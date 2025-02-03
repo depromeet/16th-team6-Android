@@ -2,11 +2,12 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.ktlint)
 }
 
 android {
     namespace = "com.depromeet.team6"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.depromeet.team6"
