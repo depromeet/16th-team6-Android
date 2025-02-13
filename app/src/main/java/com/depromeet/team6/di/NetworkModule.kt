@@ -1,6 +1,8 @@
 package com.depromeet.team6.di
 
 import com.depromeet.team6.BuildConfig
+import com.depromeet.team6.data.dataremote.interceptor.DummyInterceptor
+import com.depromeet.team6.di.qualifier.Auth
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides
@@ -8,6 +10,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
+import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -53,6 +56,11 @@ object NetworkModule {
         HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BODY
         }
+
+    @Provides
+    @Singleton
+    @Auth
+    fun provideAuthInterceptor(interceptor: DummyInterceptor): Interceptor = interceptor
 
     @ExperimentalSerializationApi
     @Provides
