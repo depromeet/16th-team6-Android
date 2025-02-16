@@ -107,3 +107,118 @@ val heading6SemiBold15 = TextStyle(
     fontSize = 15.sp,
     lineHeight = 20.sp
 )
+
+// Body Font Setting
+val bodyMedium17 = TextStyle(
+    fontFamily = FontFamily(Font(R.font.pretendard_medium)),
+    fontSize = 17.sp,
+    lineHeight = 24.sp
+)
+
+val bodyRegular17 = TextStyle(
+    fontFamily = FontFamily(Font(R.font.pretendard_regular)),
+    fontSize = 17.sp,
+    lineHeight = 24.sp
+)
+
+val bodyMedium15 = TextStyle(
+    fontFamily = FontFamily(Font(R.font.pretendard_medium)),
+    fontSize = 15.sp,
+    lineHeight = 20.sp
+)
+
+val bodyRegular15 = TextStyle(
+    fontFamily = FontFamily(Font(R.font.pretendard_regular)),
+    fontSize = 15.sp,
+    lineHeight = 20.sp
+)
+
+val bodySemiBold14 = TextStyle(
+    fontFamily = FontFamily(Font(R.font.pretendard_semibold)),
+    fontSize = 14.sp,
+    lineHeight = 18.sp
+)
+
+val bodyMedium14 = TextStyle(
+    fontFamily = FontFamily(Font(R.font.pretendard_medium)),
+    fontSize = 14.sp,
+    lineHeight = 18.sp
+)
+
+val bodyRegular14 = TextStyle(
+    fontFamily = FontFamily(Font(R.font.pretendard_regular)),
+    fontSize = 14.sp,
+    lineHeight = 18.sp
+)
+
+val bodySemiBold13 = TextStyle(
+    fontFamily = FontFamily(Font(R.font.pretendard_semibold)),
+    fontSize = 13.sp,
+    lineHeight = 16.sp
+)
+
+val bodyMedium13 = TextStyle(
+    fontFamily = FontFamily(Font(R.font.pretendard_medium)),
+    fontSize = 13.sp,
+    lineHeight = 16.sp
+)
+
+val bodyRegular13 = TextStyle(
+    fontFamily = FontFamily(Font(R.font.pretendard_regular)),
+    fontSize = 13.sp,
+    lineHeight = 16.sp
+)
+
+val bodySemiBold12 = TextStyle(
+    fontFamily = FontFamily(Font(R.font.pretendard_semibold)),
+    fontSize = 12.sp,
+    lineHeight = 14.sp
+)
+
+val bodyMedium12 = TextStyle(
+    fontFamily = FontFamily(Font(R.font.pretendard_medium)),
+    fontSize = 12.sp,
+    lineHeight = 14.sp
+)
+
+val bodyRegular12 = TextStyle(
+    fontFamily = FontFamily(Font(R.font.pretendard_regular)),
+    fontSize = 12.sp,
+    lineHeight = 14.sp
+)
+
+val bodySemiBold11 = TextStyle(
+    fontFamily = FontFamily(Font(R.font.pretendard_semibold)),
+    fontSize = 11.sp,
+    lineHeight = 13.sp
+)
+
+val bodyMedium11 = TextStyle(
+    fontFamily = FontFamily(Font(R.font.pretendard_medium)),
+    fontSize = 11.sp,
+    lineHeight = 13.sp
+)
+
+val bodyRegular11 = TextStyle(
+    fontFamily = FontFamily(Font(R.font.pretendard_regular)),
+    fontSize = 11.sp,
+    lineHeight = 13.sp
+)
+
+val bodySemiBold10 = TextStyle(
+    fontFamily = FontFamily(Font(R.font.pretendard_semibold)),
+    fontSize = 10.sp,
+    lineHeight = 12.sp
+)
+
+val bodyMedium10 = TextStyle(
+    fontFamily = FontFamily(Font(R.font.pretendard_medium)),
+    fontSize = 10.sp,
+    lineHeight = 12.sp
+)
+
+val bodyRegular10 = TextStyle(
+    fontFamily = FontFamily(Font(R.font.pretendard_regular)),
+    fontSize = 10.sp,
+    lineHeight = 12.sp
+)
