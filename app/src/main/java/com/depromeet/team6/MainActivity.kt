@@ -12,9 +12,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.depromeet.team6.ui.theme.DefaultAppColors
 import com.depromeet.team6.ui.theme.Team6Theme
-import com.depromeet.team6.ui.theme.bodySemiBold12
+import com.depromeet.team6.ui.theme.Team6Theme.colors
+import com.depromeet.team6.ui.theme.Team6Theme.typography
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,8 +43,8 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
         Text(
             text = "슬랙 알림 이제 와용가리 ~ + 컬러, 폰트 적용 테스트",
             modifier = modifier,
-            color = DefaultAppColors.greyLink,
-            style = bodySemiBold12
+            color = colors.greyLink,
+            style = typography.bodySemiBold12
         )
     }
 }

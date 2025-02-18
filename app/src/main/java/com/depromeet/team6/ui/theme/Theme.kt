@@ -8,18 +8,20 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.platform.LocalContext
 
 private val DarkColorScheme = darkColorScheme(
-    primary = DefaultAppColors.white,
-    secondary = DefaultAppColors.greySecondaryLabel,
-    tertiary = DefaultAppColors.greyTertiaryLabel
+    primary = defaultTeam6Colors.white,
+    secondary = defaultTeam6Colors.greySecondaryLabel,
+    tertiary = defaultTeam6Colors.greyTertiaryLabel
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = DefaultAppColors.white,
-    secondary = DefaultAppColors.greySecondaryLabel,
-    tertiary = DefaultAppColors.greyTertiaryLabel
+    primary = defaultTeam6Colors.white,
+    secondary = defaultTeam6Colors.greySecondaryLabel,
+    tertiary = defaultTeam6Colors.greyTertiaryLabel
 
     /* Other default colors to override
     background = Color(0xFFFFFBFE),
@@ -31,6 +33,31 @@ private val LightColorScheme = lightColorScheme(
     onSurface = Color(0xFF1C1B1F),
     */
 )
+
+object Team6Theme {
+    val colors: Team6Colors
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalTeam6Colors.current
+
+    val typography: Team6Typography
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalTeam6Typography.current
+}
+
+@Composable
+fun ProvideTeam6ColorsAndTypography(
+    colors: Team6Colors,
+    typography: Team6Typography,
+    content: @Composable () -> Unit
+) {
+    CompositionLocalProvider(
+        LocalTeam6Colors provides colors,
+        LocalTeam6Typography provides typography,
+        content = content
+    )
+}
 
 @Composable
 fun Team6Theme(
@@ -49,9 +76,13 @@ fun Team6Theme(
         else -> LightColorScheme
     }
 
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = Typography,
-        content = content
-    )
+    ProvideTeam6ColorsAndTypography(
+        colors = defaultTeam6Colors,
+        typography = defaultTeam6Typography
+    ) {
+        MaterialTheme(
+            colorScheme = colorScheme,
+            content = content
+        )
+    }
 }
