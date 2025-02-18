@@ -15,6 +15,7 @@ data class Team6Colors(
     val purpleGrey40: Color,
     val pink40: Color,
 
+    // Semantic
     // Common
     val white: Color,
     val black: Color,
@@ -36,7 +37,11 @@ data class Team6Colors(
 
     // Button
     val greyButton: Color,
-    val greyButtonOutline: Color
+    val greyButtonOutline: Color,
+
+    // Non-Semantic
+    val systemGreen: Color,
+    val systemRed: Color
 )
 
 val defaultTeam6Colors = Team6Colors(
@@ -49,6 +54,7 @@ val defaultTeam6Colors = Team6Colors(
     purpleGrey40 = Color(0xFF625b71),
     pink40 = Color(0xFF7D5260),
 
+    // Semantic
     // Common
     white = Color(0xFFFFFFFF),
     black = Color(0xFF000000),
@@ -70,7 +76,11 @@ val defaultTeam6Colors = Team6Colors(
 
     // Button
     greyButton = Color(0xFF29292C),
-    greyButtonOutline = Color(0xFF36363A)
+    greyButtonOutline = Color(0xFF36363A),
+
+    // Non-Semantic
+    systemGreen = Color(0xFF99ED7B),
+    systemRed = Color(0xFFFF5D5D)
 )
 
 val LocalTeam6Colors = staticCompositionLocalOf { defaultTeam6Colors }
