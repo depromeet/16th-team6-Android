@@ -1,10 +1,11 @@
 package com.depromeet.team6.ui.theme
 
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 
 @Immutable
-data class AppColors(
+data class Team6Colors(
     // Primary Colors
     val purple80: Color,
     val purpleGrey80: Color,
@@ -38,7 +39,7 @@ data class AppColors(
     val greyButtonOutline: Color
 )
 
-val DefaultAppColors = AppColors(
+val defaultTeam6Colors = Team6Colors(
     // Primary Colors
     purple80 = Color(0xFFD0BCFF),
     purpleGrey80 = Color(0xFFCCC2DC),
@@ -71,3 +72,5 @@ val DefaultAppColors = AppColors(
     greyButton = Color(0xFF29292C),
     greyButtonOutline = Color(0xFF36363A)
 )
+
+val LocalTeam6Colors = staticCompositionLocalOf { defaultTeam6Colors }
