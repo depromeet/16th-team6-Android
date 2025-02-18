@@ -1,4 +1,4 @@
-package com.depromeet.team6
+package com.depromeet.team6.presentation.ui.main
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -12,10 +12,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.depromeet.team6.presentation.ui.home.HomeScreen
 import com.depromeet.team6.ui.theme.Team6Theme
 import com.depromeet.team6.ui.theme.Team6Theme.colors
 import com.depromeet.team6.ui.theme.Team6Theme.typography
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,10 +26,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             Team6Theme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                    HomeScreen(modifier = Modifier.padding(innerPadding))
                 }
             }
         }
