@@ -24,10 +24,8 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             setEvent(HomeContract.HomeEvent.DummyEvent(loadState = LoadState.Loading))
             dummyUseCase()
-                .onSuccess {
-                    setEvent(
-                        HomeContract.HomeEvent.DummyEvent(loadState = LoadState.Success)
-                    )
+                .onSuccess { data ->
+                    setState { copy(loadState = LoadState.Success, dummyData = data) }
                 }
                 .onFailure {
                     setEvent(

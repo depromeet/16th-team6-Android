@@ -13,6 +13,6 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     Column(modifier = modifier.fillMaxSize()) {
-        Text(text = viewModel.dummyFunction().toString())
+        Text(text = "이 화면이 보인다면 성공한거 아니곘어?")
     }
 }

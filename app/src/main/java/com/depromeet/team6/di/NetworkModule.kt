@@ -1,8 +1,9 @@
 package com.depromeet.team6.di
 
 import com.depromeet.team6.BuildConfig
-import com.depromeet.team6.data.dataremote.interceptor.DummyInterceptor
+import com.depromeet.team6.data.dataremote.interceptor.AuthInterceptor
 import com.depromeet.team6.di.qualifier.Auth
+import com.depromeet.team6.di.qualifier.Team6
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides
@@ -60,10 +61,11 @@ object NetworkModule {
     @Provides
     @Singleton
     @Auth
-    fun provideAuthInterceptor(interceptor: DummyInterceptor): Interceptor = interceptor
+    fun provideAuthInterceptor(interceptor: AuthInterceptor): Interceptor = interceptor
 
     @ExperimentalSerializationApi
     @Provides
+    @Team6
     @Singleton
     fun providesRetrofit(
         okHttpClient: OkHttpClient,
