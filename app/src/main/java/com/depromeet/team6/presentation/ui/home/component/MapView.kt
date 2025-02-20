@@ -15,7 +15,7 @@ import com.skt.tmap.TMapView
 
 @Composable
 fun TMapViewCompose(
-    modifier : Modifier = Modifier
+    modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
     val tMapView = remember { TMapView(context) }
