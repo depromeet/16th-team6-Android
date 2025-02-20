@@ -1,34 +1,37 @@
 package com.depromeet.team6.presentation.ui.login
 
 import android.content.Context
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
-import com.depromeet.team6.presentation.util.Login.PLATFORM
+import com.depromeet.team6.R
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.presentation.util.modifier.roundedBackgroundWithPadding
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.user.UserApiClient
-import com.depromeet.team6.domain.model.Login
-import com.depromeet.team6.presentation.ui.home.HomeScreen
 
 fun setLayoutLoginKakaoClickListener(
     context: Context,
@@ -41,10 +44,9 @@ fun setLayoutLoginKakaoClickListener(
     }
 }
 
-
 @Composable
 fun LoginRoute(
-    modifier: Modifier=Modifier,
+    modifier: Modifier = Modifier,
     viewModel: LoginViewModel = hiltViewModel(),
     navigateToOnboarding: () -> Unit,
     navigateToHome: () -> Unit
@@ -76,8 +78,10 @@ fun LoginRoute(
     LaunchedEffect(uiState.authTokenLoadState) {
         when (uiState.authTokenLoadState) {
             LoadState.Success -> {
-                viewModel.postLogin(login = Login(PLATFORM))
+//                viewModel.postLogin(login = Login(PLATFORM))
+                navigateToHome()
             }
+
             else -> {
                 Unit
             }
@@ -91,7 +95,7 @@ fun LoginRoute(
                 onSignInClicked = {
                     setLayoutLoginKakaoClickListener(context = context, callback = callback)
                 },
-                modifier=modifier
+                modifier = modifier
             )
         }
 
@@ -106,13 +110,20 @@ fun LoginRoute(
 @Composable
 fun LoginScreen(
     signInUiState: LoginContract.LoginUiState = LoginContract.LoginUiState(),
-    onSignInClicked: () -> Unit,
-    modifier: Modifier = Modifier,
-    ) {
+    onSignInClicked: () -> Unit = {},
+    modifier: Modifier = Modifier
+) {
     Column(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize().background(color = defaultTeam6Colors.black),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Spacer(modifier = Modifier.height(256.dp))
+        Icon(
+            imageVector = ImageVector.vectorResource(R.drawable.ic_login_logo),
+            contentDescription = null,
+            tint = Color.Unspecified,
+            modifier = Modifier.padding(start = 34.dp)
+        )
         Spacer(modifier = Modifier.weight(1f))
         Column(
             modifier = Modifier
@@ -120,9 +131,9 @@ fun LoginScreen(
                 .fillMaxWidth()
                 .roundedBackgroundWithPadding(
                     backgroundColor = defaultTeam6Colors.kakaoLoginButton,
-                    cornerRadius = 8.dp,
+                    cornerRadius = 8.dp
 
-                    )
+                )
                 .noRippleClickable { onSignInClicked() },
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -132,13 +143,8 @@ fun LoginScreen(
     }
 }
 
-
 @Preview
 @Composable
 private fun LoginScreenPreview() {
-    LoginScreen(
-        signInUiState = TODO(),
-        onSignInClicked = TODO(),
-        modifier = TODO()
-    )
+    LoginScreen()
 }
