@@ -88,8 +88,7 @@ dependencies {
     implementation(libs.androidx.compose.navigation)
     implementation(libs.hilt.navigation.compose)
 
-
-    //Tmap
+    // Tmap
     implementation(files("libs/tmap-sdk-1.8.aar"))
     implementation(files("libs/vsm-tmap-sdk-v2-android-1.7.23.aar"))
 }
