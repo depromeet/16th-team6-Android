@@ -27,6 +27,7 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "BASE_URL", properties["base.url"].toString())
+        buildConfigField("String", "TMAP_API_KEY", properties["tmap.api.key"].toString())
     }
 
     buildTypes {
@@ -61,6 +62,7 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.material)
     implementation(libs.androidx.appcompat)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -85,4 +87,8 @@ dependencies {
     // Navigation
     implementation(libs.androidx.compose.navigation)
     implementation(libs.hilt.navigation.compose)
+
+    // Tmap
+    implementation(files("libs/tmap-sdk-1.8.aar"))
+    implementation(files("libs/vsm-tmap-sdk-v2-android-1.7.23.aar"))
 }
