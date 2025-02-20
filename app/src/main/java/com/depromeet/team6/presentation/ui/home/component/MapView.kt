@@ -14,20 +14,21 @@ import com.depromeet.team6.BuildConfig
 import com.skt.tmap.TMapView
 
 @Composable
-fun TMapViewCompose() {
+fun TMapViewCompose(
+    modifier : Modifier = Modifier
+) {
     val context = LocalContext.current
     val tMapView = remember { TMapView(context) }
 
     LaunchedEffect(Unit) {
         tMapView.setSKTMapApiKey(BuildConfig.TMAP_API_KEY)
         tMapView.setOnMapReadyListener {
-            Log.d("TMapViewCompose", "TMap is ready!")
-            // TODO: Implement your logic after the map is ready
+            tMapView.mapType = TMapView.MapType.NIGHT
         }
     }
 
     AndroidView(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         factory = { context ->
             // FrameLayout을 직접 생성
             FrameLayout(context).apply {

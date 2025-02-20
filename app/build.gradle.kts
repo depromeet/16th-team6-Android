@@ -27,7 +27,7 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "BASE_URL", properties["base.url"].toString())
-        buildConfigField("String", "TMAP_API_KEY", properties["api.key"].toString())
+        buildConfigField("String", "TMAP_API_KEY", properties["tmap.api.key"].toString())
     }
 
     buildTypes {
