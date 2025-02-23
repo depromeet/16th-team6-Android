@@ -22,14 +22,14 @@ class LoginViewModel @Inject constructor(
     override suspend fun handleEvent(event: LoginContract.LoginEvent) {
         when (event) {
             is LoginContract.LoginEvent.PostLogin -> setState { copy(loadState = event.loadState) }
-            is LoginContract.LoginEvent.SetAuthToken -> setState { copy(authTokenLoadState = event.authTokenLoadState) }
+            is LoginContract.LoginEvent.SetAuthToken -> setState { copy(authTokenLoadState = event.authTokenLoadState, loadState = event.loadState) }
         }
     }
 
     fun setKakaoAccessToken(accessToken: String) {
         userInfoRepositoryImpl.setAccessToken(accessToken)
         Log.d("SetKakaoAccessToken", "accessToken= $accessToken")
-        setEvent(LoginContract.LoginEvent.SetAuthToken(authTokenLoadState = LoadState.Success))
+        setEvent(LoginContract.LoginEvent.SetAuthToken(authTokenLoadState = LoadState.Success, loadState = LoadState.Success))
     }
 
     fun postLogin(login: Login) {

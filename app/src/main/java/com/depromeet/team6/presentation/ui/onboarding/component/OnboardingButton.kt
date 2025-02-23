@@ -1,4 +1,4 @@
-package com.depromeet.team6.presentation.ui.onboarding.component.common
+package com.depromeet.team6.presentation.ui.onboarding.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -20,6 +20,7 @@ import com.depromeet.team6.ui.theme.defaultTeam6Typography
 @Composable
 fun OnboardingButton(
     modifier: Modifier = Modifier,
+    isEnabled: Boolean = true,
     onClick: () -> Unit
 ) {
     Row(
@@ -27,17 +28,17 @@ fun OnboardingButton(
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
             .roundedBackgroundWithPadding(
-                backgroundColor = defaultTeam6Colors.disableButton,
+                backgroundColor = if (isEnabled) defaultTeam6Colors.main else defaultTeam6Colors.disabledButton,
                 cornerRadius = 8.dp,
                 padding = PaddingValues(vertical = 14.dp)
             )
-            .noRippleClickable { onClick() },
+            .noRippleClickable { if (isEnabled) onClick() },
         horizontalArrangement = Arrangement.Center
     ) {
         Text(
             text = stringResource(id = R.string.onboarding_next_button),
-            style = defaultTeam6Typography.bodyMedium15,
-            color = defaultTeam6Colors.greyQuaternaryLabel
+            style = defaultTeam6Typography.heading5SemiBold17,
+            color = if (isEnabled) defaultTeam6Colors.black else defaultTeam6Colors.greyQuaternaryLabel
         )
     }
 }

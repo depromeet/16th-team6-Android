@@ -19,12 +19,14 @@ data class Team6Colors(
     // Common
     val white: Color,
     val black: Color,
+    val main: Color,
 
     // Text
     val greySecondaryLabel: Color,
     val greyTertiaryLabel: Color,
     val greyQuaternaryLabel: Color,
     val greyLink: Color,
+    val disabledLable: Color,
 
     // Background
     val greyElevatedBackground: Color,
@@ -39,7 +41,7 @@ data class Team6Colors(
     val greyButton: Color,
     val greyButtonOutline: Color,
     val kakaoLoginButton: Color,
-    val disableButton: Color,
+    val disabledButton: Color,
 
     // Non-Semantic
     val systemGreen: Color,
@@ -64,12 +66,14 @@ val defaultTeam6Colors = Team6Colors(
     // Common
     white = Color(0xFFFFFFFF),
     black = Color(0xFF000000),
+    main = Color(0xFF99F977),
 
     // Text
     greySecondaryLabel = Color(0xFF999CA4),
     greyTertiaryLabel = Color(0xFF666970),
     greyQuaternaryLabel = Color(0xFF393C42),
     greyLink = Color(0xFF4C4D53),
+    disabledLable = Color(0xFF393C42),
 
     // Background
     greyElevatedBackground = Color(0xFF1C1C1D),
@@ -84,7 +88,7 @@ val defaultTeam6Colors = Team6Colors(
     greyButton = Color(0xFF29292C),
     greyButtonOutline = Color(0xFF36363A),
     kakaoLoginButton = Color(0xFFFAE100),
-    disableButton = Color(0x662C2C30),
+    disabledButton = Color(0x662C2C30),
 
     // Non-Semantic
     systemGreen = Color(0xFF99ED7B),

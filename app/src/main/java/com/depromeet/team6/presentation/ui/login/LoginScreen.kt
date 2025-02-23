@@ -101,7 +101,9 @@ fun LoginRoute(
 
         LoadState.Loading -> Unit
 
-        LoadState.Success -> navigateToHome()
+        LoadState.Success -> {
+            navigateToOnboarding()
+        }
 
         LoadState.Error -> navigateToOnboarding()
     }
@@ -114,7 +116,9 @@ fun LoginScreen(
     modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = modifier.fillMaxSize().background(color = defaultTeam6Colors.black),
+        modifier = modifier
+            .fillMaxSize()
+            .background(color = defaultTeam6Colors.black),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.height(256.dp))

@@ -18,9 +18,10 @@ fun MainNavHost(
         navController = navigator.navHostController,
         startDestination = navigator.startDestination
     ) {
-        homeNavGraph()
+        homeNavGraph(padding = padding)
 
         onboardingNavGraph(
+            padding = padding,
             navigateToHome = navigator::navigateToHome
         )
 

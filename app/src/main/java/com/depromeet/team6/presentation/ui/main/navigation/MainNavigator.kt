@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.depromeet.team6.presentation.ui.home.navigation.HomeRoute
 import com.depromeet.team6.presentation.ui.home.navigation.navigationHome
 import com.depromeet.team6.presentation.ui.login.navigation.LoginRoute
 import com.depromeet.team6.presentation.ui.onboarding.navigation.navigationOnboarding
@@ -19,11 +20,15 @@ class MainNavigator(
     }
 
     fun navigateToHome() {
+        clearBackStackTo(HomeRoute.ROUTE)
         navHostController.navigationHome()
     }
 
-    private fun popBackStack() {
-        navHostController.popBackStack()
+    private fun clearBackStackTo(destination: String) {
+        navHostController.popBackStack(
+            route = destination,
+            inclusive = false
+        )
     }
 }
 

@@ -1,4 +1,4 @@
-package com.depromeet.team6.presentation.ui.onboarding.component.common
+package com.depromeet.team6.presentation.ui.onboarding.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column

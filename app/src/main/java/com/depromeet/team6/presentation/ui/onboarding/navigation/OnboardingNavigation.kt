@@ -1,5 +1,6 @@
 package com.depromeet.team6.presentation.ui.onboarding.navigation
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -12,10 +13,11 @@ fun NavController.navigationOnboarding() {
 }
 
 fun NavGraphBuilder.onboardingNavGraph(
+    padding: PaddingValues,
     navigateToHome: () -> Unit
 ) {
     composable(route = OnboardingRoute.ROUTE) {
-        OnboardingRoute(navigateToHome = navigateToHome)
+        OnboardingRoute(padding = padding, navigateToHome = navigateToHome)
     }
 }
 

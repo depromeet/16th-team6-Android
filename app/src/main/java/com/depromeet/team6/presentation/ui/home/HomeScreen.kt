@@ -1,7 +1,9 @@
 package com.depromeet.team6.presentation.ui.home
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -9,10 +11,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
 fun HomeScreen(
+    padding: PaddingValues,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
-    Column(modifier = modifier.fillMaxSize()) {
+    Column(modifier = modifier.padding(padding).fillMaxSize()) {
         Text(text = "이 화면이 보인다면 성공한거 아니곘어?")
     }
 }
