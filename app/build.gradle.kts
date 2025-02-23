@@ -29,6 +29,7 @@ android {
         buildConfigField("String", "BASE_URL", properties["base.url"].toString())
         buildConfigField("String", "KAKAO_NATIVE_APP_KEY", properties["kakao.native.app.key"].toString())
         manifestPlaceholders["KAKAO_NATIVE_APP_KEY_MANIFEST"] = properties["kakao.native.app.key.manifest"] as String
+        buildConfigField("String", "TMAP_API_KEY", properties["tmap.api.key"].toString())
     }
 
     buildTypes {
@@ -63,6 +64,7 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.material)
     implementation(libs.androidx.appcompat)
     implementation(libs.play.services.auth)
     testImplementation(libs.junit)
@@ -94,4 +96,8 @@ dependencies {
 
     // Security
     implementation(libs.androidx.security.crypto)
+
+    // Tmap
+    implementation(files("libs/tmap-sdk-1.8.aar"))
+    implementation(files("libs/vsm-tmap-sdk-v2-android-1.7.23.aar"))
 }

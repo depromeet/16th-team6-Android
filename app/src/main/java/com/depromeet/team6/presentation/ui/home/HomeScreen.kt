@@ -8,6 +8,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.depromeet.team6.presentation.ui.home.component.TMapViewCompose
 
 @Composable
 fun HomeScreen(
@@ -16,6 +17,6 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     Column(modifier = modifier.padding(padding).fillMaxSize()) {
-        Text(text = "이 화면이 보인다면 성공한거 아니곘어?")
+        TMapViewCompose() // Replace with your actual API key
     }
 }
