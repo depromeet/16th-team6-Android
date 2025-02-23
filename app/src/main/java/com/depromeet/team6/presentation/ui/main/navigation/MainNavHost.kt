@@ -1,6 +1,5 @@
 package com.depromeet.team6.presentation.ui.main.navigation
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -19,9 +18,7 @@ fun MainNavHost(
         navController = navigator.navHostController,
         startDestination = navigator.startDestination
     ) {
-        homeNavGraph(
-
-        )
+        homeNavGraph()
 
         onboardingNavGraph(
             navigateToHome = navigator::navigateToHome
@@ -32,6 +29,5 @@ fun MainNavHost(
             navigateToHome = navigator::navigateToHome
         )
         val previousRoute = navigator.navHostController.previousBackStackEntry?.destination?.route ?: "Unknown"
-
     }
 }

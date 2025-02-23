@@ -18,7 +18,7 @@ class MainNavigator(
         navHostController.navigationOnboarding()
     }
 
-    fun navigateToHome(){
+    fun navigateToHome() {
         navHostController.navigationHome()
     }
 

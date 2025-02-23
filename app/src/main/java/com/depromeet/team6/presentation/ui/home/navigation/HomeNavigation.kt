@@ -4,7 +4,6 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.depromeet.team6.presentation.ui.home.HomeScreen
-import com.depromeet.team6.presentation.ui.onboarding.OnboardingRoute
 
 fun NavController.navigationHome() {
     navigate(
@@ -12,8 +11,7 @@ fun NavController.navigationHome() {
     )
 }
 
-fun NavGraphBuilder.homeNavGraph(
-) {
+fun NavGraphBuilder.homeNavGraph() {
     composable(route = HomeRoute.ROUTE) {
         HomeScreen()
     }

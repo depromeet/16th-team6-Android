@@ -39,10 +39,15 @@ data class Team6Colors(
     val greyButton: Color,
     val greyButtonOutline: Color,
     val kakaoLoginButton: Color,
+    val disableButton: Color,
 
     // Non-Semantic
     val systemGreen: Color,
-    val systemRed: Color
+    val systemRed: Color,
+    val systemGray6: Color,
+
+    // TextField Cursor
+    val textFieldCursor: Color
 )
 
 val defaultTeam6Colors = Team6Colors(
@@ -79,10 +84,15 @@ val defaultTeam6Colors = Team6Colors(
     greyButton = Color(0xFF29292C),
     greyButtonOutline = Color(0xFF36363A),
     kakaoLoginButton = Color(0xFFFAE100),
+    disableButton = Color(0x662C2C30),
 
     // Non-Semantic
     systemGreen = Color(0xFF99ED7B),
-    systemRed = Color(0xFFFF5D5D)
+    systemRed = Color(0xFFFF5D5D),
+    systemGray6 = Color(0xFF1C1C1E),
+
+    // TextField Cursor
+    textFieldCursor = Color(0xFF90E772)
 )
 
 val LocalTeam6Colors = staticCompositionLocalOf { defaultTeam6Colors }
