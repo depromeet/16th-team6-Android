@@ -13,4 +13,3 @@ class PostLoginUseCase @Inject constructor(
     suspend operator fun invoke(authorization: String, logIn: Login): Result<Auth> =
         authRepository.postLogin(authorization = authorization, logIn = logIn)
 }
-

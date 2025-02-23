@@ -6,7 +6,6 @@ import android.os.Build
 import android.util.Base64
 import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.content.ContentProviderCompat.requireContext
 import com.depromeet.team6.BuildConfig.KAKAO_NATIVE_APP_KEY
 import com.kakao.sdk.common.KakaoSdk
 import dagger.hilt.android.HiltAndroidApp
@@ -45,4 +44,3 @@ class Team6App : Application() {
         }
     }
 }
-

@@ -10,5 +10,6 @@ class AuthRemoteDataSource @Inject constructor(
 ) {
     suspend fun postSignIn(authorization: String, requestLoginDto: RequestLoginDto): ResponseAuthDto =
         authService.postLogin(
-            requestLoginDto = requestLoginDto)
+            requestLoginDto = requestLoginDto
+        )
 }

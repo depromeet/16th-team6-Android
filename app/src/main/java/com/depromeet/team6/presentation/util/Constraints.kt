@@ -4,7 +4,6 @@ object Login {
     const val PLATFORM = "KAKAO"
 }
 
-
 object Token {
     const val BEARER = "Bearer "
 }

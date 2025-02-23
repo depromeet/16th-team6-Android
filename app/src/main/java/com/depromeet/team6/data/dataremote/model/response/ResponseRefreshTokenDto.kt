@@ -9,4 +9,3 @@ data class ResponseRefreshTokenDto(
     @SerialName("accessToken") val accessToken: String,
     @SerialName("refreshToken") val refreshToken: String
 )
-

@@ -3,11 +3,11 @@ package com.depromeet.team6.data.datalocal.datasource
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.core.content.edit
-import com.kakao.sdk.auth.Constants.ACCESS_TOKEN
-import com.kakao.sdk.auth.Constants.REFRESH_TOKEN
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 import com.depromeet.team6.BuildConfig
+import com.kakao.sdk.auth.Constants.ACCESS_TOKEN
+import com.kakao.sdk.auth.Constants.REFRESH_TOKEN
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton

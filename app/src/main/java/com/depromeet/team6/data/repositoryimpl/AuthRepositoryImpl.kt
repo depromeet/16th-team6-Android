@@ -14,6 +14,4 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun postLogin(authorization: String, logIn: Login): Result<Auth> = runCatching {
         authRemoteDataSource.postSignIn(authorization = authorization, requestLoginDto = logIn.toData()).toDomain()
     }
-
-
 }

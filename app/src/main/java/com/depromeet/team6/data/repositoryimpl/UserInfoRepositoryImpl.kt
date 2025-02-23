@@ -4,7 +4,6 @@ import com.depromeet.team6.data.datalocal.datasource.UserInfoLocalDataSource
 import com.depromeet.team6.domain.repository.UserInfoRepository
 import javax.inject.Inject
 
-
 class UserInfoRepositoryImpl @Inject constructor(
     private val userInfoLocalDataSource: UserInfoLocalDataSource
 ) : UserInfoRepository {

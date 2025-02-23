@@ -79,7 +79,7 @@ fun LoginRoute(
         when (uiState.authTokenLoadState) {
             LoadState.Success -> {
 //                viewModel.postLogin(login = Login(PLATFORM))
-                navigateToHome()
+                navigateToOnboarding()
             }
 
             else -> {

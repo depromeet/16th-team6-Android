@@ -5,5 +5,4 @@ import com.depromeet.team6.domain.model.Login
 
 interface AuthRepository {
     suspend fun postLogin(authorization: String, logIn: Login): Result<Auth>
-
 }
