@@ -1,5 +1,8 @@
 package com.depromeet.team6.presentation.ui.onboarding
 
+import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -9,8 +12,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -22,6 +27,7 @@ import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingAlarmS
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingButton
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingSearchContainer
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingTitle
+import com.depromeet.team6.presentation.util.location.LocationUtil
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 
@@ -34,6 +40,18 @@ fun OnboardingRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val lifecycleOwner = LocalLifecycleOwner.current
 
+    val context = LocalContext.current
+
+    val locationPermissionsLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestMultiplePermissions(),
+        onResult = { permissions ->
+            val allGranted = permissions.values.all { it }
+            if (allGranted) {
+                Log.d("Location_Permission","Has Granted")
+            }
+        }
+    )
+
     LaunchedEffect(viewModel.sideEffect, lifecycleOwner) {
         viewModel.sideEffect.flowWithLifecycle(lifecycle = lifecycleOwner.lifecycle)
             .collect { pointHistorySideEffect ->
@@ -41,6 +59,12 @@ fun OnboardingRoute(
                     is OnboardingContract.OnboardingSideEffect.DummySideEffect -> Unit
                 }
             }
+    }
+
+    SideEffect {
+        if (!LocationUtil.hasLocationPermissions(context)) {
+            LocationUtil.requestLocationPermissions(locationPermissionsLauncher)
+        }
     }
 
     when (uiState.loadState) {
