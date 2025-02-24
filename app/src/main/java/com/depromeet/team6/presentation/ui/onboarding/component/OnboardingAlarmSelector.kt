@@ -8,10 +8,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
@@ -51,28 +47,24 @@ fun OnboardingAlarmSelectorItem(
         Spacer(modifier = Modifier.weight(1f))
         Icon(
             imageVector = ImageVector.vectorResource(R.drawable.ic_onboarding_select_alarm),
-            tint = if (isSelected) defaultTeam6Colors.main else defaultTeam6Colors.disabledLable,
+            tint = if (isSelected) defaultTeam6Colors.main else defaultTeam6Colors.disabledLabel,
             contentDescription = null
         )
     }
 }
 
 @Composable
-fun OnboardingAlarmSelector(modifier: Modifier = Modifier) {
-    var selectedItems by remember { mutableStateOf(setOf<AlarmTime>()) }
-
+fun OnboardingAlarmSelector(
+    modifier: Modifier = Modifier,
+    selectedItems: Set<AlarmTime> = emptySet(),
+    onItemClick: (AlarmTime) -> Unit
+) {
     Column(modifier = modifier.fillMaxWidth()) {
-        AlarmTime.entries.forEachIndexed { _, alarmTime ->
+        AlarmTime.entries.forEach { alarmTime ->
             OnboardingAlarmSelectorItem(
                 text = alarmTime.string,
                 isSelected = alarmTime in selectedItems,
-                onClick = {
-                    selectedItems = if (alarmTime in selectedItems) {
-                        selectedItems - alarmTime
-                    } else {
-                        selectedItems + alarmTime
-                    }
-                }
+                onClick = { onItemClick(alarmTime) }
             )
         }
     }
@@ -81,5 +73,7 @@ fun OnboardingAlarmSelector(modifier: Modifier = Modifier) {
 @Preview
 @Composable
 private fun OnboardingAlarmSelectorPreview() {
-    OnboardingAlarmSelector()
+    OnboardingAlarmSelector(
+        onItemClick = {  }
+    )
 }

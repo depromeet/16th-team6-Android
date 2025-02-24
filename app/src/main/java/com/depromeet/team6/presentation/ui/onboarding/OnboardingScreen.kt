@@ -14,6 +14,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
@@ -23,6 +26,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import com.depromeet.team6.presentation.type.OnboardingType
+import com.depromeet.team6.presentation.ui.onboarding.component.AlarmTime
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingAlarmSelector
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingButton
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingSearchContainer
@@ -68,19 +72,21 @@ fun OnboardingRoute(
     }
 
     when (uiState.loadState) {
-        LoadState.Idle -> OnboardingScreen(
-            padding = padding,
-            uiState = uiState,
-            onNextButtonClicked = {
-                if (uiState.onboardingType == OnboardingType.HOME) {
-                    viewModel.setEvent(
-                        OnboardingContract.OnboardingEvent.ChangeOnboardingType
-                    )
-                } else {
-                    navigateToHome()
+        LoadState.Idle -> {
+            OnboardingScreen(
+                padding = padding,
+                uiState = uiState,
+                onNextButtonClicked = {
+                    if (uiState.onboardingType == OnboardingType.HOME) {
+                        viewModel.setEvent(
+                            OnboardingContract.OnboardingEvent.ChangeOnboardingType
+                        )
+                    } else {
+                        navigateToHome()
+                    }
                 }
-            }
-        )
+            )
+        }
 
         LoadState.Loading -> Unit
 
@@ -99,6 +105,8 @@ fun OnboardingScreen(
     onNextButtonClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    var selectedItems by remember { mutableStateOf(setOf<AlarmTime>()) }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -112,10 +120,25 @@ fun OnboardingScreen(
             OnboardingSearchContainer()
         } else {
             Spacer(modifier = Modifier.height(68.dp))
-            OnboardingAlarmSelector()
+            OnboardingAlarmSelector(
+                selectedItems = selectedItems,
+                onItemClick = { alarmTime ->
+                    selectedItems = if (alarmTime in selectedItems) {
+                        selectedItems - alarmTime
+                    } else {
+                        selectedItems + alarmTime
+                    }
+                }
+            )
         }
         Spacer(modifier = Modifier.weight(1f))
-        OnboardingButton(isEnabled = true) { onNextButtonClicked() }
+        OnboardingButton(
+            isEnabled = if (uiState.onboardingType == OnboardingType.ALARM) {
+                selectedItems.isNotEmpty()
+            } else {
+                true
+            }
+        ) { onNextButtonClicked() }
         Spacer(modifier = Modifier.height(20.dp))
     }
 }
