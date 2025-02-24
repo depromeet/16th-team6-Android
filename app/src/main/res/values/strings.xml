@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Team6</string>
+    <string name="app_name">앗차!</string>
 
     <!-- Onboarding -->
     <string name="onboarding_home_enroll_title">우리 집을 등록해 보세요</string>
