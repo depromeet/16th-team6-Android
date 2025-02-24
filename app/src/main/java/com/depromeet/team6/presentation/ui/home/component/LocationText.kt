@@ -28,7 +28,8 @@ import com.depromeet.team6.ui.theme.LocalTeam6Typography
 
 @Composable
 fun LocationText(
-    text: String,
+    locationTitle: String,
+    location: String,
     textColor: Color,
     backgroundColor: Color,
     onClick: () -> Unit,
@@ -62,7 +63,15 @@ fun LocationText(
             Spacer(modifier = Modifier.width(8.dp))
 
             Text(
-                text = text,
+                text = locationTitle,
+                style = typography.bodyMedium15,
+                color = textColor
+            )
+
+            Spacer(modifier = Modifier.width(4.dp))
+
+            Text(
+                text = location,
                 style = typography.bodyMedium15,
                 color = textColor
             )
@@ -74,7 +83,8 @@ fun LocationText(
 @Composable
 fun LocationTextPreview() {
     LocationText(
-        text = "현위치 : 중앙빌딩",
+        locationTitle = "현위치:",
+        location = "중앙빌딩",
         textColor = LocalTeam6Colors.current.systemGreen,
         backgroundColor = LocalTeam6Colors.current.greyButton,
         onClick = {},

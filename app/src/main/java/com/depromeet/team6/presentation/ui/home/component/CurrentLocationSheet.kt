@@ -43,7 +43,8 @@ fun CurrentLocationSheet(
                 .padding(start = 16.dp, end = 16.dp, top = 28.dp, bottom = 20.dp),
         ) {
             LocationText(
-                text = currentLocation,
+                locationTitle = stringResource(R.string.home_current_location_text),
+                location = currentLocation,
                 textColor = colors.systemGreen,
                 backgroundColor = colors.greyButton,
                 onClick = {},
@@ -53,7 +54,8 @@ fun CurrentLocationSheet(
             Spacer(modifier = Modifier.height(4.dp))
 
             LocationText(
-                text = destination,
+                locationTitle = stringResource(R.string.home_destination_text),
+                location = destination,
                 textColor = colors.greyTertiaryLabel,
                 backgroundColor = colors.greyWashBackground,
                 onClick = {},
@@ -75,8 +77,8 @@ fun CurrentLocationSheet(
 @Composable
 fun CurrentLocationSheetPreview() {
     CurrentLocationSheet(
-        currentLocation = "현위치",
-        destination = "목적지",
+        currentLocation = "중앙빌딩",
+        destination = "우리집",
         onSearchClick = { },
         modifier = Modifier
     )
