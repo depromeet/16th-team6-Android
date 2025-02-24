@@ -28,7 +28,7 @@ fun OnboardingButton(
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
             .roundedBackgroundWithPadding(
-                backgroundColor = if (isEnabled) defaultTeam6Colors.main else defaultTeam6Colors.disabledButton,
+                backgroundColor = if (isEnabled) defaultTeam6Colors.main else defaultTeam6Colors.defaultButton,
                 cornerRadius = 8.dp,
                 padding = PaddingValues(vertical = 14.dp)
             )
