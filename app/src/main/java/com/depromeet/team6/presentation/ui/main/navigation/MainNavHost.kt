@@ -26,6 +26,7 @@ fun MainNavHost(
         )
 
         loginGraph(
+            padding = padding,
             navigateToOnboarding = navigator::navigateToOnboarding,
             navigateToHome = navigator::navigateToHome
         )

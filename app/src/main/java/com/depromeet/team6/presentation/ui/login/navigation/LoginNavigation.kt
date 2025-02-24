@@ -1,9 +1,11 @@
 package com.depromeet.team6.presentation.ui.login.navigation
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.depromeet.team6.presentation.ui.login.LoginRoute
+import com.google.android.material.internal.ViewUtils.RelativePadding
 
 fun NavController.navigationLogin() {
     navigate(
@@ -16,11 +18,13 @@ fun NavController.navigationLogin() {
 }
 
 fun NavGraphBuilder.loginGraph(
+    padding: PaddingValues,
     navigateToOnboarding: () -> Unit,
     navigateToHome: () -> Unit
 ) {
     composable(route = LoginRoute.ROUTE) {
         LoginRoute(
+            padding = padding,
             navigateToOnboarding = navigateToOnboarding,
             navigateToHome = navigateToHome
         )
