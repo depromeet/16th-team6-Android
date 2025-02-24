@@ -56,7 +56,6 @@ fun TMapViewCompose(
             val tMapPoint = TMapPoint(currentLocation.latitude, currentLocation.longitude)
 
             withContext(Dispatchers.Main) {
-
                 tMapView.setCenterPoint(tMapPoint.latitude, tMapPoint.longitude)
                 tMapView.zoomLevel = 18
 

@@ -41,16 +41,15 @@ fun PrimaryButton(
             containerColor = colors.systemGreen,
             contentColor = colors.black
         ),
-        shape = RoundedCornerShape(12.dp),
+        shape = RoundedCornerShape(12.dp)
     ) {
-
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.ic_all_search_black),
-                contentDescription = stringResource(R.string.home_icon_search_text),
+                contentDescription = stringResource(R.string.home_icon_search_text)
             )
 
             Spacer(modifier = Modifier.width(8.dp))

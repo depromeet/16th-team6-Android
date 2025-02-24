@@ -41,7 +41,7 @@ fun LocationText(
         modifier = modifier
             .fillMaxWidth()
             .height(48.dp),
-        contentAlignment = Alignment.Center,
+        contentAlignment = Alignment.Center
     ) {
         Row(
             modifier = Modifier

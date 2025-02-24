@@ -40,7 +40,7 @@ fun CurrentLocationSheet(
                     colors.greyWashBackground,
                     shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)
                 )
-                .padding(start = 16.dp, end = 16.dp, top = 28.dp, bottom = 20.dp),
+                .padding(start = 16.dp, end = 16.dp, top = 28.dp, bottom = 20.dp)
         ) {
             LocationText(
                 locationTitle = stringResource(R.string.home_current_location_text),

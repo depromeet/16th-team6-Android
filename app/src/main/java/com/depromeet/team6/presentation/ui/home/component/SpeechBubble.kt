@@ -30,47 +30,61 @@ class SpeechBubbleShape(private val cornerRadius: Dp = 16.dp) : Shape {
         layoutDirection: LayoutDirection,
         density: Density
     ): Outline {
-        return Outline.Generic(Path().apply {
-            val radius = with(density) { cornerRadius.toPx() }
-            val tailHeight = size.height * 0.2f
+        return Outline.Generic(
+            Path().apply {
+                val radius = with(density) { cornerRadius.toPx() }
+                val tailHeight = size.height * 0.2f
 
-            reset()
-            moveTo(radius, 0f)
+                reset()
+                moveTo(radius, 0f)
 
-            arcTo(
-                Rect(
-                    Offset(size.width - radius, 0f),
-                    Offset(size.width, radius)
-                ), -90f, 90f, false
-            )
+                arcTo(
+                    Rect(
+                        Offset(size.width - radius, 0f),
+                        Offset(size.width, radius)
+                    ),
+                    -90f,
+                    90f,
+                    false
+                )
 
-            arcTo(
-                Rect(
-                    Offset(size.width - radius, size.height - radius - tailHeight),
-                    Offset(size.width, size.height - tailHeight)
-                ), 0f, 90f, false
-            )
+                arcTo(
+                    Rect(
+                        Offset(size.width - radius, size.height - radius - tailHeight),
+                        Offset(size.width, size.height - tailHeight)
+                    ),
+                    0f,
+                    90f,
+                    false
+                )
 
-            lineTo(size.width * 0.12f, size.height - tailHeight)
-            lineTo(size.width * 0.15f, size.height)
-            lineTo(size.width * 0.18f, size.height - tailHeight)
+                lineTo(size.width * 0.12f, size.height - tailHeight)
+                lineTo(size.width * 0.15f, size.height)
+                lineTo(size.width * 0.18f, size.height - tailHeight)
 
-            arcTo(
-                Rect(
-                    Offset(0f, size.height - radius - tailHeight),
-                    Offset(radius, size.height - tailHeight)
-                ), 90f, 90f, false
-            )
+                arcTo(
+                    Rect(
+                        Offset(0f, size.height - radius - tailHeight),
+                        Offset(radius, size.height - tailHeight)
+                    ),
+                    90f,
+                    90f,
+                    false
+                )
 
-            arcTo(
-                Rect(
-                    Offset(0f, 0f),
-                    Offset(radius, radius)
-                ), 180f, 90f, false
-            )
+                arcTo(
+                    Rect(
+                        Offset(0f, 0f),
+                        Offset(radius, radius)
+                    ),
+                    180f,
+                    90f,
+                    false
+                )
 
-            close()
-        })
+                close()
+            }
+        )
     }
 }
 
@@ -93,7 +107,7 @@ fun SpeechBubble(
     ) {
         Row(
             modifier = Modifier
-                .padding(top = 10.dp, bottom = 16.dp, start = 10.dp, end = 10.dp),
+                .padding(top = 10.dp, bottom = 16.dp, start = 10.dp, end = 10.dp)
         ) {
             Text(
                 text = text,
