@@ -100,6 +100,18 @@ fun TMapViewCompose(
                 .align(Alignment.Center)
                 .padding(bottom = 105.dp)
         )
+
+        Image(
+            imageVector = ImageVector.vectorResource(id = R.drawable.ic_all_current_location),
+            contentDescription = stringResource(R.string.home_current_location_btn),
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(bottom = 236.dp, end = 16.dp)
+                .clickable {
+                    val tMapPoint = TMapPoint(currentLocation.latitude, currentLocation.longitude)
+                    tMapView.setCenterPoint(tMapPoint.latitude, tMapPoint.longitude)
+                }
+        )
     }
 
     DisposableEffect(Unit) {
