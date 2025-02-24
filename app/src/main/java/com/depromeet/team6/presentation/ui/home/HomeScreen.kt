@@ -14,6 +14,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.depromeet.team6.presentation.ui.home.component.CharacterSpeechBubble
 import com.depromeet.team6.presentation.ui.home.component.CurrentLocationSheet
 import com.depromeet.team6.presentation.ui.home.component.TMapViewCompose
+import com.google.android.gms.maps.model.LatLng
 
 @Composable
 fun HomeScreen(
@@ -24,11 +25,11 @@ fun HomeScreen(
         modifier = modifier
             .fillMaxSize()
     ) {
-        TMapViewCompose() // Replace with your actual API key
+        TMapViewCompose(LatLng(37.5665, 126.9780)) // Replace with your actual API key
 
         CurrentLocationSheet(
-            currentLocation = "현위치",
-            destination = "목적지",
+            currentLocation = "중앙빌딩",
+            destination = "우리집",
             onSearchClick = {},
             modifier = Modifier
                 .align(Alignment.BottomCenter)
@@ -37,7 +38,7 @@ fun HomeScreen(
         )
 
         CharacterSpeechBubble(
-            text = "여기서 놓치면 택시비",
+            text = "여기서 놓치면 택시비 약",
             modifier = Modifier
                 .align(Alignment.BottomStart)
                 .padding(start = 16.dp, bottom = 185.dp),
