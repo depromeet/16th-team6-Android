@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -24,7 +23,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.flowWithLifecycle
 import com.depromeet.team6.presentation.type.OnboardingType
 import com.depromeet.team6.presentation.ui.onboarding.component.AlarmTime
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingAlarmSelector
@@ -42,7 +40,6 @@ fun OnboardingRoute(
     navigateToHome: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val lifecycleOwner = LocalLifecycleOwner.current
 
     val context = LocalContext.current
 
@@ -55,15 +52,6 @@ fun OnboardingRoute(
             }
         }
     )
-
-    LaunchedEffect(viewModel.sideEffect, lifecycleOwner) {
-        viewModel.sideEffect.flowWithLifecycle(lifecycle = lifecycleOwner.lifecycle)
-            .collect { pointHistorySideEffect ->
-                when (pointHistorySideEffect) {
-                    is OnboardingContract.OnboardingSideEffect.DummySideEffect -> Unit
-                }
-            }
-    }
 
     SideEffect {
         if (!LocationUtil.hasLocationPermissions(context)) {
@@ -91,7 +79,6 @@ fun OnboardingRoute(
         LoadState.Loading -> Unit
 
         LoadState.Success -> {
-            // TODO: 위치 권한 받기
         }
 
         LoadState.Error -> Unit
