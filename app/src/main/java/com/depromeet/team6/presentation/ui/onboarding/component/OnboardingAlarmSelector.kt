@@ -74,6 +74,6 @@ fun OnboardingAlarmSelector(
 @Composable
 private fun OnboardingAlarmSelectorPreview() {
     OnboardingAlarmSelector(
-        onItemClick = {  }
+        onItemClick = { }
     )
 }

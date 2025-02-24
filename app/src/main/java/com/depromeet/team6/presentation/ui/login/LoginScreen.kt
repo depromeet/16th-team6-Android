@@ -130,7 +130,7 @@ fun LoginScreen(
         Icon(
             imageVector = ImageVector.vectorResource(R.drawable.ic_login_logo),
             contentDescription = null,
-            tint = Color.Unspecified,
+            tint = Color.Unspecified
         )
         Spacer(modifier = Modifier.weight(1f))
         Column(

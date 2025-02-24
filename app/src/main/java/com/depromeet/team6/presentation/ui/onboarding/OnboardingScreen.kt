@@ -21,7 +21,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.depromeet.team6.presentation.type.OnboardingType
 import com.depromeet.team6.presentation.ui.onboarding.component.AlarmTime
@@ -47,7 +46,7 @@ fun OnboardingRoute(
         onResult = { permissions ->
             val allGranted = permissions.values.all { it }
             if (allGranted) {
-                Log.d("Location_Permission","Has Granted")
+                Log.d("Location_Permission", "Has Granted")
             }
         }
     )
