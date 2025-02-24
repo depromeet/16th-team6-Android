@@ -92,6 +92,14 @@ fun TMapViewCompose(
                 // Update logic if needed (e.g., map settings)
             }
         )
+
+        Image(
+            imageVector = ImageVector.vectorResource(id = R.drawable.ic_home_start_marker),
+            contentDescription = "Start Marker",
+            modifier = Modifier
+                .align(Alignment.Center)
+                .padding(bottom = 105.dp)
+        )
     }
 
     DisposableEffect(Unit) {
