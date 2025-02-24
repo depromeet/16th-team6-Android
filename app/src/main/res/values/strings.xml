@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Team6</string>
     <string name="lock_screen_description">알림 잠금화면</string>
+    <string name="lock_screen_start_btn">출발하기</string>
 </resources>
