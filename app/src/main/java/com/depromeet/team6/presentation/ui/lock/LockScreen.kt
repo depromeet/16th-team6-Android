@@ -1,3 +1,4 @@
+import androidx.annotation.ColorRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -51,6 +52,10 @@ fun LockScreen(onTimerFinish: () -> Unit) {
         mutableFloatStateOf(timeLeft / 60f)
     }
 
+    val progressColor = if (timeLeft <= 10) colors.systemRed else colors.systemGreen
+
+    val timerTextColor = if (timeLeft <= 10) colors.systemRed else colors.systemGreen
+
     var currentTime by remember { mutableStateOf("") }
 
     LaunchedEffect(Unit) {
@@ -99,7 +104,7 @@ fun LockScreen(onTimerFinish: () -> Unit) {
                 CircularProgressIndicator(
                     progress = { progress },
                     modifier = Modifier.size(200.dp),
-                    color = Color(0xFFFF4444),
+                    color = progressColor,
                     strokeWidth = 8.dp
                 )
 
@@ -109,7 +114,7 @@ fun LockScreen(onTimerFinish: () -> Unit) {
                 ) {
                     Text(
                         text = String.format("%02d:%02d", timeLeft / 60, timeLeft % 60),
-                        color = Color(0xFFFF4444),
+                        color = timerTextColor,
                         fontSize = 48.sp,
                         fontWeight = FontWeight.Bold
                     )
