@@ -93,7 +93,6 @@ fun LockScreen(onTimerFinish: () -> Unit) {
                 modifier = Modifier.weight(1f),
                 contentAlignment = Alignment.Center
             ) {
-
                 CircularProgressIndicator(
                     progress = { 1f },
                     modifier = Modifier.size(270.dp),
@@ -185,9 +184,7 @@ fun LockScreen(onTimerFinish: () -> Unit) {
                         modifier = Modifier.padding(vertical = 8.dp)
                     )
                 }
-
             }
-
         }
     }
 }
