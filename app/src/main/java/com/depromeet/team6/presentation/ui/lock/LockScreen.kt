@@ -121,7 +121,8 @@ fun LockScreen(onTimerFinish: () -> Unit) {
 
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                        modifier = Modifier.padding(8.dp)
                     ) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_all_alarm_bell_white),
