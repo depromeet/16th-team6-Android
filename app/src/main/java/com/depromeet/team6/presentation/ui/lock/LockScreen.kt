@@ -1,4 +1,3 @@
-import androidx.annotation.ColorRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -59,7 +58,7 @@ fun LockScreen(onTimerFinish: () -> Unit) {
     var currentTime by remember { mutableStateOf("") }
 
     LaunchedEffect(Unit) {
-        while(true) {
+        while (true) {
             currentTime = LocalDateTime.now().format(
                 DateTimeFormatter.ofPattern("a hh:mm", Locale.KOREAN)
             )
@@ -77,7 +76,7 @@ fun LockScreen(onTimerFinish: () -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.Black)
+            .background(colors.black)
     ) {
         Column(
             modifier = Modifier.fillMaxSize(),
@@ -92,18 +91,19 @@ fun LockScreen(onTimerFinish: () -> Unit) {
 
             Box(
                 modifier = Modifier.weight(1f),
-                contentAlignment = Alignment.Center) {
+                contentAlignment = Alignment.Center
+            ) {
 
                 CircularProgressIndicator(
                     progress = { 1f },
-                    modifier = Modifier.size(200.dp),
+                    modifier = Modifier.size(270.dp),
                     color = Color.DarkGray,
                     strokeWidth = 8.dp
                 )
 
                 CircularProgressIndicator(
                     progress = { progress },
-                    modifier = Modifier.size(200.dp),
+                    modifier = Modifier.size(270.dp),
                     color = progressColor,
                     strokeWidth = 8.dp
                 )
@@ -115,7 +115,7 @@ fun LockScreen(onTimerFinish: () -> Unit) {
                     Text(
                         text = String.format("%02d:%02d", timeLeft / 60, timeLeft % 60),
                         color = timerTextColor,
-                        fontSize = 48.sp,
+                        fontSize = 60.sp,
                         fontWeight = FontWeight.Bold
                     )
 
@@ -126,13 +126,13 @@ fun LockScreen(onTimerFinish: () -> Unit) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_all_alarm_bell_white),
                             contentDescription = null,
-                            tint = Color.White,
+                            tint = colors.white,
                             modifier = Modifier.size(16.dp)
                         )
                         Text(
                             text = currentTime,
-                            color = Color.White,
-                            fontSize = 14.sp
+                            color = colors.greySecondaryLabel,
+                            style = typography.heading5SemiBold17
                         )
                     }
                 }
@@ -161,7 +161,8 @@ fun LockScreen(onTimerFinish: () -> Unit) {
                         },
                         color = defaultTeam6Colors.white,
                         fontSize = 16.sp,
-                        modifier = Modifier.padding(13.dp, 11.dp)
+                        modifier = Modifier.padding(13.dp, 11.dp),
+                        style = typography.bodyMedium13
                     )
                 }
 
@@ -180,7 +181,6 @@ fun LockScreen(onTimerFinish: () -> Unit) {
                         text = stringResource(R.string.lock_screen_start_btn),
                         color = colors.black,
                         style = typography.heading5Bold17,
-                        fontSize = 16.sp,
                         modifier = Modifier.padding(vertical = 8.dp)
                     )
                 }
