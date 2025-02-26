@@ -27,6 +27,7 @@ import com.depromeet.team6.presentation.ui.onboarding.component.AlarmTime
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingAlarmSelector
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingButton
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingSearchContainer
+import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingSearchPopup
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingTitle
 import com.depromeet.team6.presentation.util.location.LocationUtil
 import com.depromeet.team6.presentation.util.view.LoadState
@@ -52,8 +53,6 @@ fun OnboardingRoute(
     )
 
     SideEffect {
-        if (!LocationUtil.hasLocationPermissions(context)) {
-            LocationUtil.requestLocationPermissions(locationPermissionsLauncher)
         if (!LocationUtil.isLocationPermissionRequested(context = context)) {
             LocationUtil.requestLocationPermissions(
                 context = context,
@@ -62,29 +61,41 @@ fun OnboardingRoute(
         }
     }
 
-    when (uiState.loadState) {
-        LoadState.Idle -> {
-            OnboardingScreen(
-                padding = padding,
-                uiState = uiState,
-                onNextButtonClicked = {
-                    if (uiState.onboardingType == OnboardingType.HOME) {
-                        viewModel.setEvent(
-                            OnboardingContract.OnboardingEvent.ChangeOnboardingType
-                        )
-                    } else {
-                        navigateToHome()
+    when {
+        uiState.searchPopupVisible -> OnboardingSearchPopup(
+            uiState = uiState,
+            padding = padding,
+            searchText = uiState.searchText,
+            onSearchTextChange = {
+                viewModel.setEvent(
+                    OnboardingContract.OnboardingEvent.UpdateSearchText(
+                        it
+                    )
+                )
+            },
+            onCloseButtonClicked = { viewModel.setEvent(OnboardingContract.OnboardingEvent.ClearText) }
+        )
+
+        else -> when (uiState.loadState) {
+            LoadState.Idle -> {
+                OnboardingScreen(
+                    padding = padding,
+                    uiState = uiState,
+                    onSearchBoxClicked = { viewModel.setEvent(OnboardingContract.OnboardingEvent.ShowSearchPopup) },
+                    onNextButtonClicked = {
+                        if (uiState.onboardingType == OnboardingType.HOME) {
+                            viewModel.setEvent(OnboardingContract.OnboardingEvent.ChangeOnboardingType)
+                        } else {
+                            navigateToHome()
+                        }
                     }
-                }
-            )
+                )
+            }
+
+            LoadState.Loading -> Unit
+            LoadState.Success -> Unit
+            LoadState.Error -> Unit
         }
-
-        LoadState.Loading -> Unit
-
-        LoadState.Success -> {
-        }
-
-        LoadState.Error -> Unit
     }
 }
 
@@ -92,22 +103,27 @@ fun OnboardingRoute(
 fun OnboardingScreen(
     padding: PaddingValues,
     uiState: OnboardingContract.OnboardingUiState = OnboardingContract.OnboardingUiState(),
-    onNextButtonClicked: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onSearchBoxClicked: () -> Unit = {},
+    onNextButtonClicked: () -> Unit = {},
 ) {
     var selectedItems by remember { mutableStateOf(setOf<AlarmTime>()) }
+    var searchText by remember { mutableStateOf("") }
 
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(color = defaultTeam6Colors.black)
+            .background(color = defaultTeam6Colors.greyWashBackground)
             .padding(padding)
     ) {
         Spacer(modifier = Modifier.height(56.dp))
         OnboardingTitle(onboardingType = uiState.onboardingType)
         if (uiState.onboardingType == OnboardingType.HOME) {
             Spacer(modifier = Modifier.height(30.dp))
-            OnboardingSearchContainer()
+            OnboardingSearchContainer(
+                onSearchBoxClicked = onSearchBoxClicked,
+                onLocationButtonClick = { Log.d("OnboardingScreen", "Location button clicked!") },
+            )
         } else {
             Spacer(modifier = Modifier.height(68.dp))
             OnboardingAlarmSelector(
