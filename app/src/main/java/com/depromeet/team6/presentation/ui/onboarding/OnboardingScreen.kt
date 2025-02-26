@@ -54,6 +54,11 @@ fun OnboardingRoute(
     SideEffect {
         if (!LocationUtil.hasLocationPermissions(context)) {
             LocationUtil.requestLocationPermissions(locationPermissionsLauncher)
+        if (!LocationUtil.isLocationPermissionRequested(context = context)) {
+            LocationUtil.requestLocationPermissions(
+                context = context,
+                locationPermissionLauncher = locationPermissionsLauncher
+            )
         }
     }
 
