@@ -49,7 +49,7 @@ fun TransportTabRow(
         }
         tabWidthStateList
     }
-    TabRowMinimumTabWidth0dp(
+    TabRowMinTab0dp(
         selectedTabIndex = selectedTabIndex,
         contentColor = defaultTeam6Colors.white,
         containerColor = defaultTeam6Colors.greyElevatedBackground,

@@ -39,8 +39,7 @@ fun TabMenu(
 
     Column(
         modifier = modifier
-            .background(defaultTeam6Colors.greyElevatedBackground)
-            .fillMaxSize(),
+            .background(defaultTeam6Colors.greyElevatedBackground),
         verticalArrangement = Arrangement.Center
     ) {
         val pagerState = rememberPagerState {
@@ -49,47 +48,15 @@ fun TabMenu(
         val coroutineScope = rememberCoroutineScope()
 
         // TabRow
-        ScrollableTabRow(
-            containerColor = defaultTeam6Colors.greyElevatedBackground,
+        TransportTabRow(
+            tabs = tabItems,
             selectedTabIndex = pagerState.currentPage,
-            edgePadding = 0.dp,
-            indicator = { tabPositions ->
-                Box(
-                    Modifier
-                        .tabIndicatorOffset(tabPositions[pagerState.currentPage]) // 현재 탭 크기에 맞게 적용
-                        .height(2.dp) // Indicator 높이 조절
-                        .background(
-                            color = defaultTeam6Colors.white,
-                        )
-                )
+            onTabClick = { tabIndex ->
+                coroutineScope.launch {
+                    pagerState.animateScrollToPage(tabIndex)
+                }
             }
-        ) {
-            tabItems.forEachIndexed { index, title ->
-                Tab(
-                    text = {
-                        Text(
-                            modifier = Modifier.padding(0.dp),
-                            text = title,
-                            color = defaultTeam6Colors.white,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 12.sp
-                        )
-                    },
-                    selected = pagerState.currentPage == index,
-                    onClick = {
-                        coroutineScope.launch {
-                            pagerState.scrollToPage(index)
-                        }
-                    },
-                    modifier = Modifier
-                        .background(defaultTeam6Colors.greyElevatedBackground)
-                        .wrapContentHeight()
-                        .wrapContentWidth()
-//                        .padding(vertical = 0.dp, horizontal = 14.dp)
-                        .padding(0 .dp)
-                )
-            }
-        }
+        )
 
         // Tab Content
         HorizontalPager(state = pagerState) { page ->

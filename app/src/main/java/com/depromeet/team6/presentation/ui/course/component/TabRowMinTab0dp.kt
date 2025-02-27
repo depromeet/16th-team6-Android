@@ -33,7 +33,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
-fun TabRowMinimumTabWidth0dp(
+fun TabRowMinTab0dp(
     selectedTabIndex: Int,
     indicator: @Composable (tabPositions: List<TabPosition>) -> Unit,
     modifier: Modifier = Modifier,
