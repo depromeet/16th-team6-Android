@@ -3,6 +3,7 @@ package com.depromeet.team6.ui.theme
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
+import com.google.android.material.color.ColorRoles
 
 @Immutable
 data class Team6Colors(
@@ -25,6 +26,7 @@ data class Team6Colors(
     val greyTertiaryLabel: Color,
     val greyQuaternaryLabel: Color,
     val greyLink: Color,
+    val greyDisabled : Color,
 
     // Background
     val greyElevatedBackground: Color,
@@ -38,10 +40,17 @@ data class Team6Colors(
     // Button
     val greyButton: Color,
     val greyButtonOutline: Color,
+    val greyButtonDisable : Color,
 
     // Non-Semantic
     val systemGreen: Color,
-    val systemRed: Color
+    val systemRed: Color,
+    val systemGrey1 : Color,
+    val systemGrey2 : Color,
+    val systemGrey3 : Color,
+    val systemGrey4 : Color,
+    val systemGrey5 : Color,
+    val systemGrey6 : Color
 )
 
 val defaultTeam6Colors = Team6Colors(
@@ -64,6 +73,7 @@ val defaultTeam6Colors = Team6Colors(
     greyTertiaryLabel = Color(0xFF666970),
     greyQuaternaryLabel = Color(0xFF393C42),
     greyLink = Color(0xFF4C4D53),
+    greyDisabled = Color(0xFF393C42),
 
     // Background
     greyElevatedBackground = Color(0xFF1C1C1D),
@@ -75,12 +85,19 @@ val defaultTeam6Colors = Team6Colors(
     greyElevatedCard = Color(0xFF2C2C2E),
 
     // Button
-    greyButton = Color(0xFF29292C),
+    greyButton = Color(0xFF2C2C30),
     greyButtonOutline = Color(0xFF36363A),
+    greyButtonDisable = Color(0x662C2C30),
 
     // Non-Semantic
     systemGreen = Color(0xFF99ED7B),
-    systemRed = Color(0xFFFF5D5D)
+    systemRed = Color(0xFFFF5D5D),
+    systemGrey1 = Color(0xFF8E8E93),
+    systemGrey2 = Color(0xFF636366),
+    systemGrey3 = Color(0xFF424249),
+    systemGrey4 = Color(0xFF38383E),
+    systemGrey5 = Color(0xFF27272B),
+    systemGrey6 = Color(0xFF1F1F23),
 )
 
 val LocalTeam6Colors = staticCompositionLocalOf { defaultTeam6Colors }

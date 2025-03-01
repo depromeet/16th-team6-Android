@@ -2,6 +2,7 @@ package com.depromeet.team6.presentation.ui.course.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -22,8 +23,7 @@ import com.depromeet.team6.ui.theme.defaultTeam6Typography
 
 @Composable
 fun LastTransportInfoItem(
-    modifier : Modifier = Modifier,
-    lastTransportInfo : LastTransportInfo
+    modifier: Modifier = Modifier, lastTransportInfo: LastTransportInfo
 ) {
     Column(
         modifier = modifier
@@ -36,18 +36,20 @@ fun LastTransportInfoItem(
         Row {
             if (remainingHour > 0) {
                 Text(
-                    text = stringResource(id = R.string.last_transport_info_remaining_hour, remainingHour),
-                    style = defaultTeam6Typography.heading4Medium20
+                    text = stringResource(
+                        id = R.string.last_transport_info_remaining_hour, remainingHour
+                    ), style = defaultTeam6Typography.heading4Medium20
                 )
             }
             if (remainingMinute > 0) {
                 Text(
-                    text = stringResource(id = R.string.last_transport_info_remaining_minute, remainingMinute),
-                    style = defaultTeam6Typography.heading4Medium20
+                    text = stringResource(
+                        id = R.string.last_transport_info_remaining_minute, remainingMinute
+                    ), style = defaultTeam6Typography.heading4Medium20
                 )
             }
         }
-        
+
         Spacer(
             modifier = Modifier
                 .fillMaxWidth()
@@ -56,9 +58,7 @@ fun LastTransportInfoItem(
 
         // 출발-탑승 상세 시각
         Row(
-            modifier = Modifier
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(5.dp)
+            modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(5.dp)
         ) {
             Text(text = "맻시")
             Text(text = stringResource(R.string.last_transport_info_departure_time))
@@ -84,11 +84,26 @@ fun LastTransportInfoItem(
     }
 }
 
+@Composable
+fun RemainingTimeHHmm(
+    modifier : Modifier = Modifier,
+    totalMinutes : Int
+){
+    val hour = totalMinutes / 60
+    val minute = totalMinutes % 60
+    Box(
+        modifier = Modifier
+            .background(defaultTeam6Colors.grey)
+            .clip(RoundedCornerShape(20.dp))
+    ) {
+        Text(text = stringResource(R.string.last_transport_info_remaining_time, hour, minute))
+    }
+}
 
 
 @Preview(name = "more than 1 hour")
 @Composable
-fun LastTransportInfoItemPreview(){
+fun LastTransportInfoItemPreview() {
     val mockData = LastTransportInfo(
         remainingMinutes = 83
     )
@@ -99,7 +114,7 @@ fun LastTransportInfoItemPreview(){
 
 @Preview(name = "less than 1 hour")
 @Composable
-fun LastTransportInfoItemPreview2(){
+fun LastTransportInfoItemPreview2() {
     val mockData = LastTransportInfo(
         remainingMinutes = 36
     )
