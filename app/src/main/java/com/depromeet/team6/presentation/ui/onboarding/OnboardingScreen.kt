@@ -52,12 +52,44 @@ fun OnboardingRoute(
         }
     )
 
+    val notificationPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+        onResult = { granted ->
+            if (granted) {
+                Log.d("Notification_Permission", "Has Granted")
+            }
+        }
+    )
+
     SideEffect {
-        if (!LocationUtil.isLocationPermissionRequested(context = context)) {
-            LocationUtil.requestLocationPermissions(
-                context = context,
-                locationPermissionLauncher = locationPermissionsLauncher
-            )
+        when (uiState.onboardingType) {
+            OnboardingType.HOME -> {
+                Log.d(
+                    "ㅋㅋ",
+                    "${PermissionUtil.isLocationPermissionRequested(context)}, ${
+                    PermissionUtil.hasLocationPermissions(context)
+                    }"
+                )
+                if (!PermissionUtil.isLocationPermissionRequested(context) &&
+                    !PermissionUtil.hasLocationPermissions(context)
+                ) {
+                    PermissionUtil.requestLocationPermissions(
+                        context = context,
+                        locationPermissionLauncher = locationPermissionsLauncher
+                    )
+                }
+            }
+
+            OnboardingType.ALARM -> {
+                if (!PermissionUtil.isNotificationPermissionRequested(context) &&
+                    !PermissionUtil.hasNotificationPermission(context)
+                ) {
+                    PermissionUtil.requestNotificationPermission(
+                        context = context,
+                        notificationPermissionLauncher = notificationPermissionLauncher
+                    )
+                }
+            }
         }
     }
 
