@@ -67,7 +67,7 @@ fun CurrentLocationSheet(
             PrimaryButton(
                 text = stringResource(R.string.home_search_button_text),
                 onClick = onSearchClick,
-                modifier = modifier
+                modifier = Modifier
             )
         }
     }
