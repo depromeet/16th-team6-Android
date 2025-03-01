@@ -4,7 +4,7 @@ import android.content.ContentValues.TAG
 import android.util.Log
 import com.google.firebase.messaging.FirebaseMessagingService
 
-class FcmService: FirebaseMessagingService() {
+class FcmService : FirebaseMessagingService() {
     override fun onNewToken(token: String) {
         super.onNewToken(token)
 

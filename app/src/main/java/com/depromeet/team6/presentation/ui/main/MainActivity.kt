@@ -35,16 +35,18 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
-            if (!task.isSuccessful){
-                Log.d(TAG, "Fetching FCM registration token failed")
-                return@OnCompleteListener
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(
+            OnCompleteListener { task ->
+                if (!task.isSuccessful) {
+                    Log.d(TAG, "Fetching FCM registration token failed")
+                    return@OnCompleteListener
+                }
+
+                val token = task.result
+
+                Log.d("Fcm Token", token)
             }
-
-            val token = task.result
-
-            Log.d("Fcm Token", token)
-        })
+        )
     }
 }
 
