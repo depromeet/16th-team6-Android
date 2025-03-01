@@ -7,11 +7,6 @@ import com.depromeet.team6.presentation.type.OnboardingType
 import com.depromeet.team6.presentation.util.base.BaseViewModel
 import com.depromeet.team6.presentation.util.view.LoadState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -50,7 +45,6 @@ class OnboardingViewModel @Inject constructor(
         )
     )
 
-
     override suspend fun handleEvent(event: OnboardingContract.OnboardingEvent) {
         when (event) {
             is OnboardingContract.OnboardingEvent.DummyEvent -> setState { copy(loadState = event.loadState) }
@@ -67,7 +61,9 @@ class OnboardingViewModel @Inject constructor(
                 )
             }
 
-            is OnboardingContract.OnboardingEvent.UpdateSearchText -> handleUpdateSearchText(event=event)
+            is OnboardingContract.OnboardingEvent.UpdateSearchText -> handleUpdateSearchText(event = event)
+            is OnboardingContract.OnboardingEvent.BackPressed -> setState { copy(onboardingType = OnboardingType.HOME) }
+            is OnboardingContract.OnboardingEvent.LocationSelectButtonClicked -> setState { copy(myHome = event.onboardingSearchLocation, searchPopupVisible = false) }
         }
     }
 
@@ -92,7 +88,7 @@ class OnboardingViewModel @Inject constructor(
                 searchText = event.text,
                 searchLocations = dummyLocations.filter { location ->
                     location.name.contains(event.text, ignoreCase = true) ||
-                            location.roadAddress.contains(event.text, ignoreCase = true)
+                        location.roadAddress.contains(event.text, ignoreCase = true)
                 }
             )
         }

@@ -12,10 +12,14 @@ class OnboardingContract {
     data class OnboardingUiState(
         val loadState: LoadState = LoadState.Idle,
         val onboardingType: OnboardingType = OnboardingType.HOME,
-        val searchPopupVisible : Boolean = false,
+        val searchPopupVisible: Boolean = false,
         val searchText: String = "",
         val dummyData: List<DummyData> = emptyList(),
-        val myHome:OnboardingSearchLocation,
+        val myHome: OnboardingSearchLocation = OnboardingSearchLocation(
+            name = "",
+            distance = "",
+            roadAddress = ""
+        ),
         val searchLocations: List<OnboardingSearchLocation> = emptyList()
     ) : UiState
 
@@ -23,12 +27,13 @@ class OnboardingContract {
         data object DummySideEffect : OnboardingSideEffect
     }
 
-
-    sealed class OnboardingEvent: UiEvent {
+    sealed class OnboardingEvent : UiEvent {
         data class DummyEvent(val loadState: LoadState) : OnboardingEvent()
         data object ShowSearchPopup : OnboardingEvent()
         data object ClearText : OnboardingEvent()
         data class UpdateSearchText(val text: String) : OnboardingEvent()
         data object ChangeOnboardingType : OnboardingEvent()
+        data object BackPressed : OnboardingEvent()
+        data class LocationSelectButtonClicked(val onboardingSearchLocation: OnboardingSearchLocation) : OnboardingEvent()
     }
 }

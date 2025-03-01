@@ -1,10 +1,8 @@
 package com.depromeet.team6.presentation.ui.onboarding.component
 
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -39,14 +37,15 @@ fun OnboardingSearchTextField(
     value: String = "",
     visualTransformation: VisualTransformation = VisualTransformation.None,
     onValueChange: (String) -> Unit = { _ -> },
-    onCloseButtonClicked:() -> Unit = {},
+    onCloseButtonClicked: () -> Unit = {},
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Default),
     keyboardActions: KeyboardActions = KeyboardActions.Default
 ) {
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(start = 16.dp), verticalAlignment = Alignment.CenterVertically
+            .padding(start = 16.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Row(
             modifier = modifier

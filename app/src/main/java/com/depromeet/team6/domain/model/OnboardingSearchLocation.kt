@@ -4,4 +4,4 @@ data class OnboardingSearchLocation(
     val name: String,
     val distance: String,
     val roadAddress: String
-    )
+)

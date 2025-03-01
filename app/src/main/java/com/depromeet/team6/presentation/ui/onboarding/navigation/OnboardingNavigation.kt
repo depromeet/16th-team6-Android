@@ -17,7 +17,10 @@ fun NavGraphBuilder.onboardingNavGraph(
     navigateToHome: () -> Unit
 ) {
     composable(route = OnboardingRoute.ROUTE) {
-        OnboardingRoute(padding = padding, navigateToHome = navigateToHome)
+        OnboardingRoute(
+            padding = padding,
+            navigateToHome = navigateToHome
+        )
     }
 }
 

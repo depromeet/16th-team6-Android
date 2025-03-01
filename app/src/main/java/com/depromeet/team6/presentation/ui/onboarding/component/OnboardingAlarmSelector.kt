@@ -21,6 +21,7 @@ import com.depromeet.team6.ui.theme.defaultTeam6Typography
 enum class AlarmTime(val string: String) {
     ONE_MIN("1분 전"),
     FIVE_MIN("5분 전"),
+    TEN_MIN("10분 전"),
     FIFTEEN_MIN("15분 전"),
     THIRTY_MIN("30분 전"),
     ONE_HOUR("1시간 전")

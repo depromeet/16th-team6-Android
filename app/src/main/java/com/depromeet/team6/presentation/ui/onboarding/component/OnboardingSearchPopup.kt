@@ -14,37 +14,49 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.depromeet.team6.domain.model.OnboardingSearchLocation
 import com.depromeet.team6.presentation.ui.onboarding.OnboardingContract
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 
 @Composable
 fun OnboardingSearchPopup(
     padding: PaddingValues,
+    modifier: Modifier = Modifier,
     uiState: OnboardingContract.OnboardingUiState = OnboardingContract.OnboardingUiState(),
     searchText: String = "",
     onSearchTextChange: (String) -> Unit = {},
     onCloseButtonClicked: () -> Unit = {},
-    modifier: Modifier = Modifier
+    selectButtonClicked: (OnboardingSearchLocation) -> Unit = {}
 ) {
-    Column (modifier=modifier.padding(padding).fillMaxSize().background(color = defaultTeam6Colors.greyWashBackground)){
+    Column(
+        modifier = modifier
+            .padding(padding)
+            .fillMaxSize()
+            .background(color = defaultTeam6Colors.greyWashBackground)
+    ) {
         OnboardingSearchTextField(
             value = searchText,
             onValueChange = onSearchTextChange,
             onCloseButtonClicked = onCloseButtonClicked
         )
-        Spacer(modifier=Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
-        if (uiState.searchLocations.size>0)
-        {
-            Spacer(modifier=Modifier.fillMaxWidth().height(1.dp).background(color = defaultTeam6Colors.greyDivider))
+        if (uiState.searchLocations.size > 0) {
+            Spacer(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(1.dp)
+                    .background(color = defaultTeam6Colors.greyDivider)
+            )
             LazyColumn {
                 items(uiState.searchLocations) { onboardingSearchLocation ->
-                    OnboardingSearchLocationItem(onboardingSearchLocation = onboardingSearchLocation)
-                }            }
-
+                    OnboardingSearchLocationItem(
+                        onboardingSearchLocation = onboardingSearchLocation,
+                        selectButtonClicked = { selectButtonClicked(onboardingSearchLocation) }
+                    )
+                }
+            }
         }
-
-
     }
 }
 

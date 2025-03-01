@@ -16,42 +16,65 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.depromeet.team6.domain.model.OnboardingSearchLocation
+import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.presentation.util.modifier.roundedBackgroundWithPadding
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.depromeet.team6.ui.theme.defaultTeam6Typography
 
 @Composable
-fun OnboardingSearchLocationItem(onboardingSearchLocation: OnboardingSearchLocation, modifier: Modifier = Modifier) {
-    Row (modifier=modifier.fillMaxWidth().padding(vertical = 19.dp, horizontal = 16.dp),
-        verticalAlignment = Alignment.CenterVertically){
-        Column (modifier = modifier.weight(1f)){
-            Text(text = onboardingSearchLocation.name,
+fun OnboardingSearchLocationItem(
+    onboardingSearchLocation: OnboardingSearchLocation,
+    modifier: Modifier = Modifier,
+    selectButtonClicked: () -> Unit = {}
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(vertical = 19.dp, horizontal = 16.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Column(modifier = modifier.weight(1f)) {
+            Text(
+                text = onboardingSearchLocation.name,
                 color = defaultTeam6Colors.white,
                 style = defaultTeam6Typography.bodyRegular15,
                 overflow = TextOverflow.Ellipsis
             )
             Spacer(modifier = Modifier.height(4.dp))
 
-            Text(text = onboardingSearchLocation.distance+""+onboardingSearchLocation.roadAddress,
+            Text(
+                text = onboardingSearchLocation.distance + "" + onboardingSearchLocation.roadAddress,
                 style = defaultTeam6Typography.bodyRegular14,
                 color = defaultTeam6Colors.greySecondaryLabel,
                 overflow = TextOverflow.Ellipsis
             )
         }
         Spacer(modifier = Modifier.width(12.dp))
-        Text(text = "선택",
+        Text(
+            text = "선택",
             color = defaultTeam6Colors.white,
             style = defaultTeam6Typography.bodyMedium13,
-            modifier=Modifier.roundedBackgroundWithPadding(
-            backgroundColor = defaultTeam6Colors.defaultButton,
-            cornerRadius = 8.dp,
-            padding = PaddingValues(vertical = 8.dp, horizontal = 12.5.dp)
-            ))
+            modifier = Modifier
+                .roundedBackgroundWithPadding(
+                    backgroundColor = defaultTeam6Colors.defaultButton,
+                    cornerRadius = 8.dp,
+                    padding = PaddingValues(vertical = 8.dp, horizontal = 12.5.dp)
+                )
+                .noRippleClickable {
+                    selectButtonClicked()
+                }
+        )
     }
 }
 
 @Preview
 @Composable
 private fun OnboardingSearchLocationItemPreview() {
-    OnboardingSearchLocationItem(onboardingSearchLocation= OnboardingSearchLocation(name = "60계 치킨 강남정", distance = "1.9km", roadAddress = "강남구 테헤란로 4길 6"))
+    OnboardingSearchLocationItem(
+        onboardingSearchLocation = OnboardingSearchLocation(
+            name = "60계 치킨 강남정",
+            distance = "1.9km",
+            roadAddress = "강남구 테헤란로 4길 6"
+        )
+    )
 }

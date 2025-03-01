@@ -7,6 +7,7 @@
     <string name="onboarding_alarm_enroll_title">막차 알림을 설정해요</string>
     <string name="onboarding_alarm_enroll_sub_title">출발지에서 막차 타는 곳까지\n시간 내에 걸어갈 수 있게 알람 드려요.</string>
     <string name="onboarding_select_location_button_current_region">현 위치 찾기</string>
+    <string name="onboarding_edit_location_button_current_region">다른 위치로 변경</string>
     <string name="onboarding_search_text_field_placeholder">지번, 도로명, 건물명으로 검색</string>
     <string name="onboarding_next_button">다음</string>
 
