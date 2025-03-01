@@ -12,6 +12,7 @@
     <!--    course      -->
     <string name="last_transport_info_remaining_hour">%1d시간 &#160;</string>
     <string name="last_transport_info_remaining_minute">%1d분</string>
+    <string name="last_transport_info_remaining_time">%1d:%2d</string>
     <string name="last_transport_info_departure_time">출발</string>
     <string name="last_transport_info_boarding_time">탑승</string>
 </resources>
