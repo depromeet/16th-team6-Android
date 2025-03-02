@@ -13,7 +13,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.depromeet.team6.presentation.ui.course.CourseScreen
-import com.depromeet.team6.presentation.ui.home.HomeScreen
 import com.depromeet.team6.ui.theme.Team6Theme
 import com.depromeet.team6.ui.theme.Team6Theme.colors
 import com.depromeet.team6.ui.theme.Team6Theme.typography

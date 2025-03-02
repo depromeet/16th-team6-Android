@@ -56,7 +56,6 @@ fun TransportTabMenu(
 @Preview
 @Composable
 fun PreviewTabMenu() {
-
     val courseInfo = listOf(
         TransportCourseInfo(
             type = TransportType.WALK,

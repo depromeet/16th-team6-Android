@@ -3,7 +3,6 @@ package com.depromeet.team6.ui.theme
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
-import com.google.android.material.color.ColorRoles
 
 @Immutable
 data class Team6Colors(
@@ -12,9 +11,9 @@ data class Team6Colors(
     val purpleGrey80: Color,
     val pink80: Color,
     // TODO : 디자인 시스템에 '임시' 부분 -> 디자이너님께 여쭤본 후 수정해야함
-    val primaryRed : Color,
-    val primaryGreen : Color,
-    val primaryMain : Color,
+    val primaryRed: Color,
+    val primaryGreen: Color,
+    val primaryMain: Color,
 
     val purple40: Color,
     val purpleGrey40: Color,
@@ -30,7 +29,7 @@ data class Team6Colors(
     val greyTertiaryLabel: Color,
     val greyQuaternaryLabel: Color,
     val greyLink: Color,
-    val greyDisabled : Color,
+    val greyDisabled: Color,
 
     // Background
     val greyElevatedBackground: Color,
@@ -44,17 +43,17 @@ data class Team6Colors(
     // Button
     val greyButton: Color,
     val greyButtonOutline: Color,
-    val greyButtonDisable : Color,
+    val greyButtonDisable: Color,
 
     // Non-Semantic
     val systemGreen: Color,
     val systemRed: Color,
-    val systemGrey1 : Color,
-    val systemGrey2 : Color,
-    val systemGrey3 : Color,
-    val systemGrey4 : Color,
-    val systemGrey5 : Color,
-    val systemGrey6 : Color
+    val systemGrey1: Color,
+    val systemGrey2: Color,
+    val systemGrey3: Color,
+    val systemGrey4: Color,
+    val systemGrey5: Color,
+    val systemGrey6: Color
 )
 
 val defaultTeam6Colors = Team6Colors(
@@ -104,7 +103,7 @@ val defaultTeam6Colors = Team6Colors(
     systemGrey3 = Color(0xFF424249),
     systemGrey4 = Color(0xFF38383E),
     systemGrey5 = Color(0xFF27272B),
-    systemGrey6 = Color(0xFF1F1F23),
+    systemGrey6 = Color(0xFF1F1F23)
 )
 
 val LocalTeam6Colors = staticCompositionLocalOf { defaultTeam6Colors }

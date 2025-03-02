@@ -79,7 +79,7 @@ fun TransportTabRow(
                     .wrapContentWidth()
                     .padding(horizontal = 0.dp),
                 selected = selectedTabIndex == tabIndex,
-                onClick = { onTabClick(tabIndex) },
+                onClick = { onTabClick(tabIndex) }
             ) {
                 Box(
                     modifier = Modifier.fillMaxSize(), // Tab 전체 크기

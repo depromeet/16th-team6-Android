@@ -17,18 +17,18 @@ import com.depromeet.team6.ui.theme.defaultTeam6Colors
 
 @Composable
 fun LastTransportInfoList(
-    listData : List<LastTransportInfo>,
+    listData: List<LastTransportInfo>,
     modifier: Modifier = Modifier
-){
-    Column (
+) {
+    Column(
         modifier = modifier
             .background(defaultTeam6Colors.black)
             .padding(horizontal = 16.dp)
     ) {
-        LazyColumn (
+        LazyColumn(
             verticalArrangement = Arrangement.spacedBy(14.dp),
             contentPadding = PaddingValues(vertical = 16.dp)
-        ){
+        ) {
             items(listData.size) { index ->
                 LastTransportInfoItem(
                     lastTransportInfo = listData[index]
@@ -40,8 +40,7 @@ fun LastTransportInfoList(
 
 @Preview
 @Composable
-fun LastTransportInfoListPreview(){
-
+fun LastTransportInfoListPreview() {
     val courseInfo = listOf(
         TransportCourseInfo(
             type = TransportType.WALK,

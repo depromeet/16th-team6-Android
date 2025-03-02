@@ -18,9 +18,8 @@ import com.depromeet.team6.ui.theme.defaultTeam6Colors
 @Composable
 fun CourseScreen(
     modifier: Modifier = Modifier,
-    courseData : List<LastTransportInfo> = listOf(),
+    courseData: List<LastTransportInfo> = listOf()
 ) {
-
     Column(
         modifier = modifier
             .background(defaultTeam6Colors.greyWashBackground)
@@ -40,7 +39,7 @@ fun CourseScreen(
 
 @Preview
 @Composable
-fun CourseScreenPreview(){
+fun CourseScreenPreview() {
     // TODO: mocking 없애고 실제 데이터 들어가야함
     val courseInfo = listOf(
         TransportCourseInfo(
