@@ -49,7 +49,8 @@ fun CourseTextButton(
                 )
                 .border(
                     width = 1.dp,
-                    color = colors.systemGray7
+                    color = colors.systemGray7,
+                    shape = RoundedCornerShape(12.dp)
                 )
                 .padding(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 12.dp)
                 .clickable(onClick = onClick),
