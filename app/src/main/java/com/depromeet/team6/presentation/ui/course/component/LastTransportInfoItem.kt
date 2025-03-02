@@ -1,6 +1,5 @@
 package com.depromeet.team6.presentation.ui.course.component
 
-import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -19,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -32,8 +32,8 @@ import com.depromeet.team6.ui.theme.defaultTeam6Typography
 
 @Composable
 fun LastTransportInfoItem(
-    modifier: Modifier = Modifier,
-    lastTransportInfo: LastTransportInfo
+    lastTransportInfo: LastTransportInfo,
+    modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier
@@ -152,10 +152,10 @@ fun SetNotificationButton(
 
 @Composable
 fun RemainingTimeHHmm(
-    modifier : Modifier = Modifier,
     hour : Int,
     minute : Int,
-    isDeparture : Boolean
+    isDeparture : Boolean,
+    modifier : Modifier = Modifier
 ){
     Box(
         modifier = Modifier
