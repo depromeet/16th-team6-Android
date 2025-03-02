@@ -48,7 +48,8 @@ fun LastTransportInfoItem(
             if (remainingHour > 0) {
                 Text(
                     text = stringResource(
-                        id = R.string.last_transport_info_remaining_hour, remainingHour
+                        id = R.string.last_transport_info_remaining_hour,
+                        remainingHour
                     ),
                     style = defaultTeam6Typography.heading4Medium20,
                     color = defaultTeam6Colors.white
@@ -57,7 +58,8 @@ fun LastTransportInfoItem(
             if (remainingMinute > 0) {
                 Text(
                     text = stringResource(
-                        id = R.string.last_transport_info_remaining_minute, remainingMinute
+                        id = R.string.last_transport_info_remaining_minute,
+                        remainingMinute
                     ),
                     style = defaultTeam6Typography.heading4Medium20,
                     color = defaultTeam6Colors.white
@@ -73,7 +75,8 @@ fun LastTransportInfoItem(
 
         // 출발-탑승 상세 시각
         Row(
-            modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(5.dp),
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(5.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             RemainingTimeHHmm(
@@ -122,8 +125,8 @@ fun LastTransportInfoItem(
 
 @Composable
 fun SetNotificationButton(
-    modifier : Modifier = Modifier
-){
+    modifier: Modifier = Modifier
+) {
     Row(
         modifier = Modifier
             .clip(RoundedCornerShape(8.dp))
@@ -137,7 +140,7 @@ fun SetNotificationButton(
             modifier = Modifier
                 .size(16.dp),
             painter = painterResource(R.drawable.ic_all_alarm_clock_green),
-            contentDescription = "set alarm icon",
+            contentDescription = "set alarm icon"
         )
         Spacer(
             modifier = Modifier.width(4.dp)
@@ -145,18 +148,18 @@ fun SetNotificationButton(
         Text(
             style = defaultTeam6Typography.bodyMedium14,
             color = defaultTeam6Colors.primaryMain,
-            text = stringResource(R.string.last_transport_info_set_notification),
+            text = stringResource(R.string.last_transport_info_set_notification)
         )
     }
 }
 
 @Composable
 fun RemainingTimeHHmm(
-    hour : Int,
-    minute : Int,
-    isDeparture : Boolean,
-    modifier : Modifier = Modifier
-){
+    hour: Int,
+    minute: Int,
+    isDeparture: Boolean,
+    modifier: Modifier = Modifier
+) {
     Box(
         modifier = Modifier
             .clip(RoundedCornerShape(20.dp))
@@ -176,7 +179,6 @@ fun RemainingTimeHHmm(
         )
     }
 }
-
 
 @Preview(name = "more than 1 hour", showBackground = true, backgroundColor = android.graphics.Color.BLACK.toLong())
 @Composable

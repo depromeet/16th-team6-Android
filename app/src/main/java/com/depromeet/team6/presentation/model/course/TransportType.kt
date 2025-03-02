@@ -1,6 +1,5 @@
 package com.depromeet.team6.presentation.model.course
 
-import android.annotation.SuppressLint
 import android.content.Context
 import com.depromeet.team6.R
 

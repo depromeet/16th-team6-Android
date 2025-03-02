@@ -17,7 +17,7 @@ import com.depromeet.team6.ui.theme.defaultTeam6Colors
 
 @Composable
 fun CourseAppBar(
-    modifier : Modifier = Modifier
+    modifier: Modifier = Modifier
 ) {
     Row(
         modifier = modifier
@@ -44,6 +44,6 @@ fun CourseAppBar(
 
 @Preview
 @Composable
-fun PreviewAppBar(){
+fun PreviewAppBar() {
     CourseAppBar()
 }

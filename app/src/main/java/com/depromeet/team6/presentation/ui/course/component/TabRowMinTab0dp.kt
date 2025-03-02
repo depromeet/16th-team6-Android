@@ -44,7 +44,7 @@ fun TabRowMinTab0dp(
         HorizontalDivider()
     },
     scrollState: ScrollState = rememberScrollState(),
-    tabs: @Composable () -> Unit,
+    tabs: @Composable () -> Unit
 ) {
     Surface(
         modifier = modifier,
@@ -80,7 +80,7 @@ fun TabRowMinTab0dp(
             val tabConstraints = constraints.copy(
                 minWidth = minTabWidth,
                 minHeight = layoutHeight,
-                maxHeight = layoutHeight,
+                maxHeight = layoutHeight
             )
 
             val tabPlaceables = mutableListOf<Placeable>()
@@ -243,4 +243,3 @@ private enum class TabSlots {
     Divider,
     Indicator
 }
-

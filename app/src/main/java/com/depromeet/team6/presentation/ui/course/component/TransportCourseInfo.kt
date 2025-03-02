@@ -36,7 +36,7 @@ import com.depromeet.team6.ui.theme.defaultTeam6Colors
 
 @Composable
 fun TransportCourseInfoExpandable(
-    transportCourseInfo : List<TransportCourseInfo>,
+    transportCourseInfo: List<TransportCourseInfo>,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -48,7 +48,7 @@ fun TransportCourseInfoExpandable(
             .background(defaultTeam6Colors.systemGrey5)
             .padding(horizontal = 10.dp, vertical = 8.dp)
             .fillMaxWidth()
-            .wrapContentHeight(),
+            .wrapContentHeight()
     ) {
         Row(
             modifier = Modifier
@@ -59,7 +59,7 @@ fun TransportCourseInfoExpandable(
         ) {
             LazyRow(
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
-                verticalAlignment = Alignment.CenterVertically,
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 itemsIndexed(transportCourseInfo) { index, courseInfo ->
                     Image(
@@ -92,7 +92,7 @@ fun TransportCourseInfoExpandable(
                         expanded = !expanded
                     },
                 painter = painterResource(id = R.drawable.ic_all_arrow_down_grey),
-                contentDescription = "arrow down",
+                contentDescription = "arrow down"
             )
         }
 
@@ -103,7 +103,6 @@ fun TransportCourseInfoExpandable(
             }
         }
     }
-
 }
 
 @Preview(showBackground = true)
