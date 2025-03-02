@@ -45,7 +45,12 @@ data class Team6Colors(
     val systemRed: Color,
 
     // System Gray
-    val systemGray7: Color
+    val systemGray: Color,
+    val systemGray2: Color,
+    val systemGray3: Color,
+    val systemGray4: Color,
+    val systemGray5: Color,
+    val systemGray6: Color
 )
 
 val defaultTeam6Colors = Team6Colors(
@@ -88,7 +93,12 @@ val defaultTeam6Colors = Team6Colors(
     systemRed = Color(0xFFFF5D5D),
 
     // System Gray
-    systemGray7 = Color(0xFF27272B)
+    systemGray = Color(0xFF7E7E8A),
+    systemGray2 = Color(0xFF5B5B63),
+    systemGray3 = Color(0xFF424249),
+    systemGray4 = Color(0xFF38383E),
+    systemGray5 = Color(0xFF27272B),
+    systemGray6 = Color(0xFF1F1F23)
 )
 
 val LocalTeam6Colors = staticCompositionLocalOf { defaultTeam6Colors }
