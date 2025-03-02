@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer-array name="transport_type_walk">
+        <item>@drawable/ic_all_walk_grey</item>
+    </integer-array>
+    <array name="transport_type_bus">
+        <item>@drawable/ic_all_bus_red</item>
+    </array>
+    <array name="transport_type_subway">
+        <item>@drawable/ic_all_subway_1</item>
+        <item>@drawable/ic_all_subway_2</item>
+        <item>@drawable/ic_all_subway_3</item>
+        <item>@drawable/ic_all_subway_4</item>
+        <item>@drawable/ic_all_subway_5</item>
+        <item>@drawable/ic_all_subway_6</item>
+        <item>@drawable/ic_all_subway_7</item>
+        <item>@drawable/ic_all_subway_8</item>
+        <item>@drawable/ic_all_subway_9</item>
+        <item>@drawable/ic_all_subway_airport</item>
+        <item>@drawable/ic_all_subway_gyeongui_jungang</item>
+        <item>@drawable/ic_all_subway_gyeongchun</item>
+        <item>@drawable/ic_all_subway_suin_bundang</item>
+        <item>@drawable/ic_all_subway_shin_bundang</item>
+        <item>@drawable/ic_all_subway_gyeonggang</item>
+        <item>@drawable/ic_all_subway_seohae</item>
+        <item>@drawable/ic_all_subway_incheon_1</item>
+        <item>@drawable/ic_all_subway_incheon_2</item>
+        <item>@drawable/ic_all_subway_ever_line</item>
+        <item>@drawable/ic_all_subway_uijeongbu</item>
+        <item>@drawable/ic_all_subway_ui_sinseol</item>
+        <item>@drawable/ic_all_subway_gimpo_gold</item>
+        <item>@drawable/ic_all_subway_sillim</item>
+        <item>@drawable/ic_all_subway_gtx_a</item>
+    </array>
+</resources>

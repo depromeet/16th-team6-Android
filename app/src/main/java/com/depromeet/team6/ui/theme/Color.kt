@@ -11,6 +11,10 @@ data class Team6Colors(
     val purple80: Color,
     val purpleGrey80: Color,
     val pink80: Color,
+    // TODO : 디자인 시스템에 '임시' 부분 -> 디자이너님께 여쭤본 후 수정해야함
+    val primaryRed : Color,
+    val primaryGreen : Color,
+    val primaryMain : Color,
 
     val purple40: Color,
     val purpleGrey40: Color,
@@ -58,6 +62,9 @@ val defaultTeam6Colors = Team6Colors(
     purple80 = Color(0xFFD0BCFF),
     purpleGrey80 = Color(0xFFCCC2DC),
     pink80 = Color(0xFFEFB8C8),
+    primaryRed = Color(0xFFFF5D5D),
+    primaryGreen = Color(0xFF13D015),
+    primaryMain = Color(0xFF99F977),
 
     purple40 = Color(0xFF6650a4),
     purpleGrey40 = Color(0xFF625b71),
