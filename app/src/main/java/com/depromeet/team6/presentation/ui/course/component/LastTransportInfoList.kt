@@ -1,8 +1,11 @@
-package com.depromeet.team6.presentation.ui.course
+package com.depromeet.team6.presentation.ui.course.component
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -10,38 +13,35 @@ import androidx.compose.ui.unit.dp
 import com.depromeet.team6.presentation.model.course.LastTransportInfo
 import com.depromeet.team6.presentation.model.course.TransportCourseInfo
 import com.depromeet.team6.presentation.model.course.TransportType
-import com.depromeet.team6.presentation.ui.course.component.CourseAppBar
-import com.depromeet.team6.presentation.ui.course.component.DestinationSearchBar
-import com.depromeet.team6.presentation.ui.course.component.TransportTabMenu
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 
 @Composable
-fun CourseScreen(
-    modifier: Modifier = Modifier,
-    courseData : List<LastTransportInfo> = listOf(),
-) {
-
-    Column(
+fun LastTransportInfoList(
+    listData : List<LastTransportInfo>,
+    modifier: Modifier = Modifier
+){
+    Column (
         modifier = modifier
-            .background(defaultTeam6Colors.greyWashBackground)
+            .background(defaultTeam6Colors.black)
+            .padding(horizontal = 16.dp)
     ) {
-        CourseAppBar()
-        DestinationSearchBar(
-            startingPoint = "서울역",
-            destination = "강남역",
-            modifier = modifier
-                .padding(horizontal = 16.dp, vertical = 10.dp)
-        )
-        TransportTabMenu(
-            availableCourses = courseData
-        )
+        LazyColumn (
+            verticalArrangement = Arrangement.spacedBy(14.dp),
+            contentPadding = PaddingValues(vertical = 16.dp)
+        ){
+            items(listData.size) { index ->
+                LastTransportInfoItem(
+                    lastTransportInfo = listData[index]
+                )
+            }
+        }
     }
 }
 
 @Preview
 @Composable
-fun CourseScreenPreview(){
-    // TODO: mocking 없애고 실제 데이터 들어가야함
+fun LastTransportInfoListPreview(){
+
     val courseInfo = listOf(
         TransportCourseInfo(
             type = TransportType.WALK,
@@ -72,10 +72,11 @@ fun CourseScreenPreview(){
         mockData,
         mockData,
         mockData,
+        mockData,
+        mockData,
         mockData
     )
-
-    CourseScreen(
-        courseData = mockDataList
+    LastTransportInfoList(
+        listData = mockDataList
     )
 }

@@ -1,38 +1,23 @@
 package com.depromeet.team6.presentation.ui.course.component
 
-import android.graphics.fonts.FontStyle
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ScrollableTabRow
-import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
-import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import com.depromeet.team6.presentation.model.course.LastTransportInfo
+import com.depromeet.team6.presentation.model.course.TransportCourseInfo
+import com.depromeet.team6.presentation.model.course.TransportType
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import kotlinx.coroutines.launch
 
 @Composable
-fun TabMenu(
+fun TransportTabMenu(
+    availableCourses: List<LastTransportInfo>,
     modifier: Modifier = Modifier
 ) {
     val tabItems = listOf("전체", "버스", "지하철")
@@ -60,11 +45,10 @@ fun TabMenu(
 
         // Tab Content
         HorizontalPager(state = pagerState) { page ->
-            when (page) {
-                0 -> Text("This is Tab 1 content")
-                1 -> Text("This is Tab 2 content")
-                2 -> Text("This is Tab 3 content")
-            }
+            // TODO : 버스/지하철 정렬 기능 추가해야함
+            LastTransportInfoList(
+                listData = availableCourses
+            )
         }
     }
 }
@@ -72,5 +56,40 @@ fun TabMenu(
 @Preview
 @Composable
 fun PreviewTabMenu() {
-    TabMenu()
+
+    val courseInfo = listOf(
+        TransportCourseInfo(
+            type = TransportType.WALK,
+            subTypeIdx = 0,
+            durationMinutes = 10
+        ),
+        TransportCourseInfo(
+            type = TransportType.BUS,
+            subTypeIdx = 0,
+            durationMinutes = 23
+        ),
+        TransportCourseInfo(
+            type = TransportType.SUBWAY,
+            subTypeIdx = 2,
+            durationMinutes = 14
+        )
+    )
+
+    val mockData = LastTransportInfo(
+        remainingMinutes = 23,
+        departureHour = 23,
+        departureMinute = 3,
+        boardingHour = 23,
+        boardingMinute = 15,
+        transportCourseInfo = courseInfo
+    )
+    val mockDataList = listOf(
+        mockData,
+        mockData,
+        mockData,
+        mockData
+    )
+    TransportTabMenu(
+        availableCourses = mockDataList
+    )
 }

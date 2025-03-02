@@ -3,6 +3,7 @@ package com.depromeet.team6.presentation.ui.course.component
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
@@ -15,12 +16,13 @@ import com.depromeet.team6.R
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 
 @Composable
-fun AppBar(
+fun CourseAppBar(
     modifier : Modifier = Modifier
 ) {
     Row(
         modifier = modifier
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .padding(18.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -43,5 +45,5 @@ fun AppBar(
 @Preview
 @Composable
 fun PreviewAppBar(){
-    AppBar()
+    CourseAppBar()
 }
