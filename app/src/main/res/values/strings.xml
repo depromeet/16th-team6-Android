@@ -7,5 +7,8 @@
     <string name="home_current_location_text">현위치:</string>
     <string name="home_destination_text">목적지:</string>
 
+    <string name="home_icon_location_text">위치 아이콘</string>
+    <string name="home_icon_arrow_right_text">화살표 아이콘</string>
+
     <string name="all_acha_character">앗차 캐릭터</string>
 </resources>

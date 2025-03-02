@@ -41,7 +41,10 @@ data class Team6Colors(
 
     // Non-Semantic
     val systemGreen: Color,
-    val systemRed: Color
+    val systemRed: Color,
+
+    // System Gray
+    val systemGray7: Color
 )
 
 val defaultTeam6Colors = Team6Colors(
@@ -80,7 +83,10 @@ val defaultTeam6Colors = Team6Colors(
 
     // Non-Semantic
     systemGreen = Color(0xFF99ED7B),
-    systemRed = Color(0xFFFF5D5D)
+    systemRed = Color(0xFFFF5D5D),
+
+    // System Gray
+    systemGray7 = Color(0xFF27272B)
 )
 
 val LocalTeam6Colors = staticCompositionLocalOf { defaultTeam6Colors }
