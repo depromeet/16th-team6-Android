@@ -12,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -63,29 +64,7 @@ fun HomeScreen(
                     .zIndex(1f),
                 isBusDeparted = uiState.isBusDeparted
             )
-
-            if (uiState.isBusDeparted) {
-                CharacterSpeechBubble(
-                    prefixText = "이때 출발해야 막차를 탈 수 있어요",
-                    modifier = Modifier
-                        .align(Alignment.BottomStart)
-                        .padding(start = 8.dp, bottom = 241.dp),
-                    onClick = { viewModel.onCharacterClick() },
-                    showSpeechBubble = uiState.showSpeechBubble
-                )
-            } else {
-                CharacterSpeechBubble(
-                    prefixText = "차고지에서 출발하면",
-                    modifier = Modifier
-                        .align(Alignment.BottomStart)
-                        .padding(start = 8.dp, bottom = 241.dp),
-                    emphasisText = "더 정확하게",
-                    suffixText = "알려드려요",
-                    onClick = { viewModel.onCharacterClick() },
-                    showSpeechBubble = uiState.showSpeechBubble
-                )
-            }
-        } else { // 기본 Home UI
+        } else {
             CurrentLocationSheet(
                 currentLocation = "중앙빌딩",
                 destination = "우리집",
@@ -95,19 +74,38 @@ fun HomeScreen(
                     .fillMaxWidth()
                     .zIndex(1f)
             )
-
-            CharacterSpeechBubble(
-                prefixText = "여기서 놓치면 택시비 약",
-                modifier = Modifier
-                    .align(Alignment.BottomStart)
-                    .padding(start = 8.dp, bottom = 207.dp),
-                emphasisText = "34,000원",
-                onClick = { viewModel.onCharacterClick() },
-                showSpeechBubble = uiState.showSpeechBubble
-            )
         }
+
+        val (prefixText, emphasisText, suffixText, bottomPadding) = when {
+            uiState.isAlarmRegistered && uiState.isBusDeparted ->
+                SpeechBubbleText("이때 출발해야 막차를 탈 수 있어요", null, null, 241.dp)
+
+            uiState.isAlarmRegistered ->
+                SpeechBubbleText("차고지에서 출발하면", "더 정확하게", "알려드려요", 241.dp)
+
+            else ->
+                SpeechBubbleText("여기서 놓치면 택시비 약", "34,000원", null, 207.dp)
+        }
+
+        CharacterSpeechBubble(
+            prefixText = prefixText,
+            emphasisText = emphasisText,
+            suffixText = suffixText,
+            modifier = Modifier
+                .align(Alignment.BottomStart)
+                .padding(start = 8.dp, bottom = bottomPadding),
+            onClick = { viewModel.onCharacterClick() },
+            showSpeechBubble = uiState.showSpeechBubble
+        )
     }
 }
+
+private data class SpeechBubbleText(
+    val prefix: String,
+    val emphasis: String? = null,
+    val suffix: String? = null,
+    val bottomPadding: Dp
+)
 
 @Preview
 @Composable
