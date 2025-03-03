@@ -68,7 +68,9 @@ fun HomeScreen(
                 text = "차고지에서 출발하면 더 정확하게 알려드려요",
                 modifier = Modifier
                     .align(Alignment.BottomStart)
-                    .padding(start = 8.dp, bottom = 241.dp)
+                    .padding(start = 8.dp, bottom = 241.dp),
+                onClick = { viewModel.onCharacterClick() },
+                showSpeechBubble = uiState.showSpeechBubble
             )
         } else { // 기본 Home UI
             CurrentLocationSheet(
@@ -86,7 +88,9 @@ fun HomeScreen(
                 modifier = Modifier
                     .align(Alignment.BottomStart)
                     .padding(start = 8.dp, bottom = 207.dp),
-                taxiCost = "34,000"
+                taxiCost = "34,000",
+                onClick = { viewModel.onCharacterClick() },
+                showSpeechBubble = uiState.showSpeechBubble
             )
         }
     }
