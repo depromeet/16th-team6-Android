@@ -64,14 +64,27 @@ fun HomeScreen(
                 isBusDeparted = uiState.isBusDeparted
             )
 
-            CharacterSpeechBubble(
-                text = "차고지에서 출발하면 더 정확하게 알려드려요",
-                modifier = Modifier
-                    .align(Alignment.BottomStart)
-                    .padding(start = 8.dp, bottom = 241.dp),
-                onClick = { viewModel.onCharacterClick() },
-                showSpeechBubble = uiState.showSpeechBubble
-            )
+            if (uiState.isBusDeparted) {
+                CharacterSpeechBubble(
+                    prefixText = "이때 출발해야 막차를 탈 수 있어요",
+                    modifier = Modifier
+                        .align(Alignment.BottomStart)
+                        .padding(start = 8.dp, bottom = 241.dp),
+                    onClick = { viewModel.onCharacterClick() },
+                    showSpeechBubble = uiState.showSpeechBubble
+                )
+            } else {
+                CharacterSpeechBubble(
+                    prefixText = "차고지에서 출발하면",
+                    modifier = Modifier
+                        .align(Alignment.BottomStart)
+                        .padding(start = 8.dp, bottom = 241.dp),
+                    emphasisText = "더 정확하게",
+                    suffixText = "알려드려요",
+                    onClick = { viewModel.onCharacterClick() },
+                    showSpeechBubble = uiState.showSpeechBubble
+                )
+            }
         } else { // 기본 Home UI
             CurrentLocationSheet(
                 currentLocation = "중앙빌딩",
@@ -84,11 +97,11 @@ fun HomeScreen(
             )
 
             CharacterSpeechBubble(
-                text = "여기서 놓치면 택시비 약",
+                prefixText = "여기서 놓치면 택시비 약",
                 modifier = Modifier
                     .align(Alignment.BottomStart)
                     .padding(start = 8.dp, bottom = 207.dp),
-                taxiCost = "34,000",
+                emphasisText = "34,000원",
                 onClick = { viewModel.onCharacterClick() },
                 showSpeechBubble = uiState.showSpeechBubble
             )
