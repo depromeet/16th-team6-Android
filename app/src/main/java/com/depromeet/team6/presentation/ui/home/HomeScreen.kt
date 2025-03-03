@@ -5,12 +5,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.depromeet.team6.presentation.ui.home.component.AfterRegisterSheet
 import com.depromeet.team6.presentation.ui.home.component.CharacterSpeechBubble
 import com.depromeet.team6.presentation.ui.home.component.CurrentLocationSheet
 import com.depromeet.team6.presentation.ui.home.component.TMapViewCompose
@@ -21,29 +23,54 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
+
+    val uiState = viewModel.uiState.collectAsState().value
+
     Box(
         modifier = modifier
             .fillMaxSize()
     ) {
         TMapViewCompose(LatLng(37.5665, 126.9780)) // Replace with your actual API key
 
-        CurrentLocationSheet(
-            currentLocation = "중앙빌딩",
-            destination = "우리집",
-            onSearchClick = {},
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .fillMaxWidth()
-                .zIndex(1f)
-        )
+        // 알람 등록 시 Home UI
+        if (uiState.isAlarmRegistered) {
+            AfterRegisterSheet(
+                timeToLeave = "22:30:00",
+                startLocation = "중앙빌딩",
+                destination = "우리집",
+                onCourseTextClick = {},
+                onFinishClick = {},
+                onCourseDetailClick = {},
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .zIndex(1f)
+            )
 
-        CharacterSpeechBubble(
-            text = "여기서 놓치면 택시비 약",
-            modifier = Modifier
-                .align(Alignment.BottomStart)
-                .padding(start = 16.dp, bottom = 185.dp),
-            taxiCost = "34,000"
-        )
+            CharacterSpeechBubble(
+                text = "차고지에서 출발하면 더 정확하게 알려드려요",
+                modifier = Modifier
+                    .align(Alignment.BottomStart)
+                    .padding(start = 8.dp, bottom = 241.dp)
+            )
+        } else { // 기본 Home UI
+            CurrentLocationSheet(
+                currentLocation = "중앙빌딩",
+                destination = "우리집",
+                onSearchClick = {},
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .fillMaxWidth()
+                    .zIndex(1f)
+            )
+
+            CharacterSpeechBubble(
+                text = "여기서 놓치면 택시비 약",
+                modifier = Modifier
+                    .align(Alignment.BottomStart)
+                    .padding(start = 16.dp, bottom = 185.dp),
+                taxiCost = "34,000"
+            )
+        }
     }
 }
 

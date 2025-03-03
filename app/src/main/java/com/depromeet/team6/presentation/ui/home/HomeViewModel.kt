@@ -17,6 +17,7 @@ class HomeViewModel @Inject constructor(
     override suspend fun handleEvent(event: HomeContract.HomeEvent) {
         when (event) {
             is HomeContract.HomeEvent.DummyEvent -> setState { copy(loadState = event.loadState) }
+            is HomeContract.HomeEvent.UpdateAlarmRegistered -> setState { copy(isAlarmRegistered = event.isRegistered) }
         }
     }
 
@@ -34,6 +35,12 @@ class HomeViewModel @Inject constructor(
                         HomeContract.HomeEvent.DummyEvent(loadState = LoadState.Error)
                     )
                 }
+        }
+    }
+
+    fun regsiterAlarm() {
+        viewModelScope.launch {
+            setEvent(HomeContract.HomeEvent.UpdateAlarmRegistered(true))
         }
     }
 }
