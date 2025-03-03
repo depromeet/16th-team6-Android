@@ -1,13 +1,16 @@
 package com.depromeet.team6.presentation.ui.home
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
@@ -25,6 +28,17 @@ fun HomeScreen(
 ) {
 
     val uiState = viewModel.uiState.collectAsState().value
+    val context = LocalContext.current
+
+    LaunchedEffect(uiState.isAlarmRegistered) {
+        if (uiState.isAlarmRegistered) {
+            Toast.makeText(
+                context,
+                "알림이 등록되었어요",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
 
     Box(
         modifier = modifier
