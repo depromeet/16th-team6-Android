@@ -68,7 +68,7 @@ fun HomeScreen(
                 text = "여기서 놓치면 택시비 약",
                 modifier = Modifier
                     .align(Alignment.BottomStart)
-                    .padding(start = 16.dp, bottom = 185.dp),
+                    .padding(start = 8.dp, bottom = 207.dp),
                 taxiCost = "34,000"
             )
         }
