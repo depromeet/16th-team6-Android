@@ -68,6 +68,8 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.appcompat)
     implementation(libs.firebase.messaging.ktx)
+    implementation(libs.play.services.maps)
+    implementation(libs.play.services.location)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
