@@ -11,11 +11,13 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.depromeet.team6.R
 import com.depromeet.team6.presentation.ui.home.component.AfterRegisterSheet
 import com.depromeet.team6.presentation.ui.home.component.CharacterSpeechBubble
 import com.depromeet.team6.presentation.ui.home.component.CurrentLocationSheet
@@ -78,13 +80,28 @@ fun HomeScreen(
 
         val (prefixText, emphasisText, suffixText, bottomPadding) = when {
             uiState.isAlarmRegistered && uiState.isBusDeparted ->
-                SpeechBubbleText("이때 출발해야 막차를 탈 수 있어요", null, null, 241.dp)
+                SpeechBubbleText(
+                    stringResource(R.string.home_bubble_alarm_departed_text),
+                    null,
+                    null,
+                    241.dp
+                )
 
             uiState.isAlarmRegistered ->
-                SpeechBubbleText("차고지에서 출발하면", "더 정확하게", "알려드려요", 241.dp)
+                SpeechBubbleText(
+                    stringResource(R.string.home_bubble_alarm_prefix_text),
+                    stringResource(R.string.home_bubble_alarm_emphasis_text),
+                    stringResource(R.string.home_bubble_alarm_suffix_text),
+                    241.dp
+                )
 
             else ->
-                SpeechBubbleText("여기서 놓치면 택시비 약", "34,000원", null, 207.dp)
+                SpeechBubbleText(
+                    stringResource(R.string.home_bubble_basic_text),
+                    "34,000원",
+                    null,
+                    207.dp
+                )
         }
 
         CharacterSpeechBubble(
