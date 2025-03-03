@@ -1,6 +1,8 @@
 package com.depromeet.team6.presentation.ui.main
 
+import android.content.ContentValues.TAG
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -16,6 +18,8 @@ import com.depromeet.team6.presentation.ui.home.HomeScreen
 import com.depromeet.team6.ui.theme.Team6Theme
 import com.depromeet.team6.ui.theme.Team6Theme.colors
 import com.depromeet.team6.ui.theme.Team6Theme.typography
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -30,6 +34,19 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(
+            OnCompleteListener { task ->
+                if (!task.isSuccessful) {
+                    Log.d(TAG, "Fetching FCM registration token failed")
+                    return@OnCompleteListener
+                }
+
+                val token = task.result
+
+                Log.d("Fcm Token", token)
+            }
+        )
     }
 }
 
