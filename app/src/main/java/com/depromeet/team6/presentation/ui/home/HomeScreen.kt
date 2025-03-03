@@ -30,7 +30,10 @@ fun HomeScreen(
         modifier = modifier
             .fillMaxSize()
     ) {
-        TMapViewCompose(LatLng(37.5665, 126.9780)) // Replace with your actual API key
+        TMapViewCompose(
+            LatLng(37.5665, 126.9780),
+            viewModel = viewModel
+        ) // Replace with your actual API key
 
         // 알람 등록 시 Home UI
         if (uiState.isAlarmRegistered) {
