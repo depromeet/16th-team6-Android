@@ -16,9 +16,10 @@ import com.depromeet.team6.R
 
 @Composable
 fun CharacterSpeechBubble(
-    text: String,
+    prefixText: String,
     modifier: Modifier = Modifier,
-    taxiCost: String? = null,
+    emphasisText: String? = null,
+    suffixText: String? = null,
     onClick: () -> Unit = {},
     showSpeechBubble: Boolean = true
 ) {
@@ -27,9 +28,10 @@ fun CharacterSpeechBubble(
     ) {
         if (showSpeechBubble) {
             SpeechBubble(
-                text = text,
+                prefix = prefixText,
                 modifier = Modifier,
-                taxiCost = taxiCost
+                emphasisText = emphasisText,
+                suffix = suffixText
             )
 
             Spacer(modifier = Modifier.height(2.dp))
@@ -46,8 +48,8 @@ fun CharacterSpeechBubble(
 @Composable
 fun CharacterSpeechBubblePreview() {
     CharacterSpeechBubble(
-        text = "여기서 놓치면 택시비",
+        prefixText = "여기서 놓치면 택시비",
         modifier = Modifier,
-        taxiCost = "34,000"
+        emphasisText = "34,000"
     )
 }
