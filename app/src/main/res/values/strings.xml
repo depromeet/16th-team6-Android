@@ -9,6 +9,7 @@
 
     <string name="home_icon_location_text">위치 아이콘</string>
     <string name="home_icon_arrow_right_text">화살표 아이콘</string>
+    <string name="home_icon_bell_text">알림 종 아이콘</string>
 
     <string name="all_acha_character">앗차 캐릭터</string>
 </resources>
