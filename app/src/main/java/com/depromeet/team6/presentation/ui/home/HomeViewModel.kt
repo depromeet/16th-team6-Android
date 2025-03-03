@@ -50,7 +50,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun regsiterAlarm() {
+    fun registerAlarm() {
         viewModelScope.launch {
             setEvent(HomeContract.HomeEvent.UpdateAlarmRegistered(true))
         }
