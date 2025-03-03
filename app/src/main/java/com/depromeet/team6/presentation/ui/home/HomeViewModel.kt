@@ -18,6 +18,7 @@ class HomeViewModel @Inject constructor(
         when (event) {
             is HomeContract.HomeEvent.DummyEvent -> setState { copy(loadState = event.loadState) }
             is HomeContract.HomeEvent.UpdateAlarmRegistered -> setState { copy(isAlarmRegistered = event.isRegistered) }
+            is HomeContract.HomeEvent.UpdateBusDeparted -> setState { copy(isBusDeparted = event.isBusDeparted) }
         }
     }
 
@@ -41,6 +42,12 @@ class HomeViewModel @Inject constructor(
     fun regsiterAlarm() {
         viewModelScope.launch {
             setEvent(HomeContract.HomeEvent.UpdateAlarmRegistered(true))
+        }
+    }
+
+    fun setBusDeparted() {
+        viewModelScope.launch {
+            setEvent(HomeContract.HomeEvent.UpdateBusDeparted(true))
         }
     }
 }

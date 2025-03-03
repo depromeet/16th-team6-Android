@@ -43,7 +43,8 @@ fun HomeScreen(
                 onCourseDetailClick = {},
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
-                    .zIndex(1f)
+                    .zIndex(1f),
+                isBusDeparted = uiState.isBusDeparted
             )
 
             CharacterSpeechBubble(
