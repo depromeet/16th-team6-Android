@@ -29,7 +29,6 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
-
     val uiState = viewModel.uiState.collectAsState().value
     val context = LocalContext.current
 

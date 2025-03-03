@@ -44,7 +44,6 @@ fun AfterRegisterSheet(
             .height(248.dp),
         contentAlignment = Alignment.BottomCenter
     ) {
-
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -109,10 +108,8 @@ fun AfterRegisterSheet(
                 onCourseDetailClick = onCourseDetailClick,
                 modifier = modifier
             )
-
         }
     }
-
 }
 
 @Preview

@@ -41,7 +41,6 @@ fun TMapViewCompose(
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel
 ) {
-
     val uiState = viewModel.uiState.collectAsState().value
 
     val context = LocalContext.current

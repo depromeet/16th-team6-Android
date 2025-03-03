@@ -83,7 +83,6 @@ fun CourseTextButton(
                 style = typography.bodyRegular14,
                 color = colors.white
             )
-
         }
     }
 }

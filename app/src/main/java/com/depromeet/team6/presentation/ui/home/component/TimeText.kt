@@ -53,9 +53,7 @@ fun TimeText(
             color = textColor,
             modifier = Modifier.padding(start = 4.dp, bottom = 8.dp)
         )
-
     }
-
 }
 
 @Preview
