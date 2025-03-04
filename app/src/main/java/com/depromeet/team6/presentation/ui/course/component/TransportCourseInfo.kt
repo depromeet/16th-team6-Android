@@ -25,8 +25,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.depromeet.team6.R
@@ -63,7 +64,7 @@ fun TransportCourseInfoExpandable(
             ) {
                 itemsIndexed(transportCourseInfo) { index, courseInfo ->
                     Image(
-                        painter = painterResource(id = courseInfo.type.getTransportSubtypeResourceId(context, courseInfo.subTypeIdx)),
+                        imageVector = ImageVector.vectorResource(id = courseInfo.type.getTransportSubtypeResourceId(context, courseInfo.subTypeIdx)),
                         contentDescription = "${courseInfo.type.name} $index",
                         modifier = Modifier
                             .size(20.dp)
@@ -76,7 +77,7 @@ fun TransportCourseInfoExpandable(
                                 .width(4.dp)
                         )
                         Image(
-                            painter = painterResource(id = R.drawable.ic_all_arrow_right_grey),
+                            imageVector = ImageVector.vectorResource(id = R.drawable.ic_all_arrow_right_grey),
                             contentDescription = "transport course divider",
                             modifier = Modifier
                                 .size(12.dp)
@@ -91,7 +92,7 @@ fun TransportCourseInfoExpandable(
                     .clickable {
                         expanded = !expanded
                     },
-                painter = painterResource(id = R.drawable.ic_all_arrow_down_grey),
+                imageVector = ImageVector.vectorResource(id = R.drawable.ic_all_arrow_down_grey),
                 contentDescription = "arrow down"
             )
         }
