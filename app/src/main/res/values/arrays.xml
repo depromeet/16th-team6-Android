@@ -32,4 +32,10 @@
         <item>@drawable/ic_all_subway_sillim</item>
         <item>@drawable/ic_all_subway_gtx_a</item>
     </array>
+
+    <string-array name="course_search_tab_items">
+        <item>전체</item>
+        <item>버스</item>
+        <item>지하철</item>
+    </string-array>
 </resources>

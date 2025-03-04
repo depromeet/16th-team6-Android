@@ -3,7 +3,6 @@ package com.depromeet.team6.presentation.ui.course.component
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -161,24 +160,22 @@ fun RemainingTimeHHmm(
     isDeparture: Boolean,
     modifier: Modifier = Modifier
 ) {
-    Box(
+    val color = if (isDeparture) {
+        defaultTeam6Colors.primaryMain
+    } else {
+        defaultTeam6Colors.white
+    }
+
+    Text(
         modifier = Modifier
             .clip(RoundedCornerShape(20.dp))
             .background(defaultTeam6Colors.systemGrey5)
-    ) {
-        val color = if (isDeparture) {
-            defaultTeam6Colors.primaryMain
-        } else {
-            defaultTeam6Colors.white
-        }
-        Text(
-            modifier = Modifier
-                .padding(vertical = 4.dp, horizontal = 8.dp),
-            color = color,
-            text = stringResource(R.string.last_transport_info_remaining_time, hour, minute),
-            style = defaultTeam6Typography.bodySemiBold12
-        )
-    }
+            .padding(vertical = 4.dp, horizontal = 8.dp),
+        color = color,
+        text = stringResource(R.string.last_transport_info_remaining_time, hour, minute),
+        style = defaultTeam6Typography.bodySemiBold12
+    )
+
 }
 
 @Preview(name = "more than 1 hour", showBackground = true, backgroundColor = android.graphics.Color.BLACK.toLong())

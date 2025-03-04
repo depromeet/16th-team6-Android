@@ -8,7 +8,9 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import com.depromeet.team6.R
 import com.depromeet.team6.presentation.model.course.LastTransportInfo
 import com.depromeet.team6.presentation.model.course.TransportCourseInfo
 import com.depromeet.team6.presentation.model.course.TransportType
@@ -20,7 +22,8 @@ fun TransportTabMenu(
     availableCourses: List<LastTransportInfo>,
     modifier: Modifier = Modifier
 ) {
-    val tabItems = listOf("전체", "버스", "지하철")
+    val context = LocalContext.current
+    val tabItems = context.resources.getStringArray(R.array.course_search_tab_items).toList()
 
     Column(
         modifier = modifier

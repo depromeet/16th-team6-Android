@@ -35,6 +35,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun TabRowMinTab0dp(
     selectedTabIndex: Int,
+    tabs: @Composable () -> Unit,
     indicator: @Composable (tabPositions: List<TabPosition>) -> Unit,
     modifier: Modifier = Modifier,
     containerColor: Color = TabRowDefaults.primaryContainerColor,
@@ -43,8 +44,7 @@ fun TabRowMinTab0dp(
     divider: @Composable () -> Unit = @Composable {
         HorizontalDivider()
     },
-    scrollState: ScrollState = rememberScrollState(),
-    tabs: @Composable () -> Unit
+    scrollState: ScrollState = rememberScrollState()
 ) {
     Surface(
         modifier = modifier,
