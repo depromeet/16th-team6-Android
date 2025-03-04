@@ -18,7 +18,7 @@ import com.depromeet.team6.ui.theme.defaultTeam6Colors
 @Composable
 fun CourseScreen(
     modifier: Modifier = Modifier,
-    courseData: List<LastTransportInfo> = listOf()
+    courseData: List<LastTransportInfo> = emptyList()
 ) {
     Column(
         modifier = modifier
