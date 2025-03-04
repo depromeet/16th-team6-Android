@@ -175,7 +175,6 @@ fun RemainingTimeHHmm(
         text = stringResource(R.string.last_transport_info_remaining_time, hour, minute),
         style = defaultTeam6Typography.bodySemiBold12
     )
-
 }
 
 @Preview(name = "more than 1 hour", showBackground = true, backgroundColor = android.graphics.Color.BLACK.toLong())
