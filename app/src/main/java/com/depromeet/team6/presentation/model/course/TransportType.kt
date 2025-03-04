@@ -9,8 +9,11 @@ enum class TransportType(val arrayId: Int) {
     SUBWAY(R.array.transport_type_subway);
 
     fun getTransportSubtypeResourceId(context: Context, idx: Int): Int {
-        return context.resources.obtainTypedArray(arrayId).use { typedArray ->
-            typedArray.getResourceId(idx, -1)
+        val typedArray = context.resources.obtainTypedArray(arrayId)
+        try {
+            return typedArray.getResourceId(idx, -1)
+        } finally {
+            typedArray.recycle()
         }
     }
 }
