@@ -1,84 +1,46 @@
-package com.depromeet.team6.presentation.ui.course_search.component
+package com.depromeet.team6.presentation.ui.course.component
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.depromeet.team6.presentation.model.course.LastTransportInfo
 import com.depromeet.team6.presentation.model.course.LegInfo
 import com.depromeet.team6.presentation.model.course.TransportType
 import com.depromeet.team6.presentation.model.course.WayPoint
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 
 @Composable
-fun CourseInfoDetail(
-    legsInfo: List<LegInfo>,
+fun LastTransportInfoList(
+    listData: List<LastTransportInfo>,
     modifier: Modifier = Modifier
 ) {
-    Column(
+    LazyColumn(
         modifier = modifier
-            .wrapContentHeight(),
-        verticalArrangement = Arrangement.spacedBy(7.dp)
+            .fillMaxSize()
+            .background(defaultTeam6Colors.black)
+            .padding(horizontal = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(14.dp),
+        contentPadding = PaddingValues(vertical = 16.dp)
     ) {
-        legsInfo.forEachIndexed { idx, leg ->
-            if (leg.transportType == TransportType.WALK) {
-                CourseInfoDetailItem(
-                    transportType = TransportType.WALK,
-                    duration = leg.sectionTime,
-                )
-            } else {
-                CourseInfoDetailItem(
-                    transportType = leg.transportType,
-                    duration = leg.sectionTime,
-                    boardingPoint = leg.startPoint.name,
-                    destinationPoint = leg.endPoint.name
-                )
-            }
-            if (idx != legsInfo.lastIndex) {
-                VerticalDashedLine()
-            }
+        items(listData.size) { index ->
+            LastTransportInfoItem(
+                lastTransportInfo = listData[index]
+            )
         }
     }
 }
 
-@Composable
-fun VerticalDashedLine(
-    modifier: Modifier = Modifier
-) {
-    Box(
-        modifier = modifier
-            .width(2.dp) // 점선의 너비
-            .height(18.dp)
-            .padding(start = 10.dp)
-            .drawBehind {
-                val dashHeight = size.height / 6f
-                val dashSpacing = size.height / 6f
-                var y = -(dashHeight / 2)
-                while (y < size.height) {
-                    drawLine(
-                        color = defaultTeam6Colors.greyQuaternaryLabel,
-                        start = Offset(x = size.width / 2, y = y),
-                        end = Offset(x = size.width / 2, y = y + dashHeight),
-                        strokeWidth = 1f
-                    )
-                    y += dashHeight + dashSpacing
-                }
-            }
-    )
-}
-
 @Preview
 @Composable
-fun CourseInfoDetailPreview(){
-    val mockData = listOf(
+fun LastTransportInfoListPreview() {
+    val courseInfo = listOf(
         LegInfo(
             transportType = TransportType.WALK,
             sectionTime = 7,
@@ -142,9 +104,26 @@ fun CourseInfoDetailPreview(){
             ),
             routeColor = defaultTeam6Colors.black,
             distance = 10
-        ),
+        )
     )
-    CourseInfoDetail(
-        legsInfo = mockData
+
+    val mockData = LastTransportInfo(
+        remainingMinutes = 23,
+        departureHour = 23,
+        departureMinute = 3,
+        boardingHour = 23,
+        boardingMinute = 15,
+        legs = courseInfo
+    )
+    val mockDataList = listOf(
+        mockData,
+        mockData,
+        mockData,
+        mockData,
+        mockData,
+        mockData
+    )
+    LastTransportInfoList(
+        listData = mockDataList
     )
 }

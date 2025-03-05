@@ -1,4 +1,4 @@
-package com.depromeet.team6.presentation.ui.course_search.component
+package com.depromeet.team6.presentation.ui.course.component
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -41,7 +41,7 @@ fun DestinationSearchBar(
         Text(
             text = startingPoint,
             style = defaultTeam6Typography.bodyRegular15,
-            color = defaultTeam6Colors.white,
+            color = defaultTeam6Colors.white
         )
 
         Image(
@@ -54,7 +54,7 @@ fun DestinationSearchBar(
         Text(
             text = destination,
             style = defaultTeam6Typography.bodyRegular15,
-            color = defaultTeam6Colors.white,
+            color = defaultTeam6Colors.white
         )
     }
 }

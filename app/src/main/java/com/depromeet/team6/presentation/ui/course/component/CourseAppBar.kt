@@ -1,4 +1,4 @@
-package com.depromeet.team6.presentation.ui.course_search.component
+package com.depromeet.team6.presentation.ui.course.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row

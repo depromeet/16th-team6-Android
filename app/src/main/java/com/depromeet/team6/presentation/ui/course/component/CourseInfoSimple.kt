@@ -1,4 +1,4 @@
-package com.depromeet.team6.presentation.ui.course_search.component
+package com.depromeet.team6.presentation.ui.course.component
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -21,7 +21,7 @@ import com.depromeet.team6.presentation.model.course.LegInfo
 fun CourseInfoSimple(
     legs: List<LegInfo>,
     modifier: Modifier = Modifier
-){
+) {
     val context = LocalContext.current
     LazyRow(
         horizontalArrangement = Arrangement.spacedBy(4.dp),

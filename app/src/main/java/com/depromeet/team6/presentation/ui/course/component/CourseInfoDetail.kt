@@ -1,76 +1,83 @@
-package com.depromeet.team6.presentation.ui.course_search.component
+package com.depromeet.team6.presentation.ui.course.component
 
-import android.util.Log
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.depromeet.team6.R
 import com.depromeet.team6.presentation.model.course.LegInfo
 import com.depromeet.team6.presentation.model.course.TransportType
 import com.depromeet.team6.presentation.model.course.WayPoint
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 
 @Composable
-fun TransportCourseInfoExpandable(
+fun CourseInfoDetail(
     legsInfo: List<LegInfo>,
     modifier: Modifier = Modifier
 ) {
-    var expanded by remember { mutableStateOf(false) }
-    Row(
-        modifier = Modifier
-            .clip(RoundedCornerShape(8.dp))
-            .background(defaultTeam6Colors.systemGrey5)
-            .padding(horizontal = 10.dp, vertical = 8.dp)
-            .fillMaxWidth()
+    Column(
+        modifier = modifier
             .wrapContentHeight(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.Top
+        verticalArrangement = Arrangement.spacedBy(7.dp)
     ) {
-        if (!expanded){
-            CourseInfoSimple(
-                legs = legsInfo
-            )
-        } else {
-            CourseInfoDetail(
-                legsInfo = legsInfo
-            )
+        legsInfo.forEachIndexed { idx, leg ->
+            if (leg.transportType == TransportType.WALK) {
+                CourseInfoDetailItem(
+                    transportType = TransportType.WALK,
+                    duration = leg.sectionTime
+                )
+            } else {
+                CourseInfoDetailItem(
+                    transportType = leg.transportType,
+                    duration = leg.sectionTime,
+                    boardingPoint = leg.startPoint.name,
+                    destinationPoint = leg.endPoint.name
+                )
+            }
+            if (idx != legsInfo.lastIndex) {
+                VerticalDashedLine()
+            }
         }
-
-        Image(
-            modifier = Modifier
-                .size(16.dp)
-                .clickable {
-                    expanded = !expanded
-                    Log.d("expeandaenfsdf", expanded.toString())
-                },
-            imageVector = ImageVector.vectorResource(id = R.drawable.ic_all_arrow_down_grey),
-            contentDescription = "arrow down"
-        )
     }
 }
 
-@Preview(showBackground = true)
 @Composable
-fun TransportCourseInfoPreview() {
+fun VerticalDashedLine(
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .width(2.dp) // 점선의 너비
+            .height(18.dp)
+            .padding(start = 10.dp)
+            .drawBehind {
+                val dashHeight = size.height / 6f
+                val dashSpacing = size.height / 6f
+                var y = -(dashHeight / 2)
+                while (y < size.height) {
+                    drawLine(
+                        color = defaultTeam6Colors.greyQuaternaryLabel,
+                        start = Offset(x = size.width / 2, y = y),
+                        end = Offset(x = size.width / 2, y = y + dashHeight),
+                        strokeWidth = 1f
+                    )
+                    y += dashHeight + dashSpacing
+                }
+            }
+    )
+}
+
+@Preview
+@Composable
+fun CourseInfoDetailPreview() {
     val mockData = listOf(
         LegInfo(
             transportType = TransportType.WALK,
@@ -135,10 +142,9 @@ fun TransportCourseInfoPreview() {
             ),
             routeColor = defaultTeam6Colors.black,
             distance = 10
-        ),
+        )
     )
-
-    TransportCourseInfoExpandable(
+    CourseInfoDetail(
         legsInfo = mockData
     )
 }

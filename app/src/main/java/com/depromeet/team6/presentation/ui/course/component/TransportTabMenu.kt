@@ -1,4 +1,4 @@
-package com.depromeet.team6.presentation.ui.course_search.component
+package com.depromeet.team6.presentation.ui.course.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -124,7 +124,7 @@ fun PreviewTabMenu() {
             ),
             routeColor = defaultTeam6Colors.black,
             distance = 10
-        ),
+        )
     )
 
     val mockData = LastTransportInfo(

@@ -1,4 +1,4 @@
-package com.depromeet.team6.presentation.ui.course_search.component
+package com.depromeet.team6.presentation.ui.course.component
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
@@ -32,11 +32,11 @@ import com.depromeet.team6.ui.theme.defaultTeam6Typography
 @Composable
 fun CourseInfoDetailItem(
     transportType: TransportType,
-    duration : Int,
+    duration: Int,
     modifier: Modifier = Modifier,
-    boardingPoint : String = "",
-    destinationPoint : String = "",
-    eta : Int = 0,
+    boardingPoint: String = "",
+    destinationPoint: String = "",
+    eta: Int = 0
 ) {
     val context = LocalContext.current
     if (transportType == TransportType.WALK) {
@@ -62,13 +62,13 @@ fun CourseInfoDetailItem(
             )
         }
     } else {
-        Row (
-            horizontalArrangement = Arrangement.spacedBy(5.dp),
-        ){
-            Column (
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(5.dp)
+        ) {
+            Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(7.dp)
-            ){
+            ) {
                 Image(
                     modifier = Modifier
                         .size(20.dp),
@@ -122,7 +122,7 @@ fun VerticalLine(
                 drawLine(
                     color = defaultTeam6Colors.greyQuaternaryLabel,
                     start = Offset(x = size.width / 2, y = y),
-                    end = Offset(x = size.width / 2, y = y + size.height),
+                    end = Offset(x = size.width / 2, y = y + size.height)
                 )
             }
     )
@@ -130,14 +130,14 @@ fun VerticalLine(
 
 @Composable
 fun GetOffMark(
-    color : Color,
+    color: Color,
     modifier: Modifier = Modifier
-){
-    Canvas (modifier = modifier){
+) {
+    Canvas(modifier = modifier) {
         // 원 그리기
         drawCircle(
             color = color, // 원 내부 색상
-            radius = 5.5 .dp.toPx() , // 원 반지름
+            radius = 5.5.dp.toPx(), // 원 반지름
             center = center, // 원의 중심
             style = Stroke(width = 3.dp.toPx()) // 테두리 스타일 설정
         )

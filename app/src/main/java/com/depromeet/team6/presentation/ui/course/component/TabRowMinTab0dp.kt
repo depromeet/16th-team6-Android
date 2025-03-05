@@ -1,4 +1,4 @@
-package com.depromeet.team6.presentation.ui.course_search.component
+package com.depromeet.team6.presentation.ui.course.component
 
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.FastOutSlowInEasing
@@ -71,7 +71,7 @@ fun TabRowMinTab0dp(
             val minTabWidth = 0
             val padding = edgePadding.roundToPx()
 
-            val tabMeasurables = subcompose(com.depromeet.team6.presentation.ui.course_search.component.TabSlots.Tabs, tabs)
+            val tabMeasurables = subcompose(com.depromeet.team6.presentation.ui.course.component.TabSlots.Tabs, tabs)
 
             val layoutHeight = tabMeasurables.fastFold(initial = 0) { curr, measurable ->
                 maxOf(curr, measurable.maxIntrinsicHeight(Constraints.Infinity))
@@ -120,7 +120,7 @@ fun TabRowMinTab0dp(
 
                 // The divider is measured with its own height, and width equal to the total width
                 // of the tab row, and then placed on top of the tabs.
-                subcompose(com.depromeet.team6.presentation.ui.course_search.component.TabSlots.Divider, divider).fastForEach {
+                subcompose(com.depromeet.team6.presentation.ui.course.component.TabSlots.Divider, divider).fastForEach {
                     val placeable = it.measure(
                         constraints.copy(
                             minHeight = 0,
@@ -133,7 +133,7 @@ fun TabRowMinTab0dp(
 
                 // The indicator container is measured to fill the entire space occupied by the tab
                 // row, and then placed on top of the divider.
-                subcompose(com.depromeet.team6.presentation.ui.course_search.component.TabSlots.Indicator) {
+                subcompose(com.depromeet.team6.presentation.ui.course.component.TabSlots.Indicator) {
                     indicator(tabPositions)
                 }.fastForEach {
                     it.measure(Constraints.fixed(layoutWidth, layoutHeight)).placeRelative(0, 0)

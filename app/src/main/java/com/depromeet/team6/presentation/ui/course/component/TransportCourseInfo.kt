@@ -1,46 +1,77 @@
-package com.depromeet.team6.presentation.ui.course_search.component
+package com.depromeet.team6.presentation.ui.course.component
 
+import android.util.Log
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.depromeet.team6.presentation.model.course.LastTransportInfo
+import com.depromeet.team6.R
 import com.depromeet.team6.presentation.model.course.LegInfo
 import com.depromeet.team6.presentation.model.course.TransportType
 import com.depromeet.team6.presentation.model.course.WayPoint
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 
 @Composable
-fun LastTransportInfoList(
-    listData: List<LastTransportInfo>,
+fun TransportCourseInfoExpandable(
+    legsInfo: List<LegInfo>,
     modifier: Modifier = Modifier
 ) {
-    LazyColumn(
-        modifier = modifier
-            .fillMaxSize()
-            .background(defaultTeam6Colors.black)
-            .padding(horizontal = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(14.dp),
-        contentPadding = PaddingValues(vertical = 16.dp)
+    var expanded by remember { mutableStateOf(false) }
+    Row(
+        modifier = Modifier
+            .clip(RoundedCornerShape(8.dp))
+            .background(defaultTeam6Colors.systemGrey5)
+            .padding(horizontal = 10.dp, vertical = 8.dp)
+            .fillMaxWidth()
+            .wrapContentHeight(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.Top
     ) {
-        items(listData.size) { index ->
-            LastTransportInfoItem(
-                lastTransportInfo = listData[index]
+        if (!expanded) {
+            CourseInfoSimple(
+                legs = legsInfo
+            )
+        } else {
+            CourseInfoDetail(
+                legsInfo = legsInfo
             )
         }
+
+        Image(
+            modifier = Modifier
+                .size(16.dp)
+                .clickable {
+                    expanded = !expanded
+                    Log.d("expeandaenfsdf", expanded.toString())
+                },
+            imageVector = ImageVector.vectorResource(id = R.drawable.ic_all_arrow_down_grey),
+            contentDescription = "arrow down"
+        )
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
-fun LastTransportInfoListPreview() {
-    val courseInfo = listOf(
+fun TransportCourseInfoPreview() {
+    val mockData = listOf(
         LegInfo(
             transportType = TransportType.WALK,
             sectionTime = 7,
@@ -104,26 +135,10 @@ fun LastTransportInfoListPreview() {
             ),
             routeColor = defaultTeam6Colors.black,
             distance = 10
-        ),
+        )
     )
 
-    val mockData = LastTransportInfo(
-        remainingMinutes = 23,
-        departureHour = 23,
-        departureMinute = 3,
-        boardingHour = 23,
-        boardingMinute = 15,
-        legs = courseInfo
-    )
-    val mockDataList = listOf(
-        mockData,
-        mockData,
-        mockData,
-        mockData,
-        mockData,
-        mockData
-    )
-    LastTransportInfoList(
-        listData = mockDataList
+    TransportCourseInfoExpandable(
+        legsInfo = mockData
     )
 }

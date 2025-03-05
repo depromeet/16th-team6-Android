@@ -1,4 +1,4 @@
-package com.depromeet.team6.presentation.ui.course_search
+package com.depromeet.team6.presentation.ui.course
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -11,9 +11,9 @@ import com.depromeet.team6.presentation.model.course.LastTransportInfo
 import com.depromeet.team6.presentation.model.course.LegInfo
 import com.depromeet.team6.presentation.model.course.TransportType
 import com.depromeet.team6.presentation.model.course.WayPoint
-import com.depromeet.team6.presentation.ui.course_search.component.CourseAppBar
-import com.depromeet.team6.presentation.ui.course_search.component.DestinationSearchBar
-import com.depromeet.team6.presentation.ui.course_search.component.TransportTabMenu
+import com.depromeet.team6.presentation.ui.course.component.CourseAppBar
+import com.depromeet.team6.presentation.ui.course.component.DestinationSearchBar
+import com.depromeet.team6.presentation.ui.course.component.TransportTabMenu
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 
 @Composable
@@ -106,7 +106,7 @@ fun CourseScreenPreview() {
             ),
             routeColor = defaultTeam6Colors.black,
             distance = 10
-        ),
+        )
     )
 
     val mockData = LastTransportInfo(
