@@ -40,10 +40,6 @@ class UserInfoLocalDataSource @Inject constructor(
         get() = getValue(REFRESH_TOKEN)
         set(value) = setValue(REFRESH_TOKEN, value)
 
-    var nickname: String
-        get() = getValue(NICK_NAME)
-        set(value) = setValue(NICK_NAME, value)
-
     fun clear() = sharedPreferences.edit { clear() }
 
     private fun getValue(key: String): String =
@@ -54,7 +50,6 @@ class UserInfoLocalDataSource @Inject constructor(
 
     companion object {
         private const val FILE_NAME = "AtChaLocalDataSource"
-        private const val NICK_NAME = "NickName"
         private const val INITIAL_VALUE = ""
     }
 }

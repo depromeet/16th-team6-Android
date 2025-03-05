@@ -1,6 +1,7 @@
 package com.depromeet.team6.presentation.ui.login
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -79,14 +80,18 @@ fun LoginRoute(
 
     LaunchedEffect(uiState.authTokenLoadState) {
         when (uiState.authTokenLoadState) {
-            LoadState.Success -> {
-//                viewModel.postLogin(login = Login(PLATFORM))
+            LoadState.Success -> viewModel.getCheck()
+            else -> Unit
+        }
+    }
+
+    LaunchedEffect(uiState.isUserRegisteredState) {
+        when (uiState.isUserRegisteredState) {
+            LoadState.Success -> viewModel.getLogin()
+            LoadState.Error -> {
                 navigateToOnboarding()
             }
-
-            else -> {
-                Unit
-            }
+            else -> Unit
         }
     }
 
@@ -101,14 +106,8 @@ fun LoginRoute(
                 modifier = modifier
             )
         }
-
-        LoadState.Loading -> Unit
-
-        LoadState.Success -> {
-            navigateToOnboarding()
-        }
-
-        LoadState.Error -> navigateToOnboarding()
+        LoadState.Success -> navigateToHome()
+        else -> Unit
     }
 }
 

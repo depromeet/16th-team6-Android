@@ -5,6 +5,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 class RequestLoginDto(
-    @SerialName("platform")
-    val platform: String
+    @SerialName("provider")
+    val provider: Int
 )

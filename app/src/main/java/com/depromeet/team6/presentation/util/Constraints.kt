@@ -7,3 +7,7 @@ object Login {
 object Token {
     const val BEARER = "Bearer "
 }
+
+object Provider {
+    const val KAKAO = 0
+}

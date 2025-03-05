@@ -5,8 +5,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class ResponseAuthDto(
-    @SerialName("userId")
-    val userId: Int,
+    @SerialName("id")
+    val id: Int,
     @SerialName("accessToken")
     val accessToken: String,
     @SerialName("refreshToken")

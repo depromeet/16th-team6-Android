@@ -19,12 +19,6 @@ class UserInfoRepositoryImpl @Inject constructor(
 
     override fun getRefreshToken(): String = userInfoLocalDataSource.refreshToken
 
-    override fun setNickname(nickname: String) {
-        userInfoLocalDataSource.nickname = nickname
-    }
-
-    override fun getNickname(): String = userInfoLocalDataSource.nickname
-
     override fun clear() {
         userInfoLocalDataSource.clear()
     }
