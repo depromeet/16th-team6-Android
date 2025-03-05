@@ -1,4 +1,4 @@
-package com.depromeet.team6.presentation.ui.course
+package com.depromeet.team6.presentation.ui.course_search
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -10,9 +10,9 @@ import androidx.compose.ui.unit.dp
 import com.depromeet.team6.presentation.model.course.LastTransportInfo
 import com.depromeet.team6.presentation.model.course.TransportCourseInfo
 import com.depromeet.team6.presentation.model.course.TransportType
-import com.depromeet.team6.presentation.ui.course.component.CourseAppBar
-import com.depromeet.team6.presentation.ui.course.component.DestinationSearchBar
-import com.depromeet.team6.presentation.ui.course.component.TransportTabMenu
+import com.depromeet.team6.presentation.ui.course_search.component.CourseAppBar
+import com.depromeet.team6.presentation.ui.course_search.component.DestinationSearchBar
+import com.depromeet.team6.presentation.ui.course_search.component.TransportTabMenu
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 
 @Composable

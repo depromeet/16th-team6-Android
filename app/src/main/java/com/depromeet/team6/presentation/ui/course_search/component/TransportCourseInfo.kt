@@ -1,4 +1,4 @@
-package com.depromeet.team6.presentation.ui.course.component
+package com.depromeet.team6.presentation.ui.course_search.component
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
