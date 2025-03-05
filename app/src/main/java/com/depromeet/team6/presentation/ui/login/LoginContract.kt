@@ -18,7 +18,7 @@ class LoginContract {
     }
 
     sealed class LoginEvent : UiEvent {
-        data class SetAuthToken(val authTokenLoadState: LoadState, val loadState: LoadState) : LoginEvent()
+        data class SetAuthToken(val authTokenLoadState: LoadState) : LoginEvent()
         data class GetLogin(val loadState: LoadState) : LoginEvent()
         data class GetCheckUserRegistered(val isUserRegisteredState: LoadState) : LoginEvent()
     }

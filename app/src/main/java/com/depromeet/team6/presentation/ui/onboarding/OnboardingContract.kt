@@ -20,7 +20,8 @@ class OnboardingContract {
             distance = "",
             roadAddress = ""
         ),
-        val searchLocations: List<OnboardingSearchLocation> = emptyList()
+        val searchLocations: List<OnboardingSearchLocation> = emptyList(),
+        val alertFrequencies: Set<Int> = emptySet()
     ) : UiState
 
     sealed interface OnboardingSideEffect : UiSideEffect {
@@ -28,12 +29,13 @@ class OnboardingContract {
     }
 
     sealed class OnboardingEvent : UiEvent {
-        data class DummyEvent(val loadState: LoadState) : OnboardingEvent()
+        data class PostSignUp(val loadState: LoadState) : OnboardingEvent()
         data object ShowSearchPopup : OnboardingEvent()
         data object ClearText : OnboardingEvent()
         data class UpdateSearchText(val text: String) : OnboardingEvent()
         data object ChangeOnboardingType : OnboardingEvent()
         data object BackPressed : OnboardingEvent()
         data class LocationSelectButtonClicked(val onboardingSearchLocation: OnboardingSearchLocation) : OnboardingEvent()
+        data class UpdateAlertFrequencies(val alertFrequencies: Set<Int>) : OnboardingEvent()
     }
 }

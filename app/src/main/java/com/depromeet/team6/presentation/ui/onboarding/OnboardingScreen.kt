@@ -37,8 +37,8 @@ import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingSearch
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingSelectLocationButton
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingSelectedHome
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingTitle
-import com.depromeet.team6.presentation.util.permission.PermissionUtil
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
+import com.depromeet.team6.presentation.util.permission.PermissionUtil
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 
@@ -74,8 +74,12 @@ fun OnboardingRoute(
         when (uiState.onboardingType) {
             OnboardingType.HOME -> {
                 Log.d(
-                    "ㅋㅋ",
-                    "${PermissionUtil.isLocationPermissionRequested(context)}, ${
+                    "Onboarding Screen",
+                    "isLocationPermissionRequested: ${
+                    PermissionUtil.isLocationPermissionRequested(
+                        context
+                    )
+                    }, hasLocationPermissions: ${
                     PermissionUtil.hasLocationPermissions(context)
                     }"
                 )
@@ -138,15 +142,24 @@ fun OnboardingRoute(
                         if (uiState.onboardingType == OnboardingType.HOME) {
                             viewModel.setEvent(OnboardingContract.OnboardingEvent.ChangeOnboardingType)
                         } else {
-                            navigateToHome()
+                            viewModel.postSignUp()
                         }
                     },
-                    onBackPressed = { viewModel.setEvent(OnboardingContract.OnboardingEvent.BackPressed) }
+                    onBackPressed = { viewModel.setEvent(OnboardingContract.OnboardingEvent.BackPressed) },
+                    onAlarmTimeSelected = { alarmTime ->
+                        val timeValue = alarmTime.string.replace("1시간","60분").replace("분 전", "").toInt()
+                        val newSelection = if (timeValue in uiState.alertFrequencies) {
+                            uiState.alertFrequencies - timeValue
+                        } else {
+                            uiState.alertFrequencies + timeValue
+                        }
+                        viewModel.setEvent(OnboardingContract.OnboardingEvent.UpdateAlertFrequencies(newSelection))
+                    }
                 )
             }
 
             LoadState.Loading -> Unit
-            LoadState.Success -> Unit
+            LoadState.Success -> navigateToHome()
             LoadState.Error -> Unit
         }
     }
@@ -159,7 +172,8 @@ fun OnboardingScreen(
     modifier: Modifier = Modifier,
     onSearchBoxClicked: () -> Unit = {},
     onNextButtonClicked: () -> Unit = {},
-    onBackPressed: () -> Unit = {}
+    onBackPressed: () -> Unit = {},
+    onAlarmTimeSelected: (AlarmTime) -> Unit = {}
 ) {
     var selectedItems by remember { mutableStateOf(setOf<AlarmTime>()) }
 
@@ -206,21 +220,17 @@ fun OnboardingScreen(
             OnboardingTitle(onboardingType = uiState.onboardingType)
             Spacer(modifier = Modifier.height(68.dp))
             OnboardingAlarmSelector(
-                selectedItems = selectedItems,
-                onItemClick = { alarmTime ->
-                    selectedItems = if (alarmTime in selectedItems) {
-                        selectedItems - alarmTime
-                    } else {
-                        selectedItems + alarmTime
-                    }
-                }
+                selectedItems = uiState.alertFrequencies.mapNotNull { timeValue ->
+                    AlarmTime.entries.find { it.string.replace("분 전", "").replace("시간 전", "").toIntOrNull() == timeValue }
+                }.toSet(),
+                onItemClick = onAlarmTimeSelected
             )
         }
         Spacer(modifier = Modifier.weight(1f))
         OnboardingButton(
             isEnabled =
             if (uiState.onboardingType == OnboardingType.ALARM) {
-                selectedItems.isNotEmpty()
+                uiState.alertFrequencies.isNotEmpty()
             } else {
                 uiState.myHome.name.isNotEmpty()
             }
