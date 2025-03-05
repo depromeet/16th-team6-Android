@@ -37,7 +37,7 @@ import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingSearch
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingSelectLocationButton
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingSelectedHome
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingTitle
-import com.depromeet.team6.presentation.util.location.PermissionUtil
+import com.depromeet.team6.presentation.util.permission.PermissionUtil
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.depromeet.team6.ui.theme.defaultTeam6Colors

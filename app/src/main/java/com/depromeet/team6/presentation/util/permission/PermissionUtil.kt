@@ -1,4 +1,4 @@
-package com.depromeet.team6.presentation.util.location
+package com.depromeet.team6.presentation.util.permission
 
 import android.Manifest
 import android.content.Context
