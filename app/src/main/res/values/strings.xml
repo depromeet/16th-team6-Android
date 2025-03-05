@@ -2,4 +2,9 @@
     <string name="app_name">Team6</string>
     <string name="lock_screen_description">알림 잠금화면</string>
     <string name="lock_screen_start_btn">출발하기</string>
+
+    <string name="lock_service_start_text">잠금화면 서비스 시작됨</string>
+    <string name="lock_screen_start_text">잠금화면 실행</string>
+    <string name="lock_screen_start_alarm_text">출발 알림</string>
+
 </resources>

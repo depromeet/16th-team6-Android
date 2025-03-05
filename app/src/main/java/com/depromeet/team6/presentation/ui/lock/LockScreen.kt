@@ -83,7 +83,7 @@ fun LockScreen(onTimerFinish: () -> Unit) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "출발 알림",
+                text = stringResource(R.string.lock_screen_start_alarm_text),
                 color = colors.white,
                 style = typography.heading5SemiBold17,
                 modifier = Modifier.padding(top = 22.dp)

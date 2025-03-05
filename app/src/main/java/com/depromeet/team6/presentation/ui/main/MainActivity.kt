@@ -55,7 +55,7 @@ class MainActivity : ComponentActivity() {
 
     private fun startLockService() {
         lockServiceManager.start()
-        Toast.makeText(this, "잠금화면 서비스 시작됨", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, getString(R.string.lock_service_start_text), Toast.LENGTH_SHORT).show()
     }
 }
 
@@ -71,7 +71,7 @@ fun LockTestScreen(btnClick: () -> Unit) {
         Text(text = stringResource(id = R.string.app_name), fontSize = 24.sp)
         Spacer(modifier = Modifier.height(16.dp))
         Button(onClick = { btnClick() }) {
-            Text(text = "잠금화면 실행")
+            Text(text = stringResource(id = R.string.lock_service_start_text))
         }
     }
 }
