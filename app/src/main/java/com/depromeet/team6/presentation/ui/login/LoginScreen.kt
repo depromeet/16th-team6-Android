@@ -87,7 +87,6 @@ fun LoginRoute(
         when (uiState.isUserRegisteredState) {
             LoadState.Success -> viewModel.getLogin()
             LoadState.Error -> {
-                Log.d("ㅋㅋ", "여기")
                 navigateToOnboarding()
             }
             else -> Unit
