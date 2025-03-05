@@ -50,7 +50,6 @@ class LockService : Service() {
     private fun startLockReceiver() {
         val intentFilter = IntentFilter().apply {
             addAction(Intent.ACTION_SCREEN_ON)
-            addAction(Intent.ACTION_SCREEN_OFF)
         }
         registerReceiver(LockReceiver, intentFilter)
     }
