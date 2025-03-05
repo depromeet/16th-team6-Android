@@ -6,5 +6,5 @@ data class LastTransportInfo(
     val departureMinute: Int,
     val boardingHour: Int,
     val boardingMinute: Int,
-    val transportCourseInfo: List<TransportCourseInfo>
+    val legs: List<LegInfo>
 )

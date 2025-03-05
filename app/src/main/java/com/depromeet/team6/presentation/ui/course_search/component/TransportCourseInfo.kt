@@ -1,22 +1,16 @@
 package com.depromeet.team6.presentation.ui.course_search.component
 
-import androidx.compose.animation.AnimatedVisibility
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -26,107 +20,125 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.depromeet.team6.R
-import com.depromeet.team6.presentation.model.course.TransportCourseInfo
+import com.depromeet.team6.presentation.model.course.LegInfo
 import com.depromeet.team6.presentation.model.course.TransportType
+import com.depromeet.team6.presentation.model.course.WayPoint
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 
 @Composable
 fun TransportCourseInfoExpandable(
-    transportCourseInfo: List<TransportCourseInfo>,
+    legsInfo: List<LegInfo>,
     modifier: Modifier = Modifier
 ) {
-    val context = LocalContext.current
     var expanded by remember { mutableStateOf(false) }
-
-    Column(
-        modifier = modifier
+    Row(
+        modifier = Modifier
             .clip(RoundedCornerShape(8.dp))
             .background(defaultTeam6Colors.systemGrey5)
             .padding(horizontal = 10.dp, vertical = 8.dp)
             .fillMaxWidth()
-            .wrapContentHeight()
+            .wrapContentHeight(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.Top
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            LazyRow(
-                horizontalArrangement = Arrangement.spacedBy(4.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                itemsIndexed(transportCourseInfo) { index, courseInfo ->
-                    Image(
-                        imageVector = ImageVector.vectorResource(id = courseInfo.type.getTransportSubtypeResourceId(context, courseInfo.subTypeIdx)),
-                        contentDescription = "${courseInfo.type.name} $index",
-                        modifier = Modifier
-                            .size(20.dp)
-                    )
-
-                    // 마지막 아이템이 아니면 화살표 추가
-                    if (index < transportCourseInfo.lastIndex) {
-                        Spacer(
-                            modifier = Modifier
-                                .width(4.dp)
-                        )
-                        Image(
-                            imageVector = ImageVector.vectorResource(id = R.drawable.ic_all_arrow_right_grey),
-                            contentDescription = "transport course divider",
-                            modifier = Modifier
-                                .size(12.dp)
-                        )
-                    }
-                }
-            }
-
-            Image(
-                modifier = Modifier
-                    .size(16.dp)
-                    .clickable {
-                        expanded = !expanded
-                    },
-                imageVector = ImageVector.vectorResource(id = R.drawable.ic_all_arrow_down_grey),
-                contentDescription = "arrow down"
+        if (!expanded){
+            CourseInfoSimple(
+                legs = legsInfo
+            )
+        } else {
+            CourseInfoDetail(
+                legsInfo = legsInfo
             )
         }
 
-        AnimatedVisibility(visible = expanded) {
-            Column(modifier = Modifier.padding(16.dp)) {
-                Text("Here is the expandable content!")
-                Text("You can put anything you like here.")
-            }
-        }
+        Image(
+            modifier = Modifier
+                .size(16.dp)
+                .clickable {
+                    expanded = !expanded
+                    Log.d("expeandaenfsdf", expanded.toString())
+                },
+            imageVector = ImageVector.vectorResource(id = R.drawable.ic_all_arrow_down_grey),
+            contentDescription = "arrow down"
+        )
     }
 }
 
 @Preview(showBackground = true)
 @Composable
 fun TransportCourseInfoPreview() {
-    val data = listOf(
-        TransportCourseInfo(
-            type = TransportType.WALK,
-            subTypeIdx = 0,
-            durationMinutes = 10
+    val mockData = listOf(
+        LegInfo(
+            transportType = TransportType.WALK,
+            sectionTime = 7,
+            startPoint = WayPoint(
+                name = "화서역",
+                latitude = 0.1,
+                longitude = 0.1
+            ),
+            endPoint = WayPoint(
+                name = "지하철2호선방배역",
+                latitude = 0.0,
+                longitude = 0.0
+            ),
+            routeColor = defaultTeam6Colors.black,
+            distance = 10
         ),
-        TransportCourseInfo(
-            type = TransportType.BUS,
-            subTypeIdx = 0,
-            durationMinutes = 23
+        LegInfo(
+            transportType = TransportType.BUS,
+            sectionTime = 27,
+            startPoint = WayPoint(
+                name = "수원 KT위즈파크",
+                latitude = 0.1,
+                longitude = 0.1
+            ),
+            endPoint = WayPoint(
+                name = "사당역 2호선",
+                latitude = 0.0,
+                longitude = 0.0
+            ),
+            routeColor = defaultTeam6Colors.systemGreen,
+            distance = 57
         ),
-        TransportCourseInfo(
-            type = TransportType.SUBWAY,
-            subTypeIdx = 2,
-            durationMinutes = 14
-        )
+        LegInfo(
+            transportType = TransportType.SUBWAY,
+            sectionTime = 17,
+            startPoint = WayPoint(
+                name = "사당역 2호선",
+                latitude = 0.1,
+                longitude = 0.1
+            ),
+            endPoint = WayPoint(
+                name = "강남역 신분당선",
+                latitude = 0.0,
+                longitude = 0.0
+            ),
+            routeColor = defaultTeam6Colors.primaryRed,
+            distance = 37
+        ),
+        LegInfo(
+            transportType = TransportType.WALK,
+            sectionTime = 13,
+            startPoint = WayPoint(
+                name = "강남역 신분당선",
+                latitude = 0.1,
+                longitude = 0.1
+            ),
+            endPoint = WayPoint(
+                name = "할리스 커피 강남1호점",
+                latitude = 0.0,
+                longitude = 0.0
+            ),
+            routeColor = defaultTeam6Colors.black,
+            distance = 10
+        ),
     )
+
     TransportCourseInfoExpandable(
-        transportCourseInfo = data
+        legsInfo = mockData
     )
 }
