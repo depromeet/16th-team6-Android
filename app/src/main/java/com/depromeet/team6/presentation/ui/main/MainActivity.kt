@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.sp
 import com.depromeet.team6.R
 import com.depromeet.team6.data.datalocal.manager.LockServiceManager
 import com.depromeet.team6.data.datalocal.permission.PermissionUtil
+import com.depromeet.team6.presentation.ui.home.HomeScreen
 import com.depromeet.team6.ui.theme.Team6Theme
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
