@@ -1,6 +1,7 @@
 package com.depromeet.team6.presentation.ui.login
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -77,14 +78,19 @@ fun LoginRoute(
 
     LaunchedEffect(uiState.authTokenLoadState) {
         when (uiState.authTokenLoadState) {
-            LoadState.Success -> {
-//                viewModel.postLogin(login = Login(PLATFORM))
+            LoadState.Success -> viewModel.getCheck()
+            else -> Unit
+        }
+    }
+
+    LaunchedEffect(uiState.isUserRegisteredState) {
+        when (uiState.isUserRegisteredState) {
+            LoadState.Success -> viewModel.getLogin()
+            LoadState.Error -> {
+                Log.d("ㅋㅋ", "여기")
                 navigateToOnboarding()
             }
-
-            else -> {
-                Unit
-            }
+            else -> Unit
         }
     }
 
@@ -98,12 +104,8 @@ fun LoginRoute(
                 modifier = modifier
             )
         }
-
-        LoadState.Loading -> Unit
-
         LoadState.Success -> navigateToHome()
-
-        LoadState.Error -> navigateToOnboarding()
+        else -> Unit
     }
 }
 
@@ -114,7 +116,9 @@ fun LoginScreen(
     modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = modifier.fillMaxSize().background(color = defaultTeam6Colors.black),
+        modifier = modifier
+            .fillMaxSize()
+            .background(color = defaultTeam6Colors.black),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.height(256.dp))

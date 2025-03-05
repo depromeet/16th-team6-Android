@@ -9,9 +9,5 @@ interface UserInfoRepository {
 
     fun getRefreshToken(): String
 
-    fun setNickname(nickname: String)
-
-    fun getNickname(): String
-
     fun clear()
 }

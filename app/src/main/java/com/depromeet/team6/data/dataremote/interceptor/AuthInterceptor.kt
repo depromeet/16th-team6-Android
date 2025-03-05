@@ -46,7 +46,7 @@ class AuthInterceptor @Inject constructor(
     }
 
     private fun Request.newAuthBuilder() =
-        this.newBuilder().addHeader(AUTHORIZATION, localStorage.accessToken).build()
+        this.newBuilder().addHeader(AUTHORIZATION, BEARER + localStorage.accessToken).build()
 
     private fun handleTokenExpiration(chain: Interceptor.Chain, originalRequest: Request, requestAccessToken: String): Response =
         runBlocking {

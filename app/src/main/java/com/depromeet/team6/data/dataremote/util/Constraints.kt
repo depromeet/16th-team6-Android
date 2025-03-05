@@ -6,8 +6,12 @@ object Dummy {
 
 object ApiConstraints {
     const val API = "api"
+    const val AUTH = "auth"
+    const val CHECK = "check"
+    const val LOGIN = "login"
+    const val LOGOUT = "logout"
+    const val REISSUE = "reissue"
+
     const val VERSION = "v1"
     const val USERS = "users"
-    const val REISSUE = "reissue"
-    const val LOGIN = "login"
 }
