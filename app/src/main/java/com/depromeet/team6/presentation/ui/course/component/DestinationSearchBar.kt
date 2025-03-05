@@ -1,5 +1,6 @@
 package com.depromeet.team6.presentation.ui.course.component
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -7,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -16,9 +16,9 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.depromeet.team6.R
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
+import com.depromeet.team6.ui.theme.defaultTeam6Typography
 
 @Composable
 fun DestinationSearchBar(
@@ -33,32 +33,28 @@ fun DestinationSearchBar(
                 color = defaultTeam6Colors.greyElevatedCard,
                 shape = RoundedCornerShape(12.dp)
             )
-            .padding(vertical = 12.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
+            .padding(horizontal = 16.dp, vertical = 12.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         // TODO : typography 디자인 시스템 적용
         Text(
             text = startingPoint,
-            fontSize = 16.sp,
-            color = defaultTeam6Colors.greySecondaryLabel,
-            modifier = Modifier
-                .padding(start = 62.dp)
+            style = defaultTeam6Typography.bodyRegular15,
+            color = defaultTeam6Colors.white,
         )
 
-        Icon(
-            imageVector = ImageVector.vectorResource(id = R.drawable.ic_all_arrow_right_grey),
+        Image(
+            imageVector = ImageVector.vectorResource(id = R.drawable.ic_course_search_arrow_right_white),
             contentDescription = "arrow right",
-            tint = defaultTeam6Colors.greySecondaryLabel,
-            modifier = Modifier.size(21.dp)
+            modifier = Modifier.size(12.dp)
         )
 
         // TODO : typography 디자인 시스템 적용
         Text(
             text = destination,
-            fontSize = 16.sp,
-            color = defaultTeam6Colors.greySecondaryLabel,
-            modifier = Modifier.padding(end = 62.dp)
+            style = defaultTeam6Typography.bodyRegular15,
+            color = defaultTeam6Colors.white,
         )
     }
 }
