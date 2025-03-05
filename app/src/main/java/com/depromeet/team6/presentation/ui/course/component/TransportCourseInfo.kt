@@ -37,7 +37,7 @@ fun TransportCourseInfoExpandable(
     var expanded by remember { mutableStateOf(false) }
     Row(
         modifier = Modifier
-            .clip(RoundedCornerShape(8.dp))
+            .clip(if (expanded) RoundedCornerShape(12.dp) else RoundedCornerShape(8.dp))
             .background(defaultTeam6Colors.systemGrey5)
             .padding(horizontal = 10.dp, vertical = 8.dp)
             .fillMaxWidth()
