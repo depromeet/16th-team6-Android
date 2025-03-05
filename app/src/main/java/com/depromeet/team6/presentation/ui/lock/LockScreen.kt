@@ -143,29 +143,6 @@ fun LockScreen(onTimerFinish: () -> Unit) {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                Surface(
-                    shape = RoundedCornerShape(14.dp),
-                    color = defaultTeam6Colors.greyElevatedBackground
-                ) {
-                    Text(
-                        text = buildAnnotatedString {
-                            append("지금 출발하면 택시비 ")
-                            withStyle(
-                                style = SpanStyle(
-                                    color = defaultTeam6Colors.systemGreen
-                                )
-                            ) {
-                                append("34,000원")
-                            }
-                            append(" 세이브!")
-                        },
-                        color = defaultTeam6Colors.white,
-                        fontSize = 16.sp,
-                        modifier = Modifier.padding(13.dp, 11.dp),
-                        style = typography.bodyMedium13
-                    )
-                }
-
                 Button(
                     onClick = onTimerFinish,
                     modifier = Modifier
