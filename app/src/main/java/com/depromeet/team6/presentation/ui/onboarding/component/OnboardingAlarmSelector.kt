@@ -62,15 +62,15 @@ fun OnboardingAlarmSelector(
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
         AlarmTime.entries.forEach { alarmTime ->
-            val isSelected = alarmTime in selectedItems // ✅ 선택 여부 확인
             OnboardingAlarmSelectorItem(
                 text = alarmTime.string,
-                isSelected = isSelected, // ✅ 여기에 값 전달
+                isSelected = alarmTime in selectedItems,
                 onClick = { onItemClick(alarmTime) }
             )
         }
     }
 }
+
 @Preview
 @Composable
 private fun OnboardingAlarmSelectorPreview() {
