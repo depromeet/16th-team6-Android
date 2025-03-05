@@ -12,6 +12,7 @@ import androidx.annotation.StringRes
 import com.depromeet.team6.R
 import com.depromeet.team6.data.datalocal.builder.SimpleNotificationBuilder
 import com.depromeet.team6.data.datalocal.manager.LockServiceManager
+import com.depromeet.team6.presentation.ui.lock.LockScreenNavigator
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -21,9 +22,13 @@ class LockService : Service() {
     @Inject
     lateinit var lockServiceManager: LockServiceManager
 
+    @Inject
+    lateinit var lockScreenNavigator: LockScreenNavigator
+
     override fun onCreate() {
         super.onCreate()
         Log.d("LockService", "onCreate 호출됨")
+        LockReceiver.initialize(lockScreenNavigator)
     }
 
     override fun onBind(p0: Intent?): IBinder? {
