@@ -1,7 +1,9 @@
 package com.depromeet.team6.presentation.ui.main
 
+import android.content.ContentValues.TAG
 import android.os.Bundle
 import android.widget.Toast
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
@@ -24,6 +26,10 @@ import com.depromeet.team6.R
 import com.depromeet.team6.data.datalocal.manager.LockServiceManager
 import com.depromeet.team6.data.datalocal.permission.PermissionUtil
 import com.depromeet.team6.ui.theme.Team6Theme
+import com.depromeet.team6.ui.theme.Team6Theme.colors
+import com.depromeet.team6.ui.theme.Team6Theme.typography
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -46,11 +52,24 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    LockTestScreen(btnClick = { startLockService() })
-                    // HomeScreen()
+                    // LockTestScreen(btnClick = { startLockService() })
+                    HomeScreen()
                 }
             }
         }
+
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(
+            OnCompleteListener { task ->
+                if (!task.isSuccessful) {
+                    Log.d(TAG, "Fetching FCM registration token failed")
+                    return@OnCompleteListener
+                }
+
+                val token = task.result
+
+                Log.d("Fcm Token", token)
+            }
+        )
     }
 
     private fun startLockService() {
