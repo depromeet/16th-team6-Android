@@ -41,6 +41,10 @@ jobs:
       - name: Touch local properties
         run: touch local.properties
 
+      - name: Debug Base64 Decoding
+        run: |
+          echo "$FIREBASE_SECRET" | base64 --decode || echo "Base64 Decode Failed"
+
       # ✅ google-services.json 복원 (base64 디코딩)
       - name: Decode google-services.json
         env:
