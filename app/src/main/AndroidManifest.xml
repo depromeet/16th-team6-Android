@@ -3,11 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <!--  for lock  -->
-    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
@@ -33,15 +28,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".presentation.ui.lock.LockActivity"
-            android:exported="false"
-            android:theme="@style/Theme.Team6"
-            />
-        <service
-            android:name=".data.datalocal.service.LockService"
-            android:exported="false"
-            android:foregroundServiceType="specialUse"
-            android:permission="android.permission.FOREGROUND_SERVICE"/>
         <service
             android:name=".data.datalocal.service.FcmService"
             android:enabled="true"
