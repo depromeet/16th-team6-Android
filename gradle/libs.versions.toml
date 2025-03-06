@@ -1,5 +1,6 @@
 [versions]
-agp = "8.7.0"
+agp = "8.8.0"
+firebaseBom = "33.10.0"
 kotlin = "2.0.0"
 coreKtx = "1.15.0"
 junit = "4.13.2"
@@ -10,6 +11,7 @@ activityCompose = "1.10.0"
 composeBom = "2024.04.01"
 androidxComposeNavigation = "2.8.2"
 appcompat = "1.7.0"
+material = "1.11.0"
 
 # Third Party
 okhttp = "4.11.0"
@@ -22,10 +24,15 @@ daggerHilt = "2.52"
 hiltNavigationCompose = "1.2.0"
 playServicesAuth = "21.3.0"
 securityCrypto = "1.1.0-alpha06"
+firebaseMessagingKtx = "24.1.0"
+playServicesMaps = "19.1.0"
+playServicesLocation = "21.3.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-security-crypto = { module = "androidx.security:security-crypto", version.ref = "securityCrypto" }
+firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
+firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -40,6 +47,7 @@ androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-toolin
 androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 
 # Third Party
@@ -52,6 +60,9 @@ kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-
 hilt = { group = "com.google.dagger", name = "hilt-android", version.ref = "daggerHilt" }
 hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "daggerHilt" }
 hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
+firebase-messaging-ktx = { group = "com.google.firebase", name = "firebase-messaging-ktx", version.ref = "firebaseMessagingKtx" }
+play-services-maps = { group = "com.google.android.gms", name = "play-services-maps", version.ref = "playServicesMaps" }
+play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
 kakao-v2-user = { group = "com.kakao.sdk", name = "v2-user", version.ref = "kakao" }
 kakao-share = { group = "com.kakao.sdk", name = "v2-share", version.ref = "kakao" }
 kakao-talk = { group = "com.kakao.sdk", name = "v2-talk", version.ref = "kakao" }
