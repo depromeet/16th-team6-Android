@@ -6,18 +6,12 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import com.depromeet.team6.presentation.ui.login.LoginRoute
 import com.depromeet.team6.ui.theme.Team6Theme
-import com.depromeet.team6.ui.theme.Team6Theme.colors
-import com.depromeet.team6.ui.theme.Team6Theme.typography
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.AndroidEntryPoint
@@ -51,29 +45,5 @@ class MainActivity : ComponentActivity() {
                 Log.d("Fcm Token", token)
             }
         )
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Column {
-        Text(
-            text = "슬랙 알림 진짜 안가용가리?! ㅠㅠ",
-            modifier = modifier
-        )
-        Text(
-            text = "슬랙 알림 이제 와용가리 ~ + 컬러, 폰트 적용 테스트",
-            modifier = modifier,
-            color = colors.greyLink,
-            style = typography.bodySemiBold12
-        )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    Team6Theme {
-        Greeting("Android")
     }
 }
