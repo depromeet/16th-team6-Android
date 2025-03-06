@@ -58,7 +58,6 @@ fun OnboardingAlarmSelectorItem(
     }
 }
 
-
 @Composable
 fun OnboardingAlarmSelector(
     modifier: Modifier = Modifier,
