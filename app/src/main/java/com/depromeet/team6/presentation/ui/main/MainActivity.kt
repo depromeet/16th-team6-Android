@@ -10,11 +10,15 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.depromeet.team6.presentation.ui.home.HomeScreen
+import com.depromeet.team6.presentation.ui.course.CourseScreen
 import com.depromeet.team6.ui.theme.Team6Theme
 import com.depromeet.team6.ui.theme.Team6Theme.colors
 import com.depromeet.team6.ui.theme.Team6Theme.typography
@@ -29,8 +33,15 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             Team6Theme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    HomeScreen(modifier = Modifier.padding(innerPadding))
+                val snackbarHostState = remember { SnackbarHostState() }
+                val coroutineScope = rememberCoroutineScope()
+
+                Scaffold(
+                    modifier = Modifier.fillMaxSize(),
+                    snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
+                ) { innerPadding ->
+//                    HomeScreen(modifier = Modifier.padding(innerPadding))
+                    CourseScreen(modifier = Modifier.padding(innerPadding))
                 }
             }
         }
