@@ -147,7 +147,7 @@ fun OnboardingRoute(
                     },
                     onBackPressed = { viewModel.setEvent(OnboardingContract.OnboardingEvent.BackPressed) },
                     onAlarmTimeSelected = { alarmTime ->
-                        val timeValue = alarmTime.string.replace("1시간","60분").replace("분 전", "").toInt()
+                        val timeValue = alarmTime.minutes
                         val newSelection = if (timeValue in uiState.alertFrequencies) {
                             uiState.alertFrequencies - timeValue
                         } else {
@@ -175,8 +175,6 @@ fun OnboardingScreen(
     onBackPressed: () -> Unit = {},
     onAlarmTimeSelected: (AlarmTime) -> Unit = {}
 ) {
-    var selectedItems by remember { mutableStateOf(setOf<AlarmTime>()) }
-
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -221,7 +219,7 @@ fun OnboardingScreen(
             Spacer(modifier = Modifier.height(68.dp))
             OnboardingAlarmSelector(
                 selectedItems = uiState.alertFrequencies.mapNotNull { timeValue ->
-                    AlarmTime.entries.find { it.string.replace("분 전", "").replace("시간 전", "").toIntOrNull() == timeValue }
+                    AlarmTime.entries.find { it.minutes == timeValue }
                 }.toSet(),
                 onItemClick = onAlarmTimeSelected
             )

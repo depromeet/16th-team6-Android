@@ -18,13 +18,17 @@ import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.depromeet.team6.ui.theme.defaultTeam6Typography
 
-enum class AlarmTime(val string: String) {
-    ONE_MIN("1분 전"),
-    FIVE_MIN("5분 전"),
-    TEN_MIN("10분 전"),
-    FIFTEEN_MIN("15분 전"),
-    THIRTY_MIN("30분 전"),
-    ONE_HOUR("1시간 전")
+enum class AlarmTime(val minutes: Int) {
+    ONE_MIN(1),
+    FIVE_MIN(5),
+    TEN_MIN(10),
+    FIFTEEN_MIN(15),
+    THIRTY_MIN(30),
+    ONE_HOUR(60);
+
+    override fun toString(): String {
+        return if (minutes == 60) "1시간 전" else "${minutes}분 전"
+    }
 }
 
 @Composable
@@ -54,6 +58,7 @@ fun OnboardingAlarmSelectorItem(
     }
 }
 
+
 @Composable
 fun OnboardingAlarmSelector(
     modifier: Modifier = Modifier,
@@ -63,7 +68,7 @@ fun OnboardingAlarmSelector(
     Column(modifier = modifier.fillMaxWidth()) {
         AlarmTime.entries.forEach { alarmTime ->
             OnboardingAlarmSelectorItem(
-                text = alarmTime.string,
+                text = alarmTime.toString(),
                 isSelected = alarmTime in selectedItems,
                 onClick = { onItemClick(alarmTime) }
             )
