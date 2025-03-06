@@ -3,11 +3,14 @@ package com.depromeet.team6.presentation.ui.main
 import android.content.ContentValues.TAG
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -20,17 +23,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.depromeet.team6.presentation.ui.course.CourseScreen
 import com.depromeet.team6.ui.theme.Team6Theme
-import com.depromeet.team6.ui.theme.Team6Theme.colors
-import com.depromeet.team6.ui.theme.Team6Theme.typography
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    @Inject
+    lateinit var lockServiceManager: LockServiceManager
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+
+        if (PermissionUtil.alertPermissionCheck(this)) {
+            PermissionUtil.onObtainingPermissionOverlayWindow(this)
+        }
+
         setContent {
             Team6Theme {
                 val snackbarHostState = remember { SnackbarHostState() }
@@ -59,28 +69,26 @@ class MainActivity : ComponentActivity() {
             }
         )
     }
-}
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Column {
-        Text(
-            text = "슬랙 알림 진짜 안가용가리?! ㅠㅠ",
-            modifier = modifier
-        )
-        Text(
-            text = "슬랙 알림 이제 와용가리 ~ + 컬러, 폰트 적용 테스트",
-            modifier = modifier,
-            color = colors.greyLink,
-            style = typography.bodySemiBold12
-        )
+    private fun startLockService() {
+        lockServiceManager.start()
+        Toast.makeText(this, getString(R.string.lock_service_start_text), Toast.LENGTH_SHORT).show()
     }
 }
 
-@Preview(showBackground = true)
 @Composable
-fun GreetingPreview() {
-    Team6Theme {
-        Greeting("Android")
+fun LockTestScreen(btnClick: () -> Unit) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(text = stringResource(id = R.string.app_name), fontSize = 24.sp)
+        Spacer(modifier = Modifier.height(16.dp))
+        Button(onClick = { btnClick() }) {
+            Text(text = stringResource(id = R.string.lock_service_start_text))
+        }
     }
 }
