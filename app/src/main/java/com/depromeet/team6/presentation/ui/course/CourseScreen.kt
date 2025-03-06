@@ -1,12 +1,17 @@
 package com.depromeet.team6.presentation.ui.course
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.depromeet.team6.R
 import com.depromeet.team6.presentation.model.course.LastTransportInfo
 import com.depromeet.team6.presentation.model.course.LegInfo
 import com.depromeet.team6.presentation.model.course.TransportType
@@ -21,6 +26,19 @@ fun CourseScreen(
     modifier: Modifier = Modifier,
     courseData: List<LastTransportInfo> = emptyList()
 ) {
+    val context = LocalContext.current
+    val viewModel = hiltViewModel<CourseViewModel>()
+    // SideEffect 감지 및 Toast 띄우기
+    LaunchedEffect(Unit) {
+        viewModel.sideEffect.collect { sideEffect ->
+            when (sideEffect) {
+                is CourseContract.CourseSideEffect.ShowNotificationToast -> {
+                    Toast.makeText(context, context.getString(R.string.course_set_notification_snackbar), Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
     Column(
         modifier = modifier
             .background(defaultTeam6Colors.greyWashBackground)
