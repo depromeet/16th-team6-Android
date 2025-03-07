@@ -8,9 +8,7 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.dagger.hilt)
     alias(libs.plugins.kotlin.kapt)
-
-    // FCM
-//    id("com.google.gms.google-services")
+    id("com.google.gms.google-services")
 }
 
 val properties = Properties().apply {
