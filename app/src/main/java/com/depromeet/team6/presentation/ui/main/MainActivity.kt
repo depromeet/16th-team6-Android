@@ -9,6 +9,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -29,6 +30,7 @@ import com.depromeet.team6.R
 import com.depromeet.team6.data.datalocal.manager.LockServiceManager
 import com.depromeet.team6.data.datalocal.permission.PermissionUtil
 import com.depromeet.team6.presentation.ui.course.CourseScreen
+import com.depromeet.team6.presentation.ui.login.LoginRoute
 import com.depromeet.team6.ui.theme.Team6Theme
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
@@ -50,6 +52,12 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             Team6Theme {
+                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                    LoginRoute(
+                        modifier = Modifier.padding(innerPadding),
+                        navigateToOnboarding = {},
+                        navigateToHome = {}
+                    )
                 val snackbarHostState = remember { SnackbarHostState() }
                 val coroutineScope = rememberCoroutineScope()
 

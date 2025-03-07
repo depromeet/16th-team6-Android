@@ -10,6 +10,7 @@ data class Team6Colors(
     val purple80: Color,
     val purpleGrey80: Color,
     val pink80: Color,
+
     // TODO : 디자인 시스템에 '임시' 부분 -> 디자이너님께 여쭤본 후 수정해야함
     val primaryRed: Color,
     val primaryGreen: Color,
@@ -44,6 +45,7 @@ data class Team6Colors(
     val greyButton: Color,
     val greyButtonOutline: Color,
     val greyButtonDisable: Color,
+    val kakaoLoginButton: Color,
 
     // Non-Semantic
     val systemGreen: Color,
@@ -94,6 +96,7 @@ val defaultTeam6Colors = Team6Colors(
     greyButton = Color(0xFF2C2C30),
     greyButtonOutline = Color(0xFF36363A),
     greyButtonDisable = Color(0x662C2C30),
+    kakaoLoginButton = Color(0xFFFAE100),
 
     // Non-Semantic
     systemGreen = Color(0xFF99ED7B),
