@@ -76,7 +76,6 @@ class MainActivity : ComponentActivity() {
             }
         )
     }
-
     private fun startLockService() {
         lockServiceManager.start()
         Toast.makeText(this, getString(R.string.lock_service_start_text), Toast.LENGTH_SHORT).show()
