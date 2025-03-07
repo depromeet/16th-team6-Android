@@ -12,8 +12,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -39,6 +42,8 @@ import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.presentation.util.permission.PermissionUtil
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 
 @Composable
 fun OnboardingRoute(
@@ -48,6 +53,9 @@ fun OnboardingRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
+
+    val fusedLocationClient = remember { LocationServices.getFusedLocationProviderClient(context) }
+    var userLocation by remember { mutableStateOf<Pair<Double, Double>>(37.5665 to 126.9780) } // 서울시 기본 위치
 
     val locationPermissionsLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestMultiplePermissions(),
@@ -67,6 +75,15 @@ fun OnboardingRoute(
             }
         }
     )
+
+    LaunchedEffect(Unit) {
+        if (PermissionUtil.hasLocationPermissions(context)) {
+            getUserLocation(fusedLocationClient) { lat, lon ->
+                userLocation = lat to lon
+                Log.d("User_Location", "Lat: $lat, Lon: $lon")
+            }
+        }
+    }
 
     SideEffect {
         when (uiState.onboardingType) {
@@ -111,8 +128,15 @@ fun OnboardingRoute(
                 padding = padding,
                 searchText = uiState.searchText,
                 onSearchTextChange = { newText ->
+                    viewModel.setState {
+                        copy(searchText = newText)
+                    }
                     viewModel.setEvent(
-                        OnboardingContract.OnboardingEvent.UpdateSearchText(newText)
+                        OnboardingContract.OnboardingEvent.UpdateSearchText(
+                            text = newText,
+                            lat = userLocation.first,
+                            lon = userLocation.second
+                        )
                     )
                 },
                 onCloseButtonClicked = {
@@ -239,4 +263,26 @@ fun OnboardingScreen(
 @Composable
 private fun OnboardingScreenPreview() {
     OnboardingScreen(padding = PaddingValues(0.dp), onNextButtonClicked = {})
+}
+
+/**
+ * 사용자 위치 가져오기
+ */
+private fun getUserLocation(
+    fusedLocationClient: FusedLocationProviderClient,
+    onLocationFetched: (Double, Double) -> Unit
+) {
+    try {
+        fusedLocationClient.lastLocation.addOnSuccessListener { location ->
+            if (location != null) {
+                onLocationFetched(location.latitude, location.longitude)
+            } else {
+                Log.d("User_Location", "Failed to get location")
+            }
+        }.addOnFailureListener {
+            Log.e("User_Location", "Error fetching location", it)
+        }
+    } catch (e: SecurityException) {
+        Log.e("User_Location", "Location permission not granted", e)
+    }
 }

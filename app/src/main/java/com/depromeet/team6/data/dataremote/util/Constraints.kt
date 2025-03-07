@@ -5,6 +5,7 @@ object Dummy {
 }
 
 object ApiConstraints {
+    // Auth
     const val API = "api"
     const val AUTH = "auth"
     const val CHECK = "check"
@@ -15,6 +16,10 @@ object ApiConstraints {
     const val MEMBERS = "members"
     const val ME = "me"
 
+    // Locations
+    const val LOCATIONS = "locations"
+
+    // Provider
     const val PROVIDER = "provider"
 
     const val VERSION = "v1"

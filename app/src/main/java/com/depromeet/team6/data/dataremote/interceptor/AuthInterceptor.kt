@@ -31,13 +31,18 @@ class AuthInterceptor @Inject constructor(
 
     override fun intercept(chain: Interceptor.Chain): Response {
         val originalRequest = chain.request()
-        val authRequest = if (localStorage.accessToken.isNotBlank()) originalRequest.newAuthBuilder() else originalRequest
+        val authRequest =
+            if (localStorage.accessToken.isNotBlank()) originalRequest.newAuthBuilder() else originalRequest
         var response = chain.proceed(authRequest)
 
         when (response.code) {
             CODE_TOKEN_EXPIRE -> {
                 response.close()
-                response = handleTokenExpiration(chain = chain, originalRequest = originalRequest, requestAccessToken = localStorage.accessToken)
+                response = handleTokenExpiration(
+                    chain = chain,
+                    originalRequest = originalRequest,
+                    requestAccessToken = localStorage.accessToken
+                )
             }
         }
 
@@ -45,29 +50,60 @@ class AuthInterceptor @Inject constructor(
     }
 
     private fun Request.newAuthBuilder() =
-        this.newBuilder().addHeader(AUTHORIZATION, localStorage.accessToken).build()
+        this.newBuilder().addHeader(AUTHORIZATION, BEARER + localStorage.accessToken).build()
 
-    private fun handleTokenExpiration(chain: Interceptor.Chain, originalRequest: Request, requestAccessToken: String): Response =
+    private fun handleTokenExpiration(
+        chain: Interceptor.Chain,
+        originalRequest: Request,
+        requestAccessToken: String
+    ): Response =
         runBlocking {
             mutex.withLock {
-                when (isTokenValid(requestAccessToken = requestAccessToken, currentAccessToken = localStorage.accessToken)) {
+                when (
+                    isTokenValid(
+                        requestAccessToken = requestAccessToken,
+                        currentAccessToken = localStorage.accessToken
+                    )
+                ) {
                     true -> chain.proceed(originalRequest.newAuthBuilder())
-                    false -> handleTokenRefresh(chain = chain, originalRequest = originalRequest, refreshToken = localStorage.refreshToken)
+                    false -> handleTokenRefresh(
+                        chain = chain,
+                        originalRequest = originalRequest,
+                        refreshToken = localStorage.refreshToken
+                    )
                 }
             }
         }
 
-    private fun isTokenValid(requestAccessToken: String, currentAccessToken: String): Boolean = requestAccessToken != currentAccessToken && currentAccessToken.isNotBlank()
+    private fun isTokenValid(requestAccessToken: String, currentAccessToken: String): Boolean =
+        requestAccessToken != currentAccessToken && currentAccessToken.isNotBlank()
 
-    private fun handleTokenRefresh(chain: Interceptor.Chain, originalRequest: Request, refreshToken: String): Response =
-        patchTokenRefresh(chain = chain, originalRequest = originalRequest, refreshToken = refreshToken).let { refreshTokenResponse ->
+    private fun handleTokenRefresh(
+        chain: Interceptor.Chain,
+        originalRequest: Request,
+        refreshToken: String
+    ): Response =
+        patchTokenRefresh(
+            chain = chain,
+            originalRequest = originalRequest,
+            refreshToken = refreshToken
+        ).let { refreshTokenResponse ->
             when (refreshTokenResponse.isSuccessful) {
-                true -> handleTokenRefreshSuccess(chain = chain, originalRequest = originalRequest, refreshTokenResponse = refreshTokenResponse)
+                true -> handleTokenRefreshSuccess(
+                    chain = chain,
+                    originalRequest = originalRequest,
+                    refreshTokenResponse = refreshTokenResponse
+                )
+
                 false -> handleTokenRefreshFailed(refreshTokenResponse = refreshTokenResponse)
             }
         }
 
-    private fun patchTokenRefresh(chain: Interceptor.Chain, originalRequest: Request, refreshToken: String): Response = chain.proceed(
+    private fun patchTokenRefresh(
+        chain: Interceptor.Chain,
+        originalRequest: Request,
+        refreshToken: String
+    ): Response = chain.proceed(
         originalRequest.newBuilder()
             .patch("".toRequestBody(null))
             .url("${BuildConfig.BASE_URL}$API/$AUTH/$REISSUE")
@@ -75,13 +111,18 @@ class AuthInterceptor @Inject constructor(
             .build()
     )
 
-    private fun handleTokenRefreshSuccess(chain: Interceptor.Chain, originalRequest: Request, refreshTokenResponse: Response): Response {
+    private fun handleTokenRefreshSuccess(
+        chain: Interceptor.Chain,
+        originalRequest: Request,
+        refreshTokenResponse: Response
+    ): Response {
         val responseRefreshToken = json.decodeFromString<ResponseAuthDto>(
-            refreshTokenResponse.body?.string() ?: throw IllegalStateException("\"refreshTokenResponse is null $refreshTokenResponse\"")
+            refreshTokenResponse.body?.string()
+                ?: throw IllegalStateException("\"refreshTokenResponse is null $refreshTokenResponse\"")
         )
 
         with(localStorage) {
-            accessToken = BEARER + responseRefreshToken.accessToken
+            accessToken = responseRefreshToken.accessToken
             refreshToken = responseRefreshToken.refreshToken
         }
 

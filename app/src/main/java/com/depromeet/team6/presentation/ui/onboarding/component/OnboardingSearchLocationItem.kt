@@ -15,7 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.depromeet.team6.domain.model.OnboardingSearchLocation
+import com.depromeet.team6.domain.model.Location
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.presentation.util.modifier.roundedBackgroundWithPadding
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
@@ -23,7 +23,7 @@ import com.depromeet.team6.ui.theme.defaultTeam6Typography
 
 @Composable
 fun OnboardingSearchLocationItem(
-    onboardingSearchLocation: OnboardingSearchLocation,
+    onboardingSearchLocation: Location,
     modifier: Modifier = Modifier,
     selectButtonClicked: () -> Unit = {}
 ) {
@@ -43,7 +43,7 @@ fun OnboardingSearchLocationItem(
             Spacer(modifier = Modifier.height(4.dp))
 
             Text(
-                text = onboardingSearchLocation.distance + "" + onboardingSearchLocation.roadAddress,
+                text = onboardingSearchLocation.radius + " ' " + onboardingSearchLocation.address,
                 style = defaultTeam6Typography.bodyRegular14,
                 color = defaultTeam6Colors.greySecondaryLabel,
                 overflow = TextOverflow.Ellipsis
@@ -71,10 +71,13 @@ fun OnboardingSearchLocationItem(
 @Composable
 private fun OnboardingSearchLocationItemPreview() {
     OnboardingSearchLocationItem(
-        onboardingSearchLocation = OnboardingSearchLocation(
+        onboardingSearchLocation = Location(
             name = "60계 치킨 강남정",
-            distance = "1.9km",
-            roadAddress = "강남구 테헤란로 4길 6"
+            lat = 0.0,
+            lon = 0.0,
+            radius = "1.9km",
+            address = "강남구 테헤란로 4길 6",
+            businessCategory = ""
         )
     )
 }

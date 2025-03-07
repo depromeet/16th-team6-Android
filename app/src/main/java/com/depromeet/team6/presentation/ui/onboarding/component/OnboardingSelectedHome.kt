@@ -19,13 +19,13 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.depromeet.team6.R
-import com.depromeet.team6.domain.model.OnboardingSearchLocation
+import com.depromeet.team6.domain.model.Location
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.depromeet.team6.ui.theme.defaultTeam6Typography
 
 @Composable
 fun OnboardingSelectedHome(
-    onboardingSearchLocation: OnboardingSearchLocation,
+    onboardingSearchLocation: Location,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -49,7 +49,7 @@ fun OnboardingSelectedHome(
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = onboardingSearchLocation.roadAddress,
+                text = onboardingSearchLocation.address,
                 style = defaultTeam6Typography.bodySemiBold13,
                 color = defaultTeam6Colors.greyTertiaryLabel
             )
@@ -61,10 +61,13 @@ fun OnboardingSelectedHome(
 @Composable
 private fun OnboardingSelectedHomePReview() {
     OnboardingSelectedHome(
-        onboardingSearchLocation = OnboardingSearchLocation(
+        onboardingSearchLocation = Location(
             name = "해지개",
-            distance = "700m",
-            roadAddress = "제주 제주시 애월읍 애월북서길 52"
+            lat = 0.0,
+            lon = 0.0,
+            radius = "700m",
+            address = "제주 제주시 애월읍 애월북서길 52",
+            businessCategory = ""
         )
     )
 }

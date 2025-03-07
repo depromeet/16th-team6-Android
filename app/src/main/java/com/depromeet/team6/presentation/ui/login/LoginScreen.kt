@@ -112,9 +112,8 @@ fun LoginRoute(
             )
         }
 
-        LoadState.Success -> {
-            navigateToHome()
-        }
+        LoadState.Success -> navigateToHome()
+
         else -> Unit
     }
 }

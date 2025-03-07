@@ -14,7 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.depromeet.team6.domain.model.OnboardingSearchLocation
+import com.depromeet.team6.domain.model.Location
 import com.depromeet.team6.presentation.ui.onboarding.OnboardingContract
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 
@@ -26,7 +26,7 @@ fun OnboardingSearchPopup(
     searchText: String = "",
     onSearchTextChange: (String) -> Unit = {},
     onCloseButtonClicked: () -> Unit = {},
-    selectButtonClicked: (OnboardingSearchLocation) -> Unit = {}
+    selectButtonClicked: (Location) -> Unit = {}
 ) {
     Column(
         modifier = modifier
@@ -41,7 +41,7 @@ fun OnboardingSearchPopup(
         )
         Spacer(modifier = Modifier.height(10.dp))
 
-        if (uiState.searchLocations.size > 0) {
+        if (uiState.searchLocations.isNotEmpty()) {
             Spacer(
                 modifier = Modifier
                     .fillMaxWidth()
