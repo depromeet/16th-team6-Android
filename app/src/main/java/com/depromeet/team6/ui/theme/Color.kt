@@ -10,6 +10,10 @@ data class Team6Colors(
     val purple80: Color,
     val purpleGrey80: Color,
     val pink80: Color,
+    // TODO : 디자인 시스템에 '임시' 부분 -> 디자이너님께 여쭤본 후 수정해야함
+    val primaryRed: Color,
+    val primaryGreen: Color,
+    val primaryMain: Color,
 
     val purple40: Color,
     val purpleGrey40: Color,
@@ -25,6 +29,7 @@ data class Team6Colors(
     val greyTertiaryLabel: Color,
     val greyQuaternaryLabel: Color,
     val greyLink: Color,
+    val greyDisabled: Color,
 
     // Background
     val greyElevatedBackground: Color,
@@ -39,10 +44,17 @@ data class Team6Colors(
     val greyButton: Color,
     val greyButtonOutline: Color,
     val kakaoLoginButton: Color,
+    val greyButtonDisable: Color,
 
     // Non-Semantic
     val systemGreen: Color,
-    val systemRed: Color
+    val systemRed: Color,
+    val systemGrey1: Color,
+    val systemGrey2: Color,
+    val systemGrey3: Color,
+    val systemGrey4: Color,
+    val systemGrey5: Color,
+    val systemGrey6: Color
 )
 
 val defaultTeam6Colors = Team6Colors(
@@ -50,6 +62,9 @@ val defaultTeam6Colors = Team6Colors(
     purple80 = Color(0xFFD0BCFF),
     purpleGrey80 = Color(0xFFCCC2DC),
     pink80 = Color(0xFFEFB8C8),
+    primaryRed = Color(0xFFFF5D5D),
+    primaryGreen = Color(0xFF13D015),
+    primaryMain = Color(0xFF99F977),
 
     purple40 = Color(0xFF6650a4),
     purpleGrey40 = Color(0xFF625b71),
@@ -65,6 +80,7 @@ val defaultTeam6Colors = Team6Colors(
     greyTertiaryLabel = Color(0xFF666970),
     greyQuaternaryLabel = Color(0xFF393C42),
     greyLink = Color(0xFF4C4D53),
+    greyDisabled = Color(0xFF393C42),
 
     // Background
     greyElevatedBackground = Color(0xFF1C1C1D),
@@ -76,13 +92,20 @@ val defaultTeam6Colors = Team6Colors(
     greyElevatedCard = Color(0xFF2C2C2E),
 
     // Button
-    greyButton = Color(0xFF29292C),
+    greyButton = Color(0xFF2C2C30),
     greyButtonOutline = Color(0xFF36363A),
+    greyButtonDisable = Color(0x662C2C30),
     kakaoLoginButton = Color(0xFFFAE100),
 
     // Non-Semantic
     systemGreen = Color(0xFF99ED7B),
-    systemRed = Color(0xFFFF5D5D)
+    systemRed = Color(0xFFFF5D5D),
+    systemGrey1 = Color(0xFF8E8E93),
+    systemGrey2 = Color(0xFF636366),
+    systemGrey3 = Color(0xFF424249),
+    systemGrey4 = Color(0xFF38383E),
+    systemGrey5 = Color(0xFF27272B),
+    systemGrey6 = Color(0xFF1F1F23)
 )
 
 val LocalTeam6Colors = staticCompositionLocalOf { defaultTeam6Colors }
