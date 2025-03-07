@@ -53,7 +53,7 @@ fun MypageListItem(
 
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.ic_all_arrow_right_grey),
-                contentDescription = stringResource(R.string.home_icon_search_text),
+                contentDescription = stringResource(R.string.mypage_icon_arrow_text),
                 tint = colors.greyTertiaryLabel,
                 modifier = modifier
             )
