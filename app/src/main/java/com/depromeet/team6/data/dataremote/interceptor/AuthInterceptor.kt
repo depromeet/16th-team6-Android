@@ -4,11 +4,10 @@ import android.app.Application
 import android.content.Intent
 import com.depromeet.team6.BuildConfig
 import com.depromeet.team6.data.datalocal.datasource.UserInfoLocalDataSource
-import com.depromeet.team6.data.dataremote.model.response.ResponseRefreshTokenDto
+import com.depromeet.team6.data.dataremote.model.response.ResponseAuthDto
 import com.depromeet.team6.data.dataremote.util.ApiConstraints.API
+import com.depromeet.team6.data.dataremote.util.ApiConstraints.AUTH
 import com.depromeet.team6.data.dataremote.util.ApiConstraints.REISSUE
-import com.depromeet.team6.data.dataremote.util.ApiConstraints.USERS
-import com.depromeet.team6.data.dataremote.util.ApiConstraints.VERSION
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -71,13 +70,13 @@ class AuthInterceptor @Inject constructor(
     private fun patchTokenRefresh(chain: Interceptor.Chain, originalRequest: Request, refreshToken: String): Response = chain.proceed(
         originalRequest.newBuilder()
             .patch("".toRequestBody(null))
-            .url("${BuildConfig.BASE_URL}$API/$VERSION/$USERS/$REISSUE")
+            .url("${BuildConfig.BASE_URL}$API/$AUTH/$REISSUE")
             .addHeader(AUTHORIZATION, refreshToken)
             .build()
     )
 
     private fun handleTokenRefreshSuccess(chain: Interceptor.Chain, originalRequest: Request, refreshTokenResponse: Response): Response {
-        val responseRefreshToken = json.decodeFromString<ResponseRefreshTokenDto>(
+        val responseRefreshToken = json.decodeFromString<ResponseAuthDto>(
             refreshTokenResponse.body?.string() ?: throw IllegalStateException("\"refreshTokenResponse is null $refreshTokenResponse\"")
         )
 
