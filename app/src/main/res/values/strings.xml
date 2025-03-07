@@ -36,4 +36,6 @@
     <string name="mypage_alarm_title_text">푸시 알림 빈도 설정</string>
     <string name="mypage_policy_text">약관</string>
     <string name="mypage_version_title_text">현재 버전 1.0.0</string>
+    <string name="mypage_account_logout_text">로그아웃</string>
+    <string name="mypage_account_signout_text">계정 탈퇴</string>
 </resources>
