@@ -23,11 +23,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.depromeet.team6.R
 import com.depromeet.team6.presentation.model.course.LastTransportInfo
 import com.depromeet.team6.presentation.model.course.LegInfo
 import com.depromeet.team6.presentation.model.course.TransportType
 import com.depromeet.team6.presentation.model.course.WayPoint
+import com.depromeet.team6.presentation.ui.course.CourseContract
+import com.depromeet.team6.presentation.ui.course.CourseViewModel
+import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.depromeet.team6.ui.theme.defaultTeam6Typography
 
@@ -129,14 +133,18 @@ fun LastTransportInfoItem(
 
 @Composable
 fun SetNotificationButton(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: CourseViewModel = hiltViewModel()
 ) {
     Row(
         modifier = Modifier
             .clip(RoundedCornerShape(8.dp))
             .background(color = Color(0x1F8AF265))
             .padding(vertical = 13.dp, horizontal = 28.dp)
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .noRippleClickable {
+                viewModel.setEvent(CourseContract.CourseEvent.SetNotification)
+            },
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
