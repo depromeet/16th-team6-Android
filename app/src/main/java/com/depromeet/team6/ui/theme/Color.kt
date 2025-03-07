@@ -48,6 +48,7 @@ data class Team6Colors(
     // Non-Semantic
     val systemGreen: Color,
     val systemRed: Color,
+    val systemGrey: Color,
     val systemGrey1: Color,
     val systemGrey2: Color,
     val systemGrey3: Color,
@@ -98,6 +99,7 @@ val defaultTeam6Colors = Team6Colors(
     // Non-Semantic
     systemGreen = Color(0xFF99ED7B),
     systemRed = Color(0xFFFF5D5D),
+    systemGrey = Color(0xFF72728A),
     systemGrey1 = Color(0xFF8E8E93),
     systemGrey2 = Color(0xFF636366),
     systemGrey3 = Color(0xFF424249),
