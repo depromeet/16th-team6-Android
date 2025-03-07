@@ -55,7 +55,7 @@ class LoginViewModel @Inject constructor(
     fun getCheck() {
         viewModelScope.launch {
             setEvent(LoginContract.LoginEvent.GetCheckUserRegistered(isUserRegisteredState = LoadState.Loading))
-            getCheckUseCase(authorization = "Bearer " + userInfoRepositoryImpl.getAccessToken(), provider = KAKAO).onSuccess { isUserRegisteredState ->
+            getCheckUseCase(authorization = userInfoRepositoryImpl.getAccessToken(), provider = KAKAO).onSuccess { isUserRegisteredState ->
                 if (isUserRegisteredState) {
                     setEvent(LoginContract.LoginEvent.GetCheckUserRegistered(isUserRegisteredState = LoadState.Success))
                 } else {
