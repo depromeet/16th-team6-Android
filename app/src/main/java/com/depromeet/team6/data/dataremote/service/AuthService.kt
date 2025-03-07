@@ -1,9 +1,9 @@
 package com.depromeet.team6.data.dataremote.service
 
-import com.depromeet.team6.data.dataremote.model.request.RequestSignUpDto
-import com.depromeet.team6.data.dataremote.model.response.ApiResponse
-import com.depromeet.team6.data.dataremote.model.response.ResponseAuthDto
-import com.depromeet.team6.data.dataremote.model.response.ResponseCheckDto
+import com.depromeet.team6.data.dataremote.model.request.signup.RequestSignUpDto
+import com.depromeet.team6.data.dataremote.model.response.base.ApiResponse
+import com.depromeet.team6.data.dataremote.model.response.user.ResponseAuthDto
+import com.depromeet.team6.data.dataremote.model.response.user.ResponseCheckDto
 import com.depromeet.team6.data.dataremote.util.ApiConstraints.API
 import com.depromeet.team6.data.dataremote.util.ApiConstraints.AUTH
 import com.depromeet.team6.data.dataremote.util.ApiConstraints.CHECK

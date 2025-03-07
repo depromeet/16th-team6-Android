@@ -1,6 +1,6 @@
 package com.depromeet.team6.data.dataremote.service
 
-import com.depromeet.team6.data.dataremote.model.response.DummyResponseDto
+import com.depromeet.team6.data.dataremote.model.response.dummy.DummyResponseDto
 import retrofit2.http.POST
 
 interface DummyService {

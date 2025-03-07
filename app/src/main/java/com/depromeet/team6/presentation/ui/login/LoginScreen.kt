@@ -2,13 +2,16 @@ package com.depromeet.team6.presentation.ui.login
 
 import android.content.Context
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,6 +34,7 @@ import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.presentation.util.modifier.roundedBackgroundWithPadding
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
+import com.depromeet.team6.ui.theme.defaultTeam6Typography
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.user.UserApiClient
 
@@ -105,6 +109,7 @@ fun LoginRoute(
                 modifier = modifier
             )
         }
+
         LoadState.Success -> navigateToHome()
         else -> Unit
     }
@@ -128,10 +133,11 @@ fun LoginScreen(
         Icon(
             imageVector = ImageVector.vectorResource(R.drawable.ic_login_logo),
             contentDescription = null,
-            tint = Color.Unspecified
+            tint = Color.Unspecified,
+            modifier = Modifier.padding(start = 34.dp)
         )
         Spacer(modifier = Modifier.weight(1f))
-        Column(
+        Row(
             modifier = Modifier
                 .padding(horizontal = 20.dp)
                 .fillMaxWidth()
@@ -141,9 +147,19 @@ fun LoginScreen(
 
                 )
                 .noRippleClickable { onSignInClicked() },
-            horizontalAlignment = Alignment.CenterHorizontally
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
         ) {
-            Text(text = "카카오톡 로그인", modifier = Modifier.padding(vertical = 14.dp))
+            Icon(
+                imageVector = ImageVector.vectorResource(R.drawable.ic_login_kakao),
+                contentDescription = null,
+                modifier = Modifier.padding(vertical = 16.dp)
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = "카카오 계정으로 시작하기",
+                style = defaultTeam6Typography.heading6Bold15
+            )
         }
         Spacer(Modifier.height(20.dp))
     }
