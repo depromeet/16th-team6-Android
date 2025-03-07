@@ -7,6 +7,7 @@ import androidx.navigation.compose.rememberNavController
 import com.depromeet.team6.presentation.ui.home.navigation.HomeRoute
 import com.depromeet.team6.presentation.ui.home.navigation.navigationHome
 import com.depromeet.team6.presentation.ui.login.navigation.LoginRoute
+import com.depromeet.team6.presentation.ui.login.navigation.navigationLogin
 import com.depromeet.team6.presentation.ui.onboarding.navigation.navigationOnboarding
 
 class MainNavigator(
@@ -22,6 +23,11 @@ class MainNavigator(
     fun navigateToHome() {
         clearBackStackTo(HomeRoute.ROUTE)
         navHostController.navigationHome()
+    }
+
+    fun navigateToLogin() {
+        clearBackStackTo(LoginRoute.ROUTE)
+        navHostController.navigationLogin()
     }
 
     private fun clearBackStackTo(destination: String) {

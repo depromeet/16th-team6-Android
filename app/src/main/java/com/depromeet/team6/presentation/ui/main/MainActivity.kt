@@ -22,17 +22,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.core.view.WindowCompat
-import com.depromeet.team6.presentation.ui.main.navigation.MainNavHost
-import com.depromeet.team6.presentation.ui.main.navigation.MainNavigator
-import com.depromeet.team6.presentation.ui.main.navigation.rememberMainNavigator
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.view.WindowCompat
 import com.depromeet.team6.R
 import com.depromeet.team6.data.datalocal.manager.LockServiceManager
 import com.depromeet.team6.data.datalocal.permission.PermissionUtil
-import com.depromeet.team6.presentation.ui.login.LoginRoute
+import com.depromeet.team6.presentation.ui.main.navigation.MainNavHost
+import com.depromeet.team6.presentation.ui.main.navigation.MainNavigator
+import com.depromeet.team6.presentation.ui.main.navigation.rememberMainNavigator
 import com.depromeet.team6.ui.theme.Team6Theme
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
@@ -61,10 +60,9 @@ class MainActivity : ComponentActivity() {
                 val coroutineScope = rememberCoroutineScope()
 
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    LoginRoute(
-                        modifier = Modifier.padding(innerPadding),
-                        navigateToOnboarding = {},
-                        navigateToHome = {}
+                    MainNavHost(
+                        navigator = navigator,
+                        padding = innerPadding
                     )
                 }
             }
@@ -103,17 +101,6 @@ fun LockTestScreen(btnClick: () -> Unit) {
         Spacer(modifier = Modifier.height(16.dp))
         Button(onClick = { btnClick() }) {
             Text(text = stringResource(id = R.string.lock_service_start_text))
-        }
-                Scaffold(
-                    modifier = Modifier.fillMaxSize(),
-                    content = { padding ->
-                        MainNavHost(
-                            navigator = navigator,
-                            padding = padding
-                        )
-                    }
-                )
-            }
         }
     }
 }

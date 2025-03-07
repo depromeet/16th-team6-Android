@@ -90,7 +90,9 @@ fun LoginRoute(
 
     LaunchedEffect(uiState.isUserRegisteredState) {
         when (uiState.isUserRegisteredState) {
-            LoadState.Success -> viewModel.getLogin()
+            LoadState.Success -> {
+                viewModel.getLogin()
+            }
             LoadState.Error -> {
                 navigateToOnboarding()
             }
@@ -110,7 +112,9 @@ fun LoginRoute(
             )
         }
 
-        LoadState.Success -> navigateToHome()
+        LoadState.Success -> {
+            navigateToHome()
+        }
         else -> Unit
     }
 }

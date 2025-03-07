@@ -21,4 +21,7 @@ class AuthRemoteDataSource @Inject constructor(
 
     suspend fun getLogout(): Result<Unit> =
         authService.getLogout().toResult()
+
+    suspend fun deleteWithDraw(): Result<Unit> =
+        authService.deleteWithDraw().toResult()
 }

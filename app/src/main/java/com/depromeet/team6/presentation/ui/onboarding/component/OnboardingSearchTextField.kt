@@ -51,7 +51,7 @@ fun OnboardingSearchTextField(
             modifier = modifier
                 .weight(1f)
                 .roundedBackgroundWithPadding(
-                    backgroundColor = defaultTeam6Colors.systemGray6,
+                    backgroundColor = defaultTeam6Colors.systemGrey6,
                     cornerRadius = 8.dp
                 )
                 .padding(horizontal = 12.dp),

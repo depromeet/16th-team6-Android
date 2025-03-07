@@ -52,7 +52,7 @@ fun OnboardingAlarmSelectorItem(
         Spacer(modifier = Modifier.weight(1f))
         Icon(
             imageVector = ImageVector.vectorResource(R.drawable.ic_onboarding_select_alarm),
-            tint = if (isSelected) defaultTeam6Colors.main else defaultTeam6Colors.disabledLabel,
+            tint = if (isSelected) defaultTeam6Colors.main else defaultTeam6Colors.greyDisabled,
             contentDescription = null
         )
     }

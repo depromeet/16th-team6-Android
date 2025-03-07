@@ -4,7 +4,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import com.depromeet.team6.presentation.ui.home.HomeScreen
+import com.depromeet.team6.presentation.ui.home.HomeRoute
 
 fun NavController.navigationHome() {
     navigate(
@@ -16,10 +16,15 @@ fun NavController.navigationHome() {
 }
 
 fun NavGraphBuilder.homeNavGraph(
-    padding: PaddingValues
+    padding: PaddingValues,
+    navigateToLogin: () -> Unit
+
 ) {
     composable(route = HomeRoute.ROUTE) {
-        HomeScreen(padding = padding)
+        HomeRoute(
+            padding = padding,
+            navigateToLogin = navigateToLogin
+        )
     }
 }
 

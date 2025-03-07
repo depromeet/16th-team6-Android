@@ -13,10 +13,12 @@ class HomeContract {
     ) : UiState
 
     sealed interface HomeSideEffect : UiSideEffect {
-        data object DummySideEffect : HomeSideEffect
+        data object NavigateToLogin : HomeSideEffect
     }
 
     sealed class HomeEvent : UiEvent {
         data class DummyEvent(val loadState: LoadState) : HomeEvent()
+        data class LogoutClicked(val loadState: LoadState) : HomeEvent()
+        data class WithDrawClicked(val loadState: LoadState) : HomeEvent()
     }
 }

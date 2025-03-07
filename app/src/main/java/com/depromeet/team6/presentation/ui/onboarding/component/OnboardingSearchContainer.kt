@@ -35,7 +35,7 @@ fun OnboardingSearchContainer(
             modifier = Modifier
                 .fillMaxWidth()
                 .roundedBackgroundWithPadding(
-                    backgroundColor = defaultTeam6Colors.systemGray6,
+                    backgroundColor = defaultTeam6Colors.systemGrey6,
                     cornerRadius = 8.dp
                 )
                 .padding(horizontal = 16.dp, vertical = 12.dp)

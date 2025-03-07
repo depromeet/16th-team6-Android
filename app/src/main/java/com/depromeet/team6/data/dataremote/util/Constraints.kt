@@ -11,6 +11,9 @@ object ApiConstraints {
     const val LOGIN = "login"
     const val LOGOUT = "logout"
     const val REISSUE = "reissue"
+    const val SIGNUP = "sign-up"
+    const val MEMBERS = "members"
+    const val ME = "me"
 
     const val PROVIDER = "provider"
 
