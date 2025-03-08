@@ -17,6 +17,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -55,7 +56,7 @@ fun TMapViewCompose(
         }
     }
 
-    // 현재 위치 변경될 때만 마커 갱신
+    // 현재 위치 변경될 때만 현위치 마커 갱신
     LaunchedEffect(currentLocation, isMapReady) {
         if (isMapReady) {
             val tMapPoint = TMapPoint(currentLocation.latitude, currentLocation.longitude)
@@ -97,6 +98,7 @@ fun TMapViewCompose(
             }
         )
 
+        // 출발 마커
         Image(
             imageVector = ImageVector.vectorResource(id = R.drawable.ic_home_start_marker),
             contentDescription = "Start Marker",
@@ -105,6 +107,7 @@ fun TMapViewCompose(
                 .padding(bottom = 105.dp)
         )
 
+        // 현위치 버튼
         Image(
             imageVector = ImageVector.vectorResource(id = R.drawable.ic_all_current_location),
             contentDescription = stringResource(R.string.home_current_location_btn),
@@ -117,10 +120,11 @@ fun TMapViewCompose(
                         Modifier.padding(bottom = 240.dp, end = 16.dp)
                     }
                 )
-                .clickable {
+                .clickable(enabled = isMapReady) {
                     val tMapPoint = TMapPoint(currentLocation.latitude, currentLocation.longitude)
                     tMapView.setCenterPoint(tMapPoint.latitude, tMapPoint.longitude)
                 }
+                .graphicsLayer { alpha = if (isMapReady) 1f else 0.5f } // 비활성화 시 투명도 조정
         )
     }
 
