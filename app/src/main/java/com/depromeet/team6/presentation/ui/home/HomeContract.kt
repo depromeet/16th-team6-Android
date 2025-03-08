@@ -1,6 +1,5 @@
 package com.depromeet.team6.presentation.ui.home
 
-import com.depromeet.team6.domain.model.DummyData
 import com.depromeet.team6.presentation.util.base.UiEvent
 import com.depromeet.team6.presentation.util.base.UiSideEffect
 import com.depromeet.team6.presentation.util.base.UiState
