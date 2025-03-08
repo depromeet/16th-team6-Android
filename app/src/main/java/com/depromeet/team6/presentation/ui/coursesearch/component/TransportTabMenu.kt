@@ -22,7 +22,8 @@ import kotlinx.coroutines.launch
 fun TransportTabMenu(
     availableCourses: List<LastTransportInfo>,
     modifier: Modifier = Modifier,
-    onRegisterAlarmBtnClick: () -> Unit = {}
+    onRegisterAlarmBtnClick: () -> Unit = {},
+    onItemClick: () -> Unit = {}
 ) {
     val context = LocalContext.current
     val tabItems = context.resources.getStringArray(R.array.course_search_tab_items).toList()
@@ -52,7 +53,10 @@ fun TransportTabMenu(
         HorizontalPager(state = pagerState) { page ->
             // TODO : 버스/지하철 정렬 기능 추가해야함
             LastTransportInfoList(
-                listData = availableCourses
+                listData = availableCourses,
+                onItemClick = {
+                    onItemClick()
+                }
             )
         }
     }

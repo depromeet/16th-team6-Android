@@ -48,10 +48,9 @@ fun ItineraryRoute(
     }
 
     when (uiState.courseDataLoadState) {
-        LoadState.Idle -> ItineraryScreen(
-            uiState = uiState,
-            modifier = Modifier
-                .padding(padding)
+        LoadState.Idle -> Unit
+        LoadState.Success -> ItineraryScreen(
+            uiState = uiState
         )
         else -> Unit
     }

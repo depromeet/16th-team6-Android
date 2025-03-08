@@ -16,11 +16,13 @@ fun NavController.navigateCourseSearch() {
 }
 
 fun NavGraphBuilder.courseSearchNavGraph(
-    padding: PaddingValues
+    padding: PaddingValues,
+    navigateToItinerary: () -> Unit
 ) {
     composable(route = CourseSearchRoute.ROUTE) {
         CourseSearchRoute(
-            padding = padding
+            padding = padding,
+            navigateToItinerary = navigateToItinerary
         )
     }
 }

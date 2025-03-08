@@ -4,9 +4,9 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import com.depromeet.team6.presentation.ui.coursesearch.CourseSearchRoute
+import com.depromeet.team6.presentation.ui.itinerary.ItineraryRoute
 
-fun NavController.navigateItinerary() {
+fun NavController.navigateToItinerary() {
     navigate(
         route = ItineraryRoute.ROUTE
     ) {
@@ -19,7 +19,7 @@ fun NavGraphBuilder.itineraryNavGraph(
     padding: PaddingValues
 ) {
     composable(route = ItineraryRoute.ROUTE) {
-        CourseSearchRoute(
+        ItineraryRoute(
             padding = padding
         )
     }

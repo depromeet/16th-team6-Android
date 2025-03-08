@@ -9,6 +9,7 @@ import com.depromeet.team6.presentation.ui.coursesearch.navigation.navigateCours
 import com.depromeet.team6.presentation.ui.home.navigation.HomeRoute
 import com.depromeet.team6.presentation.ui.home.navigation.navigationHome
 import com.depromeet.team6.presentation.ui.itinerary.navigation.ItineraryRoute
+import com.depromeet.team6.presentation.ui.itinerary.navigation.navigateToItinerary
 import com.depromeet.team6.presentation.ui.login.navigation.LoginRoute
 import com.depromeet.team6.presentation.ui.login.navigation.navigationLogin
 import com.depromeet.team6.presentation.ui.onboarding.navigation.navigationOnboarding
@@ -40,7 +41,7 @@ class MainNavigator(
 
     fun navigateToItinerary() {
         clearBackStackTo(ItineraryRoute.ROUTE)
-        navHostController.navigateCourseSearch()
+        navHostController.navigateToItinerary()
     }
 
     private fun clearBackStackTo(destination: String) {

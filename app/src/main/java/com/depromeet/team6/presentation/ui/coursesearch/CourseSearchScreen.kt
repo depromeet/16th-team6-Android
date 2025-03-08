@@ -28,6 +28,7 @@ import com.depromeet.team6.ui.theme.defaultTeam6Colors
 @Composable
 fun CourseSearchRoute(
     padding: PaddingValues,
+    navigateToItinerary: () -> Unit,
     viewModel: CourseSearchViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -56,7 +57,8 @@ fun CourseSearchRoute(
         LoadState.Idle -> CourseSearchScreen(
             uiState = uiState,
             modifier = Modifier
-                .padding(padding)
+                .padding(padding),
+            navigateToItinerary = { navigateToItinerary() }
         )
         else -> Unit
     }
@@ -82,7 +84,10 @@ fun CourseSearchScreen(
         )
 
         TransportTabMenu(
-            availableCourses = uiState.courseData
+            availableCourses = uiState.courseData,
+            onItemClick = {
+                navigateToItinerary()
+            }
         )
     }
 }

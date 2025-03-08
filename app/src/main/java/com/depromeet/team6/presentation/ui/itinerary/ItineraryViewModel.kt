@@ -2,6 +2,7 @@ package com.depromeet.team6.presentation.ui.itinerary
 
 import com.depromeet.team6.domain.usecase.LoadMockSearchDataUseCase
 import com.depromeet.team6.presentation.util.base.BaseViewModel
+import com.depromeet.team6.presentation.util.view.LoadState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -14,7 +15,13 @@ class ItineraryViewModel @Inject constructor (
     override suspend fun handleEvent(event: ItineraryContract.ItineraryEvent) {
         when (event) {
             is ItineraryContract.ItineraryEvent.LoadLegsResult -> {
-                setState { copy(courseData = event.legsResult) }
+                setState {
+                    copy(
+                        courseData = event.legsResult,
+                        courseDataLoadState = LoadState.Success
+                    )
+                }
+
             }
             ItineraryContract.ItineraryEvent.RegisterAlarm -> TODO()
         }

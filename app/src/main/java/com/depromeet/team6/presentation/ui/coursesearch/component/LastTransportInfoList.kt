@@ -14,13 +14,15 @@ import androidx.compose.ui.unit.dp
 import com.depromeet.team6.presentation.model.course.LastTransportInfo
 import com.depromeet.team6.presentation.model.course.LegInfo
 import com.depromeet.team6.presentation.ui.itinerary.LegInfoDummyProvider
+import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 
 @Composable
 fun LastTransportInfoList(
     listData: List<LastTransportInfo>,
     modifier: Modifier = Modifier,
-    onRegisterAlarmBtnClick: () -> Unit = {}
+    onRegisterAlarmBtnClick: () -> Unit = {},
+    onItemClick: () -> Unit = {}
 ) {
     LazyColumn(
         modifier = modifier
@@ -32,6 +34,10 @@ fun LastTransportInfoList(
     ) {
         items(listData.size) { index ->
             LastTransportInfoItem(
+                modifier = Modifier
+                    .noRippleClickable{
+                        onItemClick()
+                    },
                 lastTransportInfo = listData[index]
             )
         }
