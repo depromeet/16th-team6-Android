@@ -3,7 +3,6 @@ package com.depromeet.team6.presentation.ui.home
 import androidx.lifecycle.viewModelScope
 import com.depromeet.team6.domain.usecase.DummyUseCase
 import com.depromeet.team6.presentation.util.base.BaseViewModel
-import com.depromeet.team6.presentation.util.view.LoadState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -30,21 +29,6 @@ class HomeViewModel @Inject constructor(
             is HomeContract.HomeEvent.UpdateBusDeparted -> setState { copy(isBusDeparted = event.isBusDeparted) }
             is HomeContract.HomeEvent.UpdateSpeechBubbleVisibility -> setState { copy(showSpeechBubble = event.show) }
             is HomeContract.HomeEvent.OnCharacterClick -> onCharacterClick()
-        }
-    }
-
-    fun dummyFunction() {
-        viewModelScope.launch {
-            setEvent(HomeContract.HomeEvent.DummyEvent(loadState = LoadState.Loading))
-            dummyUseCase()
-                .onSuccess { data ->
-                    setState { copy(loadState = LoadState.Success, dummyData = data) }
-                }
-                .onFailure {
-                    setEvent(
-                        HomeContract.HomeEvent.DummyEvent(loadState = LoadState.Error)
-                    )
-                }
         }
     }
 
