@@ -4,14 +4,13 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
@@ -21,8 +20,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -47,7 +48,7 @@ import com.google.android.gms.maps.model.LatLng
 @Composable
 fun HomeRoute(
     padding: PaddingValues,
-    navigateToLogin: () -> Unit,
+    navigateToMypage: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
@@ -69,9 +70,9 @@ fun HomeRoute(
 
     LaunchedEffect(viewModel.sideEffect, lifecycleOwner) {
         viewModel.sideEffect.flowWithLifecycle(lifecycle = lifecycleOwner.lifecycle)
-            .collect { signInSideEffect ->
-                when (signInSideEffect) {
-                    is HomeContract.HomeSideEffect.NavigateToLogin -> navigateToLogin()
+            .collect { sideEffect ->
+                when (sideEffect) {
+                    is HomeContract.HomeSideEffect.NavigateToMypage -> navigateToMypage()
                 }
             }
     }
@@ -113,13 +114,13 @@ fun HomeRoute(
             userLocation = LatLng(userLocation.first, userLocation.second),
             homeUiState = uiState,
             onCharacterClick = { viewModel.onCharacterClick() },
+            navigateToMypage = navigateToMypage,
             modifier = modifier,
-            padding = padding,
-            logoutClicked = { viewModel.logout() },
-            withDrawClicked = { viewModel.withDraw() }
+            padding = padding
         )
 
         LoadState.Error -> navigateToLogin()
+
         else -> Unit
     }
 }
@@ -131,15 +132,26 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     homeUiState: HomeContract.HomeUiState = HomeContract.HomeUiState(),
     onCharacterClick: () -> Unit = {},
-    viewModel: HomeViewModel = hiltViewModel(), // TODO : TmapViewCompose 변경 후 제거
-    logoutClicked: () -> Unit = {},
-    withDrawClicked: () -> Unit = {}
+    navigateToMypage: () -> Unit = {},
+    viewModel: HomeViewModel = hiltViewModel() // TODO : TmapViewCompose 변경 후 제거
 ) {
     Box(
         modifier = modifier
             .padding(padding)
             .fillMaxSize()
     ) {
+        Image(
+            imageVector = ImageVector.vectorResource(R.drawable.ic_home_mypage),
+            contentDescription = stringResource(R.string.mypage_icon_description),
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(top = 12.dp, end = 16.dp)
+                .clickable {
+                    navigateToMypage()
+                }
+                .zIndex(1f)
+        )
+
         TMapViewCompose(
             userLocation,
             viewModel = viewModel
@@ -207,21 +219,6 @@ fun HomeScreen(
             onClick = onCharacterClick,
             showSpeechBubble = homeUiState.showSpeechBubble
         )
-        Column {
-            Text(
-                text = "Logout Test",
-                modifier = Modifier.noRippleClickable {
-                    logoutClicked()
-                }
-            )
-            Text(
-                text = "WithDraw Test",
-                modifier = Modifier.noRippleClickable {
-                    withDrawClicked()
-                }
-            )
-            Spacer(modifier = Modifier.weight(1f))
-        }
     }
 }
 

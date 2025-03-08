@@ -54,4 +54,16 @@
     <string name="course_detail_info_boarding_point">%1s 승차</string>
     <string name="course_detail_info_destination_point">%1s 하차</string>
     <string name="course_set_notification_snackbar">알림이 등록되었어요</string>
+
+    <!--    mypage      -->
+    <string name="mypage_icon_arrow_text">마이페이지 화살표</string>
+    <string name="mypage_title_text">마이페이지</string>
+    <string name="mypage_account_title_text">내 계정</string>
+    <string name="mypage_change_home_title_text">우리집 변경</string>
+    <string name="mypage_alarm_title_text">푸시 알림 빈도 설정</string>
+    <string name="mypage_policy_text">개인정보처리방침</string>
+    <string name="mypage_version_title_text">현재 버전 1.0.0</string>
+    <string name="mypage_account_logout_text">로그아웃</string>
+    <string name="mypage_account_signout_text">계정 탈퇴</string>
+    <string name="mypage_icon_description">마이페이지 아이콘</string>
 </resources>

@@ -1,4 +1,5 @@
 [versions]
+accompanistWebview = "0.24.13-rc"
 agp = "8.7.0"
 firebaseBom = "33.10.0"
 kotlin = "2.0.0"
@@ -29,6 +30,7 @@ playServicesMaps = "19.1.0"
 playServicesLocation = "21.3.0"
 
 [libraries]
+accompanist-webview = { module = "com.google.accompanist:accompanist-webview", version.ref = "accompanistWebview" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-security-crypto = { module = "androidx.security:security-crypto", version.ref = "securityCrypto" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
