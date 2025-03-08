@@ -20,6 +20,7 @@ data class Team6Typography(
     val heading3SemiBold22: TextStyle,
     val heading4Bold20: TextStyle,
     val heading4SemiBold20: TextStyle,
+    val heading4Medium20: TextStyle,
     val heading5Bold17: TextStyle,
     val heading5SemiBold17: TextStyle,
     val heading6Bold15: TextStyle,
@@ -96,6 +97,11 @@ val defaultTeam6Typography = Team6Typography(
     ),
     heading4SemiBold20 = TextStyle(
         fontFamily = pretendardSemiBold,
+        fontSize = 20.sp,
+        lineHeight = 25.sp
+    ),
+    heading4Medium20 = TextStyle(
+        fontFamily = pretendardMedium,
         fontSize = 20.sp,
         lineHeight = 25.sp
     ),

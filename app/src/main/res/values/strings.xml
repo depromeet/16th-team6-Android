@@ -1,5 +1,11 @@
 <resources>
     <string name="app_name">Team6</string>
+    <string name="lock_screen_description">알림 잠금화면</string>
+    <string name="lock_screen_start_btn">출발하기</string>
+
+    <string name="lock_service_start_text">잠금화면 서비스 시작됨</string>
+    <string name="lock_screen_start_text">잠금화면 실행</string>
+    <string name="lock_screen_start_alarm_text">출발 알림</string>
 
     <string name="home_icon_search_text">검색 아이콘</string>
     <string name="home_search_button_text">검색하기</string>
@@ -18,8 +24,20 @@
     <string name="home_bubble_alarm_departed_text">이때 출발해야 막차를 탈 수 있어요</string>
 
     <string name="home_start_time_text">출발 시간</string>
-
+    <string name="home_expect_start_time_text">예상 출발 시간</string>
 
     <string name="all_acha_character">앗차 캐릭터</string>
-    <string name="home_expect_start_time_text">예상 출발 시간</string>
+
+    <!--    course      -->
+    <string name="last_transport_info_remaining_hour">%1d시간</string>
+    <string name="last_transport_info_remaining_minute">%1d분</string>
+    <string name="last_transport_info_remaining_time">%01d:%02d</string>
+    <string name="last_transport_info_departure_time">출발</string>
+    <string name="last_transport_info_boarding_time">탑승</string>
+    <string name="last_transport_info_set_notification">막차 알림 받기</string>
+    <string name="course_detail_info_walk">걷기</string>
+    <string name="course_detail_info_duration">%1d분</string>
+    <string name="course_detail_info_boarding_point">%1s 승차</string>
+    <string name="course_detail_info_destination_point">%1s 하차</string>
+    <string name="course_set_notification_snackbar">알림이 등록되었어요</string>
 </resources>

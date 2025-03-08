@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.dagger.hilt)
     alias(libs.plugins.kotlin.kapt)
+    id("com.google.gms.google-services")
 }
 
 val properties = Properties().apply {
@@ -64,6 +65,7 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.material)
     implementation(libs.androidx.appcompat)
+    implementation(libs.firebase.messaging.ktx)
     implementation(libs.play.services.maps)
     implementation(libs.play.services.location)
     testImplementation(libs.junit)
@@ -93,4 +95,13 @@ dependencies {
     // Tmap
     implementation(files("libs/tmap-sdk-1.8.aar"))
     implementation(files("libs/vsm-tmap-sdk-v2-android-1.7.23.aar"))
+
+    // Firebase
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
+}
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
 }
