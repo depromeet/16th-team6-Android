@@ -10,9 +10,9 @@ import javax.inject.Inject
 class MockSearchDataImpl @Inject constructor(
     @ApplicationContext private val context: Context
 ) {
-    fun loadMockData(resId : Int): RouteResponse? {
+    fun loadMockData(resId: Int): RouteResponse? {
         val inputStream = context.resources.openRawResource(resId)
         val jsonString = inputStream.bufferedReader().use { it.readText() }
-        return  Gson().fromJson(jsonString, object : TypeToken<RouteResponse>() {}.type)
+        return Gson().fromJson(jsonString, object : TypeToken<RouteResponse>() {}.type)
     }
 }

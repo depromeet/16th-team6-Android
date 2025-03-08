@@ -134,7 +134,7 @@ fun LastTransportInfoItem(
 @Composable
 fun SetNotificationButton(
     modifier: Modifier = Modifier,
-    btnClickEvent: () -> Unit = {},
+    btnClickEvent: () -> Unit = {}
 ) {
     Row(
         modifier = Modifier

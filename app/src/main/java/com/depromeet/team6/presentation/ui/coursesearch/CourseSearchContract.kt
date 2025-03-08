@@ -10,7 +10,7 @@ class CourseSearchContract {
     data class CourseUiState(
         val courseDataLoadState: LoadState = LoadState.Idle,
         val startingPoint: String = "",
-        val destinationPoint : String = "",
+        val destinationPoint: String = "",
         val courseData: List<LastTransportInfo> = emptyList()
     ) : UiState
 
@@ -21,6 +21,6 @@ class CourseSearchContract {
 
     sealed class CourseEvent : UiEvent {
         data object RegisterAlarm : CourseEvent()
-        data class LoadCourseSearchResult(val searchResult : List<LastTransportInfo>) : CourseEvent()
+        data class LoadCourseSearchResult(val searchResult: List<LastTransportInfo>) : CourseEvent()
     }
 }

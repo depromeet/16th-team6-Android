@@ -28,7 +28,7 @@ import com.depromeet.team6.ui.theme.defaultTeam6Colors
 @Composable
 fun CourseSearchRoute(
     padding: PaddingValues,
-    viewModel: CourseSearchViewModel = hiltViewModel(),
+    viewModel: CourseSearchViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
@@ -65,11 +65,10 @@ fun CourseSearchRoute(
 @Composable
 fun CourseSearchScreen(
     modifier: Modifier = Modifier,
-    uiState : CourseSearchContract.CourseUiState = CourseSearchContract.CourseUiState(),
+    uiState: CourseSearchContract.CourseUiState = CourseSearchContract.CourseUiState(),
     navigateToItinerary: () -> Unit = {},
-    setNotification: () -> Unit = {},
+    setNotification: () -> Unit = {}
 ) {
-
     Column(
         modifier = modifier
             .background(defaultTeam6Colors.greyWashBackground)

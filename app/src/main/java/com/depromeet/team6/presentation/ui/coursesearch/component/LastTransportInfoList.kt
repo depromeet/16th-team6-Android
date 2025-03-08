@@ -20,7 +20,7 @@ import com.depromeet.team6.ui.theme.defaultTeam6Colors
 fun LastTransportInfoList(
     listData: List<LastTransportInfo>,
     modifier: Modifier = Modifier,
-    onRegisterAlarmBtnClick : () -> Unit = {}
+    onRegisterAlarmBtnClick: () -> Unit = {}
 ) {
     LazyColumn(
         modifier = modifier
