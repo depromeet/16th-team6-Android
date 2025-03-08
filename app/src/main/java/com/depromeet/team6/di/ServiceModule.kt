@@ -2,6 +2,7 @@ package com.depromeet.team6.di
 
 import com.depromeet.team6.data.dataremote.service.AuthService
 import com.depromeet.team6.data.dataremote.service.DummyService
+import com.depromeet.team6.data.dataremote.service.LocationsService
 import com.depromeet.team6.di.qualifier.Team6
 import dagger.Module
 import dagger.Provides
@@ -22,4 +23,9 @@ object ServiceModule {
     @Singleton
     fun providesAuthService(@Team6 retrofit: Retrofit): AuthService =
         retrofit.create(AuthService::class.java)
+
+    @Provides
+    @Singleton
+    fun providesLocationsService(@Team6 retrofit: Retrofit): LocationsService =
+        retrofit.create(LocationsService::class.java)
 }

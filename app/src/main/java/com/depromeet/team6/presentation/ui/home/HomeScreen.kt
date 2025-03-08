@@ -2,11 +2,16 @@ package com.depromeet.team6.presentation.ui.home
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -16,21 +21,37 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.flowWithLifecycle
 import com.depromeet.team6.R
 import com.depromeet.team6.presentation.ui.home.component.AfterRegisterSheet
 import com.depromeet.team6.presentation.ui.home.component.CharacterSpeechBubble
 import com.depromeet.team6.presentation.ui.home.component.CurrentLocationSheet
 import com.depromeet.team6.presentation.ui.home.component.TMapViewCompose
+import com.depromeet.team6.presentation.util.modifier.noRippleClickable
+import com.depromeet.team6.presentation.util.view.LoadState
 import com.google.android.gms.maps.model.LatLng
 
 @Composable
 fun HomeRoute(
+    padding: PaddingValues,
+    navigateToLogin: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
-    val uiState = viewModel.uiState.collectAsStateWithLifecycle().value
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
+
+    LaunchedEffect(viewModel.sideEffect, lifecycleOwner) {
+        viewModel.sideEffect.flowWithLifecycle(lifecycle = lifecycleOwner.lifecycle)
+            .collect { signInSideEffect ->
+                when (signInSideEffect) {
+                    is HomeContract.HomeSideEffect.NavigateToLogin -> navigateToLogin()
+                }
+            }
+    }
 
     LaunchedEffect(uiState.isAlarmRegistered) {
         if (uiState.isAlarmRegistered) {
@@ -42,22 +63,33 @@ fun HomeRoute(
         }
     }
 
-    HomeScreen(
-        homeUiState = uiState,
-        onCharacterClick = { viewModel.onCharacterClick() },
-        modifier = modifier
-    )
+    when (uiState.loadState) {
+        LoadState.Idle -> HomeScreen(
+            homeUiState = uiState,
+            onCharacterClick = { viewModel.onCharacterClick() },
+            modifier = modifier,
+            padding = padding,
+            logoutClicked = { viewModel.logout() },
+            withDrawClicked = { viewModel.withDraw() }
+        )
+        LoadState.Error -> navigateToLogin()
+        else -> Unit
+    }
 }
 
 @Composable
 fun HomeScreen(
+    padding: PaddingValues,
     modifier: Modifier = Modifier,
     homeUiState: HomeContract.HomeUiState = HomeContract.HomeUiState(),
     onCharacterClick: () -> Unit = {},
-    viewModel: HomeViewModel = hiltViewModel() // TODO : TmapViewCompose 변경 후 제거
+    viewModel: HomeViewModel = hiltViewModel(), // TODO : TmapViewCompose 변경 후 제거
+    logoutClicked: () -> Unit = {},
+    withDrawClicked: () -> Unit = {}
 ) {
     Box(
         modifier = modifier
+            .padding(padding)
             .fillMaxSize()
     ) {
         TMapViewCompose(
@@ -127,6 +159,21 @@ fun HomeScreen(
             onClick = onCharacterClick,
             showSpeechBubble = homeUiState.showSpeechBubble
         )
+        Column {
+            Text(
+                text = "Logout Test",
+                modifier = Modifier.noRippleClickable {
+                    logoutClicked()
+                }
+            )
+            Text(
+                text = "WithDraw Test",
+                modifier = Modifier.noRippleClickable {
+                    withDrawClicked()
+                }
+            )
+            Spacer(modifier = Modifier.weight(1f))
+        }
     }
 }
 
@@ -139,6 +186,6 @@ private data class SpeechBubbleText(
 
 @Preview
 @Composable
-fun HomeScreenPreview() {
-    HomeScreen()
+private fun HomeScreenPreview() {
+    HomeScreen(padding = PaddingValues(0.dp))
 }

@@ -5,6 +5,7 @@ import com.depromeet.team6.data.dataremote.model.response.base.toResult
 import com.depromeet.team6.data.dataremote.model.response.user.ResponseAuthDto
 import com.depromeet.team6.data.dataremote.model.response.user.ResponseCheckDto
 import com.depromeet.team6.data.dataremote.service.AuthService
+import retrofit2.Response
 import javax.inject.Inject
 
 class AuthRemoteDataSource @Inject constructor(
@@ -19,6 +20,9 @@ class AuthRemoteDataSource @Inject constructor(
     suspend fun getLogin(provider: Int): Result<ResponseAuthDto> =
         authService.getLogin(provider).toResult()
 
-    suspend fun getLogout(): Result<Unit> =
-        authService.getLogout().toResult()
+    suspend fun postLogout(): Result<Unit> =
+        authService.postLogout().toResult()
+
+    suspend fun deleteWithDraw(): Response<Unit> =
+        authService.deleteWithDraw()
 }

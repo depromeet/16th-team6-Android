@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -50,6 +51,7 @@ fun setLayoutLoginKakaoClickListener(
 
 @Composable
 fun LoginRoute(
+    padding: PaddingValues,
     modifier: Modifier = Modifier,
     viewModel: LoginViewModel = hiltViewModel(),
     navigateToOnboarding: () -> Unit,
@@ -88,11 +90,12 @@ fun LoginRoute(
 
     LaunchedEffect(uiState.isUserRegisteredState) {
         when (uiState.isUserRegisteredState) {
-            LoadState.Success -> viewModel.getLogin()
+            LoadState.Success -> {
+                viewModel.getLogin()
+            }
             LoadState.Error -> {
                 navigateToOnboarding()
             }
-
             else -> Unit
         }
     }
@@ -100,6 +103,7 @@ fun LoginRoute(
     when (uiState.loadState) {
         LoadState.Idle -> {
             LoginScreen(
+                padding = padding,
                 signInUiState = uiState,
                 onSignInClicked = {
                     setLayoutLoginKakaoClickListener(context = context, callback = callback)
@@ -109,18 +113,21 @@ fun LoginRoute(
         }
 
         LoadState.Success -> navigateToHome()
+
         else -> Unit
     }
 }
 
 @Composable
 fun LoginScreen(
+    padding: PaddingValues,
     signInUiState: LoginContract.LoginUiState = LoginContract.LoginUiState(),
     onSignInClicked: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier
+            .padding(padding)
             .fillMaxSize()
             .background(color = defaultTeam6Colors.black),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -164,5 +171,5 @@ fun LoginScreen(
 @Preview
 @Composable
 private fun LoginScreenPreview() {
-    LoginScreen()
+    LoginScreen(padding = PaddingValues(0.dp))
 }

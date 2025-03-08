@@ -6,6 +6,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -24,10 +25,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.view.WindowCompat
 import com.depromeet.team6.R
 import com.depromeet.team6.data.datalocal.manager.LockServiceManager
 import com.depromeet.team6.data.datalocal.permission.PermissionUtil
-import com.depromeet.team6.presentation.ui.login.LoginRoute
+import com.depromeet.team6.presentation.ui.main.navigation.MainNavHost
+import com.depromeet.team6.presentation.ui.main.navigation.MainNavigator
+import com.depromeet.team6.presentation.ui.main.navigation.rememberMainNavigator
 import com.depromeet.team6.ui.theme.Team6Theme
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
@@ -42,21 +46,23 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        enableEdgeToEdge()
 
         if (PermissionUtil.alertPermissionCheck(this)) {
             PermissionUtil.onObtainingPermissionOverlayWindow(this)
         }
 
         setContent {
+            val navigator: MainNavigator = rememberMainNavigator()
             Team6Theme {
                 val snackbarHostState = remember { SnackbarHostState() }
                 val coroutineScope = rememberCoroutineScope()
 
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    LoginRoute(
-                        modifier = Modifier.padding(innerPadding),
-                        navigateToOnboarding = {},
-                        navigateToHome = {}
+                    MainNavHost(
+                        navigator = navigator,
+                        padding = innerPadding
                     )
                 }
             }

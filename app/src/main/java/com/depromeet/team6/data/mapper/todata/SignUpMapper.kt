@@ -8,7 +8,5 @@ fun SignUp.toData(): RequestSignUpDto = RequestSignUpDto(
     address = this.address,
     lat = this.lat,
     lon = this.lon,
-    alertAgreement = this.alertAgreement,
-    trackingAgreement = this.trackingAgreement,
     alertFrequencies = this.alertFrequencies
 )

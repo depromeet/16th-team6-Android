@@ -23,6 +23,7 @@ data class Team6Colors(
     // Common
     val white: Color,
     val black: Color,
+    val main: Color,
 
     // Text
     val greySecondaryLabel: Color,
@@ -56,7 +57,10 @@ data class Team6Colors(
     val systemGrey3: Color,
     val systemGrey4: Color,
     val systemGrey5: Color,
-    val systemGrey6: Color
+    val systemGrey6: Color,
+
+    // TextField Cursor
+    val textFieldCursor: Color
 )
 
 val defaultTeam6Colors = Team6Colors(
@@ -76,6 +80,7 @@ val defaultTeam6Colors = Team6Colors(
     // Common
     white = Color(0xFFFFFFFF),
     black = Color(0xFF000000),
+    main = Color(0xFF99F977),
 
     // Text
     greySecondaryLabel = Color(0xFF999CA4),
@@ -109,7 +114,10 @@ val defaultTeam6Colors = Team6Colors(
     systemGrey3 = Color(0xFF424249),
     systemGrey4 = Color(0xFF38383E),
     systemGrey5 = Color(0xFF27272B),
-    systemGrey6 = Color(0xFF1F1F23)
+    systemGrey6 = Color(0xFF1F1F23),
+
+    // TextField Cursor
+    textFieldCursor = Color(0xFF90E772)
 )
 
 val LocalTeam6Colors = staticCompositionLocalOf { defaultTeam6Colors }
