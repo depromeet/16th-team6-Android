@@ -20,7 +20,7 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun getLogin(provider: Int): Result<Auth> =
         authRemoteDataSource.getLogin(provider = provider).mapCatching { it.toDomain() }
 
-    override suspend fun postLogout(): Result<Unit> =
+    override suspend fun postLogout(): Response<Unit> =
         authRemoteDataSource.postLogout()
 
     override suspend fun deleteWithDraw(): Response<Unit> =

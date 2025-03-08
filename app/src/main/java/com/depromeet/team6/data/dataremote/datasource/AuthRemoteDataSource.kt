@@ -20,8 +20,8 @@ class AuthRemoteDataSource @Inject constructor(
     suspend fun getLogin(provider: Int): Result<ResponseAuthDto> =
         authService.getLogin(provider).toResult()
 
-    suspend fun postLogout(): Result<Unit> =
-        authService.postLogout().toResult()
+    suspend fun postLogout(): Response<Unit> =
+        authService.postLogout()
 
     suspend fun deleteWithDraw(): Response<Unit> =
         authService.deleteWithDraw()

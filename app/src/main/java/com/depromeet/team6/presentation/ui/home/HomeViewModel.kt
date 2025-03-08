@@ -1,5 +1,6 @@
 package com.depromeet.team6.presentation.ui.home
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.depromeet.team6.data.repositoryimpl.UserInfoRepositoryImpl
 import com.depromeet.team6.domain.usecase.DeleteWithDrawUseCase
@@ -35,8 +36,8 @@ class HomeViewModel @Inject constructor(
     override suspend fun handleEvent(event: HomeContract.HomeEvent) {
         when (event) {
             is HomeContract.HomeEvent.DummyEvent -> setState { copy(loadState = event.loadState) }
-            is HomeContract.HomeEvent.LogoutClicked -> logout()
-            is HomeContract.HomeEvent.WithDrawClicked -> withDraw()
+            is HomeContract.HomeEvent.LogoutClicked -> setState { copy(loadState = event.loadState) }
+            is HomeContract.HomeEvent.WithDrawClicked -> setState { copy(loadState = event.loadState) }
             is HomeContract.HomeEvent.UpdateAlarmRegistered -> setState { copy(isAlarmRegistered = event.isRegistered) }
             is HomeContract.HomeEvent.UpdateBusDeparted -> setState { copy(isBusDeparted = event.isBusDeparted) }
             is HomeContract.HomeEvent.UpdateSpeechBubbleVisibility -> setState {
@@ -76,12 +77,13 @@ class HomeViewModel @Inject constructor(
     }
 
     fun logout() {
+        Log.d("Logout Reponse", "Logout Response: $postLogoutUseCase")
+        userInfoRepositoryImpl.setAccessToken(userInfoRepositoryImpl.getRefreshToken())
         viewModelScope.launch {
-            postLogoutUseCase().onSuccess {
+            if (postLogoutUseCase().isSuccessful) {
                 setEvent(HomeContract.HomeEvent.LogoutClicked(loadState = LoadState.Error))
                 userInfoRepositoryImpl.clear()
-                setState { copy(loadState = LoadState.Error) }
-            }.onFailure {
+            } else {
                 setEvent(HomeContract.HomeEvent.LogoutClicked(loadState = LoadState.Idle))
             }
         }
