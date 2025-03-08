@@ -16,22 +16,28 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.depromeet.team6.R
+import com.depromeet.team6.presentation.ui.home.HomeContract
+import com.depromeet.team6.presentation.ui.home.HomeViewModel
 import com.depromeet.team6.presentation.ui.mypage.component.MypageListItem
 import com.depromeet.team6.presentation.ui.mypage.component.TitleBar
+import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.ui.theme.LocalTeam6Colors
 
 @Composable
 fun MypageRoute(
     modifier: Modifier = Modifier,
-    viewModel: MypageViewModel = hiltViewModel()
+    homeViewModel: HomeViewModel = hiltViewModel(),
+    mypageViewModel: MypageViewModel = hiltViewModel()
 ) {
-    val uiState = viewModel.uiState.collectAsStateWithLifecycle().value
+    val homeUiState = homeViewModel.uiState.collectAsStateWithLifecycle().value
+    val mypageUiState = mypageViewModel.uiState.collectAsStateWithLifecycle().value
     val context = LocalContext.current
 
     MypageScreen(
-        mypageUiState = uiState,
-        onLogoutClick = { viewModel.onLogoutClick() },
-        onSignoutClick = { viewModel.onSignoutClick() },
+        mypageUiState = mypageUiState,
+        homeUiState = homeUiState,
+        logoutClicked = { homeViewModel.logout() },
+        withDrawClicked = { homeViewModel.withDraw() },
         modifier = modifier
     )
 }
@@ -39,9 +45,10 @@ fun MypageRoute(
 @Composable
 fun MypageScreen(
     modifier: Modifier = Modifier,
+    homeUiState: HomeContract.HomeUiState = HomeContract.HomeUiState(),
     mypageUiState: MypageContract.MypageUiState = MypageContract.MypageUiState(),
-    onLogoutClick: () -> Unit = {},
-    onSignoutClick: () -> Unit = {}
+    logoutClicked: () -> Unit = {},
+    withDrawClicked: () -> Unit = {}
 ) {
     val colors = LocalTeam6Colors.current
 
@@ -69,14 +76,18 @@ fun MypageScreen(
 
             MypageListItem(
                 title = stringResource(R.string.mypage_account_logout_text),
-                onClick = onLogoutClick,
-                modifier = Modifier
+                onClick = logoutClicked,
+                modifier = Modifier.noRippleClickable {
+                    logoutClicked()
+                }
             )
 
             MypageListItem(
                 title = stringResource(R.string.mypage_account_signout_text),
-                onClick = onSignoutClick,
-                modifier = Modifier
+                onClick = withDrawClicked,
+                modifier = Modifier.noRippleClickable {
+                    withDrawClicked()
+                }
             )
 
             Spacer(
