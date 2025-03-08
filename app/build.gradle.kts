@@ -108,6 +108,9 @@ dependencies {
     // Firebase
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
+
+    // WebView
+    implementation(libs.accompanist.webview)
 }
 java {
     toolchain {
