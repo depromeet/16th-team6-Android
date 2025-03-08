@@ -16,9 +16,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -51,10 +51,10 @@ fun HomeRoute(
 
     LaunchedEffect(viewModel.sideEffect, lifecycleOwner) {
         viewModel.sideEffect.flowWithLifecycle(lifecycle = lifecycleOwner.lifecycle)
-            .collect { signInSideEffect ->
-                when (signInSideEffect) {
+            .collect { sideEffect ->
+                when (sideEffect) {
                     is HomeContract.HomeSideEffect.NavigateToLogin -> navigateToLogin()
-                    HomeContract.HomeSideEffect.NavigateToMypage -> navigateToMypage()
+                    is HomeContract.HomeSideEffect.NavigateToMypage -> navigateToMypage()
                 }
             }
     }

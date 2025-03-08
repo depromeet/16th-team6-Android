@@ -35,6 +35,12 @@ class MainNavigator(
         navHostController.navigationMypage()
     }
 
+    fun popBackStack() {
+        if (navHostController.previousBackStackEntry != null) {
+            navHostController.popBackStack()
+        }
+    }
+
     private fun clearBackStackTo(destination: String) {
         navHostController.popBackStack(
             route = destination,

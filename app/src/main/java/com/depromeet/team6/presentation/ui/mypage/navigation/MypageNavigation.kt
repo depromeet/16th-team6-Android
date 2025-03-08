@@ -17,11 +17,14 @@ fun NavController.navigationMypage() {
 
 fun NavGraphBuilder.mypageNavGraph(
     padding: PaddingValues,
-    navController: NavController
+    navigateToLogin: () -> Unit,
+    popBackStack: () -> Unit
 ) {
     composable(route = MypageRoute.ROUTE) {
         MypageRoute(
-            navigateBack = { navController.popBackStack() }
+            padding = padding,
+            navigateBack = popBackStack,
+            navigateToLogin = navigateToLogin
         )
     }
 }

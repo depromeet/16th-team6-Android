@@ -3,51 +3,68 @@ package com.depromeet.team6.presentation.ui.mypage
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.flowWithLifecycle
 import com.depromeet.team6.R
-import com.depromeet.team6.presentation.ui.home.HomeContract
-import com.depromeet.team6.presentation.ui.home.HomeViewModel
 import com.depromeet.team6.presentation.ui.mypage.component.MypageListItem
 import com.depromeet.team6.presentation.ui.mypage.component.TitleBar
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
+import com.depromeet.team6.presentation.util.view.LoadState
 import com.depromeet.team6.ui.theme.LocalTeam6Colors
 
 @Composable
 fun MypageRoute(
+    navigateToLogin: () -> Unit,
     modifier: Modifier = Modifier,
-    homeViewModel: HomeViewModel = hiltViewModel(),
+    padding: PaddingValues = PaddingValues(0.dp),
     mypageViewModel: MypageViewModel = hiltViewModel(),
     navigateBack: () -> Unit = {}
 ) {
-    val homeUiState = homeViewModel.uiState.collectAsStateWithLifecycle().value
-    val mypageUiState = mypageViewModel.uiState.collectAsStateWithLifecycle().value
+    val uiState = mypageViewModel.uiState.collectAsStateWithLifecycle().value
+    val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
 
-    MypageScreen(
-        mypageUiState = mypageUiState,
-        homeUiState = homeUiState,
-        logoutClicked = { homeViewModel.logout() },
-        withDrawClicked = { homeViewModel.withDraw() },
-        onBackClick = navigateBack,
-        modifier = modifier
-    )
+    LaunchedEffect(mypageViewModel.sideEffect, lifecycleOwner) {
+        mypageViewModel.sideEffect.flowWithLifecycle(lifecycle = lifecycleOwner.lifecycle)
+            .collect { sideEffect ->
+                when (sideEffect) {
+                    is MypageContract.MypageSideEffect.NavigateBack -> navigateBack()
+                    is MypageContract.MypageSideEffect.NavigateToLogin -> navigateToLogin()
+                }
+            }
+    }
+
+    when (uiState.loadState) {
+        LoadState.Idle -> MypageScreen(
+            modifier = Modifier.padding(padding),
+            mypageUiState = uiState,
+            logoutClicked = { mypageViewModel.logout() },
+            withDrawClicked = { mypageViewModel.withDraw() },
+            onBackClick = navigateBack
+        )
+        LoadState.Error -> navigateToLogin()
+        else -> Unit
+    }
 }
 
 @Composable
 fun MypageScreen(
     modifier: Modifier = Modifier,
-    homeUiState: HomeContract.HomeUiState = HomeContract.HomeUiState(),
     mypageUiState: MypageContract.MypageUiState = MypageContract.MypageUiState(),
     logoutClicked: () -> Unit = {},
     withDrawClicked: () -> Unit = {},
