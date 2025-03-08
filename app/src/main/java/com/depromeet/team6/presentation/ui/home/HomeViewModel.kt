@@ -1,10 +1,11 @@
 package com.depromeet.team6.presentation.ui.home
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.depromeet.team6.data.repositoryimpl.UserInfoRepositoryImpl
 import com.depromeet.team6.domain.usecase.DeleteWithDrawUseCase
 import com.depromeet.team6.domain.usecase.DummyUseCase
-import com.depromeet.team6.domain.usecase.GetLogoutUseCase
+import com.depromeet.team6.domain.usecase.PostLogoutUseCase
 import com.depromeet.team6.presentation.util.base.BaseViewModel
 import com.depromeet.team6.presentation.util.view.LoadState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,7 +16,7 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val dummyUseCase: DummyUseCase,
     private val userInfoRepositoryImpl: UserInfoRepositoryImpl,
-    private val getLogoutUseCase: GetLogoutUseCase,
+    private val postLogoutUseCase: PostLogoutUseCase,
     private val deleteWithDrawUseCase: DeleteWithDrawUseCase
 ) : BaseViewModel<HomeContract.HomeUiState, HomeContract.HomeSideEffect, HomeContract.HomeEvent>() {
     override fun createInitialState(): HomeContract.HomeUiState = HomeContract.HomeUiState()
@@ -45,7 +46,7 @@ class HomeViewModel @Inject constructor(
 
     fun logout() {
         viewModelScope.launch {
-            getLogoutUseCase().onSuccess {
+            postLogoutUseCase().onSuccess {
                 setEvent(HomeContract.HomeEvent.LogoutClicked(loadState = LoadState.Error))
                 userInfoRepositoryImpl.clear()
                 setState { copy(loadState = LoadState.Error) }
@@ -57,10 +58,10 @@ class HomeViewModel @Inject constructor(
 
     fun withDraw() {
         viewModelScope.launch {
-            deleteWithDrawUseCase().onSuccess {
+            if (deleteWithDrawUseCase().isSuccessful) {
                 userInfoRepositoryImpl.clear()
                 setEvent(HomeContract.HomeEvent.WithDrawClicked(loadState = LoadState.Error))
-            }.onFailure {
+            } else {
                 setEvent(HomeContract.HomeEvent.WithDrawClicked(loadState = LoadState.Idle))
             }
         }

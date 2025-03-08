@@ -1,11 +1,13 @@
 package com.depromeet.team6.presentation.ui.onboarding
 
 import androidx.lifecycle.viewModelScope
+import com.depromeet.team6.data.repositoryimpl.UserInfoRepositoryImpl
 import com.depromeet.team6.domain.model.SignUp
 import com.depromeet.team6.domain.usecase.GetLocationsUseCase
 import com.depromeet.team6.domain.usecase.PostSignUpUseCase
 import com.depromeet.team6.presentation.type.OnboardingType
 import com.depromeet.team6.presentation.util.Provider.KAKAO
+import com.depromeet.team6.presentation.util.Token.BEARER
 import com.depromeet.team6.presentation.util.base.BaseViewModel
 import com.depromeet.team6.presentation.util.view.LoadState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,6 +18,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class OnboardingViewModel @Inject constructor(
+    private val userInfoRepositoryImpl: UserInfoRepositoryImpl,
     private val postSignUpUseCase: PostSignUpUseCase,
     private val getLocationsUseCase: GetLocationsUseCase
 ) : BaseViewModel<OnboardingContract.OnboardingUiState, OnboardingContract.OnboardingSideEffect, OnboardingContract.OnboardingEvent>() {
@@ -87,8 +90,10 @@ class OnboardingViewModel @Inject constructor(
                     lon = 37.500627,
                     alertFrequencies = uiState.value.alertFrequencies
                 )
-            ).onSuccess {
+            ).onSuccess { auth ->
                 setEvent(OnboardingContract.OnboardingEvent.PostSignUp(loadState = LoadState.Success))
+                userInfoRepositoryImpl.setAccessToken(BEARER + auth.accessToken)
+                userInfoRepositoryImpl.setRefreshToken(auth.refreshToken)
             }.onFailure {
                 setEvent(OnboardingContract.OnboardingEvent.PostSignUp(loadState = LoadState.Error))
             }

@@ -49,8 +49,15 @@ class AuthInterceptor @Inject constructor(
         return response
     }
 
-    private fun Request.newAuthBuilder() =
-        this.newBuilder().addHeader(AUTHORIZATION, BEARER + localStorage.accessToken).build()
+    private fun Request.newAuthBuilder(): Request {
+        val token = localStorage.accessToken
+
+        val formattedToken = if (token.contains(BEARER)) token else "$BEARER$token"
+
+        return this.newBuilder()
+            .addHeader(AUTHORIZATION, formattedToken)
+            .build()
+    }
 
     private fun handleTokenExpiration(
         chain: Interceptor.Chain,

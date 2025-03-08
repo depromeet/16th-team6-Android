@@ -13,6 +13,7 @@ import com.depromeet.team6.data.dataremote.util.ApiConstraints.ME
 import com.depromeet.team6.data.dataremote.util.ApiConstraints.MEMBERS
 import com.depromeet.team6.data.dataremote.util.ApiConstraints.PROVIDER
 import com.depromeet.team6.data.dataremote.util.ApiConstraints.SIGNUP
+import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -35,9 +36,10 @@ interface AuthService {
         @Query(PROVIDER) provider: Int
     ): ApiResponse<ResponseAuthDto>
 
-    @GET("$API/$AUTH/$LOGOUT")
-    suspend fun getLogout(): ApiResponse<Unit>
+    @POST("$API/$AUTH/$LOGOUT")
+    suspend fun postLogout(): ApiResponse<Unit>
+
 
     @DELETE("$API/$MEMBERS/$ME")
-    suspend fun deleteWithDraw(): ApiResponse<Unit>
+    suspend fun deleteWithDraw(): Response<Unit>
 }

@@ -2,6 +2,7 @@ package com.depromeet.team6.data.datalocal.datasource
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.util.Log
 import androidx.core.content.edit
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
@@ -40,7 +41,11 @@ class UserInfoLocalDataSource @Inject constructor(
         get() = getValue(REFRESH_TOKEN)
         set(value) = setValue(REFRESH_TOKEN, value)
 
-    fun clear() = sharedPreferences.edit { clear() }
+    //    fun clear() = sharedPreferences.edit { clear() }
+    fun clear() {
+        setValue(REFRESH_TOKEN, "")
+        setValue(ACCESS_TOKEN, "")
+    }
 
     private fun getValue(key: String): String =
         sharedPreferences.getString(key, INITIAL_VALUE).orEmpty()

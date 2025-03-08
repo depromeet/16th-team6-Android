@@ -68,10 +68,10 @@ class LoginViewModel @Inject constructor(
     }
 
     fun checkAutoLogin() {
-        if (userInfoRepositoryImpl.getAccessToken()
+        if (userInfoRepositoryImpl.getRefreshToken()
             .isNotEmpty()
         ) {
-            setEvent(LoginContract.LoginEvent.SetAuthToken(LoadState.Success))
+            setEvent(LoginContract.LoginEvent.GetLogin(LoadState.Success))
         } else {
             Log.d("Login ViewModel", "Local Token is Empty")
         }

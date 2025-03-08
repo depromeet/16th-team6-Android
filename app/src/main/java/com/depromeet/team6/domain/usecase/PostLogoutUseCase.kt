@@ -5,9 +5,9 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class GetLogoutUseCase @Inject constructor(
+class PostLogoutUseCase @Inject constructor(
     private val authRepository: AuthRepository
 ) {
     suspend operator fun invoke(): Result<Unit> =
-        authRepository.getLogout()
+        authRepository.postLogout()
 }
