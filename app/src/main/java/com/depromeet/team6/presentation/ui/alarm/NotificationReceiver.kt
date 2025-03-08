@@ -16,9 +16,12 @@ class NotificationReceiver : BroadcastReceiver() {
         val message = intent.getStringExtra(NotificationScheduler.EXTRA_NOTIFICATION_MESSAGE) ?: "지금 바로 출발하셔야 해요!"
 
         // 메인 액티비티로 이동하기 위한 인텐트
-        val contentIntent = Intent(context, context.packageManager.getLaunchIntentForPackage(context.packageName)?.component?.className?.let {
-            Class.forName(it)
-        }).apply {
+        val contentIntent = Intent(
+            context,
+            context.packageManager.getLaunchIntentForPackage(context.packageName)?.component?.className?.let {
+                Class.forName(it)
+            }
+        ).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
 

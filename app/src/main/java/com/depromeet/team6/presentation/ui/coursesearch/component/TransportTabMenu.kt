@@ -56,6 +56,9 @@ fun TransportTabMenu(
                 listData = availableCourses,
                 onItemClick = {
                     onItemClick()
+                },
+                onRegisterAlarmBtnClick = {
+                    onRegisterAlarmBtnClick()
                 }
             )
         }

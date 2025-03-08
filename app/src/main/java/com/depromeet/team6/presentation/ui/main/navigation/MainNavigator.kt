@@ -12,6 +12,7 @@ import com.depromeet.team6.presentation.ui.itinerary.navigation.ItineraryRoute
 import com.depromeet.team6.presentation.ui.itinerary.navigation.navigateToItinerary
 import com.depromeet.team6.presentation.ui.login.navigation.LoginRoute
 import com.depromeet.team6.presentation.ui.login.navigation.navigationLogin
+import com.depromeet.team6.presentation.ui.mypage.navigation.navigationMypage
 import com.depromeet.team6.presentation.ui.onboarding.navigation.navigationOnboarding
 
 class MainNavigator(
@@ -42,6 +43,16 @@ class MainNavigator(
     fun navigateToItinerary() {
         clearBackStackTo(ItineraryRoute.ROUTE)
         navHostController.navigateToItinerary()
+    }
+
+    fun navigateToMypage() {
+        navHostController.navigationMypage()
+    }
+
+    fun popBackStack() {
+        if (navHostController.previousBackStackEntry != null) {
+            navHostController.popBackStack()
+        }
     }
 
     private fun clearBackStackTo(destination: String) {

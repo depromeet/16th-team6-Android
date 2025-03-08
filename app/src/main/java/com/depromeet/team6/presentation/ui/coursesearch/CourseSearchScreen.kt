@@ -1,5 +1,6 @@
 package com.depromeet.team6.presentation.ui.coursesearch
 
+import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -29,6 +30,7 @@ import com.depromeet.team6.ui.theme.defaultTeam6Colors
 fun CourseSearchRoute(
     padding: PaddingValues,
     navigateToItinerary: () -> Unit,
+    navigateToHome: () -> Unit,
     viewModel: CourseSearchViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -58,7 +60,15 @@ fun CourseSearchRoute(
             uiState = uiState,
             modifier = Modifier
                 .padding(padding),
-            navigateToItinerary = { navigateToItinerary() }
+            navigateToItinerary = { navigateToItinerary() },
+            setNotification = {
+                val sharedPreferences = context.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
+                val editor = sharedPreferences.edit()
+                editor.putBoolean("isUserLoggedIn", true) // "isUserLoggedIn" 키에 true 값을 저장
+                editor.apply() // 또는 editor.commit()
+
+                navigateToHome()
+            }
         )
         else -> Unit
     }
@@ -87,6 +97,9 @@ fun CourseSearchScreen(
             availableCourses = uiState.courseData,
             onItemClick = {
                 navigateToItinerary()
+            },
+            onRegisterAlarmBtnClick = {
+                setNotification()
             }
         )
     }

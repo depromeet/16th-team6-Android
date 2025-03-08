@@ -64,4 +64,17 @@
     <string name="itinerary_summary_remaining_hour">%1d시간</string>
     <string name="itinerary_summary_remaining_minute">%1d분</string>
     <string name="itinerary_summary_total_time">%02d:%02d 출발 ~ %02d:%02d 도착 예정</string>
+
+    <!--    mypage      -->
+    <string name="mypage_icon_arrow_text">마이페이지 화살표</string>
+    <string name="mypage_title_text">마이페이지</string>
+    <string name="mypage_account_title_text">내 계정</string>
+    <string name="mypage_change_home_title_text">우리집 변경</string>
+    <string name="mypage_alarm_title_text">푸시 알림 빈도 설정</string>
+    <string name="mypage_policy_text">개인정보처리방침</string>
+    <string name="mypage_version_title_text">현재 버전 1.0.0</string>
+    <string name="mypage_account_logout_text">로그아웃</string>
+    <string name="mypage_account_signout_text">계정 탈퇴</string>
+    <string name="mypage_icon_description">마이페이지 아이콘</string>
+
 </resources>

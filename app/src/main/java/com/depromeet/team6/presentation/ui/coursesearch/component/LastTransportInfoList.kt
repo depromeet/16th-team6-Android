@@ -38,7 +38,10 @@ fun LastTransportInfoList(
                     .noRippleClickable {
                         onItemClick()
                     },
-                lastTransportInfo = listData[index]
+                lastTransportInfo = listData[index],
+                onRegisterAlarmBtnClick = {
+                    onRegisterAlarmBtnClick()
+                }
             )
         }
     }
