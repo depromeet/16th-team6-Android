@@ -1,0 +1,102 @@
+package com.depromeet.team6.presentation.ui.onboarding
+
+import androidx.lifecycle.viewModelScope
+import com.depromeet.team6.data.repositoryimpl.UserInfoRepositoryImpl
+import com.depromeet.team6.domain.model.SignUp
+import com.depromeet.team6.domain.usecase.GetLocationsUseCase
+import com.depromeet.team6.domain.usecase.PostSignUpUseCase
+import com.depromeet.team6.presentation.type.OnboardingType
+import com.depromeet.team6.presentation.util.Provider.KAKAO
+import com.depromeet.team6.presentation.util.Token.BEARER
+import com.depromeet.team6.presentation.util.base.BaseViewModel
+import com.depromeet.team6.presentation.util.view.LoadState
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import javax.inject.Inject
+
+@HiltViewModel
+class OnboardingViewModel @Inject constructor(
+    private val userInfoRepositoryImpl: UserInfoRepositoryImpl,
+    private val postSignUpUseCase: PostSignUpUseCase,
+    private val getLocationsUseCase: GetLocationsUseCase
+) : BaseViewModel<OnboardingContract.OnboardingUiState, OnboardingContract.OnboardingSideEffect, OnboardingContract.OnboardingEvent>() {
+    override fun createInitialState(): OnboardingContract.OnboardingUiState =
+        OnboardingContract.OnboardingUiState()
+
+    override suspend fun handleEvent(event: OnboardingContract.OnboardingEvent) {
+        when (event) {
+            is OnboardingContract.OnboardingEvent.PostSignUp -> setState { copy(loadState = event.loadState) }
+            is OnboardingContract.OnboardingEvent.ChangeOnboardingType -> setState {
+                copy(
+                    onboardingType = OnboardingType.ALARM
+                )
+            }
+
+            is OnboardingContract.OnboardingEvent.ClearText -> setState { copy(searchText = "") }
+            is OnboardingContract.OnboardingEvent.ShowSearchPopup -> setState {
+                copy(
+                    searchPopupVisible = true
+                )
+            }
+
+            is OnboardingContract.OnboardingEvent.UpdateSearchText -> handleUpdateSearchText(event = event)
+            is OnboardingContract.OnboardingEvent.BackPressed -> setState { copy(onboardingType = OnboardingType.HOME) }
+            is OnboardingContract.OnboardingEvent.LocationSelectButtonClicked -> setState {
+                copy(
+                    myHome = event.onboardingSearchLocation,
+                    searchPopupVisible = false
+                )
+            }
+
+            is OnboardingContract.OnboardingEvent.UpdateAlertFrequencies -> setState {
+                copy(alertFrequencies = event.alertFrequencies)
+            }
+        }
+    }
+
+    private var debounceJob: Job? = null
+
+    private fun handleUpdateSearchText(event: OnboardingContract.OnboardingEvent.UpdateSearchText) {
+        setState { copy(searchText = event.text) }
+        debounceJob?.cancel()
+        debounceJob = viewModelScope.launch {
+            delay(300)
+            getLocationsUseCase(
+                keyword = event.text,
+                lat = event.lat,
+                lon = event.lon
+            ).onSuccess { locations ->
+                setState {
+                    copy(
+                        searchLocations = locations
+                    )
+                }
+            }.onFailure {
+                setState { copy(searchLocations = emptyList()) }
+            }
+        }
+    }
+
+    fun postSignUp() {
+        setEvent(OnboardingContract.OnboardingEvent.PostSignUp(loadState = LoadState.Loading))
+        viewModelScope.launch {
+            postSignUpUseCase(
+                signUp = SignUp(
+                    provider = KAKAO,
+                    address = uiState.value.myHome.address,
+                    lat = 127.036421,
+                    lon = 37.500627,
+                    alertFrequencies = uiState.value.alertFrequencies
+                )
+            ).onSuccess { auth ->
+                setEvent(OnboardingContract.OnboardingEvent.PostSignUp(loadState = LoadState.Success))
+                userInfoRepositoryImpl.setAccessToken(BEARER + auth.accessToken)
+                userInfoRepositoryImpl.setRefreshToken(auth.refreshToken)
+            }.onFailure {
+                setEvent(OnboardingContract.OnboardingEvent.PostSignUp(loadState = LoadState.Error))
+            }
+        }
+    }
+}

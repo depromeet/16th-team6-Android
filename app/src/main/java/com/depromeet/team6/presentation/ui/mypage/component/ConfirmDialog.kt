@@ -64,7 +64,7 @@ fun ConfirmDialog(
                         .padding(bottom = 28.dp),
                     shape = RoundedCornerShape(8.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = colors.greyButton
+                        containerColor = colors.greyDefaultButton
                     )
                 ) {
                     Text(

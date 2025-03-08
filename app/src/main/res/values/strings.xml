@@ -1,5 +1,17 @@
 <resources>
-    <string name="app_name">Team6</string>
+    <string name="app_name">앗차!</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_home_enroll_title">우리 집을 등록해 보세요</string>
+    <string name="onboarding_home_enroll_sub_title">출발지에서 우리집까지 빠르게\n막차 찾을 수 있어요.</string>
+    <string name="onboarding_alarm_enroll_title">막차 알림을 설정해요</string>
+    <string name="onboarding_alarm_enroll_sub_title">출발지에서 막차 타는 곳까지\n시간 내에 걸어갈 수 있게 알람 드려요.</string>
+    <string name="onboarding_select_location_button_current_region">현 위치 찾기</string>
+    <string name="onboarding_edit_location_button_current_region">다른 위치로 변경</string>
+    <string name="onboarding_search_text_field_placeholder">지번, 도로명, 건물명으로 검색</string>
+    <string name="onboarding_next_button">다음</string>
+
+    <!-- LockScreen -->
     <string name="lock_screen_description">알림 잠금화면</string>
     <string name="lock_screen_start_btn">출발하기</string>
 
@@ -7,15 +19,30 @@
     <string name="lock_screen_start_text">잠금화면 실행</string>
     <string name="lock_screen_start_alarm_text">출발 알림</string>
 
+    <!-- HomeScreen -->
     <string name="home_icon_search_text">검색 아이콘</string>
     <string name="home_search_button_text">검색하기</string>
     <string name="home_current_location_btn">현위치 버튼</string>
     <string name="home_current_location_text">현위치:</string>
     <string name="home_destination_text">목적지:</string>
 
+    <string name="home_icon_location_text">위치 아이콘</string>
+    <string name="home_icon_arrow_right_text">화살표 아이콘</string>
+    <string name="home_icon_bell_text">알림 종 아이콘</string>
+
+    <string name="home_bubble_basic_text">여기서 놓치면 택시비 약</string>
+    <string name="home_bubble_alarm_prefix_text">차고지에서 출발하면</string>
+    <string name="home_bubble_alarm_emphasis_text">더 정확하게</string>
+    <string name="home_bubble_alarm_suffix_text">알려드려요</string>
+    <string name="home_bubble_alarm_departed_text">이때 출발해야 막차를 탈 수 있어요</string>
+
+    <string name="home_start_time_text">출발 시간</string>
+    <string name="home_expect_start_time_text">예상 출발 시간</string>
+
+    <!-- All -->
     <string name="all_acha_character">앗차 캐릭터</string>
 
-    <!--    course      -->
+    <!-- Course -->
     <string name="last_transport_info_remaining_hour">%1d시간</string>
     <string name="last_transport_info_remaining_minute">%1d분</string>
     <string name="last_transport_info_remaining_time">%01d:%02d</string>

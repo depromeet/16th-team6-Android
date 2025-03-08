@@ -28,6 +28,8 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "BASE_URL", properties["base.url"].toString())
+        buildConfigField("String", "KAKAO_NATIVE_APP_KEY", properties["kakao.native.app.key"].toString())
+        manifestPlaceholders["KAKAO_NATIVE_APP_KEY_MANIFEST"] = properties["kakao.native.app.key.manifest"]?.toString() ?: ""
         buildConfigField("String", "TMAP_API_KEY", properties["tmap.api.key"].toString())
     }
 
@@ -68,6 +70,7 @@ dependencies {
     implementation(libs.firebase.messaging.ktx)
     implementation(libs.play.services.maps)
     implementation(libs.play.services.location)
+    implementation(libs.play.services.auth)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -91,6 +94,12 @@ dependencies {
     // Navigation
     implementation(libs.androidx.compose.navigation)
     implementation(libs.hilt.navigation.compose)
+
+    // Kakao
+    implementation(libs.bundles.kakao)
+
+    // Security
+    implementation(libs.androidx.security.crypto)
 
     // Tmap
     implementation(files("libs/tmap-sdk-1.8.aar"))

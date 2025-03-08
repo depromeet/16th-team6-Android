@@ -41,7 +41,7 @@ fun PrimaryButton(
             containerColor = colors.systemGreen,
             contentColor = colors.black
         ),
-        shape = RoundedCornerShape(12.dp)
+        shape = RoundedCornerShape(8.dp)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,

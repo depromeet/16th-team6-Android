@@ -23,6 +23,7 @@ data class Team6Colors(
     // Common
     val white: Color,
     val black: Color,
+    val main: Color,
 
     // Text
     val greySecondaryLabel: Color,
@@ -41,20 +42,25 @@ data class Team6Colors(
     val greyElevatedCard: Color,
 
     // Button
-    val greyButton: Color,
     val greyButtonOutline: Color,
+    val kakaoLoginButton: Color,
+    val greyDefaultButton: Color,
     val greyButtonDisable: Color,
 
     // Non-Semantic
     val systemGreen: Color,
     val systemRed: Color,
-    val systemGrey: Color,
+
+    // System Grey
     val systemGrey1: Color,
     val systemGrey2: Color,
     val systemGrey3: Color,
     val systemGrey4: Color,
     val systemGrey5: Color,
-    val systemGrey6: Color
+    val systemGrey6: Color,
+
+    // TextField Cursor
+    val textFieldCursor: Color
 )
 
 val defaultTeam6Colors = Team6Colors(
@@ -74,6 +80,7 @@ val defaultTeam6Colors = Team6Colors(
     // Common
     white = Color(0xFFFFFFFF),
     black = Color(0xFF000000),
+    main = Color(0xFF99F977),
 
     // Text
     greySecondaryLabel = Color(0xFF999CA4),
@@ -92,20 +99,25 @@ val defaultTeam6Colors = Team6Colors(
     greyElevatedCard = Color(0xFF2C2C2E),
 
     // Button
-    greyButton = Color(0xFF2C2C30),
     greyButtonOutline = Color(0xFF36363A),
+    greyDefaultButton = Color(0xFF2C2C30),
     greyButtonDisable = Color(0x662C2C30),
+    kakaoLoginButton = Color(0xFFFAE100),
 
     // Non-Semantic
     systemGreen = Color(0xFF99ED7B),
     systemRed = Color(0xFFFF5D5D),
-    systemGrey = Color(0xFF72728A),
-    systemGrey1 = Color(0xFF8E8E93),
-    systemGrey2 = Color(0xFF636366),
+
+    // System Grey
+    systemGrey1 = Color(0xFF7E7E8A),
+    systemGrey2 = Color(0xFF5B5B63),
     systemGrey3 = Color(0xFF424249),
     systemGrey4 = Color(0xFF38383E),
     systemGrey5 = Color(0xFF27272B),
-    systemGrey6 = Color(0xFF1F1F23)
+    systemGrey6 = Color(0xFF1F1F23),
+
+    // TextField Cursor
+    textFieldCursor = Color(0xFF90E772)
 )
 
 val LocalTeam6Colors = staticCompositionLocalOf { defaultTeam6Colors }
