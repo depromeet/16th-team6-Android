@@ -38,4 +38,5 @@
     <string name="mypage_version_title_text">현재 버전 1.0.0</string>
     <string name="mypage_account_logout_text">로그아웃</string>
     <string name="mypage_account_signout_text">계정 탈퇴</string>
+    <string name="mypage_icon_description">마이페이지 아이콘</string>
 </resources>
