@@ -91,7 +91,7 @@ val defaultTeam6Colors = Team6Colors(
 
     // Background
     greyElevatedBackground = Color(0xFF1C1C1D),
-    greyWashBackground = Color(0xFF18181A),
+    greyWashBackground = Color(0xFF131315),
     greyDivider = Color(0xFF4D4D4D),
 
     // Card
