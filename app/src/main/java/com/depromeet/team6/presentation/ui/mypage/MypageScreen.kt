@@ -32,27 +32,27 @@ fun MypageScreen(
             TitleBar(
                 title = stringResource(R.string.mypage_title_text)
             )
+//
+//            MypageListItem(
+//                title = stringResource(R.string.mypage_account_title_text),
+//                onClick = { },
+//                modifier = Modifier
+//            )
+//
+//            Spacer(
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .height(10.dp)
+//                    .background(colors.black))
 
             MypageListItem(
-                title = stringResource(R.string.mypage_account_title_text),
+                title = stringResource(R.string.mypage_account_logout_text),
                 onClick = { },
                 modifier = Modifier
             )
 
-            Spacer(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(10.dp)
-                    .background(colors.black))
-
             MypageListItem(
-                title = stringResource(R.string.mypage_change_home_title_text),
-                onClick = { },
-                modifier = Modifier
-            )
-
-            MypageListItem(
-                title = stringResource(R.string.mypage_alarm_title_text),
+                title = stringResource(R.string.mypage_account_signout_text),
                 onClick = { },
                 modifier = Modifier
             )
@@ -68,12 +68,12 @@ fun MypageScreen(
                 onClick = { },
                 modifier = Modifier
             )
-
-            MypageListItem(
-                title = stringResource(R.string.mypage_version_title_text),
-                onClick = { },
-                modifier = Modifier
-            )
+//
+//            MypageListItem(
+//                title = stringResource(R.string.mypage_version_title_text),
+//                onClick = { },
+//                modifier = Modifier
+//            )
         }
     }
 }
