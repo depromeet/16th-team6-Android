@@ -21,7 +21,6 @@ fun MainNavHost(
     ) {
         homeNavGraph(
             padding = padding,
-            navigateToLogin = navigator::navigateToLogin,
             navigateToMypage = navigator::navigateToMypage
         )
 

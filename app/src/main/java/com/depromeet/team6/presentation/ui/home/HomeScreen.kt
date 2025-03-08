@@ -4,13 +4,10 @@ import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -33,14 +30,12 @@ import com.depromeet.team6.presentation.ui.home.component.AfterRegisterSheet
 import com.depromeet.team6.presentation.ui.home.component.CharacterSpeechBubble
 import com.depromeet.team6.presentation.ui.home.component.CurrentLocationSheet
 import com.depromeet.team6.presentation.ui.home.component.TMapViewCompose
-import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.google.android.gms.maps.model.LatLng
 
 @Composable
 fun HomeRoute(
     padding: PaddingValues,
-    navigateToLogin: () -> Unit,
     navigateToMypage: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel()
@@ -53,7 +48,6 @@ fun HomeRoute(
         viewModel.sideEffect.flowWithLifecycle(lifecycle = lifecycleOwner.lifecycle)
             .collect { sideEffect ->
                 when (sideEffect) {
-                    is HomeContract.HomeSideEffect.NavigateToLogin -> navigateToLogin()
                     is HomeContract.HomeSideEffect.NavigateToMypage -> navigateToMypage()
                 }
             }
@@ -75,11 +69,8 @@ fun HomeRoute(
             onCharacterClick = { viewModel.onCharacterClick() },
             navigateToMypage = navigateToMypage,
             modifier = modifier,
-            padding = padding,
-            logoutClicked = { viewModel.logout() },
-            withDrawClicked = { viewModel.withDraw() }
+            padding = padding
         )
-        LoadState.Error -> navigateToLogin()
         else -> Unit
     }
 }
@@ -91,9 +82,7 @@ fun HomeScreen(
     homeUiState: HomeContract.HomeUiState = HomeContract.HomeUiState(),
     onCharacterClick: () -> Unit = {},
     navigateToMypage: () -> Unit = {},
-    viewModel: HomeViewModel = hiltViewModel(), // TODO : TmapViewCompose 변경 후 제거
-    logoutClicked: () -> Unit = {},
-    withDrawClicked: () -> Unit = {}
+    viewModel: HomeViewModel = hiltViewModel() // TODO : TmapViewCompose 변경 후 제거
 ) {
     Box(
         modifier = modifier
@@ -179,21 +168,6 @@ fun HomeScreen(
             onClick = onCharacterClick,
             showSpeechBubble = homeUiState.showSpeechBubble
         )
-        Column {
-            Text(
-                text = "Logout Test",
-                modifier = Modifier.noRippleClickable {
-                    logoutClicked()
-                }
-            )
-            Text(
-                text = "WithDraw Test",
-                modifier = Modifier.noRippleClickable {
-                    withDrawClicked()
-                }
-            )
-            Spacer(modifier = Modifier.weight(1f))
-        }
     }
 }
 
