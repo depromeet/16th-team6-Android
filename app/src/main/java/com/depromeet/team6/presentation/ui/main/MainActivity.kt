@@ -57,7 +57,9 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
                 ) { innerPadding ->
-//                    HomeScreen(modifier = Modifier.padding(innerPadding))
+//                    HomeRoute(
+//                        modifier = Modifier.padding(innerPadding)
+//                    )
                     CourseScreen(modifier = Modifier.padding(innerPadding))
                 }
             }

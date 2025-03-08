@@ -25,7 +25,7 @@ import com.depromeet.team6.presentation.ui.home.component.TMapViewCompose
 import com.google.android.gms.maps.model.LatLng
 
 @Composable
-fun HomeScreen(
+fun HomeRoute(
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
@@ -42,6 +42,20 @@ fun HomeScreen(
         }
     }
 
+    HomeScreen(
+        homeUiState = uiState,
+        onCharacterClick = { viewModel.onCharacterClick() },
+        modifier = modifier
+    )
+}
+
+@Composable
+fun HomeScreen(
+    modifier: Modifier = Modifier,
+    homeUiState: HomeContract.HomeUiState = HomeContract.HomeUiState(),
+    onCharacterClick: () -> Unit = {},
+    viewModel: HomeViewModel = hiltViewModel() // TODO : TmapViewCompose 변경 후 제거
+) {
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -52,7 +66,7 @@ fun HomeScreen(
         ) // Replace with your actual API key
 
         // 알람 등록 시 Home UI
-        if (uiState.isAlarmRegistered) {
+        if (homeUiState.isAlarmRegistered) {
             AfterRegisterSheet(
                 timeToLeave = "22:30:00",
                 startLocation = "중앙빌딩",
@@ -63,7 +77,7 @@ fun HomeScreen(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .zIndex(1f),
-                isBusDeparted = uiState.isBusDeparted
+                isBusDeparted = homeUiState.isBusDeparted
             )
         } else {
             CurrentLocationSheet(
@@ -78,7 +92,7 @@ fun HomeScreen(
         }
 
         val (prefixText, emphasisText, suffixText, bottomPadding) = when {
-            uiState.isAlarmRegistered && uiState.isBusDeparted ->
+            homeUiState.isAlarmRegistered && homeUiState.isBusDeparted ->
                 SpeechBubbleText(
                     stringResource(R.string.home_bubble_alarm_departed_text),
                     null,
@@ -86,7 +100,7 @@ fun HomeScreen(
                     241.dp
                 )
 
-            uiState.isAlarmRegistered ->
+            homeUiState.isAlarmRegistered ->
                 SpeechBubbleText(
                     stringResource(R.string.home_bubble_alarm_prefix_text),
                     stringResource(R.string.home_bubble_alarm_emphasis_text),
@@ -110,8 +124,8 @@ fun HomeScreen(
             modifier = Modifier
                 .align(Alignment.BottomStart)
                 .padding(start = 8.dp, bottom = bottomPadding),
-            onClick = { viewModel.onCharacterClick() },
-            showSpeechBubble = uiState.showSpeechBubble
+            onClick = onCharacterClick,
+            showSpeechBubble = homeUiState.showSpeechBubble
         )
     }
 }
