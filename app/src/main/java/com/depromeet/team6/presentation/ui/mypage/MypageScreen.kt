@@ -9,17 +9,39 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.depromeet.team6.R
 import com.depromeet.team6.presentation.ui.mypage.component.MypageListItem
 import com.depromeet.team6.presentation.ui.mypage.component.TitleBar
 import com.depromeet.team6.ui.theme.LocalTeam6Colors
 
 @Composable
+fun MypageRoute(
+    modifier: Modifier = Modifier,
+    viewModel: MypageViewModel = hiltViewModel()
+) {
+    val uiState = viewModel.uiState.collectAsStateWithLifecycle().value
+    val context = LocalContext.current
+
+    MypageScreen(
+        mypageUiState = uiState,
+        onLogoutClick = { viewModel.onLogoutClick() },
+        onSignoutClick = { viewModel.onSignoutClick() },
+        modifier = modifier
+    )
+}
+
+@Composable
 fun MypageScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    mypageUiState: MypageContract.MypageUiState = MypageContract.MypageUiState(),
+    onLogoutClick: () -> Unit = {},
+    onSignoutClick: () -> Unit = {}
 ) {
     val colors = LocalTeam6Colors.current
 
@@ -47,13 +69,13 @@ fun MypageScreen(
 
             MypageListItem(
                 title = stringResource(R.string.mypage_account_logout_text),
-                onClick = { },
+                onClick = onLogoutClick,
                 modifier = Modifier
             )
 
             MypageListItem(
                 title = stringResource(R.string.mypage_account_signout_text),
-                onClick = { },
+                onClick = onSignoutClick,
                 modifier = Modifier
             )
 
