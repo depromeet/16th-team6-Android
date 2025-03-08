@@ -38,12 +38,11 @@ import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingSearch
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingSelectLocationButton
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingSelectedHome
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingTitle
+import com.depromeet.team6.presentation.util.context.getUserLocation
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.presentation.util.permission.PermissionUtil
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
 
 @Composable
 fun OnboardingRoute(
@@ -54,8 +53,7 @@ fun OnboardingRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
-    val fusedLocationClient = remember { LocationServices.getFusedLocationProviderClient(context) }
-    var userLocation by remember { mutableStateOf<Pair<Double, Double>>(37.5665 to 126.9780) } // 서울시 기본 위치
+    var userLocation by remember { mutableStateOf(37.5665 to 126.9780) } // 서울시 기본 위치
 
     val locationPermissionsLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestMultiplePermissions(),
@@ -77,10 +75,11 @@ fun OnboardingRoute(
     )
 
     LaunchedEffect(Unit) {
+        Log.d("Location Permission", "${PermissionUtil.hasLocationPermissions(context)}")
         if (PermissionUtil.hasLocationPermissions(context)) {
-            getUserLocation(fusedLocationClient) { lat, lon ->
-                userLocation = lat to lon
-                Log.d("User_Location", "Lat: $lat, Lon: $lon")
+            val location = context.getUserLocation()
+            if (location != null) {
+                userLocation = location
             }
         }
     }
@@ -263,26 +262,4 @@ fun OnboardingScreen(
 @Composable
 private fun OnboardingScreenPreview() {
     OnboardingScreen(padding = PaddingValues(0.dp), onNextButtonClicked = {})
-}
-
-/**
- * 사용자 위치 가져오기
- */
-private fun getUserLocation(
-    fusedLocationClient: FusedLocationProviderClient,
-    onLocationFetched: (Double, Double) -> Unit
-) {
-    try {
-        fusedLocationClient.lastLocation.addOnSuccessListener { location ->
-            if (location != null) {
-                onLocationFetched(location.latitude, location.longitude)
-            } else {
-                Log.d("User_Location", "Failed to get location")
-            }
-        }.addOnFailureListener {
-            Log.e("User_Location", "Error fetching location", it)
-        }
-    } catch (e: SecurityException) {
-        Log.e("User_Location", "Location permission not granted", e)
-    }
 }

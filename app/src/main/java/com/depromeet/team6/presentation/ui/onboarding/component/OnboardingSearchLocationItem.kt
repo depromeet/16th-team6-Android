@@ -47,13 +47,14 @@ fun OnboardingSearchLocationItem(
             )
             Spacer(modifier = Modifier.height(4.dp))
 
-            Row (verticalAlignment = Alignment.CenterVertically){
+            Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
                     text = onboardingSearchLocation.radius,
                     style = defaultTeam6Typography.bodyRegular14,
-                    color = defaultTeam6Colors.greySecondaryLabel,
+                    color = defaultTeam6Colors.greySecondaryLabel
                 )
-                Icon(modifier = Modifier.padding(horizontal = 6.dp),
+                Icon(
+                    modifier = Modifier.padding(horizontal = 6.dp),
                     imageVector = ImageVector.vectorResource(R.drawable.ic_all_adrress_devider),
                     contentDescription = null,
                     tint = Color.Unspecified
