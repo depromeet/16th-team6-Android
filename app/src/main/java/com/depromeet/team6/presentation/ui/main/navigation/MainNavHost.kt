@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
+import com.depromeet.team6.presentation.ui.coursesearch.navigation.courseSearchNavGraph
 import com.depromeet.team6.presentation.ui.home.navigation.homeNavGraph
 import com.depromeet.team6.presentation.ui.login.navigation.loginGraph
 import com.depromeet.team6.presentation.ui.onboarding.navigation.onboardingNavGraph
@@ -20,7 +21,8 @@ fun MainNavHost(
     ) {
         homeNavGraph(
             padding = padding,
-            navigateToLogin = navigator::navigateToLogin
+            navigateToLogin = navigator::navigateToLogin,
+            navigateToCourseSearch = navigator::navigateToCourseSearch
         )
 
         onboardingNavGraph(
@@ -32,6 +34,10 @@ fun MainNavHost(
             padding = padding,
             navigateToOnboarding = navigator::navigateToOnboarding,
             navigateToHome = navigator::navigateToHome
+        )
+
+        courseSearchNavGraph(
+            padding = padding,
         )
         val previousRoute = navigator.navHostController.previousBackStackEntry?.destination?.route ?: "Unknown"
     }

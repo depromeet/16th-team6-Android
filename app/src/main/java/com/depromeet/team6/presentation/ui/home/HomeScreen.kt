@@ -37,6 +37,7 @@ import com.google.android.gms.maps.model.LatLng
 fun HomeRoute(
     padding: PaddingValues,
     navigateToLogin: () -> Unit,
+    navigateToCourseSearch : () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
@@ -69,6 +70,7 @@ fun HomeRoute(
             onCharacterClick = { viewModel.onCharacterClick() },
             modifier = modifier,
             padding = padding,
+            onSearchClick = { navigateToCourseSearch() },
             logoutClicked = { viewModel.logout() },
             withDrawClicked = { viewModel.withDraw() }
         )
@@ -83,6 +85,7 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     homeUiState: HomeContract.HomeUiState = HomeContract.HomeUiState(),
     onCharacterClick: () -> Unit = {},
+    onSearchClick : () -> Unit = {},
     viewModel: HomeViewModel = hiltViewModel(), // TODO : TmapViewCompose 변경 후 제거
     logoutClicked: () -> Unit = {},
     withDrawClicked: () -> Unit = {}
@@ -115,7 +118,9 @@ fun HomeScreen(
             CurrentLocationSheet(
                 currentLocation = "중앙빌딩",
                 destination = "우리집",
-                onSearchClick = {},
+                onSearchClick = {
+                    onSearchClick()
+                },
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .fillMaxWidth()

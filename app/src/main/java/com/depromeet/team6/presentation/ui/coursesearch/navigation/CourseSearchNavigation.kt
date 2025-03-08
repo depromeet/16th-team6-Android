@@ -5,7 +5,6 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.depromeet.team6.presentation.ui.coursesearch.CourseSearchRoute
-import com.depromeet.team6.presentation.ui.home.HomeRoute
 
 fun NavController.navigateCourseSearch() {
     navigate(
@@ -16,7 +15,7 @@ fun NavController.navigateCourseSearch() {
     }
 }
 
-fun NavGraphBuilder.homeNavGraph(
+fun NavGraphBuilder.courseSearchNavGraph(
     padding: PaddingValues,
 ) {
     composable(route = CourseSearchRoute.ROUTE) {

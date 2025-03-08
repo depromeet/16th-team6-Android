@@ -4,6 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.depromeet.team6.presentation.ui.coursesearch.navigation.CourseSearchRoute
+import com.depromeet.team6.presentation.ui.coursesearch.navigation.navigateCourseSearch
 import com.depromeet.team6.presentation.ui.home.navigation.HomeRoute
 import com.depromeet.team6.presentation.ui.home.navigation.navigationHome
 import com.depromeet.team6.presentation.ui.login.navigation.LoginRoute
@@ -28,6 +30,11 @@ class MainNavigator(
     fun navigateToLogin() {
         clearBackStackTo(LoginRoute.ROUTE)
         navHostController.navigationLogin()
+    }
+
+    fun navigateToCourseSearch() {
+        clearBackStackTo(CourseSearchRoute.ROUTE)
+        navHostController.navigateCourseSearch()
     }
 
     private fun clearBackStackTo(destination: String) {
