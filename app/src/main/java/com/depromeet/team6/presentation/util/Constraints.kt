@@ -11,3 +11,8 @@ object Token {
 object Provider {
     const val KAKAO = 0
 }
+
+object DefaultLntLng {
+    const val DEFAULT_LNT = 37.5665
+    const val DEFAULT_LNG = 126.9780
+}
