@@ -41,6 +41,7 @@ import com.google.android.gms.maps.model.LatLng
 fun HomeRoute(
     padding: PaddingValues,
     navigateToLogin: () -> Unit,
+    navigateToMypage: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
@@ -53,6 +54,7 @@ fun HomeRoute(
             .collect { signInSideEffect ->
                 when (signInSideEffect) {
                     is HomeContract.HomeSideEffect.NavigateToLogin -> navigateToLogin()
+                    HomeContract.HomeSideEffect.NavigateToMypage -> navigateToMypage()
                 }
             }
     }
@@ -71,6 +73,7 @@ fun HomeRoute(
         LoadState.Idle -> HomeScreen(
             homeUiState = uiState,
             onCharacterClick = { viewModel.onCharacterClick() },
+            navigateToMypage = navigateToMypage,
             modifier = modifier,
             padding = padding,
             logoutClicked = { viewModel.logout() },
@@ -87,6 +90,7 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     homeUiState: HomeContract.HomeUiState = HomeContract.HomeUiState(),
     onCharacterClick: () -> Unit = {},
+    navigateToMypage: () -> Unit = {},
     viewModel: HomeViewModel = hiltViewModel(), // TODO : TmapViewCompose 변경 후 제거
     logoutClicked: () -> Unit = {},
     withDrawClicked: () -> Unit = {}
@@ -103,7 +107,7 @@ fun HomeScreen(
                 .align(Alignment.TopEnd)
                 .padding(top = 12.dp, end = 16.dp)
                 .clickable {
-                    // TODO : 마이페이지로 이동
+                    navigateToMypage()
                 }
                 .zIndex(1f)
         )

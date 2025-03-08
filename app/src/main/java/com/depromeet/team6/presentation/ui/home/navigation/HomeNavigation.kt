@@ -17,13 +17,14 @@ fun NavController.navigationHome() {
 
 fun NavGraphBuilder.homeNavGraph(
     padding: PaddingValues,
-    navigateToLogin: () -> Unit
-
+    navigateToLogin: () -> Unit,
+    navigateToMypage: () -> Unit
 ) {
     composable(route = HomeRoute.ROUTE) {
         HomeRoute(
             padding = padding,
-            navigateToLogin = navigateToLogin
+            navigateToLogin = navigateToLogin,
+            navigateToMypage = navigateToMypage
         )
     }
 }
