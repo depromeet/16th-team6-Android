@@ -1,6 +1,7 @@
 package com.depromeet.team6.presentation.ui.itinerary.component
 
 import android.graphics.Color
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -52,11 +53,12 @@ fun SummaryBarChart(
                 rowWidth = layoutCoordinates.size.width.toFloat() // Row의 너비를 저장
             }
     ) {
-        legs.forEach { leg ->
+         legs.forEach { leg ->
             val fraction = leg.sectionTime / total // 비율 계산
             val barWidth = rowWidth.toDp() * fraction // Row의 너비에 비례하여 바의 너비 계산
 
             if (leg.transportType == TransportType.WALK) {
+                Log.d("adfhejfhskdfjs", "WALK")
                 Box(
                     modifier = Modifier
                         .width(barWidth) // 바의 너비 설정
@@ -84,6 +86,7 @@ fun SummaryBarChart(
 
                 }
             } else {
+                Log.d("adfhejfhskdfjs", "ELSE")
                 Box(
                     modifier = Modifier
                         .width(barWidth) // 바의 너비 설정

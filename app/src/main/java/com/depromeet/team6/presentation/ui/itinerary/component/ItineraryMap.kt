@@ -1,6 +1,5 @@
 package com.depromeet.team6.presentation.ui.itinerary.component
 
-import android.util.Log
 import android.widget.FrameLayout
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
@@ -28,12 +27,14 @@ import com.depromeet.team6.BuildConfig
 import com.depromeet.team6.R
 import com.depromeet.team6.presentation.model.course.LegInfo
 import com.depromeet.team6.presentation.ui.itinerary.LegInfoDummyProvider
+import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.presentation.util.modifier.roundedBackgroundWithPadding
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.google.android.gms.maps.model.LatLng
 import com.skt.tmap.TMapPoint
 import com.skt.tmap.TMapView
 import com.skt.tmap.overlay.TMapMarkerItem
+import com.skt.tmap.overlay.TMapPolyLine
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -48,7 +49,6 @@ fun ItineraryMap(
     val tMapView = remember { TMapView(context) }
     var isMapReady by remember { mutableStateOf(false) }
 
-    Log.d("asdfehjklfsdlkf", "${legs[0]}, ${legs[legs.size-1]}")
     val departLocation = LatLng(legs[0].startPoint.latitude, legs[0].startPoint.longitude)
     val destinationLocation = LatLng(legs[legs.size-1].endPoint.latitude, legs[legs.size-1].endPoint.longitude)
 
@@ -66,7 +66,12 @@ fun ItineraryMap(
             val departTMapPoint = TMapPoint(departLocation.latitude, departLocation.longitude)
             val destinationTMapPoint = TMapPoint(destinationLocation.latitude, destinationLocation.longitude)
 
-            Log.d("asdfehjklfsdlkf", "$departLocation, $destinationLocation")
+            // 라인 그리기
+            for (leg in legs) {
+                val lineWayPoints = getWayPointList(leg.passShape)
+                val line = TMapPolyLine("line_${leg.transportType}_${leg.sectionTime}", lineWayPoints)
+                tMapView.addTMapPolyLine(line)
+            }
 
             // 마커 설정
             val marker = TMapMarkerItem()
@@ -83,7 +88,6 @@ fun ItineraryMap(
             // 지도 위치 조정
             val midPoint = getMidPoint(departLocation, destinationLocation)
             tMapView.setCenterPoint(midPoint.latitude, midPoint.longitude)
-            Log.d("asdfehjklfsdlkfcenterpoint", "$midPoint")
 
             // 지도 Scale 조정
             tMapView.zoomLevel = 1
@@ -119,22 +123,6 @@ fun ItineraryMap(
     Box(
         modifier = modifier
     ) {
-        CircleBtnBack(
-            modifier = Modifier
-                .size(36.dp)
-                .align(Alignment.TopStart)
-                .offset(x = 16.dp, y = 12.dp)
-        )
-
-        Image(
-            modifier = Modifier
-                .size(36.dp)
-                .align(Alignment.BottomEnd)
-                .offset(x = (-16).dp, y = (-16).dp),
-            imageVector = ImageVector.vectorResource(R.drawable.ic_all_current_location),
-            contentDescription = "ItineraryCircleBtnBack"
-        )
-
         // Tmap
         AndroidView(
             modifier = modifier.fillMaxSize(),
@@ -149,7 +137,27 @@ fun ItineraryMap(
                 // Update logic if needed (e.g., map settings)
             }
         )
+        CircleBtnBack(
+            modifier = Modifier
+                .size(36.dp)
+                .align(Alignment.TopStart)
+                .offset(x = 16.dp, y = 12.dp)
+                .noRippleClickable {
+                    // TODO : 뒤로가기
+                }
+        )
 
+        Image(
+            modifier = Modifier
+                .size(36.dp)
+                .align(Alignment.BottomEnd)
+                .offset(x = (-16).dp, y = (-16).dp)
+                .noRippleClickable{
+                    tMapView.setCenterPoint(currentLocation.latitude, currentLocation.longitude)
+                },
+            imageVector = ImageVector.vectorResource(R.drawable.ic_all_current_location),
+            contentDescription = "ItineraryCircleBtnBack"
+        )
     }
 }
 
@@ -177,6 +185,20 @@ private fun getMidPoint(point1: LatLng, point2: LatLng): LatLng {
     val midLatitude = (point1.latitude + point2.latitude) / 2
     val midLongitude = (point1.longitude + point2.longitude) / 2
     return LatLng(midLatitude, midLongitude)
+}
+
+private fun getWayPointList(passShape : String) : ArrayList<TMapPoint> {
+    val pointList : ArrayList<TMapPoint> = passShape.split(" ").mapNotNull { pair ->
+        val parts = pair.split(",")
+        if (parts.size == 2) {
+            val longitude = parts[0].toDoubleOrNull()
+            val latitude = parts[1].toDoubleOrNull()
+            if (longitude != null && latitude != null) TMapPoint(latitude, longitude) else null
+        } else {
+            null
+        }
+    }.toCollection(ArrayList())
+    return pointList
 }
 
 @Preview
