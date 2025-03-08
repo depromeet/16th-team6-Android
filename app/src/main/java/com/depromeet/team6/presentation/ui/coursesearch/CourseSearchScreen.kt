@@ -48,6 +48,10 @@ fun CourseSearchRoute(
         }
     }
 
+    LaunchedEffect(Unit) {
+        viewModel.getMockData()
+    }
+
     when (uiState.courseDataLoadState) {
         LoadState.Idle -> CourseSearchScreen(
             uiState = uiState,

@@ -21,5 +21,6 @@ class CourseSearchContract {
 
     sealed class CourseEvent : UiEvent {
         data object RegisterAlarm : CourseEvent()
+        data class LoadCourseSearchResult(val searchResult : List<LastTransportInfo>) : CourseEvent()
     }
 }
