@@ -25,7 +25,6 @@ import com.depromeet.team6.presentation.ui.common.view.AtChaWebView
 import com.depromeet.team6.presentation.ui.mypage.component.MypageListItem
 import com.depromeet.team6.presentation.ui.mypage.component.TitleBar
 import com.depromeet.team6.presentation.util.WebViewUrl.PRIVACY_POLICY_URL
-import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.depromeet.team6.ui.theme.LocalTeam6Colors
 
@@ -73,23 +72,23 @@ fun MypageScreen(
     logoutClicked: () -> Unit = {},
     withDrawClicked: () -> Unit = {},
     onBackClick: () -> Unit = {},
-    onWebViewClicked: () -> Unit={},
-    webViewClose: () -> Unit={}
+    onWebViewClicked: () -> Unit = {},
+    webViewClose: () -> Unit = {}
 ) {
     val colors = LocalTeam6Colors.current
     if (mypageUiState.isWebViewOpened) {
-        AtChaWebView (url = PRIVACY_POLICY_URL, onClose = webViewClose, modifier=modifier)
+        AtChaWebView(url = PRIVACY_POLICY_URL, onClose = webViewClose, modifier = modifier)
     } else {
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(colors.greyWashBackground)
-    ) {
-        Column {
-            TitleBar(
-                title = stringResource(R.string.mypage_title_text),
-                onBackClick = onBackClick
-            )
+        Box(
+            modifier = modifier
+                .fillMaxSize()
+                .background(colors.greyWashBackground)
+        ) {
+            Column {
+                TitleBar(
+                    title = stringResource(R.string.mypage_title_text),
+                    onBackClick = onBackClick
+                )
 //
 //            MypageListItem(
 //                title = stringResource(R.string.mypage_account_title_text),
@@ -103,35 +102,35 @@ fun MypageScreen(
 //                    .height(10.dp)
 //                    .background(colors.black))
 
-            MypageListItem(
-                title = stringResource(R.string.mypage_account_logout_text),
-                onClick = logoutClicked,
-            )
+                MypageListItem(
+                    title = stringResource(R.string.mypage_account_logout_text),
+                    onClick = logoutClicked
+                )
 
-            MypageListItem(
-                title = stringResource(R.string.mypage_account_signout_text),
-                onClick = withDrawClicked,
-            )
+                MypageListItem(
+                    title = stringResource(R.string.mypage_account_signout_text),
+                    onClick = withDrawClicked
+                )
 
-            Spacer(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(10.dp)
-                    .background(colors.black)
-            )
+                Spacer(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(10.dp)
+                        .background(colors.black)
+                )
 
-            MypageListItem(
-                title = stringResource(R.string.mypage_policy_text),
-                onClick = onWebViewClicked
-            )
+                MypageListItem(
+                    title = stringResource(R.string.mypage_policy_text),
+                    onClick = onWebViewClicked
+                )
 //
 //            MypageListItem(
 //                title = stringResource(R.string.mypage_version_title_text),
 //                onClick = { },
 //                modifier = Modifier
 //            )
+            }
         }
-    }
     }
 }
 

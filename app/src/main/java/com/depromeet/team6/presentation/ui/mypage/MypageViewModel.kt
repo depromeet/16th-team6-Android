@@ -1,6 +1,5 @@
 package com.depromeet.team6.presentation.ui.mypage
 
-import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.depromeet.team6.data.repositoryimpl.UserInfoRepositoryImpl
 import com.depromeet.team6.domain.usecase.DeleteWithDrawUseCase
