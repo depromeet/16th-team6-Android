@@ -61,20 +61,22 @@ class OnboardingViewModel @Inject constructor(
     private fun handleUpdateSearchText(event: OnboardingContract.OnboardingEvent.UpdateSearchText) {
         setState { copy(searchText = event.text) }
         debounceJob?.cancel()
-        debounceJob = viewModelScope.launch {
-            delay(300)
-            getLocationsUseCase(
-                keyword = event.text,
-                lat = event.lat,
-                lon = event.lon
-            ).onSuccess { locations ->
-                setState {
-                    copy(
-                        searchLocations = locations
-                    )
+        if (event.text.isNotEmpty()) {
+            debounceJob = viewModelScope.launch {
+                delay(300)
+                getLocationsUseCase(
+                    keyword = event.text,
+                    lat = event.lat,
+                    lon = event.lon
+                ).onSuccess { locations ->
+                    setState {
+                        copy(
+                            searchLocations = locations
+                        )
+                    }
+                }.onFailure {
+                    setState { copy(searchLocations = emptyList()) }
                 }
-            }.onFailure {
-                setState { copy(searchLocations = emptyList()) }
             }
         }
     }

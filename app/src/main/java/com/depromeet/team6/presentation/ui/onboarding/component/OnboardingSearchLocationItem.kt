@@ -8,13 +8,18 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.depromeet.team6.R
 import com.depromeet.team6.domain.model.Location
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.presentation.util.modifier.roundedBackgroundWithPadding
@@ -42,12 +47,25 @@ fun OnboardingSearchLocationItem(
             )
             Spacer(modifier = Modifier.height(4.dp))
 
-            Text(
-                text = onboardingSearchLocation.radius + " ' " + onboardingSearchLocation.address,
-                style = defaultTeam6Typography.bodyRegular14,
-                color = defaultTeam6Colors.greySecondaryLabel,
-                overflow = TextOverflow.Ellipsis
-            )
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = onboardingSearchLocation.radius,
+                    style = defaultTeam6Typography.bodyRegular14,
+                    color = defaultTeam6Colors.greySecondaryLabel
+                )
+                Icon(
+                    modifier = Modifier.padding(horizontal = 6.dp),
+                    imageVector = ImageVector.vectorResource(R.drawable.ic_all_adrress_devider),
+                    contentDescription = null,
+                    tint = Color.Unspecified
+                )
+                Text(
+                    text = onboardingSearchLocation.address,
+                    style = defaultTeam6Typography.bodyRegular14,
+                    color = defaultTeam6Colors.greySecondaryLabel,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
         }
         Spacer(modifier = Modifier.width(12.dp))
         Text(

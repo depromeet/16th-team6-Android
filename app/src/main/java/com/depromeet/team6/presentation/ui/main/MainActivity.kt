@@ -59,7 +59,9 @@ class MainActivity : ComponentActivity() {
                 val snackbarHostState = remember { SnackbarHostState() }
                 val coroutineScope = rememberCoroutineScope()
 
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                Scaffold(
+                    modifier = Modifier.fillMaxSize()
+                ) { innerPadding ->
                     MainNavHost(
                         navigator = navigator,
                         padding = innerPadding
