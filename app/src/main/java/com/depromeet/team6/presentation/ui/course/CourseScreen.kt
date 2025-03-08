@@ -4,8 +4,11 @@ import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
@@ -19,7 +22,10 @@ import com.depromeet.team6.presentation.model.course.WayPoint
 import com.depromeet.team6.presentation.ui.course.component.CourseAppBar
 import com.depromeet.team6.presentation.ui.course.component.DestinationSearchBar
 import com.depromeet.team6.presentation.ui.course.component.TransportTabMenu
+import com.depromeet.team6.presentation.util.view.SnackbarController
+import com.depromeet.team6.presentation.util.view.SnackbarEvent
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
+import kotlinx.coroutines.launch
 
 @Composable
 fun CourseScreen(
@@ -50,6 +56,16 @@ fun CourseScreen(
             modifier = modifier
                 .padding(horizontal = 16.dp, vertical = 10.dp)
         )
+        val coroutineScope = rememberCoroutineScope()
+        Button(onClick = {
+            // 스낵바를 보여주는 로직
+            coroutineScope.launch {
+                SnackbarController.sendEvent(SnackbarEvent(message = "뽀잉 내려왔다가 올라가는 애니메이션!"))
+            }
+        }) {
+            Text("Show Custom Snackbar")
+        }
+
         TransportTabMenu(
             availableCourses = courseData
         )

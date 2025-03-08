@@ -1,4 +1,4 @@
-package com.depromeet.team6.presentation
+package com.depromeet.team6.presentation.util
 
 import androidx.compose.ui.unit.dp
 

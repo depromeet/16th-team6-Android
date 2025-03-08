@@ -1,4 +1,5 @@
 <resources>
+    <!--    common   -->
     <string name="app_name">Team6</string>
     <string name="lock_screen_description">알림 잠금화면</string>
     <string name="lock_screen_start_btn">출발하기</string>
@@ -27,4 +28,9 @@
     <string name="course_detail_info_boarding_point">%1s 승차</string>
     <string name="course_detail_info_destination_point">%1s 하차</string>
     <string name="course_set_notification_snackbar">알림이 등록되었어요</string>
+    
+    <!--    itinerary   -->
+    <string name="itinerary_summary_remaining_hour">%1d시간</string>
+    <string name="itinerary_summary_remaining_minute">%1d분</string>
+    <string name="itinerary_summary_total_time">%02d:%02d 출발 ~ %02d:%02d 도착 예정</string>
 </resources>
