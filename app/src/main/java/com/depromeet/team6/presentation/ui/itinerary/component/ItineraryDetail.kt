@@ -6,7 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.depromeet.team6.presentation.model.course.LegInfo
-import com.depromeet.team6.presentation.ui.course.component.CourseInfoDetail
+import com.depromeet.team6.presentation.ui.coursesearch.component.CourseInfoDetail
 
 @Composable
 fun ItineraryDetail(

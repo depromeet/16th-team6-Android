@@ -1,4 +1,4 @@
-package com.depromeet.team6.presentation.ui.course.component
+package com.depromeet.team6.presentation.ui.coursesearch.component
 
 import android.util.Log
 import androidx.compose.foundation.Image

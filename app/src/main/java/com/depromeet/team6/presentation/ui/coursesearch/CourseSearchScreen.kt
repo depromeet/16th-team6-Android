@@ -1,4 +1,4 @@
-package com.depromeet.team6.presentation.ui.course
+package com.depromeet.team6.presentation.ui.coursesearch
 
 import android.widget.Toast
 import androidx.compose.foundation.background
@@ -19,9 +19,9 @@ import com.depromeet.team6.presentation.model.course.LastTransportInfo
 import com.depromeet.team6.presentation.model.course.LegInfo
 import com.depromeet.team6.presentation.model.course.TransportType
 import com.depromeet.team6.presentation.model.course.WayPoint
-import com.depromeet.team6.presentation.ui.course.component.CourseAppBar
-import com.depromeet.team6.presentation.ui.course.component.DestinationSearchBar
-import com.depromeet.team6.presentation.ui.course.component.TransportTabMenu
+import com.depromeet.team6.presentation.ui.coursesearch.component.CourseAppBar
+import com.depromeet.team6.presentation.ui.coursesearch.component.DestinationSearchBar
+import com.depromeet.team6.presentation.ui.coursesearch.component.TransportTabMenu
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 
@@ -29,7 +29,6 @@ import com.depromeet.team6.ui.theme.defaultTeam6Colors
 fun CourseSearchRoute(
     padding: PaddingValues,
     viewModel: CourseSearchViewModel = hiltViewModel(),
-    navigateToCourseSearch: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
@@ -38,11 +37,11 @@ fun CourseSearchRoute(
     LaunchedEffect(Unit) {
         viewModel.sideEffect.collect { sideEffect ->
             when (sideEffect) {
-                is CourseContract.CourseSideEffect.ShowNotificationToast -> {
+                is CourseSearchContract.CourseSideEffect.ShowNotificationToast -> {
                     Toast.makeText(context, context.getString(R.string.course_set_notification_snackbar), Toast.LENGTH_SHORT).show()
                 }
 
-                CourseContract.CourseSideEffect.ShowSearchFailedToast -> {
+                CourseSearchContract.CourseSideEffect.ShowSearchFailedToast -> {
                     Toast.makeText(context, context.getString(R.string.course_search_failed_snackbar), Toast.LENGTH_SHORT).show()
                 }
             }
@@ -62,7 +61,7 @@ fun CourseSearchRoute(
 @Composable
 fun CourseSearchScreen(
     modifier: Modifier = Modifier,
-    uiState : CourseContract.CourseUiState = CourseContract.CourseUiState(),
+    uiState : CourseSearchContract.CourseUiState = CourseSearchContract.CourseUiState(),
     navigateToItinerary: () -> Unit = {},
     setNotification: () -> Unit = {},
 ) {
