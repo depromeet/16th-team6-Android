@@ -8,7 +8,7 @@ import javax.inject.Singleton
 @Singleton
 class GetAddressFromCoordinatesUseCase @Inject constructor(
     private val locationsRepository: LocationsRepository
-){
+) {
     suspend operator fun invoke(lat: Double, lon: Double): Result<Address> =
         locationsRepository.getAddressFromCoordinates(lat = lat, lon = lon)
 }
