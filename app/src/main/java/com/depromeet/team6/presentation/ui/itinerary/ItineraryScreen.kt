@@ -1,13 +1,19 @@
 package com.depromeet.team6.presentation.ui.itinerary
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.depromeet.team6.presentation.model.course.LegInfo
 import com.depromeet.team6.presentation.model.course.TransportType
 import com.depromeet.team6.presentation.model.course.WayPoint
@@ -15,13 +21,47 @@ import com.depromeet.team6.presentation.ui.common.AtchaCommonBottomSheet
 import com.depromeet.team6.presentation.ui.itinerary.component.ItineraryDetail
 import com.depromeet.team6.presentation.ui.itinerary.component.ItineraryMap
 import com.depromeet.team6.presentation.ui.itinerary.component.ItinerarySummary
+import com.depromeet.team6.presentation.util.view.LoadState
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.google.android.gms.maps.model.LatLng
 
 @Composable
+fun ItineraryRoute(
+    padding: PaddingValues,
+    viewModel: ItineraryViewModel = hiltViewModel()
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+
+    // SideEffect 감지
+    LaunchedEffect(Unit) {
+        viewModel.sideEffect.collect { sideEffect ->
+            when (sideEffect) {
+
+                else -> {}
+            }
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.getLegs()
+    }
+
+    when (uiState.courseDataLoadState) {
+        LoadState.Idle -> ItineraryScreen(
+            uiState = uiState,
+            modifier = Modifier
+                .padding(padding)
+        )
+        else -> Unit
+    }
+
+}
+
+@Composable
 fun ItineraryScreen(
-    legs: List<LegInfo>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    uiState: ItineraryContract.ItineraryUiState = ItineraryContract.ItineraryUiState()
 ) {
     // TODO : 나중에 없애야함
     val tempTimeToLeave = "2025-03-07 22:52:00"
@@ -100,7 +140,7 @@ fun ItineraryScreen(
     AtchaCommonBottomSheet(
         mainContent = {
             ItineraryMap(
-                legs = dummyLegs,
+                legs = uiState.courseData,
                 currentLocation = LatLng(37.5665, 126.9780)
             )
         },
@@ -113,10 +153,10 @@ fun ItineraryScreen(
                 ItinerarySummary(
                     totalTimeSec = tempTotalSec,
                     timeToLeave = tempTimeToLeave,
-                    legs = dummyLegs
+                    legs = uiState.courseData
                 )
                 ItineraryDetail(
-                    legs = dummyLegs
+                    legs = uiState.courseData
                 )
             }
         }
@@ -128,7 +168,5 @@ fun ItineraryScreen(
 fun ItineraryScreenPreview(
     @PreviewParameter(LegInfoDummyProvider::class) legs: List<LegInfo>
 ) {
-    ItineraryScreen(
-        legs = legs
-    )
+    ItineraryScreen()
 }

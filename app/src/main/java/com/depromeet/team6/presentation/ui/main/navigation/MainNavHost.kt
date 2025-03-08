@@ -6,6 +6,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import com.depromeet.team6.presentation.ui.coursesearch.navigation.courseSearchNavGraph
 import com.depromeet.team6.presentation.ui.home.navigation.homeNavGraph
+import com.depromeet.team6.presentation.ui.itinerary.navigation.itineraryNavGraph
 import com.depromeet.team6.presentation.ui.login.navigation.loginGraph
 import com.depromeet.team6.presentation.ui.onboarding.navigation.onboardingNavGraph
 
@@ -37,6 +38,10 @@ fun MainNavHost(
         )
 
         courseSearchNavGraph(
+            padding = padding
+        )
+
+        itineraryNavGraph(
             padding = padding
         )
         val previousRoute = navigator.navHostController.previousBackStackEntry?.destination?.route ?: "Unknown"
