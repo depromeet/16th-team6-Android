@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,7 +27,7 @@ import androidx.compose.ui.unit.sp
 import com.depromeet.team6.R
 import com.depromeet.team6.data.datalocal.manager.LockServiceManager
 import com.depromeet.team6.data.datalocal.permission.PermissionUtil
-import com.depromeet.team6.presentation.ui.course.CourseScreen
+import com.depromeet.team6.presentation.ui.login.LoginRoute
 import com.depromeet.team6.ui.theme.Team6Theme
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
@@ -53,30 +52,28 @@ class MainActivity : ComponentActivity() {
                 val snackbarHostState = remember { SnackbarHostState() }
                 val coroutineScope = rememberCoroutineScope()
 
-                Scaffold(
-                    modifier = Modifier.fillMaxSize(),
-                    snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
-                ) { innerPadding ->
-//                    HomeRoute(
-//                        modifier = Modifier.padding(innerPadding)
-//                    )
-                    CourseScreen(modifier = Modifier.padding(innerPadding))
+                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                    LoginRoute(
+                        modifier = Modifier.padding(innerPadding),
+                        navigateToOnboarding = {},
+                        navigateToHome = {}
+                    )
                 }
             }
+
+            FirebaseMessaging.getInstance().token.addOnCompleteListener(
+                OnCompleteListener { task ->
+                    if (!task.isSuccessful) {
+                        Log.d(TAG, "Fetching FCM registration token failed")
+                        return@OnCompleteListener
+                    }
+
+                    val token = task.result
+
+                    Log.d("Fcm Token", token)
+                }
+            )
         }
-
-        FirebaseMessaging.getInstance().token.addOnCompleteListener(
-            OnCompleteListener { task ->
-                if (!task.isSuccessful) {
-                    Log.d(TAG, "Fetching FCM registration token failed")
-                    return@OnCompleteListener
-                }
-
-                val token = task.result
-
-                Log.d("Fcm Token", token)
-            }
-        )
     }
 
     private fun startLockService() {

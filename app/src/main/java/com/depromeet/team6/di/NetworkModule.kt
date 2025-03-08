@@ -1,8 +1,10 @@
 package com.depromeet.team6.di
 
 import com.depromeet.team6.BuildConfig
-import com.depromeet.team6.data.dataremote.interceptor.DummyInterceptor
+import com.depromeet.team6.BuildConfig.DEBUG
+import com.depromeet.team6.data.dataremote.interceptor.AuthInterceptor
 import com.depromeet.team6.di.qualifier.Auth
+import com.depromeet.team6.di.qualifier.Team6
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides
@@ -35,19 +37,15 @@ object NetworkModule {
     @Provides
     @Singleton
     fun providesOkHttpClient(
-        loggingInterceptor: HttpLoggingInterceptor
+        loggingInterceptor: HttpLoggingInterceptor,
+        @Auth authInterceptor: Interceptor
     ): OkHttpClient =
         OkHttpClient.Builder().apply {
             connectTimeout(10, TimeUnit.SECONDS)
             writeTimeout(10, TimeUnit.SECONDS)
             readTimeout(10, TimeUnit.SECONDS)
-            addInterceptor(loggingInterceptor)
-            addInterceptor { chain ->
-                val request = chain.request().newBuilder()
-                    .addHeader("Accept", "*/*")
-                    .build()
-                chain.proceed(request)
-            }
+            addInterceptor(authInterceptor)
+            if (DEBUG) addInterceptor(loggingInterceptor)
         }.build()
 
     @Provides
@@ -60,10 +58,11 @@ object NetworkModule {
     @Provides
     @Singleton
     @Auth
-    fun provideAuthInterceptor(interceptor: DummyInterceptor): Interceptor = interceptor
+    fun provideAuthInterceptor(interceptor: AuthInterceptor): Interceptor = interceptor
 
     @ExperimentalSerializationApi
     @Provides
+    @Team6
     @Singleton
     fun providesRetrofit(
         okHttpClient: OkHttpClient,

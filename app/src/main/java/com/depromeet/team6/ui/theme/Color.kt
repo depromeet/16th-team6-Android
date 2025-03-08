@@ -42,6 +42,7 @@ data class Team6Colors(
 
     // Button
     val greyButtonOutline: Color,
+    val kakaoLoginButton: Color,
     val greyDefaultButton: Color,
     val greyButtonDisable: Color,
 
@@ -96,6 +97,7 @@ val defaultTeam6Colors = Team6Colors(
     greyButtonOutline = Color(0xFF36363A),
     greyDefaultButton = Color(0xFF2C2C30),
     greyButtonDisable = Color(0x662C2C30),
+    kakaoLoginButton = Color(0xFFFAE100),
 
     // Non-Semantic
     systemGreen = Color(0xFF99ED7B),

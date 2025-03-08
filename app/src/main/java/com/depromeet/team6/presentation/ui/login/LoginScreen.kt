@@ -1,0 +1,168 @@
+package com.depromeet.team6.presentation.ui.login
+
+import android.content.Context
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.flowWithLifecycle
+import com.depromeet.team6.R
+import com.depromeet.team6.presentation.util.modifier.noRippleClickable
+import com.depromeet.team6.presentation.util.modifier.roundedBackgroundWithPadding
+import com.depromeet.team6.presentation.util.view.LoadState
+import com.depromeet.team6.ui.theme.defaultTeam6Colors
+import com.depromeet.team6.ui.theme.defaultTeam6Typography
+import com.kakao.sdk.auth.model.OAuthToken
+import com.kakao.sdk.user.UserApiClient
+
+fun setLayoutLoginKakaoClickListener(
+    context: Context,
+    callback: (OAuthToken?, Throwable?) -> Unit
+) {
+    if (UserApiClient.instance.isKakaoTalkLoginAvailable(context)) {
+        UserApiClient.instance.loginWithKakaoTalk(context, callback = callback)
+    } else {
+        UserApiClient.instance.loginWithKakaoAccount(context, callback = callback)
+    }
+}
+
+@Composable
+fun LoginRoute(
+    modifier: Modifier = Modifier,
+    viewModel: LoginViewModel = hiltViewModel(),
+    navigateToOnboarding: () -> Unit,
+    navigateToHome: () -> Unit
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val context = LocalContext.current
+
+    val callback: (OAuthToken?, Throwable?) -> Unit = { oAuthToken, _ ->
+        if (oAuthToken != null) {
+            viewModel.setKakaoAccessToken(oAuthToken.accessToken)
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.checkAutoLogin()
+    }
+
+    LaunchedEffect(viewModel.sideEffect, lifecycleOwner) {
+        viewModel.sideEffect.flowWithLifecycle(lifecycle = lifecycleOwner.lifecycle)
+            .collect { signInSideEffect ->
+                when (signInSideEffect) {
+                    is LoginContract.LoginSideEffect.NavigateToOnboarding -> navigateToOnboarding()
+                    is LoginContract.LoginSideEffect.NavigateToHome -> navigateToHome()
+                }
+            }
+    }
+
+    LaunchedEffect(uiState.authTokenLoadState) {
+        when (uiState.authTokenLoadState) {
+            LoadState.Success -> viewModel.getCheck()
+            else -> Unit
+        }
+    }
+
+    LaunchedEffect(uiState.isUserRegisteredState) {
+        when (uiState.isUserRegisteredState) {
+            LoadState.Success -> viewModel.getLogin()
+            LoadState.Error -> {
+                navigateToOnboarding()
+            }
+
+            else -> Unit
+        }
+    }
+
+    when (uiState.loadState) {
+        LoadState.Idle -> {
+            LoginScreen(
+                signInUiState = uiState,
+                onSignInClicked = {
+                    setLayoutLoginKakaoClickListener(context = context, callback = callback)
+                },
+                modifier = modifier
+            )
+        }
+
+        LoadState.Success -> navigateToHome()
+        else -> Unit
+    }
+}
+
+@Composable
+fun LoginScreen(
+    signInUiState: LoginContract.LoginUiState = LoginContract.LoginUiState(),
+    onSignInClicked: () -> Unit = {},
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .background(color = defaultTeam6Colors.black),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Spacer(modifier = Modifier.height(256.dp))
+        Icon(
+            imageVector = ImageVector.vectorResource(R.drawable.ic_login_logo),
+            contentDescription = null,
+            tint = Color.Unspecified,
+            modifier = Modifier.padding(start = 34.dp)
+        )
+        Spacer(modifier = Modifier.weight(1f))
+        Row(
+            modifier = Modifier
+                .padding(horizontal = 20.dp)
+                .fillMaxWidth()
+                .roundedBackgroundWithPadding(
+                    backgroundColor = defaultTeam6Colors.kakaoLoginButton,
+                    cornerRadius = 8.dp
+
+                )
+                .noRippleClickable { onSignInClicked() },
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Icon(
+                imageVector = ImageVector.vectorResource(R.drawable.ic_login_kakao),
+                contentDescription = null,
+                modifier = Modifier.padding(vertical = 16.dp)
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = "카카오 계정으로 시작하기",
+                style = defaultTeam6Typography.heading6Bold15
+            )
+        }
+        Spacer(Modifier.height(20.dp))
+    }
+}
+
+@Preview
+@Composable
+private fun LoginScreenPreview() {
+    LoginScreen()
+}
