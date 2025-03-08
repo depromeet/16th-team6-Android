@@ -11,7 +11,7 @@ interface AuthRepository {
 
     suspend fun getLogin(provider: Int): Result<Auth>
 
-    suspend fun postLogout(): Result<Unit>
+    suspend fun postLogout(): Response<Unit>
 
     suspend fun deleteWithDraw(): Response<Unit>
 }

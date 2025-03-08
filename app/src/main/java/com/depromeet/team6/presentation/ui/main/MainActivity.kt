@@ -33,6 +33,8 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.depromeet.team6.R
 import com.depromeet.team6.data.datalocal.manager.LockServiceManager
 import com.depromeet.team6.data.datalocal.permission.PermissionUtil
+import com.depromeet.team6.presentation.ui.alarm.NotificationScheduler
+import com.depromeet.team6.presentation.ui.alarm.NotificationTimeConstants
 import com.depromeet.team6.presentation.ui.main.navigation.MainNavHost
 import com.depromeet.team6.presentation.ui.main.navigation.MainNavigator
 import com.depromeet.team6.presentation.ui.main.navigation.rememberMainNavigator
@@ -66,7 +68,9 @@ class MainActivity : ComponentActivity() {
                 val snackbarHostState = remember { SnackbarHostState() }
                 val coroutineScope = rememberCoroutineScope()
 
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                Scaffold(
+                    modifier = Modifier.fillMaxSize()
+                ) { innerPadding ->
                     MainNavHost(
                         navigator = navigator,
                         padding = innerPadding
@@ -85,6 +89,13 @@ class MainActivity : ComponentActivity() {
 
                     Log.d("Fcm Token", token)
                 }
+            )
+
+            val notificationScheduler = NotificationScheduler(applicationContext)
+            notificationScheduler.scheduleNotificationForTime(
+                stringResource(R.string.app_name),
+                stringResource(R.string.notification_content_text),
+                NotificationTimeConstants.DEPARTURE_DATE_TIME_STRING
             )
         }
     }

@@ -1,5 +1,4 @@
 <resources>
-    <!--    common   -->
     <string name="app_name">앗차!</string>
 
     <!-- Onboarding -->
@@ -19,6 +18,8 @@
     <string name="lock_service_start_text">잠금화면 서비스 시작됨</string>
     <string name="lock_screen_start_text">잠금화면 실행</string>
     <string name="lock_screen_start_alarm_text">출발 알림</string>
+
+    <string name="notification_content_text">"지금 바로 출발하셔야 해요!"</string>
 
     <!-- HomeScreen -->
     <string name="home_icon_search_text">검색 아이콘</string>
@@ -55,6 +56,8 @@
     <string name="course_detail_info_boarding_point">%1s 승차</string>
     <string name="course_detail_info_destination_point">%1s 하차</string>
     <string name="course_set_notification_snackbar">알림이 등록되었어요</string>
+    <string name="notification_channel_name">앱 알림</string>
+    <string name="notification_channel_description_text">앱 내부 알림 채널</string>
     <string name="course_search_failed_snackbar">경로를 조회하는데 실패했어요</string>
 
     <!--    itinerary   -->
