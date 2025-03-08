@@ -53,6 +53,14 @@ fun TMapViewCompose(
         tMapView.setOnMapReadyListener {
             tMapView.mapType = TMapView.MapType.NIGHT
             isMapReady = true
+
+            // 드래그 종료 시 지도 중심 좌표 업데이트
+            tMapView.setOnDisableScrollWithZoomLevelListener { _, _ ->
+                val centerLat = tMapView.centerPoint.latitude
+                val centerLon = tMapView.centerPoint.longitude
+
+                viewModel.getCenterLocation(LatLng(centerLat, centerLon))
+            }
         }
     }
 
@@ -123,6 +131,8 @@ fun TMapViewCompose(
                 .clickable(enabled = isMapReady) {
                     val tMapPoint = TMapPoint(currentLocation.latitude, currentLocation.longitude)
                     tMapView.setCenterPoint(tMapPoint.latitude, tMapPoint.longitude)
+
+                    viewModel.getCenterLocation(LatLng(tMapPoint.latitude, tMapPoint.longitude))
                 }
                 .graphicsLayer { alpha = if (isMapReady) 1f else 0.5f } // 비활성화 시 투명도 조정
         )
