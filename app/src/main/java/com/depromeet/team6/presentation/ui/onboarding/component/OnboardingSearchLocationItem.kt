@@ -56,7 +56,7 @@ fun OnboardingSearchLocationItem(
             style = defaultTeam6Typography.bodyMedium13,
             modifier = Modifier
                 .roundedBackgroundWithPadding(
-                    backgroundColor = defaultTeam6Colors.defaultButton,
+                    backgroundColor = defaultTeam6Colors.greyDefaultButton,
                     cornerRadius = 8.dp,
                     padding = PaddingValues(vertical = 8.dp, horizontal = 12.5.dp)
                 )

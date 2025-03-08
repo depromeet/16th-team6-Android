@@ -37,7 +37,7 @@ fun OnboardingSelectLocationButton(
             .fillMaxWidth()
             .border(
                 width = 1.dp,
-                color = defaultTeam6Colors.greyButton,
+                color = defaultTeam6Colors.greyDefaultButton,
                 shape = RoundedCornerShape(8.dp)
             )
             .roundedBackgroundWithPadding(
