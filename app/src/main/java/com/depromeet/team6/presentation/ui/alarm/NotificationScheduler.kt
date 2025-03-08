@@ -7,6 +7,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import androidx.core.app.NotificationCompat
+import com.depromeet.team6.R
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -28,8 +29,8 @@ class NotificationScheduler(private val context: Context) {
     }
 
     private fun createNotificationChannel() {
-        val name = "앱 알림"
-        val descriptionText = "앱 내부 알림 채널"
+        val name = context.getString(R.string.notification_channel_name)
+        val descriptionText = context.getString(R.string.notification_channel_description_text)
         val importance = NotificationManager.IMPORTANCE_DEFAULT
         val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
             description = descriptionText
