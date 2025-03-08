@@ -10,7 +10,9 @@ class HomeContract {
         val loadState: LoadState = LoadState.Idle,
         val isAlarmRegistered: Boolean = false,
         val isBusDeparted: Boolean = false,
-        val showSpeechBubble: Boolean = true
+        val showSpeechBubble: Boolean = true,
+        val locationAddress: String = "",
+        val logoutState: Boolean = false
     ) : UiState
 
     sealed interface HomeSideEffect : UiSideEffect {

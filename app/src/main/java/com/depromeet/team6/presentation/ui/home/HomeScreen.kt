@@ -1,7 +1,10 @@
 package com.depromeet.team6.presentation.ui.home
 
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -11,7 +14,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -31,6 +38,10 @@ import com.depromeet.team6.presentation.ui.home.component.AfterRegisterSheet
 import com.depromeet.team6.presentation.ui.home.component.CharacterSpeechBubble
 import com.depromeet.team6.presentation.ui.home.component.CurrentLocationSheet
 import com.depromeet.team6.presentation.ui.home.component.TMapViewCompose
+import com.depromeet.team6.presentation.util.DefaultLntLng.DEFAULT_LNG
+import com.depromeet.team6.presentation.util.DefaultLntLng.DEFAULT_LNT
+import com.depromeet.team6.presentation.util.context.getUserLocation
+import com.depromeet.team6.presentation.util.permission.PermissionUtil
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.google.android.gms.maps.model.LatLng
 
@@ -46,6 +57,18 @@ fun HomeRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
+
+    var userLocation by remember { mutableStateOf(DEFAULT_LNT to DEFAULT_LNG) } // 서울시 기본 위치
+
+    val locationPermissionsLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestMultiplePermissions(),
+        onResult = { permissions ->
+            val allGranted = permissions.values.all { it }
+            if (allGranted) {
+                Log.d("Location_Permission", "Has Granted")
+            }
+        }
+    )
 
     LaunchedEffect(viewModel.sideEffect, lifecycleOwner) {
         viewModel.sideEffect.flowWithLifecycle(lifecycle = lifecycleOwner.lifecycle)
@@ -66,8 +89,31 @@ fun HomeRoute(
         }
     }
 
+    LaunchedEffect(Unit) {
+        if (PermissionUtil.hasLocationPermissions(context)) { // 위치 권한이 있으면
+            val location = context.getUserLocation()
+            if (location != null) {
+                userLocation = location
+            }
+        }
+
+        viewModel.getCenterLocation(LatLng(userLocation.first, userLocation.second))
+    }
+
+    SideEffect {
+        if (!PermissionUtil.isLocationPermissionRequested(context) &&
+            !PermissionUtil.hasLocationPermissions(context)
+        ) {
+            PermissionUtil.requestLocationPermissions(
+                context = context,
+                locationPermissionLauncher = locationPermissionsLauncher
+            )
+        }
+    }
+
     when (uiState.loadState) {
         LoadState.Idle -> HomeScreen(
+            userLocation = LatLng(userLocation.first, userLocation.second),
             homeUiState = uiState,
             onCharacterClick = { viewModel.onCharacterClick() },
             navigateToMypage = navigateToMypage,
@@ -76,6 +122,7 @@ fun HomeRoute(
             onSearchClick = { navigateToCourseSearch() }
         )
         LoadState.Error -> navigateToLogin()
+
         else -> Unit
     }
 }
@@ -83,6 +130,7 @@ fun HomeRoute(
 @Composable
 fun HomeScreen(
     padding: PaddingValues,
+    userLocation: LatLng,
     modifier: Modifier = Modifier,
     homeUiState: HomeContract.HomeUiState = HomeContract.HomeUiState(),
     onCharacterClick: () -> Unit = {},
@@ -118,7 +166,7 @@ fun HomeScreen(
         )
 
         TMapViewCompose(
-            LatLng(37.5665, 126.9780),
+            userLocation,
             viewModel = viewModel
         ) // Replace with your actual API key
 
@@ -138,7 +186,7 @@ fun HomeScreen(
             )
         } else {
             CurrentLocationSheet(
-                currentLocation = "중앙빌딩",
+                currentLocation = homeUiState.locationAddress,
                 destination = "우리집",
                 onSearchClick = {
                     onSearchClick()
@@ -199,5 +247,8 @@ private data class SpeechBubbleText(
 @Preview
 @Composable
 private fun HomeScreenPreview() {
-    HomeScreen(padding = PaddingValues(0.dp))
+    HomeScreen(
+        padding = PaddingValues(0.dp),
+        userLocation = LatLng(37.5665, 126.9780)
+    )
 }

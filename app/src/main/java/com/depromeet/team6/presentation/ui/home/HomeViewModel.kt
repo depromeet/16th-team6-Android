@@ -1,7 +1,9 @@
 package com.depromeet.team6.presentation.ui.home
 
 import androidx.lifecycle.viewModelScope
+import com.depromeet.team6.domain.usecase.GetAddressFromCoordinatesUseCase
 import com.depromeet.team6.presentation.util.base.BaseViewModel
+import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -9,8 +11,9 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeViewModel @Inject constructor() : BaseViewModel<HomeContract.HomeUiState, HomeContract.HomeSideEffect, HomeContract.HomeEvent>() {
-
+class HomeViewModel @Inject constructor(
+    private val getAddressFromCoordinatesUseCase: GetAddressFromCoordinatesUseCase
+) : BaseViewModel<HomeContract.HomeUiState, HomeContract.HomeSideEffect, HomeContract.HomeEvent>() {
     private var speechBubbleJob: Job? = null
 
     init {
@@ -24,7 +27,12 @@ class HomeViewModel @Inject constructor() : BaseViewModel<HomeContract.HomeUiSta
             is HomeContract.HomeEvent.DummyEvent -> setState { copy(loadState = event.loadState) }
             is HomeContract.HomeEvent.UpdateAlarmRegistered -> setState { copy(isAlarmRegistered = event.isRegistered) }
             is HomeContract.HomeEvent.UpdateBusDeparted -> setState { copy(isBusDeparted = event.isBusDeparted) }
-            is HomeContract.HomeEvent.UpdateSpeechBubbleVisibility -> setState { copy(showSpeechBubble = event.show) }
+            is HomeContract.HomeEvent.UpdateSpeechBubbleVisibility -> setState {
+                copy(
+                    showSpeechBubble = event.show
+                )
+            }
+
             is HomeContract.HomeEvent.OnCharacterClick -> onCharacterClick()
         }
     }
@@ -53,5 +61,24 @@ class HomeViewModel @Inject constructor() : BaseViewModel<HomeContract.HomeUiSta
 
     fun onCharacterClick() {
         showSpeechBubbleTemporarily()
+    }
+
+    fun getCenterLocation(location: LatLng) {
+        viewModelScope.launch {
+            getAddressFromCoordinatesUseCase.invoke(location.latitude, location.longitude)
+                .onSuccess {
+                    setState {
+                        copy(
+                            locationAddress = it.name
+                        )
+                    }
+                }.onFailure {
+                    setState {
+                        copy(
+                            locationAddress = ""
+                        )
+                    }
+                }
+        }
     }
 }
