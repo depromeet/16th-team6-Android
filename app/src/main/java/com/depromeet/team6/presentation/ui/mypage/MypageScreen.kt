@@ -83,7 +83,8 @@ fun MypageScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(10.dp)
-                    .background(colors.black))
+                    .background(colors.black)
+            )
 
             MypageListItem(
                 title = stringResource(R.string.mypage_policy_text),

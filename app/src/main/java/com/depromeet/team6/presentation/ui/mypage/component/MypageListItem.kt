@@ -36,7 +36,7 @@ fun MypageListItem(
             .background(
                 colors.greyWashBackground
             )
-            .clickable(onClick = onClick),
+            .clickable(onClick = onClick)
     ) {
         Row(
             modifier = modifier
@@ -57,7 +57,6 @@ fun MypageListItem(
                 tint = colors.greyTertiaryLabel,
                 modifier = modifier
             )
-
         }
     }
 }

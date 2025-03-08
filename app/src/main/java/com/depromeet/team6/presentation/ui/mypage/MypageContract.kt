@@ -18,5 +18,4 @@ class MypageContract {
         data object OnLogoutClick : MypageEvent()
         data object OnSignoutClick : MypageEvent()
     }
-
 }

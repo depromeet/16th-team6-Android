@@ -18,13 +18,12 @@ class MypageViewModel @Inject constructor(
             MypageContract.MypageEvent.OnSignoutClick -> onSignoutClick()
         }
     }
-    
+
     fun onLogoutClick() {
         Log.d("LogOut", "onLogoutClick: ")
     }
-    
+
     fun onSignoutClick() {
         Log.d("SignOut", "onSignoutClick: ")
     }
-
 }

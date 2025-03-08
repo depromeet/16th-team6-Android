@@ -43,7 +43,6 @@ fun ConfirmDialog(
             modifier = Modifier,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
             Text(
                 text = "${title}하시겠어요?",
                 color = colors.white,
@@ -93,13 +92,9 @@ fun ConfirmDialog(
                         modifier = Modifier.padding(vertical = 13.dp)
                     )
                 }
-
             }
-            
         }
-
     }
-
 }
 
 @Preview
