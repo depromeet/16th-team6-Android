@@ -21,7 +21,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun TransportTabMenu(
     availableCourses: List<LastTransportInfo>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onRegisterAlarmBtnClick: () -> Unit = {}
 ) {
     val context = LocalContext.current
     val tabItems = context.resources.getStringArray(R.array.course_search_tab_items).toList()

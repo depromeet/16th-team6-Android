@@ -19,7 +19,8 @@ import com.depromeet.team6.ui.theme.defaultTeam6Colors
 @Composable
 fun LastTransportInfoList(
     listData: List<LastTransportInfo>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onRegisterAlarmBtnClick : () -> Unit = {}
 ) {
     LazyColumn(
         modifier = modifier

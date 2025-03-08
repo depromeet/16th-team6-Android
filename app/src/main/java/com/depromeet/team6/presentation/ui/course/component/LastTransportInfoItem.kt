@@ -24,12 +24,9 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.depromeet.team6.R
 import com.depromeet.team6.presentation.model.course.LastTransportInfo
 import com.depromeet.team6.presentation.model.course.LegInfo
-import com.depromeet.team6.presentation.ui.course.CourseContract
-import com.depromeet.team6.presentation.ui.course.CourseViewModel
 import com.depromeet.team6.presentation.ui.itinerary.LegInfoDummyProvider
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
@@ -38,7 +35,8 @@ import com.depromeet.team6.ui.theme.defaultTeam6Typography
 @Composable
 fun LastTransportInfoItem(
     lastTransportInfo: LastTransportInfo,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onRegisterAlarmBtnClick: () -> Unit = {}
 ) {
     Column(
         modifier = modifier
@@ -127,14 +125,16 @@ fun LastTransportInfoItem(
         )
 
         // 막차 알림 받기 버튼
-        SetNotificationButton()
+        SetNotificationButton(
+            btnClickEvent = onRegisterAlarmBtnClick
+        )
     }
 }
 
 @Composable
 fun SetNotificationButton(
     modifier: Modifier = Modifier,
-    viewModel: CourseViewModel = hiltViewModel()
+    btnClickEvent: () -> Unit = {},
 ) {
     Row(
         modifier = Modifier
@@ -143,7 +143,7 @@ fun SetNotificationButton(
             .padding(vertical = 13.dp, horizontal = 28.dp)
             .fillMaxWidth()
             .noRippleClickable {
-                viewModel.setEvent(CourseContract.CourseEvent.SetNotification)
+                btnClickEvent()
             },
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
