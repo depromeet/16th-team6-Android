@@ -13,6 +13,19 @@
     <string name="home_current_location_text">현위치:</string>
     <string name="home_destination_text">목적지:</string>
 
+    <string name="home_icon_location_text">위치 아이콘</string>
+    <string name="home_icon_arrow_right_text">화살표 아이콘</string>
+    <string name="home_icon_bell_text">알림 종 아이콘</string>
+
+    <string name="home_bubble_basic_text">여기서 놓치면 택시비 약</string>
+    <string name="home_bubble_alarm_prefix_text">차고지에서 출발하면</string>
+    <string name="home_bubble_alarm_emphasis_text">더 정확하게</string>
+    <string name="home_bubble_alarm_suffix_text">알려드려요</string>
+    <string name="home_bubble_alarm_departed_text">이때 출발해야 막차를 탈 수 있어요</string>
+
+    <string name="home_start_time_text">출발 시간</string>
+    <string name="home_expect_start_time_text">예상 출발 시간</string>
+
     <string name="all_acha_character">앗차 캐릭터</string>
 
     <!--    course      -->

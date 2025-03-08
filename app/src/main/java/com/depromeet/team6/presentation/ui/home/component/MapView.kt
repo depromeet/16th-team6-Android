@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -26,6 +27,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
 import com.depromeet.team6.BuildConfig
 import com.depromeet.team6.R
+import com.depromeet.team6.presentation.ui.home.HomeViewModel
 import com.google.android.gms.maps.model.LatLng
 import com.skt.tmap.TMapPoint
 import com.skt.tmap.TMapView
@@ -36,8 +38,11 @@ import kotlinx.coroutines.withContext
 @Composable
 fun TMapViewCompose(
     currentLocation: LatLng,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: HomeViewModel
 ) {
+    val uiState = viewModel.uiState.collectAsState().value
+
     val context = LocalContext.current
     val tMapView = remember { TMapView(context) }
     var isMapReady by remember { mutableStateOf(false) }
@@ -105,7 +110,13 @@ fun TMapViewCompose(
             contentDescription = stringResource(R.string.home_current_location_btn),
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .padding(bottom = 236.dp, end = 16.dp)
+                .then(
+                    if (uiState.isAlarmRegistered) {
+                        Modifier.padding(bottom = 274.dp, end = 16.dp)
+                    } else {
+                        Modifier.padding(bottom = 240.dp, end = 16.dp)
+                    }
+                )
                 .clickable {
                     val tMapPoint = TMapPoint(currentLocation.latitude, currentLocation.longitude)
                     tMapView.setCenterPoint(tMapPoint.latitude, tMapPoint.longitude)

@@ -41,13 +41,15 @@ data class Team6Colors(
     val greyElevatedCard: Color,
 
     // Button
-    val greyButton: Color,
     val greyButtonOutline: Color,
+    val greyDefaultButton: Color,
     val greyButtonDisable: Color,
 
     // Non-Semantic
     val systemGreen: Color,
     val systemRed: Color,
+
+    // System Grey
     val systemGrey1: Color,
     val systemGrey2: Color,
     val systemGrey3: Color,
@@ -91,15 +93,17 @@ val defaultTeam6Colors = Team6Colors(
     greyElevatedCard = Color(0xFF2C2C2E),
 
     // Button
-    greyButton = Color(0xFF2C2C30),
     greyButtonOutline = Color(0xFF36363A),
+    greyDefaultButton = Color(0xFF2C2C30),
     greyButtonDisable = Color(0x662C2C30),
 
     // Non-Semantic
     systemGreen = Color(0xFF99ED7B),
     systemRed = Color(0xFFFF5D5D),
-    systemGrey1 = Color(0xFF8E8E93),
-    systemGrey2 = Color(0xFF636366),
+
+    // System Grey
+    systemGrey1 = Color(0xFF7E7E8A),
+    systemGrey2 = Color(0xFF5B5B63),
     systemGrey3 = Color(0xFF424249),
     systemGrey4 = Color(0xFF38383E),
     systemGrey5 = Color(0xFF27272B),
