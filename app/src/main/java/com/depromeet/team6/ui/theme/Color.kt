@@ -10,6 +10,7 @@ data class Team6Colors(
     val purple80: Color,
     val purpleGrey80: Color,
     val pink80: Color,
+
     // TODO : 디자인 시스템에 '임시' 부분 -> 디자이너님께 여쭤본 후 수정해야함
     val primaryRed: Color,
     val primaryGreen: Color,

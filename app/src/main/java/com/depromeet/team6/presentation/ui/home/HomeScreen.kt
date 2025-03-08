@@ -1,6 +1,7 @@
 package com.depromeet.team6.presentation.ui.home
 
 import android.util.Log
+import android.content.Context
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -48,6 +49,8 @@ import com.google.android.gms.maps.model.LatLng
 @Composable
 fun HomeRoute(
     padding: PaddingValues,
+    navigateToLogin: () -> Unit,
+    navigateToCourseSearch: () -> Unit,
     navigateToMypage: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel()
@@ -116,9 +119,9 @@ fun HomeRoute(
             onCharacterClick = { viewModel.onCharacterClick() },
             navigateToMypage = navigateToMypage,
             modifier = modifier,
-            padding = padding
+            padding = padding,
+            onSearchClick = { navigateToCourseSearch() }
         )
-
         LoadState.Error -> navigateToLogin()
 
         else -> Unit
@@ -132,9 +135,20 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     homeUiState: HomeContract.HomeUiState = HomeContract.HomeUiState(),
     onCharacterClick: () -> Unit = {},
+    onSearchClick: () -> Unit = {},
     navigateToMypage: () -> Unit = {},
     viewModel: HomeViewModel = hiltViewModel() // TODO : TmapViewCompose 변경 후 제거
 ) {
+    val context = LocalContext.current
+
+    val sharedPreferences = context.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
+    val isUserLoggedIn = sharedPreferences.getBoolean("isUserLoggedIn", false) // 기본값은 false
+
+    if (isUserLoggedIn) {
+        viewModel.registerAlarm()
+        viewModel.setBusDeparted()
+    }
+
     Box(
         modifier = modifier
             .padding(padding)
@@ -160,7 +174,7 @@ fun HomeScreen(
         // 알람 등록 시 Home UI
         if (homeUiState.isAlarmRegistered) {
             AfterRegisterSheet(
-                timeToLeave = "22:30:00",
+                timeToLeave = "23:21:00",
                 startLocation = "중앙빌딩",
                 destination = "우리집",
                 onCourseTextClick = {},
@@ -175,7 +189,9 @@ fun HomeScreen(
             CurrentLocationSheet(
                 currentLocation = homeUiState.locationAddress,
                 destination = "우리집",
-                onSearchClick = {},
+                onSearchClick = {
+                    onSearchClick()
+                },
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .fillMaxWidth()
