@@ -21,8 +21,10 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import com.depromeet.team6.R
+import com.depromeet.team6.presentation.ui.common.view.AtChaWebView
 import com.depromeet.team6.presentation.ui.mypage.component.MypageListItem
 import com.depromeet.team6.presentation.ui.mypage.component.TitleBar
+import com.depromeet.team6.presentation.util.WebViewUrl.PRIVACY_POLICY_URL
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.depromeet.team6.ui.theme.LocalTeam6Colors
@@ -55,7 +57,9 @@ fun MypageRoute(
             mypageUiState = uiState,
             logoutClicked = { mypageViewModel.logout() },
             withDrawClicked = { mypageViewModel.withDraw() },
-            onBackClick = navigateBack
+            onBackClick = navigateBack,
+            onWebViewClicked = { mypageViewModel.setEvent(MypageContract.MypageEvent.PolicyClicked) },
+            webViewClose = { mypageViewModel.setEvent(MypageContract.MypageEvent.PolicyClosed) }
         )
         LoadState.Error -> navigateToLogin()
         else -> Unit
@@ -68,10 +72,14 @@ fun MypageScreen(
     mypageUiState: MypageContract.MypageUiState = MypageContract.MypageUiState(),
     logoutClicked: () -> Unit = {},
     withDrawClicked: () -> Unit = {},
-    onBackClick: () -> Unit = {}
+    onBackClick: () -> Unit = {},
+    onWebViewClicked: () -> Unit={},
+    webViewClose: () -> Unit={}
 ) {
     val colors = LocalTeam6Colors.current
-
+    if (mypageUiState.isWebViewOpened) {
+        AtChaWebView (url = PRIVACY_POLICY_URL, onClose = webViewClose, modifier=modifier)
+    } else {
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -98,17 +106,11 @@ fun MypageScreen(
             MypageListItem(
                 title = stringResource(R.string.mypage_account_logout_text),
                 onClick = logoutClicked,
-                modifier = Modifier.noRippleClickable {
-                    logoutClicked()
-                }
             )
 
             MypageListItem(
                 title = stringResource(R.string.mypage_account_signout_text),
                 onClick = withDrawClicked,
-                modifier = Modifier.noRippleClickable {
-                    withDrawClicked()
-                }
             )
 
             Spacer(
@@ -120,8 +122,7 @@ fun MypageScreen(
 
             MypageListItem(
                 title = stringResource(R.string.mypage_policy_text),
-                onClick = { },
-                modifier = Modifier
+                onClick = onWebViewClicked
             )
 //
 //            MypageListItem(
@@ -130,6 +131,7 @@ fun MypageScreen(
 //                modifier = Modifier
 //            )
         }
+    }
     }
 }
 

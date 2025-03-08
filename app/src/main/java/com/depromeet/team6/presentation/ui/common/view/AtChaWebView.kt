@@ -3,7 +3,9 @@ package com.depromeet.team6.presentation.ui.common.view
 import android.webkit.WebViewClient
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -14,7 +16,7 @@ import com.google.accompanist.web.WebView
 import com.google.accompanist.web.rememberWebViewState
 
 @Composable
-fun AtChaWebView(url: String, onClose: () -> Unit) {
+fun AtChaWebView(url: String, onClose: () -> Unit,modifier: Modifier=Modifier) {
     val webViewState = rememberWebViewState(url)
     var webView: android.webkit.WebView? by remember { mutableStateOf(null) }
 
@@ -26,7 +28,7 @@ fun AtChaWebView(url: String, onClose: () -> Unit) {
         }
     }
 
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(modifier = modifier.fillMaxSize()) {
         WebView(
             state = webViewState,
             modifier = Modifier.weight(1f),

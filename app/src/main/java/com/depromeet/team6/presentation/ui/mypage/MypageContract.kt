@@ -8,7 +8,8 @@ import com.depromeet.team6.presentation.util.view.LoadState
 class MypageContract {
     data class MypageUiState(
         val loadState: LoadState = LoadState.Idle,
-        val logoutState: Boolean = false
+        val logoutState: Boolean = false,
+        val isWebViewOpened: Boolean = false
     ) : UiState
 
     sealed interface MypageSideEffect : UiSideEffect {
@@ -20,5 +21,7 @@ class MypageContract {
         data class LogoutClicked(val loadState: LoadState) : MypageEvent()
         data class WithDrawClicked(val loadState: LoadState) : MypageEvent()
         data object BackPressed : MypageEvent()
+        data object PolicyClicked : MypageEvent()
+        data object PolicyClosed : MypageEvent()
     }
 }

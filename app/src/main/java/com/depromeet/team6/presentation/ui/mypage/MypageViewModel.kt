@@ -24,11 +24,12 @@ class MypageViewModel @Inject constructor(
             is MypageContract.MypageEvent.BackPressed -> navigateBack()
             is MypageContract.MypageEvent.LogoutClicked -> setState { copy(loadState = event.loadState) }
             is MypageContract.MypageEvent.WithDrawClicked -> setState { copy(loadState = event.loadState) }
+            is MypageContract.MypageEvent.PolicyClicked -> setState { copy(isWebViewOpened = true) }
+            is MypageContract.MypageEvent.PolicyClosed -> setState { copy(isWebViewOpened = false) }
         }
     }
 
     fun logout() {
-        Log.d("Logout Reponse", "Logout Response: $postLogoutUseCase")
         userInfoRepositoryImpl.setAccessToken(userInfoRepositoryImpl.getRefreshToken())
         viewModelScope.launch {
             if (postLogoutUseCase().isSuccessful) {
