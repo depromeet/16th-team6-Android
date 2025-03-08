@@ -37,7 +37,6 @@ fun ItineraryRoute(
     LaunchedEffect(Unit) {
         viewModel.sideEffect.collect { sideEffect ->
             when (sideEffect) {
-
                 else -> {}
             }
         }
@@ -54,7 +53,6 @@ fun ItineraryRoute(
         )
         else -> Unit
     }
-
 }
 
 @Composable

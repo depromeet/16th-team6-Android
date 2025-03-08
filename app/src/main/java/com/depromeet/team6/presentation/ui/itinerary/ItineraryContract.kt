@@ -12,8 +12,7 @@ class ItineraryContract {
         val courseData: List<LegInfo> = emptyList()
     ) : UiState
 
-    sealed interface ItinerarySideEffect : UiSideEffect {
-    }
+    sealed interface ItinerarySideEffect : UiSideEffect
 
     sealed class ItineraryEvent : UiEvent {
         data object RegisterAlarm : ItineraryEvent()

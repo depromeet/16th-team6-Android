@@ -35,7 +35,7 @@ fun LastTransportInfoList(
         items(listData.size) { index ->
             LastTransportInfoItem(
                 modifier = Modifier
-                    .noRippleClickable{
+                    .noRippleClickable {
                         onItemClick()
                     },
                 lastTransportInfo = listData[index]

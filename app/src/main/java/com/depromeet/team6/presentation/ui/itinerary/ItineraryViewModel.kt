@@ -7,8 +7,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class ItineraryViewModel @Inject constructor (
-    val loadMockData : LoadMockSearchDataUseCase
+class ItineraryViewModel @Inject constructor(
+    val loadMockData: LoadMockSearchDataUseCase
 ) : BaseViewModel<ItineraryContract.ItineraryUiState, ItineraryContract.ItinerarySideEffect, ItineraryContract.ItineraryEvent>() {
     override fun createInitialState(): ItineraryContract.ItineraryUiState = ItineraryContract.ItineraryUiState()
 
@@ -21,7 +21,6 @@ class ItineraryViewModel @Inject constructor (
                         courseDataLoadState = LoadState.Success
                     )
                 }
-
             }
             ItineraryContract.ItineraryEvent.RegisterAlarm -> TODO()
         }
