@@ -4,9 +4,11 @@ import androidx.lifecycle.viewModelScope
 import com.depromeet.team6.data.repositoryimpl.UserInfoRepositoryImpl
 import com.depromeet.team6.domain.usecase.DeleteWithDrawUseCase
 import com.depromeet.team6.domain.usecase.DummyUseCase
+import com.depromeet.team6.domain.usecase.GetAddressFromCoordinatesUseCase
 import com.depromeet.team6.domain.usecase.PostLogoutUseCase
 import com.depromeet.team6.presentation.util.base.BaseViewModel
 import com.depromeet.team6.presentation.util.view.LoadState
+import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -18,7 +20,8 @@ class HomeViewModel @Inject constructor(
     private val dummyUseCase: DummyUseCase,
     private val userInfoRepositoryImpl: UserInfoRepositoryImpl,
     private val postLogoutUseCase: PostLogoutUseCase,
-    private val deleteWithDrawUseCase: DeleteWithDrawUseCase
+    private val deleteWithDrawUseCase: DeleteWithDrawUseCase,
+    private val getAddressFromCoordinatesUseCase: GetAddressFromCoordinatesUseCase
 ) : BaseViewModel<HomeContract.HomeUiState, HomeContract.HomeSideEffect, HomeContract.HomeEvent>() {
 
     private var speechBubbleJob: Job? = null
@@ -36,7 +39,12 @@ class HomeViewModel @Inject constructor(
             is HomeContract.HomeEvent.WithDrawClicked -> withDraw()
             is HomeContract.HomeEvent.UpdateAlarmRegistered -> setState { copy(isAlarmRegistered = event.isRegistered) }
             is HomeContract.HomeEvent.UpdateBusDeparted -> setState { copy(isBusDeparted = event.isBusDeparted) }
-            is HomeContract.HomeEvent.UpdateSpeechBubbleVisibility -> setState { copy(showSpeechBubble = event.show) }
+            is HomeContract.HomeEvent.UpdateSpeechBubbleVisibility -> setState {
+                copy(
+                    showSpeechBubble = event.show
+                )
+            }
+
             is HomeContract.HomeEvent.OnCharacterClick -> onCharacterClick()
         }
     }
@@ -87,6 +95,25 @@ class HomeViewModel @Inject constructor(
             } else {
                 setEvent(HomeContract.HomeEvent.WithDrawClicked(loadState = LoadState.Idle))
             }
+        }
+    }
+
+    fun getCenterLocation(location: LatLng) {
+        viewModelScope.launch {
+            getAddressFromCoordinatesUseCase.invoke(location.latitude, location.longitude)
+                .onSuccess {
+                    setState {
+                        copy(
+                            locationAddress = it.name
+                        )
+                    }
+                }.onFailure {
+                    setState {
+                        copy(
+                            locationAddress = ""
+                        )
+                    }
+                }
         }
     }
 }
