@@ -51,7 +51,7 @@ fun AfterRegisterSheet(
                     colors.greyWashBackground,
                     shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)
                 )
-                .padding(start = 16.dp, end = 16.dp, top = 20.dp, bottom = 20.dp)
+                .padding(horizontal = 16.dp, vertical = 20.dp)
         ) {
             if (isBusDeparted) {
                 // 차고지 출발 후 UI

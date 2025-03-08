@@ -52,7 +52,7 @@ fun CourseTextButton(
                     color = colors.systemGray,
                     shape = RoundedCornerShape(12.dp)
                 )
-                .padding(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 12.dp)
+                .padding(horizontal = 16.dp, vertical = 12.dp)
                 .clickable(onClick = onClick),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -74,7 +74,7 @@ fun CourseTextButton(
                 imageVector = ImageVector.vectorResource(R.drawable.ic_all_arrow_right_white),
                 contentDescription = stringResource(R.string.home_icon_arrow_right_text),
                 modifier = Modifier
-                    .padding(start = 8.dp, end = 8.dp),
+                    .padding(horizontal = 8.dp),
                 tint = colors.white
             )
 
