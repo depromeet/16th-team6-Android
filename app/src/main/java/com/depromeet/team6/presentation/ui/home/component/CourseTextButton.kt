@@ -1,22 +1,20 @@
 package com.depromeet.team6.presentation.ui.home.component
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -27,53 +25,63 @@ import com.depromeet.team6.ui.theme.LocalTeam6Colors
 import com.depromeet.team6.ui.theme.LocalTeam6Typography
 
 @Composable
-fun LocationText(
-    locationTitle: String,
-    location: String,
-    textColor: Color,
-    backgroundColor: Color,
+fun CourseTextButton(
+    startLocation: String,
+    destination: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val typography = LocalTeam6Typography.current
+    val colors = LocalTeam6Colors.current
 
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .height(48.dp),
+            .height(42.dp),
         contentAlignment = Alignment.Center
     ) {
         Row(
             modifier = Modifier
                 .fillMaxSize()
                 .background(
-                    backgroundColor,
+                    colors.systemGrey5,
                     shape = RoundedCornerShape(12.dp)
                 )
-                .padding(16.dp)
+                .border(
+                    width = 1.dp,
+                    color = colors.systemGrey1,
+                    shape = RoundedCornerShape(12.dp)
+                )
+                .padding(horizontal = 16.dp, vertical = 12.dp)
                 .clickable(onClick = onClick),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
-                imageVector = ImageVector.vectorResource(R.drawable.ic_home_location_green),
-                contentDescription = stringResource(R.string.home_icon_search_text),
-                tint = textColor
+                imageVector = ImageVector.vectorResource(R.drawable.ic_all_location_grey),
+                contentDescription = stringResource(R.string.home_icon_location_text),
+                modifier = Modifier
+                    .padding(end = 6.dp),
+                tint = colors.white
             )
 
-            Spacer(modifier = Modifier.width(8.dp))
-
             Text(
-                text = locationTitle,
-                style = typography.bodyMedium15,
-                color = textColor
+                text = startLocation,
+                style = typography.bodyRegular14,
+                color = colors.white
             )
 
-            Spacer(modifier = Modifier.width(4.dp))
+            Icon(
+                imageVector = ImageVector.vectorResource(R.drawable.ic_all_arrow_right_white),
+                contentDescription = stringResource(R.string.home_icon_arrow_right_text),
+                modifier = Modifier
+                    .padding(horizontal = 8.dp),
+                tint = colors.white
+            )
 
             Text(
-                text = location,
-                style = typography.bodyMedium15,
-                color = textColor
+                text = destination,
+                style = typography.bodyRegular14,
+                color = colors.white
             )
         }
     }
@@ -81,13 +89,10 @@ fun LocationText(
 
 @Preview
 @Composable
-fun LocationTextPreview() {
-    LocationText(
-        locationTitle = "현위치:",
-        location = "중앙빌딩",
-        textColor = LocalTeam6Colors.current.systemGreen,
-        backgroundColor = LocalTeam6Colors.current.greyDefaultButton,
-        onClick = {},
-        modifier = Modifier
+fun CourseTextButtonPreview() {
+    CourseTextButton(
+        startLocation = "중앙빌딩",
+        destination = "우리집",
+        onClick = { }
     )
 }
