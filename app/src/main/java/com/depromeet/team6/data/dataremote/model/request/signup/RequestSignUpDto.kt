@@ -1,4 +1,4 @@
-package com.depromeet.team6.data.dataremote.model.request
+package com.depromeet.team6.data.dataremote.model.request.signup
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -17,12 +17,6 @@ data class RequestSignUpDto(
     @SerialName("lon")
     val lon: Double,
 
-    @SerialName("alertAgreement")
-    val alertAgreement: Boolean,
-
-    @SerialName("trackingAgreement")
-    val trackingAgreement: Boolean,
-
     @SerialName("alertFrequencies")
-    val alertFrequencies: Set<String>
+    val alertFrequencies: Set<Int>
 )

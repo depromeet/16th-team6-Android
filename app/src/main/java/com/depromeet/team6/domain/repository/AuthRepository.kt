@@ -2,10 +2,16 @@ package com.depromeet.team6.domain.repository
 
 import com.depromeet.team6.domain.model.Auth
 import com.depromeet.team6.domain.model.SignUp
+import retrofit2.Response
 
 interface AuthRepository {
     suspend fun getCheck(authorization: String, provider: Int): Result<Boolean>
+
     suspend fun postSignUp(signUp: SignUp): Result<Auth>
+
     suspend fun getLogin(provider: Int): Result<Auth>
-    suspend fun getLogout(provider: Int): Result<Unit>
+
+    suspend fun postLogout(): Result<Unit>
+
+    suspend fun deleteWithDraw(): Response<Unit>
 }

@@ -6,6 +6,7 @@ import com.depromeet.team6.data.mapper.todomain.toDomain
 import com.depromeet.team6.domain.model.Auth
 import com.depromeet.team6.domain.model.SignUp
 import com.depromeet.team6.domain.repository.AuthRepository
+import retrofit2.Response
 import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor(
@@ -19,6 +20,9 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun getLogin(provider: Int): Result<Auth> =
         authRemoteDataSource.getLogin(provider = provider).mapCatching { it.toDomain() }
 
-    override suspend fun getLogout(provider: Int): Result<Unit> =
-        authRemoteDataSource.getLogout()
+    override suspend fun postLogout(): Result<Unit> =
+        authRemoteDataSource.postLogout()
+
+    override suspend fun deleteWithDraw(): Response<Unit> =
+        authRemoteDataSource.deleteWithDraw()
 }

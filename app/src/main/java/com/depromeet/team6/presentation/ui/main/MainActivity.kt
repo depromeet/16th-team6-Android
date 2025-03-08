@@ -6,6 +6,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -28,12 +29,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.view.WindowCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
 import com.depromeet.team6.R
 import com.depromeet.team6.data.datalocal.manager.LockServiceManager
 import com.depromeet.team6.data.datalocal.permission.PermissionUtil
+import com.depromeet.team6.presentation.ui.main.navigation.MainNavHost
+import com.depromeet.team6.presentation.ui.main.navigation.MainNavigator
+import com.depromeet.team6.presentation.ui.main.navigation.rememberMainNavigator
 import com.depromeet.team6.presentation.ui.itinerary.ItineraryScreen
 import com.depromeet.team6.presentation.util.view.SnackbarController
 import com.depromeet.team6.ui.theme.Team6Theme
@@ -54,52 +59,23 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        enableEdgeToEdge()
 
         if (PermissionUtil.alertPermissionCheck(this)) {
             PermissionUtil.onObtainingPermissionOverlayWindow(this)
         }
 
         setContent {
+            val navigator: MainNavigator = rememberMainNavigator()
             Team6Theme {
                 val snackbarHostState = remember { SnackbarHostState() }
                 val coroutineScope = rememberCoroutineScope()
 
-                Scaffold(
-                    modifier = Modifier.fillMaxSize(),
-                    snackbarHost = {
-                        SnackbarHost(
-                            modifier = Modifier.padding(horizontal = 16.dp),
-                            hostState = snackbarHostState
-                        )
-                    }
-                ) { innerPadding ->
-                    // 전역적으로 사용할 SnackbarController 에 대한 이벤트 수신
-                    ObserveEvents(
-                        flow = SnackbarController.events,
-                        key1 = snackbarHostState
-                    ) { event ->
-                        coroutineScope.launch {
-                            snackbarHostState.currentSnackbarData?.dismiss()
-
-                            val result = snackbarHostState.showSnackbar(
-                                message = event.message,
-                                actionLabel = event.action?.name,
-                                duration = SnackbarDuration.Short
-                            )
-
-                            if (result == SnackbarResult.ActionPerformed) {
-                                event.action?.action?.invoke()
-                            }
-                        }
-                    }
-
-//                    LoginRoute(
-//                        modifier = Modifier.padding(innerPadding),
-//                        navigateToOnboarding = {},
-//                        navigateToHome = {}
-//                    )
-                    ItineraryScreen(
-                        emptyList()
+                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                    MainNavHost(
+                        navigator = navigator,
+                        padding = innerPadding
                     )
                 }
             }
@@ -118,6 +94,7 @@ class MainActivity : ComponentActivity() {
             )
         }
     }
+
     private fun startLockService() {
         lockServiceManager.start()
         Toast.makeText(this, getString(R.string.lock_service_start_text), Toast.LENGTH_SHORT).show()

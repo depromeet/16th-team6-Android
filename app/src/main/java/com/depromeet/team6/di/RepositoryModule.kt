@@ -2,9 +2,11 @@ package com.depromeet.team6.di
 
 import com.depromeet.team6.data.repositoryimpl.AuthRepositoryImpl
 import com.depromeet.team6.data.repositoryimpl.DummyRepositoryImpl
+import com.depromeet.team6.data.repositoryimpl.LocationsRepositoryImpl
 import com.depromeet.team6.data.repositoryimpl.UserInfoRepositoryImpl
 import com.depromeet.team6.domain.repository.AuthRepository
 import com.depromeet.team6.domain.repository.DummyRepository
+import com.depromeet.team6.domain.repository.LocationsRepository
 import com.depromeet.team6.domain.repository.UserInfoRepository
 import dagger.Binds
 import dagger.Module
@@ -26,4 +28,8 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindAuthRepository(authRepositoryImpl: AuthRepositoryImpl): AuthRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindLocationRepository(locationsRepositoryImpl: LocationsRepositoryImpl): LocationsRepository
 }

@@ -23,8 +23,8 @@ class LoginViewModel @Inject constructor(
 
     override suspend fun handleEvent(event: LoginContract.LoginEvent) {
         when (event) {
-            is LoginContract.LoginEvent.GetLogin -> setState { copy(loadState = event.loadState) }
             is LoginContract.LoginEvent.SetAuthToken -> setState { copy(authTokenLoadState = event.authTokenLoadState) }
+            is LoginContract.LoginEvent.GetLogin -> setState { copy(loadState = event.loadState) }
             is LoginContract.LoginEvent.GetCheckUserRegistered -> setState {
                 copy(
                     isUserRegisteredState = event.isUserRegisteredState
@@ -55,7 +55,7 @@ class LoginViewModel @Inject constructor(
     fun getCheck() {
         viewModelScope.launch {
             setEvent(LoginContract.LoginEvent.GetCheckUserRegistered(isUserRegisteredState = LoadState.Loading))
-            getCheckUseCase(authorization = "Bearer " + userInfoRepositoryImpl.getAccessToken(), provider = KAKAO).onSuccess { isUserRegisteredState ->
+            getCheckUseCase(authorization = userInfoRepositoryImpl.getAccessToken(), provider = KAKAO).onSuccess { isUserRegisteredState ->
                 if (isUserRegisteredState) {
                     setEvent(LoginContract.LoginEvent.GetCheckUserRegistered(isUserRegisteredState = LoadState.Success))
                 } else {
@@ -73,6 +73,7 @@ class LoginViewModel @Inject constructor(
         ) {
             setEvent(LoginContract.LoginEvent.GetLogin(LoadState.Success))
         } else {
+            Log.d("Login ViewModel", "Local Token is Empty")
         }
     }
 }

@@ -4,11 +4,10 @@ import android.app.Application
 import android.content.Intent
 import com.depromeet.team6.BuildConfig
 import com.depromeet.team6.data.datalocal.datasource.UserInfoLocalDataSource
-import com.depromeet.team6.data.dataremote.model.response.ResponseRefreshTokenDto
+import com.depromeet.team6.data.dataremote.model.response.user.ResponseAuthDto
 import com.depromeet.team6.data.dataremote.util.ApiConstraints.API
+import com.depromeet.team6.data.dataremote.util.ApiConstraints.AUTH
 import com.depromeet.team6.data.dataremote.util.ApiConstraints.REISSUE
-import com.depromeet.team6.data.dataremote.util.ApiConstraints.USERS
-import com.depromeet.team6.data.dataremote.util.ApiConstraints.VERSION
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -32,57 +31,105 @@ class AuthInterceptor @Inject constructor(
 
     override fun intercept(chain: Interceptor.Chain): Response {
         val originalRequest = chain.request()
-        val authRequest = if (localStorage.accessToken.isNotBlank()) originalRequest.newAuthBuilder() else originalRequest
+        val authRequest =
+            if (localStorage.accessToken.isNotBlank()) originalRequest.newAuthBuilder() else originalRequest
         var response = chain.proceed(authRequest)
 
         when (response.code) {
             CODE_TOKEN_EXPIRE -> {
                 response.close()
-                response = handleTokenExpiration(chain = chain, originalRequest = originalRequest, requestAccessToken = localStorage.accessToken)
+                response = handleTokenExpiration(
+                    chain = chain,
+                    originalRequest = originalRequest,
+                    requestAccessToken = localStorage.accessToken
+                )
             }
         }
 
         return response
     }
 
-    private fun Request.newAuthBuilder() =
-        this.newBuilder().addHeader(AUTHORIZATION, BEARER + localStorage.accessToken).build()
+    private fun Request.newAuthBuilder(): Request {
+        val token = localStorage.accessToken
 
-    private fun handleTokenExpiration(chain: Interceptor.Chain, originalRequest: Request, requestAccessToken: String): Response =
+        val formattedToken = if (token.contains(BEARER)) token else "$BEARER$token"
+
+        return this.newBuilder()
+            .addHeader(AUTHORIZATION, formattedToken)
+            .build()
+    }
+
+    private fun handleTokenExpiration(
+        chain: Interceptor.Chain,
+        originalRequest: Request,
+        requestAccessToken: String
+    ): Response =
         runBlocking {
             mutex.withLock {
-                when (isTokenValid(requestAccessToken = requestAccessToken, currentAccessToken = localStorage.accessToken)) {
+                when (
+                    isTokenValid(
+                        requestAccessToken = requestAccessToken,
+                        currentAccessToken = localStorage.accessToken
+                    )
+                ) {
                     true -> chain.proceed(originalRequest.newAuthBuilder())
-                    false -> handleTokenRefresh(chain = chain, originalRequest = originalRequest, refreshToken = localStorage.refreshToken)
+                    false -> handleTokenRefresh(
+                        chain = chain,
+                        originalRequest = originalRequest,
+                        refreshToken = localStorage.refreshToken
+                    )
                 }
             }
         }
 
-    private fun isTokenValid(requestAccessToken: String, currentAccessToken: String): Boolean = requestAccessToken != currentAccessToken && currentAccessToken.isNotBlank()
+    private fun isTokenValid(requestAccessToken: String, currentAccessToken: String): Boolean =
+        requestAccessToken != currentAccessToken && currentAccessToken.isNotBlank()
 
-    private fun handleTokenRefresh(chain: Interceptor.Chain, originalRequest: Request, refreshToken: String): Response =
-        patchTokenRefresh(chain = chain, originalRequest = originalRequest, refreshToken = refreshToken).let { refreshTokenResponse ->
+    private fun handleTokenRefresh(
+        chain: Interceptor.Chain,
+        originalRequest: Request,
+        refreshToken: String
+    ): Response =
+        patchTokenRefresh(
+            chain = chain,
+            originalRequest = originalRequest,
+            refreshToken = refreshToken
+        ).let { refreshTokenResponse ->
             when (refreshTokenResponse.isSuccessful) {
-                true -> handleTokenRefreshSuccess(chain = chain, originalRequest = originalRequest, refreshTokenResponse = refreshTokenResponse)
+                true -> handleTokenRefreshSuccess(
+                    chain = chain,
+                    originalRequest = originalRequest,
+                    refreshTokenResponse = refreshTokenResponse
+                )
+
                 false -> handleTokenRefreshFailed(refreshTokenResponse = refreshTokenResponse)
             }
         }
 
-    private fun patchTokenRefresh(chain: Interceptor.Chain, originalRequest: Request, refreshToken: String): Response = chain.proceed(
+    private fun patchTokenRefresh(
+        chain: Interceptor.Chain,
+        originalRequest: Request,
+        refreshToken: String
+    ): Response = chain.proceed(
         originalRequest.newBuilder()
             .patch("".toRequestBody(null))
-            .url("${BuildConfig.BASE_URL}$API/$VERSION/$USERS/$REISSUE")
+            .url("${BuildConfig.BASE_URL}$API/$AUTH/$REISSUE")
             .addHeader(AUTHORIZATION, refreshToken)
             .build()
     )
 
-    private fun handleTokenRefreshSuccess(chain: Interceptor.Chain, originalRequest: Request, refreshTokenResponse: Response): Response {
-        val responseRefreshToken = json.decodeFromString<ResponseRefreshTokenDto>(
-            refreshTokenResponse.body?.string() ?: throw IllegalStateException("\"refreshTokenResponse is null $refreshTokenResponse\"")
+    private fun handleTokenRefreshSuccess(
+        chain: Interceptor.Chain,
+        originalRequest: Request,
+        refreshTokenResponse: Response
+    ): Response {
+        val responseRefreshToken = json.decodeFromString<ResponseAuthDto>(
+            refreshTokenResponse.body?.string()
+                ?: throw IllegalStateException("\"refreshTokenResponse is null $refreshTokenResponse\"")
         )
 
         with(localStorage) {
-            accessToken = BEARER + responseRefreshToken.accessToken
+            accessToken = responseRefreshToken.accessToken
             refreshToken = responseRefreshToken.refreshToken
         }
 

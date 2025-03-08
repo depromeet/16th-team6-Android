@@ -40,7 +40,11 @@ class UserInfoLocalDataSource @Inject constructor(
         get() = getValue(REFRESH_TOKEN)
         set(value) = setValue(REFRESH_TOKEN, value)
 
-    fun clear() = sharedPreferences.edit { clear() }
+    //    fun clear() = sharedPreferences.edit { clear() }
+    fun clear() {
+        setValue(REFRESH_TOKEN, "")
+        setValue(ACCESS_TOKEN, "")
+    }
 
     private fun getValue(key: String): String =
         sharedPreferences.getString(key, INITIAL_VALUE).orEmpty()

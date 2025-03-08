@@ -5,7 +5,5 @@ data class SignUp(
     val address: String,
     val lat: Double,
     val lon: Double,
-    val alertAgreement: Boolean,
-    val trackingAgreement: Boolean,
-    val alertFrequencies: Set<String>
+    val alertFrequencies: Set<Int>
 )
