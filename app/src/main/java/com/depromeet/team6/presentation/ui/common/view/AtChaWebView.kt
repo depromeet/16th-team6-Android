@@ -14,7 +14,7 @@ import com.google.accompanist.web.WebView
 import com.google.accompanist.web.rememberWebViewState
 
 @Composable
-fun AtChaWebView(url: String, onClose: () -> Unit) {
+fun AtChaWebView(url: String, onClose: () -> Unit, modifier: Modifier = Modifier) {
     val webViewState = rememberWebViewState(url)
     var webView: android.webkit.WebView? by remember { mutableStateOf(null) }
 
@@ -26,7 +26,7 @@ fun AtChaWebView(url: String, onClose: () -> Unit) {
         }
     }
 
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(modifier = modifier.fillMaxSize()) {
         WebView(
             state = webViewState,
             modifier = Modifier.weight(1f),

@@ -1,13 +1,7 @@
 package com.depromeet.team6.presentation.ui.home
 
-import android.util.Log
 import androidx.lifecycle.viewModelScope
-import com.depromeet.team6.data.repositoryimpl.UserInfoRepositoryImpl
-import com.depromeet.team6.domain.usecase.DeleteWithDrawUseCase
-import com.depromeet.team6.domain.usecase.DummyUseCase
-import com.depromeet.team6.domain.usecase.PostLogoutUseCase
 import com.depromeet.team6.presentation.util.base.BaseViewModel
-import com.depromeet.team6.presentation.util.view.LoadState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -15,12 +9,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(
-    private val dummyUseCase: DummyUseCase,
-    private val userInfoRepositoryImpl: UserInfoRepositoryImpl,
-    private val postLogoutUseCase: PostLogoutUseCase,
-    private val deleteWithDrawUseCase: DeleteWithDrawUseCase
-) : BaseViewModel<HomeContract.HomeUiState, HomeContract.HomeSideEffect, HomeContract.HomeEvent>() {
+class HomeViewModel @Inject constructor() : BaseViewModel<HomeContract.HomeUiState, HomeContract.HomeSideEffect, HomeContract.HomeEvent>() {
 
     private var speechBubbleJob: Job? = null
 
@@ -33,8 +22,6 @@ class HomeViewModel @Inject constructor(
     override suspend fun handleEvent(event: HomeContract.HomeEvent) {
         when (event) {
             is HomeContract.HomeEvent.DummyEvent -> setState { copy(loadState = event.loadState) }
-            is HomeContract.HomeEvent.LogoutClicked -> setState { copy(loadState = event.loadState) }
-            is HomeContract.HomeEvent.WithDrawClicked -> setState { copy(loadState = event.loadState) }
             is HomeContract.HomeEvent.UpdateAlarmRegistered -> setState { copy(isAlarmRegistered = event.isRegistered) }
             is HomeContract.HomeEvent.UpdateBusDeparted -> setState { copy(isBusDeparted = event.isBusDeparted) }
             is HomeContract.HomeEvent.UpdateSpeechBubbleVisibility -> setState { copy(showSpeechBubble = event.show) }
@@ -66,29 +53,5 @@ class HomeViewModel @Inject constructor(
 
     fun onCharacterClick() {
         showSpeechBubbleTemporarily()
-    }
-
-    fun logout() {
-        Log.d("Logout Reponse", "Logout Response: $postLogoutUseCase")
-        userInfoRepositoryImpl.setAccessToken(userInfoRepositoryImpl.getRefreshToken())
-        viewModelScope.launch {
-            if (postLogoutUseCase().isSuccessful) {
-                setEvent(HomeContract.HomeEvent.LogoutClicked(loadState = LoadState.Error))
-                userInfoRepositoryImpl.clear()
-            } else {
-                setEvent(HomeContract.HomeEvent.LogoutClicked(loadState = LoadState.Idle))
-            }
-        }
-    }
-
-    fun withDraw() {
-        viewModelScope.launch {
-            if (deleteWithDrawUseCase().isSuccessful) {
-                userInfoRepositoryImpl.clear()
-                setEvent(HomeContract.HomeEvent.WithDrawClicked(loadState = LoadState.Error))
-            } else {
-                setEvent(HomeContract.HomeEvent.WithDrawClicked(loadState = LoadState.Idle))
-            }
-        }
     }
 }
