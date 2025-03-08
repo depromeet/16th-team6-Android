@@ -46,7 +46,7 @@ fun CurrentLocationSheet(
                 locationTitle = stringResource(R.string.home_current_location_text),
                 location = currentLocation,
                 textColor = colors.systemGreen,
-                backgroundColor = colors.greyButton,
+                backgroundColor = colors.greyDefaultButton,
                 onClick = {},
                 modifier = Modifier
             )

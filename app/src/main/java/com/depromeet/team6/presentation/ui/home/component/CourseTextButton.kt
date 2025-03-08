@@ -44,12 +44,12 @@ fun CourseTextButton(
             modifier = Modifier
                 .fillMaxSize()
                 .background(
-                    colors.systemGray5,
+                    colors.systemGrey5,
                     shape = RoundedCornerShape(12.dp)
                 )
                 .border(
                     width = 1.dp,
-                    color = colors.systemGray,
+                    color = colors.systemGrey1,
                     shape = RoundedCornerShape(12.dp)
                 )
                 .padding(horizontal = 16.dp, vertical = 12.dp)
