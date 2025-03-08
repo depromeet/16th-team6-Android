@@ -79,7 +79,7 @@ fun VerticalDashedLine(
 @Preview
 @Composable
 fun CourseInfoDetailPreview(
-    @PreviewParameter (LegInfoDummyProvider::class) legs : List<LegInfo>
+    @PreviewParameter(LegInfoDummyProvider::class) legs: List<LegInfo>
 ) {
     CourseInfoDetail(
         legsInfo = legs

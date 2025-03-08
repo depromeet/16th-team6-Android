@@ -38,7 +38,6 @@ import com.skt.tmap.overlay.TMapPolyLine
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-
 @Composable
 fun ItineraryMap(
     currentLocation: LatLng,
@@ -50,7 +49,7 @@ fun ItineraryMap(
     var isMapReady by remember { mutableStateOf(false) }
 
     val departLocation = LatLng(legs[0].startPoint.latitude, legs[0].startPoint.longitude)
-    val destinationLocation = LatLng(legs[legs.size-1].endPoint.latitude, legs[legs.size-1].endPoint.longitude)
+    val destinationLocation = LatLng(legs[legs.size - 1].endPoint.latitude, legs[legs.size - 1].endPoint.longitude)
 
     LaunchedEffect(Unit) {
         tMapView.setSKTMapApiKey(BuildConfig.TMAP_API_KEY)
@@ -152,7 +151,7 @@ fun ItineraryMap(
                 .size(36.dp)
                 .align(Alignment.BottomEnd)
                 .offset(x = (-16).dp, y = (-16).dp)
-                .noRippleClickable{
+                .noRippleClickable {
                     tMapView.setCenterPoint(currentLocation.latitude, currentLocation.longitude)
                 },
             imageVector = ImageVector.vectorResource(R.drawable.ic_all_current_location),
@@ -163,7 +162,7 @@ fun ItineraryMap(
 
 @Composable
 fun CircleBtnBack(
-    modifier : Modifier = Modifier
+    modifier: Modifier = Modifier
 ) {
     Box(
         modifier = modifier
@@ -187,8 +186,8 @@ private fun getMidPoint(point1: LatLng, point2: LatLng): LatLng {
     return LatLng(midLatitude, midLongitude)
 }
 
-private fun getWayPointList(passShape : String) : ArrayList<TMapPoint> {
-    val pointList : ArrayList<TMapPoint> = passShape.split(" ").mapNotNull { pair ->
+private fun getWayPointList(passShape: String): ArrayList<TMapPoint> {
+    val pointList: ArrayList<TMapPoint> = passShape.split(" ").mapNotNull { pair ->
         val parts = pair.split(",")
         if (parts.size == 2) {
             val longitude = parts[0].toDoubleOrNull()
@@ -205,7 +204,7 @@ private fun getWayPointList(passShape : String) : ArrayList<TMapPoint> {
 @Composable
 fun ItineraryMapPreview(
     @PreviewParameter(LegInfoDummyProvider::class) legs: List<LegInfo>
-){
+) {
     ItineraryMap(
         legs = legs,
         currentLocation = LatLng(37.5665, 126.9780)

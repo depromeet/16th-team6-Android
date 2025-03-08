@@ -10,5 +10,5 @@ data class LegInfo(
     val routeColor: Color,
     val startPoint: WayPoint,
     val endPoint: WayPoint,
-    val passShape : String
+    val passShape: String
 )

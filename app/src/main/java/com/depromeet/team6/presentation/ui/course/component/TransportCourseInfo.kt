@@ -71,10 +71,8 @@ fun TransportCourseInfoExpandable(
 @Preview(showBackground = true)
 @Composable
 fun TransportCourseInfoPreview(
-    @PreviewParameter(LegInfoDummyProvider::class) courseInfo : List<LegInfo>
+    @PreviewParameter(LegInfoDummyProvider::class) courseInfo: List<LegInfo>
 ) {
-
-
     TransportCourseInfoExpandable(
         legsInfo = courseInfo
     )

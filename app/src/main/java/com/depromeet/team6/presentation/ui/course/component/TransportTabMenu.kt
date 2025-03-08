@@ -60,9 +60,8 @@ fun TransportTabMenu(
 @Preview
 @Composable
 fun PreviewTabMenu(
-    @PreviewParameter(LegInfoDummyProvider::class) courseInfo : List<LegInfo>
+    @PreviewParameter(LegInfoDummyProvider::class) courseInfo: List<LegInfo>
 ) {
-
     val mockData = LastTransportInfo(
         remainingMinutes = 23,
         departureHour = 23,

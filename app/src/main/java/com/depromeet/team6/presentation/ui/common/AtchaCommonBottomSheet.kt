@@ -32,9 +32,9 @@ import com.depromeet.team6.ui.theme.defaultTeam6Colors
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AtchaCommonBottomSheet(
-    mainContent: @Composable () -> Unit,    // 뒷 배경에 표시될 화면
-    sheetContent: @Composable () -> Unit,   // BottomSheet에 표시될 화면
-    modifier : Modifier = Modifier
+    mainContent: @Composable () -> Unit, // 뒷 배경에 표시될 화면
+    sheetContent: @Composable () -> Unit, // BottomSheet에 표시될 화면
+    modifier: Modifier = Modifier
 ) {
     val sheetState = rememberStandardBottomSheetState(initialValue = SheetValue.PartiallyExpanded)
     val scaffoldState = rememberBottomSheetScaffoldState(bottomSheetState = sheetState)
@@ -50,16 +50,18 @@ fun AtchaCommonBottomSheet(
         sheetPeekHeight = 300.dp, // 필요하면 기본 노출 높이 조정 가능
         sheetShape = RoundedCornerShape(
             topStart = Dimens.BottomSheetRoundCornerRadius,
-            topEnd = Dimens.BottomSheetRoundCornerRadius),
+            topEnd = Dimens.BottomSheetRoundCornerRadius
+        ),
         sheetContainerColor = defaultTeam6Colors.greyWashBackground,
         sheetDragHandle = {
             DragHandle()
-
         }
     ) { paddingValues ->
-        Box(modifier = Modifier
-            .fillMaxSize()
-            .padding(paddingValues)) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+        ) {
             mainContent()
         }
     }
@@ -71,7 +73,7 @@ fun DragHandle(
     width: Dp = 40.dp,
     height: Dp = 4.dp,
     shape: Shape = MaterialTheme.shapes.extraLarge,
-    color: Color = defaultTeam6Colors.greyQuaternaryLabel,
+    color: Color = defaultTeam6Colors.greyQuaternaryLabel
 ) {
     Surface(
         modifier = modifier
@@ -92,7 +94,6 @@ fun DragHandle(
 @Preview
 @Composable
 fun AtchaCommonBottomSheetPreview() {
-
     AtchaCommonBottomSheet(
         mainContent = {
             Box(
@@ -123,7 +124,6 @@ fun AtchaCommonBottomSheetPreview() {
                     textAlign = TextAlign.Center
                 )
             }
-
         }
     )
 }

@@ -34,7 +34,7 @@ import kotlinx.coroutines.launch
 // TODO : 나중에 다시 브랜치 파서 완성
 @Composable
 fun AtchaSnackBarHost(
-    hostState: SnackbarHostState,
+    hostState: SnackbarHostState
 ) {
     var isVisible by remember { mutableStateOf(false) }
     val currentSnackbarData = hostState.currentSnackbarData

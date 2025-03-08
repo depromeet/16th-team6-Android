@@ -28,9 +28,9 @@ import java.time.format.DateTimeFormatter
 
 @Composable
 fun ItinerarySummary(
-    totalTimeSec : Int,
-    timeToLeave : String,
-    legs : List<LegInfo>,
+    totalTimeSec: Int,
+    timeToLeave: String,
+    legs: List<LegInfo>,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -42,7 +42,7 @@ fun ItinerarySummary(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 8.dp),
-            verticalAlignment = Alignment.CenterVertically,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             if (totalTimeHour > 0) {
                 Text(
@@ -73,17 +73,17 @@ fun ItinerarySummary(
             )
         }
 
-
         // 예상 도착, 출발 시간
         val (departHour, departMinute) = LocalDateTime
             .parse(timeToLeave, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
             .let { it.hour to it.minute }
         Text(
-            text = context.getString(R.string.itinerary_summary_total_time,
+            text = context.getString(
+                R.string.itinerary_summary_total_time,
                 departHour,
                 departMinute,
-                (departHour+totalTimeHour+((departMinute + totalTimeMinute)/60)) % 24,
-                (departMinute+totalTimeMinute)%60
+                (departHour + totalTimeHour + ((departMinute + totalTimeMinute) / 60)) % 24,
+                (departMinute + totalTimeMinute) % 60
             ),
             style = defaultTeam6Typography.bodyRegular12,
             color = defaultTeam6Colors.greyTertiaryLabel
@@ -123,7 +123,7 @@ fun ItinerarySummaryPreview(
 @Composable
 fun ItinerarySummaryPreviewShort(
     @PreviewParameter(LegInfoDummyProvider::class) legs: List<LegInfo>
-){
+) {
     ItinerarySummary(
         totalTimeSec = 780,
         timeToLeave = "2025-03-07 22:52:00",

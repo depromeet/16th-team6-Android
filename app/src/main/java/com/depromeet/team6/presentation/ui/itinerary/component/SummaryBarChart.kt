@@ -36,24 +36,24 @@ import com.depromeet.team6.ui.theme.defaultTeam6Typography
 @Composable
 fun SummaryBarChart(
     modifier: Modifier = Modifier,
-    legs: List<LegInfo>,
+    legs: List<LegInfo>
 ) {
     val total = legs.sumOf { it.sectionTime }.toFloat()
     var rowWidth by remember { mutableStateOf(0f) } // Row의 너비를 저장할 변수
-     Row(
+    Row(
         modifier = modifier
             .fillMaxWidth()
             .height(16.dp)
             .roundedBackgroundWithPadding(
                 backgroundColor = defaultTeam6Colors.greyButtonOutline,
                 cornerRadius = 20.dp,
-                padding = PaddingValues(horizontal = 10.dp),
+                padding = PaddingValues(horizontal = 10.dp)
             )
             .onGloballyPositioned { layoutCoordinates ->
                 rowWidth = layoutCoordinates.size.width.toFloat() // Row의 너비를 저장
             }
     ) {
-         legs.forEach { leg ->
+        legs.forEach { leg ->
             val fraction = leg.sectionTime / total // 비율 계산
             val barWidth = rowWidth.toDp() * fraction // Row의 너비에 비례하여 바의 너비 계산
 
@@ -64,7 +64,7 @@ fun SummaryBarChart(
                         .width(barWidth) // 바의 너비 설정
                         .fillMaxHeight()
                         .background(defaultTeam6Colors.greyButtonOutline)
-                        .align(Alignment.CenterVertically),
+                        .align(Alignment.CenterVertically)
                 ) {
                     Row(
                         modifier = Modifier
@@ -74,7 +74,7 @@ fun SummaryBarChart(
                         Text(
                             text = "${leg.sectionTime}",
                             color = defaultTeam6Colors.greySecondaryLabel,
-                            style = defaultTeam6Typography.bodySemiBold10,
+                            style = defaultTeam6Typography.bodySemiBold10
                         )
                         Text(
                             text = "분",
@@ -83,7 +83,6 @@ fun SummaryBarChart(
                             fontSize = 9.sp
                         )
                     }
-
                 }
             } else {
                 Log.d("adfhejfhskdfjs", "ELSE")
@@ -92,7 +91,7 @@ fun SummaryBarChart(
                         .width(barWidth) // 바의 너비 설정
                         .fillMaxHeight()
                         .background(leg.routeColor, shape = RoundedCornerShape(20.dp))
-                        .align(Alignment.CenterVertically),
+                        .align(Alignment.CenterVertically)
                 ) {
                     Row(
                         modifier = Modifier
@@ -113,18 +112,15 @@ fun SummaryBarChart(
                     }
                 }
             }
-
         }
     }
 }
-
 
 @Preview(showBackground = true, backgroundColor = Color.BLACK.toLong())
 @Composable
 fun BarChartPreview(
     @PreviewParameter(LegInfoDummyProvider::class) legs: List<LegInfo>
 ) {
-
     SummaryBarChart(
         modifier = Modifier
             .fillMaxWidth(),

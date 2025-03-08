@@ -192,9 +192,8 @@ fun RemainingTimeHHmm(
 @Preview(name = "more than 1 hour", showBackground = true, backgroundColor = android.graphics.Color.BLACK.toLong())
 @Composable
 fun LastTransportInfoItemPreview(
-    @PreviewParameter (LegInfoDummyProvider::class) courseInfo : List<LegInfo>
+    @PreviewParameter(LegInfoDummyProvider::class) courseInfo: List<LegInfo>
 ) {
-
     val mockData = LastTransportInfo(
         remainingMinutes = 83,
         departureHour = 23,
@@ -211,9 +210,8 @@ fun LastTransportInfoItemPreview(
 @Preview(name = "less than 1 hour", showBackground = true, backgroundColor = android.graphics.Color.BLACK.toLong())
 @Composable
 fun LastTransportInfoItemPreview2(
-    @PreviewParameter (LegInfoDummyProvider::class) courseInfo : List<LegInfo>
+    @PreviewParameter(LegInfoDummyProvider::class) courseInfo: List<LegInfo>
 ) {
-
     val mockData = LastTransportInfo(
         remainingMinutes = 23,
         departureHour = 23,

@@ -10,8 +10,8 @@ import com.depromeet.team6.presentation.ui.course.component.CourseInfoDetail
 
 @Composable
 fun ItineraryDetail(
-    legs : List<LegInfo>,
-    modifier : Modifier = Modifier
+    legs: List<LegInfo>,
+    modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier
@@ -21,5 +21,4 @@ fun ItineraryDetail(
             legsInfo = legs
         )
     }
-
 }

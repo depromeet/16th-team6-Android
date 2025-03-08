@@ -7,11 +7,9 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
@@ -36,7 +34,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.depromeet.team6.R
 import com.depromeet.team6.data.datalocal.manager.LockServiceManager
 import com.depromeet.team6.data.datalocal.permission.PermissionUtil
-import com.depromeet.team6.presentation.ui.course.CourseScreen
 import com.depromeet.team6.presentation.ui.itinerary.ItineraryScreen
 import com.depromeet.team6.presentation.util.view.SnackbarController
 import com.depromeet.team6.ui.theme.Team6Theme
@@ -72,7 +69,8 @@ class MainActivity : ComponentActivity() {
                     snackbarHost = {
                         SnackbarHost(
                             modifier = Modifier.padding(horizontal = 16.dp),
-                            hostState = snackbarHostState)
+                            hostState = snackbarHostState
+                        )
                     }
                 ) { innerPadding ->
                     // 전역적으로 사용할 SnackbarController 에 대한 이벤트 수신
@@ -89,7 +87,7 @@ class MainActivity : ComponentActivity() {
                                 duration = SnackbarDuration.Short
                             )
 
-                            if(result == SnackbarResult.ActionPerformed) {
+                            if (result == SnackbarResult.ActionPerformed) {
                                 event.action?.action?.invoke()
                             }
                         }
@@ -141,7 +139,6 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-
 }
 
 @Composable

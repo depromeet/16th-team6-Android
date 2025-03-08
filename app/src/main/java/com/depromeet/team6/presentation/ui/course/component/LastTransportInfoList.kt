@@ -42,7 +42,6 @@ fun LastTransportInfoList(
 fun LastTransportInfoListPreview(
     @PreviewParameter(LegInfoDummyProvider::class) legs: List<LegInfo>
 ) {
-
     val mockData = LastTransportInfo(
         remainingMinutes = 23,
         departureHour = 23,
