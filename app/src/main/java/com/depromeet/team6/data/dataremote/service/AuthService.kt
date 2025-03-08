@@ -39,7 +39,6 @@ interface AuthService {
     @POST("$API/$AUTH/$LOGOUT")
     suspend fun postLogout(): ApiResponse<Unit>
 
-
     @DELETE("$API/$MEMBERS/$ME")
     suspend fun deleteWithDraw(): Response<Unit>
 }

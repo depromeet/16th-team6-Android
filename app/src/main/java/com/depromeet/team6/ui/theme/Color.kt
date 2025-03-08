@@ -104,7 +104,6 @@ val defaultTeam6Colors = Team6Colors(
     greyButtonDisable = Color(0x662C2C30),
     kakaoLoginButton = Color(0xFFFAE100),
 
-
     // Non-Semantic
     systemGreen = Color(0xFF99ED7B),
     systemRed = Color(0xFFFF5D5D),

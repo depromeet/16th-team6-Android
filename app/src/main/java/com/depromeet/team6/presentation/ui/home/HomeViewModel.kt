@@ -1,12 +1,12 @@
 package com.depromeet.team6.presentation.ui.home
 
-import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.depromeet.team6.data.repositoryimpl.UserInfoRepositoryImpl
 import com.depromeet.team6.domain.usecase.DeleteWithDrawUseCase
 import com.depromeet.team6.domain.usecase.DummyUseCase
 import com.depromeet.team6.domain.usecase.PostLogoutUseCase
 import com.depromeet.team6.presentation.util.base.BaseViewModel
+import com.depromeet.team6.presentation.util.view.LoadState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
