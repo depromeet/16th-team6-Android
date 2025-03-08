@@ -69,7 +69,7 @@ fun AfterRegisterSheet(
                     )
 
                     Text(
-                        text = "출발 시간",
+                        text = stringResource(R.string.home_start_time_text),
                         style = typography.bodyMedium13,
                         color = colors.systemRed
                     )
@@ -83,7 +83,7 @@ fun AfterRegisterSheet(
             } else {
                 // 차고지 출발 전 UI
                 Text(
-                    text = "예상 출발 시간",
+                    text = stringResource(R.string.home_expect_start_time_text),
                     style = typography.bodyMedium13,
                     color = colors.greySecondaryLabel,
                     modifier = modifier.padding(top = 8.dp, bottom = 2.dp)

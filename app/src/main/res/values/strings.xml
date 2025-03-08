@@ -17,5 +17,9 @@
     <string name="home_bubble_alarm_suffix_text">알려드려요</string>
     <string name="home_bubble_alarm_departed_text">이때 출발해야 막차를 탈 수 있어요</string>
 
+    <string name="home_start_time_text">출발 시간</string>
+
+
     <string name="all_acha_character">앗차 캐릭터</string>
+    <string name="home_expect_start_time_text">예상 출발 시간</string>
 </resources>
