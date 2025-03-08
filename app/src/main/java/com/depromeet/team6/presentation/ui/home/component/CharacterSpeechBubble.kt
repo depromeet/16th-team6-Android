@@ -1,6 +1,7 @@
 package com.depromeet.team6.presentation.ui.home.component
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -15,20 +16,26 @@ import com.depromeet.team6.R
 
 @Composable
 fun CharacterSpeechBubble(
-    text: String,
+    prefixText: String,
     modifier: Modifier = Modifier,
-    taxiCost: String? = null
+    emphasisText: String? = null,
+    suffixText: String? = null,
+    onClick: () -> Unit = {},
+    showSpeechBubble: Boolean = true
 ) {
     Column(
-        modifier = modifier
+        modifier = modifier.clickable { onClick() }
     ) {
-        SpeechBubble(
-            text = text,
-            modifier = Modifier,
-            taxiCost = taxiCost
-        )
+        if (showSpeechBubble) {
+            SpeechBubble(
+                prefix = prefixText,
+                modifier = Modifier,
+                emphasisText = emphasisText,
+                suffix = suffixText
+            )
 
-        Spacer(modifier = Modifier.height(2.dp))
+            Spacer(modifier = Modifier.height(2.dp))
+        }
 
         Image(
             imageVector = ImageVector.vectorResource(R.drawable.ic_all_acha_character),
@@ -41,8 +48,8 @@ fun CharacterSpeechBubble(
 @Composable
 fun CharacterSpeechBubblePreview() {
     CharacterSpeechBubble(
-        text = "여기서 놓치면 택시비",
+        prefixText = "여기서 놓치면 택시비",
         modifier = Modifier,
-        taxiCost = "34,000"
+        emphasisText = "34,000"
     )
 }
