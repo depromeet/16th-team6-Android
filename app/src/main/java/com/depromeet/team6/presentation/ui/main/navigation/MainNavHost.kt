@@ -37,7 +37,8 @@ fun MainNavHost(
         )
 
         mypageNavGraph(
-            padding = padding
+            padding = padding,
+            navController = navigator.navHostController
         )
 
         val previousRoute = navigator.navHostController.previousBackStackEntry?.destination?.route ?: "Unknown"

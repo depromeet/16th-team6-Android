@@ -12,10 +12,12 @@ class MypageContract {
 
     sealed interface MypageSideEffect : UiSideEffect {
         data object DummySideEffect : MypageSideEffect
+        data object NavigateBack : MypageSideEffect
     }
 
     sealed class MypageEvent : UiEvent {
         data object OnLogoutClick : MypageEvent()
         data object OnSignoutClick : MypageEvent()
+        data object BackPressed : MypageEvent()
     }
 }

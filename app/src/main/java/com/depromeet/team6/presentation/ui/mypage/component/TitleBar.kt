@@ -1,5 +1,6 @@
 package com.depromeet.team6.presentation.ui.mypage.component
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -20,6 +21,7 @@ import com.depromeet.team6.ui.theme.LocalTeam6Typography
 @Composable
 fun TitleBar(
     title: String,
+    onBackClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val typography = LocalTeam6Typography.current
@@ -34,6 +36,7 @@ fun TitleBar(
             tint = colors.systemGrey1,
             modifier = modifier
                 .padding(vertical = 18.dp, horizontal = 16.dp)
+                .clickable { onBackClick() }
         )
 
         Text(

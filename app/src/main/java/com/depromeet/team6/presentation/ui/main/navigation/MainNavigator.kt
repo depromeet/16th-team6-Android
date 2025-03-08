@@ -8,7 +8,6 @@ import com.depromeet.team6.presentation.ui.home.navigation.HomeRoute
 import com.depromeet.team6.presentation.ui.home.navigation.navigationHome
 import com.depromeet.team6.presentation.ui.login.navigation.LoginRoute
 import com.depromeet.team6.presentation.ui.login.navigation.navigationLogin
-import com.depromeet.team6.presentation.ui.mypage.navigation.MypageRoute
 import com.depromeet.team6.presentation.ui.mypage.navigation.navigationMypage
 import com.depromeet.team6.presentation.ui.onboarding.navigation.navigationOnboarding
 
@@ -33,7 +32,6 @@ class MainNavigator(
     }
 
     fun navigateToMypage() {
-        clearBackStackTo(MypageRoute.ROUTE)
         navHostController.navigationMypage()
     }
 

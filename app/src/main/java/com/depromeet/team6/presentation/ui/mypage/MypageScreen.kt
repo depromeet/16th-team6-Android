@@ -27,7 +27,8 @@ import com.depromeet.team6.ui.theme.LocalTeam6Colors
 fun MypageRoute(
     modifier: Modifier = Modifier,
     homeViewModel: HomeViewModel = hiltViewModel(),
-    mypageViewModel: MypageViewModel = hiltViewModel()
+    mypageViewModel: MypageViewModel = hiltViewModel(),
+    navigateBack: () -> Unit = {}
 ) {
     val homeUiState = homeViewModel.uiState.collectAsStateWithLifecycle().value
     val mypageUiState = mypageViewModel.uiState.collectAsStateWithLifecycle().value
@@ -38,6 +39,7 @@ fun MypageRoute(
         homeUiState = homeUiState,
         logoutClicked = { homeViewModel.logout() },
         withDrawClicked = { homeViewModel.withDraw() },
+        onBackClick = navigateBack,
         modifier = modifier
     )
 }
@@ -48,7 +50,8 @@ fun MypageScreen(
     homeUiState: HomeContract.HomeUiState = HomeContract.HomeUiState(),
     mypageUiState: MypageContract.MypageUiState = MypageContract.MypageUiState(),
     logoutClicked: () -> Unit = {},
-    withDrawClicked: () -> Unit = {}
+    withDrawClicked: () -> Unit = {},
+    onBackClick: () -> Unit = {}
 ) {
     val colors = LocalTeam6Colors.current
 
@@ -59,7 +62,8 @@ fun MypageScreen(
     ) {
         Column {
             TitleBar(
-                title = stringResource(R.string.mypage_title_text)
+                title = stringResource(R.string.mypage_title_text),
+                onBackClick = onBackClick
             )
 //
 //            MypageListItem(

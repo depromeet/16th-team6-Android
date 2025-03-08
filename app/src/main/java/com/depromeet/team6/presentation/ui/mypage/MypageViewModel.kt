@@ -16,6 +16,7 @@ class MypageViewModel @Inject constructor(
         when (event) {
             MypageContract.MypageEvent.OnLogoutClick -> onLogoutClick()
             MypageContract.MypageEvent.OnSignoutClick -> onSignoutClick()
+            MypageContract.MypageEvent.BackPressed -> navigateBack()
         }
     }
 
@@ -25,5 +26,9 @@ class MypageViewModel @Inject constructor(
 
     fun onSignoutClick() {
         Log.d("SignOut", "onSignoutClick: ")
+    }
+
+    private fun navigateBack() {
+        setSideEffect(MypageContract.MypageSideEffect.NavigateBack)
     }
 }
