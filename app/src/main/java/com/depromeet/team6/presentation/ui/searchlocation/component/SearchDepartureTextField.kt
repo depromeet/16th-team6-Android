@@ -1,5 +1,6 @@
-package com.depromeet.team6.presentation.ui.home.component
+package com.depromeet.team6.presentation.ui.searchlocation.component
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -27,6 +28,10 @@ fun SearchDepartureTextField(
     Box(
         modifier = modifier
             .fillMaxWidth()
+            .background(
+                color = defaultTeam6Colors.greyElevatedBackground
+            )
+            .padding(horizontal = 16.dp),
     ) {
         Row(
             modifier = Modifier
