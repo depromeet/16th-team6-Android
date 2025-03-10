@@ -170,7 +170,7 @@ fun HomeScreen(
         if (homeUiState.isAlarmRegistered) {
             AfterRegisterSheet(
                 timeToLeave = "23:21:00",
-                startLocation = "중앙빌딩",
+                startLocation = homeUiState.locationAddress,
                 destination = "우리집",
                 onCourseTextClick = {},
                 onFinishClick = {
