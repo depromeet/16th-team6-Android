@@ -5,7 +5,6 @@ import android.content.Intent
 import com.depromeet.team6.BuildConfig
 import com.depromeet.team6.data.datalocal.datasource.UserInfoLocalDataSource
 import com.depromeet.team6.data.dataremote.model.response.base.ApiResponse
-import com.depromeet.team6.data.dataremote.model.response.base.toResult
 import com.depromeet.team6.data.dataremote.model.response.user.ResponseAuthDto
 import com.depromeet.team6.data.dataremote.util.ApiConstraints.API
 import com.depromeet.team6.data.dataremote.util.ApiConstraints.AUTH
@@ -19,7 +18,6 @@ import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.json.Json
 import okhttp3.Interceptor
 import okhttp3.Request
-import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
 import javax.inject.Inject
 
@@ -116,7 +114,7 @@ class AuthInterceptor @Inject constructor(
         originalRequest.newBuilder()
             .get()
             .url("${BuildConfig.BASE_URL}$API/$AUTH/$REISSUE")
-            .addHeader(AUTHORIZATION, BEARER+refreshToken)
+            .addHeader(AUTHORIZATION, BEARER + refreshToken)
             .build()
     )
 
