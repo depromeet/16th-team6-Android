@@ -41,6 +41,7 @@ import com.depromeet.team6.presentation.ui.home.component.TMapViewCompose
 import com.depromeet.team6.presentation.util.DefaultLntLng.DEFAULT_LNG
 import com.depromeet.team6.presentation.util.DefaultLntLng.DEFAULT_LNT
 import com.depromeet.team6.presentation.util.context.getUserLocation
+import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.presentation.util.permission.PermissionUtil
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.google.android.gms.maps.model.LatLng
@@ -228,8 +229,8 @@ fun HomeScreen(
             suffixText = suffixText,
             modifier = Modifier
                 .align(Alignment.BottomStart)
-                .padding(start = 8.dp, bottom = bottomPadding),
-            onClick = onCharacterClick,
+                .padding(start = 8.dp, bottom = bottomPadding)
+                .noRippleClickable(onClick = onCharacterClick),
             showSpeechBubble = homeUiState.showSpeechBubble
         )
     }
