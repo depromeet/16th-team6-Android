@@ -68,7 +68,8 @@ fun CourseSearchRoute(
                 editor.apply() // 또는 editor.commit()
 
                 navigateToHome()
-            }
+            },
+            backButtonClicked = { navigateToHome() }
         )
         else -> Unit
     }
@@ -79,13 +80,14 @@ fun CourseSearchScreen(
     modifier: Modifier = Modifier,
     uiState: CourseSearchContract.CourseUiState = CourseSearchContract.CourseUiState(),
     navigateToItinerary: () -> Unit = {},
-    setNotification: () -> Unit = {}
+    setNotification: () -> Unit = {},
+    backButtonClicked: () -> Unit = {}
 ) {
     Column(
         modifier = modifier
             .background(defaultTeam6Colors.greyWashBackground)
     ) {
-        CourseAppBar()
+        CourseAppBar(backButtonClicked = backButtonClicked)
         DestinationSearchBar(
             startingPoint = uiState.startingPoint,
             destination = uiState.destinationPoint,
