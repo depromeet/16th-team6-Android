@@ -95,7 +95,7 @@ class MainActivity : ComponentActivity() {
             notificationScheduler.scheduleNotificationForTime(
                 stringResource(R.string.app_name),
                 stringResource(R.string.notification_content_text),
-                NotificationTimeConstants.DEPARTURE_DATE_TIME_STRING
+                NotificationTimeConstants.getDepartureTimeWithTodayDate()
             )
         }
     }
