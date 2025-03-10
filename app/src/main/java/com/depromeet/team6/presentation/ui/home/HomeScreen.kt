@@ -52,6 +52,7 @@ fun HomeRoute(
     navigateToLogin: () -> Unit,
     navigateToCourseSearch: () -> Unit,
     navigateToMypage: () -> Unit,
+    navigateToItinerary: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
@@ -76,6 +77,7 @@ fun HomeRoute(
             .collect { sideEffect ->
                 when (sideEffect) {
                     is HomeContract.HomeSideEffect.NavigateToMypage -> navigateToMypage()
+                    is HomeContract.HomeSideEffect.NavigateToItinerary -> navigateToItinerary()
                 }
             }
     }
@@ -108,6 +110,7 @@ fun HomeRoute(
             homeUiState = uiState,
             onCharacterClick = { viewModel.onCharacterClick() },
             navigateToMypage = navigateToMypage,
+            naivgateToItinerary = navigateToItinerary,
             modifier = modifier,
             padding = padding,
             onSearchClick = { navigateToCourseSearch() },
@@ -131,6 +134,7 @@ fun HomeScreen(
     onSearchClick: () -> Unit = {},
     onFinishClick: () -> Unit = {},
     navigateToMypage: () -> Unit = {},
+    naivgateToItinerary: () -> Unit = {},
     viewModel: HomeViewModel = hiltViewModel() // TODO : TmapViewCompose 변경 후 제거
 ) {
     val context = LocalContext.current
@@ -177,7 +181,9 @@ fun HomeScreen(
                 onFinishClick = {
                     onFinishClick()
                 },
-                onCourseDetailClick = {},
+                onCourseDetailClick = {
+                    naivgateToItinerary()
+                },
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .zIndex(1f),
