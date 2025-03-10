@@ -79,16 +79,6 @@ fun HomeRoute(
             }
     }
 
-    LaunchedEffect(uiState.isAlarmRegistered) {
-        if (uiState.isAlarmRegistered) {
-            Toast.makeText(
-                context,
-                "알림이 등록되었어요",
-                Toast.LENGTH_SHORT
-            ).show()
-        }
-    }
-
     LaunchedEffect(Unit) {
         if (PermissionUtil.hasLocationPermissions(context)) { // 위치 권한이 있으면
             val location = context.getUserLocation()
@@ -119,7 +109,10 @@ fun HomeRoute(
             navigateToMypage = navigateToMypage,
             modifier = modifier,
             padding = padding,
-            onSearchClick = { navigateToCourseSearch() }
+            onSearchClick = { navigateToCourseSearch() },
+            onFinishClick = {
+                viewModel.finishAlarm(context)
+            }
         )
         LoadState.Error -> navigateToLogin()
 
@@ -135,6 +128,7 @@ fun HomeScreen(
     homeUiState: HomeContract.HomeUiState = HomeContract.HomeUiState(),
     onCharacterClick: () -> Unit = {},
     onSearchClick: () -> Unit = {},
+    onFinishClick: () -> Unit = {},
     navigateToMypage: () -> Unit = {},
     viewModel: HomeViewModel = hiltViewModel() // TODO : TmapViewCompose 변경 후 제거
 ) {
@@ -146,6 +140,8 @@ fun HomeScreen(
     if (isUserLoggedIn) {
         viewModel.registerAlarm()
         viewModel.setBusDeparted()
+    } else {
+        viewModel.finishAlarm(context)
     }
 
     Box(
@@ -177,7 +173,9 @@ fun HomeScreen(
                 startLocation = "중앙빌딩",
                 destination = "우리집",
                 onCourseTextClick = {},
-                onFinishClick = {},
+                onFinishClick = {
+                    onFinishClick()
+                },
                 onCourseDetailClick = {},
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
