@@ -34,6 +34,8 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import com.depromeet.team6.R
+import com.depromeet.team6.presentation.ui.alarm.NotificationScheduler
+import com.depromeet.team6.presentation.ui.alarm.NotificationTimeConstants
 import com.depromeet.team6.presentation.ui.home.component.AfterRegisterSheet
 import com.depromeet.team6.presentation.ui.home.component.CharacterSpeechBubble
 import com.depromeet.team6.presentation.ui.home.component.CurrentLocationSheet
@@ -142,6 +144,8 @@ fun HomeScreen(
     val sharedPreferences = context.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
     val isUserLoggedIn = sharedPreferences.getBoolean("isUserLoggedIn", false) // 기본값은 false
 
+    val notificationScheduler = NotificationScheduler(context)
+
     if (isUserLoggedIn) {
         viewModel.registerAlarm()
         viewModel.setBusDeparted()
@@ -173,6 +177,13 @@ fun HomeScreen(
 
         // 알람 등록 시 Home UI
         if (homeUiState.isAlarmRegistered) {
+
+            notificationScheduler.scheduleNotificationForTime(
+                stringResource(R.string.app_name),
+                stringResource(R.string.notification_content_text),
+                NotificationTimeConstants.getDepartureTimeWithTodayDate()
+            )
+
             AfterRegisterSheet(
                 timeToLeave = "23:21:00",
                 startLocation = homeUiState.locationAddress,
@@ -190,6 +201,9 @@ fun HomeScreen(
                 isBusDeparted = homeUiState.isBusDeparted
             )
         } else {
+
+            notificationScheduler.cancelAllNotifications()
+
             CurrentLocationSheet(
                 currentLocation = homeUiState.locationAddress,
                 destination = "우리집",

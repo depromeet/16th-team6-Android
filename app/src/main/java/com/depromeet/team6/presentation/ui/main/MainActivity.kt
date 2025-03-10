@@ -90,13 +90,6 @@ class MainActivity : ComponentActivity() {
                     Log.d("Fcm Token", token)
                 }
             )
-
-            val notificationScheduler = NotificationScheduler(applicationContext)
-            notificationScheduler.scheduleNotificationForTime(
-                stringResource(R.string.app_name),
-                stringResource(R.string.notification_content_text),
-                NotificationTimeConstants.getDepartureTimeWithTodayDate()
-            )
         }
     }
 

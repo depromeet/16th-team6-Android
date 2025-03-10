@@ -5,7 +5,7 @@ import java.util.Calendar
 import java.util.Locale
 
 object NotificationTimeConstants {
-    const val DEPARTURE_DATE_TIME_STRING = "2025-03-09 00:37:00"
+    const val DEPARTURE_DATE_TIME_STRING = "2025-03-11 23:21:00"
 
     fun getDepartureTimeWithTodayDate(): String {
         val timeOnly = DEPARTURE_DATE_TIME_STRING.split(" ")[1]
