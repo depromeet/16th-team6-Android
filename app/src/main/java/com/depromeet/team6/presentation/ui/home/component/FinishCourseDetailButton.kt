@@ -1,6 +1,5 @@
 package com.depromeet.team6.presentation.ui.home.component
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth

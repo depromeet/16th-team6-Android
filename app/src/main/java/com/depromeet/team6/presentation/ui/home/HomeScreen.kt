@@ -2,7 +2,6 @@ package com.depromeet.team6.presentation.ui.home
 
 import android.content.Context
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -177,7 +176,6 @@ fun HomeScreen(
 
         // 알람 등록 시 Home UI
         if (homeUiState.isAlarmRegistered) {
-
             notificationScheduler.scheduleNotificationForTime(
                 stringResource(R.string.app_name),
                 stringResource(R.string.notification_content_text),
@@ -201,7 +199,6 @@ fun HomeScreen(
                 isBusDeparted = homeUiState.isBusDeparted
             )
         } else {
-
             notificationScheduler.cancelAllNotifications()
 
             CurrentLocationSheet(
