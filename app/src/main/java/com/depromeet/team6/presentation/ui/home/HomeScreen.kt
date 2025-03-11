@@ -114,10 +114,12 @@ fun HomeRoute(
             naivgateToItinerary = navigateToItinerary,
             modifier = modifier,
             padding = padding,
-            onSearchClick = { navigateToCourseSearch(
-                uiState.locationAddress,
-                "우리집"
-            ) },
+            onSearchClick = {
+                navigateToCourseSearch(
+                    uiState.locationAddress,
+                    "우리집"
+                )
+            },
             onFinishClick = {
                 viewModel.finishAlarm(context)
             }

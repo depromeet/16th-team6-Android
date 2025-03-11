@@ -29,7 +29,7 @@ class CourseSearchViewModel @Inject constructor(
         setEvent(CourseSearchContract.CourseEvent.LoadCourseSearchResult(mockData))
     }
 
-    fun setDepartureDestination(departure : String, destination : String) {
+    fun setDepartureDestination(departure: String, destination: String) {
         setState {
             copy(
                 startingPoint = departure,

@@ -9,7 +9,7 @@ import com.depromeet.team6.presentation.util.view.LoadState
 class ItineraryContract {
     data class ItineraryUiState(
         val courseDataLoadState: LoadState = LoadState.Idle,
-        val itineraryInfo : LastTransportInfo? = null
+        val itineraryInfo: LastTransportInfo? = null
     ) : UiState
 
     sealed interface ItinerarySideEffect : UiSideEffect

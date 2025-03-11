@@ -19,7 +19,7 @@ class LoadMockSearchDataUseCase @Inject constructor(
         val departureDateTime = LocalDateTime
             .parse(mockData.departureDateTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
         var boardingTime = mockData.departureDateTime
-        for (leg in mockData.legs){
+        for (leg in mockData.legs) {
             if (leg.mode != "WALK") {
                 boardingTime = leg.departureDateTime ?: ""
                 break
