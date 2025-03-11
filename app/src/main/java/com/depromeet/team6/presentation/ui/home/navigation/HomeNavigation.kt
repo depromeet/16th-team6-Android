@@ -18,7 +18,7 @@ fun NavController.navigationHome() {
 fun NavGraphBuilder.homeNavGraph(
     padding: PaddingValues,
     navigateToLogin: () -> Unit,
-    navigateToCourseSearch: () -> Unit,
+    navigateToCourseSearch: (String, String) -> Unit,
     navigateToMypage: () -> Unit,
     navigateToItinerary: () -> Unit
 ) {

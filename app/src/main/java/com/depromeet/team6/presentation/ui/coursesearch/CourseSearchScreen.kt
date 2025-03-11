@@ -29,6 +29,8 @@ import com.depromeet.team6.ui.theme.defaultTeam6Colors
 @Composable
 fun CourseSearchRoute(
     padding: PaddingValues,
+    departure: String,
+    destination: String,
     navigateToItinerary: () -> Unit,
     navigateToHome: () -> Unit,
     viewModel: CourseSearchViewModel = hiltViewModel()
@@ -52,6 +54,7 @@ fun CourseSearchRoute(
     }
 
     LaunchedEffect(Unit) {
+        viewModel.setDepartureDestination(departure, destination)
         viewModel.getMockData()
     }
 

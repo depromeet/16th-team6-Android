@@ -51,7 +51,7 @@ import com.google.android.gms.maps.model.LatLng
 fun HomeRoute(
     padding: PaddingValues,
     navigateToLogin: () -> Unit,
-    navigateToCourseSearch: () -> Unit,
+    navigateToCourseSearch: (String, String) -> Unit,
     navigateToMypage: () -> Unit,
     navigateToItinerary: () -> Unit,
     modifier: Modifier = Modifier,
@@ -114,7 +114,10 @@ fun HomeRoute(
             naivgateToItinerary = navigateToItinerary,
             modifier = modifier,
             padding = padding,
-            onSearchClick = { navigateToCourseSearch() },
+            onSearchClick = { navigateToCourseSearch(
+                uiState.locationAddress,
+                "우리집"
+            ) },
             onFinishClick = {
                 viewModel.finishAlarm(context)
             }
