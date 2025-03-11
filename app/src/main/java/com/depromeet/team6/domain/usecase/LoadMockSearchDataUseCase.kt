@@ -18,6 +18,13 @@ class LoadMockSearchDataUseCase @Inject constructor(
         val mockData = repository.loadMockData(R.raw.mock_data)!!.result[0]
         val departureDateTime = LocalDateTime
             .parse(mockData.departureDateTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+        var boardingTime = mockData.departureDateTime
+        for (leg in mockData.legs){
+            if (leg.mode != "WALK") {
+                boardingTime = leg.departureDateTime ?: ""
+                break
+            }
+        }
         val legs = mockData.legs.map { leg ->
             LegInfo(
                 transportType = when (leg.mode) {
@@ -39,7 +46,7 @@ class LoadMockSearchDataUseCase @Inject constructor(
         val result = LastTransportInfo(
             remainingMinutes = mockData.totalTime / 60,
             departureTime = mockData.departureDateTime,
-            boardingTime = mockData.departureDateTime,
+            boardingTime = boardingTime,
             legs = legs
         )
         return listOf(result)

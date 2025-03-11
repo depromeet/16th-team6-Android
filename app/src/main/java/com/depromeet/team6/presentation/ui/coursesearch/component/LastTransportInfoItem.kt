@@ -91,8 +91,8 @@ fun LastTransportInfoItem(
                 .parse(lastTransportInfo.departureTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
             val (departHour, departMinute) = departureDateTime.let { it.hour to it.minute }
             val boardingDateTime = LocalDateTime
-                .parse(lastTransportInfo.departureTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-            val (boardingHour, boardingMinute) = departureDateTime.let { it.hour to it.minute }
+                .parse(lastTransportInfo.boardingTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+            val (boardingHour, boardingMinute) = boardingDateTime.let { it.hour to it.minute }
 
 
             RemainingTimeHHmm(
