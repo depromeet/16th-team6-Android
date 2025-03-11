@@ -16,9 +16,8 @@ class LoadMockSearchDataUseCase @Inject constructor(
 ) {
     operator fun invoke(): List<LastTransportInfo> {
         val mockData = repository.loadMockData(R.raw.mock_data)!!.result[0]
-        val (departHour, departMinute) = LocalDateTime
+        val departureDateTime = LocalDateTime
             .parse(mockData.departureDateTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-            .let { it.hour to it.minute }
         val legs = mockData.legs.map { leg ->
             LegInfo(
                 transportType = when (leg.mode) {
@@ -28,7 +27,7 @@ class LoadMockSearchDataUseCase @Inject constructor(
                     else -> TransportType.WALK
                 },
                 subTypeIdx = 0, // 기본값으로 0을 사용, 필요에 따라 변경
-                sectionTime = leg.sectionTime,
+                sectionTime = leg.sectionTime / 60,
                 distance = leg.distance,
                 routeColor = Color(0xFFFF0000), // 예시로 색상 코드, 실제로는 더 구체적인 값 필요
                 startPoint = WayPoint("", leg.start.lat, leg.start.lon), // WayPoint는 start의 Location에 맞춰 생성
@@ -39,10 +38,8 @@ class LoadMockSearchDataUseCase @Inject constructor(
 
         val result = LastTransportInfo(
             remainingMinutes = mockData.totalTime / 60,
-            departureHour = departHour,
-            departureMinute = departMinute,
-            boardingHour = departHour,
-            boardingMinute = departMinute,
+            departureTime = mockData.departureDateTime,
+            boardingTime = mockData.departureDateTime,
             legs = legs
         )
         return listOf(result)

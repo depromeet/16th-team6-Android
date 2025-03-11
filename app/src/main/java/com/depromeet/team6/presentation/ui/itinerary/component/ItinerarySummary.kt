@@ -28,14 +28,13 @@ import java.time.format.DateTimeFormatter
 
 @Composable
 fun ItinerarySummary(
-    totalTimeSec: Int,
-    timeToLeave: String,
+    totalTimeMinute: Int,
+    boardingTime: String,
     legs: List<LegInfo>,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
-    val totalTimeHour = totalTimeSec / 3600
-    val totalTimeMinute = (totalTimeSec % 3600) / 60
+    val totalTimeHour = totalTimeMinute / 60
     Column {
         // 남은 시간
         Row(
@@ -75,7 +74,7 @@ fun ItinerarySummary(
 
         // 예상 도착, 출발 시간
         val (departHour, departMinute) = LocalDateTime
-            .parse(timeToLeave, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+            .parse(boardingTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
             .let { it.hour to it.minute }
         Text(
             text = context.getString(
@@ -113,8 +112,8 @@ fun ItinerarySummaryPreview(
     @PreviewParameter(LegInfoDummyProvider::class) legs: List<LegInfo>
 ) {
     ItinerarySummary(
-        totalTimeSec = 4980,
-        timeToLeave = "2025-03-07 22:52:00",
+        totalTimeMinute = 78,
+        boardingTime = "2025-03-07 22:52:00",
         legs = legs
     )
 }
@@ -125,8 +124,8 @@ fun ItinerarySummaryPreviewShort(
     @PreviewParameter(LegInfoDummyProvider::class) legs: List<LegInfo>
 ) {
     ItinerarySummary(
-        totalTimeSec = 780,
-        timeToLeave = "2025-03-07 22:52:00",
+        totalTimeMinute = 13,
+        boardingTime = "2025-03-07 22:52:00",
         legs = legs
     )
 }

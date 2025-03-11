@@ -31,6 +31,8 @@ import com.depromeet.team6.presentation.ui.itinerary.LegInfoDummyProvider
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.depromeet.team6.ui.theme.defaultTeam6Typography
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun LastTransportInfoItem(
@@ -85,9 +87,17 @@ fun LastTransportInfoItem(
             horizontalArrangement = Arrangement.spacedBy(5.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
+            val departureDateTime = LocalDateTime
+                .parse(lastTransportInfo.departureTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+            val (departHour, departMinute) = departureDateTime.let { it.hour to it.minute }
+            val boardingDateTime = LocalDateTime
+                .parse(lastTransportInfo.departureTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+            val (boardingHour, boardingMinute) = departureDateTime.let { it.hour to it.minute }
+
+
             RemainingTimeHHmm(
-                hour = lastTransportInfo.departureHour,
-                minute = lastTransportInfo.departureMinute,
+                hour = departHour,
+                minute = departMinute,
                 isDeparture = true
             )
             Text(
@@ -96,8 +106,8 @@ fun LastTransportInfoItem(
                 text = stringResource(R.string.last_transport_info_departure_time)
             )
             RemainingTimeHHmm(
-                hour = lastTransportInfo.boardingHour,
-                minute = lastTransportInfo.boardingMinute,
+                hour = boardingHour,
+                minute = boardingMinute,
                 isDeparture = false
             )
             Text(
@@ -196,10 +206,8 @@ fun LastTransportInfoItemPreview(
 ) {
     val mockData = LastTransportInfo(
         remainingMinutes = 83,
-        departureHour = 23,
-        departureMinute = 3,
-        boardingHour = 23,
-        boardingMinute = 15,
+        departureTime = "2025-03-11 23:12:00",
+        boardingTime = "2025-03-11 23:21:00",
         legs = courseInfo
     )
     LastTransportInfoItem(
@@ -214,10 +222,8 @@ fun LastTransportInfoItemPreview2(
 ) {
     val mockData = LastTransportInfo(
         remainingMinutes = 23,
-        departureHour = 23,
-        departureMinute = 3,
-        boardingHour = 23,
-        boardingMinute = 15,
+        departureTime = "2025-03-11 23:12:00",
+        boardingTime = "2025-03-11 23:21:00",
         legs = courseInfo
     )
     LastTransportInfoItem(
