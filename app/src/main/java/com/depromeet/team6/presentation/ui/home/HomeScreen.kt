@@ -1,21 +1,30 @@
 package com.depromeet.team6.presentation.ui.home
 
+import android.content.Context
+import android.util.Log
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -29,7 +38,10 @@ import com.depromeet.team6.presentation.ui.home.component.AfterRegisterSheet
 import com.depromeet.team6.presentation.ui.home.component.CharacterSpeechBubble
 import com.depromeet.team6.presentation.ui.home.component.CurrentLocationSheet
 import com.depromeet.team6.presentation.ui.home.component.TMapViewCompose
-import com.depromeet.team6.presentation.util.modifier.noRippleClickable
+import com.depromeet.team6.presentation.util.DefaultLntLng.DEFAULT_LNG
+import com.depromeet.team6.presentation.util.DefaultLntLng.DEFAULT_LNT
+import com.depromeet.team6.presentation.util.context.getUserLocation
+import com.depromeet.team6.presentation.util.permission.PermissionUtil
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.google.android.gms.maps.model.LatLng
 
@@ -37,6 +49,8 @@ import com.google.android.gms.maps.model.LatLng
 fun HomeRoute(
     padding: PaddingValues,
     navigateToLogin: () -> Unit,
+    navigateToCourseSearch: () -> Unit,
+    navigateToMypage: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
@@ -44,11 +58,23 @@ fun HomeRoute(
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
 
+    var userLocation by remember { mutableStateOf(DEFAULT_LNT to DEFAULT_LNG) } // 서울시 기본 위치
+
+    val locationPermissionsLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestMultiplePermissions(),
+        onResult = { permissions ->
+            val allGranted = permissions.values.all { it }
+            if (allGranted) {
+                Log.d("Location_Permission", "Has Granted")
+            }
+        }
+    )
+
     LaunchedEffect(viewModel.sideEffect, lifecycleOwner) {
         viewModel.sideEffect.flowWithLifecycle(lifecycle = lifecycleOwner.lifecycle)
-            .collect { signInSideEffect ->
-                when (signInSideEffect) {
-                    is HomeContract.HomeSideEffect.NavigateToLogin -> navigateToLogin()
+            .collect { sideEffect ->
+                when (sideEffect) {
+                    is HomeContract.HomeSideEffect.NavigateToMypage -> navigateToMypage()
                 }
             }
     }
@@ -63,16 +89,40 @@ fun HomeRoute(
         }
     }
 
+    LaunchedEffect(Unit) {
+        if (PermissionUtil.hasLocationPermissions(context)) { // 위치 권한이 있으면
+            val location = context.getUserLocation()
+            if (location != null) {
+                userLocation = location
+            }
+        }
+
+        viewModel.getCenterLocation(LatLng(userLocation.first, userLocation.second))
+    }
+
+    SideEffect {
+        if (!PermissionUtil.isLocationPermissionRequested(context) &&
+            !PermissionUtil.hasLocationPermissions(context)
+        ) {
+            PermissionUtil.requestLocationPermissions(
+                context = context,
+                locationPermissionLauncher = locationPermissionsLauncher
+            )
+        }
+    }
+
     when (uiState.loadState) {
         LoadState.Idle -> HomeScreen(
+            userLocation = LatLng(userLocation.first, userLocation.second),
             homeUiState = uiState,
             onCharacterClick = { viewModel.onCharacterClick() },
+            navigateToMypage = navigateToMypage,
             modifier = modifier,
             padding = padding,
-            logoutClicked = { viewModel.logout() },
-            withDrawClicked = { viewModel.withDraw() }
+            onSearchClick = { navigateToCourseSearch() }
         )
         LoadState.Error -> navigateToLogin()
+
         else -> Unit
     }
 }
@@ -80,27 +130,50 @@ fun HomeRoute(
 @Composable
 fun HomeScreen(
     padding: PaddingValues,
+    userLocation: LatLng,
     modifier: Modifier = Modifier,
     homeUiState: HomeContract.HomeUiState = HomeContract.HomeUiState(),
     onCharacterClick: () -> Unit = {},
-    viewModel: HomeViewModel = hiltViewModel(), // TODO : TmapViewCompose 변경 후 제거
-    logoutClicked: () -> Unit = {},
-    withDrawClicked: () -> Unit = {}
+    onSearchClick: () -> Unit = {},
+    navigateToMypage: () -> Unit = {},
+    viewModel: HomeViewModel = hiltViewModel() // TODO : TmapViewCompose 변경 후 제거
 ) {
+    val context = LocalContext.current
+
+    val sharedPreferences = context.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
+    val isUserLoggedIn = sharedPreferences.getBoolean("isUserLoggedIn", false) // 기본값은 false
+
+    if (isUserLoggedIn) {
+        viewModel.registerAlarm()
+        viewModel.setBusDeparted()
+    }
+
     Box(
         modifier = modifier
             .padding(padding)
             .fillMaxSize()
     ) {
+        Image(
+            imageVector = ImageVector.vectorResource(R.drawable.ic_home_mypage),
+            contentDescription = stringResource(R.string.mypage_icon_description),
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(top = 12.dp, end = 16.dp)
+                .clickable {
+                    navigateToMypage()
+                }
+                .zIndex(1f)
+        )
+
         TMapViewCompose(
-            LatLng(37.5665, 126.9780),
+            userLocation,
             viewModel = viewModel
         ) // Replace with your actual API key
 
         // 알람 등록 시 Home UI
         if (homeUiState.isAlarmRegistered) {
             AfterRegisterSheet(
-                timeToLeave = "22:30:00",
+                timeToLeave = "23:21:00",
                 startLocation = "중앙빌딩",
                 destination = "우리집",
                 onCourseTextClick = {},
@@ -113,9 +186,11 @@ fun HomeScreen(
             )
         } else {
             CurrentLocationSheet(
-                currentLocation = "중앙빌딩",
+                currentLocation = homeUiState.locationAddress,
                 destination = "우리집",
-                onSearchClick = {},
+                onSearchClick = {
+                    onSearchClick()
+                },
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .fillMaxWidth()
@@ -159,21 +234,6 @@ fun HomeScreen(
             onClick = onCharacterClick,
             showSpeechBubble = homeUiState.showSpeechBubble
         )
-        Column {
-            Text(
-                text = "Logout Test",
-                modifier = Modifier.noRippleClickable {
-                    logoutClicked()
-                }
-            )
-            Text(
-                text = "WithDraw Test",
-                modifier = Modifier.noRippleClickable {
-                    withDrawClicked()
-                }
-            )
-            Spacer(modifier = Modifier.weight(1f))
-        }
     }
 }
 
@@ -187,5 +247,8 @@ private data class SpeechBubbleText(
 @Preview
 @Composable
 private fun HomeScreenPreview() {
-    HomeScreen(padding = PaddingValues(0.dp))
+    HomeScreen(
+        padding = PaddingValues(0.dp),
+        userLocation = LatLng(37.5665, 126.9780)
+    )
 }

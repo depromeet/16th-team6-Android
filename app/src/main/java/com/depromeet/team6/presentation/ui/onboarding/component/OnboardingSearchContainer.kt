@@ -10,9 +10,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.depromeet.team6.BuildConfig.DEBUG
 import com.depromeet.team6.R
 import com.depromeet.team6.presentation.type.OnboardingSelectLocationButtonType
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
@@ -54,6 +56,7 @@ fun OnboardingSearchContainer(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 6.dp, bottom = 2.dp)
+                .alpha(if (DEBUG) 1f else 0f)
         ) {
             OnboardingSelectLocationButton(
                 searchLocationButtonType = OnboardingSelectLocationButtonType.SEARCH,

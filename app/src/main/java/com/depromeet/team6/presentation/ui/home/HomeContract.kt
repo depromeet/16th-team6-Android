@@ -11,17 +11,16 @@ class HomeContract {
         val isAlarmRegistered: Boolean = false,
         val isBusDeparted: Boolean = false,
         val showSpeechBubble: Boolean = true,
+        val locationAddress: String = "",
         val logoutState: Boolean = false
     ) : UiState
 
     sealed interface HomeSideEffect : UiSideEffect {
-        data object NavigateToLogin : HomeSideEffect
+        data object NavigateToMypage : HomeSideEffect
     }
 
     sealed class HomeEvent : UiEvent {
         data class DummyEvent(val loadState: LoadState) : HomeEvent()
-        data class LogoutClicked(val loadState: LoadState) : HomeEvent()
-        data class WithDrawClicked(val loadState: LoadState) : HomeEvent()
         data class UpdateAlarmRegistered(val isRegistered: Boolean) : HomeEvent()
         data class UpdateBusDeparted(val isBusDeparted: Boolean) : HomeEvent()
         data class UpdateSpeechBubbleVisibility(val show: Boolean) : HomeEvent()
