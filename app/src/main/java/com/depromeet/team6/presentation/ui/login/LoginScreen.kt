@@ -3,13 +3,12 @@ package com.depromeet.team6.presentation.ui.login
 import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
@@ -125,30 +124,29 @@ fun LoginScreen(
     onSignInClicked: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    Column(
+    Box(
         modifier = modifier
             .padding(padding)
             .fillMaxSize()
-            .background(color = defaultTeam6Colors.black),
-        horizontalAlignment = Alignment.CenterHorizontally
+            .background(color = defaultTeam6Colors.black)
     ) {
-        Spacer(modifier = Modifier.height(256.dp))
         Icon(
             imageVector = ImageVector.vectorResource(R.drawable.ic_login_logo),
             contentDescription = null,
-            tint = Color.Unspecified
+            tint = Color.Unspecified,
+            modifier = Modifier.align(Alignment.Center)
         )
-        Spacer(modifier = Modifier.weight(1f))
+
         Row(
             modifier = Modifier
-                .padding(horizontal = 20.dp)
+                .padding(horizontal = 20.dp, vertical = 20.dp)
                 .fillMaxWidth()
                 .roundedBackgroundWithPadding(
                     backgroundColor = defaultTeam6Colors.kakaoLoginButton,
                     cornerRadius = 8.dp
-
                 )
-                .noRippleClickable { onSignInClicked() },
+                .noRippleClickable { onSignInClicked() }
+                .align(Alignment.BottomCenter),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
@@ -163,7 +161,6 @@ fun LoginScreen(
                 style = defaultTeam6Typography.heading6Bold15
             )
         }
-        Spacer(Modifier.height(20.dp))
     }
 }
 
