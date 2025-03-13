@@ -49,3 +49,5 @@
 -dontwarn org.conscrypt.**
 -dontwarn org.bouncycastle.**
 -dontwarn org.openjsse.**
+-dontwarn com.google.flatbuffers.Struct
+-dontwarn com.google.flatbuffers.Table
