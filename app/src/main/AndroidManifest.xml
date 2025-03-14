@@ -64,11 +64,11 @@
             android:exported="false"
             android:theme="@style/Theme.Team6"
             />
-        <service
-            android:name=".data.datalocal.service.LockService"
-            android:exported="false"
-            android:foregroundServiceType="specialUse"
-            android:permission="android.permission.FOREGROUND_SERVICE"/>
+<!--        <service-->
+<!--            android:name=".data.datalocal.service.LockService"-->
+<!--            android:exported="false"-->
+<!--            android:foregroundServiceType="specialUse"-->
+<!--            android:permission="android.permission.FOREGROUND_SERVICE"/>-->
 <!--        <service-->
 <!--            android:name=".data.datalocal.service.FcmService"-->
 <!--            android:enabled="true"-->
