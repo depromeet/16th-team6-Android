@@ -20,6 +20,7 @@ android {
     compileSdk = 35
 
     defaultConfig {
+        manifestPlaceholders += mapOf()
         applicationId = "com.depromeet.team6"
         minSdk = 26
         targetSdk = 34
@@ -45,7 +46,6 @@ android {
         debug {
             isMinifyEnabled = false
             isDebuggable = true
-            applicationIdSuffix = ".debug"
             buildConfigField("String", "BASE_URL", properties["dev.base.url"].toString())
         }
     }
