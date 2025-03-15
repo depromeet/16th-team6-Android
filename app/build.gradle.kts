@@ -121,6 +121,9 @@ dependencies {
 
     // SplashScreen
     implementation(libs.androidx.core.splashscreen)
+
+    // View Pager
+    implementation(libs.bundles.pager)
 }
 java {
     toolchain {

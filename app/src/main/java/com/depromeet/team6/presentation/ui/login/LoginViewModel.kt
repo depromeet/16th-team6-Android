@@ -9,10 +9,12 @@ import com.depromeet.team6.presentation.util.Provider.KAKAO
 import com.depromeet.team6.presentation.util.Token.BEARER
 import com.depromeet.team6.presentation.util.base.BaseViewModel
 import com.depromeet.team6.presentation.util.view.LoadState
+import com.google.accompanist.pager.ExperimentalPagerApi
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@OptIn(ExperimentalPagerApi::class)
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val userInfoRepositoryImpl: UserInfoRepositoryImpl,
@@ -29,6 +31,9 @@ class LoginViewModel @Inject constructor(
                 copy(
                     isUserRegisteredState = event.isUserRegisteredState
                 )
+            }
+            is LoginContract.LoginEvent.SetPagerState -> {
+                setState { copy(pagerState = event.pagerState) }
             }
         }
     }
