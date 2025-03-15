@@ -32,7 +32,9 @@ fun FinishCourseDetailButton(
             .fillMaxWidth()
     ) {
         Button(
-            onClick = onFinishClick,
+            onClick = {
+                onFinishClick()
+            },
             modifier = Modifier,
             colors = ButtonDefaults.buttonColors(
                 containerColor = colors.greyDefaultButton,

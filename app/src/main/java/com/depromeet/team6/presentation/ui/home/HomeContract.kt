@@ -17,6 +17,7 @@ class HomeContract {
 
     sealed interface HomeSideEffect : UiSideEffect {
         data object NavigateToMypage : HomeSideEffect
+        data object NavigateToItinerary : HomeSideEffect
     }
 
     sealed class HomeEvent : UiEvent {
