@@ -89,7 +89,6 @@ fun ItineraryMap(
             tMapView.setCenterPoint(midPoint.latitude, midPoint.longitude)
 
             // 지도 Scale 조정
-            tMapView.zoomLevel = 1
             val leftTop = departTMapPoint
             val rightBottom = destinationTMapPoint
             tMapView.zoomToTMapPoint(leftTop, rightBottom)

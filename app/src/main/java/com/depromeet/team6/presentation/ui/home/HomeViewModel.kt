@@ -1,5 +1,6 @@
 package com.depromeet.team6.presentation.ui.home
 
+import android.content.Context
 import androidx.lifecycle.viewModelScope
 import com.depromeet.team6.domain.usecase.GetAddressFromCoordinatesUseCase
 import com.depromeet.team6.presentation.util.base.BaseViewModel
@@ -40,6 +41,20 @@ class HomeViewModel @Inject constructor(
     fun registerAlarm() {
         viewModelScope.launch {
             setEvent(HomeContract.HomeEvent.UpdateAlarmRegistered(true))
+        }
+    }
+
+    fun finishAlarm(context: Context) {
+        viewModelScope.launch {
+            // TODO : 알림 등록 API 연동 후 SharedPreferences 로직 삭제
+            val sharedPreferences = context.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
+            sharedPreferences.edit().apply {
+                putBoolean("isUserLoggedIn", false)
+                apply()
+            }
+
+            setEvent(HomeContract.HomeEvent.UpdateAlarmRegistered(false))
+            setEvent(HomeContract.HomeEvent.UpdateBusDeparted(false))
         }
     }
 

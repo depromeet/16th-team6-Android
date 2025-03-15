@@ -2,7 +2,6 @@ package com.depromeet.team6.presentation.ui.home.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,6 +20,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.depromeet.team6.R
+import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.ui.theme.LocalTeam6Colors
 import com.depromeet.team6.ui.theme.LocalTeam6Typography
 
@@ -53,7 +53,7 @@ fun CourseTextButton(
                     shape = RoundedCornerShape(12.dp)
                 )
                 .padding(horizontal = 16.dp, vertical = 12.dp)
-                .clickable(onClick = onClick),
+                .noRippleClickable(onClick = onClick),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
