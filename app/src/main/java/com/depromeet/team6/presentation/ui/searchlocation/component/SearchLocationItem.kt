@@ -60,7 +60,7 @@ fun SearchLocationItem(
             style = defaultTeam6Typography.bodyMedium13,
             modifier = Modifier
                 .roundedBackgroundWithPadding(
-                    backgroundColor = defaultTeam6Colors.greyButton,
+                    backgroundColor = defaultTeam6Colors.greyButtonOutline,
                     cornerRadius = 8.dp,
                     padding = PaddingValues(vertical = 8.dp, horizontal = 12.5.dp)
                 )
