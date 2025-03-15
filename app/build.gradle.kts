@@ -116,6 +116,9 @@ dependencies {
 
     // WebView
     implementation(libs.accompanist.webview)
+
+    // SplashScreen
+    implementation(libs.androidx.core.splashscreen)
 }
 java {
     toolchain {
