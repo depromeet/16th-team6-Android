@@ -2,16 +2,13 @@ package com.depromeet.team6.presentation.ui.searchlocation
 
 import androidx.lifecycle.viewModelScope
 import com.depromeet.team6.domain.model.HomeSearchLocation
-import com.depromeet.team6.domain.usecase.DummyUseCase
 import com.depromeet.team6.presentation.util.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class SearchLocationViewModel @Inject constructor(
-    private val dummyUseCase: DummyUseCase
-) : BaseViewModel<SearchLocationContract.SearchLocationUiState, SearchLocationContract.SearchLocationSideEffect, SearchLocationContract.SearchLocationEvent>() {
+class SearchLocationViewModel @Inject constructor() : BaseViewModel<SearchLocationContract.SearchLocationUiState, SearchLocationContract.SearchLocationSideEffect, SearchLocationContract.SearchLocationEvent>() {
 
     override fun createInitialState(): SearchLocationContract.SearchLocationUiState =
         SearchLocationContract.SearchLocationUiState()
