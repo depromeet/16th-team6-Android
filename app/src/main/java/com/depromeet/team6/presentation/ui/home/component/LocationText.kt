@@ -86,7 +86,7 @@ fun LocationTextPreview() {
         locationTitle = "현위치:",
         location = "중앙빌딩",
         textColor = LocalTeam6Colors.current.systemGreen,
-        backgroundColor = LocalTeam6Colors.current.greyButton,
+        backgroundColor = LocalTeam6Colors.current.greyDefaultButton,
         onClick = {},
         modifier = Modifier
     )

@@ -10,12 +10,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -26,6 +28,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
 import com.depromeet.team6.BuildConfig
 import com.depromeet.team6.R
+import com.depromeet.team6.presentation.ui.home.HomeViewModel
 import com.google.android.gms.maps.model.LatLng
 import com.skt.tmap.TMapPoint
 import com.skt.tmap.TMapView
@@ -36,8 +39,11 @@ import kotlinx.coroutines.withContext
 @Composable
 fun TMapViewCompose(
     currentLocation: LatLng,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: HomeViewModel
 ) {
+    val uiState = viewModel.uiState.collectAsState().value
+
     val context = LocalContext.current
     val tMapView = remember { TMapView(context) }
     var isMapReady by remember { mutableStateOf(false) }
@@ -47,10 +53,18 @@ fun TMapViewCompose(
         tMapView.setOnMapReadyListener {
             tMapView.mapType = TMapView.MapType.NIGHT
             isMapReady = true
+
+            // 드래그 종료 시 지도 중심 좌표 업데이트
+            tMapView.setOnDisableScrollWithZoomLevelListener { _, _ ->
+                val centerLat = tMapView.centerPoint.latitude
+                val centerLon = tMapView.centerPoint.longitude
+
+                viewModel.getCenterLocation(LatLng(centerLat, centerLon))
+            }
         }
     }
 
-    // 현재 위치 변경될 때만 마커 갱신
+    // 현재 위치 변경될 때만 현위치 마커 갱신
     LaunchedEffect(currentLocation, isMapReady) {
         if (isMapReady) {
             val tMapPoint = TMapPoint(currentLocation.latitude, currentLocation.longitude)
@@ -92,6 +106,7 @@ fun TMapViewCompose(
             }
         )
 
+        // 출발 마커
         Image(
             imageVector = ImageVector.vectorResource(id = R.drawable.ic_home_start_marker),
             contentDescription = "Start Marker",
@@ -100,16 +115,26 @@ fun TMapViewCompose(
                 .padding(bottom = 105.dp)
         )
 
+        // 현위치 버튼
         Image(
             imageVector = ImageVector.vectorResource(id = R.drawable.ic_all_current_location),
             contentDescription = stringResource(R.string.home_current_location_btn),
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .padding(bottom = 236.dp, end = 16.dp)
-                .clickable {
+                .then(
+                    if (uiState.isAlarmRegistered) {
+                        Modifier.padding(bottom = 274.dp, end = 16.dp)
+                    } else {
+                        Modifier.padding(bottom = 240.dp, end = 16.dp)
+                    }
+                )
+                .clickable(enabled = isMapReady) {
                     val tMapPoint = TMapPoint(currentLocation.latitude, currentLocation.longitude)
                     tMapView.setCenterPoint(tMapPoint.latitude, tMapPoint.longitude)
+
+                    viewModel.getCenterLocation(LatLng(tMapPoint.latitude, tMapPoint.longitude))
                 }
+                .graphicsLayer { alpha = if (isMapReady) 1f else 0.5f } // 비활성화 시 투명도 조정
         )
     }
 

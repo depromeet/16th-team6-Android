@@ -17,7 +17,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Gradle cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
             ~/.gradle/caches
@@ -41,23 +41,35 @@ jobs:
       - name: Touch local properties
         run: touch local.properties
 
+      - name: Debug Base64 Decoding
+        run: |
+          echo "$FIREBASE_SECRET" | base64 --decode || echo "Base64 Decode Failed"
+
+      # ✅ google-services.json 복원 (base64 디코딩)
       - name: Decode google-services.json
         env:
           FIREBASE_SECRET: ${{ secrets.FIREBASE_SECRET }}
-        run: echo $FIREBASE_SECRET > app/google-services.json
+        run: |
+          echo $FIREBASE_SECRET | base64 --decode > app/google-services.json
+          ls -l app
+          cat app/google-services.json | jq .
 
+      # ✅ local.properties 생성 및 환경 변수 추가
       - name: Access local properties
         env:
-          HFM_BASE_URL: ${{ secrets.BASE_URL }}
+          BASE_URL: ${{ secrets.BASE_URL }}
         run: |
           echo "dev.base.url=\"$BASE_URL\"" >> local.properties
 
+      # ✅ Lint Check
       - name: Lint Check
         run: ./gradlew ktlintCheck -PcompileSdkVersion=34
 
+      # ✅ Build with Gradle
       - name: Build with Gradle
         run: ./gradlew build -PcompileSdkVersion=34
 
+      # ✅ 성공 알림
       - name: Slack Notify - Success
         if: ${{ success() }}
         uses: rtCamp/action-slack-notify@v2
@@ -68,6 +80,7 @@ jobs:
           SLACK_USERNAME: DEPORMEET-TEAM6 🍗
           SLACK_MESSAGE: 'PR이 완료되었습니다! 😆‍'
 
+      # ❌ 실패 알림
       - name: Slack Notify - Failure
         if: ${{ failure() }}
         uses: rtCamp/action-slack-notify@v2

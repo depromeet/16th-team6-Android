@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.dagger.hilt)
     alias(libs.plugins.kotlin.kapt)
+    id("com.google.gms.google-services")
 }
 
 val properties = Properties().apply {
@@ -26,17 +27,24 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        buildConfigField("String", "BASE_URL", properties["base.url"].toString())
+        buildConfigField("String", "KAKAO_NATIVE_APP_KEY", properties["kakao.native.app.key"].toString())
+        manifestPlaceholders["KAKAO_NATIVE_APP_KEY_MANIFEST"] = properties["kakao.native.app.key.manifest"]?.toString() ?: ""
         buildConfigField("String", "TMAP_API_KEY", properties["tmap.api.key"].toString())
     }
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
+            buildConfigField("String", "BASE_URL", properties["release.base.url"].toString())
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+        }
+        debug {
+            isMinifyEnabled = false
+            buildConfigField("String", "BASE_URL", properties["dev.base.url"].toString())
         }
     }
     compileOptions {
@@ -64,8 +72,10 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.material)
     implementation(libs.androidx.appcompat)
+    implementation(libs.firebase.messaging.ktx)
     implementation(libs.play.services.maps)
     implementation(libs.play.services.location)
+    implementation(libs.play.services.auth)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -90,7 +100,25 @@ dependencies {
     implementation(libs.androidx.compose.navigation)
     implementation(libs.hilt.navigation.compose)
 
+    // Kakao
+    implementation(libs.bundles.kakao)
+
+    // Security
+    implementation(libs.androidx.security.crypto)
+
     // Tmap
     implementation(files("libs/tmap-sdk-1.8.aar"))
     implementation(files("libs/vsm-tmap-sdk-v2-android-1.7.23.aar"))
+
+    // Firebase
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
+
+    // WebView
+    implementation(libs.accompanist.webview)
+}
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
 }

@@ -20,6 +20,7 @@ data class Team6Typography(
     val heading3SemiBold22: TextStyle,
     val heading4Bold20: TextStyle,
     val heading4SemiBold20: TextStyle,
+    val heading4Medium20: TextStyle,
     val heading5Bold17: TextStyle,
     val heading5SemiBold17: TextStyle,
     val heading6Bold15: TextStyle,
@@ -44,7 +45,10 @@ data class Team6Typography(
     val bodyRegular11: TextStyle,
     val bodySemiBold10: TextStyle,
     val bodyMedium10: TextStyle,
-    val bodyRegular10: TextStyle
+    val bodyRegular10: TextStyle,
+
+    // Extra
+    val extraBold44: TextStyle
 )
 
 // Pretendard FontFamilies (예: bold, semibold, etc.)
@@ -52,6 +56,7 @@ private val pretendardBold = FontFamily(Font(R.font.pretendard_bold))
 private val pretendardSemiBold = FontFamily(Font(R.font.pretendard_semibold))
 private val pretendardMedium = FontFamily(Font(R.font.pretendard_medium))
 private val pretendardRegular = FontFamily(Font(R.font.pretendard_regular))
+private val pretendardExtraBold = FontFamily(Font(R.font.pretendard_extrabold))
 
 val defaultTeam6Typography = Team6Typography(
     // Heading
@@ -92,6 +97,11 @@ val defaultTeam6Typography = Team6Typography(
     ),
     heading4SemiBold20 = TextStyle(
         fontFamily = pretendardSemiBold,
+        fontSize = 20.sp,
+        lineHeight = 25.sp
+    ),
+    heading4Medium20 = TextStyle(
+        fontFamily = pretendardMedium,
         fontSize = 20.sp,
         lineHeight = 25.sp
     ),
@@ -211,6 +221,13 @@ val defaultTeam6Typography = Team6Typography(
         fontFamily = pretendardRegular,
         fontSize = 10.sp,
         lineHeight = 12.sp
+    ),
+
+    // Extra
+    extraBold44 = TextStyle(
+        fontFamily = pretendardExtraBold,
+        fontSize = 44.sp,
+        lineHeight = 54.sp
     )
 )
 

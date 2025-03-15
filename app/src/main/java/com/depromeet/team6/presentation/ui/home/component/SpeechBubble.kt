@@ -90,9 +90,10 @@ class SpeechBubbleShape(private val cornerRadius: Dp = 16.dp) : Shape {
 
 @Composable
 fun SpeechBubble(
-    text: String,
+    prefix: String,
     modifier: Modifier = Modifier,
-    taxiCost: String? = null
+    emphasisText: String? = null,
+    suffix: String? = null
 ) {
     val colors = LocalTeam6Colors.current
     val typography = LocalTeam6Typography.current
@@ -110,19 +111,26 @@ fun SpeechBubble(
                 .padding(top = 10.dp, bottom = 16.dp, start = 10.dp, end = 10.dp)
         ) {
             Text(
-                text = text,
+                text = prefix,
                 color = colors.greySecondaryLabel,
                 style = typography.bodyMedium12
             )
 
-            Spacer(modifier = Modifier.width(2.dp))
-
-            if (taxiCost != null) {
+            if (emphasisText != null) {
                 Spacer(modifier = Modifier.width(2.dp))
                 Text(
-                    text = taxiCost,
+                    text = emphasisText,
                     color = colors.white,
                     style = typography.bodySemiBold12
+                )
+            }
+
+            if (suffix != null) {
+                Spacer(modifier = Modifier.width(2.dp))
+                Text(
+                    text = suffix,
+                    color = colors.greySecondaryLabel,
+                    style = typography.bodyMedium12
                 )
             }
         }
@@ -133,8 +141,8 @@ fun SpeechBubble(
 @Composable
 fun SpeechBubblePreview() {
     SpeechBubble(
-        text = "여기서 놓치면 택시비",
-        taxiCost = "34,000원",
+        prefix = "여기서 놓치면 택시비",
+        emphasisText = "34,000원",
         modifier = Modifier
     )
 }
