@@ -1,6 +1,7 @@
 package com.depromeet.team6.presentation.ui.main
 
 import android.content.ContentValues.TAG
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -61,15 +62,16 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            installSplashScreen()
+        }
         WindowCompat.setDecorFitsSystemWindows(window, false)
+
         enableEdgeToEdge()
 
         if (PermissionUtil.alertPermissionCheck(this)) {
             PermissionUtil.onObtainingPermissionOverlayWindow(this)
-        }
-
-        installSplashScreen().setOnExitAnimationListener { splashScreenView ->
-            splashScreenView.remove()
         }
 
         setContent {
