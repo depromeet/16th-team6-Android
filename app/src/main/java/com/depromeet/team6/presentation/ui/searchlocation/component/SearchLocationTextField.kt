@@ -59,7 +59,6 @@ fun SearchLocationTextField(
                 .padding(horizontal = 12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.ic_home_location_green),
                 contentDescription = stringResource(R.string.home_icon_search_text),

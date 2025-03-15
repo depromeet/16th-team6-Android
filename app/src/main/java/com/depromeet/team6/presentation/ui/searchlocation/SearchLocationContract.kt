@@ -18,8 +18,7 @@ class SearchLocationContract {
         )
     ) : UiState
 
-    sealed interface SearchLocationSideEffect : UiSideEffect {
-    }
+    sealed interface SearchLocationSideEffect : UiSideEffect
 
     sealed class SearchLocationEvent : UiEvent {
         data class UpdateSearchQuery(val query: String) : SearchLocationEvent()

@@ -31,7 +31,7 @@ fun SearchDepartureTextField(
             .background(
                 color = defaultTeam6Colors.greyElevatedBackground
             )
-            .padding(horizontal = 16.dp),
+            .padding(horizontal = 16.dp)
     ) {
         Row(
             modifier = Modifier

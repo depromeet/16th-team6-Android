@@ -69,9 +69,7 @@ fun SearchLocationScreen(
                 color = defaultTeam6Colors.black
             )
 
-            Box(
-
-            ) {
+            Box() {
                 if (uiState.recentSearches.isEmpty()) {
                     SearchHistoryEmptyContainer()
                 }
