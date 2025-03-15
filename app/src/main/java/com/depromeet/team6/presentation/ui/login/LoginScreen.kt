@@ -1,7 +1,6 @@
 package com.depromeet.team6.presentation.ui.login
 
 import android.content.Context
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -18,9 +17,14 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -128,7 +132,10 @@ fun LoginScreen(
         modifier = modifier
             .padding(padding)
             .fillMaxSize()
-            .background(color = defaultTeam6Colors.black)
+            .paint(
+                painter = BitmapPainter(ImageBitmap.imageResource(R.drawable.img_login_background)),
+                contentScale = ContentScale.Crop
+            )
     ) {
         Icon(
             imageVector = ImageVector.vectorResource(R.drawable.ic_login_logo),
