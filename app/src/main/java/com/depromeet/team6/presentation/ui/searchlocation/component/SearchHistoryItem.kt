@@ -73,7 +73,6 @@ fun SearchHistoryItem(
                     overflow = TextOverflow.Ellipsis
                 )
             }
-
         }
 
         Spacer(modifier = Modifier.width(12.dp))
