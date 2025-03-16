@@ -33,6 +33,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import com.depromeet.team6.R
+import com.depromeet.team6.domain.model.RouteLocation
 import com.depromeet.team6.presentation.ui.alarm.NotificationScheduler
 import com.depromeet.team6.presentation.ui.alarm.NotificationTimeConstants
 import com.depromeet.team6.presentation.ui.home.component.AfterRegisterSheet
@@ -92,6 +93,11 @@ fun HomeRoute(
         }
 
         viewModel.getCenterLocation(LatLng(userLocation.first, userLocation.second))
+    }
+
+    LaunchedEffect(Unit) {
+        // TODO : 현재 좌표, 목적지 좌표로 변경
+        viewModel.getTaxiCost(RouteLocation(37.5665, 126.9780, 37.8888, 126.8888))
     }
 
     SideEffect {

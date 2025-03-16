@@ -2,7 +2,9 @@ package com.depromeet.team6.presentation.ui.home
 
 import android.content.Context
 import androidx.lifecycle.viewModelScope
+import com.depromeet.team6.domain.model.RouteLocation
 import com.depromeet.team6.domain.usecase.GetAddressFromCoordinatesUseCase
+import com.depromeet.team6.domain.usecase.GetTaxiCostUseCase
 import com.depromeet.team6.presentation.util.base.BaseViewModel
 import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -13,7 +15,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val getAddressFromCoordinatesUseCase: GetAddressFromCoordinatesUseCase
+    private val getAddressFromCoordinatesUseCase: GetAddressFromCoordinatesUseCase,
+    private val getTaxiCostUseCase: GetTaxiCostUseCase
 ) : BaseViewModel<HomeContract.HomeUiState, HomeContract.HomeSideEffect, HomeContract.HomeEvent>() {
     private var speechBubbleJob: Job? = null
 
@@ -91,6 +94,32 @@ class HomeViewModel @Inject constructor(
                     setState {
                         copy(
                             locationAddress = ""
+                        )
+                    }
+                }
+        }
+    }
+
+    fun getTaxiCost(routeLocation: RouteLocation) {
+        viewModelScope.launch {
+            getTaxiCostUseCase(
+                routeLocation = RouteLocation(
+                    startLat = routeLocation.startLat,
+                    startLon = routeLocation.startLon,
+                    endLat = routeLocation.endLat,
+                    endLon = routeLocation.endLon
+                )
+            )
+                .onSuccess {
+                    setState {
+                        copy(
+                            taxiCost = it
+                        )
+                    }
+                }.onFailure {
+                    setState {
+                        copy(
+                            taxiCost = 0
                         )
                     }
                 }

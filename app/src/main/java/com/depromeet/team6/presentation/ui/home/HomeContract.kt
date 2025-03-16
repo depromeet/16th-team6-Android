@@ -12,7 +12,8 @@ class HomeContract {
         val isBusDeparted: Boolean = false,
         val showSpeechBubble: Boolean = true,
         val locationAddress: String = "",
-        val logoutState: Boolean = false
+        val logoutState: Boolean = false,
+        val taxiCost: Int = 0
     ) : UiState
 
     sealed interface HomeSideEffect : UiSideEffect {
