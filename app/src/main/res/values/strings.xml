@@ -15,6 +15,7 @@
     <string name="lock_screen_description">알림 잠금화면</string>
     <string name="lock_screen_start_btn">출발하기</string>
     <string name="lock_screen_late_btn">더 늦은 경로 확인하기</string>
+    <string name="lock_screen_taxi_text">지금 안 일어나면\n 택시비</string>
 
     <string name="lock_service_start_text">잠금화면 서비스 시작됨</string>
     <string name="lock_screen_start_text">잠금화면 실행</string>

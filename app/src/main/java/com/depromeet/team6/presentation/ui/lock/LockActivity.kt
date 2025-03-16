@@ -21,9 +21,9 @@ class LockActivity : ComponentActivity() {
         }
 
         setContent {
-            LockScreen(onTimerFinish = {
-                stopLockServiceAndExit(this)
-            })
+//            LockScreen(onTimerFinish = {
+//                stopLockServiceAndExit(this)
+//            })
         }
     }
 
