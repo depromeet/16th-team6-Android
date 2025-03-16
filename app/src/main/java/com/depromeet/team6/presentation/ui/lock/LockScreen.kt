@@ -1,5 +1,6 @@
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,23 +21,52 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.depromeet.team6.R
+import com.depromeet.team6.domain.model.RouteLocation
+import com.depromeet.team6.presentation.ui.lock.LockContract
+import com.depromeet.team6.presentation.ui.lock.LockViewModel
 import com.depromeet.team6.ui.theme.LocalTeam6Colors
 import com.depromeet.team6.ui.theme.LocalTeam6Typography
 import com.depromeet.team6.ui.theme.Team6Theme
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import kotlinx.coroutines.delay
+import retrofit2.http.Tag
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 @Composable
+fun LockRoute(
+    padding: PaddingValues,
+    viewModel: LockViewModel,
+    onTimerFinish: () -> Unit
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        viewModel.loadTaxiCost()
+    }
+
+    LockScreen(
+        uiState = uiState,
+        padding = padding,
+        onTimerFinish = onTimerFinish
+    )
+}
+
+@Composable
 fun LockScreen(
+    padding: PaddingValues,
+    uiState: LockContract.LockUiState = LockContract.LockUiState(),
     onTimerFinish: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -88,7 +118,7 @@ fun LockScreen(
         )
 
         Text(
-            text = "-33,000",
+            text = "-"+uiState.taxiCost.toString(),
             color = colors.systemRed,
             style = typography.heading1ExtraBold56,
             modifier = Modifier.padding(vertical = 8.dp)
@@ -141,6 +171,7 @@ fun LockScreen(
 fun LockScreenPreview() {
     Team6Theme {
         LockScreen(
+            padding = PaddingValues(0.dp),
             onTimerFinish = {}
         )
     }

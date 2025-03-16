@@ -116,6 +116,7 @@ class HomeViewModel @Inject constructor(
                             taxiCost = it
                         )
                     }
+                    getTaxiCostUseCase.saveTaxiCost(it)
                 }.onFailure {
                     setState {
                         copy(

@@ -12,8 +12,13 @@ import androidx.annotation.StringRes
 import com.depromeet.team6.R
 import com.depromeet.team6.data.datalocal.builder.SimpleNotificationBuilder
 import com.depromeet.team6.data.datalocal.manager.LockServiceManager
+import com.depromeet.team6.domain.usecase.GetTaxiCostUseCase
 import com.depromeet.team6.presentation.ui.lock.LockScreenNavigator
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -25,10 +30,13 @@ class LockService : Service() {
     @Inject
     lateinit var lockScreenNavigator: LockScreenNavigator
 
+    @Inject
+    lateinit var taxiCostUseCase: GetTaxiCostUseCase
+
     override fun onCreate() {
         super.onCreate()
         Log.d("LockService", "onCreate 호출됨")
-        LockReceiver.initialize(lockScreenNavigator)
+        LockReceiver.initialize(lockScreenNavigator, taxiCostUseCase)
     }
 
     override fun onBind(p0: Intent?): IBinder? {
@@ -41,6 +49,15 @@ class LockService : Service() {
         createNotificationChannel()
         startForeground(SERVICE_ID, createNotificationBuilder())
         startLockReceiver()
+
+        CoroutineScope(Dispatchers.IO).launch {
+            val taxiCost = taxiCostUseCase.getLastSavedTaxiCost()
+
+            withContext(Dispatchers.Main) {
+                lockScreenNavigator.navigateToLockScreen(applicationContext, taxiCost)
+            }
+        }
+
         return super.onStartCommand(intent, flags, startId)
     }
 

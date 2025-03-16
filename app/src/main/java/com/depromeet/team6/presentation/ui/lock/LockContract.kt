@@ -7,7 +7,8 @@ import com.depromeet.team6.presentation.util.base.UiState
 class LockContract {
     data class LockUiState(
         val timeLeft: Int = INITIAL_TIME,
-        val isTimerFinished: Boolean = false
+        val isTimerFinished: Boolean = false,
+        val taxiCost: Int = 0
     ) : UiState {
         companion object {
             const val INITIAL_TIME = 5
