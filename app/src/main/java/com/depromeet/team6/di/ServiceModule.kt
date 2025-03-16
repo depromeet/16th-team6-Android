@@ -4,6 +4,7 @@ import com.depromeet.team6.data.dataremote.service.AuthService
 import com.depromeet.team6.data.dataremote.service.DummyService
 import com.depromeet.team6.data.dataremote.service.LocationsService
 import com.depromeet.team6.data.dataremote.service.TaxiCostService
+import com.depromeet.team6.data.dataremote.service.TimeLeftService
 import com.depromeet.team6.di.qualifier.Team6
 import dagger.Module
 import dagger.Provides
@@ -34,4 +35,9 @@ object ServiceModule {
     @Singleton
     fun providesLockService(@Team6 retrofit: Retrofit): TaxiCostService =
         retrofit.create(TaxiCostService::class.java)
+
+    @Provides
+    @Singleton
+    fun providesTimeLeftService(@Team6 retrofit: Retrofit): TimeLeftService =
+        retrofit.create(TimeLeftService::class.java)
 }
