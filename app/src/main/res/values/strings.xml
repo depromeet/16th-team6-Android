@@ -33,6 +33,7 @@
     <string name="home_search_back_text">뒤로 가기</string>
     <string name="home_search_empty_history">최근 내역이 없습니다.</string>
     <string name="home_search_dot_icon">및</string>
+    <string name="home_search_map_icon">지도 아이콘</string>
 
     <string name="home_icon_location_text">위치 아이콘</string>
     <string name="home_icon_arrow_right_text">화살표 아이콘</string>
