@@ -24,4 +24,8 @@ object ApiConstraints {
 
     const val VERSION = "v1"
     const val USERS = "users"
+
+    // Lock
+    const val TRANSITS = "transits"
+    const val TAXIFARE = "taxi-fare"
 }
