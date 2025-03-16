@@ -29,7 +29,7 @@ fun SearchDepartureTextField(
         modifier = modifier
             .fillMaxWidth()
             .background(
-                color = defaultTeam6Colors.greyElevatedBackground
+                color = defaultTeam6Colors.greyWashBackground
             )
             .padding(horizontal = 16.dp)
     ) {
