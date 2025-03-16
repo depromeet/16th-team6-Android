@@ -1,4 +1,4 @@
-package com.depromeet.team6.data.dataremote.model.request.lock
+package com.depromeet.team6.data.dataremote.model.request.taxi
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
