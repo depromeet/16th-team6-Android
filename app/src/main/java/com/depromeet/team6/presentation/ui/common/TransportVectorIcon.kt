@@ -19,6 +19,15 @@ import com.depromeet.team6.presentation.model.course.TransportType
 import com.depromeet.team6.presentation.util.Dimens
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 
+/**
+ * 대중교통 아이콘을 그리는 Composable
+ * type : 대중교통 타입 (WALK, BUS, SUBWAY)
+ * color : 아이콘 색상 (대중교통에 해당하는 색상으로 넣어주세요)
+ * isMarker : 원형 background 유무.
+ *            true -> 원형 background에 색상 적용
+ *            false -> 대중교통 아이콘에 색상 적용
+ * modifier : size는 modifier를 통해 지정해주세요.
+ */
 @Composable
 fun TransportVectorIcon(
     type : TransportType,
@@ -46,7 +55,12 @@ fun TransportVectorIcon(
                 )
                 // 두 번째 path (흰색)
                 when (type) {
-                    TransportType.WALK -> {}
+                    TransportType.WALK -> {
+                        addPath(
+                            pathData = PathParser().parsePathString(context.getString(R.string.vector_builder_node_transport_walk_marker)).toNodes(),
+                            fill = SolidColor(defaultTeam6Colors.white)
+                        )
+                    }
                     TransportType.BUS -> {
                         addPath(
                             pathData = PathParser().parsePathString(context.getString(R.string.vector_builder_node_transport_bus_marker)).toNodes(),
@@ -64,7 +78,12 @@ fun TransportVectorIcon(
             } else {
                 // 배경없는 대중교통 아이콘
                 when (type) {
-                    TransportType.WALK -> {}
+                    TransportType.WALK -> {
+                        addPath(
+                            pathData = PathParser().parsePathString(context.getString(R.string.vector_builder_node_transport_walk)).toNodes(),
+                            fill = SolidColor(color)
+                        )
+                    }
                     TransportType.BUS -> {
                         addPath(
                             pathData = PathParser().parsePathString(context.getString(R.string.vector_builder_node_transport_bus)).toNodes(),
@@ -105,7 +124,7 @@ fun preview1(){
 @Composable
 fun preview2(){
     TransportVectorIcon(
-        modifier = Modifier.size(32.dp),
+        modifier = Modifier.size(16.dp),
         type = TransportType.SUBWAY,
         color = defaultTeam6Colors.systemGreen,
         isMarker = true
@@ -119,6 +138,39 @@ fun preview3() {
         modifier = Modifier.size(15.dp),
         type = TransportType.BUS,
         color = defaultTeam6Colors.primaryRed,
+        isMarker = false
+    )
+}
+
+@Preview(name = "orange subway")
+@Composable
+fun preview4() {
+    TransportVectorIcon(
+        modifier = Modifier.size(32.dp),
+        type = TransportType.SUBWAY,
+        color = defaultTeam6Colors.primaryRed,
+        isMarker = false
+    )
+}
+
+@Preview(name = "walk marker")
+@Composable
+fun preview5() {
+    TransportVectorIcon(
+        modifier = Modifier.size(32.dp),
+        type = TransportType.WALK,
+        color = defaultTeam6Colors.greySecondaryLabel,
+        isMarker = true
+    )
+}
+
+@Preview(name = "walk")
+@Composable
+fun preview6() {
+    TransportVectorIcon(
+        modifier = Modifier.size(26.dp),
+        type = TransportType.WALK,
+        color = defaultTeam6Colors.white,
         isMarker = false
     )
 }
