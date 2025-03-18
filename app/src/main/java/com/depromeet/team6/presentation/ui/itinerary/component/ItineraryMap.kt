@@ -76,7 +76,7 @@ fun ItineraryMap(
             val marker = TMapMarkerItem()
             marker.id = "departPoint"
             marker.tMapPoint = departTMapPoint
-            marker.icon = ContextCompat.getDrawable(context, R.drawable.ic_home_start_marker)?.toBitmap()
+            marker.icon = ContextCompat.getDrawable(context, R.drawable.map_marker_departure)?.toBitmap()
             tMapView.addTMapMarkerItem(marker)
 
             marker.id = "destinationPoint"
