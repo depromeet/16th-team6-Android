@@ -31,7 +31,7 @@ data class Leg(
     val steps: List<Step>? = null,
     val route: String? = null,
     val passStopList: PassStopList? = null,
-    val arriveDateTime: String? = null,
+    val departureDateTime: String? = null,
     val type: Int? = null,
     val passShape: String? = null
 )

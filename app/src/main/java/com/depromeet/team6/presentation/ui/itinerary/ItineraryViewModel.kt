@@ -17,7 +17,7 @@ class ItineraryViewModel @Inject constructor(
             is ItineraryContract.ItineraryEvent.LoadLegsResult -> {
                 setState {
                     copy(
-                        courseData = event.legsResult,
+                        itineraryInfo = event.result,
                         courseDataLoadState = LoadState.Success
                     )
                 }
@@ -28,6 +28,6 @@ class ItineraryViewModel @Inject constructor(
 
     fun getLegs() {
         val mockData = loadMockData()
-        setEvent(ItineraryContract.ItineraryEvent.LoadLegsResult(mockData[0].legs))
+        setEvent(ItineraryContract.ItineraryEvent.LoadLegsResult(mockData[0]))
     }
 }

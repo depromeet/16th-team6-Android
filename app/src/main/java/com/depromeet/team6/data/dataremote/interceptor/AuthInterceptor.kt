@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Intent
 import com.depromeet.team6.BuildConfig
 import com.depromeet.team6.data.datalocal.datasource.UserInfoLocalDataSource
+import com.depromeet.team6.data.dataremote.model.response.base.ApiResponse
 import com.depromeet.team6.data.dataremote.model.response.user.ResponseAuthDto
 import com.depromeet.team6.data.dataremote.util.ApiConstraints.API
 import com.depromeet.team6.data.dataremote.util.ApiConstraints.AUTH
@@ -17,7 +18,6 @@ import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.json.Json
 import okhttp3.Interceptor
 import okhttp3.Request
-import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
 import javax.inject.Inject
 
@@ -90,7 +90,7 @@ class AuthInterceptor @Inject constructor(
         originalRequest: Request,
         refreshToken: String
     ): Response =
-        patchTokenRefresh(
+        getTokenRefresh(
             chain = chain,
             originalRequest = originalRequest,
             refreshToken = refreshToken
@@ -106,15 +106,15 @@ class AuthInterceptor @Inject constructor(
             }
         }
 
-    private fun patchTokenRefresh(
+    private fun getTokenRefresh(
         chain: Interceptor.Chain,
         originalRequest: Request,
         refreshToken: String
     ): Response = chain.proceed(
         originalRequest.newBuilder()
-            .patch("".toRequestBody(null))
+            .get()
             .url("${BuildConfig.BASE_URL}$API/$AUTH/$REISSUE")
-            .addHeader(AUTHORIZATION, refreshToken)
+            .addHeader(AUTHORIZATION, BEARER + refreshToken)
             .build()
     )
 
@@ -123,18 +123,17 @@ class AuthInterceptor @Inject constructor(
         originalRequest: Request,
         refreshTokenResponse: Response
     ): Response {
-        val responseRefreshToken = json.decodeFromString<ResponseAuthDto>(
+        val responseRefreshToken = json.decodeFromString<ApiResponse<ResponseAuthDto>>(
             refreshTokenResponse.body?.string()
                 ?: throw IllegalStateException("\"refreshTokenResponse is null $refreshTokenResponse\"")
         )
 
         with(localStorage) {
-            accessToken = responseRefreshToken.accessToken
-            refreshToken = responseRefreshToken.refreshToken
+            accessToken = responseRefreshToken.result?.accessToken ?: ""
+            refreshToken = responseRefreshToken.result?.refreshToken ?: ""
         }
 
         refreshTokenResponse.close()
-
         return chain.proceed(originalRequest.newAuthBuilder())
     }
 
@@ -159,7 +158,7 @@ class AuthInterceptor @Inject constructor(
     }
 
     companion object {
-        const val CODE_TOKEN_EXPIRE = 401
+        const val CODE_TOKEN_EXPIRE = 400
         const val AUTHORIZATION = "Authorization"
         const val BEARER = "Bearer "
     }

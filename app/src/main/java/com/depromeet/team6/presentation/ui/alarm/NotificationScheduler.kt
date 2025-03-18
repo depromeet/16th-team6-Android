@@ -96,4 +96,33 @@ class NotificationScheduler(private val context: Context) {
             showNotification(title, message)
         }
     }
+
+    // 이미 표시된 알림 취소
+    fun cancelDisplayedNotification() {
+        notificationManager.cancel(NOTIFICATION_ID)
+    }
+
+    // 예약된 알림 취소
+    fun cancelScheduledNotification() {
+        // NotificationReceiver를 타겟으로 한 PendingIntent를 얻기
+        val intent = Intent(context, NotificationReceiver::class.java)
+        val pendingIntent = PendingIntent.getBroadcast(
+            context,
+            NOTIFICATION_REQUEST_CODE,
+            intent,
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_NO_CREATE // 기존 PendingIntent가 없으면 null 반환
+        )
+
+        // 기존 PendingIntent가 있으면 취소
+        pendingIntent?.let {
+            alarmManager.cancel(it)
+            it.cancel()
+        }
+    }
+
+    // 모든 알림 취소 (표시된 알림과 예약된 알림 모두)
+    fun cancelAllNotifications() {
+        cancelDisplayedNotification() // 표시된 알림 취소
+        cancelScheduledNotification() // 예약된 알림 취소
+    }
 }

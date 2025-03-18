@@ -28,6 +28,11 @@
     <string name="home_current_location_text">현위치:</string>
     <string name="home_destination_text">목적지:</string>
 
+    <string name="home_search_location_search_text">출발지 검색</string>
+    <string name="home_search_departure_home_text">도착지: 우리집</string>
+    <string name="home_search_back_text">뒤로 가기</string>
+    <string name="home_search_empty_history">최근 내역이 없습니다.</string>
+
     <string name="home_icon_location_text">위치 아이콘</string>
     <string name="home_icon_arrow_right_text">화살표 아이콘</string>
     <string name="home_icon_bell_text">알림 종 아이콘</string>

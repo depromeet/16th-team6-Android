@@ -72,10 +72,8 @@ fun PreviewTabMenu(
 ) {
     val mockData = LastTransportInfo(
         remainingMinutes = 23,
-        departureHour = 23,
-        departureMinute = 3,
-        boardingHour = 23,
-        boardingMinute = 15,
+        departureTime = "2025-03-11 23:12:00",
+        boardingTime = "2025-03-11 23:21:00",
         legs = courseInfo
     )
     val mockDataList = listOf(
