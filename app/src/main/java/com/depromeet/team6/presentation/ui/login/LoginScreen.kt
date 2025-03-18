@@ -168,6 +168,7 @@ fun LoginScreen(
         ) { page ->
             val loginViewPagerType = LoginViewPagerType.entries[page]
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Spacer(modifier = Modifier.weight(1f))
                 Image(
                     painter = painterResource(id = loginViewPagerType.imageRes),
                     contentDescription = null,
@@ -175,7 +176,7 @@ fun LoginScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                 )
-                Spacer(Modifier.height(99.dp))
+                Spacer(modifier = Modifier.weight(1f))
                 Text(
                     text = stringResource(loginViewPagerType.mainTextRes),
                     style = defaultTeam6Typography.heading2Bold26,
@@ -190,13 +191,14 @@ fun LoginScreen(
                 )
             }
         }
+        Spacer(modifier = Modifier.height(28.dp))
         LoginIndicator(
             selectedIndex = uiState.pagerState.currentPage,
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
         Row(
             modifier = Modifier
-                .padding(horizontal = 20.dp, vertical = 20.dp)
+                .padding(start = 24.dp, top = 28.dp, end = 24.dp, bottom = 20.dp)
                 .fillMaxWidth()
                 .roundedBackgroundWithPadding(
                     backgroundColor = defaultTeam6Colors.kakaoLoginButton,
