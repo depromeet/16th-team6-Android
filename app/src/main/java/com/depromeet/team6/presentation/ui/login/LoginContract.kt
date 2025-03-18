@@ -8,7 +8,8 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
 
 class LoginContract {
-    data class LoginUiState @OptIn(ExperimentalPagerApi::class) constructor(
+    @OptIn(ExperimentalPagerApi::class)
+    data class LoginUiState(
         val loadState: LoadState = LoadState.Idle,
         val authTokenLoadState: LoadState = LoadState.Idle,
         val isUserRegisteredState: LoadState = LoadState.Idle,
@@ -20,10 +21,11 @@ class LoginContract {
         data object NavigateToHome : LoginSideEffect
     }
 
+    @OptIn(ExperimentalPagerApi::class)
     sealed class LoginEvent : UiEvent {
         data class SetAuthToken(val authTokenLoadState: LoadState) : LoginEvent()
         data class GetLogin(val loadState: LoadState) : LoginEvent()
         data class GetCheckUserRegistered(val isUserRegisteredState: LoadState) : LoginEvent()
-        data class SetPagerState @OptIn(ExperimentalPagerApi::class) constructor(val pagerState: PagerState) : LoginEvent()
+        data class SetPagerState(val pagerState: PagerState) : LoginEvent()
     }
 }
