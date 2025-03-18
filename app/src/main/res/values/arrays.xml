@@ -4,7 +4,6 @@
         <item>@drawable/ic_all_walk_grey</item>
     </integer-array>
     <array name="transport_type_bus">
-        <item>@drawable/ic_all_bus_red</item>
     </array>
     <array name="transport_type_subway">
         <item>@drawable/ic_all_subway_1</item>

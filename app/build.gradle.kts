@@ -20,7 +20,6 @@ android {
     compileSdk = 35
 
     defaultConfig {
-        manifestPlaceholders += mapOf()
         applicationId = "com.depromeet.team6"
         minSdk = 26
         targetSdk = 34
