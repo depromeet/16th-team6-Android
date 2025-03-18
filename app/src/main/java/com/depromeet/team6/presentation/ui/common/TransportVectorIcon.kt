@@ -30,9 +30,9 @@ import com.depromeet.team6.ui.theme.defaultTeam6Colors
  */
 @Composable
 fun TransportVectorIcon(
-    type : TransportType,
-    color : Color,
-    isMarker : Boolean,
+    type: TransportType,
+    color: Color,
+    isMarker: Boolean,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -45,7 +45,7 @@ fun TransportVectorIcon(
             viewportWidth = baseSize,
             viewportHeight = baseSize
         ).apply {
-            if (isMarker){
+            if (isMarker) {
                 // 첫 번째 path (마커 배경)
                 addPath(
                     pathData = PathParser().parsePathString(context.getString(R.string.vector_builder_node_transport_marker_outline)).toNodes(),
@@ -58,7 +58,8 @@ fun TransportVectorIcon(
                     TransportType.WALK -> {
                         addPath(
                             pathData = PathParser().parsePathString(context.getString(R.string.vector_builder_node_transport_walk_marker)).toNodes(),
-                            fill = SolidColor(defaultTeam6Colors.white)
+                            fill = SolidColor(defaultTeam6Colors.white),
+                            pathFillType = PathFillType.EvenOdd
                         )
                     }
                     TransportType.BUS -> {
@@ -81,7 +82,8 @@ fun TransportVectorIcon(
                     TransportType.WALK -> {
                         addPath(
                             pathData = PathParser().parsePathString(context.getString(R.string.vector_builder_node_transport_walk)).toNodes(),
-                            fill = SolidColor(color)
+                            fill = SolidColor(color),
+                            pathFillType = PathFillType.EvenOdd
                         )
                     }
                     TransportType.BUS -> {
@@ -105,24 +107,24 @@ fun TransportVectorIcon(
     Image(
         modifier = modifier,
         painter = rememberVectorPainter(customVector),
-        contentDescription = "Custom Icon",
+        contentDescription = "Custom Icon"
     )
 }
 
 @Preview(name = "red bus marker")
 @Composable
-fun preview1(){
+fun preview1() {
     TransportVectorIcon(
         modifier = Modifier.size(28.dp),
         type = TransportType.BUS,
-        color = defaultTeam6Colors.primaryRed,
+        color = defaultTeam6Colors.systemRed,
         isMarker = true
     )
 }
 
 @Preview(name = "green subway marker")
 @Composable
-fun preview2(){
+fun preview2() {
     TransportVectorIcon(
         modifier = Modifier.size(16.dp),
         type = TransportType.SUBWAY,
@@ -137,7 +139,7 @@ fun preview3() {
     TransportVectorIcon(
         modifier = Modifier.size(15.dp),
         type = TransportType.BUS,
-        color = defaultTeam6Colors.primaryRed,
+        color = defaultTeam6Colors.systemRed,
         isMarker = false
     )
 }
@@ -148,7 +150,7 @@ fun preview4() {
     TransportVectorIcon(
         modifier = Modifier.size(32.dp),
         type = TransportType.SUBWAY,
-        color = defaultTeam6Colors.primaryRed,
+        color = defaultTeam6Colors.systemRed,
         isMarker = false
     )
 }
