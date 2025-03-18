@@ -104,7 +104,9 @@ fun AfterRegisterSheet(
             )
 
             FinishCourseDetailButton(
-                onFinishClick = onFinishClick,
+                onFinishClick = {
+                    onFinishClick()
+                },
                 onCourseDetailClick = onCourseDetailClick,
                 modifier = modifier
             )

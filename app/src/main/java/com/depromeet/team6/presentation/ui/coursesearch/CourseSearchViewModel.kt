@@ -29,6 +29,15 @@ class CourseSearchViewModel @Inject constructor(
         setEvent(CourseSearchContract.CourseEvent.LoadCourseSearchResult(mockData))
     }
 
+    fun setDepartureDestination(departure: String, destination: String) {
+        setState {
+            copy(
+                startingPoint = departure,
+                destinationPoint = destination
+            )
+        }
+    }
+
     fun registerAlarm() {
         viewModelScope.launch {
             setEvent(CourseSearchContract.CourseEvent.RegisterAlarm)

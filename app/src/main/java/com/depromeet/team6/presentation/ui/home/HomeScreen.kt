@@ -2,7 +2,6 @@ package com.depromeet.team6.presentation.ui.home
 
 import android.content.Context
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -34,6 +33,8 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import com.depromeet.team6.R
+import com.depromeet.team6.presentation.ui.alarm.NotificationScheduler
+import com.depromeet.team6.presentation.ui.alarm.NotificationTimeConstants
 import com.depromeet.team6.presentation.ui.home.component.AfterRegisterSheet
 import com.depromeet.team6.presentation.ui.home.component.CharacterSpeechBubble
 import com.depromeet.team6.presentation.ui.home.component.CurrentLocationSheet
@@ -41,6 +42,7 @@ import com.depromeet.team6.presentation.ui.home.component.TMapViewCompose
 import com.depromeet.team6.presentation.util.DefaultLntLng.DEFAULT_LNG
 import com.depromeet.team6.presentation.util.DefaultLntLng.DEFAULT_LNT
 import com.depromeet.team6.presentation.util.context.getUserLocation
+import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.presentation.util.permission.PermissionUtil
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.google.android.gms.maps.model.LatLng
@@ -49,8 +51,9 @@ import com.google.android.gms.maps.model.LatLng
 fun HomeRoute(
     padding: PaddingValues,
     navigateToLogin: () -> Unit,
-    navigateToCourseSearch: () -> Unit,
+    navigateToCourseSearch: (String, String) -> Unit,
     navigateToMypage: () -> Unit,
+    navigateToItinerary: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
@@ -75,18 +78,9 @@ fun HomeRoute(
             .collect { sideEffect ->
                 when (sideEffect) {
                     is HomeContract.HomeSideEffect.NavigateToMypage -> navigateToMypage()
+                    is HomeContract.HomeSideEffect.NavigateToItinerary -> navigateToItinerary()
                 }
             }
-    }
-
-    LaunchedEffect(uiState.isAlarmRegistered) {
-        if (uiState.isAlarmRegistered) {
-            Toast.makeText(
-                context,
-                "알림이 등록되었어요",
-                Toast.LENGTH_SHORT
-            ).show()
-        }
     }
 
     LaunchedEffect(Unit) {
@@ -117,9 +111,18 @@ fun HomeRoute(
             homeUiState = uiState,
             onCharacterClick = { viewModel.onCharacterClick() },
             navigateToMypage = navigateToMypage,
+            naivgateToItinerary = navigateToItinerary,
             modifier = modifier,
             padding = padding,
-            onSearchClick = { navigateToCourseSearch() }
+            onSearchClick = {
+                navigateToCourseSearch(
+                    uiState.locationAddress,
+                    "우리집"
+                )
+            },
+            onFinishClick = {
+                viewModel.finishAlarm(context)
+            }
         )
         LoadState.Error -> navigateToLogin()
 
@@ -135,7 +138,9 @@ fun HomeScreen(
     homeUiState: HomeContract.HomeUiState = HomeContract.HomeUiState(),
     onCharacterClick: () -> Unit = {},
     onSearchClick: () -> Unit = {},
+    onFinishClick: () -> Unit = {},
     navigateToMypage: () -> Unit = {},
+    naivgateToItinerary: () -> Unit = {},
     viewModel: HomeViewModel = hiltViewModel() // TODO : TmapViewCompose 변경 후 제거
 ) {
     val context = LocalContext.current
@@ -143,9 +148,13 @@ fun HomeScreen(
     val sharedPreferences = context.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
     val isUserLoggedIn = sharedPreferences.getBoolean("isUserLoggedIn", false) // 기본값은 false
 
+    val notificationScheduler = NotificationScheduler(context)
+
     if (isUserLoggedIn) {
         viewModel.registerAlarm()
         viewModel.setBusDeparted()
+    } else {
+        viewModel.finishAlarm(context)
     }
 
     Box(
@@ -172,19 +181,31 @@ fun HomeScreen(
 
         // 알람 등록 시 Home UI
         if (homeUiState.isAlarmRegistered) {
+            notificationScheduler.scheduleNotificationForTime(
+                stringResource(R.string.app_name),
+                stringResource(R.string.notification_content_text),
+                NotificationTimeConstants.getDepartureTimeWithTodayDate()
+            )
+
             AfterRegisterSheet(
                 timeToLeave = "23:21:00",
-                startLocation = "중앙빌딩",
+                startLocation = homeUiState.locationAddress,
                 destination = "우리집",
                 onCourseTextClick = {},
-                onFinishClick = {},
-                onCourseDetailClick = {},
+                onFinishClick = {
+                    onFinishClick()
+                },
+                onCourseDetailClick = {
+                    naivgateToItinerary()
+                },
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .zIndex(1f),
                 isBusDeparted = homeUiState.isBusDeparted
             )
         } else {
+            notificationScheduler.cancelAllNotifications()
+
             CurrentLocationSheet(
                 currentLocation = homeUiState.locationAddress,
                 destination = "우리집",
@@ -230,8 +251,8 @@ fun HomeScreen(
             suffixText = suffixText,
             modifier = Modifier
                 .align(Alignment.BottomStart)
-                .padding(start = 8.dp, bottom = bottomPadding),
-            onClick = onCharacterClick,
+                .padding(start = 8.dp, bottom = bottomPadding)
+                .noRippleClickable(onClick = onCharacterClick),
             showSpeechBubble = homeUiState.showSpeechBubble
         )
     }
