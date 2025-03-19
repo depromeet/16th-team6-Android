@@ -20,7 +20,8 @@ fun NavGraphBuilder.homeNavGraph(
     navigateToLogin: () -> Unit,
     navigateToCourseSearch: (String, String) -> Unit,
     navigateToMypage: () -> Unit,
-    navigateToItinerary: () -> Unit
+    navigateToItinerary: () -> Unit,
+    navigateToSearchLocation: () -> Unit
 ) {
     composable(route = HomeRoute.ROUTE) {
         HomeRoute(
@@ -28,7 +29,8 @@ fun NavGraphBuilder.homeNavGraph(
             navigateToMypage = navigateToMypage,
             navigateToLogin = navigateToLogin,
             navigateToCourseSearch = navigateToCourseSearch,
-            navigateToItinerary = navigateToItinerary
+            navigateToItinerary = navigateToItinerary,
+            navigateToSearchLocation = navigateToSearchLocation
         )
     }
 }
