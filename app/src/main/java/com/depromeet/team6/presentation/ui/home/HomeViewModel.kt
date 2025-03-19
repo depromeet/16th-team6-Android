@@ -1,10 +1,13 @@
 package com.depromeet.team6.presentation.ui.home
 
 import android.content.Context
+import android.content.LocusId
 import androidx.lifecycle.viewModelScope
+import com.depromeet.team6.data.datalocal.manager.LockServiceManager
 import com.depromeet.team6.domain.model.RouteLocation
 import com.depromeet.team6.domain.usecase.GetAddressFromCoordinatesUseCase
 import com.depromeet.team6.domain.usecase.GetTaxiCostUseCase
+import com.depromeet.team6.domain.usecase.GetTimeLeftUseCase
 import com.depromeet.team6.presentation.util.base.BaseViewModel
 import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,9 +19,13 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val getAddressFromCoordinatesUseCase: GetAddressFromCoordinatesUseCase,
-    private val getTaxiCostUseCase: GetTaxiCostUseCase
+    private val getTaxiCostUseCase: GetTaxiCostUseCase,
+    private val getTimeLeftUseCase: GetTimeLeftUseCase
 ) : BaseViewModel<HomeContract.HomeUiState, HomeContract.HomeSideEffect, HomeContract.HomeEvent>() {
     private var speechBubbleJob: Job? = null
+
+    @Inject
+    lateinit var lockServiceManager: LockServiceManager
 
     init {
         showSpeechBubbleTemporarily()
@@ -124,6 +131,12 @@ class HomeViewModel @Inject constructor(
                         )
                     }
                 }
+        }
+    }
+
+    fun checkTime(routeId: String) {
+        viewModelScope.launch {
+            lockServiceManager.startWithTimeCheck(routeId)
         }
     }
 }

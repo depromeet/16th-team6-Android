@@ -1,7 +1,6 @@
 package com.depromeet.team6.presentation.ui.main
 
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -85,11 +84,6 @@ class MainActivity : ComponentActivity() {
 //                }
 //            )
         }
-    }
-
-    private fun startLockService() {
-        lockServiceManager.start()
-        Toast.makeText(this, getString(R.string.lock_service_start_text), Toast.LENGTH_SHORT).show()
     }
 
     @Composable

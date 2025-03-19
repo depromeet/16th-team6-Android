@@ -100,6 +100,11 @@ fun HomeRoute(
         viewModel.getTaxiCost(RouteLocation(37.5665, 126.9780, 37.8888, 126.8888))
     }
 
+    LaunchedEffect(Unit) {
+        // TODO : routeId 불러 와서 추가
+        viewModel.checkTime("1111")
+    }
+
     SideEffect {
         if (!PermissionUtil.isLocationPermissionRequested(context) &&
             !PermissionUtil.hasLocationPermissions(context)
