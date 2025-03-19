@@ -62,7 +62,7 @@ fun HomeRoute(
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
 
-    var userLocation by remember { mutableStateOf(LatLng(DEFAULT_LNT, DEFAULT_LNG)) } // 서울시 기본 위치
+    var userLocation by remember { mutableStateOf(DEFAULT_LNT to DEFAULT_LNG) } // 서울시 기본 위치
 
     val locationPermissionsLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestMultiplePermissions(),
@@ -87,10 +87,12 @@ fun HomeRoute(
     LaunchedEffect(Unit) {
         if (PermissionUtil.hasLocationPermissions(context)) { // 위치 권한이 있으면
             val location = context.getUserLocation()
-            userLocation = location
+            if (location != null) {
+                userLocation = location
+            }
         }
 
-        viewModel.getCenterLocation(LatLng(userLocation.latitude, userLocation.longitude))
+        viewModel.getCenterLocation(LatLng(userLocation.first, userLocation.second))
     }
 
     SideEffect {
@@ -106,7 +108,7 @@ fun HomeRoute(
 
     when (uiState.loadState) {
         LoadState.Idle -> HomeScreen(
-            userLocation = LatLng(userLocation.latitude, userLocation.longitude),
+            userLocation = LatLng(userLocation.first, userLocation.second),
             homeUiState = uiState,
             onCharacterClick = { viewModel.onCharacterClick() },
             navigateToMypage = navigateToMypage,
@@ -140,6 +142,7 @@ fun HomeScreen(
     onSearchClick: () -> Unit = {},
     onFinishClick: () -> Unit = {},
     navigateToMypage: () -> Unit = {},
+    navigateToSearchLocation: () -> Unit = {},
     navigateToItinerary: () -> Unit = {},
     navigateToSearchLocation: () -> Unit = {},
     viewModel: HomeViewModel = hiltViewModel() // TODO : TmapViewCompose 변경 후 제거
