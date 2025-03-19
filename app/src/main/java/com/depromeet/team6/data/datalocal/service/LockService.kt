@@ -98,6 +98,11 @@ class LockService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.d("LockService", "onStartCommand 호출됨")
 
+        if (intent?.action == ACTION_STOP_ALARM_SOUND) {
+            stopAlarmSound()
+            return START_STICKY
+        }
+
         // 인텐트에서 시간 체크 사용 여부와 직접 잠금화면 표시 여부 확인
         val enableTimeCheck = intent?.getBooleanExtra(EXTRA_ENABLE_TIME_CHECK, false) ?: false
         val showLockScreen = intent?.getBooleanExtra(EXTRA_SHOW_LOCK_SCREEN, false) ?: false
@@ -237,5 +242,7 @@ class LockService : Service() {
         const val EXTRA_ENABLE_TIME_CHECK = "extra_enable_time_check"
         const val EXTRA_ROUTE_ID = "extra_route_id"
         const val EXTRA_SHOW_LOCK_SCREEN = "extra_show_lock_screen"
+
+        const val ACTION_STOP_ALARM_SOUND = "com.depromeet.team6.STOP_ALARM_SOUND"
     }
 }

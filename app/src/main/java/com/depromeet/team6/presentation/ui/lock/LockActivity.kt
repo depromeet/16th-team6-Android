@@ -40,8 +40,16 @@ class LockActivity : ComponentActivity() {
     }
 
     private fun stopLockServiceAndExit(context: Context) {
+        // 알림음을 중지하기 위한 인텐트 추가
+        val stopSoundIntent = Intent(context, LockService::class.java).apply {
+            action = LockService.ACTION_STOP_ALARM_SOUND
+        }
+        startService(stopSoundIntent)
+
+        // 서비스 종료
         val stopIntent = Intent(context, LockService::class.java)
-        context.stopService(stopIntent) // 서비스 종료
+        context.stopService(stopIntent)
+
         finish() // 액티비티 종료
     }
 }
