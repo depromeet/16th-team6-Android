@@ -53,6 +53,10 @@ class OnboardingViewModel @Inject constructor(
             is OnboardingContract.OnboardingEvent.UpdateAlertFrequencies -> setState {
                 copy(alertFrequencies = event.alertFrequencies)
             }
+
+            is OnboardingContract.OnboardingEvent.ChangePermissionBottomSheetVisible -> setState {
+                copy(permissionBottomSheetVisible = !event.permissionBottomSheetVisible)
+            }
         }
     }
 

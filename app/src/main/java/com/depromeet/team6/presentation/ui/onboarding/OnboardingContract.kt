@@ -24,7 +24,8 @@ class OnboardingContract {
             radius = ""
         ),
         val searchLocations: List<Location> = emptyList(),
-        val alertFrequencies: Set<Int> = emptySet()
+        val alertFrequencies: Set<Int> = emptySet(),
+        val permissionBottomSheetVisible: Boolean = false
     ) : UiState
 
     sealed interface OnboardingSideEffect : UiSideEffect {
@@ -44,5 +45,6 @@ class OnboardingContract {
             OnboardingEvent()
 
         data class UpdateAlertFrequencies(val alertFrequencies: Set<Int>) : OnboardingEvent()
+        data class ChangePermissionBottomSheetVisible (val permissionBottomSheetVisible:Boolean): OnboardingEvent()
     }
 }

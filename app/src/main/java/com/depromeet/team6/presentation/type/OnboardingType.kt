@@ -16,3 +16,10 @@ enum class OnboardingType(
         subTitleStringRes = R.string.onboarding_alarm_enroll_sub_title
     )
 }
+
+fun OnboardingType.toPermissionType(): OnboardingPermissionType {
+    return when (this) {
+        OnboardingType.HOME -> OnboardingPermissionType.LOCATION
+        OnboardingType.ALARM -> OnboardingPermissionType.NOTIFICATION
+    }
+}
