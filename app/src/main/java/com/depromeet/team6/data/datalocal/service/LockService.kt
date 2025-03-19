@@ -6,6 +6,7 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.media.MediaPlayer
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
@@ -23,6 +24,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import kotlin.math.log
 
 @AndroidEntryPoint
 class LockService : Service() {
@@ -39,6 +41,8 @@ class LockService : Service() {
     @Inject
     lateinit var getTimeLeftUseCase: GetTimeLeftUseCase
 
+    private var mediaPlayer: MediaPlayer? = null
+
     private val handler = Handler(Looper.getMainLooper())
     private var isTimeCheckEnabled = false
 
@@ -49,6 +53,36 @@ class LockService : Service() {
                 handler.postDelayed(this, 60 * 1000)
             }
         }
+    }
+
+    private fun playAlarmSound() {
+        try {
+            Log.d("LockService", "알림음 재생 시작")
+            mediaPlayer?.release()
+            mediaPlayer = MediaPlayer.create(applicationContext, R.raw.alarm_sound)
+            mediaPlayer?.apply {
+                isLooping = false
+                setVolume(4.0f, 4.0f)
+                setOnCompletionListener {
+                    Log.d("LockService", "알림음 재생 완료")
+                }
+                start()
+                Log.d("LockService", "알림음 재생 시작됨")
+            }
+        } catch (e: Exception) {
+            Log.e("LockService", "알림음 재생 중 오류 발생: ${e.message}", e)
+        }
+    }
+
+    private fun stopAlarmSound() {
+        mediaPlayer?.apply {
+            if (isPlaying) {
+                stop()
+            }
+            release()
+        }
+        mediaPlayer = null
+        Log.d("LockService", "알림음 재생 중지")
     }
 
     override fun onCreate() {
@@ -95,6 +129,7 @@ class LockService : Service() {
 
         stopTimeCheck()
         stopLockReceiver()
+        stopAlarmSound()
         lockServiceManager.stop()
         super.onDestroy()
     }
@@ -134,6 +169,10 @@ class LockService : Service() {
 //
 //                        val taxiCost = taxiCostUseCase.getLastSavedTaxiCost()
 //
+//                    // 알림음 재생
+//                    withContext(Dispatchers.Main) {
+//                        playAlarmSound()
+//                    }
 //                        withContext(Dispatchers.Main) {
 //                            lockScreenNavigator.navigateToLockScreen(applicationContext, taxiCost)
 //
