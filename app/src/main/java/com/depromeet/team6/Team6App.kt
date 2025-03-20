@@ -10,6 +10,7 @@ import com.depromeet.team6.BuildConfig.KAKAO_NATIVE_APP_KEY
 import com.kakao.sdk.common.KakaoSdk
 import com.kakao.sdk.common.util.Utility
 import dagger.hilt.android.HiltAndroidApp
+import timber.log.Timber
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 
@@ -19,6 +20,7 @@ class Team6App : Application() {
         super.onCreate()
         setDarkMode()
         setKakao()
+        setTimber()
     }
 
     private fun setDarkMode() {
@@ -43,6 +45,12 @@ class Team6App : Application() {
                     Log.w("getKeyHash", "Unable to get MessageDigest. signature=$signature", e)
                 }
             }
+        }
+    }
+
+    private fun setTimber() {
+        if (BuildConfig.DEBUG) {
+            Timber.plant(Timber.DebugTree())
         }
     }
 }

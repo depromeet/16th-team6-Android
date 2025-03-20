@@ -19,6 +19,12 @@ class UserInfoRepositoryImpl @Inject constructor(
 
     override fun getRefreshToken(): String = userInfoLocalDataSource.refreshToken
 
+    override fun setFcmToken(fcmToken: String) {
+        userInfoLocalDataSource.fcmToken = fcmToken
+    }
+
+    override fun getFcmToken(): String = userInfoLocalDataSource.fcmToken
+
     override fun clear() {
         userInfoLocalDataSource.clear()
     }

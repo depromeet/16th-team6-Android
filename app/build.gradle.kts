@@ -78,6 +78,7 @@ dependencies {
     implementation(libs.play.services.maps)
     implementation(libs.play.services.location)
     implementation(libs.play.services.auth)
+    implementation(libs.androidx.runtime.livedata)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -118,6 +119,15 @@ dependencies {
 
     // WebView
     implementation(libs.accompanist.webview)
+
+    // SplashScreen
+    implementation(libs.androidx.core.splashscreen)
+
+    // View Pager
+    implementation(libs.bundles.pager)
+
+    // Timber
+    implementation(libs.timber)
 }
 java {
     toolchain {
