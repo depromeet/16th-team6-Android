@@ -98,7 +98,7 @@ fun AtchaCommonBottomSheetPreview() {
         mainContent = {
             Box(
                 modifier = Modifier
-                    .background(defaultTeam6Colors.primaryRed)
+                    .background(defaultTeam6Colors.systemRed)
                     .fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
