@@ -34,6 +34,8 @@ securityCrypto = "1.1.0-alpha06"
 firebaseMessagingKtx = "24.1.0"
 playServicesMaps = "19.1.0"
 playServicesLocation = "21.3.0"
+timber = "5.0.1"
+runtimeLivedata = "1.7.8"
 
 [libraries]
 accompanist-webview = { module = "com.google.accompanist:accompanist-webview", version.ref = "accompanistWebview" }
@@ -82,6 +84,8 @@ kakao-friend = { group = "com.kakao.sdk", name = "v2-friend", version.ref = "kak
 kakao-navi = { group = "com.kakao.sdk", name = "v2-navi", version.ref = "kakao" }
 kakao-cert = { group = "com.kakao.sdk", name = "v2-cert", version.ref = "kakao" }
 play-services-auth = { group = "com.google.android.gms", name = "play-services-auth", version.ref = "playServicesAuth" }
+timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
+androidx-runtime-livedata = { group = "androidx.compose.runtime", name = "runtime-livedata", version.ref = "runtimeLivedata" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

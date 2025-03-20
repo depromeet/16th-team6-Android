@@ -22,6 +22,9 @@ object ApiConstraints {
     // Provider
     const val PROVIDER = "provider"
 
+    // FcmToken
+    const val FCMTOKEN = "fcmToken"
+
     const val VERSION = "v1"
     const val USERS = "users"
 }
