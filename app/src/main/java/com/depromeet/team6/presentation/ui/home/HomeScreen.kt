@@ -1,7 +1,6 @@
 package com.depromeet.team6.presentation.ui.home
 
 import android.content.Context
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -46,6 +45,7 @@ import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.presentation.util.permission.PermissionUtil
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.google.android.gms.maps.model.LatLng
+import timber.log.Timber
 
 @Composable
 fun HomeRoute(
@@ -62,14 +62,14 @@ fun HomeRoute(
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
 
-    var userLocation by remember { mutableStateOf(DEFAULT_LNT to DEFAULT_LNG) } // 서울시 기본 위치
+    var userLocation by remember { mutableStateOf(LatLng(DEFAULT_LNT,DEFAULT_LNG)) } // 서울시 기본 위치
 
     val locationPermissionsLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestMultiplePermissions(),
         onResult = { permissions ->
             val allGranted = permissions.values.all { it }
             if (allGranted) {
-                Log.d("Location_Permission", "Has Granted")
+                Timber.d("Location_Permission Has Granted")
             }
         }
     )
@@ -87,12 +87,10 @@ fun HomeRoute(
     LaunchedEffect(Unit) {
         if (PermissionUtil.hasLocationPermissions(context)) { // 위치 권한이 있으면
             val location = context.getUserLocation()
-            if (location != null) {
-                userLocation = location
-            }
+            userLocation = location
         }
 
-        viewModel.getCenterLocation(LatLng(userLocation.first, userLocation.second))
+        viewModel.getCenterLocation(LatLng(userLocation.latitude, userLocation.longitude))
     }
 
     SideEffect {
@@ -108,11 +106,11 @@ fun HomeRoute(
 
     when (uiState.loadState) {
         LoadState.Idle -> HomeScreen(
-            userLocation = LatLng(userLocation.first, userLocation.second),
+            userLocation = LatLng(userLocation.latitude, userLocation.longitude),
             homeUiState = uiState,
             onCharacterClick = { viewModel.onCharacterClick() },
             navigateToMypage = navigateToMypage,
-            naivgateToItinerary = navigateToItinerary,
+            navigateToItinerary = navigateToItinerary,
             modifier = modifier,
             padding = padding,
             onSearchClick = {
@@ -142,7 +140,7 @@ fun HomeScreen(
     onSearchClick: () -> Unit = {},
     onFinishClick: () -> Unit = {},
     navigateToMypage: () -> Unit = {},
-    naivgateToItinerary: () -> Unit = {},
+    navigateToItinerary: () -> Unit = {},
     navigateToSearchLocation: () -> Unit = {},
     viewModel: HomeViewModel = hiltViewModel() // TODO : TmapViewCompose 변경 후 제거
 ) {
@@ -199,7 +197,7 @@ fun HomeScreen(
                     onFinishClick()
                 },
                 onCourseDetailClick = {
-                    naivgateToItinerary()
+                    navigateToItinerary()
                 },
                 modifier = Modifier
                     .align(Alignment.BottomCenter)

@@ -1,6 +1,10 @@
 package com.depromeet.team6.presentation.ui.onboarding
 
-import android.util.Log
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import android.provider.Settings
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -14,11 +18,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -35,17 +39,21 @@ import com.depromeet.team6.presentation.type.toPermissionType
 import com.depromeet.team6.presentation.ui.onboarding.component.AlarmTime
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingAlarmSelector
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingButton
+import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingMapView
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingPermissionBottomSheet
+import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingPermissionDeniedBottomSheet
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingSearchContainer
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingSearchPopup
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingSelectLocationButton
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingSelectedHome
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingTitle
-import com.depromeet.team6.presentation.util.context.getUserLocation
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.presentation.util.permission.PermissionUtil
+import com.depromeet.team6.presentation.util.toast.atChaToastMessage
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
+import com.google.android.gms.maps.model.LatLng
+import timber.log.Timber
 
 @Composable
 fun OnboardingRoute(
@@ -56,14 +64,23 @@ fun OnboardingRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
-    var userLocation by remember { mutableStateOf(37.5665 to 126.9780) } // 서울시 기본 위치
+    val hasRequestedLocationPermission = remember { mutableStateOf(false) }
 
     val locationPermissionsLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestMultiplePermissions(),
         onResult = { permissions ->
-            val allGranted = permissions.values.all { it }
-            if (allGranted) {
-                Log.d("Location_Permission", "Has Granted")
+            hasRequestedLocationPermission.value = true
+
+            val anyDenied = permissions.any { !it.value }
+
+            if (anyDenied) {
+                viewModel.setEvent(
+                    OnboardingContract.OnboardingEvent.ChangePermissionDeniedBottomSheetVisible(
+                        permissionDeniedBottomSheetVisible = true
+                    )
+                )
+            } else {
+                Timber.d("모든 권한 허용됨")
             }
         }
     )
@@ -72,26 +89,20 @@ fun OnboardingRoute(
         contract = ActivityResultContracts.RequestPermission(),
         onResult = { granted ->
             if (granted) {
-                Log.d("Notification_Permission", "Has Granted")
+                Timber.d("Notification_Permission Has Granted")
             }
         }
     )
 
     LaunchedEffect(Unit) {
-        Log.d("Location Permission", "${PermissionUtil.hasLocationPermissions(context)}")
-        if (PermissionUtil.hasLocationPermissions(context)) {
-            val location = context.getUserLocation()
-            if (location != null) {
-                userLocation = location
-            }
-        }
+        Timber.d("Location Permission= ${PermissionUtil.hasLocationPermissions(context)}")
+        viewModel.setEvent(OnboardingContract.OnboardingEvent.UpdateUserLocation(context = context))
     }
 
-    SideEffect {
+    LaunchedEffect(uiState.onboardingType) {
         when (uiState.onboardingType) {
             OnboardingType.HOME -> {
-                Log.d(
-                    "Onboarding Screen",
+                Timber.d(
                     "isLocationPermissionRequested: ${
                         PermissionUtil.isLocationPermissionRequested(
                             context
@@ -100,19 +111,23 @@ fun OnboardingRoute(
                         PermissionUtil.hasLocationPermissions(context)
                     }"
                 )
-                viewModel.setEvent(
-                    OnboardingContract.OnboardingEvent.ChangePermissionBottomSheetVisible(
-                        uiState.permissionBottomSheetVisible
+                if (!PermissionUtil.isLocationPermissionRequested(context)) {
+                    viewModel.setEvent(
+                        OnboardingContract.OnboardingEvent.ChangePermissionBottomSheetVisible(
+                            permissionBottomSheetVisible = true
+                        )
                     )
-                )
+                }
             }
 
             OnboardingType.ALARM -> {
-                viewModel.setEvent(
-                    OnboardingContract.OnboardingEvent.ChangePermissionBottomSheetVisible(
-                        uiState.permissionBottomSheetVisible
+                if (!PermissionUtil.isNotificationPermissionRequested(context)) {
+                    viewModel.setEvent(
+                        OnboardingContract.OnboardingEvent.ChangePermissionBottomSheetVisible(
+                            permissionBottomSheetVisible = true
+                        )
                     )
-                )
+                }
             }
         }
     }
@@ -120,30 +135,33 @@ fun OnboardingRoute(
     when {
         uiState.searchPopupVisible -> {
             OnboardingSearchPopup(
-                uiState = uiState,
+                context = context,
+                searchLocations = uiState.searchLocations,
                 padding = padding,
                 searchText = uiState.searchText,
                 onSearchTextChange = { newText ->
                     viewModel.setState {
                         copy(searchText = newText)
                     }
-                    viewModel.setEvent(
-                        OnboardingContract.OnboardingEvent.UpdateSearchText(
-                            text = newText,
-                            lat = userLocation.first,
-                            lon = userLocation.second
-                        )
-                    )
+                    viewModel.setEvent(OnboardingContract.OnboardingEvent.UpdateSearchText(text = newText))
                 },
-                onCloseButtonClicked = {
-                    viewModel.setEvent(OnboardingContract.OnboardingEvent.ClearText)
+                onBackButtonClicked = {
+                    viewModel.setEvent(OnboardingContract.OnboardingEvent.SearchPopUpBackPressed)
                 },
-                selectButtonClicked = { location ->
+                selectButtonClicked = { address ->
                     viewModel.setEvent(
                         OnboardingContract.OnboardingEvent.LocationSelectButtonClicked(
-                            location
+                            address
                         )
                     )
+                    viewModel.setEvent(
+                        OnboardingContract.OnboardingEvent.ChangeMapViewVisible(
+                            true
+                        )
+                    )
+                },
+                onTextClearButtonClicked = {
+                    viewModel.setEvent(OnboardingContract.OnboardingEvent.ClearText)
                 }
             )
         }
@@ -151,6 +169,7 @@ fun OnboardingRoute(
         else -> when (uiState.loadState) {
             LoadState.Idle -> {
                 OnboardingScreen(
+                    context = context,
                     padding = padding,
                     uiState = uiState,
                     onSearchBoxClicked = {
@@ -166,21 +185,23 @@ fun OnboardingRoute(
                     onBackPressed = { viewModel.setEvent(OnboardingContract.OnboardingEvent.BackPressed) },
                     onAlarmTimeSelected = { alarmTime ->
                         val timeValue = alarmTime.minutes
-                        val newSelection = if (timeValue in uiState.alertFrequencies) {
-                            uiState.alertFrequencies - timeValue
-                        } else {
-                            uiState.alertFrequencies + timeValue
-                        }
-                        viewModel.setEvent(
-                            OnboardingContract.OnboardingEvent.UpdateAlertFrequencies(
-                                newSelection
+                        if (timeValue != 1) {
+                            val newSelection = if (timeValue in uiState.alertFrequencies) {
+                                uiState.alertFrequencies - timeValue
+                            } else {
+                                uiState.alertFrequencies + timeValue
+                            }
+                            viewModel.setEvent(
+                                OnboardingContract.OnboardingEvent.UpdateAlertFrequencies(
+                                    newSelection
+                                )
                             )
-                        )
+                        }
                     },
                     bottomSheetButtonClicked = {
                         viewModel.setEvent(
                             OnboardingContract.OnboardingEvent.ChangePermissionBottomSheetVisible(
-                                uiState.permissionBottomSheetVisible
+                                permissionBottomSheetVisible = false
                             )
                         )
 
@@ -207,8 +228,54 @@ fun OnboardingRoute(
                                 }
                             }
                         }
-
-
+                    },
+                    onLocationButtonClicked = {
+                        if (PermissionUtil.hasLocationPermissions(context = context)) {
+                            viewModel.setCurrentLocationToHomeAddress(context = context) {
+                                viewModel.setEvent(
+                                    OnboardingContract.OnboardingEvent.ChangeMapViewVisible(
+                                        true
+                                    )
+                                )
+                            }
+                        } else {
+                            atChaToastMessage(
+                                context = context,
+                                R.string.onboarding_location_no_permission_toast,
+                                length = Toast.LENGTH_SHORT
+                            )
+                        }
+                    },
+                    deniedBottomSheetCloseButtonClicked = {
+                        viewModel.setEvent(
+                            OnboardingContract.OnboardingEvent.ChangePermissionDeniedBottomSheetVisible(
+                                permissionDeniedBottomSheetVisible = false
+                            )
+                        )
+                    },
+                    deniedBottomSheetSettingButtonClicked = {
+                        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                            data = Uri.fromParts("package", context.packageName, null)
+                        }
+                        context.startActivity(intent)
+                    },
+                    getCenterLocation = { viewModel.getCenterLocation(it) },
+                    clearAddress = {
+                        viewModel.setEvent(OnboardingContract.OnboardingEvent.ClearAddress)
+                        viewModel.setEvent(
+                            OnboardingContract.OnboardingEvent.ChangeMapViewVisible(
+                                mapViewVisible = false
+                            )
+                        )
+                    },
+                    mapViewSelectButtonClicked = {
+                        viewModel.setEvent(
+                            (
+                                    OnboardingContract.OnboardingEvent.ChangeMapViewVisible(
+                                        false
+                                    )
+                                    )
+                        )
                     }
                 )
             }
@@ -223,38 +290,42 @@ fun OnboardingRoute(
 @Composable
 fun OnboardingScreen(
     padding: PaddingValues,
+    context: Context = LocalContext.current,
     uiState: OnboardingContract.OnboardingUiState = OnboardingContract.OnboardingUiState(),
     modifier: Modifier = Modifier,
     onSearchBoxClicked: () -> Unit = {},
     onNextButtonClicked: () -> Unit = {},
     onBackPressed: () -> Unit = {},
     onAlarmTimeSelected: (AlarmTime) -> Unit = {},
-    bottomSheetButtonClicked: () -> Unit = {}
+    onLocationButtonClicked: () -> Unit = {},
+    bottomSheetButtonClicked: () -> Unit = {},
+    deniedBottomSheetSettingButtonClicked: () -> Unit = {},
+    deniedBottomSheetCloseButtonClicked: () -> Unit = {},
+    getCenterLocation: (LatLng) -> Unit = {},
+    clearAddress: () -> Unit = {},
+    mapViewSelectButtonClicked: () -> Unit = {}
 ) {
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(padding)
+    ) {
         Column(
             modifier = modifier
                 .fillMaxSize()
                 .background(color = defaultTeam6Colors.greyWashBackground)
-                .padding(padding)
         ) {
             if (uiState.onboardingType == OnboardingType.HOME) {
                 Spacer(modifier = Modifier.height(72.dp))
                 OnboardingTitle(onboardingType = uiState.onboardingType)
                 Spacer(modifier = Modifier.height(48.dp))
-                if (uiState.myHome.name.isEmpty()) {
+                if (uiState.myAddress.address.isEmpty()) {
                     OnboardingSearchContainer(
                         onSearchBoxClicked = onSearchBoxClicked,
-                        onLocationButtonClick = {
-                            // TODO: 현위치 찾기 로직 구현
-                            Log.d(
-                                "OnboardingScreen",
-                                "Location button clicked!"
-                            )
-                        }
+                        onLocationButtonClick = onLocationButtonClicked
                     )
                 } else {
-                    OnboardingSelectedHome(onboardingSearchLocation = uiState.myHome)
+                    OnboardingSelectedHome(onboardingSearchLocation = uiState.myAddress)
                     Spacer(modifier = Modifier.height(31.dp))
 
                     OnboardingSelectLocationButton(
@@ -287,14 +358,34 @@ fun OnboardingScreen(
                 if (uiState.onboardingType == OnboardingType.ALARM) {
                     uiState.alertFrequencies.isNotEmpty()
                 } else {
-                    uiState.myHome.name.isNotEmpty()
+                    uiState.myAddress.name.isNotEmpty()
                 }
             ) { onNextButtonClicked() }
             Spacer(modifier = Modifier.height(20.dp))
         }
-        OnboardingPermissionBottomSheet(onboardingPermissionType = uiState.onboardingType.toPermissionType(),
+        if (uiState.mapViewVisible) {
+            val currentLocation by remember { mutableStateOf(uiState.myAddress) }
+            OnboardingMapView(
+                context = context,
+                myAddress = uiState.myAddress,
+                getCenterLocation = getCenterLocation,
+                currentLocation = currentLocation,
+                buttonClicked = mapViewSelectButtonClicked,
+                backButtonClicked = clearAddress
+            )
+        }
+        OnboardingPermissionBottomSheet(
+            modifier = Modifier.align(Alignment.BottomCenter),
+            onboardingPermissionType = uiState.onboardingType.toPermissionType(),
             bottomSheetVisible = uiState.permissionBottomSheetVisible,
-            buttonClicked = { bottomSheetButtonClicked() })
+            buttonClicked = { bottomSheetButtonClicked() }
+        )
+        OnboardingPermissionDeniedBottomSheet(
+            modifier = Modifier.align(Alignment.BottomCenter),
+            bottomSheetVisible = uiState.permissionDeniedBottomSheetVisible,
+            completeButtonClicked = deniedBottomSheetCloseButtonClicked,
+            settingButtonClicked = deniedBottomSheetSettingButtonClicked
+        )
     }
 }
 
