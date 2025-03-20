@@ -7,7 +7,7 @@ import com.depromeet.team6.data.dataremote.model.response.user.ResponseCheckDto
 import com.depromeet.team6.data.dataremote.util.ApiConstraints.API
 import com.depromeet.team6.data.dataremote.util.ApiConstraints.AUTH
 import com.depromeet.team6.data.dataremote.util.ApiConstraints.CHECK
-import com.depromeet.team6.data.dataremote.util.ApiConstraints.FCMTOKEN
+import com.depromeet.team6.data.dataremote.util.ApiConstraints.FCM_TOKEN
 import com.depromeet.team6.data.dataremote.util.ApiConstraints.LOGIN
 import com.depromeet.team6.data.dataremote.util.ApiConstraints.LOGOUT
 import com.depromeet.team6.data.dataremote.util.ApiConstraints.ME
@@ -35,7 +35,7 @@ interface AuthService {
     @GET("$API/$AUTH/$LOGIN")
     suspend fun getLogin(
         @Query(PROVIDER) provider: Int,
-        @Query(FCMTOKEN) fcmToken: String
+        @Query(FCM_TOKEN) fcmToken: String
     ): ApiResponse<ResponseAuthDto>
 
     @POST("$API/$AUTH/$LOGOUT")
