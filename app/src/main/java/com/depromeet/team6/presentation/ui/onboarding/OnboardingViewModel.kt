@@ -1,7 +1,7 @@
 package com.depromeet.team6.presentation.ui.onboarding
 
+import android.content.Context
 import androidx.lifecycle.viewModelScope
-import com.depromeet.team6.data.repositoryimpl.UserInfoRepositoryImpl
 import com.depromeet.team6.domain.model.SignUp
 import com.depromeet.team6.domain.repository.UserInfoRepository
 import com.depromeet.team6.domain.usecase.GetLocationsUseCase
@@ -10,6 +10,8 @@ import com.depromeet.team6.presentation.type.OnboardingType
 import com.depromeet.team6.presentation.util.Provider.KAKAO
 import com.depromeet.team6.presentation.util.Token.BEARER
 import com.depromeet.team6.presentation.util.base.BaseViewModel
+import com.depromeet.team6.presentation.util.context.getUserLocation
+import com.depromeet.team6.presentation.util.permission.PermissionUtil
 import com.depromeet.team6.presentation.util.view.LoadState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -54,6 +56,8 @@ class OnboardingViewModel @Inject constructor(
             is OnboardingContract.OnboardingEvent.UpdateAlertFrequencies -> setState {
                 copy(alertFrequencies = event.alertFrequencies)
             }
+
+            is OnboardingContract.OnboardingEvent.UpdateUserLocation -> updateUserLocation(context = event.context)
         }
     }
 
@@ -67,8 +71,8 @@ class OnboardingViewModel @Inject constructor(
                 delay(300)
                 getLocationsUseCase(
                     keyword = event.text,
-                    lat = event.lat,
-                    lon = event.lon
+                    lat = currentState.userCurrentLocation.latitude,
+                    lon = currentState.userCurrentLocation.longitude
                 ).onSuccess { locations ->
                     setState {
                         copy(
@@ -100,6 +104,19 @@ class OnboardingViewModel @Inject constructor(
                 userInfoRepository.setRefreshToken(auth.refreshToken)
             }.onFailure {
                 setEvent(OnboardingContract.OnboardingEvent.PostSignUp(loadState = LoadState.Error))
+            }
+        }
+    }
+
+    private fun updateUserLocation(context: Context){
+        viewModelScope.launch {
+            if (PermissionUtil.hasLocationPermissions(context)) {
+                val location = context.getUserLocation()
+                setState {
+                    copy(
+                        userCurrentLocation = location
+                    )
+                }
             }
         }
     }
