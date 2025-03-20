@@ -3,6 +3,7 @@ package com.depromeet.team6.presentation.ui.onboarding
 import androidx.lifecycle.viewModelScope
 import com.depromeet.team6.data.repositoryimpl.UserInfoRepositoryImpl
 import com.depromeet.team6.domain.model.SignUp
+import com.depromeet.team6.domain.repository.UserInfoRepository
 import com.depromeet.team6.domain.usecase.GetLocationsUseCase
 import com.depromeet.team6.domain.usecase.PostSignUpUseCase
 import com.depromeet.team6.presentation.type.OnboardingType
@@ -18,7 +19,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class OnboardingViewModel @Inject constructor(
-    private val userInfoRepositoryImpl: UserInfoRepositoryImpl,
+    private val userInfoRepository: UserInfoRepository,
     private val postSignUpUseCase: PostSignUpUseCase,
     private val getLocationsUseCase: GetLocationsUseCase
 ) : BaseViewModel<OnboardingContract.OnboardingUiState, OnboardingContract.OnboardingSideEffect, OnboardingContract.OnboardingEvent>() {
@@ -94,12 +95,13 @@ class OnboardingViewModel @Inject constructor(
                     address = uiState.value.myHome.address,
                     lat = 127.036421,
                     lon = 37.500627,
-                    alertFrequencies = uiState.value.alertFrequencies
+                    alertFrequencies = uiState.value.alertFrequencies,
+                    fcmToken = userInfoRepository.getFcmToken()
                 )
             ).onSuccess { auth ->
                 setEvent(OnboardingContract.OnboardingEvent.PostSignUp(loadState = LoadState.Success))
-                userInfoRepositoryImpl.setAccessToken(BEARER + auth.accessToken)
-                userInfoRepositoryImpl.setRefreshToken(auth.refreshToken)
+                userInfoRepository.setAccessToken(BEARER + auth.accessToken)
+                userInfoRepository.setRefreshToken(auth.refreshToken)
             }.onFailure {
                 setEvent(OnboardingContract.OnboardingEvent.PostSignUp(loadState = LoadState.Error))
             }
