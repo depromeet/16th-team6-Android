@@ -1,7 +1,6 @@
 package com.depromeet.team6.presentation.ui.coursesearch.component
 
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,13 +18,12 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.depromeet.team6.R
 import com.depromeet.team6.presentation.model.course.TransportType
+import com.depromeet.team6.presentation.ui.common.TransportVectorIcon
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.depromeet.team6.ui.theme.defaultTeam6Typography
 
@@ -44,11 +42,12 @@ fun CourseInfoDetailItem(
             horizontalArrangement = Arrangement.spacedBy(5.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Image(
+            TransportVectorIcon(
                 modifier = Modifier
                     .size(20.dp),
-                imageVector = ImageVector.vectorResource(R.drawable.ic_all_walk_grey),
-                contentDescription = "courseInfo Detail WalkIcon"
+                type = TransportType.WALK,
+                color = defaultTeam6Colors.greySecondaryLabel,
+                isMarker = true
             )
             Text(
                 text = context.resources.getString(R.string.course_detail_info_walk),
@@ -69,11 +68,12 @@ fun CourseInfoDetailItem(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(7.dp)
             ) {
-                Image(
+                TransportVectorIcon(
                     modifier = Modifier
                         .size(20.dp),
-                    imageVector = ImageVector.vectorResource(R.drawable.ic_all_walk_grey),
-                    contentDescription = "courseInfo Detail WalkIcon"
+                    type = TransportType.WALK,
+                    color = defaultTeam6Colors.greySecondaryLabel,
+                    isMarker = true
                 )
                 VerticalLine()
                 // TODO : 적절한 색상 넣어줘야함
