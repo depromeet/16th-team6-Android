@@ -48,6 +48,7 @@ fun OnboardingSearchTextField(
     onValueChange: (String) -> Unit = { _ -> },
     onBackButtonClicked: () -> Unit = {},
     onTextClearButtonClicked: () -> Unit = {},
+    onGpsButtonClicked: () -> Unit = {},
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Default),
     keyboardActions: KeyboardActions = KeyboardActions.Default
 ) {
@@ -119,7 +120,10 @@ fun OnboardingSearchTextField(
         Icon(
             imageVector = ImageVector.vectorResource(R.drawable.ic_onboarding_current_location),
             tint = Color.Unspecified,
-            contentDescription = null
+            contentDescription = null,
+            modifier = Modifier.noRippleClickable {
+                onGpsButtonClicked()
+            }
         )
     }
 }
