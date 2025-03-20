@@ -12,13 +12,13 @@ class AuthRemoteDataSource @Inject constructor(
     private val authService: AuthService
 ) {
     suspend fun getCheck(authorization: String, provider: Int): Result<ResponseCheckDto> =
-        authService.getCheck(provider).toResult()
+        authService.getCheck(provider = provider).toResult()
 
     suspend fun postSignUp(requestSignUpDto: RequestSignUpDto): Result<ResponseAuthDto> =
-        authService.postSignUp(requestSignUpDto).toResult()
+        authService.postSignUp(requestSignUpDto = requestSignUpDto).toResult()
 
-    suspend fun getLogin(provider: Int): Result<ResponseAuthDto> =
-        authService.getLogin(provider).toResult()
+    suspend fun getLogin(provider: Int, fcmToken: String): Result<ResponseAuthDto> =
+        authService.getLogin(provider = provider, fcmToken = fcmToken).toResult()
 
     suspend fun postLogout(): Response<Unit> =
         authService.postLogout()

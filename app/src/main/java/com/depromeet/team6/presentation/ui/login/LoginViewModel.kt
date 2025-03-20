@@ -2,7 +2,7 @@ package com.depromeet.team6.presentation.ui.login
 
 import android.util.Log
 import androidx.lifecycle.viewModelScope
-import com.depromeet.team6.data.repositoryimpl.UserInfoRepositoryImpl
+import com.depromeet.team6.domain.repository.UserInfoRepository
 import com.depromeet.team6.domain.usecase.GetCheckUseCase
 import com.depromeet.team6.domain.usecase.GetLoginUseCase
 import com.depromeet.team6.presentation.util.Provider.KAKAO
@@ -12,12 +12,13 @@ import com.depromeet.team6.presentation.util.view.LoadState
 import com.google.accompanist.pager.ExperimentalPagerApi
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @OptIn(ExperimentalPagerApi::class)
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val userInfoRepositoryImpl: UserInfoRepositoryImpl,
+    private val userInfoRepository: UserInfoRepository,
     val getLoginUseCase: GetLoginUseCase,
     val getCheckUseCase: GetCheckUseCase
 ) : BaseViewModel<LoginContract.LoginUiState, LoginContract.LoginSideEffect, LoginContract.LoginEvent>() {
@@ -39,18 +40,18 @@ class LoginViewModel @Inject constructor(
     }
 
     fun setKakaoAccessToken(accessToken: String) {
-        userInfoRepositoryImpl.setAccessToken(accessToken)
-        Log.d("SetKakaoAccessToken", "accessToken= $accessToken")
+        userInfoRepository.setAccessToken(accessToken)
+        Timber.d("SetKakaoAccessToken= $accessToken")
         setEvent(LoginContract.LoginEvent.SetAuthToken(authTokenLoadState = LoadState.Success))
     }
 
     fun getLogin() {
         viewModelScope.launch {
             setEvent(LoginContract.LoginEvent.GetLogin(loadState = LoadState.Loading))
-            getLoginUseCase(provider = KAKAO).onSuccess { auth ->
+            getLoginUseCase(provider = KAKAO, fcmToken = userInfoRepository.getFcmToken()).onSuccess { auth ->
                 setEvent(LoginContract.LoginEvent.GetLogin(loadState = LoadState.Success))
-                userInfoRepositoryImpl.setAccessToken(BEARER + auth.accessToken)
-                userInfoRepositoryImpl.setRefreshToken(auth.refreshToken)
+                userInfoRepository.setAccessToken(BEARER + auth.accessToken)
+                userInfoRepository.setRefreshToken(auth.refreshToken)
             }.onFailure {
                 setEvent(LoginContract.LoginEvent.GetLogin(loadState = LoadState.Error))
             }
@@ -60,7 +61,7 @@ class LoginViewModel @Inject constructor(
     fun getCheck() {
         viewModelScope.launch {
             setEvent(LoginContract.LoginEvent.GetCheckUserRegistered(isUserRegisteredState = LoadState.Loading))
-            getCheckUseCase(authorization = userInfoRepositoryImpl.getAccessToken(), provider = KAKAO).onSuccess { isUserRegisteredState ->
+            getCheckUseCase(authorization = userInfoRepository.getAccessToken(), provider = KAKAO).onSuccess { isUserRegisteredState ->
                 if (isUserRegisteredState) {
                     setEvent(LoginContract.LoginEvent.GetCheckUserRegistered(isUserRegisteredState = LoadState.Success))
                 } else {
@@ -73,7 +74,7 @@ class LoginViewModel @Inject constructor(
     }
 
     fun checkAutoLogin() {
-        if (userInfoRepositoryImpl.getRefreshToken()
+        if (userInfoRepository.getRefreshToken()
             .isNotEmpty()
         ) {
             setEvent(LoginContract.LoginEvent.GetLogin(LoadState.Success))

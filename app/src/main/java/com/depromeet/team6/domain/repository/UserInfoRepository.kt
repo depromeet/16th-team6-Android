@@ -9,5 +9,9 @@ interface UserInfoRepository {
 
     fun getRefreshToken(): String
 
+    fun setFcmToken(fcmToken: String)
+
+    fun getFcmToken(): String
+
     fun clear()
 }
