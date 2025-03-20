@@ -29,7 +29,7 @@ class OnboardingContract {
         ),
         val searchLocations: List<Location> = emptyList(),
         val alertFrequencies: Set<Int> = emptySet(),
-        var userCurrentLocation: LatLng = LatLng(DEFAULT_LNT , DEFAULT_LNG)
+        var userCurrentLocation: LatLng = LatLng(DEFAULT_LNT, DEFAULT_LNG)
     ) : UiState
 
     sealed interface OnboardingSideEffect : UiSideEffect {
@@ -49,6 +49,6 @@ class OnboardingContract {
             OnboardingEvent()
 
         data class UpdateAlertFrequencies(val alertFrequencies: Set<Int>) : OnboardingEvent()
-        data class UpdateUserLocation(val context: Context): OnboardingEvent()
+        data class UpdateUserLocation(val context: Context) : OnboardingEvent()
     }
 }

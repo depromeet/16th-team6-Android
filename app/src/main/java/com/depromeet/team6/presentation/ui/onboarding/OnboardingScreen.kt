@@ -1,6 +1,5 @@
 package com.depromeet.team6.presentation.ui.onboarding
 
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -15,8 +14,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -38,7 +35,6 @@ import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingSearch
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingSelectLocationButton
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingSelectedHome
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingTitle
-import com.depromeet.team6.presentation.util.context.getUserLocation
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.presentation.util.permission.PermissionUtil
 import com.depromeet.team6.presentation.util.view.LoadState
@@ -83,11 +79,11 @@ fun OnboardingRoute(
             OnboardingType.HOME -> {
                 Timber.d(
                     "isLocationPermissionRequested: ${
-                        PermissionUtil.isLocationPermissionRequested(
-                            context
-                        )
+                    PermissionUtil.isLocationPermissionRequested(
+                        context
+                    )
                     }, hasLocationPermissions: ${
-                        PermissionUtil.hasLocationPermissions(context)
+                    PermissionUtil.hasLocationPermissions(context)
                     }"
                 )
                 if (!PermissionUtil.isLocationPermissionRequested(context) &&

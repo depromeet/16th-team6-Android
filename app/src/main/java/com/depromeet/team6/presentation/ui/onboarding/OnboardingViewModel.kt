@@ -108,7 +108,7 @@ class OnboardingViewModel @Inject constructor(
         }
     }
 
-    private fun updateUserLocation(context: Context){
+    private fun updateUserLocation(context: Context) {
         viewModelScope.launch {
             if (PermissionUtil.hasLocationPermissions(context)) {
                 val location = context.getUserLocation()
