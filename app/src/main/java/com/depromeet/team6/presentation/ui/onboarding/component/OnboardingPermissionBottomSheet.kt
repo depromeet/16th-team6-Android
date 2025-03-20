@@ -36,7 +36,7 @@ fun OnboardingPermissionBottomSheet(
     onboardingPermissionType: OnboardingPermissionType,
     modifier: Modifier = Modifier,
     bottomSheetVisible: Boolean = false,
-    buttonClicked:()-> Unit = {}
+    buttonClicked: () -> Unit = {}
 ) {
     if (bottomSheetVisible) {
         Column(

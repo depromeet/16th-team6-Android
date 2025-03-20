@@ -61,7 +61,7 @@ fun HomeRoute(
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
 
-    var userLocation by remember { mutableStateOf(LatLng(DEFAULT_LNT,DEFAULT_LNG)) } // 서울시 기본 위치
+    var userLocation by remember { mutableStateOf(LatLng(DEFAULT_LNT, DEFAULT_LNG)) } // 서울시 기본 위치
 
     val locationPermissionsLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestMultiplePermissions(),
