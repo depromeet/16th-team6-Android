@@ -1,6 +1,6 @@
 package com.depromeet.team6.presentation.ui.onboarding
 
-import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -15,7 +15,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -41,6 +40,7 @@ import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingSelect
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingTitle
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.presentation.util.permission.PermissionUtil
+import com.depromeet.team6.presentation.util.toast.atChaToastMessage
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import timber.log.Timber
@@ -135,7 +135,8 @@ fun OnboardingRoute(
                 },
                 onTextClearButtonClicked = {
                     viewModel.setEvent(OnboardingContract.OnboardingEvent.ClearText)
-                }
+                },
+                onGpsButtonClicked = {}
             )
         }
 
@@ -198,6 +199,9 @@ fun OnboardingRoute(
                                 }
                             }
                         }
+                    },
+                    onLocationButtonClicked = {
+                        atChaToastMessage(context = context, R.string.onboarding_location_no_permission_toast, length = Toast.LENGTH_SHORT)
                     }
                 )
             }
@@ -218,6 +222,7 @@ fun OnboardingScreen(
     onNextButtonClicked: () -> Unit = {},
     onBackPressed: () -> Unit = {},
     onAlarmTimeSelected: (AlarmTime) -> Unit = {},
+    onLocationButtonClicked: () -> Unit = {},
     bottomSheetButtonClicked: () -> Unit = {}
 ) {
     Box(
@@ -237,13 +242,7 @@ fun OnboardingScreen(
                 if (uiState.myHome.name.isEmpty()) {
                     OnboardingSearchContainer(
                         onSearchBoxClicked = onSearchBoxClicked,
-                        onLocationButtonClick = {
-                            // TODO: 현위치 찾기 로직 구현
-                            Log.d(
-                                "OnboardingScreen",
-                                "Location button clicked!"
-                            )
-                        }
+                        onLocationButtonClick = onLocationButtonClicked
                     )
                 } else {
                     OnboardingSelectedHome(onboardingSearchLocation = uiState.myHome)

@@ -31,6 +31,7 @@ fun OnboardingSearchPopup(
     onSearchTextChange: (String) -> Unit = {},
     onBackButtonClicked: () -> Unit = {},
     onTextClearButtonClicked: () -> Unit = {},
+    onGpsButtonClicked: () -> Unit = {},
     selectButtonClicked: (Location) -> Unit = {}
 ) {
     val focusManager = LocalFocusManager.current
@@ -47,6 +48,7 @@ fun OnboardingSearchPopup(
             onValueChange = onSearchTextChange,
             onBackButtonClicked = onBackButtonClicked,
             onTextClearButtonClicked = onTextClearButtonClicked,
+            onGpsButtonClicked = onGpsButtonClicked,
             focusRequester = focusRequester
         )
         Spacer(modifier = Modifier.height(4.dp))

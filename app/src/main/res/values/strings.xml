@@ -16,6 +16,7 @@
     <string name="onboarding_notification_permission_bottom_sheet_title">제때 막차 알림을 드리기 위해\n알림을 허용해주세요</string>
     <string name="onboarding_notification_permission_bottom_sheet_sub_title">본인 출발 알림, 막차 출발 알림, 목적지 도착</string>
     <string name="onboarding_notification_permission_bottom_sheet_type">알림</string>
+    <string name="onboarding_location_no_permission_toast">설정에서 앗차 위치 접근 허용을 항상으로 설정해주세요.</string>
 
     <!-- LockScreen -->
     <string name="lock_screen_description">알림 잠금화면</string>
