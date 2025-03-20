@@ -30,7 +30,7 @@ class OnboardingContract {
         val searchLocations: List<Location> = emptyList(),
         var userCurrentLocation: LatLng = LatLng(DEFAULT_LNT, DEFAULT_LNG),
         val alertFrequencies: Set<Int> = emptySet(),
-        val permissionBottomSheetVisible: Boolean = false
+        var permissionBottomSheetVisible: Boolean = false
     ) : UiState
 
     sealed interface OnboardingSideEffect : UiSideEffect {

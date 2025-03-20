@@ -17,6 +17,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -76,33 +77,38 @@ fun OnboardingRoute(
     LaunchedEffect(Unit) {
         Timber.d("Location Permission= ${PermissionUtil.hasLocationPermissions(context)}")
         viewModel.setEvent(OnboardingContract.OnboardingEvent.UpdateUserLocation(context = context))
+
     }
 
-    SideEffect {
+    LaunchedEffect(uiState.onboardingType) {
         when (uiState.onboardingType) {
             OnboardingType.HOME -> {
                 Timber.d(
                     "isLocationPermissionRequested: ${
-                    PermissionUtil.isLocationPermissionRequested(
-                        context
-                    )
+                        PermissionUtil.isLocationPermissionRequested(
+                            context
+                        )
                     }, hasLocationPermissions: ${
-                    PermissionUtil.hasLocationPermissions(context)
+                        PermissionUtil.hasLocationPermissions(context)
                     }"
                 )
-                viewModel.setEvent(
-                    OnboardingContract.OnboardingEvent.ChangePermissionBottomSheetVisible(
-                        uiState.permissionBottomSheetVisible
+                if (!PermissionUtil.isLocationPermissionRequested(context)) {
+                    viewModel.setEvent(
+                        OnboardingContract.OnboardingEvent.ChangePermissionBottomSheetVisible(
+                            permissionBottomSheetVisible = true
+                        )
                     )
-                )
+                }
             }
 
             OnboardingType.ALARM -> {
-                viewModel.setEvent(
+                if (!PermissionUtil.isNotificationPermissionRequested(context)) {
+                    viewModel.setEvent(
                     OnboardingContract.OnboardingEvent.ChangePermissionBottomSheetVisible(
-                        uiState.permissionBottomSheetVisible
+                        permissionBottomSheetVisible = true
                     )
                 )
+                }
             }
         }
     }
@@ -164,7 +170,7 @@ fun OnboardingRoute(
                     bottomSheetButtonClicked = {
                         viewModel.setEvent(
                             OnboardingContract.OnboardingEvent.ChangePermissionBottomSheetVisible(
-                                uiState.permissionBottomSheetVisible
+                                permissionBottomSheetVisible = false
                             )
                         )
 
@@ -213,12 +219,15 @@ fun OnboardingScreen(
     onAlarmTimeSelected: (AlarmTime) -> Unit = {},
     bottomSheetButtonClicked: () -> Unit = {}
 ) {
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(padding)
+    ) {
         Column(
             modifier = modifier
                 .fillMaxSize()
                 .background(color = defaultTeam6Colors.greyWashBackground)
-                .padding(padding)
         ) {
             if (uiState.onboardingType == OnboardingType.HOME) {
                 Spacer(modifier = Modifier.height(72.dp))
@@ -275,6 +284,7 @@ fun OnboardingScreen(
             Spacer(modifier = Modifier.height(20.dp))
         }
         OnboardingPermissionBottomSheet(
+            modifier = Modifier.align(Alignment.BottomCenter),
             onboardingPermissionType = uiState.onboardingType.toPermissionType(),
             bottomSheetVisible = uiState.permissionBottomSheetVisible,
             buttonClicked = { bottomSheetButtonClicked() }

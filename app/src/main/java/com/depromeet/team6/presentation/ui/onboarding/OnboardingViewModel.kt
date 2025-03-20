@@ -58,7 +58,7 @@ class OnboardingViewModel @Inject constructor(
             }
 
             is OnboardingContract.OnboardingEvent.ChangePermissionBottomSheetVisible -> setState {
-                copy(permissionBottomSheetVisible = !event.permissionBottomSheetVisible)
+                copy(permissionBottomSheetVisible = event.permissionBottomSheetVisible)
             }
 
             is OnboardingContract.OnboardingEvent.UpdateUserLocation -> updateUserLocation(context = event.context)
