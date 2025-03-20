@@ -52,5 +52,6 @@ class OnboardingContract {
         data class UpdateAlertFrequencies(val alertFrequencies: Set<Int>) : OnboardingEvent()
         data class ChangePermissionBottomSheetVisible(val permissionBottomSheetVisible: Boolean) : OnboardingEvent()
         data class UpdateUserLocation(val context: Context) : OnboardingEvent()
+        data object SearchPopUpBackPressed : OnboardingEvent()
     }
 }

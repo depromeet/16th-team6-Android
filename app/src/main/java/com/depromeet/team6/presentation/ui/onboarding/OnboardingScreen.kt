@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -77,7 +76,6 @@ fun OnboardingRoute(
     LaunchedEffect(Unit) {
         Timber.d("Location Permission= ${PermissionUtil.hasLocationPermissions(context)}")
         viewModel.setEvent(OnboardingContract.OnboardingEvent.UpdateUserLocation(context = context))
-
     }
 
     LaunchedEffect(uiState.onboardingType) {
@@ -85,11 +83,11 @@ fun OnboardingRoute(
             OnboardingType.HOME -> {
                 Timber.d(
                     "isLocationPermissionRequested: ${
-                        PermissionUtil.isLocationPermissionRequested(
-                            context
-                        )
+                    PermissionUtil.isLocationPermissionRequested(
+                        context
+                    )
                     }, hasLocationPermissions: ${
-                        PermissionUtil.hasLocationPermissions(context)
+                    PermissionUtil.hasLocationPermissions(context)
                     }"
                 )
                 if (!PermissionUtil.isLocationPermissionRequested(context)) {
@@ -104,10 +102,10 @@ fun OnboardingRoute(
             OnboardingType.ALARM -> {
                 if (!PermissionUtil.isNotificationPermissionRequested(context)) {
                     viewModel.setEvent(
-                    OnboardingContract.OnboardingEvent.ChangePermissionBottomSheetVisible(
-                        permissionBottomSheetVisible = true
+                        OnboardingContract.OnboardingEvent.ChangePermissionBottomSheetVisible(
+                            permissionBottomSheetVisible = true
+                        )
                     )
-                )
                 }
             }
         }
@@ -125,8 +123,8 @@ fun OnboardingRoute(
                     }
                     viewModel.setEvent(OnboardingContract.OnboardingEvent.UpdateSearchText(text = newText))
                 },
-                onCloseButtonClicked = {
-                    viewModel.setEvent(OnboardingContract.OnboardingEvent.ClearText)
+                onBackButtonClicked = {
+                    viewModel.setEvent(OnboardingContract.OnboardingEvent.SearchPopUpBackPressed)
                 },
                 selectButtonClicked = { location ->
                     viewModel.setEvent(
@@ -134,6 +132,9 @@ fun OnboardingRoute(
                             location
                         )
                     )
+                },
+                onTextClearButtonClicked = {
+                    viewModel.setEvent(OnboardingContract.OnboardingEvent.ClearText)
                 }
             )
         }

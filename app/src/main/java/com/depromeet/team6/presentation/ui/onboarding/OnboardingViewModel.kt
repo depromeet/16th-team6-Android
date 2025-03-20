@@ -37,7 +37,7 @@ class OnboardingViewModel @Inject constructor(
                 )
             }
 
-            is OnboardingContract.OnboardingEvent.ClearText -> setState { copy(searchText = "") }
+            is OnboardingContract.OnboardingEvent.ClearText -> setState { copy(searchText = "", searchLocations = emptyList()) }
             is OnboardingContract.OnboardingEvent.ShowSearchPopup -> setState {
                 copy(
                     searchPopupVisible = true
@@ -62,6 +62,11 @@ class OnboardingViewModel @Inject constructor(
             }
 
             is OnboardingContract.OnboardingEvent.UpdateUserLocation -> updateUserLocation(context = event.context)
+            is OnboardingContract.OnboardingEvent.SearchPopUpBackPressed -> setState {
+                copy(
+                    searchPopupVisible = false
+                )
+            }
         }
     }
 
