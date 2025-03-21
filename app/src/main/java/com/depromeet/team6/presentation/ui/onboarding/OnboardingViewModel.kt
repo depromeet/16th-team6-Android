@@ -102,6 +102,7 @@ class OnboardingViewModel @Inject constructor(
                 setEvent(OnboardingContract.OnboardingEvent.PostSignUp(loadState = LoadState.Success))
                 userInfoRepository.setAccessToken(BEARER + auth.accessToken)
                 userInfoRepository.setRefreshToken(auth.refreshToken)
+                userInfoRepository.setUserHome(auth.userHome)
             }.onFailure {
                 setEvent(OnboardingContract.OnboardingEvent.PostSignUp(loadState = LoadState.Error))
             }
