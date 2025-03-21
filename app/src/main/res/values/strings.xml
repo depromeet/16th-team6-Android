@@ -27,6 +27,9 @@
     <string name="onboarding_notification_permission_bottom_sheet_sub_title">본인 출발 알림, 막차 출발 알림, 목적지 도착</string>
     <string name="onboarding_notification_permission_bottom_sheet_type">알림</string>
     <string name="onboarding_location_no_permission_toast">설정에서 앗차 위치 접근 허용을 항상으로 설정해주세요.</string>
+    <string name="onboarding_location_permission_denied_bottom_sheet_title">원활한 앗차 사용을 위해서는\n위치 정보에 대한 접근 허가가 필요해요</string>
+    <string name="onboarding_location_permission_denied_bottom_sheet_description">1. 설정에서 앗차 선택\n2. 위치를 선택\n3. 위치 접근 허용을 항상으로 설정\n4. 정확한 위치 정보를 사용</string>
+
 
     <!-- LockScreen -->
     <string name="lock_screen_description">알림 잠금화면</string>
