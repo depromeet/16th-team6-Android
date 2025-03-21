@@ -47,7 +47,7 @@ fun OnboardingSearchContainer(
         ) {
             Text(
                 text = stringResource(R.string.onboarding_search_text_field_placeholder),
-                color = defaultTeam6Colors.greyQuaternaryLabel,
+                color = defaultTeam6Colors.greyTertiaryLabel,
                 style = defaultTeam6Typography.bodyRegular17
             )
         }

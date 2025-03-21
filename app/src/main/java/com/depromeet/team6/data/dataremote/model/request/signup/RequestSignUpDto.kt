@@ -1,11 +1,13 @@
 package com.depromeet.team6.data.dataremote.model.request.signup
 
+import com.depromeet.team6.data.dataremote.util.ApiConstraints.FCM_TOKEN
+import com.depromeet.team6.data.dataremote.util.ApiConstraints.PROVIDER
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class RequestSignUpDto(
-    @SerialName("provider")
+    @SerialName(PROVIDER)
     val provider: Int,
 
     @SerialName("address")
@@ -18,5 +20,8 @@ data class RequestSignUpDto(
     val lon: Double,
 
     @SerialName("alertFrequencies")
-    val alertFrequencies: Set<Int>
+    val alertFrequencies: Set<Int>,
+
+    @SerialName(FCM_TOKEN)
+    val fcmToken: String
 )

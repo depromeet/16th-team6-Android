@@ -1,6 +1,5 @@
 package com.depromeet.team6.presentation.ui.onboarding
 
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -15,8 +14,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -38,11 +35,11 @@ import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingSearch
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingSelectLocationButton
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingSelectedHome
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingTitle
-import com.depromeet.team6.presentation.util.context.getUserLocation
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.presentation.util.permission.PermissionUtil
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
+import timber.log.Timber
 
 @Composable
 fun OnboardingRoute(
@@ -53,14 +50,12 @@ fun OnboardingRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
-    var userLocation by remember { mutableStateOf(37.5665 to 126.9780) } // 서울시 기본 위치
-
     val locationPermissionsLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestMultiplePermissions(),
         onResult = { permissions ->
             val allGranted = permissions.values.all { it }
             if (allGranted) {
-                Log.d("Location_Permission", "Has Granted")
+                Timber.d("Location_Permission Has Granted")
             }
         }
     )
@@ -69,26 +64,20 @@ fun OnboardingRoute(
         contract = ActivityResultContracts.RequestPermission(),
         onResult = { granted ->
             if (granted) {
-                Log.d("Notification_Permission", "Has Granted")
+                Timber.d("Notification_Permission Has Granted")
             }
         }
     )
 
     LaunchedEffect(Unit) {
-        Log.d("Location Permission", "${PermissionUtil.hasLocationPermissions(context)}")
-        if (PermissionUtil.hasLocationPermissions(context)) {
-            val location = context.getUserLocation()
-            if (location != null) {
-                userLocation = location
-            }
-        }
+        Timber.d("Location Permission= ${PermissionUtil.hasLocationPermissions(context)}")
+        viewModel.setEvent(OnboardingContract.OnboardingEvent.UpdateUserLocation(context = context))
     }
 
     SideEffect {
         when (uiState.onboardingType) {
             OnboardingType.HOME -> {
-                Log.d(
-                    "Onboarding Screen",
+                Timber.d(
                     "isLocationPermissionRequested: ${
                     PermissionUtil.isLocationPermissionRequested(
                         context
@@ -130,13 +119,7 @@ fun OnboardingRoute(
                     viewModel.setState {
                         copy(searchText = newText)
                     }
-                    viewModel.setEvent(
-                        OnboardingContract.OnboardingEvent.UpdateSearchText(
-                            text = newText,
-                            lat = userLocation.first,
-                            lon = userLocation.second
-                        )
-                    )
+                    viewModel.setEvent(OnboardingContract.OnboardingEvent.UpdateSearchText(text = newText))
                 },
                 onCloseButtonClicked = {
                     viewModel.setEvent(OnboardingContract.OnboardingEvent.ClearText)
@@ -174,7 +157,11 @@ fun OnboardingRoute(
                         } else {
                             uiState.alertFrequencies + timeValue
                         }
-                        viewModel.setEvent(OnboardingContract.OnboardingEvent.UpdateAlertFrequencies(newSelection))
+                        viewModel.setEvent(
+                            OnboardingContract.OnboardingEvent.UpdateAlertFrequencies(
+                                newSelection
+                            )
+                        )
                     }
                 )
             }
@@ -210,11 +197,7 @@ fun OnboardingScreen(
                 OnboardingSearchContainer(
                     onSearchBoxClicked = onSearchBoxClicked,
                     onLocationButtonClick = {
-                        // TODO: 현위치 찾기 로직 구현
-                        Log.d(
-                            "OnboardingScreen",
-                            "Location button clicked!"
-                        )
+                        Timber.d("Location button clicked!")
                     }
                 )
             } else {

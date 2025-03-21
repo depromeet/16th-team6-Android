@@ -8,5 +8,6 @@ fun SignUp.toData(): RequestSignUpDto = RequestSignUpDto(
     address = this.address,
     lat = this.lat,
     lon = this.lon,
-    alertFrequencies = this.alertFrequencies
+    alertFrequencies = this.alertFrequencies,
+    fcmToken = this.fcmToken
 )

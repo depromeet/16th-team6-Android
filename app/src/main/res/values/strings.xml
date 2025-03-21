@@ -31,6 +31,15 @@
 
     <string name="notification_content_text">"지금 바로 출발하셔야 해요!"</string>
 
+    <!-- LoginScreen -->
+    <string name="login_pager_main_text_first">오후 10시에 미리\n막차알림 등록하세요</string>
+    <string name="login_pager_main_text_second">자리에서 떠나기 전에\n여러번 막차 알림 드려요</string>
+    <string name="login_pager_main_text_third">탑승 하는 곳까지\n시간 확인하며 걸어가요</string>
+    <string name="login_pager_sub_text_first">막차를 미리 찾고 알림 설정할 수 있도록 노티드려요</string>
+    <string name="login_pager_sub_text_second">막차 까먹지 않게 푸시알림과 타이머를 제공해요</string>
+    <string name="login_pager_sub_text_third">탑승하는 곳까지 타이머 보면서 시간맞춰 걸어가요</string>
+
+
     <!-- HomeScreen -->
     <string name="home_icon_search_text">검색 아이콘</string>
     <string name="home_search_button_text">검색하기</string>

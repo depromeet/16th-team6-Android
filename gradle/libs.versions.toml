@@ -13,6 +13,12 @@ composeBom = "2024.04.01"
 androidxComposeNavigation = "2.8.2"
 appcompat = "1.7.0"
 material = "1.11.0"
+coreSplashscreen = "1.0.1"
+accompanistPager = "0.25.0"
+pagingCommonAndroid = "3.3.2"
+
+
+
 
 # Third Party
 okhttp = "4.11.0"
@@ -28,6 +34,8 @@ securityCrypto = "1.1.0-alpha06"
 firebaseMessagingKtx = "24.1.0"
 playServicesMaps = "19.1.0"
 playServicesLocation = "21.3.0"
+timber = "5.0.1"
+runtimeLivedata = "1.7.8"
 
 [libraries]
 accompanist-webview = { module = "com.google.accompanist:accompanist-webview", version.ref = "accompanistWebview" }
@@ -49,6 +57,10 @@ androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-toolin
 androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
+androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
+androidx-paging-common-android = { group = "androidx.paging", name = "paging-common-android", version.ref = "pagingCommonAndroid" }
+accompanist-pager = { module = "com.google.accompanist:accompanist-pager", version.ref = "accompanistPager" }
+accompanist-pager-indicators = { module = "com.google.accompanist:accompanist-pager-indicators", version.ref = "accompanistPager" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 
@@ -72,6 +84,8 @@ kakao-friend = { group = "com.kakao.sdk", name = "v2-friend", version.ref = "kak
 kakao-navi = { group = "com.kakao.sdk", name = "v2-navi", version.ref = "kakao" }
 kakao-cert = { group = "com.kakao.sdk", name = "v2-cert", version.ref = "kakao" }
 play-services-auth = { group = "com.google.android.gms", name = "play-services-auth", version.ref = "playServicesAuth" }
+timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
+androidx-runtime-livedata = { group = "androidx.compose.runtime", name = "runtime-livedata", version.ref = "runtimeLivedata" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -96,4 +110,10 @@ kakao = [
     "kakao-friend",
     "kakao-navi",
     "kakao-cert"
+]
+
+pager = [
+    "androidx-paging-common-android",
+    "accompanist-pager",
+    "accompanist-pager-indicators"
 ]

@@ -1,4 +1,4 @@
-package com.depromeet.team6.presentation.model
+package com.depromeet.team6.presentation.model.route
 
 import kotlinx.serialization.Serializable
 
