@@ -50,10 +50,13 @@ fun OnboardingAlarmSelectorItem(
             color = defaultTeam6Colors.white
         )
         Spacer(modifier = Modifier.weight(1f))
-        if(text == "1분 전"){
-            Text(text = "1분 전 푸시 알림은 무조건 드려요", color = defaultTeam6Colors.greyTertiaryLabel,
-                style = defaultTeam6Typography.bodyRegular14)
-        }else{
+        if (text == "1분 전") {
+            Text(
+                text = "1분 전 푸시 알림은 무조건 드려요",
+                color = defaultTeam6Colors.greyTertiaryLabel,
+                style = defaultTeam6Typography.bodyRegular14
+            )
+        } else {
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.ic_onboarding_select_alarm),
                 tint = if (isSelected) defaultTeam6Colors.main else defaultTeam6Colors.greyDisabled,
