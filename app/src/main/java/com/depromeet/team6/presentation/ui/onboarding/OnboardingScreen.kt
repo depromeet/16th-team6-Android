@@ -91,6 +91,7 @@ fun OnboardingRoute(
                     }"
                 )
                 if (!PermissionUtil.isLocationPermissionRequested(context)) {
+                    Timber.d("타냐")
                     viewModel.setEvent(
                         OnboardingContract.OnboardingEvent.ChangePermissionBottomSheetVisible(
                             permissionBottomSheetVisible = true
