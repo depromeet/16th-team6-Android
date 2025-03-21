@@ -2,6 +2,7 @@ package com.depromeet.team6.data.repositoryimpl
 
 import com.depromeet.team6.data.datalocal.datasource.UserInfoLocalDataSource
 import com.depromeet.team6.domain.repository.UserInfoRepository
+import com.google.android.gms.maps.model.LatLng
 import javax.inject.Inject
 
 class UserInfoRepositoryImpl @Inject constructor(
@@ -24,6 +25,12 @@ class UserInfoRepositoryImpl @Inject constructor(
     }
 
     override fun getFcmToken(): String = userInfoLocalDataSource.fcmToken
+
+    override fun setUserHome(userHomeLocation: LatLng) {
+        userInfoLocalDataSource.userHome = userHomeLocation
+    }
+
+    override fun getUserHome(): LatLng = userInfoLocalDataSource.userHome
 
     override fun clear() {
         userInfoLocalDataSource.clear()
