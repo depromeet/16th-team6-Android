@@ -104,11 +104,11 @@ fun OnboardingRoute(
             OnboardingType.HOME -> {
                 Timber.d(
                     "isLocationPermissionRequested: ${
-                        PermissionUtil.isLocationPermissionRequested(
-                            context
-                        )
+                    PermissionUtil.isLocationPermissionRequested(
+                        context
+                    )
                     }, hasLocationPermissions: ${
-                        PermissionUtil.hasLocationPermissions(context)
+                    PermissionUtil.hasLocationPermissions(context)
                     }"
                 )
                 if (!PermissionUtil.isLocationPermissionRequested(context)) {
