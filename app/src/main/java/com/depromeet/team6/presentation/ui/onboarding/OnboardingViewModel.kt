@@ -67,6 +67,9 @@ class OnboardingViewModel @Inject constructor(
                     searchPopupVisible = false
                 )
             }
+            is OnboardingContract.OnboardingEvent.ChangePermissionDeniedBottomSheetVisible -> setState {
+                copy(permissionDeniedBottomSheetVisible = event.permissionDeniedBottomSheetVisible)
+            }
         }
     }
 

@@ -30,7 +30,8 @@ class OnboardingContract {
         val searchLocations: List<Location> = emptyList(),
         var userCurrentLocation: LatLng = LatLng(DEFAULT_LNT, DEFAULT_LNG),
         val alertFrequencies: Set<Int> = setOf(1),
-        var permissionBottomSheetVisible: Boolean = false
+        var permissionBottomSheetVisible: Boolean = false,
+        var permissionDeniedBottomSheetVisible: Boolean = false
     ) : UiState
 
     sealed interface OnboardingSideEffect : UiSideEffect {
@@ -53,5 +54,6 @@ class OnboardingContract {
         data class ChangePermissionBottomSheetVisible(val permissionBottomSheetVisible: Boolean) : OnboardingEvent()
         data class UpdateUserLocation(val context: Context) : OnboardingEvent()
         data object SearchPopUpBackPressed : OnboardingEvent()
+        data class ChangePermissionDeniedBottomSheetVisible(val permissionDeniedBottomSheetVisible: Boolean) : OnboardingEvent()
     }
 }

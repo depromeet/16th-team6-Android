@@ -1,5 +1,8 @@
 package com.depromeet.team6.presentation.ui.onboarding
 
+import android.content.Intent
+import android.net.Uri
+import android.provider.Settings
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -15,6 +18,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -33,6 +38,7 @@ import com.depromeet.team6.presentation.ui.onboarding.component.AlarmTime
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingAlarmSelector
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingButton
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingPermissionBottomSheet
+import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingPermissionDeniedBottomSheet
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingSearchContainer
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingSearchPopup
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingSelectLocationButton
@@ -54,12 +60,23 @@ fun OnboardingRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
+    val hasRequestedLocationPermission = remember { mutableStateOf(false) }
+
     val locationPermissionsLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestMultiplePermissions(),
         onResult = { permissions ->
-            val allGranted = permissions.values.all { it }
-            if (allGranted) {
-                Timber.d("Location_Permission Has Granted")
+            hasRequestedLocationPermission.value = true
+
+            val anyDenied = permissions.any { !it.value }
+
+            if (anyDenied) {
+                viewModel.setEvent(
+                    OnboardingContract.OnboardingEvent.ChangePermissionDeniedBottomSheetVisible(
+                        permissionDeniedBottomSheetVisible = true
+                    )
+                )
+            } else {
+                Timber.d("✅ 모든 권한 허용됨")
             }
         }
     )
@@ -166,7 +183,9 @@ fun OnboardingRoute(
                                 uiState.alertFrequencies + timeValue
                             }
                             viewModel.setEvent(
-                                OnboardingContract.OnboardingEvent.UpdateAlertFrequencies(newSelection)
+                                OnboardingContract.OnboardingEvent.UpdateAlertFrequencies(
+                                    newSelection
+                                )
                             )
                         }
                     },
@@ -207,6 +226,19 @@ fun OnboardingRoute(
                             R.string.onboarding_location_no_permission_toast,
                             length = Toast.LENGTH_SHORT
                         )
+                    },
+                    deniedBottomSheetCloseButtonClicked = {
+                        viewModel.setEvent(
+                            OnboardingContract.OnboardingEvent.ChangePermissionDeniedBottomSheetVisible(
+                                permissionDeniedBottomSheetVisible = false
+                            )
+                        )
+                    },
+                    deniedBottomSheetSettingButtonClicked = {
+                        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                            data = Uri.fromParts("package", context.packageName, null)
+                        }
+                        context.startActivity(intent)
                     }
                 )
             }
@@ -228,7 +260,9 @@ fun OnboardingScreen(
     onBackPressed: () -> Unit = {},
     onAlarmTimeSelected: (AlarmTime) -> Unit = {},
     onLocationButtonClicked: () -> Unit = {},
-    bottomSheetButtonClicked: () -> Unit = {}
+    bottomSheetButtonClicked: () -> Unit = {},
+    deniedBottomSheetSettingButtonClicked: () -> Unit = {},
+    deniedBottomSheetCloseButtonClicked: () -> Unit = {}
 ) {
     Box(
         modifier = Modifier
@@ -293,6 +327,12 @@ fun OnboardingScreen(
             onboardingPermissionType = uiState.onboardingType.toPermissionType(),
             bottomSheetVisible = uiState.permissionBottomSheetVisible,
             buttonClicked = { bottomSheetButtonClicked() }
+        )
+        OnboardingPermissionDeniedBottomSheet(
+            modifier = Modifier.align(Alignment.BottomCenter),
+            bottomSheetVisible = uiState.permissionDeniedBottomSheetVisible,
+            completeButtonClicked = deniedBottomSheetCloseButtonClicked,
+            settingButtonClicked = deniedBottomSheetSettingButtonClicked
         )
     }
 }
