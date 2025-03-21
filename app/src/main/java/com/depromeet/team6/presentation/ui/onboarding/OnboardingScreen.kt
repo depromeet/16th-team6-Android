@@ -15,7 +15,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -84,11 +83,11 @@ fun OnboardingRoute(
             OnboardingType.HOME -> {
                 Timber.d(
                     "isLocationPermissionRequested: ${
-                    PermissionUtil.isLocationPermissionRequested(
-                        context
-                    )
+                        PermissionUtil.isLocationPermissionRequested(
+                            context
+                        )
                     }, hasLocationPermissions: ${
-                    PermissionUtil.hasLocationPermissions(context)
+                        PermissionUtil.hasLocationPermissions(context)
                     }"
                 )
                 if (!PermissionUtil.isLocationPermissionRequested(context)) {
@@ -160,16 +159,16 @@ fun OnboardingRoute(
                     onBackPressed = { viewModel.setEvent(OnboardingContract.OnboardingEvent.BackPressed) },
                     onAlarmTimeSelected = { alarmTime ->
                         val timeValue = alarmTime.minutes
-                        val newSelection = if (timeValue in uiState.alertFrequencies) {
-                            uiState.alertFrequencies - timeValue
-                        } else {
-                            uiState.alertFrequencies + timeValue
-                        }
-                        viewModel.setEvent(
-                            OnboardingContract.OnboardingEvent.UpdateAlertFrequencies(
-                                newSelection
+                        if (timeValue != 1) {
+                            val newSelection = if (timeValue in uiState.alertFrequencies) {
+                                uiState.alertFrequencies - timeValue
+                            } else {
+                                uiState.alertFrequencies + timeValue
+                            }
+                            viewModel.setEvent(
+                                OnboardingContract.OnboardingEvent.UpdateAlertFrequencies(newSelection)
                             )
-                        )
+                        }
                     },
                     bottomSheetButtonClicked = {
                         viewModel.setEvent(
@@ -203,7 +202,11 @@ fun OnboardingRoute(
                         }
                     },
                     onLocationButtonClicked = {
-                        atChaToastMessage(context = context, R.string.onboarding_location_no_permission_toast, length = Toast.LENGTH_SHORT)
+                        atChaToastMessage(
+                            context = context,
+                            R.string.onboarding_location_no_permission_toast,
+                            length = Toast.LENGTH_SHORT
+                        )
                     }
                 )
             }

@@ -29,7 +29,7 @@ class OnboardingContract {
         ),
         val searchLocations: List<Location> = emptyList(),
         var userCurrentLocation: LatLng = LatLng(DEFAULT_LNT, DEFAULT_LNG),
-        val alertFrequencies: Set<Int> = emptySet(),
+        val alertFrequencies: Set<Int> = setOf(1),
         var permissionBottomSheetVisible: Boolean = false
     ) : UiState
 
