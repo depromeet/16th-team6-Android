@@ -10,5 +10,9 @@ data class ResponseAuthDto(
     @SerialName("accessToken")
     val accessToken: String,
     @SerialName("refreshToken")
-    val refreshToken: String
+    val refreshToken: String,
+    @SerialName("lat")
+    val lat: Double,
+    @SerialName("lon")
+    val lon: Double
 )
