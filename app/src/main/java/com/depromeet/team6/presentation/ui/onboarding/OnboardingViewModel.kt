@@ -102,8 +102,8 @@ class OnboardingViewModel @Inject constructor(
                 signUp = SignUp(
                     provider = KAKAO,
                     address = uiState.value.myHome.address,
-                    lat = 127.036421,
-                    lon = 37.500627,
+                    lat = uiState.value.myHome.lat,
+                    lon = uiState.value.myHome.lon,
                     alertFrequencies = uiState.value.alertFrequencies,
                     fcmToken = userInfoRepository.getFcmToken()
                 )
