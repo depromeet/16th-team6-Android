@@ -5,7 +5,7 @@ import android.content.Intent
 import com.depromeet.team6.BuildConfig
 import com.depromeet.team6.data.datalocal.datasource.UserInfoLocalDataSource
 import com.depromeet.team6.data.dataremote.model.response.base.ApiResponse
-import com.depromeet.team6.data.dataremote.model.response.user.ResponseAuthDto
+import com.depromeet.team6.data.dataremote.model.response.user.ResponseReissueDto
 import com.depromeet.team6.data.dataremote.util.ApiConstraints.API
 import com.depromeet.team6.data.dataremote.util.ApiConstraints.AUTH
 import com.depromeet.team6.data.dataremote.util.ApiConstraints.REISSUE
@@ -123,7 +123,7 @@ class AuthInterceptor @Inject constructor(
         originalRequest: Request,
         refreshTokenResponse: Response
     ): Response {
-        val responseRefreshToken = json.decodeFromString<ApiResponse<ResponseAuthDto>>(
+        val responseRefreshToken = json.decodeFromString<ApiResponse<ResponseReissueDto>>(
             refreshTokenResponse.body?.string()
                 ?: throw IllegalStateException("\"refreshTokenResponse is null $refreshTokenResponse\"")
         )
