@@ -1,13 +1,12 @@
 package com.depromeet.team6.presentation.mapper
 
-fun List<com.depromeet.team6.domain.model.Location>.toPresentationList(): List<com.depromeet.team6.presentation.model.location.Location> =
-    this.map { domainLocation ->
-        com.depromeet.team6.presentation.model.location.Location(
-            name = domainLocation.name,
-            lat = domainLocation.lat,
-            lon = domainLocation.lon,
-            businessCategory = domainLocation.businessCategory,
-            address = domainLocation.address,
-            radius = domainLocation.radius
-        )
-    }
+import com.depromeet.team6.domain.model.Address
+import com.depromeet.team6.presentation.model.location.Location
+
+fun Location.toAddress(): Address =
+    Address(
+        name = this.name,
+        lat = this.lat,
+        lon = this.lon,
+        address = this.address
+    )
