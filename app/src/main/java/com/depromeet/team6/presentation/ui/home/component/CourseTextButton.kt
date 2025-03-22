@@ -31,7 +31,7 @@ fun CourseTextButton(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 12.dp)
+            .padding(vertical = 12.dp)
             .noRippleClickable(onClick = onClick),
         verticalAlignment = Alignment.CenterVertically
     ) {

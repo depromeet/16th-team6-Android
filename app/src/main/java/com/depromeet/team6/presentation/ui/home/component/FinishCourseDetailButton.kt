@@ -5,6 +5,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -37,7 +38,7 @@ fun FinishCourseDetailButton(
             onClick = {
                 onFinishClick()
             },
-            modifier = Modifier,
+            modifier = modifier,
             border = BorderStroke(
                 width = 1.dp,
                 color = colors.systemGrey6
@@ -51,7 +52,7 @@ fun FinishCourseDetailButton(
             Text(
                 text = "종료",
                 style = typography.bodyMedium15,
-                modifier = modifier
+                modifier = Modifier.padding(vertical = 14.dp)
             )
         }
 

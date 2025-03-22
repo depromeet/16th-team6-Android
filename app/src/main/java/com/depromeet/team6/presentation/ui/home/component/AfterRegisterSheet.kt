@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -78,7 +79,7 @@ fun AfterRegisterSheet(
                 TimeText(
                     timeToLeave = timeToLeave,
                     textColor = colors.systemRed,
-                    modifier = modifier.padding(vertical = 4.dp)
+                    modifier = modifier.padding(vertical = 6.dp)
                 )
             } else {
                 // 차고지 출발 전 UI
@@ -92,7 +93,7 @@ fun AfterRegisterSheet(
                 TimeText(
                     timeToLeave = timeToLeave,
                     textColor = colors.systemGrey1,
-                    modifier = modifier.padding(vertical = 4.dp)
+                    modifier = modifier.padding(top = 4.dp, bottom = 6.dp)
                 )
             }
 
@@ -100,8 +101,10 @@ fun AfterRegisterSheet(
                 startLocation = startLocation,
                 destination = destination,
                 onClick = onCourseTextClick,
-                modifier = modifier.padding(vertical = 12.dp)
+                modifier = modifier
             )
+
+            Spacer(modifier = modifier.height(26.dp))
 
             FinishCourseDetailButton(
                 onFinishClick = {
