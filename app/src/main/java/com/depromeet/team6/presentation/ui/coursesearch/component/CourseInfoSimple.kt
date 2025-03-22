@@ -16,6 +16,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.depromeet.team6.R
 import com.depromeet.team6.presentation.model.course.LegInfo
+import com.depromeet.team6.presentation.ui.common.TransportVectorIcon
 
 @Composable
 fun CourseInfoSimple(
@@ -28,11 +29,12 @@ fun CourseInfoSimple(
         verticalAlignment = Alignment.CenterVertically
     ) {
         itemsIndexed(legs) { index, courseInfo ->
-            Image(
-                imageVector = ImageVector.vectorResource(id = courseInfo.transportType.getTransportSubtypeResourceId(context, courseInfo.subTypeIdx)),
-                contentDescription = "${courseInfo.transportType.name} $index",
+            TransportVectorIcon(
                 modifier = Modifier
-                    .size(20.dp)
+                    .size(20.dp),
+                type = courseInfo.transportType,
+                color = courseInfo.routeColor,
+                isMarker = true,
             )
 
             // 마지막 아이템이 아니면 화살표 추가

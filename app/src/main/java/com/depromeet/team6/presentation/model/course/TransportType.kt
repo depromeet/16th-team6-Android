@@ -16,4 +16,13 @@ enum class TransportType(val arrayId: Int) {
             typedArray.recycle()
         }
     }
+
+    fun getTransportSubtypeColor(context: Context, idx : Int): Int{
+        val typedArray = context.resources.obtainTypedArray(arrayId)
+        try {
+            return typedArray.getColor(idx, -1)
+        } finally {
+            typedArray.recycle()
+        }
+    }
 }
