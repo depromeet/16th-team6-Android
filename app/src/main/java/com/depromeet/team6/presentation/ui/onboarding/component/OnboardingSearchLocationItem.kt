@@ -1,6 +1,7 @@
 package com.depromeet.team6.presentation.ui.onboarding.component
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -29,11 +30,16 @@ fun OnboardingSearchLocationItem(
     modifier: Modifier = Modifier,
     selectButtonClicked: () -> Unit = {}
 ) {
+    val padding = if (onboardingSearchLocation.businessCategory.startsWith("지역")) {
+        PaddingValues(vertical = 16.dp, horizontal = 16.dp)
+    } else {
+        PaddingValues(vertical = 19.dp, horizontal = 16.dp)
+    }
     Column(
         modifier = modifier
             .fillMaxWidth()
             .noRippleClickable { selectButtonClicked() }
-            .padding(vertical = 19.dp, horizontal = 16.dp)
+            .padding(padding)
     ) {
         Text(
             text = onboardingSearchLocation.name,
@@ -41,26 +47,28 @@ fun OnboardingSearchLocationItem(
             style = defaultTeam6Typography.bodyRegular15,
             overflow = TextOverflow.Ellipsis
         )
-        Spacer(modifier = Modifier.height(4.dp))
+        if (!onboardingSearchLocation.businessCategory.startsWith("지역")) {
+            Spacer(modifier = Modifier.height(4.dp))
 
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(
-                text = onboardingSearchLocation.radius,
-                style = defaultTeam6Typography.bodyRegular14,
-                color = defaultTeam6Colors.greySecondaryLabel
-            )
-            Icon(
-                modifier = Modifier.padding(horizontal = 6.dp),
-                imageVector = ImageVector.vectorResource(R.drawable.ic_all_adrress_devider),
-                contentDescription = null,
-                tint = Color.Unspecified
-            )
-            Text(
-                text = onboardingSearchLocation.address,
-                style = defaultTeam6Typography.bodyRegular14,
-                color = defaultTeam6Colors.greySecondaryLabel,
-                overflow = TextOverflow.Ellipsis
-            )
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = onboardingSearchLocation.radius,
+                    style = defaultTeam6Typography.bodyRegular14,
+                    color = defaultTeam6Colors.greySecondaryLabel
+                )
+                Icon(
+                    modifier = Modifier.padding(horizontal = 6.dp),
+                    imageVector = ImageVector.vectorResource(R.drawable.ic_all_adrress_devider),
+                    contentDescription = null,
+                    tint = Color.Unspecified
+                )
+                Text(
+                    text = onboardingSearchLocation.address,
+                    style = defaultTeam6Typography.bodyRegular14,
+                    color = defaultTeam6Colors.greySecondaryLabel,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
         }
     }
 }
