@@ -11,4 +11,6 @@ data class ResponseAddressDto(
     val lat: Double,
     @SerialName("lon")
     val lon: Double
+//    @SerialName("address")
+//    val address: String
 )

@@ -144,17 +144,18 @@ fun OnboardingRoute(
                 onBackButtonClicked = {
                     viewModel.setEvent(OnboardingContract.OnboardingEvent.SearchPopUpBackPressed)
                 },
-                selectButtonClicked = { location ->
+                selectButtonClicked = {
                     viewModel.setEvent(
                         OnboardingContract.OnboardingEvent.LocationSelectButtonClicked(
-                            location
+                            uiState.myAddress
                         )
                     )
                 },
                 onTextClearButtonClicked = {
                     viewModel.setEvent(OnboardingContract.OnboardingEvent.ClearText)
                 },
-                onGpsButtonClicked = {}
+                onGpsButtonClicked = {
+                }
             )
         }
 
@@ -221,11 +222,15 @@ fun OnboardingRoute(
                         }
                     },
                     onLocationButtonClicked = {
-                        atChaToastMessage(
-                            context = context,
-                            R.string.onboarding_location_no_permission_toast,
-                            length = Toast.LENGTH_SHORT
-                        )
+                        if (PermissionUtil.hasLocationPermissions(context = context)) {
+                            // Todo: 현 위치로 찾기 구현
+                        } else {
+                            atChaToastMessage(
+                                context = context,
+                                R.string.onboarding_location_no_permission_toast,
+                                length = Toast.LENGTH_SHORT
+                            )
+                        }
                     },
                     deniedBottomSheetCloseButtonClicked = {
                         viewModel.setEvent(
@@ -278,13 +283,13 @@ fun OnboardingScreen(
                 Spacer(modifier = Modifier.height(72.dp))
                 OnboardingTitle(onboardingType = uiState.onboardingType)
                 Spacer(modifier = Modifier.height(48.dp))
-                if (uiState.myHome.name.isEmpty()) {
+                if (uiState.myAddress.name.isEmpty()) {
                     OnboardingSearchContainer(
                         onSearchBoxClicked = onSearchBoxClicked,
                         onLocationButtonClick = onLocationButtonClicked
                     )
                 } else {
-                    OnboardingSelectedHome(onboardingSearchLocation = uiState.myHome)
+                    OnboardingSelectedHome(onboardingSearchLocation = uiState.myAddress)
                     Spacer(modifier = Modifier.height(31.dp))
 
                     OnboardingSelectLocationButton(
@@ -317,7 +322,7 @@ fun OnboardingScreen(
                 if (uiState.onboardingType == OnboardingType.ALARM) {
                     uiState.alertFrequencies.isNotEmpty()
                 } else {
-                    uiState.myHome.name.isNotEmpty()
+                    uiState.myAddress.name.isNotEmpty()
                 }
             ) { onNextButtonClicked() }
             Spacer(modifier = Modifier.height(20.dp))

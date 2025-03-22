@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.lifecycle.viewModelScope
 import com.depromeet.team6.domain.model.SignUp
 import com.depromeet.team6.domain.repository.UserInfoRepository
+import com.depromeet.team6.domain.usecase.GetAddressFromCoordinatesUseCase
 import com.depromeet.team6.domain.usecase.GetLocationsUseCase
 import com.depromeet.team6.domain.usecase.PostSignUpUseCase
 import com.depromeet.team6.presentation.mapper.toPresentationList
@@ -14,6 +15,7 @@ import com.depromeet.team6.presentation.util.base.BaseViewModel
 import com.depromeet.team6.presentation.util.context.getUserLocation
 import com.depromeet.team6.presentation.util.permission.PermissionUtil
 import com.depromeet.team6.presentation.util.view.LoadState
+import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -24,7 +26,8 @@ import javax.inject.Inject
 class OnboardingViewModel @Inject constructor(
     private val userInfoRepository: UserInfoRepository,
     private val postSignUpUseCase: PostSignUpUseCase,
-    private val getLocationsUseCase: GetLocationsUseCase
+    private val getLocationsUseCase: GetLocationsUseCase,
+    private val getAddressFromCoordinatesUseCase: GetAddressFromCoordinatesUseCase
 ) : BaseViewModel<OnboardingContract.OnboardingUiState, OnboardingContract.OnboardingSideEffect, OnboardingContract.OnboardingEvent>() {
     override fun createInitialState(): OnboardingContract.OnboardingUiState =
         OnboardingContract.OnboardingUiState()
@@ -38,7 +41,13 @@ class OnboardingViewModel @Inject constructor(
                 )
             }
 
-            is OnboardingContract.OnboardingEvent.ClearText -> setState { copy(searchText = "", searchLocations = emptyList()) }
+            is OnboardingContract.OnboardingEvent.ClearText -> setState {
+                copy(
+                    searchText = "",
+                    searchLocations = emptyList()
+                )
+            }
+
             is OnboardingContract.OnboardingEvent.ShowSearchPopup -> setState {
                 copy(
                     searchPopupVisible = true
@@ -49,7 +58,7 @@ class OnboardingViewModel @Inject constructor(
             is OnboardingContract.OnboardingEvent.BackPressed -> setState { copy(onboardingType = OnboardingType.HOME) }
             is OnboardingContract.OnboardingEvent.LocationSelectButtonClicked -> setState {
                 copy(
-                    myHome = event.onboardingSearchLocation,
+                    myAddress = event.onboardingSearchLocation,
                     searchPopupVisible = false
                 )
             }
@@ -68,6 +77,7 @@ class OnboardingViewModel @Inject constructor(
                     searchPopupVisible = false
                 )
             }
+
             is OnboardingContract.OnboardingEvent.ChangePermissionDeniedBottomSheetVisible -> setState {
                 copy(permissionDeniedBottomSheetVisible = event.permissionDeniedBottomSheetVisible)
             }
@@ -105,9 +115,9 @@ class OnboardingViewModel @Inject constructor(
             postSignUpUseCase(
                 signUp = SignUp(
                     provider = KAKAO,
-                    address = uiState.value.myHome.address,
-                    lat = uiState.value.myHome.lat,
-                    lon = uiState.value.myHome.lon,
+                    address = uiState.value.myAddress.name,
+                    lat = uiState.value.myAddress.lat,
+                    lon = uiState.value.myAddress.lon,
                     alertFrequencies = uiState.value.alertFrequencies,
                     fcmToken = userInfoRepository.getFcmToken()
                 )
@@ -132,6 +142,20 @@ class OnboardingViewModel @Inject constructor(
                     )
                 }
             }
+        }
+    }
+
+    fun getCenterLocation(location: LatLng) {
+        viewModelScope.launch {
+            getAddressFromCoordinatesUseCase.invoke(location.latitude, location.longitude)
+                .onSuccess {
+                    setState {
+                        copy(
+                            myAddress = it
+                        )
+                    }
+                }.onFailure {
+                }
         }
     }
 }

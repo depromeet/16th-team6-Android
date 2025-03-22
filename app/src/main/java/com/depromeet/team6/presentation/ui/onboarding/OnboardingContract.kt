@@ -1,6 +1,7 @@
 package com.depromeet.team6.presentation.ui.onboarding
 
 import android.content.Context
+import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.DummyData
 import com.depromeet.team6.presentation.model.location.Location
 import com.depromeet.team6.presentation.type.OnboardingType
@@ -19,19 +20,25 @@ class OnboardingContract {
         val searchPopupVisible: Boolean = false,
         val searchText: String = "",
         val dummyData: List<DummyData> = emptyList(),
-        val myHome: Location = Location(
-            name = "",
-            lat = 0.0,
-            lon = 0.0,
-            businessCategory = "",
-            address = "",
-            radius = ""
-        ),
+//        val myHome: Location = Location(
+//            name = "",
+//            lat = 0.0,
+//            lon = 0.0,
+//            businessCategory = "",
+//            address = "",
+//            radius = ""
+//        ),
         val searchLocations: List<Location> = emptyList(),
         var userCurrentLocation: LatLng = LatLng(DEFAULT_LNT, DEFAULT_LNG),
         val alertFrequencies: Set<Int> = setOf(1),
         var permissionBottomSheetVisible: Boolean = false,
-        var permissionDeniedBottomSheetVisible: Boolean = false
+        var permissionDeniedBottomSheetVisible: Boolean = false,
+        val myAddress: Address = Address(
+            name = "",
+            lat = 0.0,
+            lon = 0.0,
+            address = ""
+        )
     ) : UiState
 
     sealed interface OnboardingSideEffect : UiSideEffect {
@@ -47,7 +54,7 @@ class OnboardingContract {
 
         data object ChangeOnboardingType : OnboardingEvent()
         data object BackPressed : OnboardingEvent()
-        data class LocationSelectButtonClicked(val onboardingSearchLocation: Location) :
+        data class LocationSelectButtonClicked(val onboardingSearchLocation: Address) :
             OnboardingEvent()
 
         data class UpdateAlertFrequencies(val alertFrequencies: Set<Int>) : OnboardingEvent()
