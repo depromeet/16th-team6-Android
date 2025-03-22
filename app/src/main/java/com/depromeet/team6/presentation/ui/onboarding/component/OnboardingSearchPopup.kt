@@ -10,7 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.Text
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -19,8 +19,9 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.depromeet.team6.domain.model.Location
+import com.depromeet.team6.presentation.model.location.Location
 import com.depromeet.team6.presentation.util.modifier.addFocusCleaner
+import com.depromeet.team6.presentation.util.view.partitionByAddressCategory
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.depromeet.team6.ui.theme.defaultTeam6Typography
 
@@ -39,9 +40,7 @@ fun OnboardingSearchPopup(
     val focusManager = LocalFocusManager.current
     val focusRequester = remember { FocusRequester() }
 
-    val (addressLocations, placeLocations) = searchLocations.partition {
-        it.businessCategory.startsWith("지역")
-    }
+    val (addressLocations, placeLocations) = searchLocations.partitionByAddressCategory()
 
     Column(
         modifier = modifier
