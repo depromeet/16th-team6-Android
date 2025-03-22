@@ -1,5 +1,6 @@
 package com.depromeet.team6.presentation.ui.home.component
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -7,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -31,16 +33,15 @@ fun FinishCourseDetailButton(
         modifier = modifier
             .fillMaxWidth()
     ) {
-        Button(
+        OutlinedButton(
             onClick = {
                 onFinishClick()
             },
-            modifier = Modifier
-                .border(
-                    width = 1.dp,
-                    color = colors.systemGrey6,
-                    shape = RoundedCornerShape(10.dp)
-                ),
+            modifier = Modifier,
+            border = BorderStroke(
+                width = 1.dp,
+                color = colors.systemGrey6
+            ),
             colors = ButtonDefaults.buttonColors(
                 containerColor = colors.greyWashBackground,
                 contentColor = colors.white
