@@ -1,9 +1,9 @@
 package com.depromeet.team6.presentation.ui.home.component
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -35,25 +35,29 @@ fun FinishCourseDetailButton(
             onClick = {
                 onFinishClick()
             },
-            modifier = Modifier,
+            modifier = Modifier
+                .border(
+                    width = 1.dp,
+                    color = colors.systemGrey6,
+                    shape = RoundedCornerShape(10.dp)
+                ),
             colors = ButtonDefaults.buttonColors(
-                containerColor = colors.greyDefaultButton,
+                containerColor = colors.greyWashBackground,
                 contentColor = colors.white
             ),
-            shape = RoundedCornerShape(8.dp)
+            shape = RoundedCornerShape(10.dp)
         ) {
             Text(
                 text = "종료",
-                style = typography.bodyMedium17,
+                style = typography.bodyMedium15,
                 modifier = modifier
-                    .padding(horizontal = 5.dp)
             )
         }
 
-        PrimaryButton(
+        CourseDetailButton(
             text = "경로 상세",
             onClick = onCourseDetailClick,
-            modifier = Modifier.weight(1f)
+            modifier = modifier
         )
     }
 }
