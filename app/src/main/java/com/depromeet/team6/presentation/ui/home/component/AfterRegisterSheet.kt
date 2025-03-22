@@ -91,7 +91,7 @@ fun AfterRegisterSheet(
 
                 TimeText(
                     timeToLeave = timeToLeave,
-                    textColor = colors.white,
+                    textColor = colors.systemGrey1,
                     modifier = modifier.padding(vertical = 4.dp)
                 )
             }
