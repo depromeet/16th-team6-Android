@@ -132,7 +132,7 @@ fun OnboardingRoute(
     when {
         uiState.searchPopupVisible -> {
             OnboardingSearchPopup(
-                uiState = uiState,
+                searchLocations = uiState.searchLocations,
                 padding = padding,
                 searchText = uiState.searchText,
                 onSearchTextChange = { newText ->
