@@ -2,7 +2,7 @@ package com.depromeet.team6.presentation.ui.onboarding
 
 import android.content.Context
 import com.depromeet.team6.domain.model.DummyData
-import com.depromeet.team6.domain.model.Location
+import com.depromeet.team6.presentation.model.location.Location
 import com.depromeet.team6.presentation.type.OnboardingType
 import com.depromeet.team6.presentation.util.DefaultLntLng.DEFAULT_LNG
 import com.depromeet.team6.presentation.util.DefaultLntLng.DEFAULT_LNT
