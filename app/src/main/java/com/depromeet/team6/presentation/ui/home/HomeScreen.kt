@@ -33,6 +33,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import com.depromeet.team6.R
+import com.depromeet.team6.presentation.model.course.TransportType
 import com.depromeet.team6.presentation.ui.alarm.NotificationScheduler
 import com.depromeet.team6.presentation.ui.alarm.NotificationTimeConstants
 import com.depromeet.team6.presentation.ui.home.component.AfterRegisterMap
@@ -198,8 +199,11 @@ fun HomeScreen(
             )
         }
         //
+        var isConfirmed = false
 
         val firstTransportation = homeUiState.firtTransportTation
+        if (firstTransportation == TransportType.SUBWAY)
+            isConfirmed = true
 
         // 알람 등록 시 Home UI
         if (homeUiState.isAlarmRegistered) {
@@ -210,6 +214,7 @@ fun HomeScreen(
             )
 
             AfterRegisterSheet(
+                isConfirmed = isConfirmed,
                 timeToLeave = departureTime,
                 startLocation = homeUiState.locationAddress,
                 destination = "우리집",

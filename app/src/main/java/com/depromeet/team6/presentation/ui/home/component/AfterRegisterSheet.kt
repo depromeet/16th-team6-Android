@@ -27,6 +27,7 @@ import com.depromeet.team6.ui.theme.LocalTeam6Typography
 
 @Composable
 fun AfterRegisterSheet(
+    isConfirmed: Boolean = false,
     timeToLeave: String,
     startLocation: String,
     destination: String,
@@ -38,6 +39,12 @@ fun AfterRegisterSheet(
 ) {
     val colors = LocalTeam6Colors.current
     val typography = LocalTeam6Typography.current
+
+    var timeTextColor = colors.systemGrey1
+
+    if (isConfirmed) {
+        timeTextColor = colors.white
+    }
 
     Box(
         modifier = modifier
@@ -54,46 +61,27 @@ fun AfterRegisterSheet(
                 )
                 .padding(horizontal = 16.dp, vertical = 20.dp)
         ) {
-            if (isBusDeparted) {
-                // 차고지 출발 후 UI
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center,
                     modifier = Modifier.padding(top = 8.dp, bottom = 2.dp)
                 ) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(R.drawable.ic_all_alarm_bell_red),
-                        contentDescription = stringResource(R.string.home_icon_bell_text),
-                        modifier = Modifier
-                            .padding(end = 4.dp),
-                        tint = colors.systemRed
-                    )
+                    if (isConfirmed) {
+                        Text(
+                            text = stringResource(R.string.home_start_time_text),
+                            style = typography.bodyMedium13,
+                            color = colors.white,
+                            modifier = modifier
+                        )
 
-                    Text(
-                        text = stringResource(R.string.home_start_time_text),
-                        style = typography.bodyMedium13,
-                        color = colors.systemRed
-                    )
-                }
-
-                TimeText(
-                    timeToLeave = timeToLeave,
-                    textColor = colors.systemRed,
-                    modifier = modifier.padding(vertical = 6.dp)
-                )
-            } else {
-                // 차고지 출발 전 UI
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center,
-                    modifier = Modifier.padding(top = 8.dp, bottom = 2.dp)
-                ) {
-                    Text(
-                        text = stringResource(R.string.home_expect_start_time_text),
-                        style = typography.bodyMedium13,
-                        color = colors.white,
-                        modifier = modifier
-                    )
+                    } else {
+                        Text(
+                            text = stringResource(R.string.home_expect_start_time_text),
+                            style = typography.bodyMedium13,
+                            color = colors.white,
+                            modifier = modifier
+                        )
+                    }
 
                     Icon(
                         imageVector = ImageVector.vectorResource(R.drawable.ic_all_info_grey),
@@ -102,14 +90,26 @@ fun AfterRegisterSheet(
                             .padding(horizontal = 5.dp),
                         tint = colors.systemGrey1
                     )
+
+                    if (isConfirmed) {
+                        Spacer(modifier = Modifier.weight(1f))
+
+                        Icon(
+                            imageVector = ImageVector.vectorResource(R.drawable.ic_all_refresh_white),
+                            contentDescription = stringResource(R.string.home_icon_refresh),
+                            modifier = Modifier
+                                .padding(horizontal = 5.dp),
+                            tint = colors.white
+                        )
+                    }
                 }
 
                 TimeText(
                     timeToLeave = timeToLeave,
-                    textColor = colors.systemGrey1,
+                    textColor = timeTextColor,
                     modifier = modifier.padding(top = 4.dp, bottom = 6.dp)
                 )
-            }
+
 
             CourseTextButton(
                 startLocation = startLocation,

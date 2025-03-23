@@ -54,7 +54,7 @@
         },
         {
           "departureDateTime": "2021-09-01 07:12:00",
-          "mode": "SUBWAY",
+          "mode": "BUS",
           "sectionTime": 572,
           "route": "수도권2호선",
           "distance": 3951,
