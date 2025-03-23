@@ -1,6 +1,7 @@
 package com.depromeet.team6.presentation.ui.home
 
 import android.content.Context
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -38,6 +39,7 @@ import com.depromeet.team6.presentation.ui.home.component.AfterRegisterSheet
 import com.depromeet.team6.presentation.ui.home.component.CharacterSpeechBubble
 import com.depromeet.team6.presentation.ui.home.component.CurrentLocationSheet
 import com.depromeet.team6.presentation.ui.home.component.TMapViewCompose
+import com.depromeet.team6.presentation.ui.itinerary.component.ItineraryMap
 import com.depromeet.team6.presentation.util.DefaultLntLng.DEFAULT_LNG
 import com.depromeet.team6.presentation.util.DefaultLntLng.DEFAULT_LNT
 import com.depromeet.team6.presentation.util.context.getUserLocation
@@ -90,6 +92,10 @@ fun HomeRoute(
         }
 
         viewModel.getCenterLocation(LatLng(userLocation.latitude, userLocation.longitude))
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.getLegs()
     }
 
     SideEffect {
@@ -148,12 +154,16 @@ fun HomeScreen(
 
     val notificationScheduler = NotificationScheduler(context)
 
-    if (isUserLoggedIn) {
-        viewModel.registerAlarm()
-        viewModel.setBusDeparted()
-    } else {
-        viewModel.finishAlarm(context)
-    }
+    // TODO: 알림 등록 후 지도 테스트 후 삭제
+    viewModel.registerAlarm()
+    // viewModel.setBusDeparted()
+
+//    if (isUserLoggedIn) {
+//        viewModel.registerAlarm()
+//        viewModel.setBusDeparted()
+//    } else {
+//        viewModel.finishAlarm(context)
+//    }
 
     Box(
         modifier = modifier
@@ -172,10 +182,21 @@ fun HomeScreen(
                 .zIndex(1f)
         )
 
-        TMapViewCompose(
-            userLocation,
-            viewModel = viewModel
-        ) // Replace with your actual API key
+//        TMapViewCompose(
+//            userLocation,
+//            viewModel = viewModel
+//        ) // Replace with your actual API key
+
+        //TODO : 알림 등록 후 지도 테스트 후 삭제
+        val itineraryInfo = homeUiState.itineraryInfo?.legs
+        if (itineraryInfo != null) {
+            ItineraryMap(
+                currentLocation = userLocation,
+                legs = itineraryInfo
+            )
+        }
+        //
+
 
         // 알람 등록 시 Home UI
         if (homeUiState.isAlarmRegistered) {

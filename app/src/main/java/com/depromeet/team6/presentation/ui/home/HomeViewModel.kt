@@ -1,9 +1,13 @@
 package com.depromeet.team6.presentation.ui.home
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.depromeet.team6.domain.usecase.GetAddressFromCoordinatesUseCase
+import com.depromeet.team6.domain.usecase.LoadMockSearchDataUseCase
+import com.depromeet.team6.presentation.ui.itinerary.ItineraryContract
 import com.depromeet.team6.presentation.util.base.BaseViewModel
+import com.depromeet.team6.presentation.util.view.LoadState
 import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -13,7 +17,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val getAddressFromCoordinatesUseCase: GetAddressFromCoordinatesUseCase
+    private val getAddressFromCoordinatesUseCase: GetAddressFromCoordinatesUseCase,
+    val loadMockData : LoadMockSearchDataUseCase // TODO : 실제 UseCase 로 교체
 ) : BaseViewModel<HomeContract.HomeUiState, HomeContract.HomeSideEffect, HomeContract.HomeEvent>() {
     private var speechBubbleJob: Job? = null
 
@@ -35,6 +40,14 @@ class HomeViewModel @Inject constructor(
             }
 
             is HomeContract.HomeEvent.OnCharacterClick -> onCharacterClick()
+            is HomeContract.HomeEvent.LoadLegsResult -> {
+                setState {
+                    copy(
+                        itineraryInfo = event.result,
+                        courseDataLoadState = LoadState.Success
+                    )
+                }
+            }
         }
     }
 
@@ -95,5 +108,12 @@ class HomeViewModel @Inject constructor(
                     }
                 }
         }
+    }
+
+    // TODO : 실제 데이터로 교체
+    fun getLegs() {
+        val mockData = loadMockData()
+        Log.d("getLegs", "getLegs: " + mockData[0].legs.toString())
+        setEvent(HomeContract.HomeEvent.LoadLegsResult(mockData[0]))
     }
 }

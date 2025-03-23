@@ -1,5 +1,6 @@
 package com.depromeet.team6.presentation.ui.home
 
+import com.depromeet.team6.presentation.model.course.LastTransportInfo
 import com.depromeet.team6.presentation.util.base.UiEvent
 import com.depromeet.team6.presentation.util.base.UiSideEffect
 import com.depromeet.team6.presentation.util.base.UiState
@@ -12,7 +13,10 @@ class HomeContract {
         val isBusDeparted: Boolean = false,
         val showSpeechBubble: Boolean = true,
         val locationAddress: String = "",
-        val logoutState: Boolean = false
+        val logoutState: Boolean = false,
+        // 알림 등록 후 경로 표시
+        val itineraryInfo: LastTransportInfo? = null,
+        val courseDataLoadState: LoadState = LoadState.Idle
     ) : UiState
 
     sealed interface HomeSideEffect : UiSideEffect {
@@ -25,6 +29,7 @@ class HomeContract {
         data class UpdateAlarmRegistered(val isRegistered: Boolean) : HomeEvent()
         data class UpdateBusDeparted(val isBusDeparted: Boolean) : HomeEvent()
         data class UpdateSpeechBubbleVisibility(val show: Boolean) : HomeEvent()
+        data class LoadLegsResult(val result: LastTransportInfo) : HomeEvent()
         data object OnCharacterClick : HomeEvent()
     }
 }
