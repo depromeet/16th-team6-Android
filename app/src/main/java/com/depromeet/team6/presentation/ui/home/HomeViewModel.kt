@@ -5,6 +5,8 @@ import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.depromeet.team6.domain.usecase.GetAddressFromCoordinatesUseCase
 import com.depromeet.team6.domain.usecase.LoadMockSearchDataUseCase
+import com.depromeet.team6.presentation.model.course.LegInfo
+import com.depromeet.team6.presentation.model.course.TransportType
 import com.depromeet.team6.presentation.ui.itinerary.ItineraryContract
 import com.depromeet.team6.presentation.util.base.BaseViewModel
 import com.depromeet.team6.presentation.util.view.LoadState
@@ -52,6 +54,14 @@ class HomeViewModel @Inject constructor(
                 setState {
                     copy(
                         departureTime = event.departureTime.substring(11,16)
+                    )
+                }
+            }
+
+            is HomeContract.HomeEvent.LoadFirstTransportation -> {
+                setState {
+                    copy(
+                        firtTransportTation = event.transportation
                     )
                 }
             }
@@ -120,8 +130,20 @@ class HomeViewModel @Inject constructor(
     // TODO : 실제 데이터로 교체
     fun getLegs() {
         val mockData = loadMockData()
-        Log.d("getLegs", "getLegs: " + mockData[0].legs.toString())
         setEvent(HomeContract.HomeEvent.LoadLegsResult(mockData[0]))
         setEvent(HomeContract.HomeEvent.LoadDepartureDateTime(mockData[0].departureTime))
+        setEvent(HomeContract.HomeEvent.LoadFirstTransportation(getFirstTransportation(mockData[0].legs)))
+    }
+
+    // 막차 경로 중 첫번째 대중 교통 수단
+    private fun getFirstTransportation(legs: List<LegInfo>): TransportType {
+        var firstTransportation = legs[0].transportType
+
+        for (leg in legs) {
+            if (leg.transportType != TransportType.WALK) {
+                firstTransportation = leg.transportType
+                break }
+        }
+        return firstTransportation
     }
 }

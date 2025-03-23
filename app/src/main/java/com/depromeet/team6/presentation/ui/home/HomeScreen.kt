@@ -199,6 +199,7 @@ fun HomeScreen(
         }
         //
 
+        val firstTransportation = homeUiState.firtTransportTation
 
         // 알람 등록 시 Home UI
         if (homeUiState.isAlarmRegistered) {
