@@ -48,6 +48,13 @@ class HomeViewModel @Inject constructor(
                     )
                 }
             }
+            is HomeContract.HomeEvent.LoadDepartureDateTime -> {
+                setState {
+                    copy(
+                        departureTime = event.departureTime.substring(11,16)
+                    )
+                }
+            }
         }
     }
 
@@ -115,5 +122,6 @@ class HomeViewModel @Inject constructor(
         val mockData = loadMockData()
         Log.d("getLegs", "getLegs: " + mockData[0].legs.toString())
         setEvent(HomeContract.HomeEvent.LoadLegsResult(mockData[0]))
+        setEvent(HomeContract.HomeEvent.LoadDepartureDateTime(mockData[0].departureTime))
     }
 }

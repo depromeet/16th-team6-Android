@@ -16,7 +16,8 @@ class HomeContract {
         val logoutState: Boolean = false,
         // 알림 등록 후 경로 표시
         val itineraryInfo: LastTransportInfo? = null,
-        val courseDataLoadState: LoadState = LoadState.Idle
+        val courseDataLoadState: LoadState = LoadState.Idle,
+        val departureTime: String = ""
     ) : UiState
 
     sealed interface HomeSideEffect : UiSideEffect {
@@ -30,6 +31,7 @@ class HomeContract {
         data class UpdateBusDeparted(val isBusDeparted: Boolean) : HomeEvent()
         data class UpdateSpeechBubbleVisibility(val show: Boolean) : HomeEvent()
         data class LoadLegsResult(val result: LastTransportInfo) : HomeEvent()
+        data class LoadDepartureDateTime(val departureTime: String) : HomeEvent()
         data object OnCharacterClick : HomeEvent()
     }
 }

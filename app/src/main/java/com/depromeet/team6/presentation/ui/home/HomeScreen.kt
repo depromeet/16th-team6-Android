@@ -190,6 +190,7 @@ fun HomeScreen(
 
         //TODO : 알림 등록 후 지도 테스트 후 삭제
         val itineraryInfo = homeUiState.itineraryInfo?.legs
+        val departureTime = homeUiState.departureTime
         if (itineraryInfo != null) {
             AfterRegisterMap(
                 currentLocation = userLocation,
@@ -208,7 +209,7 @@ fun HomeScreen(
             )
 
             AfterRegisterSheet(
-                timeToLeave = "23:21:00",
+                timeToLeave = departureTime,
                 startLocation = homeUiState.locationAddress,
                 destination = "우리집",
                 onCourseTextClick = {},
