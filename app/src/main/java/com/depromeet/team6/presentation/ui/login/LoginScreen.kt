@@ -126,14 +126,16 @@ fun LoginRoute(
 
     when (uiState.loadState) {
         LoadState.Idle -> {
-            LoginScreen(
-                padding = padding,
-                uiState = uiState,
-                onSignInClicked = {
-                    setLayoutLoginKakaoClickListener(context = context, callback = callback)
-                },
-                modifier = modifier
-            )
+//            LoginScreen(
+//                padding = padding,
+//                uiState = uiState,
+//                onSignInClicked = {
+//                    setLayoutLoginKakaoClickListener(context = context, callback = callback)
+//                },
+//                modifier = modifier
+//            )
+            // TODO : 테스트 끝나고 삭제
+            navigateToHome()
         }
 
         LoadState.Success -> navigateToHome()

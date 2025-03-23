@@ -2,17 +2,20 @@ package com.depromeet.team6.presentation.ui.home.component
 
 import android.widget.FrameLayout
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
@@ -27,6 +30,7 @@ import com.skt.tmap.overlay.TMapMarkerItem
 import com.skt.tmap.overlay.TMapPolyLine
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlin.math.abs
 
 @Composable
 fun AfterRegisterMap(
@@ -74,15 +78,14 @@ fun AfterRegisterMap(
             marker.icon = ContextCompat.getDrawable(context, R.drawable.ic_all_location_black)?.toBitmap()
             tMapView.addTMapMarkerItem(marker)
 
-            // 지도 위치 조정
-            val midPoint = getMidPoint(departLocation, destinationLocation)
+            // 지도 위치 설정 - 현위치와 출발지의 중간 지점
+            val midPoint = getMidPoint(currentLocation, departLocation)
             tMapView.setCenterPoint(midPoint.latitude, midPoint.longitude)
 
-            // 지도 Scale 조정
-            val leftTop = departTMapPoint
-            val rightBottom = destinationTMapPoint
-            tMapView.zoomToTMapPoint(leftTop, rightBottom)
-            tMapView.mapZoomOut()
+            // 지도 Scale 조정 - 현위치와 출발지 차이 + 일정 값
+            val latSpan = abs(currentLocation.latitude - departLocation.latitude) + 0.001
+            val lonSpan = abs(currentLocation.longitude - departLocation.longitude) + 0.003
+            tMapView.zoomToSpan(latSpan, lonSpan)
         }
     }
 
@@ -113,7 +116,12 @@ fun AfterRegisterMap(
     ) {
         // Tmap
         AndroidView(
-            modifier = modifier.fillMaxSize(),
+            modifier = modifier
+                .fillMaxWidth()
+                // TODO : 하단 모달 영역 제외한 부분에 띄우도록 수정
+                .height(500.dp)
+                .align(Alignment.TopCenter)
+            ,
             factory = { context ->
                 // FrameLayout을 직접 생성
                 FrameLayout(context).apply {
