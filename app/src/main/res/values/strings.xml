@@ -100,5 +100,6 @@
     <string name="mypage_account_logout_text">로그아웃</string>
     <string name="mypage_account_signout_text">계정 탈퇴</string>
     <string name="mypage_icon_description">마이페이지 아이콘</string>
+    <string name="home_icon_info">홈 안내 아이콘</string>
 
 </resources>

@@ -83,12 +83,26 @@ fun AfterRegisterSheet(
                 )
             } else {
                 // 차고지 출발 전 UI
-                Text(
-                    text = stringResource(R.string.home_expect_start_time_text),
-                    style = typography.bodyMedium13,
-                    color = colors.white,
-                    modifier = modifier.padding(top = 8.dp, bottom = 2.dp)
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier.padding(top = 8.dp, bottom = 2.dp)
+                ) {
+                    Text(
+                        text = stringResource(R.string.home_expect_start_time_text),
+                        style = typography.bodyMedium13,
+                        color = colors.white,
+                        modifier = modifier
+                    )
+
+                    Icon(
+                        imageVector = ImageVector.vectorResource(R.drawable.ic_all_info_grey),
+                        contentDescription = stringResource(R.string.home_icon_info),
+                        modifier = Modifier
+                            .padding(horizontal = 5.dp),
+                        tint = colors.systemGrey1
+                    )
+                }
 
                 TimeText(
                     timeToLeave = timeToLeave,
