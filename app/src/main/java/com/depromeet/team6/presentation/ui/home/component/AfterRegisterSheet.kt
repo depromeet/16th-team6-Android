@@ -86,7 +86,7 @@ fun AfterRegisterSheet(
                 Text(
                     text = stringResource(R.string.home_expect_start_time_text),
                     style = typography.bodyMedium13,
-                    color = colors.greySecondaryLabel,
+                    color = colors.white,
                     modifier = modifier.padding(top = 8.dp, bottom = 2.dp)
                 )
 
