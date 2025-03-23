@@ -35,6 +35,7 @@ import androidx.lifecycle.flowWithLifecycle
 import com.depromeet.team6.R
 import com.depromeet.team6.presentation.ui.alarm.NotificationScheduler
 import com.depromeet.team6.presentation.ui.alarm.NotificationTimeConstants
+import com.depromeet.team6.presentation.ui.home.component.AfterRegisterMap
 import com.depromeet.team6.presentation.ui.home.component.AfterRegisterSheet
 import com.depromeet.team6.presentation.ui.home.component.CharacterSpeechBubble
 import com.depromeet.team6.presentation.ui.home.component.CurrentLocationSheet
@@ -190,7 +191,7 @@ fun HomeScreen(
         //TODO : 알림 등록 후 지도 테스트 후 삭제
         val itineraryInfo = homeUiState.itineraryInfo?.legs
         if (itineraryInfo != null) {
-            ItineraryMap(
+            AfterRegisterMap(
                 currentLocation = userLocation,
                 legs = itineraryInfo
             )
