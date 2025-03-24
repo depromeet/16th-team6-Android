@@ -1,6 +1,6 @@
 package com.depromeet.team6.presentation.ui.itinerary
 
-import com.depromeet.team6.domain.usecase.LoadMockSearchDataUseCase
+import com.depromeet.team6.domain.usecase.GetCourseSearchResultsUseCase
 import com.depromeet.team6.presentation.util.base.BaseViewModel
 import com.depromeet.team6.presentation.util.view.LoadState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -8,7 +8,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ItineraryViewModel @Inject constructor(
-    val loadMockData: LoadMockSearchDataUseCase
+    val getCourseSearchResults: GetCourseSearchResultsUseCase
 ) : BaseViewModel<ItineraryContract.ItineraryUiState, ItineraryContract.ItinerarySideEffect, ItineraryContract.ItineraryEvent>() {
     override fun createInitialState(): ItineraryContract.ItineraryUiState = ItineraryContract.ItineraryUiState()
 
@@ -26,8 +26,8 @@ class ItineraryViewModel @Inject constructor(
         }
     }
 
-    fun getLegs() {
-        val mockData = loadMockData()
-        setEvent(ItineraryContract.ItineraryEvent.LoadLegsResult(mockData[0]))
-    }
+//    fun getLegs() {
+//        val mockData = getCourseSearchResults()
+//        setEvent(ItineraryContract.ItineraryEvent.LoadLegsResult(mockData[0]))
+//    }
 }

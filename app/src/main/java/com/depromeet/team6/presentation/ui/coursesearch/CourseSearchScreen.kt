@@ -29,8 +29,8 @@ import com.depromeet.team6.ui.theme.defaultTeam6Colors
 @Composable
 fun CourseSearchRoute(
     padding: PaddingValues,
-    departure: String,
-    destination: String,
+    departurePoint: String,
+    destinationPoint: String,
     navigateToItinerary: () -> Unit,
     navigateToHome: () -> Unit,
     viewModel: CourseSearchViewModel = hiltViewModel()
@@ -54,12 +54,11 @@ fun CourseSearchRoute(
     }
 
     LaunchedEffect(Unit) {
-        viewModel.setDepartureDestination(departure, destination)
-        viewModel.getMockData()
+        viewModel.setDepartureDestination(departurePoint, destinationPoint)
     }
 
     when (uiState.courseDataLoadState) {
-        LoadState.Idle -> CourseSearchScreen(
+        LoadState.Success -> CourseSearchScreen(
             uiState = uiState,
             modifier = Modifier
                 .padding(padding),
@@ -92,8 +91,8 @@ fun CourseSearchScreen(
     ) {
         CourseAppBar(backButtonClicked = backButtonClicked)
         DestinationSearchBar(
-            startingPoint = uiState.startingPoint,
-            destination = uiState.destinationPoint,
+            startingPoint = uiState.startingPoint?.name ?: "",
+            destination = uiState.destinationPoint?.name ?: "",
             modifier = modifier
                 .padding(horizontal = 16.dp, vertical = 10.dp)
         )

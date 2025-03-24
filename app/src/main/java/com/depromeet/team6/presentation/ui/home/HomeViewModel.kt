@@ -2,6 +2,7 @@ package com.depromeet.team6.presentation.ui.home
 
 import android.content.Context
 import androidx.lifecycle.viewModelScope
+import com.depromeet.team6.domain.model.course.WayPoint
 import com.depromeet.team6.domain.usecase.GetAddressFromCoordinatesUseCase
 import com.depromeet.team6.presentation.util.base.BaseViewModel
 import com.google.android.gms.maps.model.LatLng
@@ -83,14 +84,27 @@ class HomeViewModel @Inject constructor(
             getAddressFromCoordinatesUseCase.invoke(location.latitude, location.longitude)
                 .onSuccess {
                     setState {
+                        // TODO : 실제 위도, 경도 가져오는 로직으로 바꿔야 합니다.
+                        //      : 현재는 더미데이터를 임의로 넣고있습니다.
+                        val latitude = uiState.value.departurePoint.latitude    // 이부분 실제 위도 경도로 넣어주세요
+                        val longitude = uiState.value.departurePoint.longitude  // 이부분 실제 위도 경도로 넣어주세요
                         copy(
-                            locationAddress = it.name
+                            departurePoint = WayPoint(
+                                name = it.name,
+                                latitude = latitude,
+                                longitude = longitude
+                            )
                         )
                     }
                 }.onFailure {
                     setState {
+                        // 위치 찾을 수 없는 경우 서울시청으로 임의 초기화
                         copy(
-                            locationAddress = ""
+                            departurePoint = WayPoint(
+                                name = "서울특별시청",
+                                latitude = 37.56681744674135,
+                                longitude = 126.97866075004276
+                            )
                         )
                     }
                 }

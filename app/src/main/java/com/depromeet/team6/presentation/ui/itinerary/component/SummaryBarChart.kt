@@ -29,6 +29,7 @@ import com.depromeet.team6.domain.model.course.LegInfo
 import com.depromeet.team6.domain.model.course.TransportType
 import com.depromeet.team6.presentation.ui.itinerary.LegInfoDummyProvider
 import com.depromeet.team6.presentation.util.modifier.roundedBackgroundWithPadding
+import com.depromeet.team6.presentation.util.view.TransportTypeUiMapper
 import com.depromeet.team6.presentation.util.view.toDp
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.depromeet.team6.ui.theme.defaultTeam6Typography
@@ -90,7 +91,12 @@ fun SummaryBarChart(
                     modifier = Modifier
                         .width(barWidth) // 바의 너비 설정
                         .fillMaxHeight()
-                        .background(leg.routeColor, shape = RoundedCornerShape(20.dp))
+                        .background(
+                            color = TransportTypeUiMapper.getColor(
+                                type = leg.transportType,
+                                subtypeIndex = leg.subTypeIdx
+                            ),
+                            shape = RoundedCornerShape(20.dp))
                         .align(Alignment.CenterVertically)
                 ) {
                     Row(

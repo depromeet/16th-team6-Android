@@ -46,6 +46,7 @@ import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.presentation.util.permission.PermissionUtil
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.google.android.gms.maps.model.LatLng
+import com.google.gson.Gson
 
 @Composable
 fun HomeRoute(
@@ -115,9 +116,11 @@ fun HomeRoute(
             modifier = modifier,
             padding = padding,
             onSearchClick = {
+                val departurePointJSON = Gson().toJson(uiState.departurePoint)
+                val destinationPointJSON = Gson().toJson(uiState.destinationPoint)
                 navigateToCourseSearch(
-                    uiState.locationAddress,
-                    "우리집"
+                    departurePointJSON,
+                    destinationPointJSON
                 )
             },
             onFinishClick = {
@@ -189,7 +192,7 @@ fun HomeScreen(
 
             AfterRegisterSheet(
                 timeToLeave = "23:21:00",
-                startLocation = homeUiState.locationAddress,
+                startLocation = homeUiState.departurePoint.name,
                 destination = "우리집",
                 onCourseTextClick = {},
                 onFinishClick = {
@@ -207,7 +210,7 @@ fun HomeScreen(
             notificationScheduler.cancelAllNotifications()
 
             CurrentLocationSheet(
-                currentLocation = homeUiState.locationAddress,
+                currentLocation = homeUiState.departurePoint.name,
                 destination = "우리집",
                 onSearchClick = {
                     onSearchClick()

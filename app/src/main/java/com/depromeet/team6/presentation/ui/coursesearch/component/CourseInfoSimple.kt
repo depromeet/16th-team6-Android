@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import com.depromeet.team6.R
 import com.depromeet.team6.domain.model.course.LegInfo
 import com.depromeet.team6.presentation.ui.common.TransportVectorIcon
+import com.depromeet.team6.presentation.util.view.TransportTypeUiMapper
 
 @Composable
 fun CourseInfoSimple(
@@ -33,7 +34,7 @@ fun CourseInfoSimple(
                 modifier = Modifier
                     .size(20.dp),
                 type = courseInfo.transportType,
-                color = courseInfo.routeColor,
+                color = TransportTypeUiMapper.getColor(courseInfo.transportType, courseInfo.subTypeIdx),
                 isMarker = true,
             )
 

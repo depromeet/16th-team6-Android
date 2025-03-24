@@ -40,7 +40,7 @@ fun ItineraryRoute(
     }
 
     LaunchedEffect(Unit) {
-        viewModel.getLegs()
+//        viewModel.getLegs()
     }
 
     when (uiState.courseDataLoadState) {

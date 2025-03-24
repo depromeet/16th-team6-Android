@@ -1,7 +1,7 @@
 package com.depromeet.team6.data.repositoryimpl
 
 import com.depromeet.team6.data.dataremote.datasource.CourseRemoteDataSource
-import com.depromeet.team6.data.dataremote.model.response.course.ResponseCourseSearchDto
+import com.depromeet.team6.data.mapper.todomain.toDomain
 import com.depromeet.team6.domain.model.course.CourseInfo
 import com.depromeet.team6.domain.model.course.WayPoint
 import com.depromeet.team6.domain.repository.CourseSearchRepository
@@ -19,6 +19,6 @@ class CourseSearchRepositoryImpl @Inject constructor(
             endLat = endPosition.latitude.toString(),
             endLon = endPosition.longitude.toString()
         ).mapCatching {
-            it.toDomain
+            it.toDomain()
         }
 }

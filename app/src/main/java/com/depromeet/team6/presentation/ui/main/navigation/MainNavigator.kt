@@ -41,8 +41,8 @@ class MainNavigator(
     ) {
         clearBackStackTo(CourseSearchRoute.ROUTE)
         navHostController.navigateCourseSearch(
-            departure = departure,
-            destination = destination
+            departurePoint = departure,
+            destinationPoint = destination
         )
     }
 
