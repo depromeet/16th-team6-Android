@@ -1,6 +1,7 @@
 package com.depromeet.team6.presentation.ui.home.component
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,6 +23,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.depromeet.team6.R
+import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.ui.theme.LocalTeam6Colors
 import com.depromeet.team6.ui.theme.LocalTeam6Typography
 
@@ -34,8 +36,8 @@ fun AfterRegisterSheet(
     onCourseTextClick: () -> Unit,
     onFinishClick: () -> Unit,
     onCourseDetailClick: () -> Unit,
+    onRefreshClick: () -> Unit,
     modifier: Modifier = Modifier,
-    isBusDeparted: Boolean = false
 ) {
     val colors = LocalTeam6Colors.current
     val typography = LocalTeam6Typography.current
@@ -98,7 +100,10 @@ fun AfterRegisterSheet(
                             imageVector = ImageVector.vectorResource(R.drawable.ic_all_refresh_white),
                             contentDescription = stringResource(R.string.home_icon_refresh),
                             modifier = Modifier
-                                .padding(horizontal = 5.dp),
+                                .padding(horizontal = 5.dp)
+                                .noRippleClickable {
+                                    onRefreshClick()
+                                },
                             tint = colors.white
                         )
                     }
@@ -141,6 +146,7 @@ fun AfterRegisterSheetPreview() {
         onCourseTextClick = { },
         onFinishClick = { },
         onCourseDetailClick = { },
-        modifier = Modifier
+        modifier = Modifier,
+        onRefreshClick = { }
     )
 }

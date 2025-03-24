@@ -144,6 +144,11 @@ fun HomeRoute(
             },
             onFinishClick = {
                 viewModel.finishAlarm(context)
+            },
+            onRefreshClick = {
+                // TODO : getLegs 함수가 막차 경로 상세 API를 받아오는게 맞는지 확인
+                viewModel.getLegs()
+                // TODO : 말풍선 표출
             }
         )
         LoadState.Error -> navigateToLogin()
@@ -161,6 +166,7 @@ fun HomeScreen(
     onCharacterClick: () -> Unit = {},
     onSearchClick: () -> Unit = {},
     onFinishClick: () -> Unit = {},
+    onRefreshClick: () -> Unit = {},
     navigateToMypage: () -> Unit = {},
     navigateToItinerary: () -> Unit = {},
     viewModel: HomeViewModel = hiltViewModel() // TODO : TmapViewCompose 변경 후 제거
@@ -249,7 +255,9 @@ fun HomeScreen(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .zIndex(1f),
-                isBusDeparted = homeUiState.isBusDeparted
+                onRefreshClick = {
+                    onRefreshClick()
+                }
             )
         } else {
             notificationScheduler.cancelAllNotifications()
