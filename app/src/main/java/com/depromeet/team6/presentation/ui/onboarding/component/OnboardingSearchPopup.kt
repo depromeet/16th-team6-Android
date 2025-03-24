@@ -1,5 +1,7 @@
 package com.depromeet.team6.presentation.ui.onboarding.component
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,11 +22,20 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.depromeet.team6.R
+import com.depromeet.team6.domain.model.Address
+import com.depromeet.team6.presentation.mapper.toAddress
 import com.depromeet.team6.presentation.model.location.Location
+import com.depromeet.team6.presentation.ui.onboarding.OnboardingContract
+import com.depromeet.team6.presentation.ui.onboarding.OnboardingViewModel
 import com.depromeet.team6.presentation.util.modifier.addFocusCleaner
+import com.depromeet.team6.presentation.util.permission.PermissionUtil
+import com.depromeet.team6.presentation.util.toast.atChaToastMessage
 import com.depromeet.team6.presentation.util.view.partitionByAddressCategory
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.depromeet.team6.ui.theme.defaultTeam6Typography
@@ -34,20 +45,31 @@ import com.google.android.gms.maps.model.LatLng
 fun OnboardingSearchPopup(
     padding: PaddingValues,
     modifier: Modifier = Modifier,
+    context: Context = LocalContext.current,
+    uiState: OnboardingContract.OnboardingUiState = OnboardingContract.OnboardingUiState(),
+    viewModel: OnboardingViewModel = hiltViewModel(),
     searchLocations: List<Location> = emptyList(),
     searchText: String = "",
     onSearchTextChange: (String) -> Unit = {},
     onBackButtonClicked: () -> Unit = {},
     onTextClearButtonClicked: () -> Unit = {},
-    onGpsButtonClicked: () -> Unit = {},
-    selectButtonClicked: (Location) -> Unit = {}
+    selectButtonClicked: (Address) -> Unit = {}
 ) {
     val focusManager = LocalFocusManager.current
     val focusRequester = remember { FocusRequester() }
 
     val (addressLocations, placeLocations) = searchLocations.partitionByAddressCategory()
 
-    var selectedLocation by remember { mutableStateOf<Location?>(null) }
+    var selectedLocation by remember {
+        mutableStateOf(
+            Address(
+                name = "",
+                lat = 0.0,
+                lon = 0.0,
+                address = ""
+            )
+        )
+    }
 
     Box(
         modifier = modifier
@@ -65,7 +87,19 @@ fun OnboardingSearchPopup(
                 onValueChange = onSearchTextChange,
                 onBackButtonClicked = onBackButtonClicked,
                 onTextClearButtonClicked = onTextClearButtonClicked,
-                onGpsButtonClicked = onGpsButtonClicked,
+                onGpsButtonClicked = {
+                    if (PermissionUtil.hasLocationPermissions(context = context)) {
+                        viewModel.setCurrentLocationToHomeAddress(context = context) { address ->
+                            selectedLocation = address
+                        }
+                    } else {
+                        atChaToastMessage(
+                            context = context,
+                            R.string.onboarding_location_no_permission_toast,
+                            length = Toast.LENGTH_SHORT
+                        )
+                    }
+                },
                 focusRequester = focusRequester
             )
             Spacer(modifier = Modifier.height(4.dp))
@@ -89,8 +123,7 @@ fun OnboardingSearchPopup(
                         OnboardingSearchLocationItem(
                             onboardingSearchLocation = location,
                             selectButtonClicked = {
-//                                selectButtonClicked(location)
-                                selectedLocation = location
+                                selectedLocation = location.toAddress()
                             }
                         )
                     }
@@ -114,19 +147,27 @@ fun OnboardingSearchPopup(
                         OnboardingSearchLocationItem(
                             onboardingSearchLocation = location,
                             selectButtonClicked = {
-//                                selectButtonClicked(location)
-                                selectedLocation = location
+                                selectedLocation = location.toAddress()
                             }
                         )
                     }
                 }
             }
         }
-        if (selectedLocation != null) {
+        if (selectedLocation.address.isNotEmpty()) {
             OnboardingMapView(
-                currentLocation = LatLng(selectedLocation!!.lat, selectedLocation!!.lon),
-                buttonClicked = { selectButtonClicked(selectedLocation!!) },
-                backButtonClicked = { selectedLocation = null }
+                uiState = uiState,
+                viewModel = viewModel,
+                currentLocation = selectedLocation,
+                buttonClicked = { selectButtonClicked(selectedLocation) },
+                backButtonClicked = {
+                    selectedLocation = Address(
+                        name = "",
+                        lat = 0.0,
+                        lon = 0.0,
+                        address = ""
+                    )
+                }
             )
         }
     }
