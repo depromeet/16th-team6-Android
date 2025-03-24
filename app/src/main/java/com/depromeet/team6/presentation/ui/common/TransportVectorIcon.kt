@@ -15,7 +15,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.depromeet.team6.R
-import com.depromeet.team6.presentation.model.course.TransportType
+import com.depromeet.team6.domain.model.course.TransportType
 import com.depromeet.team6.presentation.util.Dimens
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 

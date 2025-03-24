@@ -22,7 +22,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.depromeet.team6.R
-import com.depromeet.team6.presentation.model.course.TransportType
+import com.depromeet.team6.domain.model.course.TransportType
 import com.depromeet.team6.presentation.ui.common.TransportVectorIcon
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.depromeet.team6.ui.theme.defaultTeam6Typography
@@ -71,7 +71,7 @@ fun CourseInfoDetailItem(
                 TransportVectorIcon(
                     modifier = Modifier
                         .size(20.dp),
-                    type = TransportType.WALK,
+                    type = transportType,
                     color = defaultTeam6Colors.greySecondaryLabel,
                     isMarker = true
                 )

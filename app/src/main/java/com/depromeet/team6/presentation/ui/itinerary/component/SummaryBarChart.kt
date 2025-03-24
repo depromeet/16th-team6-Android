@@ -25,8 +25,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.depromeet.team6.presentation.model.course.LegInfo
-import com.depromeet.team6.presentation.model.course.TransportType
+import com.depromeet.team6.domain.model.course.LegInfo
+import com.depromeet.team6.domain.model.course.TransportType
 import com.depromeet.team6.presentation.ui.itinerary.LegInfoDummyProvider
 import com.depromeet.team6.presentation.util.modifier.roundedBackgroundWithPadding
 import com.depromeet.team6.presentation.util.view.toDp

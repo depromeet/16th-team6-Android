@@ -59,6 +59,8 @@ data class Team6Colors(
     // TextField Cursor
     val textFieldCursor: Color,
 
+    val walkColor: List<Pair<String, Color>>,
+
     // BUS 색상 리스트
     val busColors: List<Pair<String, Color>>,
 
@@ -118,7 +120,12 @@ val defaultTeam6Colors = Team6Colors(
     systemGrey6 = Color(0xFF1F1F23),
 
     // TextField Cursor
-    textFieldCursor = Color(0xFF90E772),
+    textFieldCursor = Color(0xFF999CA4),
+
+    // WALK
+    walkColor = listOf(
+        "walk" to Color(0xFF90E772)
+    ),
 
     // BUS
     busColors = listOf(
@@ -152,7 +159,7 @@ val defaultTeam6Colors = Team6Colors(
         "subwayEverLine" to Color(0xFF66BA60),
         "subwayUijeongbu" to Color(0xFFE68E24),
         "subwayUiSinseol" to Color(0xFFBBB51C),
-        "subwayGimpo" to Color(0xFF9F7A10),
+        "subwayGimpoGold" to Color(0xFF9F7A10),
         "subwaySillim" to Color(0xFF608CC4),
         "subwayGTX_A" to Color(0xFF8F5787)
     )

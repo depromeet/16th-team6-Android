@@ -11,15 +11,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
-import com.depromeet.team6.presentation.model.course.LastTransportInfo
-import com.depromeet.team6.presentation.model.course.LegInfo
+import com.depromeet.team6.domain.model.course.CourseInfo
+import com.depromeet.team6.domain.model.course.LegInfo
 import com.depromeet.team6.presentation.ui.itinerary.LegInfoDummyProvider
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 
 @Composable
 fun LastTransportInfoList(
-    listData: List<LastTransportInfo>,
+    listData: List<CourseInfo>,
     modifier: Modifier = Modifier,
     onRegisterAlarmBtnClick: () -> Unit = {},
     onItemClick: () -> Unit = {}
@@ -38,7 +38,7 @@ fun LastTransportInfoList(
                     .noRippleClickable {
                         onItemClick()
                     },
-                lastTransportInfo = listData[index],
+                courseSearchResult = listData[index],
                 onRegisterAlarmBtnClick = {
                     onRegisterAlarmBtnClick()
                 }
@@ -52,8 +52,10 @@ fun LastTransportInfoList(
 fun LastTransportInfoListPreview(
     @PreviewParameter(LegInfoDummyProvider::class) legs: List<LegInfo>
 ) {
-    val mockData = LastTransportInfo(
-        remainingMinutes = 23,
+    val mockData = CourseInfo(
+        routeId = "123",
+        filterCategory = 0,
+        remainingTime = 23 * 60,
         departureTime = "2025-03-11 23:12:00",
         boardingTime = "2025-03-11 23:21:00",
         legs = legs

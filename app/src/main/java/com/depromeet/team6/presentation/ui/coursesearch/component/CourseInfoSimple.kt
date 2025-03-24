@@ -15,7 +15,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.depromeet.team6.R
-import com.depromeet.team6.presentation.model.course.LegInfo
+import com.depromeet.team6.domain.model.course.LegInfo
 import com.depromeet.team6.presentation.ui.common.TransportVectorIcon
 
 @Composable

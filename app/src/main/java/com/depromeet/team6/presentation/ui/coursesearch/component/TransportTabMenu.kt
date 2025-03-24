@@ -12,15 +12,15 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import com.depromeet.team6.R
-import com.depromeet.team6.presentation.model.course.LastTransportInfo
-import com.depromeet.team6.presentation.model.course.LegInfo
+import com.depromeet.team6.domain.model.course.CourseInfo
+import com.depromeet.team6.domain.model.course.LegInfo
 import com.depromeet.team6.presentation.ui.itinerary.LegInfoDummyProvider
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import kotlinx.coroutines.launch
 
 @Composable
 fun TransportTabMenu(
-    availableCourses: List<LastTransportInfo>,
+    availableCourses: List<CourseInfo>,
     modifier: Modifier = Modifier,
     onRegisterAlarmBtnClick: () -> Unit = {},
     onItemClick: () -> Unit = {}
@@ -70,8 +70,10 @@ fun TransportTabMenu(
 fun PreviewTabMenu(
     @PreviewParameter(LegInfoDummyProvider::class) courseInfo: List<LegInfo>
 ) {
-    val mockData = LastTransportInfo(
-        remainingMinutes = 23,
+    val mockData = CourseInfo(
+        routeId = "123",
+        filterCategory = 0,
+        remainingTime = 23 * 60,
         departureTime = "2025-03-11 23:12:00",
         boardingTime = "2025-03-11 23:21:00",
         legs = courseInfo

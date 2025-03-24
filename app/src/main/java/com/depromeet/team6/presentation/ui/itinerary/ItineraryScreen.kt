@@ -14,7 +14,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.depromeet.team6.presentation.model.course.LegInfo
+import com.depromeet.team6.domain.model.course.LegInfo
 import com.depromeet.team6.presentation.ui.common.AtchaCommonBottomSheet
 import com.depromeet.team6.presentation.ui.itinerary.component.ItineraryDetail
 import com.depromeet.team6.presentation.ui.itinerary.component.ItineraryMap
@@ -72,7 +72,7 @@ fun ItineraryScreen(
                     .padding(horizontal = 16.dp)
             ) {
                 ItinerarySummary(
-                    totalTimeMinute = itineraryInfo.remainingMinutes,
+                    totalTimeMinute = itineraryInfo.remainingTime / 60,
                     boardingTime = itineraryInfo.boardingTime,
                     legs = itineraryInfo.legs
                 )

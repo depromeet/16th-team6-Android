@@ -25,8 +25,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import com.depromeet.team6.R
-import com.depromeet.team6.presentation.model.course.LastTransportInfo
-import com.depromeet.team6.presentation.model.course.LegInfo
+import com.depromeet.team6.domain.model.course.CourseInfo
+import com.depromeet.team6.domain.model.course.LegInfo
 import com.depromeet.team6.presentation.ui.itinerary.LegInfoDummyProvider
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
@@ -36,7 +36,7 @@ import java.time.format.DateTimeFormatter
 
 @Composable
 fun LastTransportInfoItem(
-    lastTransportInfo: LastTransportInfo,
+    courseSearchResult: CourseInfo,
     modifier: Modifier = Modifier,
     onRegisterAlarmBtnClick: () -> Unit = {}
 ) {
@@ -47,8 +47,8 @@ fun LastTransportInfoItem(
             .padding(16.dp)
     ) {
         // 남은 시간
-        val remainingHour = lastTransportInfo.remainingMinutes / 60
-        val remainingMinute = lastTransportInfo.remainingMinutes % 60
+        val remainingMinute = courseSearchResult.remainingTime / 60
+        val remainingHour = remainingMinute / 60
         Row {
             if (remainingHour > 0) {
                 Text(
@@ -88,10 +88,10 @@ fun LastTransportInfoItem(
             verticalAlignment = Alignment.CenterVertically
         ) {
             val departureDateTime = LocalDateTime
-                .parse(lastTransportInfo.departureTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+                .parse(courseSearchResult.departureTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
             val (departHour, departMinute) = departureDateTime.let { it.hour to it.minute }
             val boardingDateTime = LocalDateTime
-                .parse(lastTransportInfo.boardingTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+                .parse(courseSearchResult.boardingTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
             val (boardingHour, boardingMinute) = boardingDateTime.let { it.hour to it.minute }
 
             RemainingTimeHHmm(
@@ -124,7 +124,7 @@ fun LastTransportInfoItem(
 
         // 막차 경로 상세 정보
         TransportCourseInfoExpandable(
-            legsInfo = lastTransportInfo.legs
+            legsInfo = courseSearchResult.legs
         )
 
         Spacer(
@@ -203,14 +203,16 @@ fun RemainingTimeHHmm(
 fun LastTransportInfoItemPreview(
     @PreviewParameter(LegInfoDummyProvider::class) courseInfo: List<LegInfo>
 ) {
-    val mockData = LastTransportInfo(
-        remainingMinutes = 83,
+    val mockData = CourseInfo(
+        routeId = "123",
+        filterCategory = 0,
+        remainingTime = 83 * 60,
         departureTime = "2025-03-11 23:12:00",
         boardingTime = "2025-03-11 23:21:00",
         legs = courseInfo
     )
     LastTransportInfoItem(
-        lastTransportInfo = mockData
+        courseSearchResult = mockData
     )
 }
 
@@ -219,13 +221,15 @@ fun LastTransportInfoItemPreview(
 fun LastTransportInfoItemPreview2(
     @PreviewParameter(LegInfoDummyProvider::class) courseInfo: List<LegInfo>
 ) {
-    val mockData = LastTransportInfo(
-        remainingMinutes = 23,
+    val mockData = CourseInfo(
+        routeId = "123",
+        filterCategory = 0,
+        remainingTime = 23 * 60,
         departureTime = "2025-03-11 23:12:00",
         boardingTime = "2025-03-11 23:21:00",
         legs = courseInfo
     )
     LastTransportInfoItem(
-        lastTransportInfo = mockData
+        courseSearchResult = mockData
     )
 }

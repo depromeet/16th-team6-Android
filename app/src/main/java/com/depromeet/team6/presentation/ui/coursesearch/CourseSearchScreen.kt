@@ -17,8 +17,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.depromeet.team6.R
-import com.depromeet.team6.presentation.model.course.LastTransportInfo
-import com.depromeet.team6.presentation.model.course.LegInfo
+import com.depromeet.team6.domain.model.course.CourseInfo
+import com.depromeet.team6.domain.model.course.LegInfo
 import com.depromeet.team6.presentation.ui.coursesearch.component.CourseAppBar
 import com.depromeet.team6.presentation.ui.coursesearch.component.DestinationSearchBar
 import com.depromeet.team6.presentation.ui.coursesearch.component.TransportTabMenu
@@ -117,8 +117,10 @@ fun CourseSearchScreenPreview(
 ) {
     // TODO: mocking 없애고 실제 데이터 들어가야함
 
-    val mockData = LastTransportInfo(
-        remainingMinutes = 23,
+    val mockData = CourseInfo(
+        routeId = "123",
+        filterCategory = 0,
+        remainingTime = 23,
         departureTime = "2024-12-31 23:59:59",
         boardingTime = "2023-07-19 08:15:42",
         legs = legs
