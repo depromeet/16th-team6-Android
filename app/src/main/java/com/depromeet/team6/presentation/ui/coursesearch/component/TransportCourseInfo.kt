@@ -1,6 +1,5 @@
 package com.depromeet.team6.presentation.ui.coursesearch.component
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -60,8 +59,8 @@ fun TransportCourseInfoExpandable(
                 .size(16.dp)
                 .clickable {
                     expanded = !expanded
-                    Log.d("expeandaenfsdf", expanded.toString())
-                },
+                }
+                .align(Alignment.CenterVertically),
             imageVector = ImageVector.vectorResource(id = R.drawable.ic_all_arrow_down_grey),
             contentDescription = "arrow down"
         )

@@ -33,11 +33,13 @@ fun CourseInfoDetail(
             if (leg.transportType == TransportType.WALK) {
                 CourseInfoDetailItem(
                     transportType = TransportType.WALK,
+                    subtypeIndex = leg.subTypeIdx,
                     duration = leg.sectionTime
                 )
             } else {
                 CourseInfoDetailItem(
                     transportType = leg.transportType,
+                    subtypeIndex = leg.subTypeIdx,
                     duration = leg.sectionTime,
                     boardingPoint = leg.startPoint.name,
                     destinationPoint = leg.endPoint.name
@@ -68,7 +70,7 @@ fun VerticalDashedLine(
                         color = defaultTeam6Colors.greyQuaternaryLabel,
                         start = Offset(x = size.width / 2, y = y),
                         end = Offset(x = size.width / 2, y = y + dashHeight),
-                        strokeWidth = 1f
+                        strokeWidth = 1.dp.toPx()
                     )
                     y += dashHeight + dashSpacing
                 }

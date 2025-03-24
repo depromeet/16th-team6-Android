@@ -13,10 +13,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import com.depromeet.team6.R
 import com.depromeet.team6.domain.model.course.LegInfo
-import com.depromeet.team6.presentation.ui.common.TransportVectorIcon
+import com.depromeet.team6.presentation.ui.itinerary.LegInfoDummyProvider
 import com.depromeet.team6.presentation.util.view.TransportTypeUiMapper
 
 @Composable
@@ -30,12 +32,11 @@ fun CourseInfoSimple(
         verticalAlignment = Alignment.CenterVertically
     ) {
         itemsIndexed(legs) { index, courseInfo ->
-            TransportVectorIcon(
+            Image(
                 modifier = Modifier
                     .size(20.dp),
-                type = courseInfo.transportType,
-                color = TransportTypeUiMapper.getColor(courseInfo.transportType, courseInfo.subTypeIdx),
-                isMarker = true,
+                imageVector = ImageVector.vectorResource(id = TransportTypeUiMapper.getCourseInfoIconId(courseInfo.transportType, courseInfo.subTypeIdx)),
+                contentDescription = "transport course icon"
             )
 
             // 마지막 아이템이 아니면 화살표 추가
@@ -53,4 +54,14 @@ fun CourseInfoSimple(
             }
         }
     }
+}
+
+@Preview
+@Composable
+fun CourseInfoSimplePreview(
+    @PreviewParameter(LegInfoDummyProvider::class) courseInfo: List<LegInfo>
+){
+    CourseInfoSimple(
+        legs = courseInfo
+    )
 }

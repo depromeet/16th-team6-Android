@@ -4,7 +4,6 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import com.depromeet.team6.domain.model.course.LegInfo
 import com.depromeet.team6.domain.model.course.TransportType
 import com.depromeet.team6.domain.model.course.WayPoint
-import com.depromeet.team6.ui.theme.defaultTeam6Colors
 
 class LegInfoDummyProvider : PreviewParameterProvider<List<LegInfo>> {
     override val values = sequenceOf(
@@ -27,6 +26,7 @@ class LegInfoDummyProvider : PreviewParameterProvider<List<LegInfo>> {
             ),
             LegInfo(
                 transportType = TransportType.BUS,
+                subTypeIdx = 2,
                 sectionTime = 27,
                 startPoint = WayPoint(
                     name = "수원 KT위즈파크",
@@ -43,6 +43,7 @@ class LegInfoDummyProvider : PreviewParameterProvider<List<LegInfo>> {
             ),
             LegInfo(
                 transportType = TransportType.SUBWAY,
+                subTypeIdx = 2,
                 sectionTime = 17,
                 startPoint = WayPoint(
                     name = "사당역 2호선",
