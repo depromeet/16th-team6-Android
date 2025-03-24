@@ -15,6 +15,7 @@ import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -25,6 +26,8 @@ class HomeViewModel @Inject constructor(
     private val getBusStartedUseCase: GetBusStartedUseCase
 ) : BaseViewModel<HomeContract.HomeUiState, HomeContract.HomeSideEffect, HomeContract.HomeEvent>() {
     private var speechBubbleJob: Job? = null
+    private var busStartedPollingJob: Job? = null
+    private var lastRouteId: String = "" // TODO : 실제값으로 변경
 
     init {
         showSpeechBubbleTemporarily()
@@ -73,6 +76,12 @@ class HomeViewModel @Inject constructor(
     fun registerAlarm() {
         viewModelScope.launch {
             setEvent(HomeContract.HomeEvent.UpdateAlarmRegistered(true))
+
+            when (currentState.firtTransportTation) {
+                TransportType.BUS -> startPollingBusStarted(routeId = "") // TODO : routeId 변경
+                TransportType.SUBWAY -> setEvent(HomeContract.HomeEvent.UpdateBusDeparted(true))
+                else -> {}
+            }
         }
     }
 
@@ -87,6 +96,8 @@ class HomeViewModel @Inject constructor(
 
             setEvent(HomeContract.HomeEvent.UpdateAlarmRegistered(false))
             setEvent(HomeContract.HomeEvent.UpdateBusDeparted(false))
+
+            stopPollingBusStarted()
         }
     }
 
@@ -97,6 +108,7 @@ class HomeViewModel @Inject constructor(
     }
 
     fun getBusStarted(lastRouteId: String) {
+        this.lastRouteId = lastRouteId
         viewModelScope.launch {
             getBusStartedUseCase.invoke(lastRouteId = lastRouteId)
                 .onSuccess {
@@ -105,12 +117,17 @@ class HomeViewModel @Inject constructor(
                             isBusDeparted = it
                         )
                     }
+
+                    if (!it) {
+                        stopPollingBusStarted()
+                    }
                 }.onFailure {
                     setState {
                         copy(
                             isBusDeparted = true
                         )
                     }
+                    stopPollingBusStarted()
                 }
         }
     }
@@ -148,6 +165,26 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    fun startPollingBusStarted(routeId: String) {
+        busStartedPollingJob?.cancel()
+        lastRouteId = routeId
+
+        if (currentState.firtTransportTation == TransportType.BUS && currentState.isAlarmRegistered) {
+            busStartedPollingJob = viewModelScope.launch {
+                while (isActive) {
+                    getBusStarted(routeId)
+
+                    delay(60000)
+                }
+            }
+        }
+    }
+
+    fun stopPollingBusStarted() {
+        busStartedPollingJob?.cancel()
+        busStartedPollingJob = null
+    }
+
     // TODO : 실제 데이터로 교체
     fun getLegs() {
         val mockData = loadMockData()
@@ -166,5 +203,10 @@ class HomeViewModel @Inject constructor(
                 break }
         }
         return firstTransportation
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        stopPollingBusStarted()
     }
 }
