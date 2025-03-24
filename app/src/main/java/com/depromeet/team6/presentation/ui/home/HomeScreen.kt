@@ -100,6 +100,11 @@ fun HomeRoute(
         viewModel.getLegs()
     }
 
+    LaunchedEffect(Unit) {
+        // TODO : lastRouteId 실제 값으로 변경
+        viewModel.getBusStarted("18690518-23c7-41dc-a815-9ef2f08328dd")
+    }
+
     SideEffect {
         if (!PermissionUtil.isLocationPermissionRequested(context) &&
             !PermissionUtil.hasLocationPermissions(context)
@@ -167,6 +172,8 @@ fun HomeScreen(
 //        viewModel.finishAlarm(context)
 //    }
 
+    Log.d("차고지", homeUiState.isBusDeparted.toString())
+
     Box(
         modifier = modifier
             .padding(padding)
@@ -204,6 +211,9 @@ fun HomeScreen(
         val firstTransportation = homeUiState.firtTransportTation
         if (firstTransportation == TransportType.SUBWAY)
             isConfirmed = true
+
+        // 차고지 등록 여부를 1분마다 받아와서 true면 isConfirmed로 변경
+
 
         // 알람 등록 시 Home UI
         if (homeUiState.isAlarmRegistered) {

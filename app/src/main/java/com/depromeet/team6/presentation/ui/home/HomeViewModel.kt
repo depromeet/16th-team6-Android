@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.depromeet.team6.domain.usecase.GetAddressFromCoordinatesUseCase
+import com.depromeet.team6.domain.usecase.GetBusStartedUseCase
 import com.depromeet.team6.domain.usecase.LoadMockSearchDataUseCase
 import com.depromeet.team6.presentation.model.course.LegInfo
 import com.depromeet.team6.presentation.model.course.TransportType
@@ -20,7 +21,8 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val getAddressFromCoordinatesUseCase: GetAddressFromCoordinatesUseCase,
-    val loadMockData : LoadMockSearchDataUseCase // TODO : 실제 UseCase 로 교체
+    val loadMockData : LoadMockSearchDataUseCase, // TODO : 실제 UseCase 로 교체
+    private val getBusStartedUseCase: GetBusStartedUseCase
 ) : BaseViewModel<HomeContract.HomeUiState, HomeContract.HomeSideEffect, HomeContract.HomeEvent>() {
     private var speechBubbleJob: Job? = null
 
@@ -91,6 +93,25 @@ class HomeViewModel @Inject constructor(
     fun setBusDeparted() {
         viewModelScope.launch {
             setEvent(HomeContract.HomeEvent.UpdateBusDeparted(true))
+        }
+    }
+
+    fun getBusStarted(lastRouteId: String) {
+        viewModelScope.launch {
+            getBusStartedUseCase.invoke(lastRouteId = lastRouteId)
+                .onSuccess {
+                    setState {
+                        copy(
+                            isBusDeparted = it
+                        )
+                    }
+                }.onFailure {
+                    setState {
+                        copy(
+                            isBusDeparted = true
+                        )
+                    }
+                }
         }
     }
 
