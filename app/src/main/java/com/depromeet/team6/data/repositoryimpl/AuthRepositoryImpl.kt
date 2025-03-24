@@ -13,12 +13,16 @@ class AuthRepositoryImpl @Inject constructor(
     private val authRemoteDataSource: AuthRemoteDataSource
 ) : AuthRepository {
     override suspend fun getCheck(authorization: String, provider: Int): Result<Boolean> =
-        authRemoteDataSource.getCheck(authorization = authorization, provider = provider).mapCatching { it.toDomain() }
-    override suspend fun postSignUp(signUp: SignUp): Result<Auth> =
-        authRemoteDataSource.postSignUp(requestSignUpDto = signUp.toData()).mapCatching { it.toDomain() }
+        authRemoteDataSource.getCheck(authorization = authorization, provider = provider)
+            .mapCatching { it.toDomain() }
 
-    override suspend fun getLogin(provider: Int): Result<Auth> =
-        authRemoteDataSource.getLogin(provider = provider).mapCatching { it.toDomain() }
+    override suspend fun postSignUp(signUp: SignUp): Result<Auth> =
+        authRemoteDataSource.postSignUp(requestSignUpDto = signUp.toData())
+            .mapCatching { it.toDomain() }
+
+    override suspend fun getLogin(provider: Int, fcmToken: String): Result<Auth> =
+        authRemoteDataSource.getLogin(provider = provider, fcmToken = fcmToken)
+            .mapCatching { it.toDomain() }
 
     override suspend fun postLogout(): Response<Unit> =
         authRemoteDataSource.postLogout()

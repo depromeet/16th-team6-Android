@@ -20,6 +20,16 @@
     <string name="onboarding_edit_location_button_current_region">다른 위치로 변경</string>
     <string name="onboarding_search_text_field_placeholder">지번, 도로명, 건물명으로 검색</string>
     <string name="onboarding_next_button">다음</string>
+    <string name="onboarding_location_permission_bottom_sheet_title">정확한 막차 경로 안내를 위해\n위치 접근을 허용해주세요</string>
+    <string name="onboarding_location_permission_bottom_sheet_sub_title">정확한 위치 설정으로 현 위치 표시, 경로 안내</string>
+    <string name="onboarding_location_permission_bottom_sheet_type">위치</string>
+    <string name="onboarding_notification_permission_bottom_sheet_title">제때 막차 알림을 드리기 위해\n알림을 허용해주세요</string>
+    <string name="onboarding_notification_permission_bottom_sheet_sub_title">본인 출발 알림, 막차 출발 알림, 목적지 도착</string>
+    <string name="onboarding_notification_permission_bottom_sheet_type">알림</string>
+    <string name="onboarding_location_no_permission_toast">설정에서 앗차 위치 접근 허용을 항상으로 설정해주세요.</string>
+    <string name="onboarding_location_permission_denied_bottom_sheet_title">원활한 앗차 사용을 위해서는\n위치 정보에 대한 접근 허가가 필요해요</string>
+    <string name="onboarding_location_permission_denied_bottom_sheet_description">1. 설정에서 앗차 선택\n2. 위치를 선택\n3. 위치 접근 허용을 항상으로 설정\n4. 정확한 위치 정보를 사용</string>
+
 
     <!-- LockScreen -->
     <string name="lock_screen_description">알림 잠금화면</string>
@@ -30,6 +40,15 @@
     <string name="lock_screen_start_alarm_text">출발 알림</string>
 
     <string name="notification_content_text">"지금 바로 출발하셔야 해요!"</string>
+
+    <!-- LoginScreen -->
+    <string name="login_pager_main_text_first">오후 10시에 미리\n막차알림 등록하세요</string>
+    <string name="login_pager_main_text_second">자리에서 떠나기 전에\n여러번 막차 알림 드려요</string>
+    <string name="login_pager_main_text_third">탑승 하는 곳까지\n시간 확인하며 걸어가요</string>
+    <string name="login_pager_sub_text_first">막차를 미리 찾고 알림 설정할 수 있도록 노티드려요</string>
+    <string name="login_pager_sub_text_second">막차 까먹지 않게 푸시알림과 타이머를 제공해요</string>
+    <string name="login_pager_sub_text_third">탑승하는 곳까지 타이머 보면서 시간맞춰 걸어가요</string>
+
 
     <!-- HomeScreen -->
     <string name="home_icon_search_text">검색 아이콘</string>
