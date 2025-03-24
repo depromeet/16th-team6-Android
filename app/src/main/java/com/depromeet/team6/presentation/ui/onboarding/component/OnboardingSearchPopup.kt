@@ -39,7 +39,6 @@ import com.depromeet.team6.presentation.util.toast.atChaToastMessage
 import com.depromeet.team6.presentation.util.view.partitionByAddressCategory
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.depromeet.team6.ui.theme.defaultTeam6Typography
-import com.google.android.gms.maps.model.LatLng
 
 @Composable
 fun OnboardingSearchPopup(

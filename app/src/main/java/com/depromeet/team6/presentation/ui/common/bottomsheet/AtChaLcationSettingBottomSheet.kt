@@ -43,7 +43,7 @@ fun AtChaLocationSettingBottomSheet(
     ) {
         Spacer(modifier = Modifier.height(32.dp))
 
-        if (locationName.isNotEmpty()){
+        if (locationName.isNotEmpty()) {
             Text(
                 text = locationName,
                 modifier = Modifier.fillMaxWidth(),
@@ -58,8 +58,7 @@ fun AtChaLocationSettingBottomSheet(
                 style = defaultTeam6Typography.bodyRegular14,
                 color = defaultTeam6Colors.greySecondaryLabel
             )
-        }
-        else{
+        } else {
             Text(
                 text = locationAddress,
                 modifier = Modifier.fillMaxWidth(),

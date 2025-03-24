@@ -164,7 +164,7 @@ fun OnboardingMapView(
             }
 
             AtChaLocationSettingBottomSheet(
-                locationName =  uiState.myAddress.name,
+                locationName = uiState.myAddress.name,
                 locationAddress = uiState.myAddress.address,
                 completeButtonText = "우리집 등록",
                 buttonClicked = { buttonClicked(uiState.myAddress) }
