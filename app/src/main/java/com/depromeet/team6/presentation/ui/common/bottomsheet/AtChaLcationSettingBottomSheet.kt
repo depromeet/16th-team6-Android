@@ -42,20 +42,29 @@ fun AtChaLocationSettingBottomSheet(
         verticalArrangement = Arrangement.Bottom
     ) {
         Spacer(modifier = Modifier.height(32.dp))
-        Text(
-            text = locationName,
-            modifier = Modifier.fillMaxWidth(),
-            style = defaultTeam6Typography.heading5SemiBold17,
-            color = defaultTeam6Colors.white
-        )
-        if (locationAddress.isNotEmpty()) {
-            Spacer(modifier = Modifier.height(4.dp))
 
+        if (locationName.isNotEmpty()){
+            Text(
+                text = locationName,
+                modifier = Modifier.fillMaxWidth(),
+                style = defaultTeam6Typography.heading5SemiBold17,
+                color = defaultTeam6Colors.white
+            )
+
+            Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = locationAddress,
                 modifier = Modifier.fillMaxWidth(),
                 style = defaultTeam6Typography.bodyRegular14,
                 color = defaultTeam6Colors.greySecondaryLabel
+            )
+        }
+        else{
+            Text(
+                text = locationAddress,
+                modifier = Modifier.fillMaxWidth(),
+                style = defaultTeam6Typography.heading5SemiBold17,
+                color = defaultTeam6Colors.white
             )
         }
 

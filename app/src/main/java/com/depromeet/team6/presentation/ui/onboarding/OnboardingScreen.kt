@@ -76,7 +76,7 @@ fun OnboardingRoute(
                     )
                 )
             } else {
-                Timber.d("✅ 모든 권한 허용됨")
+                Timber.d("모든 권한 허용됨")
             }
         }
     )
@@ -108,7 +108,6 @@ fun OnboardingRoute(
                     }"
                 )
                 if (!PermissionUtil.isLocationPermissionRequested(context)) {
-                    Timber.d("타냐")
                     viewModel.setEvent(
                         OnboardingContract.OnboardingEvent.ChangePermissionBottomSheetVisible(
                             permissionBottomSheetVisible = true
@@ -132,6 +131,8 @@ fun OnboardingRoute(
     when {
         uiState.searchPopupVisible -> {
             OnboardingSearchPopup(
+                context = context,
+                uiState = uiState,
                 searchLocations = uiState.searchLocations,
                 padding = padding,
                 searchText = uiState.searchText,
@@ -153,8 +154,6 @@ fun OnboardingRoute(
                 },
                 onTextClearButtonClicked = {
                     viewModel.setEvent(OnboardingContract.OnboardingEvent.ClearText)
-                },
-                onGpsButtonClicked = {
                 }
             )
         }
@@ -283,7 +282,7 @@ fun OnboardingScreen(
                 Spacer(modifier = Modifier.height(72.dp))
                 OnboardingTitle(onboardingType = uiState.onboardingType)
                 Spacer(modifier = Modifier.height(48.dp))
-                if (uiState.myAddress.name.isEmpty()) {
+                if (uiState.myAddress.address.isEmpty()) {
                     OnboardingSearchContainer(
                         onSearchBoxClicked = onSearchBoxClicked,
                         onLocationButtonClick = onLocationButtonClicked

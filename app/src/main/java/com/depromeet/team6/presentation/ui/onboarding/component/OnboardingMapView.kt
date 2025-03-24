@@ -24,20 +24,17 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.depromeet.team6.BuildConfig
 import com.depromeet.team6.R
 import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.presentation.ui.common.bottomsheet.AtChaLocationSettingBottomSheet
+import com.depromeet.team6.presentation.ui.onboarding.OnboardingContract
 import com.depromeet.team6.presentation.ui.onboarding.OnboardingViewModel
-import com.depromeet.team6.presentation.util.DefaultLntLng.DEFAULT_LNG
-import com.depromeet.team6.presentation.util.DefaultLntLng.DEFAULT_LNT
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.google.android.gms.maps.model.LatLng
 import com.skt.tmap.TMapPoint
@@ -49,14 +46,13 @@ import timber.log.Timber
 
 @Composable
 fun OnboardingMapView(
-    currentLocation: LatLng,
+    currentLocation: Address,
     modifier: Modifier = Modifier,
+    uiState: OnboardingContract.OnboardingUiState = OnboardingContract.OnboardingUiState(),
     viewModel: OnboardingViewModel = hiltViewModel(),
     buttonClicked: (Address) -> Unit = {},
     backButtonClicked: () -> Unit = {}
 ) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-
     val keyboardController = LocalSoftwareKeyboardController.current
 
     val context = LocalContext.current
@@ -84,13 +80,13 @@ fun OnboardingMapView(
     // 현재 위치 변경될 때만 현위치 마커 갱신
     LaunchedEffect(currentLocation, isMapReady) {
         if (isMapReady) {
-            val tMapPoint = TMapPoint(currentLocation.latitude, currentLocation.longitude)
+            val tMapPoint = TMapPoint(currentLocation.lat, currentLocation.lon)
 
             withContext(Dispatchers.Main) {
                 // 중심 좌표를 살짝 아래로 (lat - offset)
                 tMapView.setCenterPoint(
-                    currentLocation.latitude - offsetLat,
-                    currentLocation.longitude
+                    currentLocation.lat - offsetLat,
+                    currentLocation.lon
                 )
                 tMapView.zoomLevel = 18
 
@@ -158,7 +154,7 @@ fun OnboardingMapView(
                         .padding(end = 16.dp, bottom = 16.dp)
                         .clickable(enabled = isMapReady) {
                             val tMapPoint =
-                                TMapPoint(currentLocation.latitude, currentLocation.longitude)
+                                TMapPoint(currentLocation.lat, currentLocation.lon)
                             tMapView.setCenterPoint(tMapPoint.latitude - offsetLat, tMapPoint.longitude)
 
                             viewModel.getCenterLocation(LatLng(tMapPoint.latitude, tMapPoint.longitude))
@@ -168,7 +164,7 @@ fun OnboardingMapView(
             }
 
             AtChaLocationSettingBottomSheet(
-                locationName = uiState.myAddress.name,
+                locationName =  uiState.myAddress.name,
                 locationAddress = uiState.myAddress.address,
                 completeButtonText = "우리집 등록",
                 buttonClicked = { buttonClicked(uiState.myAddress) }
@@ -181,13 +177,5 @@ fun OnboardingMapView(
             Timber.d("TMapViewCompose destroy!")
             tMapView.onDestroy()
         }
-    }
-}
-
-@Preview
-@Composable
-private fun OnboardingMapViewPreview() {
-    Column(modifier = Modifier.fillMaxSize()) {
-        OnboardingMapView(currentLocation = LatLng(DEFAULT_LNT, DEFAULT_LNG))
     }
 }

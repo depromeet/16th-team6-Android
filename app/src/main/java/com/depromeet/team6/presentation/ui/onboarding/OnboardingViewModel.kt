@@ -2,6 +2,7 @@ package com.depromeet.team6.presentation.ui.onboarding
 
 import android.content.Context
 import androidx.lifecycle.viewModelScope
+import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.SignUp
 import com.depromeet.team6.domain.repository.UserInfoRepository
 import com.depromeet.team6.domain.usecase.GetAddressFromCoordinatesUseCase
@@ -20,6 +21,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -155,6 +157,24 @@ class OnboardingViewModel @Inject constructor(
                         )
                     }
                 }.onFailure {
+                }
+        }
+    }
+
+    fun setCurrentLocationToHomeAddress(
+        context: Context,
+        onSuccess: (Address) -> Unit = {}
+    ) {
+        viewModelScope.launch {
+            val location = context.getUserLocation()
+            setState { copy(userCurrentLocation = location) }
+
+            getAddressFromCoordinatesUseCase.invoke(location.latitude, location.longitude)
+                .onSuccess { address ->
+                    setState { copy(myAddress = address) }
+                    onSuccess.invoke(address)
+                }.onFailure {
+                    Timber.e("주소 변환 실패: ${it.message}")
                 }
         }
     }
