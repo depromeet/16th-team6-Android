@@ -1,5 +1,6 @@
 package com.depromeet.team6.presentation.ui.onboarding.component
 
+import android.content.Context
 import android.widget.FrameLayout
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -14,13 +15,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -28,37 +29,41 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.depromeet.team6.BuildConfig
 import com.depromeet.team6.R
 import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.presentation.ui.common.bottomsheet.AtChaLocationSettingBottomSheet
-import com.depromeet.team6.presentation.ui.onboarding.OnboardingContract
-import com.depromeet.team6.presentation.ui.onboarding.OnboardingViewModel
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.google.android.gms.maps.model.LatLng
 import com.skt.tmap.TMapPoint
 import com.skt.tmap.TMapView
 import com.skt.tmap.overlay.TMapMarkerItem
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 @Composable
 fun OnboardingMapView(
     currentLocation: Address,
+    myAddress: Address,
+    context: Context,
     modifier: Modifier = Modifier,
-    uiState: OnboardingContract.OnboardingUiState = OnboardingContract.OnboardingUiState(),
-    viewModel: OnboardingViewModel = hiltViewModel(),
-    buttonClicked: (Address) -> Unit = {},
+    getCenterLocation: (LatLng) -> Unit = {},
+    buttonClicked: () -> Unit = {},
     backButtonClicked: () -> Unit = {}
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
 
-    val context = LocalContext.current
+    var isFirstZoom by remember { mutableStateOf(true) }
     val tMapView = remember { TMapView(context) }
     var isMapReady by remember { mutableStateOf(false) }
     val offsetLat = 0.00005
+    val coroutineScope = rememberCoroutineScope()
+    var initialRenderDone by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         keyboardController?.hide()
@@ -69,10 +74,11 @@ fun OnboardingMapView(
 
             // 드래그 종료 시 지도 중심 좌표 업데이트
             tMapView.setOnDisableScrollWithZoomLevelListener { _, _ ->
-                val centerLat = tMapView.centerPoint.latitude
-                val centerLon = tMapView.centerPoint.longitude
-
-                viewModel.getCenterLocation(LatLng(centerLat, centerLon))
+                startScrollIdleCheck(
+                    scope = coroutineScope,
+                    tMapView = tMapView,
+                    getCenterLocation = getCenterLocation
+                )
             }
         }
     }
@@ -83,12 +89,19 @@ fun OnboardingMapView(
             val tMapPoint = TMapPoint(currentLocation.lat, currentLocation.lon)
 
             withContext(Dispatchers.Main) {
-                // 중심 좌표를 살짝 아래로 (lat - offset)
-                tMapView.setCenterPoint(
-                    currentLocation.lat - offsetLat,
-                    currentLocation.lon
-                )
-                tMapView.zoomLevel = 18
+                if (isFirstZoom) {
+                    tMapView.zoomLevel = 18
+                    isFirstZoom = false
+                    tMapView.setCenterPoint(
+                        currentLocation.lat - offsetLat,
+                        currentLocation.lon
+                    )
+                } else {
+                    tMapView.setCenterPoint(
+                        currentLocation.lat,
+                        currentLocation.lon
+                    )
+                }
 
                 val markerDrawable =
                     ContextCompat.getDrawable(context, R.drawable.ic_home_current_location)
@@ -111,17 +124,36 @@ fun OnboardingMapView(
     ) {
         AndroidView(
             modifier = modifier.fillMaxSize(),
-            factory = { context ->
-                // FrameLayout을 직접 생성
-                FrameLayout(context).apply {
-                    // TMapView를 FrameLayout에 추가
+            factory = { ctx ->
+                FrameLayout(ctx).apply {
                     addView(tMapView)
+
+                    viewTreeObserver.addOnGlobalLayoutListener {
+                        if (isMapReady && !initialRenderDone) {
+                            initialRenderDone = true
+
+                            val initialLat = currentLocation.lat - offsetLat
+                            val initialLon = currentLocation.lon
+
+                            tMapView.setCenterPoint(initialLat, initialLon, true)
+                            tMapView.zoomLevel = 18
+
+                            val markerDrawable = ContextCompat.getDrawable(ctx, R.drawable.ic_home_current_location)
+                            val markerBitmap = markerDrawable?.toBitmap()
+
+                            val markerItem = TMapMarkerItem().apply {
+                                id = "CurrentMarker"
+                                icon = markerBitmap
+                                setTMapPoint(TMapPoint(currentLocation.lat, currentLocation.lon))
+                            }
+
+                            tMapView.addTMapMarkerItem(markerItem)
+                        }
+                    }
                 }
-            },
-            update = { _ ->
-                // Update logic if needed (e.g., map settings)
             }
         )
+
         Icon(
             modifier = Modifier
                 .align(Alignment.TopStart)
@@ -156,18 +188,18 @@ fun OnboardingMapView(
                             val tMapPoint =
                                 TMapPoint(currentLocation.lat, currentLocation.lon)
                             tMapView.setCenterPoint(tMapPoint.latitude - offsetLat, tMapPoint.longitude)
-
-                            viewModel.getCenterLocation(LatLng(tMapPoint.latitude, tMapPoint.longitude))
+                            tMapView.zoomLevel = 18
+                            getCenterLocation(LatLng(tMapPoint.latitude, tMapPoint.longitude))
                         }
                         .graphicsLayer { alpha = if (isMapReady) 1f else 0.5f } // 비활성화 시 투명도 조정
                 )
             }
 
             AtChaLocationSettingBottomSheet(
-                locationName = uiState.myAddress.name,
-                locationAddress = uiState.myAddress.address,
+                locationName = myAddress.name,
+                locationAddress = myAddress.address,
                 completeButtonText = "우리집 등록",
-                buttonClicked = { buttonClicked(uiState.myAddress) }
+                buttonClicked = buttonClicked
             )
         }
     }
@@ -177,5 +209,37 @@ fun OnboardingMapView(
             Timber.d("TMapViewCompose destroy!")
             tMapView.onDestroy()
         }
+    }
+}
+
+private var checkScrollJob: Job? = null
+
+fun startScrollIdleCheck(
+    scope: CoroutineScope,
+    tMapView: TMapView,
+    getCenterLocation: (LatLng) -> Unit
+) {
+    checkScrollJob?.cancel()
+    checkScrollJob = scope.launch {
+        var previousLatLng: LatLng? = null
+        var sameCount = 0
+
+        while (sameCount < 1) {
+            val currentLatLng = LatLng(
+                tMapView.centerPoint.latitude,
+                tMapView.centerPoint.longitude
+            )
+
+            if (previousLatLng == currentLatLng) {
+                sameCount++
+            } else {
+                sameCount = 0
+            }
+
+            previousLatLng = currentLatLng
+            delay(70L)
+        }
+
+        getCenterLocation(previousLatLng!!)
     }
 }
