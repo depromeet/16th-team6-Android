@@ -3,6 +3,7 @@ package com.depromeet.team6.presentation.ui.coursesearch.component
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
@@ -11,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.unit.dp
 import com.depromeet.team6.R
 import com.depromeet.team6.domain.model.course.CourseInfo
 import com.depromeet.team6.domain.model.course.LegInfo
@@ -30,7 +32,7 @@ fun TransportTabMenu(
 
     Column(
         modifier = modifier
-            .background(defaultTeam6Colors.greyElevatedBackground),
+            .background(defaultTeam6Colors.black),
         verticalArrangement = Arrangement.Center
     ) {
         val pagerState = rememberPagerState {
@@ -51,16 +53,24 @@ fun TransportTabMenu(
 
         // Tab Content
         HorizontalPager(state = pagerState) { page ->
-            // TODO : 버스/지하철 정렬 기능 추가해야함
-            LastTransportInfoList(
-                listData = availableCourses,
-                onItemClick = {
-                    onItemClick()
-                },
-                onRegisterAlarmBtnClick = {
-                    onRegisterAlarmBtnClick()
-                }
-            )
+            val resultItems = availableCourses.filter {
+                it.filterCategory == page
+            }
+            if (resultItems.isEmpty()) {
+                SearchResultEmpty(
+                    modifier = Modifier.padding(top = 10.dp)
+                )
+            } else {
+                LastTransportInfoList(
+                    listData = resultItems,
+                    onItemClick = {
+                        onItemClick()
+                    },
+                    onRegisterAlarmBtnClick = {
+                        onRegisterAlarmBtnClick()
+                    }
+                )
+            }
         }
     }
 }
@@ -86,5 +96,13 @@ fun PreviewTabMenu(
     )
     TransportTabMenu(
         availableCourses = mockDataList
+    )
+}
+
+@Preview(name = "empty")
+@Composable
+fun PreviewTabMenuEmpty() {
+    TransportTabMenu(
+        availableCourses = emptyList()
     )
 }

@@ -94,6 +94,7 @@
     <string name="notification_channel_description_text">앱 내부 알림 채널</string>
     <string name="course_search_failed_snackbar">경로를 조회하는데 실패했어요</string>
     <string name="course_detail_description">상세보기</string>
+    <string name="course_search_result_empty">검색 가능한 막차 정보가 없습니다.</string>
 
     <!--    itinerary   -->
     <string name="itinerary_summary_remaining_hour">%1d시간</string>
