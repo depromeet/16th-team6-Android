@@ -38,7 +38,8 @@ class OnboardingContract {
             lat = 0.0,
             lon = 0.0,
             address = ""
-        )
+        ),
+        val mapViewVisible: Boolean = false
     ) : UiState
 
     sealed interface OnboardingSideEffect : UiSideEffect {
@@ -62,5 +63,7 @@ class OnboardingContract {
         data class UpdateUserLocation(val context: Context) : OnboardingEvent()
         data object SearchPopUpBackPressed : OnboardingEvent()
         data class ChangePermissionDeniedBottomSheetVisible(val permissionDeniedBottomSheetVisible: Boolean) : OnboardingEvent()
+        data object ClearAddress : OnboardingEvent()
+        data class ChangeMapViewVisible(val mapViewVisible: Boolean) : OnboardingEvent()
     }
 }
