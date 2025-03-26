@@ -6,7 +6,7 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface CourseService {
-    @GET("api/notifications/route")
+    @GET("/api/tansits/last-routes")
     suspend fun getAvailableCourses(
         @Query("startLat") startLat : String,
         @Query("startLon") startLon : String,
