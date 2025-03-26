@@ -19,8 +19,7 @@ class MainViewModel @Inject constructor(
     private val lockServiceManager: LockServiceManager
 ) : ViewModel() {
 
-    private val _fcmToken = MutableLiveData<String?>()
-    val fcmToken: LiveData<String?> = _fcmToken
+    private var fcmToken: String? = null
 
     private val _showSplash = MutableLiveData(true)
     val showSplash: LiveData<Boolean> = _showSplash
@@ -32,7 +31,7 @@ class MainViewModel @Inject constructor(
         FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 val token = task.result
-                _fcmToken.value = token
+                fcmToken = token
                 Timber.d("FCM Token: $token")
                 userInfoRepository.setFcmToken(token)
             } else {
