@@ -20,14 +20,7 @@ class OnboardingContract {
         val searchPopupVisible: Boolean = false,
         val searchText: String = "",
         val dummyData: List<DummyData> = emptyList(),
-//        val myHome: Location = Location(
-//            name = "",
-//            lat = 0.0,
-//            lon = 0.0,
-//            businessCategory = "",
-//            address = "",
-//            radius = ""
-//        ),
+
         val searchLocations: List<Location> = emptyList(),
         var userCurrentLocation: LatLng = LatLng(DEFAULT_LNT, DEFAULT_LNG),
         val alertFrequencies: Set<Int> = setOf(1),
