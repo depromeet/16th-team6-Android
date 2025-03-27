@@ -36,6 +36,8 @@ class AuthInterceptor @Inject constructor(
             if (localStorage.accessToken.isNotBlank()) originalRequest.newAuthBuilder() else originalRequest
         var response = chain.proceed(authRequest)
 
+        Timber.d("API_REQUEST : $originalRequest")
+        Timber.d("API_RESPONSE : ${response}")
         when (response.code) {
             CODE_TOKEN_EXPIRE -> {
                 response.close()

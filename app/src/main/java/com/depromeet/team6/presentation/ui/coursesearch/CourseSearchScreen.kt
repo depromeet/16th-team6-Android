@@ -93,8 +93,8 @@ fun CourseSearchScreen(
         DestinationSearchBar(
             startingPoint = uiState.startingPoint?.name ?: "",
             destination = uiState.destinationPoint?.name ?: "",
-            modifier = modifier
-                .padding(horizontal = 16.dp, vertical = 10.dp)
+            modifier = Modifier
+                .padding(top = 6.dp, start = 16.dp, end = 16.dp, bottom = 10.dp)
         )
 
         TransportTabMenu(

@@ -1,10 +1,10 @@
 package com.depromeet.team6.data.mapper.todomain
 
 import com.depromeet.team6.data.dataremote.model.response.course.ResponseCourseSearchDto
+import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.course.CourseInfo
 import com.depromeet.team6.domain.model.course.LegInfo
 import com.depromeet.team6.domain.model.course.TransportType
-import com.depromeet.team6.domain.model.course.WayPoint
 
 fun List<ResponseCourseSearchDto>.toDomain() : List<CourseInfo> = filter { response ->
     true
@@ -23,15 +23,17 @@ fun List<ResponseCourseSearchDto>.toDomain() : List<CourseInfo> = filter { respo
                 subTypeIdx = leg.type ?: 0,
                 sectionTime = leg.sectionTime,
                 distance = leg.distance.toInt(),
-                startPoint = WayPoint(
+                startPoint = Address(
                     name = leg.start.name,
-                    latitude = leg.start.lat.toDouble(),
-                    longitude = leg.start.lon.toDouble()
+                    lat = leg.start.lat.toDouble(),
+                    lon = leg.start.lon.toDouble(),
+                    address = ""
                 ),
-                endPoint = WayPoint(
+                endPoint = Address(
                     name = leg.end.name,
-                    latitude = leg.end.lat.toDouble(),
-                    longitude = leg.end.lon.toDouble()
+                    lat = leg.end.lat.toDouble(),
+                    lon = leg.end.lon.toDouble(),
+                    address = ""
                 ),
                 passShape = leg.passShape ?: ""
             )

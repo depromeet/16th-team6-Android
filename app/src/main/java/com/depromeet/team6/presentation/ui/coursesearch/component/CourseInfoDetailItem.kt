@@ -49,7 +49,7 @@ fun CourseInfoDetailItem(
         ) {
             Image(
                 modifier = Modifier
-                    .size(20.dp),
+                    .size(26.dp),
                 imageVector = ImageVector.vectorResource(TransportTypeUiMapper.getCourseInfoIconId(transportType, subtypeIndex)),
                 contentDescription = "transport course icon"
             )
@@ -66,15 +66,16 @@ fun CourseInfoDetailItem(
         }
     } else {
         Row(
+            modifier = Modifier.padding(bottom = 2.dp),
             horizontalArrangement = Arrangement.spacedBy(5.dp)
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(7.dp)
+                verticalArrangement = Arrangement.spacedBy(5.dp)
             ) {
                 Image(
                     modifier = Modifier
-                        .size(20.dp),
+                        .size(26.dp),
                     imageVector = ImageVector.vectorResource(TransportTypeUiMapper.getCourseInfoIconId(transportType, subtypeIndex)),
                     contentDescription = "transport course icon"
                 )
@@ -137,6 +138,7 @@ fun GetOffMark(
     modifier: Modifier = Modifier
 ) {
     Canvas(modifier = modifier) {
+
         // 내부 흰색 채우기
         drawCircle(
             color = Color.White,

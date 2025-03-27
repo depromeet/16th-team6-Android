@@ -228,8 +228,8 @@ fun LastTransportInfoItemPreview(
         routeId = "123",
         filterCategory = 0,
         remainingTime = 83 * 60,
-        departureTime = "2025-03-11 23:12:00",
-        boardingTime = "2025-03-11 23:21:00",
+        departureTime = "2025-03-11T23:12:00",
+        boardingTime = "2025-03-11T23:21:00",
         legs = courseInfo
     )
     LastTransportInfoItem(
@@ -246,8 +246,8 @@ fun LastTransportInfoItemPreview2(
         routeId = "123",
         filterCategory = 0,
         remainingTime = 23 * 60,
-        departureTime = "2025-03-11 23:12:00",
-        boardingTime = "2025-03-11 23:21:00",
+        departureTime = "2025-03-11T23:12:00",
+        boardingTime = "2025-03-11T23:21:00",
         legs = courseInfo
     )
     LastTransportInfoItem(

@@ -1,5 +1,7 @@
 package com.depromeet.team6.presentation.ui.coursesearch.component
 
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -46,7 +48,14 @@ fun TransportTabMenu(
             selectedTabIndex = pagerState.currentPage,
             onTabClick = { tabIndex ->
                 coroutineScope.launch {
-                    pagerState.animateScrollToPage(tabIndex)
+                    pagerState.animateScrollToPage(
+                        page = tabIndex,
+                        animationSpec = tween(
+                            durationMillis = 500,
+                            delayMillis = 0,
+                            easing = FastOutSlowInEasing
+                        )
+                    )
                 }
             }
         )
