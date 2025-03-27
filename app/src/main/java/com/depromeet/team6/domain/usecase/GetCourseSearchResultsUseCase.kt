@@ -3,6 +3,7 @@ package com.depromeet.team6.domain.usecase
 import com.depromeet.team6.data.repositoryimpl.CourseSearchRepositoryImpl
 import com.depromeet.team6.domain.model.course.CourseInfo
 import com.depromeet.team6.domain.model.course.WayPoint
+import timber.log.Timber
 import javax.inject.Inject
 
 class GetCourseSearchResultsUseCase @Inject constructor(
@@ -13,6 +14,7 @@ class GetCourseSearchResultsUseCase @Inject constructor(
             startPosition = startPoint,
             endPosition = endPoint
         )
+        Timber.d("respsonersedfews : ${apiResult}")
         return apiResult
     }
 }

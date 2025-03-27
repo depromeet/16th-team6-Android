@@ -19,6 +19,7 @@ import kotlinx.serialization.json.Json
 import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
+import timber.log.Timber
 import javax.inject.Inject
 
 class AuthInterceptor @Inject constructor(
@@ -53,6 +54,7 @@ class AuthInterceptor @Inject constructor(
         val token = localStorage.accessToken
 
         val formattedToken = if (token.contains(BEARER)) token else "$BEARER$token"
+        Timber.d("formattedToken : $formattedToken")
 
         return this.newBuilder()
             .addHeader(AUTHORIZATION, formattedToken)

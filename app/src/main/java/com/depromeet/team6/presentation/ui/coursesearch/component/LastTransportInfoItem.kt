@@ -32,7 +32,6 @@ import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.depromeet.team6.ui.theme.defaultTeam6Typography
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 @Composable
 fun LastTransportInfoItem(
@@ -109,10 +108,10 @@ fun LastTransportInfoItem(
             verticalAlignment = Alignment.CenterVertically
         ) {
             val departureDateTime = LocalDateTime
-                .parse(courseSearchResult.departureTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+                .parse(courseSearchResult.departureTime)
             val (departHour, departMinute) = departureDateTime.let { it.hour to it.minute }
             val boardingDateTime = LocalDateTime
-                .parse(courseSearchResult.boardingTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+                .parse(courseSearchResult.boardingTime)
             val (boardingHour, boardingMinute) = boardingDateTime.let { it.hour to it.minute }
 
             RemainingTimeHHmm(

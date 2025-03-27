@@ -18,7 +18,7 @@ class CourseSearchRepositoryImpl @Inject constructor(
             startLon = startPosition.longitude.toString(),
             endLat = endPosition.latitude.toString(),
             endLon = endPosition.longitude.toString()
-        ).mapCatching {
+        ).map {
             it.toDomain()
         }
 }

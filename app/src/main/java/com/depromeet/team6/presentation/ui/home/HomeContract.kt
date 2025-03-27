@@ -13,9 +13,9 @@ class HomeContract {
         val isBusDeparted: Boolean = false,
         val showSpeechBubble: Boolean = true,
         val departurePoint: WayPoint = WayPoint(
-            name = "건국대학교",
-            latitude = 37.540957955055,
-            longitude = 127.08278172427
+            name = "성균관대학교 자연과학캠퍼스",
+            latitude = 37.296391553347,
+            longitude = 126.97755824522
         ),
         val destinationPoint : WayPoint = WayPoint(
             name = "우리집",

@@ -7,8 +7,9 @@ import com.depromeet.team6.domain.model.course.TransportType
 import com.depromeet.team6.domain.model.course.WayPoint
 
 fun List<ResponseCourseSearchDto>.toDomain() : List<CourseInfo> = filter { response ->
-        response.legs.first().departureDateTime != null &&
-        response.legs.all { it.passShape != null }      // passShape 이 하나라도 없으면 제거
+    true
+//        response.legs.first().departureDateTime != null &&
+//        response.legs.all { it.passShape != null }      // passShape 이 하나라도 없으면 제거
 }.map { response ->
         val legInfo = response.legs.map { leg ->
             LegInfo(
@@ -21,7 +22,7 @@ fun List<ResponseCourseSearchDto>.toDomain() : List<CourseInfo> = filter { respo
                 },
                 subTypeIdx = leg.type ?: 0,
                 sectionTime = leg.sectionTime,
-                distance = leg.distance,
+                distance = leg.distance.toInt(),
                 startPoint = WayPoint(
                     name = leg.start.name,
                     latitude = leg.start.lat.toDouble(),
@@ -32,7 +33,7 @@ fun List<ResponseCourseSearchDto>.toDomain() : List<CourseInfo> = filter { respo
                     latitude = leg.end.lat.toDouble(),
                     longitude = leg.end.lon.toDouble()
                 ),
-                passShape = leg.passShape!!
+                passShape = leg.passShape ?: ""
             )
         }
 
@@ -41,7 +42,7 @@ fun List<ResponseCourseSearchDto>.toDomain() : List<CourseInfo> = filter { respo
             filterCategory = (response.pathType + 1) % 3,   // 1 버스, 2 지하철, 3 전체 ->  0 : 전체,  1: 버스,  2: 지하철
             remainingTime = response.totalTime,
             departureTime = response.departureDateTime,
-            boardingTime = response.legs.first().departureDateTime!!,
+            boardingTime = response.legs.first().departureDateTime ?: "1999-06-06T00:00:00",
             legs = legInfo
         )
     }

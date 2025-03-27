@@ -81,7 +81,7 @@
     <!-- Course -->
     <string name="last_transport_info_remaining_hour">%1d시간</string>
     <string name="last_transport_info_remaining_minute">%1d분</string>
-    <string name="last_transport_info_remaining_time">%01d:%02d</string>
+    <string name="last_transport_info_remaining_time">%02d:%02d</string>
     <string name="last_transport_info_departure_time">출발</string>
     <string name="last_transport_info_boarding_time">탑승</string>
     <string name="last_transport_info_set_notification">막차 알림 받기</string>
