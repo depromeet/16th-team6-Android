@@ -35,12 +35,6 @@ fun atChaToastMessage(
     val yOffsetPx = (yOffsetDp * context.resources.displayMetrics.density).toInt()
     toast.setGravity(Gravity.TOP or Gravity.FILL_HORIZONTAL, 0, yOffsetPx)
 
-//    val slideDown = TranslateAnimation(0f, 0f, -100f, 0f).apply {
-//        duration = 300L
-//        fillAfter = true
-//    }
-//    layout.startAnimation(slideDown)
-
     toast.show()
 
     val toastDurationMs = when (length) {
