@@ -62,13 +62,14 @@ fun HomeRoute(
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
 
+    var permissionGranted by remember { mutableStateOf(PermissionUtil.hasLocationPermissions(context)) }
     var userLocation by remember { mutableStateOf(LatLng(DEFAULT_LNT, DEFAULT_LNG)) } // 서울시 기본 위치
 
     val locationPermissionsLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestMultiplePermissions(),
         onResult = { permissions ->
-            val allGranted = permissions.values.all { it }
-            if (allGranted) {
+            permissionGranted = permissions.values.all { it }
+            if (permissionGranted) {
                 Timber.d("Location_Permission Has Granted")
             }
         }
@@ -84,7 +85,7 @@ fun HomeRoute(
             }
     }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(permissionGranted) {
         if (PermissionUtil.hasLocationPermissions(context)) { // 위치 권한이 있으면
             val location = context.getUserLocation()
             userLocation = location

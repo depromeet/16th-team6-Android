@@ -3,12 +3,16 @@ package com.depromeet.team6.presentation.ui.coursesearch
 import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
@@ -17,7 +21,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.depromeet.team6.R
-import com.depromeet.team6.domain.model.course.CourseInfo
 import com.depromeet.team6.domain.model.course.LegInfo
 import com.depromeet.team6.presentation.ui.coursesearch.component.CourseAppBar
 import com.depromeet.team6.presentation.ui.coursesearch.component.DestinationSearchBar
@@ -58,6 +61,9 @@ fun CourseSearchRoute(
     }
 
     when (uiState.courseDataLoadState) {
+        LoadState.Loading -> Box(modifier = Modifier.fillMaxSize()){
+            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+        }
         LoadState.Success -> CourseSearchScreen(
             uiState = uiState,
             modifier = Modifier
@@ -114,22 +120,5 @@ fun CourseSearchScreen(
 fun CourseSearchScreenPreview(
     @PreviewParameter(LegInfoDummyProvider::class) legs: List<LegInfo>
 ) {
-    // TODO: mocking 없애고 실제 데이터 들어가야함
-
-    val mockData = CourseInfo(
-        routeId = "123",
-        filterCategory = 0,
-        remainingTime = 23,
-        departureTime = "2024-12-31 23:59:59",
-        boardingTime = "2023-07-19 08:15:42",
-        legs = legs
-    )
-    val mockDataList = listOf(
-        mockData,
-        mockData,
-        mockData,
-        mockData
-    )
-
     CourseSearchScreen()
 }

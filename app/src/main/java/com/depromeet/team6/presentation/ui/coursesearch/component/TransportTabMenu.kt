@@ -62,9 +62,10 @@ fun TransportTabMenu(
 
         // Tab Content
         HorizontalPager(state = pagerState) { page ->
-            val resultItems = availableCourses.filter {
-                it.filterCategory == page
-            }
+            val resultItems =
+                if (page == 0) availableCourses
+                else availableCourses.filter { it.filterCategory == page }
+
             if (resultItems.isEmpty()) {
                 SearchResultEmpty(
                     modifier = Modifier.padding(top = 10.dp)
