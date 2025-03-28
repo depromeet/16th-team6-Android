@@ -21,6 +21,7 @@ fun List<ResponseCourseSearchDto>.toDomain(): List<CourseInfo> = filter { respon
                 else -> TransportType.WALK // fallback
             },
             subTypeIdx = leg.type ?: 0,
+            routeName = leg.route,
             sectionTime = leg.sectionTime,
             distance = leg.distance.toInt(),
             startPoint = Address(

@@ -14,7 +14,6 @@ class GetCourseSearchResultsUseCase @Inject constructor(
             startPosition = startPoint,
             endPosition = endPoint
         )
-        Timber.d("respsonersedfews : $apiResult")
         return apiResult
     }
 }
