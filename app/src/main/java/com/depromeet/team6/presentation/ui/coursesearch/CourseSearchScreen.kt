@@ -81,7 +81,6 @@ fun CourseSearchRoute(
                 val editor = sharedPreferences.edit()
                 editor.putBoolean("isUserLoggedIn", true) // "isUserLoggedIn" 키에 true 값을 저장
                 editor.apply() // 또는 editor.commit()
-
                 navigateToHome()
             },
             backButtonClicked = { navigateToHome() }

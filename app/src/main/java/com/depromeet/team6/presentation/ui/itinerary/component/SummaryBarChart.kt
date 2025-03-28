@@ -92,7 +92,7 @@ fun SummaryBarChart(
                         horizontalArrangement = Arrangement.Center
                     ) {
                         Text(
-                            text = "${leg.sectionTime}",
+                            text = "${leg.sectionTime / 60}",
                             color = defaultTeam6Colors.greySecondaryLabel,
                             style = defaultTeam6Typography.bodySemiBold10
                         )
@@ -123,7 +123,7 @@ fun SummaryBarChart(
                         horizontalArrangement = Arrangement.Center
                     ) {
                         Text(
-                            text = "${leg.sectionTime}",
+                            text = "${leg.sectionTime / 60}",
                             color = defaultTeam6Colors.white,
                             style = defaultTeam6Typography.bodySemiBold10
                         )

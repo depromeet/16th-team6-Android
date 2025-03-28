@@ -3,7 +3,9 @@ package com.depromeet.team6.presentation.ui.coursesearch.component
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
@@ -46,6 +48,12 @@ fun LastTransportInfoList(
                     onRegisterAlarmBtnClick()
                 }
             )
+
+            if (index == listData.size - 1){
+                Spacer(
+                    modifier = Modifier.height(70.dp)
+                )
+            }
         }
     }
 }

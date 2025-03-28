@@ -60,13 +60,13 @@ fun CourseInfoDetail(
                     CourseInfoDetailItem(
                         transportType = TransportType.WALK,
                         subtypeIndex = leg.subTypeIdx,
-                        duration = leg.sectionTime
+                        duration = leg.sectionTime / 60
                     )
                 } else {
                     CourseInfoDetailItem(
                         transportType = leg.transportType,
                         subtypeIndex = leg.subTypeIdx,
-                        duration = leg.sectionTime,
+                        duration = leg.sectionTime / 60,
                         boardingPoint = leg.startPoint.name,
                         destinationPoint = leg.endPoint.name
                     )
