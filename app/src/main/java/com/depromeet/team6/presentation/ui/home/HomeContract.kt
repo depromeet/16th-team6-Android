@@ -20,7 +20,10 @@ class HomeContract {
         val courseDataLoadState: LoadState = LoadState.Idle,
         val departureTime: String = "",
         // 막차 첫번째 교통 수단
-        val firtTransportTation: TransportType = TransportType.WALK
+        val firtTransportTation: TransportType = TransportType.WALK,
+        // 사용자 출발 여부
+        // TODO : 잠금화면에서 출발하기 버튼 클릭하면 해당 값 변경
+        val userDeparture: Boolean = false
     ) : UiState
 
     sealed interface HomeSideEffect : UiSideEffect {
@@ -36,6 +39,7 @@ class HomeContract {
         data class LoadLegsResult(val result: LastTransportInfo) : HomeEvent()
         data class LoadDepartureDateTime(val departureTime: String) : HomeEvent()
         data class LoadFirstTransportation(val transportation: TransportType) : HomeEvent()
+        data class LoadUserDeparture(val userDeparture: Boolean) : HomeEvent()
         data object OnCharacterClick : HomeEvent()
     }
 }

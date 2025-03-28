@@ -70,6 +70,14 @@ class HomeViewModel @Inject constructor(
                     )
                 }
             }
+
+            is HomeContract.HomeEvent.LoadUserDeparture -> {
+                setState {
+                    copy(
+                        userDeparture = event.userDeparture
+                    )
+                }
+            }
         }
     }
 
@@ -208,5 +216,12 @@ class HomeViewModel @Inject constructor(
     override fun onCleared() {
         super.onCleared()
         stopPollingBusStarted()
+    }
+
+    // TODO : 잠금화면에서 출발 클릭했을 때 호출
+    fun setUserDeparture() {
+        viewModelScope.launch {
+            setEvent(HomeContract.HomeEvent.LoadUserDeparture(true))
+        }
     }
 }

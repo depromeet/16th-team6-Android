@@ -30,6 +30,7 @@ import com.depromeet.team6.ui.theme.LocalTeam6Typography
 @Composable
 fun AfterRegisterSheet(
     isConfirmed: Boolean = false,
+    afterUserDeparted: Boolean = false,
     timeToLeave: String,
     startLocation: String,
     destination: String,
@@ -43,10 +44,8 @@ fun AfterRegisterSheet(
     val typography = LocalTeam6Typography.current
 
     var timeTextColor = colors.systemGrey1
-
-    if (isConfirmed) {
-        timeTextColor = colors.white
-    }
+    if (isConfirmed) timeTextColor = colors.white
+    if (afterUserDeparted) timeTextColor = colors.systemRed
 
     Box(
         modifier = modifier
@@ -55,7 +54,7 @@ fun AfterRegisterSheet(
         contentAlignment = Alignment.BottomCenter
     ) {
         Column(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth()
                 .background(
                     colors.greyWashBackground,
@@ -66,34 +65,45 @@ fun AfterRegisterSheet(
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center,
-                    modifier = Modifier.padding(top = 8.dp, bottom = 2.dp)
+                    modifier = modifier.padding(top = 8.dp, bottom = 2.dp)
                 ) {
-                    if (isConfirmed) {
-                        Text(
-                            text = stringResource(R.string.home_start_time_text),
-                            style = typography.bodyMedium13,
-                            color = colors.white,
-                            modifier = modifier
+                    if (afterUserDeparted) { // 사용자 출발 후
+                        TransportStatus(
+                            modifier = modifier,
+                            transportationType = "SUBWAY",
+                            transportationNumber = "2호선",
+                            transportationName = "화곡역",
+                            stopLeft = 6
                         )
 
                     } else {
-                        Text(
-                            text = stringResource(R.string.home_expect_start_time_text),
-                            style = typography.bodyMedium13,
-                            color = colors.white,
-                            modifier = modifier
+                        if (isConfirmed) {
+                            Text(
+                                text = stringResource(R.string.home_start_time_text),
+                                style = typography.bodyMedium13,
+                                color = colors.white,
+                                modifier = Modifier
+                            )
+
+                        } else {
+                            Text(
+                                text = stringResource(R.string.home_expect_start_time_text),
+                                style = typography.bodyMedium13,
+                                color = colors.white,
+                                modifier = Modifier
+                            )
+                        }
+
+                        Icon(
+                            imageVector = ImageVector.vectorResource(R.drawable.ic_all_info_grey),
+                            contentDescription = stringResource(R.string.home_icon_info),
+                            modifier = Modifier
+                                .padding(horizontal = 5.dp),
+                            tint = colors.systemGrey1
                         )
                     }
 
-                    Icon(
-                        imageVector = ImageVector.vectorResource(R.drawable.ic_all_info_grey),
-                        contentDescription = stringResource(R.string.home_icon_info),
-                        modifier = Modifier
-                            .padding(horizontal = 5.dp),
-                        tint = colors.systemGrey1
-                    )
-
-                    if (isConfirmed) {
+                    if (isConfirmed || afterUserDeparted) {
                         Spacer(modifier = Modifier.weight(1f))
 
                         Icon(
@@ -109,11 +119,21 @@ fun AfterRegisterSheet(
                     }
                 }
 
+            // 사용자가 잠금화면 출발하기 버튼 눌러서 출발했을 때
+            if (afterUserDeparted) {
+                // TODO : 타이머 구현
                 TimeText(
                     timeToLeave = timeToLeave,
                     textColor = timeTextColor,
-                    modifier = modifier.padding(top = 4.dp, bottom = 6.dp)
+                    modifier = Modifier.padding(top = 4.dp, bottom = 6.dp)
                 )
+            } else {
+                TimeText(
+                    timeToLeave = timeToLeave,
+                    textColor = timeTextColor,
+                    modifier = Modifier.padding(top = 4.dp, bottom = 6.dp)
+                )
+            }
 
 
             CourseTextButton(
@@ -140,6 +160,7 @@ fun AfterRegisterSheet(
 @Composable
 fun AfterRegisterSheetPreview() {
     AfterRegisterSheet(
+        afterUserDeparted = true,
         timeToLeave = "23:30:00",
         startLocation = "중앙빌딩",
         destination = "우리집",

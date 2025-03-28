@@ -242,6 +242,7 @@ fun HomeScreen(
 
             AfterRegisterSheet(
                 isConfirmed = isConfirmed,
+                afterUserDeparted = homeUiState.userDeparture,
                 timeToLeave = departureTime,
                 startLocation = homeUiState.locationAddress,
                 destination = "우리집",
