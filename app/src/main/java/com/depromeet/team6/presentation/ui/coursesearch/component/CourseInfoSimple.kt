@@ -34,7 +34,7 @@ import com.depromeet.team6.ui.theme.defaultTeam6Colors
 fun CourseInfoSimple(
     legs: List<LegInfo>,
     modifier: Modifier = Modifier,
-    onClick : () -> Unit = {}
+    onClick: () -> Unit = {}
 ) {
     val context = LocalContext.current
     Row(
@@ -92,7 +92,7 @@ fun CourseInfoSimple(
 @Composable
 fun CourseInfoSimplePreview(
     @PreviewParameter(LegInfoDummyProvider::class) courseInfo: List<LegInfo>
-){
+) {
     CourseInfoSimple(
         legs = courseInfo
     )

@@ -59,7 +59,6 @@ fun SummaryBarChart(
         finalWidths = calculateFinalWidths(rowWidthDp, legs, minBarWidth)
     }
 
-
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -114,7 +113,8 @@ fun SummaryBarChart(
                                 type = leg.transportType,
                                 subtypeIndex = leg.subTypeIdx
                             ),
-                            shape = RoundedCornerShape(20.dp))
+                            shape = RoundedCornerShape(20.dp)
+                        )
                         .align(Alignment.CenterVertically)
                 ) {
                     Row(
@@ -160,7 +160,7 @@ private fun calculateFinalWidths(
         index to leg.sectionTime
     }.toMutableList()
     val finalWidths = MutableList(legs.size) { 0.dp }
-    var remainingWidth = totalWidth.value  // dp 단위의 Float 값으로 사용
+    var remainingWidth = totalWidth.value // dp 단위의 Float 값으로 사용
 
     // 남은 leg들에 대해 이론상 너비를 계산하고, 최소 너비보다 작은 경우 고정 처리 후 다시 분배
     var shouldRecalculate = true
@@ -195,8 +195,6 @@ private fun calculateFinalWidths(
 
     return finalWidths
 }
-
-
 
 @Preview(name = "normal", showBackground = true, backgroundColor = Color.BLACK.toLong())
 @Composable
@@ -280,8 +278,8 @@ fun BarChartPreview(
         )
     )
 
-    Team6Theme(){
-        Column (){
+    Team6Theme() {
+        Column() {
             SummaryBarChart(
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -295,6 +293,5 @@ fun BarChartPreview(
                 legs = legs_
             )
         }
-
     }
 }

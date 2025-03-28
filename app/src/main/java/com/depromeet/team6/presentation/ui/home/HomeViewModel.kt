@@ -85,7 +85,7 @@ class HomeViewModel @Inject constructor(
                 .onSuccess {
                     setState {
                         copy(
-                            departurePoint = it,
+                            departurePoint = it
                         )
                     }
                 }.onFailure {

@@ -35,7 +35,7 @@ import com.depromeet.team6.ui.theme.defaultTeam6Colors
 fun CourseInfoDetail(
     legsInfo: List<LegInfo>,
     modifier: Modifier = Modifier,
-    onClick : () -> Unit = {}
+    onClick: () -> Unit = {}
 ) {
     Row(
         modifier = Modifier

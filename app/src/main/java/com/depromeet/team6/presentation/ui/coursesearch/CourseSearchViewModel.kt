@@ -38,7 +38,7 @@ class CourseSearchViewModel @Inject constructor(
         }
     }
 
-    private fun getSearchResults(){
+    private fun getSearchResults() {
         setState {
             copy(
                 courseDataLoadState = LoadState.Loading

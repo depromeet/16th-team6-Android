@@ -9,10 +9,10 @@ import androidx.navigation.navArgument
 import com.depromeet.team6.presentation.ui.itinerary.ItineraryRoute
 
 fun NavController.navigateToItinerary(
-    courseInfoJSON : String
+    courseInfoJSON: String
 ) {
     navigate(
-        route = "${ItineraryRoute.ROUTE}/${courseInfoJSON}"
+        route = "${ItineraryRoute.ROUTE}/$courseInfoJSON"
     ) {
         popUpTo(graph.startDestinationId) { inclusive = true }
         launchSingleTop = true

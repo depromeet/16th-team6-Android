@@ -13,5 +13,5 @@ class CourseRemoteDataSource @Inject constructor(
         startLon: String,
         endLat: String,
         endLon: String
-    ) : Result<List<ResponseCourseSearchDto>> = courseService.getAvailableCourses(startLat, startLon, endLat, endLon).toResult()
+    ): Result<List<ResponseCourseSearchDto>> = courseService.getAvailableCourses(startLat, startLon, endLat, endLon).toResult()
 }

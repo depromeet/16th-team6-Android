@@ -31,7 +31,7 @@ fun DestinationSearchBar(
 ) {
     Box(
         modifier = modifier
-    ){
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()

@@ -19,14 +19,14 @@ class HomeContract {
             lon = 127.01085807594,
             address = ""
         ),
-        val destinationPoint : Address = Address(
+        val destinationPoint: Address = Address(
             name = "우리집",
             lat = 37.296391553347,
             lon = 126.97755824522,
             address = ""
         ),
         val logoutState: Boolean = false,
-        val courseInfo : CourseInfo? = null
+        val courseInfo: CourseInfo? = null
     ) : UiState
 
     sealed interface HomeSideEffect : UiSideEffect {

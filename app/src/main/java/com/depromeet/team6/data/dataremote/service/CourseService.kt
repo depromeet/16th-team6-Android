@@ -8,9 +8,9 @@ import retrofit2.http.Query
 interface CourseService {
     @GET("/api/transits/last-routes")
     suspend fun getAvailableCourses(
-        @Query("startLat") startLat : String,
-        @Query("startLon") startLon : String,
-        @Query("endLat") endLat : String,
-        @Query("endLon") endLon : String
-    ) : ApiResponse<List<ResponseCourseSearchDto>>
+        @Query("startLat") startLat: String,
+        @Query("startLon") startLon: String,
+        @Query("endLat") endLat: String,
+        @Query("endLon") endLon: String
+    ): ApiResponse<List<ResponseCourseSearchDto>>
 }

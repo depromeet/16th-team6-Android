@@ -34,7 +34,7 @@ import com.depromeet.team6.ui.theme.defaultTeam6Typography
 @Composable
 fun CourseInfoDetailItem(
     transportType: TransportType,
-    subtypeIndex : Int,
+    subtypeIndex: Int,
     duration: Int,
     modifier: Modifier = Modifier,
     boardingPoint: String = "",
@@ -138,7 +138,6 @@ fun GetOffMark(
     modifier: Modifier = Modifier
 ) {
     Canvas(modifier = modifier) {
-
         // 내부 흰색 채우기
         drawCircle(
             color = Color.White,

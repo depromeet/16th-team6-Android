@@ -11,8 +11,7 @@ class CourseSearchRepositoryImpl @Inject constructor(
     private val courseRemoteDataSource: CourseRemoteDataSource
 ) : CourseSearchRepository {
 
-    override suspend fun getAvailableCourses(startPosition: Address, endPosition: Address)
-    : Result<List<CourseInfo>> =
+    override suspend fun getAvailableCourses(startPosition: Address, endPosition: Address): Result<List<CourseInfo>> =
         courseRemoteDataSource.getAvailableCourses(
             startLat = startPosition.lat.toString(),
             startLon = startPosition.lon.toString(),

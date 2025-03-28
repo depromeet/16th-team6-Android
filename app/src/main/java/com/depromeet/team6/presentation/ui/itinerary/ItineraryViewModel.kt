@@ -8,9 +8,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class ItineraryViewModel @Inject constructor(
-
-) : BaseViewModel<ItineraryContract.ItineraryUiState, ItineraryContract.ItinerarySideEffect, ItineraryContract.ItineraryEvent>() {
+class ItineraryViewModel @Inject constructor() : BaseViewModel<ItineraryContract.ItineraryUiState, ItineraryContract.ItinerarySideEffect, ItineraryContract.ItineraryEvent>() {
     override fun createInitialState(): ItineraryContract.ItineraryUiState = ItineraryContract.ItineraryUiState()
 
     override suspend fun handleEvent(event: ItineraryContract.ItineraryEvent) {
@@ -27,7 +25,7 @@ class ItineraryViewModel @Inject constructor(
         }
     }
 
-    fun initItineraryInfo(courseInfoJSON : String){
+    fun initItineraryInfo(courseInfoJSON: String) {
         val courseInfo = Gson().fromJson(courseInfoJSON, CourseInfo::class.java)
         setState {
             copy(

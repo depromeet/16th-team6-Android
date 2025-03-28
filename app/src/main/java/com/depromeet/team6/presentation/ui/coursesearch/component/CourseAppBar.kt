@@ -36,8 +36,8 @@ fun CourseAppBar(
             modifier = Modifier
                 .size(24.dp)
                 .noRippleClickable {
-                backButtonClicked()
-            }
+                    backButtonClicked()
+                }
         )
 
         Icon(

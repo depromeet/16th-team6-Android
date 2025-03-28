@@ -65,9 +65,9 @@ fun CourseSearchRoute(
             CourseSearchScreen(
                 uiState = uiState,
                 modifier = Modifier
-                    .padding(padding),
+                    .padding(padding)
             )
-            Box(modifier = Modifier.fillMaxSize()){
+            Box(modifier = Modifier.fillMaxSize()) {
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
             }
         }

@@ -49,7 +49,7 @@ fun LastTransportInfoList(
                 }
             )
 
-            if (index == listData.size - 1){
+            if (index == listData.size - 1) {
                 Spacer(
                     modifier = Modifier.height(70.dp)
                 )

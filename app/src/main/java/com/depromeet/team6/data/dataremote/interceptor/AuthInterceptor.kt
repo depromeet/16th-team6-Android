@@ -37,7 +37,7 @@ class AuthInterceptor @Inject constructor(
         var response = chain.proceed(authRequest)
 
         Timber.d("API_REQUEST : $originalRequest")
-        Timber.d("API_RESPONSE : ${response}")
+        Timber.d("API_RESPONSE : $response")
         when (response.code) {
             CODE_TOKEN_EXPIRE -> {
                 response.close()

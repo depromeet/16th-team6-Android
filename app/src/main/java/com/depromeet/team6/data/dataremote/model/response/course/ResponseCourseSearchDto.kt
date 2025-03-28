@@ -53,5 +53,5 @@ data class Station(
     @SerialName("stationId") val stationId: Int? = null,
     @SerialName("stationName") val stationName: String = "",
     @SerialName("lon") val lon: String? = null,
-    @SerialName("lat") val lat: String? = null,
+    @SerialName("lat") val lat: String? = null
 )

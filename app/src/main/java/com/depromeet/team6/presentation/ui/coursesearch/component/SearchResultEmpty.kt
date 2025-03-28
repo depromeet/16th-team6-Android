@@ -24,12 +24,12 @@ import com.depromeet.team6.ui.theme.defaultTeam6Typography
 @Composable
 fun SearchResultEmpty(
     modifier: Modifier = Modifier
-){
+) {
     Box(
         modifier = modifier
             .background(defaultTeam6Colors.greyWashBackground)
             .fillMaxSize()
-    ){
+    ) {
         Column(
             modifier = Modifier.align(Alignment.Center)
         ) {
@@ -54,6 +54,6 @@ fun SearchResultEmpty(
 
 @Preview
 @Composable
-fun SearchResultEmptyPreview(){
+fun SearchResultEmptyPreview() {
     SearchResultEmpty()
 }
