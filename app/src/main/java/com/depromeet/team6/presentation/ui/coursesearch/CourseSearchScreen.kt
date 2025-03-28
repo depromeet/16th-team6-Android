@@ -61,8 +61,15 @@ fun CourseSearchRoute(
     }
 
     when (uiState.courseDataLoadState) {
-        LoadState.Loading -> Box(modifier = Modifier.fillMaxSize()){
-            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+        LoadState.Loading -> {
+            CourseSearchScreen(
+                uiState = uiState,
+                modifier = Modifier
+                    .padding(padding),
+            )
+            Box(modifier = Modifier.fillMaxSize()){
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+            }
         }
         LoadState.Success -> CourseSearchScreen(
             uiState = uiState,

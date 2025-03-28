@@ -22,13 +22,13 @@ class CourseSearchViewModel @Inject constructor(
             is CourseSearchContract.CourseEvent.RegisterAlarm -> CourseSearchContract.CourseSideEffect.ShowNotificationToast
             is CourseSearchContract.CourseEvent.LoadCourseSearchResult -> setState {
                 copy(
+                    courseDataLoadState = LoadState.Success,
                     courseData = event.searchResult
                 )
             }
             is CourseSearchContract.CourseEvent.InitiateDepartureDestinationPoint -> {
                 setState {
                     copy(
-                        courseDataLoadState = LoadState.Success,
                         startingPoint = event.departurePoint,
                         destinationPoint = event.destinationPoint
                     )
@@ -39,6 +39,11 @@ class CourseSearchViewModel @Inject constructor(
     }
 
     private fun getSearchResults(){
+        setState {
+            copy(
+                courseDataLoadState = LoadState.Loading
+            )
+        }
         viewModelScope.launch {
             loadSearchResult(
                 startPoint = uiState.value.startingPoint!!,
