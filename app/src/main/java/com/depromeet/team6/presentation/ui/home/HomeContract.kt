@@ -1,6 +1,7 @@
 package com.depromeet.team6.presentation.ui.home
 
 import com.depromeet.team6.domain.model.Address
+import com.depromeet.team6.domain.model.course.CourseInfo
 import com.depromeet.team6.presentation.util.base.UiEvent
 import com.depromeet.team6.presentation.util.base.UiSideEffect
 import com.depromeet.team6.presentation.util.base.UiState
@@ -24,7 +25,8 @@ class HomeContract {
             lon = 126.97755824522,
             address = ""
         ),
-        val logoutState: Boolean = false
+        val logoutState: Boolean = false,
+        val courseInfo : CourseInfo? = null
     ) : UiState
 
     sealed interface HomeSideEffect : UiSideEffect {

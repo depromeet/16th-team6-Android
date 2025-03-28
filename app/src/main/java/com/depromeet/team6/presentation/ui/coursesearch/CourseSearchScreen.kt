@@ -34,7 +34,7 @@ fun CourseSearchRoute(
     padding: PaddingValues,
     departurePoint: String,
     destinationPoint: String,
-    navigateToItinerary: () -> Unit,
+    navigateToItinerary: (String) -> Unit,
     navigateToHome: () -> Unit,
     viewModel: CourseSearchViewModel = hiltViewModel()
 ) {
@@ -75,7 +75,7 @@ fun CourseSearchRoute(
             uiState = uiState,
             modifier = Modifier
                 .padding(padding),
-            navigateToItinerary = { navigateToItinerary() },
+            navigateToItinerary = navigateToItinerary,
             setNotification = {
                 val sharedPreferences = context.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
                 val editor = sharedPreferences.edit()
@@ -94,7 +94,7 @@ fun CourseSearchRoute(
 fun CourseSearchScreen(
     modifier: Modifier = Modifier,
     uiState: CourseSearchContract.CourseUiState = CourseSearchContract.CourseUiState(),
-    navigateToItinerary: () -> Unit = {},
+    navigateToItinerary: (String) -> Unit = {},
     setNotification: () -> Unit = {},
     backButtonClicked: () -> Unit = {}
 ) {
@@ -112,9 +112,7 @@ fun CourseSearchScreen(
 
         TransportTabMenu(
             availableCourses = uiState.courseData,
-            onItemClick = {
-                navigateToItinerary()
-            },
+            onItemClick = navigateToItinerary,
             onRegisterAlarmBtnClick = {
                 setNotification()
             }

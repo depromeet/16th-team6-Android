@@ -54,7 +54,7 @@ fun HomeRoute(
     navigateToLogin: () -> Unit,
     navigateToCourseSearch: (String, String) -> Unit,
     navigateToMypage: () -> Unit,
-    navigateToItinerary: () -> Unit,
+    navigateToItinerary: (String) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
@@ -80,7 +80,9 @@ fun HomeRoute(
             .collect { sideEffect ->
                 when (sideEffect) {
                     is HomeContract.HomeSideEffect.NavigateToMypage -> navigateToMypage()
-                    is HomeContract.HomeSideEffect.NavigateToItinerary -> navigateToItinerary()
+                    is HomeContract.HomeSideEffect.NavigateToItinerary -> navigateToItinerary(
+                        Gson().toJson(uiState.courseInfo)
+                    )
                 }
             }
     }
@@ -142,7 +144,7 @@ fun HomeScreen(
     onSearchClick: () -> Unit = {},
     onFinishClick: () -> Unit = {},
     navigateToMypage: () -> Unit = {},
-    navigateToItinerary: () -> Unit = {},
+    navigateToItinerary: (String) -> Unit = {},
     viewModel: HomeViewModel = hiltViewModel() // TODO : TmapViewCompose 변경 후 제거
 ) {
     val context = LocalContext.current
@@ -198,7 +200,9 @@ fun HomeScreen(
                     onFinishClick()
                 },
                 onCourseDetailClick = {
-                    navigateToItinerary()
+                    val courseInfoJSON =
+                        Gson().toJson(homeUiState.courseInfo)
+                    navigateToItinerary(courseInfoJSON)
                 },
                 modifier = Modifier
                     .align(Alignment.BottomCenter)

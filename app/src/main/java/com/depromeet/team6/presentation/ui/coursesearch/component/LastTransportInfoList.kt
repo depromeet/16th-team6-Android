@@ -16,13 +16,14 @@ import com.depromeet.team6.domain.model.course.LegInfo
 import com.depromeet.team6.presentation.ui.itinerary.LegInfoDummyProvider
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
+import com.google.gson.Gson
 
 @Composable
 fun LastTransportInfoList(
     listData: List<CourseInfo>,
     modifier: Modifier = Modifier,
     onRegisterAlarmBtnClick: () -> Unit = {},
-    onItemClick: () -> Unit = {}
+    onItemClick: (String) -> Unit = {}
 ) {
     LazyColumn(
         modifier = modifier
@@ -36,7 +37,9 @@ fun LastTransportInfoList(
             LastTransportInfoItem(
                 modifier = Modifier
                     .noRippleClickable {
-                        onItemClick()
+                        onItemClick(
+                            Gson().toJson(listData[index])
+                        )
                     },
                 courseSearchResult = listData[index],
                 onRegisterAlarmBtnClick = {

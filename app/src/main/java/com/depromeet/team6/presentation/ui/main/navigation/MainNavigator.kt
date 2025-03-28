@@ -48,9 +48,11 @@ class MainNavigator(
         )
     }
 
-    fun navigateToItinerary() {
+    fun navigateToItinerary(
+        courseInfoJSON : String
+    ) {
         clearBackStackTo(ItineraryRoute.ROUTE)
-        navHostController.navigateToItinerary()
+        navHostController.navigateToItinerary(courseInfoJSON)
     }
 
     fun navigateToMypage() {
