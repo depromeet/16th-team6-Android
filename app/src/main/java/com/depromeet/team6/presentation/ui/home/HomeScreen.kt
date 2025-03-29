@@ -62,7 +62,7 @@ fun HomeRoute(
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
 
-    var userLocation by remember { mutableStateOf(DEFAULT_LNT to DEFAULT_LNG) } // 서울시 기본 위치
+    var userLocation by remember { mutableStateOf(LatLng(DEFAULT_LNT, DEFAULT_LNG)) } // 서울시 기본 위치
 
     val locationPermissionsLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestMultiplePermissions(),
@@ -92,7 +92,7 @@ fun HomeRoute(
             }
         }
 
-        viewModel.getCenterLocation(LatLng(userLocation.first, userLocation.second))
+        viewModel.getCenterLocation(LatLng(userLocation.latitude, userLocation.longitude))
     }
 
     SideEffect {
@@ -108,7 +108,7 @@ fun HomeRoute(
 
     when (uiState.loadState) {
         LoadState.Idle -> HomeScreen(
-            userLocation = LatLng(userLocation.first, userLocation.second),
+            userLocation = LatLng(userLocation.latitude, userLocation.longitude),
             homeUiState = uiState,
             onCharacterClick = { viewModel.onCharacterClick() },
             navigateToMypage = navigateToMypage,

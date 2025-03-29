@@ -26,10 +26,13 @@ import com.depromeet.team6.presentation.ui.searchlocation.component.BackTopBar
 import com.depromeet.team6.presentation.ui.searchlocation.component.SearchDepartureTextField
 import com.depromeet.team6.presentation.ui.searchlocation.component.SearchHistoryEmptyContainer
 import com.depromeet.team6.presentation.ui.searchlocation.component.SearchLocationTextField
+import com.depromeet.team6.presentation.util.DefaultLntLng.DEFAULT_LNG
+import com.depromeet.team6.presentation.util.DefaultLntLng.DEFAULT_LNT
 import com.depromeet.team6.presentation.util.context.getUserLocation
 import com.depromeet.team6.presentation.util.permission.PermissionUtil
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
+import com.google.android.gms.maps.model.LatLng
 
 @Composable
 fun SearchLocationRoute(
@@ -41,7 +44,7 @@ fun SearchLocationRoute(
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
 
-    var userLocation by remember { mutableStateOf(37.5665 to 126.9780) } // 서울시 기본 위치
+    var userLocation by remember { mutableStateOf(LatLng(DEFAULT_LNT, DEFAULT_LNG)) } // 서울시 기본 위치
 
     LaunchedEffect(Unit) {
         Log.d("Location Permission", "${PermissionUtil.hasLocationPermissions(context)}")
@@ -75,8 +78,8 @@ fun SearchLocationRoute(
                 viewModel.setEvent(
                     SearchLocationContract.SearchLocationEvent.UpdateSearchQuery(
                         text = newText,
-                        lat = userLocation.first,
-                        lon = userLocation.second
+                        lat = userLocation.latitude,
+                        lon = userLocation.longitude
                     )
                 )
             }
