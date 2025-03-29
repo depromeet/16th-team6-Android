@@ -26,7 +26,6 @@ class CourseRemoteDataSource @Inject constructor(
                 val errorResponse = Gson().fromJson(errorBody, ApiResponse::class.java)
 
                 return Result.failure(RequestException(errorResponse.responseCode, errorResponse.message!!))
-
             } else {
                 return Result.failure(IllegalStateException("서버로부터 응답이 없습니다."))
             }
