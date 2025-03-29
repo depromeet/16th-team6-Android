@@ -8,7 +8,6 @@ import com.depromeet.team6.presentation.util.view.LoadState
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -50,11 +49,15 @@ class CourseSearchViewModel @Inject constructor(
                 endPoint = uiState.value.destinationPoint!!
             )
                 .onSuccess {
-                    Timber.tag("alksdjhflakhjfdlhkjsdflhjk").d(it.toString())
                     setEvent(CourseSearchContract.CourseEvent.LoadCourseSearchResult(it))
                 }
                 .onFailure {
-                    Timber.tag("alksdjhflakhjfdlhkjsdflhjk").d(it.toString())
+                    setState {
+                        copy(
+                            courseDataLoadState = LoadState.Error
+                        )
+                    }
+                    setSideEffect(CourseSearchContract.CourseSideEffect.ShowSearchFailedToast(it.message!!))
                 }
         }
     }
