@@ -78,7 +78,8 @@ class CourseSearchViewModel @Inject constructor(
         viewModelScope.launch {
             if (postAlarmUseCase(
                     lastRouteId = lastRouteId
-                ).isSuccessful) {
+                ).isSuccessful
+            ) {
                 setEvent(CourseSearchContract.CourseEvent.RegisterAlarm)
             } else {
                 setEvent(CourseSearchContract.CourseEvent.RegisterAlarm)
