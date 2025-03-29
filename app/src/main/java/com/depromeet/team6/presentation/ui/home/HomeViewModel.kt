@@ -16,6 +16,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -77,6 +78,24 @@ class HomeViewModel @Inject constructor(
                     )
                 }
             }
+
+            is HomeContract.HomeEvent.LoadTimerFinish -> {
+                setState {
+                    copy(
+                        timerFinish = event.timerFinish
+                    )
+                }
+            }
+        }
+    }
+
+    fun onTimerFinished() {
+        Timber.d("타이머 종료됨")
+
+        setState {
+            copy(
+                timerFinish = true
+            )
         }
     }
 

@@ -118,5 +118,6 @@
     <string name="home_course_detail_button_text">상세 경로</string>
     <string name="home_icon_transportation">홈 대중교통 아이콘</string>
     <string name="home_icon_dot">홈 점 아이콘</string>
+    <string name="home_final_departure_time_text">우리집 도착시간</string>
 
 </resources>

@@ -51,6 +51,8 @@ import com.depromeet.team6.presentation.util.view.LoadState
 import com.google.android.gms.maps.model.LatLng
 import com.google.gson.Gson
 import timber.log.Timber
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun HomeRoute(
@@ -217,6 +219,8 @@ fun HomeScreen(
         //TODO : 알림 등록 후 지도 테스트 후 삭제
         val itineraryInfo = homeUiState.itineraryInfo?.legs
         val departureTime = homeUiState.departureTime
+        val timerFinish = homeUiState.timerFinish
+
         if (itineraryInfo != null) {
             AfterRegisterMap(
                 currentLocation = userLocation,
@@ -250,10 +254,13 @@ fun HomeScreen(
             )
 
             AfterRegisterSheet(
+                timerFinish = homeUiState.timerFinish,
                 startLocation = homeUiState.departurePoint.name,
                 isConfirmed = isConfirmed,
-                afterUserDeparted = homeUiState.userDeparture,
-                timeToLeave = departureTime,
+//                afterUserDeparted = homeUiState.userDeparture,
+                afterUserDeparted = true,
+                timeToLeave = formatTimeString(departureTime),
+           //     timeToLeave = "2025-03-29T18:32",
                 destination = "우리집",
                 onCourseTextClick = {},
                 onFinishClick = {
@@ -263,6 +270,9 @@ fun HomeScreen(
                     val courseInfoJSON =
                         Gson().toJson(homeUiState.courseInfo)
                     navigateToItinerary(courseInfoJSON)
+                },
+                onTimerFinished = {
+                    viewModel.onTimerFinished()
                 },
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
@@ -324,6 +334,30 @@ fun HomeScreen(
                 .noRippleClickable(onClick = onCharacterClick),
             showSpeechBubble = homeUiState.showSpeechBubble
         )
+    }
+
+
+}
+
+// TimeFormatter 유틸 함수 (HomeScreen.kt 파일 내에 추가)
+private fun formatTimeString(timeString: String): String {
+    return try {
+        if (timeString.contains("T")) {
+            // ISO 형식 (2025-03-14T23:46)
+            val dateTime = LocalDateTime.parse(timeString)
+            val formatter = DateTimeFormatter.ofPattern("HH:mm")
+            dateTime.format(formatter)
+        } else if (timeString.contains(":") && timeString.split(":").size == 3) {
+            // HH:mm:ss 형식
+            val timeParts = timeString.split(":")
+            "${timeParts[0]}:${timeParts[1]}"
+        } else {
+            // 그 외의 경우 원본 반환
+            timeString
+        }
+    } catch (e: Exception) {
+        Timber.e("시간 형식 변환 오류: $timeString")
+        timeString // 실패 시 원본 반환
     }
 }
 

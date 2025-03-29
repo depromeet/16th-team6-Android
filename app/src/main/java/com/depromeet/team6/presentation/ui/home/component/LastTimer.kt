@@ -17,55 +17,93 @@ import androidx.compose.ui.unit.dp
 import com.depromeet.team6.ui.theme.LocalTeam6Typography
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import kotlinx.coroutines.delay
+import timber.log.Timber
+import java.time.Duration
+import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
-import java.time.temporal.ChronoUnit
-import kotlin.math.max
+import java.time.format.DateTimeParseException
 
 @Composable
 fun LastTimer(
-    departureTime: String,
+    departureTime: String, // "2025-03-14T23:46" 형식 또는 "HH:mm:ss" 형식
     textColor: Color,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onTimerFinished: () -> Unit = {}
 ) {
     val typography = LocalTeam6Typography.current
 
-    var remainingTimeText by remember { mutableStateOf("00:00") }
+    var remainingMinutes by remember { mutableStateOf(0) }
+    var remainingSeconds by remember { mutableStateOf(0) }
+    var isTimerFinished by remember { mutableStateOf(false) }
 
     LaunchedEffect(departureTime) {
-        val formatter = DateTimeFormatter.ofPattern("HH:mm:ss")
-        val targetTime = LocalTime.parse(departureTime, formatter)
+        try {
+            // 먼저 ISO 형식 (2025-03-14T23:46)으로 파싱 시도
+            val targetDateTime = try {
+                LocalDateTime.parse(departureTime)
+            } catch (e: DateTimeParseException) {
+                // ISO 형식이 아니면 HH:mm:ss 또는 HH:mm 형식으로 시도
+                try {
+                    val timeFormatter = if (departureTime.contains(":") && departureTime.split(":").size == 3) {
+                        DateTimeFormatter.ofPattern("HH:mm:ss")
+                    } else {
+                        DateTimeFormatter.ofPattern("HH:mm")
+                    }
 
-        while (true) {
-            val currentTime = LocalTime.now()
+                    val targetTime = LocalTime.parse(departureTime, timeFormatter)
+                    val now = LocalDateTime.now()
 
-            val hoursDiff = ChronoUnit.HOURS.between(currentTime, targetTime)
-            val minutesDiff = ChronoUnit.MINUTES.between(currentTime, targetTime) % 60
-
-            val hours = max(0, hoursDiff)
-            val minutes = max(0, minutesDiff)
-
-            remainingTimeText = String.format("%02d:%02d", hours, minutes)
-
-            if (hours <= 0 && minutes <= 0) {
-                remainingTimeText = "00:00"
-                break
+                    // 현재 날짜에 목표 시간을 합쳐서 오늘 날짜의 목표 시간을 설정
+                    LocalDateTime.of(now.toLocalDate(), targetTime)
+                } catch (e: Exception) {
+                    Timber.e("시간 파싱 오류: $departureTime - ${e.message}")
+                    null
+                }
             }
 
-            delay(1000) // 1초 대기
+            if (targetDateTime != null) {
+                while (!isTimerFinished) {
+                    val now = LocalDateTime.now()
+                    val duration = Duration.between(now, targetDateTime)
+
+                    // 음수가 되지 않도록 처리
+                    if (duration.isNegative) {
+                        remainingMinutes = 0
+                        remainingSeconds = 0
+                        isTimerFinished = true
+                        onTimerFinished()
+                        break
+                    }
+
+                    val totalSeconds = duration.seconds
+                    remainingMinutes = (totalSeconds / 60).toInt()
+                    remainingSeconds = (totalSeconds % 60).toInt()
+
+                    // 타이머가 0이 되면 완료 콜백 호출
+                    if (remainingMinutes <= 0 && remainingSeconds <= 0) {
+                        isTimerFinished = true
+                        onTimerFinished()
+                        break
+                    }
+
+                    delay(1000) // 1초마다 업데이트
+                }
+            } else {
+                // 시간 파싱에 실패한 경우
+                Timber.e("시간 형식 파싱 실패: $departureTime")
+            }
+        } catch (e: Exception) {
+            Timber.e("타이머 오류: ${e.message}")
         }
     }
-
-    val timeParts = remainingTimeText.split(":")
-    val hour = if (timeParts.isNotEmpty()) timeParts[0] else "00"
-    val minute = if (timeParts.size > 1) timeParts[1] else "00"
 
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.Bottom
     ) {
         Text(
-            text = hour,
+            text = String.format("%02d", remainingMinutes),
             style = typography.extraBold44,
             color = textColor
         )
@@ -78,7 +116,7 @@ fun LastTimer(
         )
 
         Text(
-            text = minute,
+            text = String.format("%02d", remainingSeconds),
             style = typography.extraBold44,
             color = textColor
         )
@@ -96,7 +134,7 @@ fun LastTimer(
 @Composable
 fun LastTimerPreview() {
     LastTimer(
-        departureTime = "15:30:00",
+        departureTime = "2025-03-14T23:46",
         textColor = defaultTeam6Colors.systemRed
     )
 }
