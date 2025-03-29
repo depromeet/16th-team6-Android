@@ -35,8 +35,11 @@ import com.skt.tmap.TMapPoint
 import com.skt.tmap.TMapView
 import com.skt.tmap.overlay.TMapMarkerItem
 import com.skt.tmap.overlay.TMapPolyLine
+import com.skt.tmap.overlay.TMapTrafficLine
+import com.skt.tmap.overlay.TMapTrafficLine.TrafficLine
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+
 
 @Composable
 fun ItineraryMap(
@@ -65,9 +68,27 @@ fun ItineraryMap(
             val departTMapPoint = TMapPoint(departLocation.latitude, departLocation.longitude)
             val destinationTMapPoint = TMapPoint(destinationLocation.latitude, destinationLocation.longitude)
 
+            // TMapTrafficLine 객체 생성
+            val tmapTrafficLine = TMapTrafficLine("line_itinerary")
+            // 교통 정보 표출 여부 설정
+            tmapTrafficLine.isShowTraffic = true
+            // 방향 인디케이터(화살표) 표시 설정
+            tmapTrafficLine.isShowIndicator = true
+            // 경로 선의 두께 설정
+            tmapTrafficLine.lineWidth = 9
+            // 경로 외곽선의 두께 설정
+            tmapTrafficLine.outLineWidth = 2
+
             // 라인 그리기
             for (leg in legs) {
                 val lineWayPoints = getWayPointList(leg.passShape)
+
+
+                // TrafficLine 객체 생성 후 리스트에 추가
+                val trafficLine = TrafficLine(1, lineWayPoints)
+                tmapTrafficLine.trafficLineList.add(trafficLine)
+
+
                 val line = TMapPolyLine("line_${leg.transportType}_${leg.sectionTime}", lineWayPoints)
                 tMapView.addTMapPolyLine(line)
             }
@@ -81,7 +102,7 @@ fun ItineraryMap(
 
             marker.id = "destinationPoint"
             marker.tMapPoint = destinationTMapPoint
-            marker.icon = ContextCompat.getDrawable(context, R.drawable.ic_all_location_black)?.toBitmap()
+            marker.icon = ContextCompat.getDrawable(context, R.drawable.map_marker_arrival)?.toBitmap()
             tMapView.addTMapMarkerItem(marker)
 
             // 지도 위치 조정
