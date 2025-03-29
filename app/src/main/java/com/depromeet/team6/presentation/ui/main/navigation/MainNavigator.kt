@@ -43,14 +43,16 @@ class MainNavigator(
     ) {
         clearBackStackTo(CourseSearchRoute.ROUTE)
         navHostController.navigateCourseSearch(
-            departure = departure,
-            destination = destination
+            departurePoint = departure,
+            destinationPoint = destination
         )
     }
 
-    fun navigateToItinerary() {
+    fun navigateToItinerary(
+        courseInfoJSON: String
+    ) {
         clearBackStackTo(ItineraryRoute.ROUTE)
-        navHostController.navigateToItinerary()
+        navHostController.navigateToItinerary(courseInfoJSON)
     }
 
     fun navigateToMypage() {
