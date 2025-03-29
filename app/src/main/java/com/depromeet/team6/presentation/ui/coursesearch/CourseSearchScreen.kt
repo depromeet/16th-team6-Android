@@ -76,13 +76,16 @@ fun CourseSearchRoute(
             modifier = Modifier
                 .padding(padding),
             navigateToItinerary = navigateToItinerary,
-            setNotification = {
+            setNotification = { routeId ->
+
                 val sharedPreferences = context.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
                 val editor = sharedPreferences.edit()
                 editor.putBoolean("isUserLoggedIn", true) // "isUserLoggedIn" 키에 true 값을 저장
+                editor.putString("lastRouteId", routeId)
                 editor.apply() // 또는 editor.commit()
                 // TODO : lastRouteId 실제 값으로 교체, 막차 알림 등록 버튼 클릭하면 아래 함수 호출
-                viewModel.postAlarm(lastRouteId = "a41baaf0-bc0a-4d14-a20c-5fd929b3a147")
+                viewModel.postAlarm(lastRouteId = routeId)
+
                 navigateToHome()
             },
             backButtonClicked = { navigateToHome() }
@@ -96,7 +99,7 @@ fun CourseSearchScreen(
     modifier: Modifier = Modifier,
     uiState: CourseSearchContract.CourseUiState = CourseSearchContract.CourseUiState(),
     navigateToItinerary: (String) -> Unit = {},
-    setNotification: () -> Unit = {},
+    setNotification: (String) -> Unit = {},
     backButtonClicked: () -> Unit = {}
 ) {
     Column(
@@ -114,8 +117,8 @@ fun CourseSearchScreen(
         TransportTabMenu(
             availableCourses = uiState.courseData,
             onItemClick = navigateToItinerary,
-            onRegisterAlarmBtnClick = {
-                setNotification()
+            onRegisterAlarmBtnClick = { routeId ->
+                setNotification(routeId)
             }
         )
     }
