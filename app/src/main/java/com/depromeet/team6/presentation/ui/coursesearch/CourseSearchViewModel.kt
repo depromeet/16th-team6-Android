@@ -84,6 +84,7 @@ class CourseSearchViewModel @Inject constructor(
                 ).isSuccessful
             ) {
                 setEvent(CourseSearchContract.CourseEvent.RegisterAlarm)
+                setSideEffect(CourseSearchContract.CourseSideEffect.NavigateHomeWithToast)
             } else {
                 setEvent(CourseSearchContract.CourseEvent.RegisterAlarm)
             }

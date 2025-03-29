@@ -89,7 +89,7 @@
     <string name="course_detail_info_duration">%1d분</string>
     <string name="course_detail_info_boarding_point">%1s 승차</string>
     <string name="course_detail_info_destination_point">%1s 하차</string>
-    <string name="course_set_notification_snackbar">알림이 등록되었어요</string>
+    <string name="course_set_notification_snackbar">알림이 등록되었습니다</string>
     <string name="notification_channel_name">앱 알림</string>
     <string name="notification_channel_description_text">앱 내부 알림 채널</string>
     <string name="course_search_failed_snackbar">경로를 조회하는데 실패했어요</string>

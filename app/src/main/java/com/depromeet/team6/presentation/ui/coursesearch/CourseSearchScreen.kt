@@ -26,6 +26,7 @@ import com.depromeet.team6.presentation.ui.coursesearch.component.CourseAppBar
 import com.depromeet.team6.presentation.ui.coursesearch.component.DestinationSearchBar
 import com.depromeet.team6.presentation.ui.coursesearch.component.TransportTabMenu
 import com.depromeet.team6.presentation.ui.itinerary.LegInfoDummyProvider
+import com.depromeet.team6.presentation.util.toast.atChaToastMessage
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 
@@ -51,6 +52,11 @@ fun CourseSearchRoute(
 
                 is CourseSearchContract.CourseSideEffect.ShowSearchFailedToast -> {
                     Toast.makeText(context, sideEffect.message, Toast.LENGTH_SHORT).show()
+                }
+
+                is CourseSearchContract.CourseSideEffect.NavigateHomeWithToast -> {
+                    navigateToHome()
+                    atChaToastMessage(context, R.string.course_set_notification_snackbar)
                 }
             }
         }
@@ -85,8 +91,6 @@ fun CourseSearchRoute(
                 editor.apply() // 또는 editor.commit()
                 // TODO : lastRouteId 실제 값으로 교체, 막차 알림 등록 버튼 클릭하면 아래 함수 호출
                 viewModel.postAlarm(lastRouteId = routeId)
-
-                navigateToHome()
             },
             backButtonClicked = { navigateToHome() }
         )
