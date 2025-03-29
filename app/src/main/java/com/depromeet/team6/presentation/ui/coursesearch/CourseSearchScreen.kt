@@ -49,8 +49,8 @@ fun CourseSearchRoute(
                     Toast.makeText(context, context.getString(R.string.course_set_notification_snackbar), Toast.LENGTH_SHORT).show()
                 }
 
-                CourseSearchContract.CourseSideEffect.ShowSearchFailedToast -> {
-                    Toast.makeText(context, context.getString(R.string.course_search_failed_snackbar), Toast.LENGTH_SHORT).show()
+                is CourseSearchContract.CourseSideEffect.ShowSearchFailedToast -> {
+                    Toast.makeText(context, sideEffect.message, Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -90,7 +90,12 @@ fun CourseSearchRoute(
             },
             backButtonClicked = { navigateToHome() }
         )
-        else -> Unit
+        LoadState.Error -> {
+            navigateToHome()
+        }
+
+        LoadState.Idle -> {
+        }
     }
 }
 

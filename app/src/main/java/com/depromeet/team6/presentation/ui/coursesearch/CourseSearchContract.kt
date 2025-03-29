@@ -17,7 +17,7 @@ class CourseSearchContract {
 
     sealed interface CourseSideEffect : UiSideEffect {
         data object ShowNotificationToast : CourseSideEffect
-        data object ShowSearchFailedToast : CourseSideEffect
+        data class ShowSearchFailedToast(val message: String) : CourseSideEffect
     }
 
     sealed class CourseEvent : UiEvent {

@@ -1,6 +1,5 @@
 package com.depromeet.team6.presentation.ui.home.component
 
-import android.util.Log
 import android.widget.FrameLayout
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -35,6 +34,7 @@ import com.skt.tmap.TMapView
 import com.skt.tmap.overlay.TMapMarkerItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 
 @Composable
 fun TMapViewCompose(
@@ -101,7 +101,7 @@ fun TMapViewCompose(
                     addView(tMapView)
                 }
             },
-            update = { frameLayout ->
+            update = { _ ->
                 // Update logic if needed (e.g., map settings)
             }
         )
@@ -140,7 +140,7 @@ fun TMapViewCompose(
 
     DisposableEffect(Unit) {
         onDispose {
-            Log.d("TMapViewCompose", "destroy!")
+            Timber.d("TMapViewCompose destroy!")
             tMapView.onDestroy()
         }
     }

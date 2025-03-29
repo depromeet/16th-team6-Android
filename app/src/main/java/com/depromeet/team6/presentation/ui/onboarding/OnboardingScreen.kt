@@ -1,5 +1,6 @@
 package com.depromeet.team6.presentation.ui.onboarding
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
@@ -20,6 +21,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -37,6 +39,7 @@ import com.depromeet.team6.presentation.type.toPermissionType
 import com.depromeet.team6.presentation.ui.onboarding.component.AlarmTime
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingAlarmSelector
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingButton
+import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingMapView
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingPermissionBottomSheet
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingPermissionDeniedBottomSheet
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingSearchContainer
@@ -49,6 +52,7 @@ import com.depromeet.team6.presentation.util.permission.PermissionUtil
 import com.depromeet.team6.presentation.util.toast.atChaToastMessage
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
+import com.google.android.gms.maps.model.LatLng
 import timber.log.Timber
 
 @Composable
@@ -132,7 +136,6 @@ fun OnboardingRoute(
         uiState.searchPopupVisible -> {
             OnboardingSearchPopup(
                 context = context,
-                uiState = uiState,
                 searchLocations = uiState.searchLocations,
                 padding = padding,
                 searchText = uiState.searchText,
@@ -145,10 +148,15 @@ fun OnboardingRoute(
                 onBackButtonClicked = {
                     viewModel.setEvent(OnboardingContract.OnboardingEvent.SearchPopUpBackPressed)
                 },
-                selectButtonClicked = {
+                selectButtonClicked = { address ->
                     viewModel.setEvent(
                         OnboardingContract.OnboardingEvent.LocationSelectButtonClicked(
-                            uiState.myAddress
+                            address
+                        )
+                    )
+                    viewModel.setEvent(
+                        OnboardingContract.OnboardingEvent.ChangeMapViewVisible(
+                            true
                         )
                     )
                 },
@@ -161,6 +169,7 @@ fun OnboardingRoute(
         else -> when (uiState.loadState) {
             LoadState.Idle -> {
                 OnboardingScreen(
+                    context = context,
                     padding = padding,
                     uiState = uiState,
                     onSearchBoxClicked = {
@@ -222,7 +231,13 @@ fun OnboardingRoute(
                     },
                     onLocationButtonClicked = {
                         if (PermissionUtil.hasLocationPermissions(context = context)) {
-                            // Todo: 현 위치로 찾기 구현
+                            viewModel.setCurrentLocationToHomeAddress(context = context) {
+                                viewModel.setEvent(
+                                    OnboardingContract.OnboardingEvent.ChangeMapViewVisible(
+                                        true
+                                    )
+                                )
+                            }
                         } else {
                             atChaToastMessage(
                                 context = context,
@@ -243,6 +258,24 @@ fun OnboardingRoute(
                             data = Uri.fromParts("package", context.packageName, null)
                         }
                         context.startActivity(intent)
+                    },
+                    getCenterLocation = { viewModel.getCenterLocation(it) },
+                    clearAddress = {
+                        viewModel.setEvent(OnboardingContract.OnboardingEvent.ClearAddress)
+                        viewModel.setEvent(
+                            OnboardingContract.OnboardingEvent.ChangeMapViewVisible(
+                                mapViewVisible = false
+                            )
+                        )
+                    },
+                    mapViewSelectButtonClicked = {
+                        viewModel.setEvent(
+                            (
+                                OnboardingContract.OnboardingEvent.ChangeMapViewVisible(
+                                    false
+                                )
+                                )
+                        )
                     }
                 )
             }
@@ -257,6 +290,7 @@ fun OnboardingRoute(
 @Composable
 fun OnboardingScreen(
     padding: PaddingValues,
+    context: Context = LocalContext.current,
     uiState: OnboardingContract.OnboardingUiState = OnboardingContract.OnboardingUiState(),
     modifier: Modifier = Modifier,
     onSearchBoxClicked: () -> Unit = {},
@@ -266,7 +300,10 @@ fun OnboardingScreen(
     onLocationButtonClicked: () -> Unit = {},
     bottomSheetButtonClicked: () -> Unit = {},
     deniedBottomSheetSettingButtonClicked: () -> Unit = {},
-    deniedBottomSheetCloseButtonClicked: () -> Unit = {}
+    deniedBottomSheetCloseButtonClicked: () -> Unit = {},
+    getCenterLocation: (LatLng) -> Unit = {},
+    clearAddress: () -> Unit = {},
+    mapViewSelectButtonClicked: () -> Unit = {}
 ) {
     Box(
         modifier = Modifier
@@ -325,6 +362,17 @@ fun OnboardingScreen(
                 }
             ) { onNextButtonClicked() }
             Spacer(modifier = Modifier.height(20.dp))
+        }
+        if (uiState.mapViewVisible) {
+            val currentLocation by remember { mutableStateOf(uiState.myAddress) }
+            OnboardingMapView(
+                context = context,
+                myAddress = uiState.myAddress,
+                getCenterLocation = getCenterLocation,
+                currentLocation = currentLocation,
+                buttonClicked = mapViewSelectButtonClicked,
+                backButtonClicked = clearAddress
+            )
         }
         OnboardingPermissionBottomSheet(
             modifier = Modifier.align(Alignment.BottomCenter),
