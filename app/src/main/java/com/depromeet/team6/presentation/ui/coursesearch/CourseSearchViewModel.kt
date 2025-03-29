@@ -1,7 +1,7 @@
 package com.depromeet.team6.presentation.ui.coursesearch
 
 import androidx.lifecycle.viewModelScope
-import com.depromeet.team6.domain.model.course.WayPoint
+import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.usecase.GetCourseSearchResultsUseCase
 import com.depromeet.team6.presentation.util.base.BaseViewModel
 import com.depromeet.team6.presentation.util.view.LoadState
@@ -21,13 +21,13 @@ class CourseSearchViewModel @Inject constructor(
             is CourseSearchContract.CourseEvent.RegisterAlarm -> CourseSearchContract.CourseSideEffect.ShowNotificationToast
             is CourseSearchContract.CourseEvent.LoadCourseSearchResult -> setState {
                 copy(
+                    courseDataLoadState = LoadState.Success,
                     courseData = event.searchResult
                 )
             }
             is CourseSearchContract.CourseEvent.InitiateDepartureDestinationPoint -> {
                 setState {
                     copy(
-                        courseDataLoadState = LoadState.Success,
                         startingPoint = event.departurePoint,
                         destinationPoint = event.destinationPoint
                     )
@@ -37,7 +37,12 @@ class CourseSearchViewModel @Inject constructor(
         }
     }
 
-    private fun getSearchResults(){
+    private fun getSearchResults() {
+        setState {
+            copy(
+                courseDataLoadState = LoadState.Loading
+            )
+        }
         viewModelScope.launch {
             loadSearchResult(
                 startPoint = uiState.value.startingPoint!!,
@@ -46,13 +51,20 @@ class CourseSearchViewModel @Inject constructor(
                 .onSuccess {
                     setEvent(CourseSearchContract.CourseEvent.LoadCourseSearchResult(it))
                 }
-                .onFailure {  }
+                .onFailure {
+                    setState {
+                        copy(
+                            courseDataLoadState = LoadState.Error
+                        )
+                    }
+                    setSideEffect(CourseSearchContract.CourseSideEffect.ShowSearchFailedToast(it.message!!))
+                }
         }
     }
 
     fun setDepartureDestination(departure: String, destination: String) {
-        val departurePoint = Gson().fromJson(departure, WayPoint::class.java)
-        val destinationPoint = Gson().fromJson(destination, WayPoint::class.java)
+        val departurePoint = Gson().fromJson(departure, Address::class.java)
+        val destinationPoint = Gson().fromJson(destination, Address::class.java)
 
         setEvent(CourseSearchContract.CourseEvent.InitiateDepartureDestinationPoint(departurePoint, destinationPoint))
     }

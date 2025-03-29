@@ -51,8 +51,8 @@ fun ItineraryMap(
     val tMapView = remember { TMapView(context) }
     var isMapReady by remember { mutableStateOf(false) }
 
-    val departLocation = LatLng(legs[0].startPoint.latitude, legs[0].startPoint.longitude)
-    val destinationLocation = LatLng(legs[legs.size - 1].endPoint.latitude, legs[legs.size - 1].endPoint.longitude)
+    val departLocation = LatLng(legs[0].startPoint.lat, legs[0].startPoint.lon)
+    val destinationLocation = LatLng(legs[legs.size - 1].endPoint.lat, legs[legs.size - 1].endPoint.lon)
 
     LaunchedEffect(Unit) {
         tMapView.setSKTMapApiKey(BuildConfig.TMAP_API_KEY)

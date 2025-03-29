@@ -25,6 +25,7 @@ import com.google.android.gms.maps.model.LatLng
 @Composable
 fun ItineraryRoute(
     padding: PaddingValues,
+    courseInfoJSON: String,
     viewModel: ItineraryViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -32,6 +33,7 @@ fun ItineraryRoute(
 
     // SideEffect 감지
     LaunchedEffect(Unit) {
+        viewModel.initItineraryInfo(courseInfoJSON)
         viewModel.sideEffect.collect { sideEffect ->
             when (sideEffect) {
                 else -> {}
@@ -44,9 +46,11 @@ fun ItineraryRoute(
     }
 
     when (uiState.courseDataLoadState) {
-        LoadState.Idle -> Unit
+        LoadState.Idle -> {}
         LoadState.Success -> ItineraryScreen(
-            uiState = uiState
+            uiState = uiState,
+            modifier = Modifier
+                .padding(padding)
         )
         else -> Unit
     }

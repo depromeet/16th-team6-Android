@@ -33,7 +33,6 @@ object TransportTypeUiMapper {
         put(key(TransportType.BUS, 22), R.drawable.ic_bus_wide_area)
         put(key(TransportType.BUS, 23), R.drawable.ic_bus_wide_area)
 
-
         // SUBWAY: index 0~N
         put(key(TransportType.SUBWAY, 1), R.drawable.ic_subway_1)
         put(key(TransportType.SUBWAY, 2), R.drawable.ic_subway_2)
@@ -69,7 +68,6 @@ object TransportTypeUiMapper {
         put(key(TransportType.SUBWAY, 125), R.drawable.ic_subway_gtx_a)
         put(key(TransportType.SUBWAY, 21), R.drawable.ic_subway_incheon_1)
         put(key(TransportType.SUBWAY, 22), R.drawable.ic_subway_incheon_2)
-
     }
 
     private val colorTable = SparseArray<Color>().apply {
@@ -131,6 +129,7 @@ object TransportTypeUiMapper {
         put(key(TransportType.SUBWAY, 21), defaultTeam6Colors.subwayColors[16].second)
         put(key(TransportType.SUBWAY, 22), defaultTeam6Colors.subwayColors[17].second)
     }
+
     // 키 생성 헬퍼
     private fun key(type: TransportType, index: Int = 0): Int {
         return type.ordinal * 1000 + index

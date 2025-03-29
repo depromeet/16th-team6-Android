@@ -54,7 +54,7 @@ fun HomeRoute(
     navigateToLogin: () -> Unit,
     navigateToCourseSearch: (String, String) -> Unit,
     navigateToMypage: () -> Unit,
-    navigateToItinerary: () -> Unit,
+    navigateToItinerary: (String) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
@@ -62,13 +62,14 @@ fun HomeRoute(
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
 
+    var permissionGranted by remember { mutableStateOf(PermissionUtil.hasLocationPermissions(context)) }
     var userLocation by remember { mutableStateOf(LatLng(DEFAULT_LNT, DEFAULT_LNG)) } // 서울시 기본 위치
 
     val locationPermissionsLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestMultiplePermissions(),
         onResult = { permissions ->
-            val allGranted = permissions.values.all { it }
-            if (allGranted) {
+            permissionGranted = permissions.values.all { it }
+            if (permissionGranted) {
                 Timber.d("Location_Permission Has Granted")
             }
         }
@@ -79,12 +80,14 @@ fun HomeRoute(
             .collect { sideEffect ->
                 when (sideEffect) {
                     is HomeContract.HomeSideEffect.NavigateToMypage -> navigateToMypage()
-                    is HomeContract.HomeSideEffect.NavigateToItinerary -> navigateToItinerary()
+                    is HomeContract.HomeSideEffect.NavigateToItinerary -> navigateToItinerary(
+                        Gson().toJson(uiState.courseInfo)
+                    )
                 }
             }
     }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(permissionGranted) {
         if (PermissionUtil.hasLocationPermissions(context)) { // 위치 권한이 있으면
             val location = context.getUserLocation()
             userLocation = location
@@ -141,7 +144,7 @@ fun HomeScreen(
     onSearchClick: () -> Unit = {},
     onFinishClick: () -> Unit = {},
     navigateToMypage: () -> Unit = {},
-    navigateToItinerary: () -> Unit = {},
+    navigateToItinerary: (String) -> Unit = {},
     viewModel: HomeViewModel = hiltViewModel() // TODO : TmapViewCompose 변경 후 제거
 ) {
     val context = LocalContext.current
@@ -197,7 +200,9 @@ fun HomeScreen(
                     onFinishClick()
                 },
                 onCourseDetailClick = {
-                    navigateToItinerary()
+                    val courseInfoJSON =
+                        Gson().toJson(homeUiState.courseInfo)
+                    navigateToItinerary(courseInfoJSON)
                 },
                 modifier = Modifier
                     .align(Alignment.BottomCenter)

@@ -24,7 +24,6 @@ import com.depromeet.team6.presentation.ui.itinerary.LegInfoDummyProvider
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.depromeet.team6.ui.theme.defaultTeam6Typography
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 @Composable
 fun ItinerarySummary(
@@ -74,7 +73,7 @@ fun ItinerarySummary(
 
         // 예상 도착, 출발 시간
         val (departHour, departMinute) = LocalDateTime
-            .parse(boardingTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+            .parse(boardingTime)
             .let { it.hour to it.minute }
         Text(
             text = context.getString(

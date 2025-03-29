@@ -1,6 +1,7 @@
 package com.depromeet.team6.presentation.ui.home
 
-import com.depromeet.team6.domain.model.course.WayPoint
+import com.depromeet.team6.domain.model.Address
+import com.depromeet.team6.domain.model.course.CourseInfo
 import com.depromeet.team6.presentation.util.base.UiEvent
 import com.depromeet.team6.presentation.util.base.UiSideEffect
 import com.depromeet.team6.presentation.util.base.UiState
@@ -12,17 +13,20 @@ class HomeContract {
         val isAlarmRegistered: Boolean = false,
         val isBusDeparted: Boolean = false,
         val showSpeechBubble: Boolean = true,
-        val departurePoint: WayPoint = WayPoint(
-            name = "건국대학교",
-            latitude = 37.540957955055,
-            longitude = 127.08278172427
+        val departurePoint: Address = Address(
+            name = "성균관대학교 자연과학캠퍼스",
+            lat = 37.303534788694,
+            lon = 127.01085807594,
+            address = ""
         ),
-        val destinationPoint : WayPoint = WayPoint(
+        val destinationPoint: Address = Address(
             name = "우리집",
-            latitude = 37.303534788694,
-            longitude = 127.01085807594
+            lat = 37.296391553347,
+            lon = 126.97755824522,
+            address = ""
         ),
-        val logoutState: Boolean = false
+        val logoutState: Boolean = false,
+        val courseInfo: CourseInfo? = null
     ) : UiState
 
     sealed interface HomeSideEffect : UiSideEffect {
