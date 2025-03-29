@@ -83,6 +83,21 @@ class OnboardingViewModel @Inject constructor(
             is OnboardingContract.OnboardingEvent.ChangePermissionDeniedBottomSheetVisible -> setState {
                 copy(permissionDeniedBottomSheetVisible = event.permissionDeniedBottomSheetVisible)
             }
+
+            is OnboardingContract.OnboardingEvent.ClearAddress -> setState {
+                copy(
+                    myAddress = Address(
+                        name = "",
+                        lat = 0.0,
+                        lon = 0.0,
+                        address = ""
+                    )
+                )
+            }
+
+            is OnboardingContract.OnboardingEvent.ChangeMapViewVisible -> setState {
+                copy(mapViewVisible = event.mapViewVisible)
+            }
         }
     }
 
@@ -147,16 +162,14 @@ class OnboardingViewModel @Inject constructor(
         }
     }
 
-    fun getCenterLocation(location: LatLng) {
+    fun getCenterLocation(location: LatLng, onComplete: (Address) -> Unit = {}) {
         viewModelScope.launch {
-            getAddressFromCoordinatesUseCase.invoke(location.latitude, location.longitude)
-                .onSuccess {
-                    setState {
-                        copy(
-                            myAddress = it
-                        )
-                    }
-                }.onFailure {
+            getAddressFromCoordinatesUseCase(location.latitude, location.longitude)
+                .onSuccess { address ->
+                    setState { copy(myAddress = address) }
+                    onComplete(address)
+                }
+                .onFailure {
                 }
         }
     }
