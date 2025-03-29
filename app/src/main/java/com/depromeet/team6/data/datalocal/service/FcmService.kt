@@ -4,27 +4,28 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.ContentValues.TAG
 import android.content.Context
+import android.content.Intent
 import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
 import com.depromeet.team6.R
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-import timber.log.Timber
 
 class FcmService : FirebaseMessagingService() {
 
     override fun onNewToken(token: String) {
         super.onNewToken(token)
 
-        Timber.d("[FCM] FcmService -> token: $token")
+        Log.d("FCM","[FCM] FcmService -> token: $token")
     }
 
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
 
-        Timber.d("[FCM] FcmService -> data: ${message.data}")
-        Timber.d("[FCM] FcmService -> data: ${message.notification}")
+        Log.d("FCM","[FCM] FcmService -> data: ${message.data}")
+        Log.d("FCM","[FCM] FcmService -> data: ${message.notification}")
 
         val title = message.notification?.title
         val body = message.notification?.body
@@ -32,13 +33,13 @@ class FcmService : FirebaseMessagingService() {
 
         if (message.data.isNotEmpty()) {
             if (type == "FULL_SCREEN_ALERT")
-            // TODO: 잠금화면 표출
+                startLockScreenService()
             else if (type == "PUSH_ALERT")
                 sendNotification(title, body)
             else
                 sendDefaultNotification()
         } else {
-            Timber.d("[FCM] FcmService -> empty data")
+            Log.d("FCM","[FCM] FcmService -> empty data")
         }
 
     }
@@ -89,6 +90,23 @@ class FcmService : FirebaseMessagingService() {
 
     }
 
+    private fun startLockScreenService() {
+        Log.d("FCM", "[FCM] 잠금화면 표시를 위한 LockService 시작")
+
+        // LockService를 시작하는 인텐트 생성
+        val intent = Intent(this, LockService::class.java).apply {
+            // 잠금화면 표시 플래그 설정
+            putExtra(LockService.EXTRA_SHOW_LOCK_SCREEN, true)
+
+            // 시간 체크 기능은 필요 없으므로 false로 설정
+            putExtra(LockService.EXTRA_ENABLE_TIME_CHECK, false)
+
+        }
+
+        // Android Oreo 이상에서는 startForegroundService 사용
+        ContextCompat.startForegroundService(this, intent)
+
+    }
 
     companion object {
         private const val CHANNEL_ID = "ATCHA_CHANNEL"

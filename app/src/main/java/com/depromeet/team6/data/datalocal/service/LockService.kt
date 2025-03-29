@@ -121,12 +121,15 @@ class LockService : Service() {
                 val taxiCost = taxiCostUseCase.getLastSavedTaxiCost()
 
                 withContext(Dispatchers.Main) {
+
+                    playAlarmSound()
+
                     lockScreenNavigator.navigateToLockScreen(applicationContext, taxiCost)
                 }
             }
         }
 
-        return super.onStartCommand(intent, flags, startId)
+        return START_STICKY
     }
 
     override fun onDestroy() {
