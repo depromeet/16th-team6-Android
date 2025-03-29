@@ -3,7 +3,9 @@ package com.depromeet.team6.presentation.ui.searchlocation
 import androidx.lifecycle.viewModelScope
 import com.depromeet.team6.domain.model.Location
 import com.depromeet.team6.domain.usecase.GetLocationsUseCase
+import com.depromeet.team6.domain.usecase.GetSearchHistoriesUseCase
 import com.depromeet.team6.presentation.util.base.BaseViewModel
+import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -12,7 +14,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SearchLocationViewModel @Inject constructor(
-    private val getLocationsUseCase: GetLocationsUseCase
+    private val getLocationsUseCase: GetLocationsUseCase,
+    private val getSearchHistoriesUseCase: GetSearchHistoriesUseCase
 ) : BaseViewModel<SearchLocationContract.SearchLocationUiState, SearchLocationContract.SearchLocationSideEffect, SearchLocationContract.SearchLocationEvent>() {
 
     override fun createInitialState(): SearchLocationContract.SearchLocationUiState =
@@ -20,7 +23,9 @@ class SearchLocationViewModel @Inject constructor(
 
     override suspend fun handleEvent(event: SearchLocationContract.SearchLocationEvent) {
         when (event) {
-            is SearchLocationContract.SearchLocationEvent.UpdateSearchQuery -> handleUpdateSearchText(event = event)
+            is SearchLocationContract.SearchLocationEvent.UpdateSearchQuery -> handleUpdateSearchText(
+                event = event
+            )
 
             is SearchLocationContract.SearchLocationEvent.UpdateSearchResults -> setState {
                 copy(
@@ -28,11 +33,9 @@ class SearchLocationViewModel @Inject constructor(
                 )
             }
 
-            is SearchLocationContract.SearchLocationEvent.UpdateRecentSearches -> setState {
-                copy(
-                    recentSearches = event.recentSearches
-                )
-            }
+            is SearchLocationContract.SearchLocationEvent.UpdateRecentSearches -> updateRecentSearches(
+                location = LatLng(event.lat, event.lon)
+            )
 
             is SearchLocationContract.SearchLocationEvent.ClearRecentSearches -> setState {
                 copy(
@@ -48,9 +51,24 @@ class SearchLocationViewModel @Inject constructor(
         }
     }
 
-    fun updateRecentSearches(recentSearches: List<Location>) {
+    private fun updateRecentSearches(location: LatLng) {
+        setEvent(
+            SearchLocationContract.SearchLocationEvent.UpdateRecentSearches(
+                lat = location.latitude,
+                lon = location.longitude
+            )
+        )
+
         viewModelScope.launch {
-            setEvent(SearchLocationContract.SearchLocationEvent.UpdateRecentSearches(recentSearches))
+            getSearchHistoriesUseCase(location.latitude, location.longitude)
+                .onSuccess { searchHistories ->
+                    setState { copy(
+                        recentSearches = searchHistories
+                    ) }
+                }
+                .onFailure {
+                    setState { copy(recentSearches = emptyList()) }
+                }
         }
     }
 
