@@ -101,7 +101,7 @@ fun HomeRoute(
     }
 
     LaunchedEffect(Unit) {
-        viewModel.getLegs()
+        // viewModel.getLegs()
     }
 
     LaunchedEffect(uiState.isAlarmRegistered, uiState.firtTransportTation) {
@@ -117,7 +117,7 @@ fun HomeRoute(
 
     LaunchedEffect(Unit) {
         // TODO : lastRouteId 실제 값으로 변경
-        viewModel.getBusStarted("18690518-23c7-41dc-a815-9ef2f08328dd")
+        // viewModel.getBusStarted("18690518-23c7-41dc-a815-9ef2f08328dd")
     }
 
     SideEffect {
@@ -214,11 +214,6 @@ fun HomeScreen(
                 .zIndex(1f)
         )
 
-//        TMapViewCompose(
-//            userLocation,
-//            viewModel = viewModel
-//        ) // Replace with your actual API key
-
         //TODO : 알림 등록 후 지도 테스트 후 삭제
         val itineraryInfo = homeUiState.itineraryInfo?.legs
         val departureTime = homeUiState.departureTime
@@ -227,6 +222,12 @@ fun HomeScreen(
                 currentLocation = userLocation,
                 legs = itineraryInfo
             )
+        } else {
+            Log.e("error","AfterRegisterMap Error")
+            TMapViewCompose(
+                userLocation,
+                viewModel = viewModel
+            ) // Replace with your actual API key
         }
         //
 

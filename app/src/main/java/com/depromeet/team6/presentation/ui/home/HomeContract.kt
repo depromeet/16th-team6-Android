@@ -1,9 +1,8 @@
 package com.depromeet.team6.presentation.ui.home
 
-import com.depromeet.team6.presentation.model.course.LastTransportInfo
-import com.depromeet.team6.presentation.model.course.TransportType
-import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.course.CourseInfo
+import com.depromeet.team6.domain.model.course.TransportType
+import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.presentation.util.base.UiEvent
 import com.depromeet.team6.presentation.util.base.UiSideEffect
 import com.depromeet.team6.presentation.util.base.UiState
@@ -16,16 +15,15 @@ class HomeContract {
         val isBusDeparted: Boolean = false,
         val showSpeechBubble: Boolean = true,
         val locationAddress: String = "",
-        val logoutState: Boolean = false,
         // 알림 등록 후 경로 표시
-        val itineraryInfo: LastTransportInfo? = null,
+        val itineraryInfo: CourseInfo? = null,
         val courseDataLoadState: LoadState = LoadState.Idle,
         val departureTime: String = "",
         // 막차 첫번째 교통 수단
         val firtTransportTation: TransportType = TransportType.WALK,
         // 사용자 출발 여부
         // TODO : 잠금화면에서 출발하기 버튼 클릭하면 해당 값 변경
-        val userDeparture: Boolean = false
+        val userDeparture: Boolean = false,
         val departurePoint: Address = Address(
             name = "성균관대학교 자연과학캠퍼스",
             lat = 37.303534788694,
@@ -52,7 +50,7 @@ class HomeContract {
         data class UpdateAlarmRegistered(val isRegistered: Boolean) : HomeEvent()
         data class UpdateBusDeparted(val isBusDeparted: Boolean) : HomeEvent()
         data class UpdateSpeechBubbleVisibility(val show: Boolean) : HomeEvent()
-        data class LoadLegsResult(val result: LastTransportInfo) : HomeEvent()
+        data class LoadLegsResult(val result: CourseInfo) : HomeEvent()
         data class LoadDepartureDateTime(val departureTime: String) : HomeEvent()
         data class LoadFirstTransportation(val transportation: TransportType) : HomeEvent()
         data class LoadUserDeparture(val userDeparture: Boolean) : HomeEvent()

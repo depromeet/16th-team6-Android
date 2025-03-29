@@ -1,15 +1,13 @@
 package com.depromeet.team6.presentation.ui.home
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.depromeet.team6.domain.model.Address
+import com.depromeet.team6.domain.model.course.TransportType
 import com.depromeet.team6.domain.usecase.GetAddressFromCoordinatesUseCase
 import com.depromeet.team6.domain.usecase.GetBusStartedUseCase
-import com.depromeet.team6.domain.usecase.LoadMockSearchDataUseCase
-import com.depromeet.team6.presentation.model.course.LegInfo
-import com.depromeet.team6.presentation.model.course.TransportType
-import com.depromeet.team6.presentation.ui.itinerary.ItineraryContract
+import com.depromeet.team6.domain.model.course.LegInfo
+import com.depromeet.team6.domain.usecase.GetCourseSearchResultsUseCase
 import com.depromeet.team6.presentation.util.base.BaseViewModel
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.google.android.gms.maps.model.LatLng
@@ -23,7 +21,7 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val getAddressFromCoordinatesUseCase: GetAddressFromCoordinatesUseCase,
-    val loadMockData : LoadMockSearchDataUseCase, // TODO : 실제 UseCase 로 교체
+    val getCourseSearchResultUseCase : GetCourseSearchResultsUseCase, // TODO : 실제 UseCase 로 교체
     private val getBusStartedUseCase: GetBusStartedUseCase
 ) : BaseViewModel<HomeContract.HomeUiState, HomeContract.HomeSideEffect, HomeContract.HomeEvent>() {
     private var speechBubbleJob: Job? = null
@@ -200,12 +198,24 @@ class HomeViewModel @Inject constructor(
         busStartedPollingJob = null
     }
 
-    // TODO : 실제 데이터로 교체
+    // TODO : 상세 경로 조회 API로 교체
     fun getLegs() {
-        val mockData = loadMockData()
-        setEvent(HomeContract.HomeEvent.LoadLegsResult(mockData[0]))
-        setEvent(HomeContract.HomeEvent.LoadDepartureDateTime(mockData[0].departureTime))
-        setEvent(HomeContract.HomeEvent.LoadFirstTransportation(getFirstTransportation(mockData[0].legs)))
+        viewModelScope.launch {
+            getCourseSearchResultUseCase(
+                startPoint = currentState.departurePoint,
+                endPoint = currentState.destinationPoint
+            ).onSuccess { courseInfo ->
+                setEvent(HomeContract.HomeEvent.LoadLegsResult(courseInfo[0]))
+                setEvent(HomeContract.HomeEvent.LoadDepartureDateTime(courseInfo[0].departureTime))
+                setEvent(
+                    HomeContract.HomeEvent.LoadFirstTransportation(
+                        getFirstTransportation(
+                            courseInfo[0].legs
+                        )
+                    )
+                )
+            }
+        }
     }
 
     // 막차 경로 중 첫번째 대중 교통 수단
