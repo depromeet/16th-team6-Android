@@ -16,12 +16,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.depromeet.team6.R
+import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.ui.theme.LocalTeam6Colors
 
 @Composable
 fun CurrentLocationSheet(
     currentLocation: String,
     destination: String,
+    onSearchLocationClick: () -> Unit,
     onSearchClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -48,7 +50,7 @@ fun CurrentLocationSheet(
                 textColor = colors.systemGreen,
                 backgroundColor = colors.greyDefaultButton,
                 onClick = {},
-                modifier = Modifier
+                modifier = Modifier.noRippleClickable { onSearchLocationClick() }
             )
 
             Spacer(modifier = Modifier.height(4.dp))
@@ -79,6 +81,7 @@ fun CurrentLocationSheetPreview() {
     CurrentLocationSheet(
         currentLocation = "중앙빌딩",
         destination = "우리집",
+        onSearchLocationClick = {},
         onSearchClick = { },
         modifier = Modifier
     )
