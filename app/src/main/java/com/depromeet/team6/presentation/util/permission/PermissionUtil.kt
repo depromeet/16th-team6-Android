@@ -26,7 +26,12 @@ object PermissionUtil {
     }
 
     fun isNotificationPermissionRequested(context: Context): Boolean {
-        return getPreferences(context).getBoolean(KEY_NOTIFICATION_PERMISSION_REQUESTED, false)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            return getPreferences(context).getBoolean(KEY_NOTIFICATION_PERMISSION_REQUESTED, false)
+        } else {
+            savePermissionRequested(context, KEY_NOTIFICATION_PERMISSION_REQUESTED)
+            return true
+        }
     }
 
     fun hasLocationPermissions(context: Context): Boolean {

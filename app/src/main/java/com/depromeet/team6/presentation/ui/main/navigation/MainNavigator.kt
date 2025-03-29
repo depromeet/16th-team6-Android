@@ -13,6 +13,7 @@ import com.depromeet.team6.presentation.ui.itinerary.navigation.navigateToItiner
 import com.depromeet.team6.presentation.ui.login.navigation.LoginRoute
 import com.depromeet.team6.presentation.ui.login.navigation.navigationLogin
 import com.depromeet.team6.presentation.ui.mypage.navigation.navigationMypage
+import com.depromeet.team6.presentation.ui.onboarding.navigation.OnboardingRoute
 import com.depromeet.team6.presentation.ui.onboarding.navigation.navigationOnboarding
 
 class MainNavigator(
@@ -22,6 +23,7 @@ class MainNavigator(
     val startDestination = LoginRoute.ROUTE
 
     fun navigateToOnboarding() {
+        clearBackStackTo(OnboardingRoute.ROUTE)
         navHostController.navigationOnboarding()
     }
 
@@ -41,14 +43,16 @@ class MainNavigator(
     ) {
         clearBackStackTo(CourseSearchRoute.ROUTE)
         navHostController.navigateCourseSearch(
-            departure = departure,
-            destination = destination
+            departurePoint = departure,
+            destinationPoint = destination
         )
     }
 
-    fun navigateToItinerary() {
+    fun navigateToItinerary(
+        courseInfoJSON: String
+    ) {
         clearBackStackTo(ItineraryRoute.ROUTE)
-        navHostController.navigateToItinerary()
+        navHostController.navigateToItinerary(courseInfoJSON)
     }
 
     fun navigateToMypage() {

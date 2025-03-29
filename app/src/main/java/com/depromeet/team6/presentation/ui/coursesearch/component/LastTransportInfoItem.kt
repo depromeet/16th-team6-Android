@@ -17,7 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -25,18 +25,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import com.depromeet.team6.R
-import com.depromeet.team6.presentation.model.course.LastTransportInfo
-import com.depromeet.team6.presentation.model.course.LegInfo
+import com.depromeet.team6.domain.model.course.CourseInfo
+import com.depromeet.team6.domain.model.course.LegInfo
 import com.depromeet.team6.presentation.ui.itinerary.LegInfoDummyProvider
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.depromeet.team6.ui.theme.defaultTeam6Typography
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 @Composable
 fun LastTransportInfoItem(
-    lastTransportInfo: LastTransportInfo,
+    courseSearchResult: CourseInfo,
     modifier: Modifier = Modifier,
     onRegisterAlarmBtnClick: () -> Unit = {}
 ) {
@@ -47,8 +46,9 @@ fun LastTransportInfoItem(
             .padding(16.dp)
     ) {
         // 남은 시간
-        val remainingHour = lastTransportInfo.remainingMinutes / 60
-        val remainingMinute = lastTransportInfo.remainingMinutes % 60
+        val remainingHour = courseSearchResult.remainingTime / 60 / 60
+        val remainingMinute = courseSearchResult.remainingTime / 60 % 60
+
         Row {
             if (remainingHour > 0) {
                 Text(
@@ -56,7 +56,7 @@ fun LastTransportInfoItem(
                         id = R.string.last_transport_info_remaining_hour,
                         remainingHour
                     ),
-                    style = defaultTeam6Typography.heading4Medium20,
+                    style = defaultTeam6Typography.heading3Bold22,
                     color = defaultTeam6Colors.white
                 )
                 Spacer(
@@ -69,16 +69,36 @@ fun LastTransportInfoItem(
                         id = R.string.last_transport_info_remaining_minute,
                         remainingMinute
                     ),
-                    style = defaultTeam6Typography.heading4Medium20,
+                    style = defaultTeam6Typography.heading3Bold22,
                     color = defaultTeam6Colors.white
                 )
             }
+
+            Spacer(
+                modifier = Modifier.weight(1f)
+            )
+
+            Text(
+                modifier = Modifier.align(Alignment.CenterVertically),
+                text = stringResource(
+                    id = R.string.course_detail_description
+                ),
+                style = defaultTeam6Typography.bodyRegular12,
+                color = defaultTeam6Colors.greySecondaryLabel
+            )
+            Image(
+                modifier = Modifier
+                    .size(12.dp)
+                    .align(Alignment.CenterVertically),
+                imageVector = ImageVector.vectorResource(R.drawable.ic_all_arrow_right_grey),
+                contentDescription = "arrow right"
+            )
         }
 
         Spacer(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(10.dp)
+                .height(20.dp)
         )
 
         // 출발-탑승 상세 시각
@@ -88,10 +108,10 @@ fun LastTransportInfoItem(
             verticalAlignment = Alignment.CenterVertically
         ) {
             val departureDateTime = LocalDateTime
-                .parse(lastTransportInfo.departureTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+                .parse(courseSearchResult.departureTime)
             val (departHour, departMinute) = departureDateTime.let { it.hour to it.minute }
             val boardingDateTime = LocalDateTime
-                .parse(lastTransportInfo.boardingTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+                .parse(courseSearchResult.boardingTime)
             val (boardingHour, boardingMinute) = boardingDateTime.let { it.hour to it.minute }
 
             RemainingTimeHHmm(
@@ -119,18 +139,18 @@ fun LastTransportInfoItem(
         Spacer(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(16.dp)
+                .height(20.dp)
         )
 
         // 막차 경로 상세 정보
         TransportCourseInfoExpandable(
-            legsInfo = lastTransportInfo.legs
+            legsInfo = courseSearchResult.legs
         )
 
         Spacer(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(16.dp)
+                .height(24.dp)
         )
 
         // 막차 알림 받기 버튼
@@ -148,7 +168,7 @@ fun SetNotificationButton(
     Row(
         modifier = Modifier
             .clip(RoundedCornerShape(8.dp))
-            .background(color = Color(0x1F8AF265))
+            .background(color = defaultTeam6Colors.greyDefaultButton)
             .padding(vertical = 13.dp, horizontal = 28.dp)
             .fillMaxWidth()
             .noRippleClickable {
@@ -160,7 +180,8 @@ fun SetNotificationButton(
         Image(
             modifier = Modifier
                 .size(16.dp),
-            imageVector = ImageVector.vectorResource(R.drawable.ic_all_alarm_clock_green),
+            imageVector = ImageVector.vectorResource(R.drawable.ic_onboarding_bottom_sheet_bell_16),
+            colorFilter = ColorFilter.tint(defaultTeam6Colors.white),
             contentDescription = "set alarm icon"
         )
         Spacer(
@@ -168,7 +189,7 @@ fun SetNotificationButton(
         )
         Text(
             style = defaultTeam6Typography.bodyMedium14,
-            color = defaultTeam6Colors.primaryMain,
+            color = defaultTeam6Colors.white,
             text = stringResource(R.string.last_transport_info_set_notification)
         )
     }
@@ -203,14 +224,16 @@ fun RemainingTimeHHmm(
 fun LastTransportInfoItemPreview(
     @PreviewParameter(LegInfoDummyProvider::class) courseInfo: List<LegInfo>
 ) {
-    val mockData = LastTransportInfo(
-        remainingMinutes = 83,
-        departureTime = "2025-03-11 23:12:00",
-        boardingTime = "2025-03-11 23:21:00",
+    val mockData = CourseInfo(
+        routeId = "123",
+        filterCategory = 0,
+        remainingTime = 83 * 60,
+        departureTime = "2025-03-11T23:12:00",
+        boardingTime = "2025-03-11T23:21:00",
         legs = courseInfo
     )
     LastTransportInfoItem(
-        lastTransportInfo = mockData
+        courseSearchResult = mockData
     )
 }
 
@@ -219,13 +242,15 @@ fun LastTransportInfoItemPreview(
 fun LastTransportInfoItemPreview2(
     @PreviewParameter(LegInfoDummyProvider::class) courseInfo: List<LegInfo>
 ) {
-    val mockData = LastTransportInfo(
-        remainingMinutes = 23,
-        departureTime = "2025-03-11 23:12:00",
-        boardingTime = "2025-03-11 23:21:00",
+    val mockData = CourseInfo(
+        routeId = "123",
+        filterCategory = 0,
+        remainingTime = 23 * 60,
+        departureTime = "2025-03-11T23:12:00",
+        boardingTime = "2025-03-11T23:21:00",
         legs = courseInfo
     )
     LastTransportInfoItem(
-        lastTransportInfo = mockData
+        courseSearchResult = mockData
     )
 }

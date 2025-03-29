@@ -3,6 +3,7 @@ package com.depromeet.team6.presentation.ui.coursesearch.component
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -28,41 +29,43 @@ fun DestinationSearchBar(
     destination: String,
     modifier: Modifier = Modifier
 ) {
-    Row(
+    Box(
         modifier = modifier
-            .fillMaxWidth()
-            .background(
-                color = defaultTeam6Colors.greyElevatedCard,
-                shape = RoundedCornerShape(12.dp)
-            )
-            .padding(horizontal = 16.dp, vertical = 12.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalAlignment = Alignment.CenterVertically
     ) {
-        // TODO : typography 디자인 시스템 적용
-        Text(
+        Row(
             modifier = Modifier
-                .wrapContentWidth()
-                .weight(1f, fill = false),
-            text = startingPoint,
-            style = defaultTeam6Typography.bodyRegular15,
-            color = defaultTeam6Colors.white,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
-        )
+                .fillMaxWidth()
+                .background(
+                    color = defaultTeam6Colors.greyElevatedCard,
+                    shape = RoundedCornerShape(12.dp)
+                )
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                modifier = Modifier
+                    .wrapContentWidth()
+                    .weight(1f, fill = false),
+                text = startingPoint,
+                style = defaultTeam6Typography.bodyRegular15,
+                color = defaultTeam6Colors.white,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
 
-        Image(
-            imageVector = ImageVector.vectorResource(id = R.drawable.ic_course_search_arrow_right_white),
-            contentDescription = "arrow right",
-            modifier = Modifier.size(12.dp)
-        )
+            Image(
+                imageVector = ImageVector.vectorResource(id = R.drawable.ic_course_search_arrow_right_white),
+                contentDescription = "arrow right",
+                modifier = Modifier.size(12.dp)
+            )
 
-        // TODO : typography 디자인 시스템 적용
-        Text(
-            text = destination,
-            style = defaultTeam6Typography.bodyRegular15,
-            color = defaultTeam6Colors.white
-        )
+            Text(
+                text = destination,
+                style = defaultTeam6Typography.bodyRegular15,
+                color = defaultTeam6Colors.white
+            )
+        }
     }
 }
 

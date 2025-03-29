@@ -1,11 +1,13 @@
 package com.depromeet.team6.di
 
 import com.depromeet.team6.data.repositoryimpl.AuthRepositoryImpl
+import com.depromeet.team6.data.repositoryimpl.CourseSearchRepositoryImpl
 import com.depromeet.team6.data.repositoryimpl.DummyRepositoryImpl
 import com.depromeet.team6.data.repositoryimpl.HomeRepositoryImpl
 import com.depromeet.team6.data.repositoryimpl.LocationsRepositoryImpl
 import com.depromeet.team6.data.repositoryimpl.UserInfoRepositoryImpl
 import com.depromeet.team6.domain.repository.AuthRepository
+import com.depromeet.team6.domain.repository.CourseSearchRepository
 import com.depromeet.team6.domain.repository.DummyRepository
 import com.depromeet.team6.domain.repository.HomeRepository
 import com.depromeet.team6.domain.repository.LocationsRepository
@@ -38,4 +40,8 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindHomeRepository7(homeRepositoryImpl: HomeRepositoryImpl): HomeRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindCourseRepository(courseRepositoryImpl: CourseSearchRepositoryImpl): CourseSearchRepository
 }

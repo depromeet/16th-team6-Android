@@ -1,8 +1,13 @@
 package com.depromeet.team6.presentation.ui.onboarding
 
+import android.content.Intent
+import android.net.Uri
+import android.provider.Settings
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -12,9 +17,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -27,9 +33,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.depromeet.team6.R
 import com.depromeet.team6.presentation.type.OnboardingSelectLocationButtonType
 import com.depromeet.team6.presentation.type.OnboardingType
+import com.depromeet.team6.presentation.type.toPermissionType
 import com.depromeet.team6.presentation.ui.onboarding.component.AlarmTime
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingAlarmSelector
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingButton
+import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingPermissionBottomSheet
+import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingPermissionDeniedBottomSheet
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingSearchContainer
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingSearchPopup
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingSelectLocationButton
@@ -37,6 +46,7 @@ import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingSelect
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingTitle
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.presentation.util.permission.PermissionUtil
+import com.depromeet.team6.presentation.util.toast.atChaToastMessage
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import timber.log.Timber
@@ -50,12 +60,23 @@ fun OnboardingRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
+    val hasRequestedLocationPermission = remember { mutableStateOf(false) }
+
     val locationPermissionsLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestMultiplePermissions(),
         onResult = { permissions ->
-            val allGranted = permissions.values.all { it }
-            if (allGranted) {
-                Timber.d("Location_Permission Has Granted")
+            hasRequestedLocationPermission.value = true
+
+            val anyDenied = permissions.any { !it.value }
+
+            if (anyDenied) {
+                viewModel.setEvent(
+                    OnboardingContract.OnboardingEvent.ChangePermissionDeniedBottomSheetVisible(
+                        permissionDeniedBottomSheetVisible = true
+                    )
+                )
+            } else {
+                Timber.d("모든 권한 허용됨")
             }
         }
     )
@@ -74,7 +95,7 @@ fun OnboardingRoute(
         viewModel.setEvent(OnboardingContract.OnboardingEvent.UpdateUserLocation(context = context))
     }
 
-    SideEffect {
+    LaunchedEffect(uiState.onboardingType) {
         when (uiState.onboardingType) {
             OnboardingType.HOME -> {
                 Timber.d(
@@ -86,23 +107,21 @@ fun OnboardingRoute(
                     PermissionUtil.hasLocationPermissions(context)
                     }"
                 )
-                if (!PermissionUtil.isLocationPermissionRequested(context) &&
-                    !PermissionUtil.hasLocationPermissions(context)
-                ) {
-                    PermissionUtil.requestLocationPermissions(
-                        context = context,
-                        locationPermissionLauncher = locationPermissionsLauncher
+                if (!PermissionUtil.isLocationPermissionRequested(context)) {
+                    viewModel.setEvent(
+                        OnboardingContract.OnboardingEvent.ChangePermissionBottomSheetVisible(
+                            permissionBottomSheetVisible = true
+                        )
                     )
                 }
             }
 
             OnboardingType.ALARM -> {
-                if (!PermissionUtil.isNotificationPermissionRequested(context) &&
-                    !PermissionUtil.hasNotificationPermission(context)
-                ) {
-                    PermissionUtil.requestNotificationPermission(
-                        context = context,
-                        notificationPermissionLauncher = notificationPermissionLauncher
+                if (!PermissionUtil.isNotificationPermissionRequested(context)) {
+                    viewModel.setEvent(
+                        OnboardingContract.OnboardingEvent.ChangePermissionBottomSheetVisible(
+                            permissionBottomSheetVisible = true
+                        )
                     )
                 }
             }
@@ -112,7 +131,9 @@ fun OnboardingRoute(
     when {
         uiState.searchPopupVisible -> {
             OnboardingSearchPopup(
+                context = context,
                 uiState = uiState,
+                searchLocations = uiState.searchLocations,
                 padding = padding,
                 searchText = uiState.searchText,
                 onSearchTextChange = { newText ->
@@ -121,15 +142,18 @@ fun OnboardingRoute(
                     }
                     viewModel.setEvent(OnboardingContract.OnboardingEvent.UpdateSearchText(text = newText))
                 },
-                onCloseButtonClicked = {
-                    viewModel.setEvent(OnboardingContract.OnboardingEvent.ClearText)
+                onBackButtonClicked = {
+                    viewModel.setEvent(OnboardingContract.OnboardingEvent.SearchPopUpBackPressed)
                 },
-                selectButtonClicked = { location ->
+                selectButtonClicked = {
                     viewModel.setEvent(
                         OnboardingContract.OnboardingEvent.LocationSelectButtonClicked(
-                            location
+                            uiState.myAddress
                         )
                     )
+                },
+                onTextClearButtonClicked = {
+                    viewModel.setEvent(OnboardingContract.OnboardingEvent.ClearText)
                 }
             )
         }
@@ -152,16 +176,73 @@ fun OnboardingRoute(
                     onBackPressed = { viewModel.setEvent(OnboardingContract.OnboardingEvent.BackPressed) },
                     onAlarmTimeSelected = { alarmTime ->
                         val timeValue = alarmTime.minutes
-                        val newSelection = if (timeValue in uiState.alertFrequencies) {
-                            uiState.alertFrequencies - timeValue
-                        } else {
-                            uiState.alertFrequencies + timeValue
+                        if (timeValue != 1) {
+                            val newSelection = if (timeValue in uiState.alertFrequencies) {
+                                uiState.alertFrequencies - timeValue
+                            } else {
+                                uiState.alertFrequencies + timeValue
+                            }
+                            viewModel.setEvent(
+                                OnboardingContract.OnboardingEvent.UpdateAlertFrequencies(
+                                    newSelection
+                                )
+                            )
                         }
+                    },
+                    bottomSheetButtonClicked = {
                         viewModel.setEvent(
-                            OnboardingContract.OnboardingEvent.UpdateAlertFrequencies(
-                                newSelection
+                            OnboardingContract.OnboardingEvent.ChangePermissionBottomSheetVisible(
+                                permissionBottomSheetVisible = false
                             )
                         )
+
+                        when (uiState.onboardingType) {
+                            OnboardingType.HOME -> {
+                                if (!PermissionUtil.isLocationPermissionRequested(context) &&
+                                    !PermissionUtil.hasLocationPermissions(context)
+                                ) {
+                                    PermissionUtil.requestLocationPermissions(
+                                        context = context,
+                                        locationPermissionLauncher = locationPermissionsLauncher
+                                    )
+                                }
+                            }
+
+                            OnboardingType.ALARM -> {
+                                if (!PermissionUtil.isNotificationPermissionRequested(context) &&
+                                    !PermissionUtil.hasNotificationPermission(context)
+                                ) {
+                                    PermissionUtil.requestNotificationPermission(
+                                        context = context,
+                                        notificationPermissionLauncher = notificationPermissionLauncher
+                                    )
+                                }
+                            }
+                        }
+                    },
+                    onLocationButtonClicked = {
+                        if (PermissionUtil.hasLocationPermissions(context = context)) {
+                            // Todo: 현 위치로 찾기 구현
+                        } else {
+                            atChaToastMessage(
+                                context = context,
+                                R.string.onboarding_location_no_permission_toast,
+                                length = Toast.LENGTH_SHORT
+                            )
+                        }
+                    },
+                    deniedBottomSheetCloseButtonClicked = {
+                        viewModel.setEvent(
+                            OnboardingContract.OnboardingEvent.ChangePermissionDeniedBottomSheetVisible(
+                                permissionDeniedBottomSheetVisible = false
+                            )
+                        )
+                    },
+                    deniedBottomSheetSettingButtonClicked = {
+                        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                            data = Uri.fromParts("package", context.packageName, null)
+                        }
+                        context.startActivity(intent)
                     }
                 )
             }
@@ -181,63 +262,82 @@ fun OnboardingScreen(
     onSearchBoxClicked: () -> Unit = {},
     onNextButtonClicked: () -> Unit = {},
     onBackPressed: () -> Unit = {},
-    onAlarmTimeSelected: (AlarmTime) -> Unit = {}
+    onAlarmTimeSelected: (AlarmTime) -> Unit = {},
+    onLocationButtonClicked: () -> Unit = {},
+    bottomSheetButtonClicked: () -> Unit = {},
+    deniedBottomSheetSettingButtonClicked: () -> Unit = {},
+    deniedBottomSheetCloseButtonClicked: () -> Unit = {}
 ) {
-    Column(
-        modifier = modifier
+    Box(
+        modifier = Modifier
             .fillMaxSize()
-            .background(color = defaultTeam6Colors.greyWashBackground)
             .padding(padding)
     ) {
-        if (uiState.onboardingType == OnboardingType.HOME) {
-            Spacer(modifier = Modifier.height(72.dp))
-            OnboardingTitle(onboardingType = uiState.onboardingType)
-            Spacer(modifier = Modifier.height(48.dp))
-            if (uiState.myHome.name.isEmpty()) {
-                OnboardingSearchContainer(
-                    onSearchBoxClicked = onSearchBoxClicked,
-                    onLocationButtonClick = {
-                        Timber.d("Location button clicked!")
-                    }
-                )
-            } else {
-                OnboardingSelectedHome(onboardingSearchLocation = uiState.myHome)
-                Spacer(modifier = Modifier.height(31.dp))
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .background(color = defaultTeam6Colors.greyWashBackground)
+        ) {
+            if (uiState.onboardingType == OnboardingType.HOME) {
+                Spacer(modifier = Modifier.height(72.dp))
+                OnboardingTitle(onboardingType = uiState.onboardingType)
+                Spacer(modifier = Modifier.height(48.dp))
+                if (uiState.myAddress.address.isEmpty()) {
+                    OnboardingSearchContainer(
+                        onSearchBoxClicked = onSearchBoxClicked,
+                        onLocationButtonClick = onLocationButtonClicked
+                    )
+                } else {
+                    OnboardingSelectedHome(onboardingSearchLocation = uiState.myAddress)
+                    Spacer(modifier = Modifier.height(31.dp))
 
-                OnboardingSelectLocationButton(
-                    searchLocationButtonType = OnboardingSelectLocationButtonType.EDIT,
-                    onClick = onSearchBoxClicked
+                    OnboardingSelectLocationButton(
+                        searchLocationButtonType = OnboardingSelectLocationButtonType.EDIT,
+                        onClick = onSearchBoxClicked
+                    )
+                }
+            } else {
+                Icon(
+                    modifier = Modifier
+                        .padding(vertical = 18.dp, horizontal = 16.dp)
+                        .noRippleClickable { onBackPressed() },
+                    imageVector = ImageVector.vectorResource(R.drawable.ic_all_arrow_left_white),
+                    contentDescription = null,
+                    tint = Color.Unspecified
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+                OnboardingTitle(onboardingType = uiState.onboardingType)
+                Spacer(modifier = Modifier.height(68.dp))
+                OnboardingAlarmSelector(
+                    selectedItems = uiState.alertFrequencies.mapNotNull { timeValue ->
+                        AlarmTime.entries.find { it.minutes == timeValue }
+                    }.toSet(),
+                    onItemClick = onAlarmTimeSelected
                 )
             }
-        } else {
-            Icon(
-                modifier = Modifier
-                    .padding(vertical = 18.dp, horizontal = 16.dp)
-                    .noRippleClickable { onBackPressed() },
-                imageVector = ImageVector.vectorResource(R.drawable.ic_all_arrow_left_white),
-                contentDescription = null,
-                tint = Color.Unspecified
-            )
-            Spacer(modifier = Modifier.height(12.dp))
-            OnboardingTitle(onboardingType = uiState.onboardingType)
-            Spacer(modifier = Modifier.height(68.dp))
-            OnboardingAlarmSelector(
-                selectedItems = uiState.alertFrequencies.mapNotNull { timeValue ->
-                    AlarmTime.entries.find { it.minutes == timeValue }
-                }.toSet(),
-                onItemClick = onAlarmTimeSelected
-            )
+            Spacer(modifier = Modifier.weight(1f))
+            OnboardingButton(
+                isEnabled =
+                if (uiState.onboardingType == OnboardingType.ALARM) {
+                    uiState.alertFrequencies.isNotEmpty()
+                } else {
+                    uiState.myAddress.name.isNotEmpty()
+                }
+            ) { onNextButtonClicked() }
+            Spacer(modifier = Modifier.height(20.dp))
         }
-        Spacer(modifier = Modifier.weight(1f))
-        OnboardingButton(
-            isEnabled =
-            if (uiState.onboardingType == OnboardingType.ALARM) {
-                uiState.alertFrequencies.isNotEmpty()
-            } else {
-                uiState.myHome.name.isNotEmpty()
-            }
-        ) { onNextButtonClicked() }
-        Spacer(modifier = Modifier.height(20.dp))
+        OnboardingPermissionBottomSheet(
+            modifier = Modifier.align(Alignment.BottomCenter),
+            onboardingPermissionType = uiState.onboardingType.toPermissionType(),
+            bottomSheetVisible = uiState.permissionBottomSheetVisible,
+            buttonClicked = { bottomSheetButtonClicked() }
+        )
+        OnboardingPermissionDeniedBottomSheet(
+            modifier = Modifier.align(Alignment.BottomCenter),
+            bottomSheetVisible = uiState.permissionDeniedBottomSheetVisible,
+            completeButtonClicked = deniedBottomSheetCloseButtonClicked,
+            settingButtonClicked = deniedBottomSheetSettingButtonClicked
+        )
     }
 }
 

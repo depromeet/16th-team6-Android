@@ -1,16 +1,24 @@
 package com.depromeet.team6.presentation.ui.onboarding.component
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -35,32 +43,45 @@ object OnboardingSearchTextField {
 fun OnboardingSearchTextField(
     modifier: Modifier = Modifier,
     value: String = "",
+    focusRequester: FocusRequester = remember { FocusRequester() },
     visualTransformation: VisualTransformation = VisualTransformation.None,
     onValueChange: (String) -> Unit = { _ -> },
-    onCloseButtonClicked: () -> Unit = {},
+    onBackButtonClicked: () -> Unit = {},
+    onTextClearButtonClicked: () -> Unit = {},
+    onGpsButtonClicked: () -> Unit = {},
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Default),
     keyboardActions: KeyboardActions = KeyboardActions.Default
 ) {
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(start = 16.dp),
+            .padding(horizontal = 16.dp, vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
+        Icon(
+            imageVector = ImageVector.vectorResource(R.drawable.ic_all_arrow_left_grey),
+            tint = Color.Unspecified,
+            contentDescription = null,
+            modifier = Modifier.noRippleClickable {
+                onBackButtonClicked()
+            }
+        )
+        Spacer(modifier = Modifier.width(12.dp))
         Row(
             modifier = modifier
                 .weight(1f)
                 .roundedBackgroundWithPadding(
                     backgroundColor = defaultTeam6Colors.systemGrey6,
-                    cornerRadius = 8.dp
-                )
-                .padding(horizontal = 12.dp),
+                    cornerRadius = 8.dp,
+                    padding = PaddingValues(horizontal = 12.dp)
+                ),
             verticalAlignment = Alignment.CenterVertically
         ) {
             BasicTextField(
                 modifier = Modifier
                     .weight(1f)
-                    .padding(vertical = 10.dp),
+                    .padding(vertical = 10.dp)
+                    .focusRequester(focusRequester),
                 value = value,
                 onValueChange = {
                     if (it.codePointCount(0, it.length) <= MAX_LENGTH) {
@@ -84,13 +105,25 @@ fun OnboardingSearchTextField(
                     }
                 }
             )
+            if (value.isNotEmpty()) {
+                Spacer(modifier = Modifier.width(12.dp))
+                Icon(
+                    modifier = Modifier
+                        .noRippleClickable { onTextClearButtonClicked() },
+                    imageVector = ImageVector.vectorResource(R.drawable.ic_onboarding_close),
+                    tint = Color.Unspecified,
+                    contentDescription = null
+                )
+            }
         }
+        Spacer(modifier = Modifier.width(12.dp))
         Icon(
-            modifier = Modifier.padding(start = 12.dp, top = 18.dp, end = 16.dp, bottom = 18.dp)
-                .noRippleClickable { onCloseButtonClicked() },
-            imageVector = ImageVector.vectorResource(R.drawable.ic_onboarding_close_24),
+            imageVector = ImageVector.vectorResource(R.drawable.ic_onboarding_current_location),
             tint = Color.Unspecified,
-            contentDescription = null
+            contentDescription = null,
+            modifier = Modifier.noRippleClickable {
+                onGpsButtonClicked()
+            }
         )
     }
 }
@@ -98,5 +131,11 @@ fun OnboardingSearchTextField(
 @Preview
 @Composable
 private fun OnboardingSearchTextFieldPreview() {
-    OnboardingSearchTextField()
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(color = defaultTeam6Colors.white)
+    ) {
+        OnboardingSearchTextField()
+    }
 }
