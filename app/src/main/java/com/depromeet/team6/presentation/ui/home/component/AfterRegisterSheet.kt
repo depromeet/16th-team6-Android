@@ -32,6 +32,7 @@ fun AfterRegisterSheet(
     isConfirmed: Boolean = false,
     afterUserDeparted: Boolean = false,
     timeToLeave: String,
+    departureTime: String,
     startLocation: String,
     destination: String,
     onCourseTextClick: () -> Unit,
@@ -121,10 +122,9 @@ fun AfterRegisterSheet(
 
             // 사용자가 잠금화면 출발하기 버튼 눌러서 출발했을 때
             if (afterUserDeparted) {
-                // TODO : 타이머 구현
-                TimeText(
-                    timeToLeave = timeToLeave,
-                    textColor = timeTextColor,
+                LastTimer(
+                    departureTime = departureTime, // TODO : 막차 출발 시간 받아오기
+                    textColor = colors.systemRed,
                     modifier = Modifier.padding(top = 4.dp, bottom = 6.dp)
                 )
             } else {
@@ -162,6 +162,7 @@ fun AfterRegisterSheetPreview() {
     AfterRegisterSheet(
         afterUserDeparted = true,
         timeToLeave = "23:30:00",
+        departureTime = "15:30:00",
         startLocation = "중앙빌딩",
         destination = "우리집",
         onCourseTextClick = { },

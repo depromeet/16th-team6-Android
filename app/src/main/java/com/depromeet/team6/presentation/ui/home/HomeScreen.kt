@@ -223,6 +223,8 @@ fun HomeScreen(
             )
         }
         //
+
+        val lastDepartureTime = homeUiState.departureTime // TODO : 막차 출발 시간으로 변경
         var isConfirmed = false
 
         val firstTransportation = homeUiState.firtTransportTation
@@ -258,7 +260,8 @@ fun HomeScreen(
                     .zIndex(1f),
                 onRefreshClick = {
                     onRefreshClick()
-                }
+                },
+                departureTime = lastDepartureTime
             )
         } else {
             notificationScheduler.cancelAllNotifications()
