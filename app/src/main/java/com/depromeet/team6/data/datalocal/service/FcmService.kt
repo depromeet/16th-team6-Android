@@ -2,10 +2,8 @@ package com.depromeet.team6.data.datalocal.service
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
@@ -25,13 +23,18 @@ class FcmService : FirebaseMessagingService() {
         super.onMessageReceived(message)
 
         Log.d("FCM","[FCM] FcmService -> data: ${message.data}")
-        Log.d("FCM","[FCM] FcmService -> data: ${message.notification}")
+        Log.d("FCM","[FCM] FcmService -> notification: ${message.notification}")
 
         val title = message.notification?.title
         val body = message.notification?.body
         val type = message.data["type"] ?: ""
 
-        if (message.data.isNotEmpty()) {
+        Log.d("FCM","[FCM] FcmService -> title: $title")
+        Log.d("FCM","[FCM] FcmService -> body: $body")
+
+        if (message.notification != null) {
+            sendNotification(title, body)
+        } else if (message.data.isNotEmpty()) {
             if (type == "FULL_SCREEN_ALERT")
                 startLockScreenService()
             else if (type == "PUSH_ALERT")
@@ -39,12 +42,12 @@ class FcmService : FirebaseMessagingService() {
             else
                 sendDefaultNotification()
         } else {
-            Log.d("FCM","[FCM] FcmService -> empty data")
+            Log.d("FCM","[FCM] FcmService -> 알림 및 데이터 필드 모두 없음")
         }
-
     }
 
     private fun sendNotification(title: String?, body: String?) {
+        Log.d("FCM", "[FCM] sendNotification 호출됨 - title: $title, body: $body")
 
         val notificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -57,7 +60,7 @@ class FcmService : FirebaseMessagingService() {
         notificationManager.createNotificationChannel(channel)
 
         val notification = NotificationCompat.Builder(this, CHANNEL_ID)
-            .setContentTitle(title ?: "")
+            .setContentTitle(title ?: "앗차")
             .setContentText(body ?: "막차 출발 시간을 확인해보세요!")
             .setSmallIcon(R.drawable.ic_app_logo_foreground)
             .setAutoCancel(true)

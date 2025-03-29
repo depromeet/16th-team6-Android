@@ -70,15 +70,15 @@
             android:exported="false"
             android:foregroundServiceType="specialUse"
             android:permission="android.permission.FOREGROUND_SERVICE"/>
-<!--        <service-->
-<!--            android:name=".data.datalocal.service.FcmService"-->
-<!--            android:enabled="true"-->
-<!--            android:exported="false"-->
-<!--            android:stopWithTask="false">-->
-<!--            <intent-filter>-->
-<!--                <action android:name="com.google.firebase.MESSAGING_EVENT"/>-->
-<!--            </intent-filter>-->
-<!--        </service>-->
+        <service
+            android:name=".data.datalocal.service.FcmService"
+            android:enabled="true"
+            android:exported="false"
+            android:stopWithTask="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
+        </service>
         <receiver
             android:name=".presentation.ui.alarm.NotificationReceiver"
             android:enabled="true"
