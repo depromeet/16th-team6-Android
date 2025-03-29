@@ -58,15 +58,13 @@ fun SearchHistoryContainer(
             )
         }
 
-        if (uiState.searchQuery.isEmpty()) {
-            LazyColumn {
-                items(uiState.recentSearches) { recentSearchLocation ->
-                    SearchHistoryItem(
-                        homeSearchLocation = recentSearchLocation,
-                        deleteButtonClicked = { TODO("검색 내역 삭제 api 연결") },
-                        selectItemClicked = { selectButtonClicked(recentSearchLocation) }
-                    )
-                }
+        LazyColumn {
+            items(uiState.recentSearches) { recentSearchLocation ->
+                SearchHistoryItem(
+                    homeSearchLocation = recentSearchLocation,
+                    deleteButtonClicked = onDeleteButtonClicked,
+                    selectItemClicked = { selectButtonClicked(recentSearchLocation) }
+                )
             }
         }
     }
