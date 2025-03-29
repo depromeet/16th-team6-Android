@@ -15,15 +15,17 @@ class SearchLocationContract {
     ) : UiState
 
     sealed interface SearchLocationSideEffect : UiSideEffect {
-        data object NavigateBack: SearchLocationSideEffect
+        data object NavigateBack : SearchLocationSideEffect
     }
 
     sealed class SearchLocationEvent : UiEvent {
-        data class UpdateSearchQuery(val text: String, val lat: Double, val lon: Double) : SearchLocationEvent()
+        data class UpdateSearchQuery(val text: String, val lat: Double, val lon: Double) :
+            SearchLocationEvent()
+
         data class UpdateSearchResults(val results: List<Location>) :
             SearchLocationEvent()
 
-        data class UpdateRecentSearches(val recentSearches: List<Location>) :
+        data class UpdateRecentSearches(val lat: Double, val lon: Double) :
             SearchLocationEvent()
 
         data object ClearRecentSearches : SearchLocationEvent()
