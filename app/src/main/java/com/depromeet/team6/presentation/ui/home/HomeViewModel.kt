@@ -2,6 +2,7 @@ package com.depromeet.team6.presentation.ui.home
 
 import android.content.Context
 import androidx.lifecycle.viewModelScope
+import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.usecase.GetAddressFromCoordinatesUseCase
 import com.depromeet.team6.presentation.util.base.BaseViewModel
 import com.google.android.gms.maps.model.LatLng
@@ -84,13 +85,19 @@ class HomeViewModel @Inject constructor(
                 .onSuccess {
                     setState {
                         copy(
-                            locationAddress = it.name
+                            departurePoint = it
                         )
                     }
                 }.onFailure {
                     setState {
+                        // 위치 찾을 수 없는 경우 서울시청으로 임의 초기화
                         copy(
-                            locationAddress = ""
+                            departurePoint = Address(
+                                name = "서울특별시청",
+                                lat = 37.56681744674135,
+                                lon = 126.97866075004276,
+                                address = ""
+                            )
                         )
                     }
                 }

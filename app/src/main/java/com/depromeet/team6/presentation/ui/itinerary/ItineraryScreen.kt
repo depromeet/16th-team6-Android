@@ -14,7 +14,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.depromeet.team6.presentation.model.course.LegInfo
+import com.depromeet.team6.domain.model.course.LegInfo
 import com.depromeet.team6.presentation.ui.common.AtchaCommonBottomSheet
 import com.depromeet.team6.presentation.ui.itinerary.component.ItineraryDetail
 import com.depromeet.team6.presentation.ui.itinerary.component.ItineraryMap
@@ -25,6 +25,7 @@ import com.google.android.gms.maps.model.LatLng
 @Composable
 fun ItineraryRoute(
     padding: PaddingValues,
+    courseInfoJSON: String,
     viewModel: ItineraryViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -32,6 +33,7 @@ fun ItineraryRoute(
 
     // SideEffect 감지
     LaunchedEffect(Unit) {
+        viewModel.initItineraryInfo(courseInfoJSON)
         viewModel.sideEffect.collect { sideEffect ->
             when (sideEffect) {
                 else -> {}
@@ -40,13 +42,15 @@ fun ItineraryRoute(
     }
 
     LaunchedEffect(Unit) {
-        viewModel.getLegs()
+//        viewModel.getLegs()
     }
 
     when (uiState.courseDataLoadState) {
-        LoadState.Idle -> Unit
+        LoadState.Idle -> {}
         LoadState.Success -> ItineraryScreen(
-            uiState = uiState
+            uiState = uiState,
+            modifier = Modifier
+                .padding(padding)
         )
         else -> Unit
     }
@@ -72,7 +76,7 @@ fun ItineraryScreen(
                     .padding(horizontal = 16.dp)
             ) {
                 ItinerarySummary(
-                    totalTimeMinute = itineraryInfo.remainingMinutes,
+                    totalTimeMinute = itineraryInfo.remainingTime / 60,
                     boardingTime = itineraryInfo.boardingTime,
                     legs = itineraryInfo.legs
                 )

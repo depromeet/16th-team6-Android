@@ -15,7 +15,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.depromeet.team6.R
-import com.depromeet.team6.presentation.model.course.TransportType
+import com.depromeet.team6.domain.model.course.TransportType
 import com.depromeet.team6.presentation.util.Dimens
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 
@@ -23,6 +23,7 @@ import com.depromeet.team6.ui.theme.defaultTeam6Colors
  * 대중교통 아이콘을 그리는 Composable
  * type : 대중교통 타입 (WALK, BUS, SUBWAY)
  * color : 아이콘 색상 (대중교통에 해당하는 색상으로 넣어주세요)
+ *          ex) defaultTeam6Colors.subwayColors[3].second
  * isMarker : 원형 background 유무.
  *            true -> 원형 background에 색상 적용
  *            false -> 대중교통 아이콘에 색상 적용
@@ -139,7 +140,7 @@ fun preview3() {
     TransportVectorIcon(
         modifier = Modifier.size(15.dp),
         type = TransportType.BUS,
-        color = defaultTeam6Colors.systemRed,
+        color = defaultTeam6Colors.subwayColors[3].second,
         isMarker = false
     )
 }
@@ -150,7 +151,7 @@ fun preview4() {
     TransportVectorIcon(
         modifier = Modifier.size(32.dp),
         type = TransportType.SUBWAY,
-        color = defaultTeam6Colors.systemRed,
+        color = defaultTeam6Colors.subwayColors[12].second,
         isMarker = false
     )
 }
