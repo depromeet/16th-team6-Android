@@ -24,6 +24,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import com.depromeet.team6.presentation.ui.searchlocation.component.BackTopBar
 import com.depromeet.team6.presentation.ui.searchlocation.component.SearchDepartureTextField
+import com.depromeet.team6.presentation.ui.searchlocation.component.SearchHistoryContainer
 import com.depromeet.team6.presentation.ui.searchlocation.component.SearchHistoryEmptyContainer
 import com.depromeet.team6.presentation.ui.searchlocation.component.SearchLocationTextField
 import com.depromeet.team6.presentation.util.DefaultLntLng.DEFAULT_LNG
@@ -140,7 +141,12 @@ fun SearchLocationScreen(
             Box() {
                 if (uiState.searchQuery.isEmpty()) { // 검색어가 없을 때
                     // 최근 기록 api 호출 후 검색 내역 있을 경우, 없을 경우 분기 처리
-
+                    SearchHistoryContainer(
+                        modifier = Modifier,
+                        uiState = SearchLocationContract.SearchLocationUiState(),
+                        onDeleteButtonClicked = { TODO("검색 내역 삭제") },
+                        selectButtonClicked = { TODO("검색 내역 중 선택 시") }
+                    )
                     // 검색 내역이 없을 때
                     SearchHistoryEmptyContainer()
                 } else { // 검색어 입력 시
