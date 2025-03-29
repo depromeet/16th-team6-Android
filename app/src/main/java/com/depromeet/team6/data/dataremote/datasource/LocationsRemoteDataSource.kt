@@ -14,4 +14,7 @@ class LocationsRemoteDataSource @Inject constructor(
 
     suspend fun getAddressFromCoordinates(lat: Double, lon: Double): Result<ResponseAddressDto> =
         locationsService.getAddressFromCoordinates(lat = lat, lon = lon).toResult()
+
+    suspend fun getSearchHistories(lat: Double, lon: Double): Result<List<ResponseLocationsDto>> =
+        locationsService.getSearchHistories(lat = lat, lon = lon).toResult()
 }

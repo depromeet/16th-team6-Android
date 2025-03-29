@@ -21,4 +21,10 @@ interface LocationsService {
         @Query("lat") lat: Double,
         @Query("lon") lon: Double
     ): ApiResponse<ResponseAddressDto>
+
+    @GET("api/locations/histories")
+    suspend fun getSearchHistories(
+        @Query("lat") lat: Double,
+        @Query("lon") lon: Double
+    ):ApiResponse<List<ResponseLocationsDto>>
 }

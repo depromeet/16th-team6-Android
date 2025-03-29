@@ -7,4 +7,6 @@ interface LocationsRepository {
     suspend fun getLocations(keyword: String, lat: Double, lon: Double): Result<List<Location>>
 
     suspend fun getAddressFromCoordinates(lat: Double, lon: Double): Result<Address>
+
+    suspend fun getSearchHistories(lat: Double, lon: Double): Result<List<Location>>
 }

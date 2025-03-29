@@ -21,4 +21,8 @@ class LocationsRepositoryImpl @Inject constructor(
     override suspend fun getAddressFromCoordinates(lat: Double, lon: Double): Result<Address> =
         locationsRemoteDataSource.getAddressFromCoordinates(lat = lat, lon = lon)
             .mapCatching { it.toDomain() }
+
+    override suspend fun getSearchHistories(lat: Double, lon: Double): Result<List<Location>> =
+        locationsRemoteDataSource.getSearchHistories(lat = lat, lon = lon)
+            .mapCatching { it.toDomain() }
 }
