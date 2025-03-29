@@ -81,6 +81,8 @@ fun CourseSearchRoute(
                 val editor = sharedPreferences.edit()
                 editor.putBoolean("isUserLoggedIn", true) // "isUserLoggedIn" 키에 true 값을 저장
                 editor.apply() // 또는 editor.commit()
+                // TODO : lastRouteId 실제 값으로 교체, 막차 알림 등록 버튼 클릭하면 아래 함수 호출
+                viewModel.postAlarm(lastRouteId = "a41baaf0-bc0a-4d14-a20c-5fd929b3a147")
                 navigateToHome()
             },
             backButtonClicked = { navigateToHome() }
