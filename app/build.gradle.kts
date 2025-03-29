@@ -111,6 +111,7 @@ dependencies {
     // Tmap
     implementation(files("libs/tmap-sdk-2.1.aar"))
     implementation(files("libs/vsm-tmap-sdk-v2-android-1.7.23.aar"))
+    implementation(libs.flatbuffers.java)
 
     // Firebase
     implementation(platform(libs.firebase.bom))

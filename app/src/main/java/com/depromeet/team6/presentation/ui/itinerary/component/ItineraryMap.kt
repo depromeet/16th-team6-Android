@@ -34,7 +34,6 @@ import com.google.android.gms.maps.model.LatLng
 import com.skt.tmap.TMapPoint
 import com.skt.tmap.TMapView
 import com.skt.tmap.overlay.TMapMarkerItem
-import com.skt.tmap.overlay.TMapPolyLine
 import com.skt.tmap.overlay.TMapTrafficLine
 import com.skt.tmap.overlay.TMapTrafficLine.TrafficLine
 import kotlinx.coroutines.Dispatchers
@@ -71,7 +70,7 @@ fun ItineraryMap(
             // TMapTrafficLine 객체 생성
             val tmapTrafficLine = TMapTrafficLine("line_itinerary")
             // 교통 정보 표출 여부 설정
-            tmapTrafficLine.isShowTraffic = true
+            tmapTrafficLine.isShowTraffic = false
             // 방향 인디케이터(화살표) 표시 설정
             tmapTrafficLine.isShowIndicator = true
             // 경로 선의 두께 설정
@@ -83,15 +82,14 @@ fun ItineraryMap(
             for (leg in legs) {
                 val lineWayPoints = getWayPointList(leg.passShape)
 
-
                 // TrafficLine 객체 생성 후 리스트에 추가
                 val trafficLine = TrafficLine(1, lineWayPoints)
                 tmapTrafficLine.trafficLineList.add(trafficLine)
 
-
-                val line = TMapPolyLine("line_${leg.transportType}_${leg.sectionTime}", lineWayPoints)
-                tMapView.addTMapPolyLine(line)
+//                val line = TMapPolyLine("line_${leg.transportType}_${leg.sectionTime}", lineWayPoints)
+//                tMapView.addTMapPolyLine(line)
             }
+            tMapView.addTrafficLine(tmapTrafficLine)
 
             // 마커 설정
             val marker = TMapMarkerItem()
