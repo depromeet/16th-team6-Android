@@ -34,6 +34,7 @@ import com.depromeet.team6.presentation.util.permission.PermissionUtil
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.google.android.gms.maps.model.LatLng
+import timber.log.Timber
 
 @Composable
 fun SearchLocationRoute(
@@ -48,12 +49,10 @@ fun SearchLocationRoute(
     var userLocation by remember { mutableStateOf(LatLng(DEFAULT_LNT, DEFAULT_LNG)) } // 서울시 기본 위치
 
     LaunchedEffect(Unit) {
-        Log.d("Location Permission", "${PermissionUtil.hasLocationPermissions(context)}")
+        Timber.tag("Location Permission").d("${PermissionUtil.hasLocationPermissions(context)}")
         if (PermissionUtil.hasLocationPermissions(context)) {
             val location = context.getUserLocation()
-            if (location != null) {
-                userLocation = location
-            }
+            userLocation = location
         }
     }
 
@@ -68,8 +67,10 @@ fun SearchLocationRoute(
 
     when (uiState.loadState) {
         LoadState.Idle -> SearchLocationScreen(
-            backButtonClick = navigateToBack,
             modifier = Modifier,
+            viewModel = viewModel,
+            backButtonClick = navigateToBack,
+            location = userLocation,
             uiState = uiState,
             searchText = uiState.searchQuery,
             onSearchTextChange = { newText ->
@@ -94,7 +95,9 @@ fun SearchLocationRoute(
 @Composable
 fun SearchLocationScreen(
     modifier: Modifier = Modifier,
+    viewModel: SearchLocationViewModel = hiltViewModel(),
     backButtonClick: () -> Unit,
+    location: LatLng,
     uiState: SearchLocationContract.SearchLocationUiState = SearchLocationContract.SearchLocationUiState(),
     searchText: String = "",
     onSearchTextChange: (String) -> Unit = {}
@@ -138,19 +141,27 @@ fun SearchLocationScreen(
                 color = defaultTeam6Colors.black
             )
 
-            Box() {
+            Box(
+                modifier = Modifier.fillMaxSize()
+            ) {
                 if (uiState.searchQuery.isEmpty()) { // 검색어가 없을 때
                     // 최근 기록 api 호출 후 검색 내역 있을 경우, 없을 경우 분기 처리
-                    SearchHistoryContainer(
-                        modifier = Modifier,
-                        uiState = SearchLocationContract.SearchLocationUiState(),
-                        onDeleteButtonClicked = { TODO("검색 내역 삭제") },
-                        selectButtonClicked = { TODO("검색 내역 중 선택 시") }
-                    )
-                    // 검색 내역이 없을 때
-                    SearchHistoryEmptyContainer()
+                    viewModel.updateRecentSearches(location = location)
+
+                    if (uiState.recentSearches.isEmpty()) {
+                        SearchHistoryContainer(
+                            modifier = Modifier,
+                            uiState = SearchLocationContract.SearchLocationUiState(),
+                            onDeleteButtonClicked = { TODO("검색 내역 삭제") },
+                            selectButtonClicked = { TODO("검색 내역 중 선택 시") }
+                        )
+                    } else {
+                        // 검색 내역이 없을 때
+                        SearchHistoryEmptyContainer()
+                    }
+
                 } else { // 검색어 입력 시
-                    // api 연결 함수 추가
+
                 }
             }
         }
@@ -161,6 +172,7 @@ fun SearchLocationScreen(
 @Composable
 fun SearchLocationScreenPreview() {
     SearchLocationScreen(
-        backButtonClick = {}
+        backButtonClick = {},
+        location = LatLng(37.5665, 126.9780)
     )
 }

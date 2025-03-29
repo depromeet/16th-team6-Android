@@ -51,7 +51,7 @@ class SearchLocationViewModel @Inject constructor(
         }
     }
 
-    private fun updateRecentSearches(location: LatLng) {
+    fun updateRecentSearches(location: LatLng) {
         setEvent(
             SearchLocationContract.SearchLocationEvent.UpdateRecentSearches(
                 lat = location.latitude,
