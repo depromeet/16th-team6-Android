@@ -1,13 +1,16 @@
 package com.depromeet.team6.presentation.util.context
 
 import android.content.Context
-import android.util.Log
+import com.depromeet.team6.presentation.util.DefaultLntLng.DEFAULT_LNG
+import com.depromeet.team6.presentation.util.DefaultLntLng.DEFAULT_LNT
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.suspendCancellableCoroutine
+import timber.log.Timber
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
-suspend fun Context.getUserLocation(): Pair<Double, Double>? {
+suspend fun Context.getUserLocation(): LatLng {
     return try {
         suspendCancellableCoroutine { continuation ->
             val fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
@@ -15,23 +18,22 @@ suspend fun Context.getUserLocation(): Pair<Double, Double>? {
             fusedLocationClient.lastLocation
                 .addOnSuccessListener { location ->
                     if (location != null) {
-                        Log.d(
-                            "User_Location",
-                            "Lat: ${location.latitude}, Lon: ${location.longitude}"
+                        Timber.d(
+                            "User_Location Lat: ${location.latitude}, Lon: ${location.longitude}"
                         )
-                        continuation.resume(Pair(location.latitude, location.longitude))
+                        continuation.resume(LatLng(location.latitude, location.longitude))
                     } else {
-                        Log.d("User_Location", "Failed to get location")
-                        continuation.resume(null) // 위치 정보를 가져오지 못한 경우
+                        Timber.d("User_Location Failed to get location")
+                        continuation.resume(LatLng(DEFAULT_LNT, DEFAULT_LNG)) // 위치 정보를 가져오지 못한 경우
                     }
                 }
                 .addOnFailureListener { exception ->
-                    Log.e("User_Location", "Error fetching location", exception)
+                    Timber.e("User_Location Error fetching location", exception)
                     continuation.resumeWithException(exception)
                 }
         }
     } catch (e: SecurityException) {
-        Log.e("User_Location", "Location permission not granted", e)
-        null
+        Timber.e("User_Location Location permission not granted", e)
+        LatLng(DEFAULT_LNT, DEFAULT_LNG)
     }
 }

@@ -56,7 +56,7 @@ class LegInfoDummyProvider : PreviewParameterProvider<List<LegInfo>> {
                     latitude = 0.0,
                     longitude = 0.0
                 ),
-                routeColor = defaultTeam6Colors.primaryRed,
+                routeColor = defaultTeam6Colors.systemRed,
                 distance = 37,
                 passShape = "127.0381,37.479004 127.03806,37.4791 127.03799,37.479313"
             ),

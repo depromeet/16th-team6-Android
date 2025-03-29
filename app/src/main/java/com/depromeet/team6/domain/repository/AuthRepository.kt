@@ -9,7 +9,7 @@ interface AuthRepository {
 
     suspend fun postSignUp(signUp: SignUp): Result<Auth>
 
-    suspend fun getLogin(provider: Int): Result<Auth>
+    suspend fun getLogin(provider: Int, fcmToken: String): Result<Auth>
 
     suspend fun postLogout(): Response<Unit>
 
