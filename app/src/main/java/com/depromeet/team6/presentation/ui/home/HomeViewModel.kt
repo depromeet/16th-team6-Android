@@ -19,8 +19,7 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val getAddressFromCoordinatesUseCase: GetAddressFromCoordinatesUseCase,
-    private val getTaxiCostUseCase: GetTaxiCostUseCase,
-    private val getTimeLeftUseCase: GetTimeLeftUseCase
+    private val getTaxiCostUseCase: GetTaxiCostUseCase
 ) : BaseViewModel<HomeContract.HomeUiState, HomeContract.HomeSideEffect, HomeContract.HomeEvent>() {
     private var speechBubbleJob: Job? = null
 
@@ -134,9 +133,4 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun checkTime(routeId: String) {
-        viewModelScope.launch {
-            lockServiceManager.startWithTimeCheck(routeId)
-        }
-    }
 }

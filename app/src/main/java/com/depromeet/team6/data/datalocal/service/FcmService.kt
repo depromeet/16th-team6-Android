@@ -31,12 +31,15 @@ class FcmService : FirebaseMessagingService() {
 
         Log.d("FCM","[FCM] FcmService -> title: $title")
         Log.d("FCM","[FCM] FcmService -> body: $body")
+        Log.d("FCM","[FCM] FcmService -> type: $type")
 
         if (message.notification != null) {
             sendNotification(title, body)
-        } else if (message.data.isNotEmpty()) {
-            if (type == "FULL_SCREEN_ALERT")
+        }
+        if (message.data.isNotEmpty()) {
+            if (type == "FULL_SCREEN_ALERT"){
                 startLockScreenService()
+            }
             else if (type == "PUSH_ALERT")
                 sendNotification(title, body)
             else
@@ -94,20 +97,14 @@ class FcmService : FirebaseMessagingService() {
     }
 
     private fun startLockScreenService() {
-        Log.d("FCM", "[FCM] 잠금화면 표시를 위한 LockService 시작")
 
         // LockService를 시작하는 인텐트 생성
         val intent = Intent(this, LockService::class.java).apply {
             // 잠금화면 표시 플래그 설정
             putExtra(LockService.EXTRA_SHOW_LOCK_SCREEN, true)
-
-            // 시간 체크 기능은 필요 없으므로 false로 설정
-            putExtra(LockService.EXTRA_ENABLE_TIME_CHECK, false)
-
         }
 
-        // Android Oreo 이상에서는 startForegroundService 사용
-        ContextCompat.startForegroundService(this, intent)
+         ContextCompat.startForegroundService(this, intent)
 
     }
 
