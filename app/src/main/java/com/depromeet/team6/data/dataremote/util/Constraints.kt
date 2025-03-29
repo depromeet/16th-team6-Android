@@ -27,4 +27,8 @@ object ApiConstraints {
 
     const val VERSION = "v1"
     const val USERS = "users"
+
+    // Alarm
+    const val NOTIFICATIONS = "notifications"
+    const val ROUTE = "route"
 }

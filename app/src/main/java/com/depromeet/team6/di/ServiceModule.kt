@@ -1,5 +1,6 @@
 package com.depromeet.team6.di
 
+import com.depromeet.team6.data.dataremote.service.AlarmService
 import com.depromeet.team6.data.dataremote.service.AuthService
 import com.depromeet.team6.data.dataremote.service.CourseService
 import com.depromeet.team6.data.dataremote.service.DummyService
@@ -34,4 +35,9 @@ object ServiceModule {
     @Singleton
     fun providesCourseService(@Team6 retrofit: Retrofit): CourseService =
         retrofit.create(CourseService::class.java)
+
+    @Provides
+    @Singleton
+    fun providesAlarmService(@Team6 retrofit: Retrofit): AlarmService =
+        retrofit.create(AlarmService::class.java)
 }
