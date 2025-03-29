@@ -29,6 +29,7 @@ import com.depromeet.team6.presentation.ui.itinerary.LegInfoDummyProvider
 import com.depromeet.team6.presentation.util.toast.atChaToastMessage
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
+import com.google.gson.Gson
 
 @Composable
 fun CourseSearchRoute(
@@ -86,11 +87,20 @@ fun CourseSearchRoute(
 
                 val sharedPreferences = context.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
                 val editor = sharedPreferences.edit()
-                editor.putBoolean("isUserLoggedIn", true) // "isUserLoggedIn" 키에 true 값을 저장
-                editor.putString("lastRouteId", routeId)
-                editor.apply() // 또는 editor.commit()
-                // TODO : lastRouteId 실제 값으로 교체, 막차 알림 등록 버튼 클릭하면 아래 함수 호출
-                viewModel.postAlarm(lastRouteId = routeId)
+
+                val registeredCourse = uiState.courseData.find { it.routeId == routeId }
+
+                if (registeredCourse != null) {
+                    val courseJson = Gson().toJson(registeredCourse)
+                    editor.putBoolean("alarmRegistered", true) // 알람 등록 여부
+                    editor.putString("lastRouteId", routeId) // 막차 경로 Id
+                    editor.putString("lastCourseInfo", courseJson) // 막차 경로
+                    editor.apply()
+
+                    viewModel.postAlarm(lastRouteId = routeId)
+                } else {
+                    atChaToastMessage(context, R.string.course_set_notification_failed_snackbar)
+                }
             },
             backButtonClicked = { navigateToHome() }
         )
