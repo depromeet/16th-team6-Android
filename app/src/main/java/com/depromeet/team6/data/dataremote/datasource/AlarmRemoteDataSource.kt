@@ -10,4 +10,7 @@ class AlarmRemoteDataSource @Inject constructor(
 ) {
     suspend fun postAlarm(lastRouteId: String): Response<Unit> =
         alarmService.postAlarm(lastRouteId = RequestAlarmDto(lastRouteId))
+
+    suspend fun deleteAlarm(lastRouteId: String): Response<Unit> =
+        alarmService.deleteAlarm(lastRouteId = lastRouteId)
 }
