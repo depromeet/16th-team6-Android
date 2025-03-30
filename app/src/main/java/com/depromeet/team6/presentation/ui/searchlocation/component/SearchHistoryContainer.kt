@@ -28,6 +28,7 @@ fun SearchHistoryContainer(
     modifier: Modifier = Modifier,
     uiState: SearchLocationContract.SearchLocationUiState = SearchLocationContract.SearchLocationUiState(),
     onDeleteButtonClicked: (Location) -> Unit = {},
+    onDeleteAllButtonClicked: () -> Unit = {},
     selectButtonClicked: (Location) -> Unit = {}
 ) {
     Column(
@@ -54,7 +55,7 @@ fun SearchHistoryContainer(
                 color = defaultTeam6Colors.greyTertiaryLabel,
                 modifier = Modifier.noRippleClickable {
                     // 검색 내역 전체 삭제
-                    // onDeleteButtonClicked()
+                    onDeleteAllButtonClicked()
                 }
             )
         }

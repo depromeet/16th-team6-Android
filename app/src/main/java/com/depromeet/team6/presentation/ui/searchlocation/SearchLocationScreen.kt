@@ -156,6 +156,7 @@ fun SearchLocationScreen(
                         onDeleteButtonClicked = { searchHistory -> // 검색 내역 삭제
                             viewModel.deleteSearchHistory(searchHistory = searchHistory, location = location)
                         },
+                        onDeleteAllButtonClicked = { viewModel.deleteAllSearchHistory() },
                         selectButtonClicked = { searchHistory -> // 장소 선택
                             // 장소 텍스트 검색
                             onSearchTextChange(searchHistory.name)

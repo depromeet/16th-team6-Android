@@ -148,7 +148,12 @@ class SearchLocationViewModel @Inject constructor(
     // 최근 검색 내역 전체 삭제
     fun deleteAllSearchHistory() {
         viewModelScope.launch {
-            setEvent(SearchLocationContract.SearchLocationEvent.ClearRecentSearches)
+            if(deleteAllSearchHistoryUseCase().isSuccessful) {
+                setEvent(SearchLocationContract.SearchLocationEvent.ClearRecentSearches)
+            }
+            else {
+                Timber.e("deleteAllSearchHistory failure")
+            }
         }
     }
 
