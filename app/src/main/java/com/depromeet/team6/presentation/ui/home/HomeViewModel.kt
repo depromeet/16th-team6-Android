@@ -2,15 +2,20 @@ package com.depromeet.team6.presentation.ui.home
 
 import android.content.Context
 import android.util.Log
+import android.content.LocusId
 import androidx.lifecycle.viewModelScope
 import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.course.CourseInfo
 import com.depromeet.team6.domain.model.course.TransportType
+import com.depromeet.team6.data.datalocal.manager.LockServiceManager
+import com.depromeet.team6.domain.model.RouteLocation
 import com.depromeet.team6.domain.usecase.GetAddressFromCoordinatesUseCase
 import com.depromeet.team6.domain.usecase.GetBusStartedUseCase
 import com.depromeet.team6.domain.model.course.LegInfo
 import com.depromeet.team6.domain.usecase.GetCourseSearchResultsUseCase
 import com.depromeet.team6.presentation.model.route.Route
+import com.depromeet.team6.domain.usecase.GetTaxiCostUseCase
+import com.depromeet.team6.domain.usecase.GetTimeLeftUseCase
 import com.depromeet.team6.presentation.util.base.BaseViewModel
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.google.android.gms.maps.model.LatLng
@@ -26,12 +31,16 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val getAddressFromCoordinatesUseCase: GetAddressFromCoordinatesUseCase,
+    private val getTaxiCostUseCase: GetTaxiCostUseCase,
     val getCourseSearchResultUseCase : GetCourseSearchResultsUseCase, // TODO : 실제 UseCase 로 교체
     private val getBusStartedUseCase: GetBusStartedUseCase
 ) : BaseViewModel<HomeContract.HomeUiState, HomeContract.HomeSideEffect, HomeContract.HomeEvent>() {
     private var speechBubbleJob: Job? = null
     private var busStartedPollingJob: Job? = null
     private var lastRouteId: String = "" // TODO : 실제값으로 변경
+
+    @Inject
+    lateinit var lockServiceManager: LockServiceManager
 
     init {
         showSpeechBubbleTemporarily()
@@ -306,4 +315,32 @@ class HomeViewModel @Inject constructor(
             setEvent(HomeContract.HomeEvent.LoadUserDeparture(true))
         }
     }
+
+    fun getTaxiCost(routeLocation: RouteLocation) {
+        viewModelScope.launch {
+            getTaxiCostUseCase(
+                routeLocation = RouteLocation(
+                    startLat = routeLocation.startLat,
+                    startLon = routeLocation.startLon,
+                    endLat = routeLocation.endLat,
+                    endLon = routeLocation.endLon
+                )
+            )
+                .onSuccess {
+                    setState {
+                        copy(
+                            taxiCost = it
+                        )
+                    }
+                    getTaxiCostUseCase.saveTaxiCost(it)
+                }.onFailure {
+                    setState {
+                        copy(
+                            taxiCost = 0
+                        )
+                    }
+                }
+        }
+    }
+
 }

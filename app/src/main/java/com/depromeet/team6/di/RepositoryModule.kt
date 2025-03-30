@@ -6,6 +6,8 @@ import com.depromeet.team6.data.repositoryimpl.CourseSearchRepositoryImpl
 import com.depromeet.team6.data.repositoryimpl.DummyRepositoryImpl
 import com.depromeet.team6.data.repositoryimpl.HomeRepositoryImpl
 import com.depromeet.team6.data.repositoryimpl.LocationsRepositoryImpl
+import com.depromeet.team6.data.repositoryimpl.TaxiCostRepositoryImpl
+import com.depromeet.team6.data.repositoryimpl.TimeLeftRepositoryImpl
 import com.depromeet.team6.data.repositoryimpl.UserInfoRepositoryImpl
 import com.depromeet.team6.domain.repository.AlarmRepository
 import com.depromeet.team6.domain.repository.AuthRepository
@@ -13,6 +15,8 @@ import com.depromeet.team6.domain.repository.CourseSearchRepository
 import com.depromeet.team6.domain.repository.DummyRepository
 import com.depromeet.team6.domain.repository.HomeRepository
 import com.depromeet.team6.domain.repository.LocationsRepository
+import com.depromeet.team6.domain.repository.TaxiCostRepository
+import com.depromeet.team6.domain.repository.TimeLeftRepository
 import com.depromeet.team6.domain.repository.UserInfoRepository
 import dagger.Binds
 import dagger.Module
@@ -50,4 +54,12 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindAlarmRepository(alarmRepositoryImpl: AlarmRepositoryImpl): AlarmRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindLockRepository(taxiCostRepositoryImpl: TaxiCostRepositoryImpl): TaxiCostRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindTimeLeftRepository(timeLeftRepository: TimeLeftRepositoryImpl): TimeLeftRepository
 }

@@ -34,6 +34,15 @@ object ApiConstraints {
     const val VERSION = "v1"
     const val USERS = "users"
 
+    // Taxi
+    const val TAXIFARE = "taxi-fare"
+
+    // TimeLeft
+    const val LASTROUTES = "last-routes"
+    const val DEPARTUREREMAINING = "departure-remaining"
+    const val ROUTEID = "routeId"
+
+
     // Alarm
     const val NOTIFICATIONS = "notifications"
     const val ROUTE = "route"

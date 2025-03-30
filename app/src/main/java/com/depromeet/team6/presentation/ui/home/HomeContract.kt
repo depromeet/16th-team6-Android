@@ -40,7 +40,8 @@ class HomeContract {
             address = ""
         ),
         val logoutState: Boolean = false,
-        val courseInfo: CourseInfo? = null
+        val courseInfo: CourseInfo? = null,
+        val taxiCost: Int = 0
     ) : UiState
 
     sealed interface HomeSideEffect : UiSideEffect {
