@@ -201,8 +201,8 @@ class HomeViewModel @Inject constructor(
                 editor.remove("departurePoint")
                 editor.remove("lastCourseInfo")
                 editor.remove("lastRouteId")
-
-                editor.putBoolean("alarmRegistered", false)
+                editor.remove("alarmRegistered")
+                editor.remove("userDeparture")
 
                 editor.apply()
 
