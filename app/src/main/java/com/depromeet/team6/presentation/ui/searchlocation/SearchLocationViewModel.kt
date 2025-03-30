@@ -56,6 +56,13 @@ class SearchLocationViewModel @Inject constructor(
                     recentSearches = emptyList()
                 )
             }
+
+            is SearchLocationContract.SearchLocationEvent.ClearText -> setState {
+                copy(
+                    searchQuery = "",
+                    searchResults = emptyList()
+                )
+            }
         }
     }
 
@@ -107,6 +114,12 @@ class SearchLocationViewModel @Inject constructor(
         viewModelScope.launch {
             if (deleteSearchHistoryUseCase(searchHistory = convertedSearchHistory).isSuccessful) {
                 updateRecentSearches(location = LatLng(location.latitude, location.longitude))
+
+                setEvent(
+                    SearchLocationContract.SearchLocationEvent.DeleteSearchHistory(
+                        searchHistory = convertedSearchHistory
+                    )
+                )
             }
             else {
                 Timber.e("deleteSearchHistory failure")

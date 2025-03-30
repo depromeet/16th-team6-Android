@@ -38,7 +38,7 @@ fun SearchLocationTextField(
     value: String = "",
     visualTransformation: VisualTransformation = VisualTransformation.None,
     onValueChange: (String) -> Unit = { _ -> },
-    onCloseButtonClicked: () -> Unit = {},
+    onTextClearButtonClicked: () -> Unit = {},
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Default),
     keyboardActions: KeyboardActions = KeyboardActions.Default
 ) {
@@ -97,7 +97,7 @@ fun SearchLocationTextField(
             Spacer(Modifier.width(12.dp))
 
             Icon(
-                modifier = Modifier.noRippleClickable { TODO("텍스트 close 버튼 클릭 시 검색 텍스트 지우기") },
+                modifier = Modifier.noRippleClickable { onTextClearButtonClicked() },
                 imageVector = ImageVector.vectorResource(R.drawable.ic_search_circle_close),
                 tint = defaultTeam6Colors.greySecondaryLabel,
                 contentDescription = null

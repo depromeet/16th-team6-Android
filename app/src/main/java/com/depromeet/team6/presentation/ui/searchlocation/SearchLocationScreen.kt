@@ -121,14 +121,16 @@ fun SearchLocationScreen(
                 .fillMaxWidth()
         ) {
             BackTopBar(
-                backButtonClick = {},
+                backButtonClick = { backButtonClick() },
                 modifier = Modifier
             )
 
             SearchLocationTextField(
                 value = searchText,
                 onValueChange = onSearchTextChange,
-                onCloseButtonClicked = { backButtonClick() },
+                onTextClearButtonClicked = {
+                    viewModel.setEvent(SearchLocationContract.SearchLocationEvent.ClearText)
+                },
                 modifier = Modifier.fillMaxWidth()
             )
 

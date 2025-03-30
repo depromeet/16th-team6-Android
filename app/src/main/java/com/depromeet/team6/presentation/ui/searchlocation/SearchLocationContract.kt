@@ -29,6 +29,8 @@ class SearchLocationContract {
         data class UpdateRecentSearches(val lat: Double, val lon: Double) :
             SearchLocationEvent()
 
+        data object ClearText : SearchLocationEvent()
+
         data class DeleteSearchHistory(val searchHistory: SearchHistory) : SearchLocationEvent()
 
         data object ClearRecentSearches : SearchLocationEvent()
