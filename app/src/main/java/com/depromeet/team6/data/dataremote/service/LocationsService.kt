@@ -1,11 +1,14 @@
 package com.depromeet.team6.data.dataremote.service
 
+import com.depromeet.team6.data.dataremote.model.request.search.RequestSearchHistoryDto
 import com.depromeet.team6.data.dataremote.model.response.base.ApiResponse
 import com.depromeet.team6.data.dataremote.model.response.locations.ResponseAddressDto
 import com.depromeet.team6.data.dataremote.model.response.locations.ResponseLocationsDto
 import com.depromeet.team6.data.dataremote.util.ApiConstraints.API
 import com.depromeet.team6.data.dataremote.util.ApiConstraints.LOCATIONS
+import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.Query
 
 interface LocationsService {
@@ -27,4 +30,9 @@ interface LocationsService {
         @Query("lat") lat: Double,
         @Query("lon") lon: Double
     ):ApiResponse<List<ResponseLocationsDto>>
+
+    @POST("api/locations/histories")
+    suspend fun postSearchHistories(
+        @Body requestSearchHistoryDto: RequestSearchHistoryDto
+    ): ApiResponse<Unit>
 }

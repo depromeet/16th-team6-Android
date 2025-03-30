@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.depromeet.team6.domain.model.Location
 import com.depromeet.team6.domain.usecase.GetLocationsUseCase
 import com.depromeet.team6.domain.usecase.GetSearchHistoriesUseCase
+import com.depromeet.team6.domain.usecase.PostSearchHistoriesUseCase
 import com.depromeet.team6.presentation.util.base.BaseViewModel
 import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,7 +16,8 @@ import javax.inject.Inject
 @HiltViewModel
 class SearchLocationViewModel @Inject constructor(
     private val getLocationsUseCase: GetLocationsUseCase,
-    private val getSearchHistoriesUseCase: GetSearchHistoriesUseCase
+    private val getSearchHistoriesUseCase: GetSearchHistoriesUseCase,
+    private val postSearchHistoriesUseCase: PostSearchHistoriesUseCase
 ) : BaseViewModel<SearchLocationContract.SearchLocationUiState, SearchLocationContract.SearchLocationSideEffect, SearchLocationContract.SearchLocationEvent>() {
 
     override fun createInitialState(): SearchLocationContract.SearchLocationUiState =
