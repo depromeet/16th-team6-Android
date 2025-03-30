@@ -157,8 +157,7 @@ fun HomeRoute(
     }
 
     LaunchedEffect(Unit) {
-        // TODO : 현재 좌표, 목적지 좌표로 변경
-        viewModel.getTaxiCost(RouteLocation(37.5665, 126.9780, 37.8888, 126.8888))
+        viewModel.getTaxiCost()
     }
 
     SideEffect {
@@ -347,7 +346,7 @@ fun HomeScreen(
             else ->
                 SpeechBubbleText(
                     stringResource(R.string.home_bubble_basic_text),
-                    "34,000원",
+                    homeUiState.taxiCost.toString() + "원",
                     null,
                     207.dp
                 )

@@ -455,14 +455,14 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun getTaxiCost(routeLocation: RouteLocation) {
+    fun getTaxiCost() {
         viewModelScope.launch {
             getTaxiCostUseCase(
                 routeLocation = RouteLocation(
-                    startLat = routeLocation.startLat,
-                    startLon = routeLocation.startLon,
-                    endLat = routeLocation.endLat,
-                    endLon = routeLocation.endLon
+                    startLat = currentState.departurePoint.lat,
+                    startLon = currentState.departurePoint.lon,
+                    endLat = currentState.destinationPoint.lat,
+                    endLon = currentState.destinationPoint.lon
                 )
             )
                 .onSuccess {
