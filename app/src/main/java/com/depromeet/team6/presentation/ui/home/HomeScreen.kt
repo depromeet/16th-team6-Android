@@ -235,22 +235,17 @@ fun HomeScreen(
                 .zIndex(1f)
         )
 
-        //TODO : 알림 등록 후 지도 테스트 후 삭제
-        val itineraryInfo = homeUiState.itineraryInfo?.legs
-
-        if (itineraryInfo != null) {
+        if (homeUiState.isAlarmRegistered) {
             AfterRegisterMap(
                 currentLocation = userLocation,
-                legs = itineraryInfo
+                legs = homeUiState.itineraryInfo!!.legs
             )
         } else {
-            Log.e("error","AfterRegisterMap Error")
             TMapViewCompose(
                 userLocation,
                 viewModel = viewModel
             ) // Replace with your actual API key
         }
-        //
 
         var isConfirmed = false
 
