@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -39,12 +40,14 @@ import androidx.lifecycle.flowWithLifecycle
 import com.depromeet.team6.R
 import com.depromeet.team6.domain.model.course.TransportType
 import com.depromeet.team6.domain.model.RouteLocation
+import com.depromeet.team6.presentation.model.route.Route
 import com.depromeet.team6.presentation.ui.alarm.NotificationScheduler
 import com.depromeet.team6.presentation.ui.alarm.NotificationTimeConstants
 import com.depromeet.team6.presentation.ui.home.component.AfterRegisterMap
 import com.depromeet.team6.presentation.ui.home.component.AfterRegisterSheet
 import com.depromeet.team6.presentation.ui.home.component.CharacterSpeechBubble
 import com.depromeet.team6.presentation.ui.home.component.CurrentLocationSheet
+import com.depromeet.team6.presentation.ui.home.component.DeleteAlarmDialog
 import com.depromeet.team6.presentation.ui.home.component.TMapViewCompose
 import com.depromeet.team6.presentation.ui.itinerary.component.ItineraryMap
 import com.depromeet.team6.presentation.util.DefaultLntLng.DEFAULT_LNG
@@ -186,7 +189,16 @@ fun HomeRoute(
                 )
             },
             onFinishClick = {
+                viewModel.setEvent(HomeContract.HomeEvent.FinishAlarmClicked)
+//                showDeleteDialog = true
+//                viewModel.deleteAlarm(uiState.lastRouteId, context)
+            },
+            deleteAlarmConfirmed = {
+               viewModel.setEvent(HomeContract.HomeEvent.DeleteAlarmConfirmed)
                 viewModel.deleteAlarm(uiState.lastRouteId, context)
+            },
+            dismissDialog = {
+              viewModel.setEvent(HomeContract.HomeEvent.DismissDialog)
             },
             onRefreshClick = {
                 // TODO : getLegs 함수가 막차 경로 상세 API를 받아오는게 맞는지 확인
@@ -212,6 +224,8 @@ fun HomeScreen(
     onRefreshClick: () -> Unit = {},
     navigateToMypage: () -> Unit = {},
     navigateToItinerary: (String) -> Unit = {},
+    deleteAlarmConfirmed: () -> Unit = {},
+    dismissDialog: () -> Unit = {},
     viewModel: HomeViewModel = hiltViewModel() // TODO : TmapViewCompose 변경 후 제거
 ) {
     val context = LocalContext.current
@@ -276,6 +290,8 @@ fun HomeScreen(
                 boardingTime = formatTimeString(homeUiState.boardingTime),
                 destination = "우리집",
                 onCourseTextClick = {},
+                deleteAlarmConfirmed = deleteAlarmConfirmed,
+                dismissDialog = dismissDialog,
                 onFinishClick = {
                     onFinishClick()
                 },
@@ -346,6 +362,34 @@ fun HomeScreen(
                 .noRippleClickable(onClick = onCharacterClick),
             showSpeechBubble = homeUiState.showSpeechBubble
         )
+
+        if (homeUiState.deleteAlarmDialogVisible) {
+            // 반투명 검은색 배경 오버레이 추가
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(color = androidx.compose.ui.graphics.Color.Black.copy(alpha = 0.5f))
+                    .zIndex(2f)
+            )
+
+            // 알림 삭제 다이얼로그
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .zIndex(3f)
+            ) {
+                // DeleteAlarmDialog 컴포넌트에 콜백 전달
+                DeleteAlarmDialog(
+                    onDismiss = {
+                        dismissDialog() // 다이얼로그 닫기
+                    },
+                    onSuccess = {
+                        deleteAlarmConfirmed() // 알림 삭제 실행
+                    }
+                )
+            }
+        }
     }
 
 

@@ -45,7 +45,8 @@ class HomeContract {
         ),
         val logoutState: Boolean = false,
         val courseInfo: CourseInfo? = null,
-        val taxiCost: Int = 0
+        val taxiCost: Int = 0,
+        val deleteAlarmDialogVisible: Boolean = false
     ) : UiState
 
     sealed interface HomeSideEffect : UiSideEffect {
@@ -69,5 +70,8 @@ class HomeContract {
         data class LoadUserDeparture(val userDeparture: Boolean) : HomeEvent()
         data class LoadTimerFinish(val timerFinish: Boolean) : HomeEvent()
         data object OnCharacterClick : HomeEvent()
+        data object FinishAlarmClicked: HomeEvent()
+        data object DeleteAlarmConfirmed: HomeEvent()
+        data object DismissDialog: HomeEvent()
     }
 }

@@ -40,6 +40,8 @@ fun AfterRegisterSheet(
     boardingTime: String,
     startLocation: String,
     destination: String,
+    deleteAlarmConfirmed: () -> Unit = {},
+    dismissDialog: () -> Unit = {},
     onCourseTextClick: () -> Unit,
     onFinishClick: () -> Unit,
     onCourseDetailClick: () -> Unit,

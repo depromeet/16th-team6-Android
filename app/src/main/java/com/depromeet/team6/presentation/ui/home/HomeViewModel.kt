@@ -144,6 +144,19 @@ class HomeViewModel @Inject constructor(
                     )
                 }
             }
+            HomeContract.HomeEvent.DeleteAlarmConfirmed -> setState {
+                copy(
+                    deleteAlarmDialogVisible = false
+                )
+            }
+            HomeContract.HomeEvent.DismissDialog -> setState {
+                copy(
+                    deleteAlarmDialogVisible = false
+                )
+            }
+            HomeContract.HomeEvent.FinishAlarmClicked -> {
+                setState { copy(deleteAlarmDialogVisible = true) }
+            }
         }
     }
 
@@ -192,6 +205,8 @@ class HomeViewModel @Inject constructor(
                 editor.putBoolean("alarmRegistered", false)
 
                 editor.apply()
+
+                setEvent(HomeContract.HomeEvent.DismissDialog)
 
             } else {
                 Log.d("알림 삭제 실패", "알림 삭제 실패")
