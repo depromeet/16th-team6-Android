@@ -22,6 +22,7 @@ class HomeContract {
         val lastRouteId: String = "",
         // 막차 첫번째 교통 수단
         val firtTransportTation: TransportType = TransportType.WALK,
+        val firstTransportationNumber: Int = 0,
         // 사용자 출발 여부
         // TODO : 잠금화면에서 출발하기 버튼 클릭하면 해당 값 변경
         val userDeparture: Boolean = false,
@@ -58,6 +59,7 @@ class HomeContract {
         data class LoadLegsResult(val result: CourseInfo) : HomeEvent()
         data class LoadDepartureDateTime(val departureTime: String) : HomeEvent()
         data class LoadFirstTransportation(val transportation: TransportType) : HomeEvent()
+        data class LoadFirstTransportationNumber(val firstTransportationNumber: Int) : HomeEvent()
         data class LoadUserDeparture(val userDeparture: Boolean) : HomeEvent()
         data class LoadTimerFinish(val timerFinish: Boolean) : HomeEvent()
         data object OnCharacterClick : HomeEvent()

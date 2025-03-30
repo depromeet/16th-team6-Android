@@ -23,6 +23,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.depromeet.team6.R
+import com.depromeet.team6.domain.model.course.TransportType
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.ui.theme.LocalTeam6Colors
 import com.depromeet.team6.ui.theme.LocalTeam6Typography
@@ -32,6 +33,8 @@ fun AfterRegisterSheet(
     timerFinish: Boolean,
     isConfirmed: Boolean,
     afterUserDeparted: Boolean,
+    transportType: TransportType,
+    transportationNumber: Int,
     timeToLeave: String,
     departureTime: String,
     startLocation: String,
@@ -73,8 +76,8 @@ fun AfterRegisterSheet(
                     if (afterUserDeparted && !timerFinish) { // 사용자 출발 후
                         TransportStatus(
                             modifier = modifier,
-                            transportationType = "SUBWAY",
-                            transportationNumber = "2호선",
+                            transportationType = transportType,
+                            transportationNumber = transportationNumber,
                             transportationName = "화곡역",
                             stopLeft = 6
                         )
@@ -182,6 +185,8 @@ fun AfterRegisterSheetPreview() {
     AfterRegisterSheet(
         timerFinish = true,
         afterUserDeparted = true,
+        transportType = TransportType.BUS,
+        transportationNumber = 0,
         timeToLeave = "23:30:00",
         departureTime = "15:30:00",
         startLocation = "중앙빌딩",

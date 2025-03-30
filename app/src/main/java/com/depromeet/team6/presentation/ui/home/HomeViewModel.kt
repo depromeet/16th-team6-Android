@@ -107,6 +107,14 @@ class HomeViewModel @Inject constructor(
                     )
                 }
             }
+
+            is HomeContract.HomeEvent.LoadFirstTransportationNumber -> {
+                setState {
+                    copy(
+                        firstTransportationNumber = event.firstTransportationNumber
+                    )
+                }
+            }
         }
     }
 
@@ -288,6 +296,7 @@ class HomeViewModel @Inject constructor(
                     Log.d("lastRouteId", courseInfo.routeId)
                     setEvent(HomeContract.HomeEvent.LoadDepartureDateTime(courseInfo.departureTime))
                     setEvent(HomeContract.HomeEvent.LoadFirstTransportation(getFirstTransportation(courseInfo.legs)))
+                    setEvent(HomeContract.HomeEvent.LoadFirstTransportationNumber(getFirstTransportationNumber(courseInfo.legs)))
                     if (getFirstTransportation(courseInfo.legs) == TransportType.BUS) {
                         startPollingBusStarted(lastRouteId!!)
                     } else if (getFirstTransportation(courseInfo.legs) == TransportType.SUBWAY) {
@@ -312,6 +321,20 @@ class HomeViewModel @Inject constructor(
                 break }
         }
         return firstTransportation
+    }
+
+    // 막차 경로 중 첫번째 대중 교통 수단 색상
+    private fun getFirstTransportationNumber(legs: List<LegInfo>): Int {
+        var firstTransportation = legs[0].transportType
+        var firstTransportationNumber = 0
+
+        for (leg in legs) {
+            if (leg.transportType != TransportType.WALK) {
+                firstTransportation = leg.transportType
+                firstTransportationNumber = leg.subTypeIdx
+                break }
+        }
+        return firstTransportationNumber
     }
 
     override fun onCleared() {

@@ -291,6 +291,8 @@ fun HomeScreen(
                 startLocation = homeUiState.departurePoint.name,
                 isConfirmed = isConfirmed,
                 afterUserDeparted = homeUiState.userDeparture,
+                transportType = homeUiState.firtTransportTation,
+                transportationNumber = homeUiState.firstTransportationNumber,
 //                afterUserDeparted = true,
                 timeToLeave = formatTimeString(departureTime),
            //     timeToLeave = "2025-03-29T18:32",
