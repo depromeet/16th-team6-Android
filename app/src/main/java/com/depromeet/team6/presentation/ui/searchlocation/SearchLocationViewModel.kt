@@ -2,6 +2,7 @@ package com.depromeet.team6.presentation.ui.searchlocation
 
 import androidx.lifecycle.viewModelScope
 import com.depromeet.team6.domain.model.Location
+import com.depromeet.team6.domain.usecase.DeleteAllSearchHistoryUseCase
 import com.depromeet.team6.domain.usecase.DeleteSearchHistoryUseCase
 import com.depromeet.team6.domain.usecase.GetLocationsUseCase
 import com.depromeet.team6.domain.usecase.GetSearchHistoriesUseCase
@@ -19,7 +20,8 @@ class SearchLocationViewModel @Inject constructor(
     private val getLocationsUseCase: GetLocationsUseCase,
     private val getSearchHistoriesUseCase: GetSearchHistoriesUseCase,
     private val postSearchHistoriesUseCase: PostSearchHistoriesUseCase,
-    private val deleteSearchHistoryUseCase: DeleteSearchHistoryUseCase
+    private val deleteSearchHistoryUseCase: DeleteSearchHistoryUseCase,
+    private val deleteAllSearchHistoryUseCase: DeleteAllSearchHistoryUseCase
 ) : BaseViewModel<SearchLocationContract.SearchLocationUiState, SearchLocationContract.SearchLocationSideEffect, SearchLocationContract.SearchLocationEvent>() {
 
     override fun createInitialState(): SearchLocationContract.SearchLocationUiState =

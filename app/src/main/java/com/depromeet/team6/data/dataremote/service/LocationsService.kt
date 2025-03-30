@@ -42,4 +42,7 @@ interface LocationsService {
     suspend fun deleteSearchHistory(
         @Body requestSearchHistoryDto: RequestSearchHistoryDto
     ): Response<Unit>
+
+    @DELETE("api/locations/histories")
+    suspend fun deleteAllSearchHistory(): Response<Unit>
 }

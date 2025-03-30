@@ -15,4 +15,6 @@ interface LocationsRepository {
     suspend fun postSearchHistories(requestSearchHistoryDto: SearchHistory): Response<Unit>
 
     suspend fun deleteSearchHistory(requestSearchHistoryDto: SearchHistory): Response<Unit>
+
+    suspend fun deleteAllSearchHistory(): Response<Unit>
 }

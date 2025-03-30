@@ -29,4 +29,6 @@ class LocationsRemoteDataSource @Inject constructor(
 
     suspend fun deleteSearchHistory(requestSearchHistoryDto: RequestSearchHistoryDto): Response<Unit> =
         locationsService.deleteSearchHistory(requestSearchHistoryDto = requestSearchHistoryDto)
+
+    suspend fun deleteAllSearchHistory(): Response<Unit> = locationsService.deleteAllSearchHistory()
 }
