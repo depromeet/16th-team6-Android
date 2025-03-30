@@ -1,5 +1,6 @@
 package com.depromeet.team6.presentation.ui.home.component
 
+import android.util.Log
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
@@ -55,7 +56,16 @@ fun LastTimer(
                     val now = LocalDateTime.now()
 
                     // 현재 날짜에 목표 시간을 합쳐서 오늘 날짜의 목표 시간을 설정
-                    LocalDateTime.of(now.toLocalDate(), targetTime)
+                    val targetDate = if (targetTime.hour == 0) {
+                        // 00시라면 다음날로 설정
+                        now.toLocalDate().plusDays(1)
+                    } else {
+                        now.toLocalDate()
+                    }
+
+                    // 여기서 값을 반환해야 함
+                    LocalDateTime.of(targetDate, targetTime)
+
                 } catch (e: Exception) {
                     Timber.e("시간 파싱 오류: $departureTime - ${e.message}")
                     null

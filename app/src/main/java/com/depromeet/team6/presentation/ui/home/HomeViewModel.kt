@@ -123,6 +123,14 @@ class HomeViewModel @Inject constructor(
                     )
                 }
             }
+
+            is HomeContract.HomeEvent.LoadBoardingDateTime -> {
+                setState {
+                    copy(
+                        boardingTime = event.boardingTime
+                    )
+                }
+            }
         }
     }
 
@@ -303,6 +311,7 @@ class HomeViewModel @Inject constructor(
                     Log.d("departureTime", courseInfo.departureTime)
                     Log.d("lastRouteId", courseInfo.routeId)
                     setEvent(HomeContract.HomeEvent.LoadDepartureDateTime(courseInfo.departureTime))
+                    setEvent(HomeContract.HomeEvent.LoadBoardingDateTime(courseInfo.boardingTime))
                     setEvent(HomeContract.HomeEvent.LoadFirstTransportation(getFirstTransportation(courseInfo.legs)))
                     setEvent(HomeContract.HomeEvent.LoadFirstTransportationNumber(getFirstTransportationNumber(courseInfo.legs)))
                     setEvent(HomeContract.HomeEvent.LoadFirstTransportationName(getFirstTransportationName(courseInfo.legs)))

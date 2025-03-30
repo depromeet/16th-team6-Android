@@ -37,7 +37,7 @@ fun AfterRegisterSheet(
     transportationNumber: Int,
     transportationName: String,
     timeToLeave: String,
-    departureTime: String,
+    boardingTime: String,
     startLocation: String,
     destination: String,
     onCourseTextClick: () -> Unit,
@@ -138,7 +138,7 @@ fun AfterRegisterSheet(
             if (afterUserDeparted) {
                 if (!timerFinish) {
                     LastTimer(
-                        departureTime = departureTime, // TODO : 막차 출발 시간 받아오기
+                        departureTime = boardingTime,
                         textColor = colors.systemRed,
                         modifier = Modifier.padding(top = 4.dp, bottom = 6.dp),
                         onTimerFinished = onTimerFinished
@@ -189,7 +189,6 @@ fun AfterRegisterSheetPreview() {
         transportationNumber = 0,
         transportationName = "잠실새내역",
         timeToLeave = "23:30:00",
-        departureTime = "15:30:00",
         startLocation = "중앙빌딩",
         destination = "우리집",
         onCourseTextClick = { },
@@ -197,6 +196,7 @@ fun AfterRegisterSheetPreview() {
         onCourseDetailClick = { },
         modifier = Modifier,
         onRefreshClick = { },
-        isConfirmed = true
+        isConfirmed = true,
+        boardingTime = "15:30:00"
     )
 }

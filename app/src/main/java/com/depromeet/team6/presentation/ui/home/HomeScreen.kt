@@ -268,7 +268,6 @@ fun HomeScreen(
         }
         //
 
-        val lastDepartureTime = homeUiState.departureTime // TODO : 막차 출발 시간으로 변경
         var isConfirmed = false
 
         val firstTransportation = homeUiState.firtTransportTation
@@ -288,13 +287,14 @@ fun HomeScreen(
 
             AfterRegisterSheet(
                 timerFinish = homeUiState.timerFinish,
-                startLocation = homeUiState.departurePoint.name,
+                startLocation = homeUiState.departurePoint.name, // TODO : spf 에서 가져와서 저장
                 isConfirmed = isConfirmed,
                 afterUserDeparted = homeUiState.userDeparture,
                 transportType = homeUiState.firtTransportTation,
                 transportationNumber = homeUiState.firstTransportationNumber,
                 transportationName = homeUiState.firstTransportationName,
-                timeToLeave = formatTimeString(departureTime),
+                timeToLeave = formatTimeString(homeUiState.departureTime),
+                boardingTime = formatTimeString(homeUiState.boardingTime),
                 destination = "우리집",
                 onCourseTextClick = {},
                 onFinishClick = {
@@ -313,8 +313,7 @@ fun HomeScreen(
                     .zIndex(1f),
                 onRefreshClick = {
                     onRefreshClick()
-                },
-                departureTime = lastDepartureTime
+                }
             )
         } else {
             notificationScheduler.cancelAllNotifications()
