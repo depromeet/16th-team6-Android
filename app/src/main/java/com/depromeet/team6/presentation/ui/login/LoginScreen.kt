@@ -134,7 +134,6 @@ fun LoginRoute(
                 },
                 modifier = modifier
             )
-            navigateToHome()
         }
 
         LoadState.Success -> navigateToHome()
