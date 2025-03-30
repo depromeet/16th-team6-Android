@@ -14,15 +14,18 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.depromeet.team6.R
 import com.depromeet.team6.ui.theme.LocalTeam6Colors
 import com.depromeet.team6.ui.theme.LocalTeam6Typography
 
 @Composable
-fun ConfirmDialog(
+fun MyPageConfirmDialog(
     title: String,
+    confirmText: String,
     onDismiss: () -> Unit,
     onSuccess: () -> Unit,
     modifier: Modifier = Modifier
@@ -44,7 +47,7 @@ fun ConfirmDialog(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "${title}하시겠어요?",
+                text = title,
                 color = colors.white,
                 style = typography.heading5Bold17,
                 textAlign = TextAlign.Center,
@@ -68,7 +71,7 @@ fun ConfirmDialog(
                     )
                 ) {
                     Text(
-                        text = "취소",
+                        text = stringResource(R.string.mypage_dialog_cancle),
                         color = colors.white,
                         style = typography.bodyMedium14,
                         modifier = Modifier.padding(vertical = 13.dp)
@@ -86,7 +89,7 @@ fun ConfirmDialog(
                     )
                 ) {
                     Text(
-                        text = title,
+                        text = confirmText,
                         color = colors.black,
                         style = typography.bodyMedium14,
                         modifier = Modifier.padding(vertical = 13.dp)
@@ -99,9 +102,10 @@ fun ConfirmDialog(
 
 @Preview
 @Composable
-fun ConfirmDialogPreview() {
-    ConfirmDialog(
-        title = "로그아웃",
+fun MyPageConfirmDialogPreview() {
+    MyPageConfirmDialog(
+        title = stringResource(R.string.mypage_logout_dialog_title),
+        confirmText = stringResource(R.string.mypage_logout_dialog_confirm),
         onDismiss = {},
         onSuccess = {},
         modifier = Modifier
