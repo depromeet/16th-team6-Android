@@ -4,4 +4,6 @@ import retrofit2.Response
 
 interface AlarmRepository {
     suspend fun postAlarm(lastRouteId: String): Response<Unit>
+
+    suspend fun deleteAlarm(lastRouteId: String): Response<Unit>
 }
