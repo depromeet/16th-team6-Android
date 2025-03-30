@@ -114,6 +114,24 @@ class SearchLocationViewModel @Inject constructor(
         }
     }
 
+    fun postSearchHistory(searchHistory: Location) {
+        val convertedSearchHistory = SearchHistory(
+            name = searchHistory.name,
+            lat = searchHistory.lat,
+            lon = searchHistory.lon,
+            businessCategory = searchHistory.businessCategory,
+            address = searchHistory.address
+        )
+
+        viewModelScope.launch {
+            if (postSearchHistoriesUseCase(searchHistory = convertedSearchHistory).isSuccessful) {
+                Timber.e("postSearchHistory Success")
+            } else {
+                Timber.e("postSearchHistory failure")
+            }
+        }
+    }
+
     // 최근 검색 내역 전체 삭제
     fun deleteAllSearchHistory() {
         viewModelScope.launch {

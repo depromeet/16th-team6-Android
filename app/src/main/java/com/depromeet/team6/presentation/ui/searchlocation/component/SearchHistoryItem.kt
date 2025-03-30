@@ -29,14 +29,14 @@ fun SearchHistoryItem(
     homeSearchLocation: Location,
     modifier: Modifier = Modifier,
     deleteButtonClicked: (Location) -> Unit = {},
-    selectItemClicked: () -> Unit = {}
+    selectItemClicked: (Location) -> Unit = {}
 ) {
     Row(
         modifier = modifier
             .fillMaxWidth()
             .padding(vertical = 19.dp, horizontal = 16.dp)
             .noRippleClickable {
-                selectItemClicked()
+                selectItemClicked(homeSearchLocation)
             },
         verticalAlignment = Alignment.CenterVertically
     ) {

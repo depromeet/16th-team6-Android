@@ -1,6 +1,5 @@
 package com.depromeet.team6.presentation.ui.searchlocation
 
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -146,8 +145,7 @@ fun SearchLocationScreen(
             ) {
                 viewModel.updateRecentSearches(location = location)
 
-                if (uiState.recentSearches.isEmpty()) {
-                    // 검색 내역이 없을 때
+                if (uiState.recentSearches.isEmpty()) { // 검색 내역이 없을 때
                     SearchHistoryEmptyContainer()
                 } else {
                     SearchHistoryContainer(
@@ -156,8 +154,12 @@ fun SearchLocationScreen(
                         onDeleteButtonClicked = { searchHistory -> // 검색 내역 삭제
                             viewModel.deleteSearchHistory(searchHistory = searchHistory, location = location)
                         },
-                        selectButtonClicked = { // 장소 선택
-                            TODO("검색 내역 중 선택 시 1. 장소 텍스트 검색, 2. 최근 검색 내역 추가 api 호출") }
+                        selectButtonClicked = { searchHistory -> // 장소 선택
+                            // 장소 텍스트 검색
+                            onSearchTextChange(searchHistory.name)
+                            // 최근 검색 내역 추가
+                            viewModel.postSearchHistory(searchHistory)
+                        }
                     )
                 }
             }
