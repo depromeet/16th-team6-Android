@@ -293,9 +293,8 @@ fun HomeScreen(
                 afterUserDeparted = homeUiState.userDeparture,
                 transportType = homeUiState.firtTransportTation,
                 transportationNumber = homeUiState.firstTransportationNumber,
-//                afterUserDeparted = true,
+                transportationName = homeUiState.firstTransportationName,
                 timeToLeave = formatTimeString(departureTime),
-           //     timeToLeave = "2025-03-29T18:32",
                 destination = "우리집",
                 onCourseTextClick = {},
                 onFinishClick = {

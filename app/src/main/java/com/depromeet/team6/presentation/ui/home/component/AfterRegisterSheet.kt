@@ -35,6 +35,7 @@ fun AfterRegisterSheet(
     afterUserDeparted: Boolean,
     transportType: TransportType,
     transportationNumber: Int,
+    transportationName: String,
     timeToLeave: String,
     departureTime: String,
     startLocation: String,
@@ -78,7 +79,7 @@ fun AfterRegisterSheet(
                             modifier = modifier,
                             transportationType = transportType,
                             transportationNumber = transportationNumber,
-                            transportationName = "화곡역",
+                            transportationName = transportationName,
                             stopLeft = 6
                         )
 
@@ -187,6 +188,7 @@ fun AfterRegisterSheetPreview() {
         afterUserDeparted = true,
         transportType = TransportType.BUS,
         transportationNumber = 0,
+        transportationName = "잠실새내역",
         timeToLeave = "23:30:00",
         departureTime = "15:30:00",
         startLocation = "중앙빌딩",

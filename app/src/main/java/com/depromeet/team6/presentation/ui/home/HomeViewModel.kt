@@ -115,6 +115,14 @@ class HomeViewModel @Inject constructor(
                     )
                 }
             }
+
+            is HomeContract.HomeEvent.LoadFirstTransportationName -> {
+                setState {
+                    copy(
+                        firstTransportationName = event.firstTransportationName
+                    )
+                }
+            }
         }
     }
 
@@ -297,6 +305,8 @@ class HomeViewModel @Inject constructor(
                     setEvent(HomeContract.HomeEvent.LoadDepartureDateTime(courseInfo.departureTime))
                     setEvent(HomeContract.HomeEvent.LoadFirstTransportation(getFirstTransportation(courseInfo.legs)))
                     setEvent(HomeContract.HomeEvent.LoadFirstTransportationNumber(getFirstTransportationNumber(courseInfo.legs)))
+                    setEvent(HomeContract.HomeEvent.LoadFirstTransportationName(getFirstTransportationName(courseInfo.legs)))
+
                     if (getFirstTransportation(courseInfo.legs) == TransportType.BUS) {
                         startPollingBusStarted(lastRouteId!!)
                     } else if (getFirstTransportation(courseInfo.legs) == TransportType.SUBWAY) {
@@ -335,6 +345,24 @@ class HomeViewModel @Inject constructor(
                 break }
         }
         return firstTransportationNumber
+    }
+
+    // 막차 경로 중 첫번째 대중 교통 이름 저장
+    private fun getFirstTransportationName(legs: List<LegInfo>): String {
+        var firstTransportationName = ""
+
+        for (leg in legs) {
+            if (leg.transportType != TransportType.WALK) {
+                if (leg.transportType == TransportType.BUS) {
+                    firstTransportationName = leg.routeName.toString().split(":")[1]
+                }
+                else if (leg.transportType == TransportType.SUBWAY) {
+                    firstTransportationName = leg.startPoint.name + "역"
+                }
+                break
+            }
+        }
+        return firstTransportationName
     }
 
     override fun onCleared() {
