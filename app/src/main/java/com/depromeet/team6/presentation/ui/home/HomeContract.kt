@@ -18,7 +18,8 @@ class HomeContract {
         // 알림 등록 후 경로 표시
         val itineraryInfo: CourseInfo? = null,
         val courseDataLoadState: LoadState = LoadState.Idle,
-        val departureTime: String = "2025-03-29T18:51",
+        val departureTime: String = "",
+        val lastRouteId: String = "",
         // 막차 첫번째 교통 수단
         val firtTransportTation: TransportType = TransportType.WALK,
         // 사용자 출발 여부
@@ -50,6 +51,7 @@ class HomeContract {
     sealed class HomeEvent : UiEvent {
         data class DummyEvent(val loadState: LoadState) : HomeEvent()
         data class UpdateAlarmRegistered(val isRegistered: Boolean) : HomeEvent()
+        data class UpdateLastRouteId(val lastRouteId: String) : HomeEvent()
         data class UpdateBusDeparted(val isBusDeparted: Boolean) : HomeEvent()
         data class UpdateSpeechBubbleVisibility(val show: Boolean) : HomeEvent()
         data class LoadLegsResult(val result: CourseInfo) : HomeEvent()

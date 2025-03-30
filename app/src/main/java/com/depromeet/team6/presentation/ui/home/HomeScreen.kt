@@ -81,6 +81,10 @@ fun HomeRoute(
         }
     )
 
+    LaunchedEffect(Unit) {
+        viewModel.loadAlarmAndCourseInfoFromPrefs(context)
+    }
+
     LaunchedEffect(viewModel.sideEffect, lifecycleOwner) {
         viewModel.sideEffect.flowWithLifecycle(lifecycle = lifecycleOwner.lifecycle)
             .collect { sideEffect ->
@@ -155,7 +159,7 @@ fun HomeRoute(
             },
             onRefreshClick = {
                 // TODO : getLegs 함수가 막차 경로 상세 API를 받아오는게 맞는지 확인
-                viewModel.getLegs()
+                // viewModel.getLegs()
                 // TODO : 말풍선 표출
             }
         )
@@ -187,7 +191,7 @@ fun HomeScreen(
     val notificationScheduler = NotificationScheduler(context)
 
     // TODO: 알림 등록 후 지도 테스트 후 삭제
-    viewModel.registerAlarm()
+   // viewModel.registerAlarm()
     // viewModel.setBusDeparted()
 
 //    if (isUserLoggedIn) {
@@ -257,8 +261,8 @@ fun HomeScreen(
                 timerFinish = homeUiState.timerFinish,
                 startLocation = homeUiState.departurePoint.name,
                 isConfirmed = isConfirmed,
-//                afterUserDeparted = homeUiState.userDeparture,
-                afterUserDeparted = true,
+                afterUserDeparted = homeUiState.userDeparture,
+//                afterUserDeparted = true,
                 timeToLeave = formatTimeString(departureTime),
            //     timeToLeave = "2025-03-29T18:32",
                 destination = "우리집",

@@ -1,16 +1,20 @@
 package com.depromeet.team6.presentation.ui.home
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.depromeet.team6.domain.model.Address
+import com.depromeet.team6.domain.model.course.CourseInfo
 import com.depromeet.team6.domain.model.course.TransportType
 import com.depromeet.team6.domain.usecase.GetAddressFromCoordinatesUseCase
 import com.depromeet.team6.domain.usecase.GetBusStartedUseCase
 import com.depromeet.team6.domain.model.course.LegInfo
 import com.depromeet.team6.domain.usecase.GetCourseSearchResultsUseCase
+import com.depromeet.team6.presentation.model.route.Route
 import com.depromeet.team6.presentation.util.base.BaseViewModel
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.google.android.gms.maps.model.LatLng
+import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -83,6 +87,14 @@ class HomeViewModel @Inject constructor(
                 setState {
                     copy(
                         timerFinish = event.timerFinish
+                    )
+                }
+            }
+
+            is HomeContract.HomeEvent.UpdateLastRouteId -> {
+                setState {
+                    copy(
+                        lastRouteId = event.lastRouteId
                     )
                 }
             }
@@ -236,6 +248,34 @@ class HomeViewModel @Inject constructor(
             }
         }
     }
+
+    fun loadAlarmAndCourseInfoFromPrefs(context: Context) {
+        viewModelScope.launch {
+            val prefs = context.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
+            val isAlarmRegistered = prefs.getBoolean("alarmRegistered", false)
+            val lastRouteId = prefs.getString("lastRouteId", null)
+
+            setEvent(HomeContract.HomeEvent.UpdateAlarmRegistered(isAlarmRegistered))
+            lastRouteId?.let { HomeContract.HomeEvent.UpdateLastRouteId(it) }?.let { setEvent(it) }
+
+            val courseInfoJson = prefs.getString("lastCourseInfo", null)
+            courseInfoJson?.let {
+                try {
+                    val courseInfo = Gson().fromJson(it, CourseInfo::class.java)
+                    setEvent(HomeContract.HomeEvent.LoadLegsResult(courseInfo))
+                    Log.d("courseInfo", courseInfo.toString())
+                    Log.d("departureTime", courseInfo.departureTime)
+                    Log.d("lastRouteId", courseInfo.routeId)
+                    setEvent(HomeContract.HomeEvent.LoadDepartureDateTime(courseInfo.departureTime))
+                    setEvent(HomeContract.HomeEvent.LoadFirstTransportation(getFirstTransportation(courseInfo.legs)))
+                } catch (e: Exception) {
+                    // 역직렬화 실패 시 로그
+                    Timber.e("CourseInfo 불러오기 실패: ${e.message}")
+                }
+            }
+        }
+
+}
 
     // 막차 경로 중 첫번째 대중 교통 수단
     private fun getFirstTransportation(legs: List<LegInfo>): TransportType {
