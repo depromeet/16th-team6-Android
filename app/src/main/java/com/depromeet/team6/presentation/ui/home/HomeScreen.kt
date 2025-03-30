@@ -56,6 +56,7 @@ import com.depromeet.team6.presentation.util.context.getUserLocation
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.presentation.util.permission.PermissionUtil
 import com.depromeet.team6.presentation.util.view.LoadState
+import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.google.android.gms.maps.model.LatLng
 import com.google.gson.Gson
 import dagger.hilt.android.internal.Contexts.getApplication
@@ -368,7 +369,7 @@ fun HomeScreen(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(color = androidx.compose.ui.graphics.Color.Black.copy(alpha = 0.5f))
+                    .background(color = defaultTeam6Colors.black.copy(alpha = 0.76f))
                     .zIndex(2f)
             )
 
