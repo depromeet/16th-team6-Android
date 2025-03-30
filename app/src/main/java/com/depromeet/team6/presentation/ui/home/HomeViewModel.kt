@@ -115,11 +115,11 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             setEvent(HomeContract.HomeEvent.UpdateAlarmRegistered(true))
 
-            when (currentState.firtTransportTation) {
-                TransportType.BUS -> startPollingBusStarted(routeId = "") // TODO : routeId 변경
-                TransportType.SUBWAY -> setEvent(HomeContract.HomeEvent.UpdateBusDeparted(true))
-                else -> {}
-            }
+//            when (currentState.firtTransportTation) {
+//                TransportType.BUS -> startPollingBusStarted(routeId = lastRouteId)
+//                TransportType.SUBWAY -> setEvent(HomeContract.HomeEvent.UpdateBusDeparted(true))
+//                else -> {}
+//            }
         }
     }
 
@@ -150,13 +150,13 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             getBusStartedUseCase.invoke(lastRouteId = lastRouteId)
                 .onSuccess {
+                    Timber.d("버스 출발여부 getBusStarted: $it")
                     setState {
                         copy(
                             isBusDeparted = it
                         )
                     }
-
-                    if (!it) {
+                    if (it) {
                         stopPollingBusStarted()
                     }
                 }.onFailure {
@@ -216,6 +216,7 @@ class HomeViewModel @Inject constructor(
         if (currentState.firtTransportTation == TransportType.BUS && currentState.isAlarmRegistered) {
             busStartedPollingJob = viewModelScope.launch {
                 while (isActive) {
+                    Timber.d("버스 차고지 출발 여부 API 호출")
                     getBusStarted(routeId)
 
                     delay(60000)
@@ -268,6 +269,11 @@ class HomeViewModel @Inject constructor(
                     Log.d("lastRouteId", courseInfo.routeId)
                     setEvent(HomeContract.HomeEvent.LoadDepartureDateTime(courseInfo.departureTime))
                     setEvent(HomeContract.HomeEvent.LoadFirstTransportation(getFirstTransportation(courseInfo.legs)))
+                    if (getFirstTransportation(courseInfo.legs) == TransportType.BUS) {
+                        startPollingBusStarted(lastRouteId!!)
+                    } else if (getFirstTransportation(courseInfo.legs) == TransportType.SUBWAY) {
+                        setEvent(HomeContract.HomeEvent.UpdateBusDeparted(true))
+                    }
                 } catch (e: Exception) {
                     // 역직렬화 실패 시 로그
                     Timber.e("CourseInfo 불러오기 실패: ${e.message}")

@@ -110,20 +110,20 @@ fun HomeRoute(
         // viewModel.getLegs()
     }
 
+    LaunchedEffect(Unit) {
+        if (uiState.isAlarmRegistered) {
+            viewModel.registerAlarm()
+        }
+    }
+
     LaunchedEffect(uiState.isAlarmRegistered, uiState.firtTransportTation) {
         if (uiState.isAlarmRegistered && uiState.firtTransportTation == TransportType.BUS) {
             // 버스이면서 알람이 등록된 경우 폴링 시작
-            viewModel.startPollingBusStarted(routeId = "") // TODO : routeId 변경
+            viewModel.startPollingBusStarted(routeId = uiState.lastRouteId)
         } else {
             // 그 외의 경우 폴링 중지
             viewModel.stopPollingBusStarted()
         }
-    }
-
-
-    LaunchedEffect(Unit) {
-        // TODO : lastRouteId 실제 값으로 변경
-        // viewModel.getBusStarted("18690518-23c7-41dc-a815-9ef2f08328dd")
     }
 
     SideEffect {
