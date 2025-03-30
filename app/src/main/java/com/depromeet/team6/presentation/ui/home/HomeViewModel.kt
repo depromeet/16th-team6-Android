@@ -131,6 +131,14 @@ class HomeViewModel @Inject constructor(
                     )
                 }
             }
+
+            is HomeContract.HomeEvent.UpdateDeparturePointName -> {
+                setState {
+                    copy(
+                        departurePointName = event.departurePointName
+                    )
+                }
+            }
         }
     }
 
@@ -302,6 +310,17 @@ class HomeViewModel @Inject constructor(
             setEvent(HomeContract.HomeEvent.UpdateAlarmRegistered(isAlarmRegistered))
             lastRouteId?.let { HomeContract.HomeEvent.UpdateLastRouteId(it) }?.let { setEvent(it) }
 
+            val departurePointJson = prefs.getString("departurePoint",null)
+            departurePointJson?.let {
+                try {
+                    val departurePoint = Gson().fromJson(it, Address::class.java)
+
+                    setEvent(HomeContract.HomeEvent.UpdateDeparturePointName(departurePoint.name))
+                } catch (e: Exception) {
+                    Timber.e("DeparturePoint 불러오기 실패: ${e.message}")
+                    e.printStackTrace()
+                }
+            }
             val courseInfoJson = prefs.getString("lastCourseInfo", null)
             courseInfoJson?.let {
                 try {

@@ -287,7 +287,7 @@ fun HomeScreen(
 
             AfterRegisterSheet(
                 timerFinish = homeUiState.timerFinish,
-                startLocation = homeUiState.departurePoint.name, // TODO : spf 에서 가져와서 저장
+                startLocation = homeUiState.departurePointName,
                 isConfirmed = isConfirmed,
                 afterUserDeparted = homeUiState.userDeparture,
                 transportType = homeUiState.firtTransportTation,
