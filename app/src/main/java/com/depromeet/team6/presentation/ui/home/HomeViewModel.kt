@@ -259,6 +259,15 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    // SharedPreferences에서 사용자 출발 상태를 로드
+    fun loadUserDepartureState(context: Context) {
+        viewModelScope.launch {
+            val sharedPreferences = context.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
+            val userDeparture = sharedPreferences.getBoolean("userDeparture", false)
+            setEvent(HomeContract.HomeEvent.LoadUserDeparture(userDeparture))
+        }
+    }
+
     fun loadAlarmAndCourseInfoFromPrefs(context: Context) {
         viewModelScope.launch {
             val prefs = context.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)

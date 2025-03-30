@@ -29,6 +29,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.flowWithLifecycle
 import com.depromeet.team6.R
 import com.depromeet.team6.domain.model.RouteLocation
 import com.depromeet.team6.presentation.ui.lock.LockContract
@@ -56,10 +57,13 @@ fun LockRoute(
         viewModel.loadTaxiCost()
     }
 
+
     LockScreen(
         uiState = uiState,
         padding = padding,
-        onTimerFinish = onTimerFinish
+        onTimerFinish = onTimerFinish,
+        onDepartureClick = { viewModel.setEvent(LockContract.LockEvent.OnDepartureClick) },
+        onLateClick = { viewModel.setEvent(LockContract.LockEvent.OnLateClick) }
     )
 }
 
@@ -68,6 +72,8 @@ fun LockScreen(
     padding: PaddingValues,
     uiState: LockContract.LockUiState = LockContract.LockUiState(),
     onTimerFinish: () -> Unit,
+    onDepartureClick: () -> Unit,
+    onLateClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val colors = LocalTeam6Colors.current
@@ -127,7 +133,9 @@ fun LockScreen(
         Spacer(modifier = Modifier.weight(1f))
 
         Button(
-            onClick = onTimerFinish,
+            onClick = {
+                onTimerFinish()
+                onDepartureClick() },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 20.dp),
@@ -145,7 +153,10 @@ fun LockScreen(
         }
 
         Button(
-            onClick = onTimerFinish,
+            onClick = {
+                onTimerFinish()
+                onLateClick()
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 20.dp, vertical = 12.dp)
@@ -172,7 +183,11 @@ fun LockScreenPreview() {
     Team6Theme {
         LockScreen(
             padding = PaddingValues(0.dp),
-            onTimerFinish = {}
+            onTimerFinish = {},
+            uiState = TODO(),
+            onDepartureClick = TODO(),
+            onLateClick = TODO(),
+            modifier = TODO()
         )
     }
 }

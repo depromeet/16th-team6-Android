@@ -84,6 +84,7 @@ fun HomeRoute(
 
     LaunchedEffect(Unit) {
         viewModel.loadAlarmAndCourseInfoFromPrefs(context)
+        viewModel.loadUserDepartureState(context)
     }
 
     LaunchedEffect(viewModel.sideEffect, lifecycleOwner) {

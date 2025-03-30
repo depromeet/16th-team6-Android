@@ -17,10 +17,13 @@ class LockContract {
 
     sealed class LockSideEffect : UiSideEffect {
         data object CloseScreen : LockSideEffect()
+        data class NavigateToHome(val userDeparted: Boolean) : LockSideEffect()
     }
 
     sealed class LockEvent : UiEvent {
         data object OnTimerFinish : LockEvent()
         data object OnCloseClick : LockEvent()
+        data object OnDepartureClick : LockEvent()
+        data object OnLateClick : LockEvent()
     }
 }
