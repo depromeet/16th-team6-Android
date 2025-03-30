@@ -108,16 +108,15 @@ fun AfterRegisterSheet(
                         )
                     }
 
-                        if (!timerFinish) {
-                            Icon(
-                                imageVector = ImageVector.vectorResource(R.drawable.ic_all_info_grey),
-                                contentDescription = stringResource(R.string.home_icon_info),
-                                modifier = Modifier
-                                    .padding(horizontal = 5.dp),
-                                tint = colors.systemGrey1
-                            )
-                        }
-
+                    if (!afterUserDeparted) {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(R.drawable.ic_all_info_grey),
+                            contentDescription = stringResource(R.string.home_icon_info),
+                            modifier = Modifier
+                                .padding(horizontal = 5.dp),
+                            tint = colors.systemGrey1
+                        )
+                    }
 
                     if ((isConfirmed || afterUserDeparted) && !timerFinish) {
                         Spacer(modifier = Modifier.weight(1f))
