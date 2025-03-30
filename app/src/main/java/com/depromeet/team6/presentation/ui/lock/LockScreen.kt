@@ -48,6 +48,8 @@ import java.util.Locale
 fun LockRoute(
     padding: PaddingValues,
     viewModel: LockViewModel,
+    onDepartureClick: () -> Unit,
+    onLateClick: () -> Unit,
     onTimerFinish: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -62,8 +64,8 @@ fun LockRoute(
         uiState = uiState,
         padding = padding,
         onTimerFinish = onTimerFinish,
-        onDepartureClick = { viewModel.setEvent(LockContract.LockEvent.OnDepartureClick) },
-        onLateClick = { viewModel.setEvent(LockContract.LockEvent.OnLateClick) }
+        onDepartureClick = { onDepartureClick() },
+        onLateClick = { onLateClick() }
     )
 }
 

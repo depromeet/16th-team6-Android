@@ -264,6 +264,7 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             val sharedPreferences = context.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
             val userDeparture = sharedPreferences.getBoolean("userDeparture", false)
+            Log.d("userDeparture 가져옴", userDeparture.toString())
             setEvent(HomeContract.HomeEvent.LoadUserDeparture(userDeparture))
         }
     }

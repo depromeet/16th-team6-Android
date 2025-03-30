@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
@@ -29,6 +30,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
@@ -84,7 +87,26 @@ fun HomeRoute(
 
     LaunchedEffect(Unit) {
         viewModel.loadAlarmAndCourseInfoFromPrefs(context)
+    }
+
+    LaunchedEffect(Unit) {
         viewModel.loadUserDepartureState(context)
+    }
+
+    // 화면이 다시 활성화될 때마다 사용자 출발 상태를 새로 로드
+    DisposableEffect(lifecycleOwner) {
+        val observer = object : DefaultLifecycleObserver {
+            override fun onResume(owner: LifecycleOwner) {
+                super.onResume(owner)
+                // 화면이 다시 보일 때마다 사용자 출발 상태 로드
+                viewModel.loadUserDepartureState(context)
+            }
+        }
+
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
     }
 
     LaunchedEffect(viewModel.sideEffect, lifecycleOwner) {

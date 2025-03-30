@@ -87,9 +87,9 @@ class LockViewModel @Inject constructor(
                     putBoolean("userDeparture", userDeparted)
                     apply()
                 }
-                Log.d("LockViewModel", "사용자 출발 상태 저장: $userDeparted")
+                Log.d("userDeparture", "사용자 출발 상태 저장: $userDeparted")
             } catch (e: Exception) {
-                Log.e("LockViewModel", "사용자 출발 상태 저장 중 오류 발생", e)
+                Log.e("userDeparture", "사용자 출발 상태 저장 중 오류 발생", e)
             }
         }
     }

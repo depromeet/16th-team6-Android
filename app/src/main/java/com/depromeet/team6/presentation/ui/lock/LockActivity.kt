@@ -33,7 +33,16 @@ class LockActivity : ComponentActivity() {
                     padding = PaddingValues(),
                     viewModel = viewModel,
                     onTimerFinish = {
-                        stopLockServiceAndExit(this) }
+                        stopLockServiceAndExit(this)
+                    },
+                    onDepartureClick = {
+                        viewModel.setEvent(LockContract.LockEvent.OnDepartureClick)
+                        finish()
+                    },
+                    onLateClick = {
+                        viewModel.setEvent(LockContract.LockEvent.OnLateClick)
+                        finish()
+                    }
                 )
             }
         }
