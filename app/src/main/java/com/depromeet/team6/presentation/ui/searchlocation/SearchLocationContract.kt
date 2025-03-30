@@ -1,6 +1,7 @@
 package com.depromeet.team6.presentation.ui.searchlocation
 
 import com.depromeet.team6.domain.model.Location
+import com.depromeet.team6.domain.model.SearchHistory
 import com.depromeet.team6.presentation.util.base.UiEvent
 import com.depromeet.team6.presentation.util.base.UiSideEffect
 import com.depromeet.team6.presentation.util.base.UiState
@@ -27,6 +28,8 @@ class SearchLocationContract {
 
         data class UpdateRecentSearches(val lat: Double, val lon: Double) :
             SearchLocationEvent()
+
+        data class DeleteSearchHistory(val searchHistory: SearchHistory) : SearchLocationEvent()
 
         data object ClearRecentSearches : SearchLocationEvent()
     }

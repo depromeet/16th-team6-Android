@@ -144,24 +144,21 @@ fun SearchLocationScreen(
             Box(
                 modifier = Modifier.fillMaxSize()
             ) {
-                if (uiState.searchQuery.isEmpty()) { // 검색어가 없을 때
-                    // 최근 기록 api 호출 후 검색 내역 있을 경우, 없을 경우 분기 처리
-                    viewModel.updateRecentSearches(location = location)
+                viewModel.updateRecentSearches(location = location)
 
-                    if (uiState.recentSearches.isEmpty()) {
-                        SearchHistoryContainer(
-                            modifier = Modifier,
-                            uiState = SearchLocationContract.SearchLocationUiState(),
-                            onDeleteButtonClicked = { TODO("검색 내역 삭제") },
-                            selectButtonClicked = { TODO("검색 내역 중 선택 시") }
-                        )
-                    } else {
-                        // 검색 내역이 없을 때
-                        SearchHistoryEmptyContainer()
-                    }
-
-                } else { // 검색어 입력 시
-
+                if (uiState.recentSearches.isEmpty()) {
+                    // 검색 내역이 없을 때
+                    SearchHistoryEmptyContainer()
+                } else {
+                    SearchHistoryContainer(
+                        modifier = Modifier,
+                        uiState = SearchLocationContract.SearchLocationUiState(),
+                        onDeleteButtonClicked = { searchHistory -> // 검색 내역 삭제
+                            viewModel.deleteSearchHistory(searchHistory = searchHistory, location = location)
+                        },
+                        selectButtonClicked = { // 장소 선택
+                            TODO("검색 내역 중 선택 시 1. 장소 텍스트 검색, 2. 최근 검색 내역 추가 api 호출") }
+                    )
                 }
             }
         }

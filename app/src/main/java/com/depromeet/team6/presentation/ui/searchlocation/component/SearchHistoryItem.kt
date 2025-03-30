@@ -28,7 +28,7 @@ import com.depromeet.team6.ui.theme.defaultTeam6Typography
 fun SearchHistoryItem(
     homeSearchLocation: Location,
     modifier: Modifier = Modifier,
-    deleteButtonClicked: () -> Unit = {},
+    deleteButtonClicked: (Location) -> Unit = {},
     selectItemClicked: () -> Unit = {}
 ) {
     Row(
@@ -86,7 +86,7 @@ fun SearchHistoryItem(
             contentDescription = stringResource(R.string.home_icon_search_text),
             tint = defaultTeam6Colors.greyTertiaryLabel,
             modifier = Modifier.noRippleClickable {
-                deleteButtonClicked()
+                deleteButtonClicked(homeSearchLocation)
             }
         )
     }

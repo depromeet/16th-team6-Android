@@ -27,7 +27,7 @@ import androidx.compose.ui.tooling.preview.Preview
 fun SearchHistoryContainer(
     modifier: Modifier = Modifier,
     uiState: SearchLocationContract.SearchLocationUiState = SearchLocationContract.SearchLocationUiState(),
-    onDeleteButtonClicked: () -> Unit = {},
+    onDeleteButtonClicked: (Location) -> Unit = {},
     selectButtonClicked: (Location) -> Unit = {}
 ) {
     Column(
@@ -53,7 +53,8 @@ fun SearchHistoryContainer(
                 style = defaultTeam6Typography.bodyRegular13,
                 color = defaultTeam6Colors.greyTertiaryLabel,
                 modifier = Modifier.noRippleClickable {
-                    onDeleteButtonClicked()
+                    // 검색 내역 전체 삭제
+                    // onDeleteButtonClicked()
                 }
             )
         }
@@ -62,7 +63,7 @@ fun SearchHistoryContainer(
             items(uiState.recentSearches) { recentSearchLocation ->
                 SearchHistoryItem(
                     homeSearchLocation = recentSearchLocation,
-                    deleteButtonClicked = onDeleteButtonClicked,
+                    deleteButtonClicked = { onDeleteButtonClicked(recentSearchLocation) },
                     selectItemClicked = { selectButtonClicked(recentSearchLocation) }
                 )
             }

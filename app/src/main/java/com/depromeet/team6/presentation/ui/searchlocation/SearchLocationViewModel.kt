@@ -2,6 +2,7 @@ package com.depromeet.team6.presentation.ui.searchlocation
 
 import androidx.lifecycle.viewModelScope
 import com.depromeet.team6.domain.model.Location
+import com.depromeet.team6.domain.model.SearchHistory
 import com.depromeet.team6.domain.usecase.DeleteAllSearchHistoryUseCase
 import com.depromeet.team6.domain.usecase.DeleteSearchHistoryUseCase
 import com.depromeet.team6.domain.usecase.GetLocationsUseCase
@@ -13,6 +14,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -43,6 +45,12 @@ class SearchLocationViewModel @Inject constructor(
                 location = LatLng(event.lat, event.lon)
             )
 
+            is SearchLocationContract.SearchLocationEvent.DeleteSearchHistory -> setState {
+                copy(
+
+                )
+            }
+
             is SearchLocationContract.SearchLocationEvent.ClearRecentSearches -> setState {
                 copy(
                     recentSearches = emptyList()
@@ -57,6 +65,7 @@ class SearchLocationViewModel @Inject constructor(
         }
     }
 
+    // 최근 검색 내역 조회
     fun updateRecentSearches(location: LatLng) {
         setEvent(
             SearchLocationContract.SearchLocationEvent.UpdateRecentSearches(
@@ -78,7 +87,35 @@ class SearchLocationViewModel @Inject constructor(
         }
     }
 
-    fun clearRecentSearches() {
+    // 검색 내역 삭제
+    fun deleteSearchHistory(searchHistory: Location, location: LatLng) {
+
+        val convertedSearchHistory = SearchHistory(
+            name = searchHistory.name,
+            lat = searchHistory.lat,
+            lon = searchHistory.lon,
+            businessCategory = searchHistory.businessCategory,
+            address = searchHistory.address
+        )
+
+        setEvent(
+            SearchLocationContract.SearchLocationEvent.DeleteSearchHistory(
+                searchHistory = convertedSearchHistory
+            )
+        )
+
+        viewModelScope.launch {
+            if (deleteSearchHistoryUseCase(searchHistory = convertedSearchHistory).isSuccessful) {
+                updateRecentSearches(location = LatLng(location.latitude, location.longitude))
+            }
+            else {
+                Timber.e("deleteSearchHistory failure")
+            }
+        }
+    }
+
+    // 최근 검색 내역 전체 삭제
+    fun deleteAllSearchHistory() {
         viewModelScope.launch {
             setEvent(SearchLocationContract.SearchLocationEvent.ClearRecentSearches)
         }
