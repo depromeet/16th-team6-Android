@@ -1,5 +1,6 @@
 package com.depromeet.team6.presentation.ui.home
 
+import android.app.Application
 import android.content.Context
 import android.util.Log
 import android.content.LocusId
@@ -12,14 +13,17 @@ import com.depromeet.team6.domain.model.RouteLocation
 import com.depromeet.team6.domain.usecase.GetAddressFromCoordinatesUseCase
 import com.depromeet.team6.domain.usecase.GetBusStartedUseCase
 import com.depromeet.team6.domain.model.course.LegInfo
+import com.depromeet.team6.domain.usecase.DeleteAlarmUseCase
 import com.depromeet.team6.domain.usecase.GetCourseSearchResultsUseCase
 import com.depromeet.team6.presentation.model.route.Route
 import com.depromeet.team6.domain.usecase.GetTaxiCostUseCase
 import com.depromeet.team6.domain.usecase.GetTimeLeftUseCase
+import com.depromeet.team6.presentation.ui.coursesearch.CourseSearchContract
 import com.depromeet.team6.presentation.util.base.BaseViewModel
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.google.android.gms.maps.model.LatLng
 import com.google.gson.Gson
+import dagger.hilt.android.internal.Contexts.getApplication
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -33,7 +37,8 @@ class HomeViewModel @Inject constructor(
     private val getAddressFromCoordinatesUseCase: GetAddressFromCoordinatesUseCase,
     private val getTaxiCostUseCase: GetTaxiCostUseCase,
     val getCourseSearchResultUseCase : GetCourseSearchResultsUseCase, // TODO : 실제 UseCase 로 교체
-    private val getBusStartedUseCase: GetBusStartedUseCase
+    private val getBusStartedUseCase: GetBusStartedUseCase,
+    private val deleteAlarmUseCase: DeleteAlarmUseCase
 ) : BaseViewModel<HomeContract.HomeUiState, HomeContract.HomeSideEffect, HomeContract.HomeEvent>() {
     private var speechBubbleJob: Job? = null
     private var busStartedPollingJob: Job? = null
@@ -161,6 +166,36 @@ class HomeViewModel @Inject constructor(
 //                TransportType.SUBWAY -> setEvent(HomeContract.HomeEvent.UpdateBusDeparted(true))
 //                else -> {}
 //            }
+        }
+    }
+
+    fun deleteAlarm(lastRouteId: String, context: Context) {
+        viewModelScope.launch {
+            if (deleteAlarmUseCase(
+                    lastRouteId = lastRouteId
+                ).isSuccessful
+            ) {
+                setEvent(HomeContract.HomeEvent.UpdateAlarmRegistered(false))
+                setEvent(HomeContract.HomeEvent.UpdateBusDeparted(false))
+
+                stopPollingBusStarted()
+
+                val sharedPreferences = context.getSharedPreferences(
+                    "MyPreferences", Context.MODE_PRIVATE
+                )
+                val editor = sharedPreferences.edit()
+
+                editor.remove("departurePoint")
+                editor.remove("lastCourseInfo")
+                editor.remove("lastRouteId")
+
+                editor.putBoolean("alarmRegistered", false)
+
+                editor.apply()
+
+            } else {
+                Log.d("알림 삭제 실패", "알림 삭제 실패")
+            }
         }
     }
 

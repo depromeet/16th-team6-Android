@@ -1,5 +1,6 @@
 package com.depromeet.team6.presentation.ui.home
 
+import android.app.Application
 import android.content.Context
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -54,6 +55,7 @@ import com.depromeet.team6.presentation.util.permission.PermissionUtil
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.google.android.gms.maps.model.LatLng
 import com.google.gson.Gson
+import dagger.hilt.android.internal.Contexts.getApplication
 import timber.log.Timber
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -184,7 +186,7 @@ fun HomeRoute(
                 )
             },
             onFinishClick = {
-                viewModel.finishAlarm(context)
+                viewModel.deleteAlarm(uiState.lastRouteId, context)
             },
             onRefreshClick = {
                 // TODO : getLegs 함수가 막차 경로 상세 API를 받아오는게 맞는지 확인
