@@ -216,23 +216,7 @@ fun HomeScreen(
 ) {
     val context = LocalContext.current
 
-    val sharedPreferences = context.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
-    val isUserLoggedIn = sharedPreferences.getBoolean("isUserLoggedIn", false) // 기본값은 false
-
     val notificationScheduler = NotificationScheduler(context)
-
-    // TODO: 알림 등록 후 지도 테스트 후 삭제
-   // viewModel.registerAlarm()
-    // viewModel.setBusDeparted()
-
-//    if (isUserLoggedIn) {
-//        viewModel.registerAlarm()
-//        viewModel.setBusDeparted()
-//    } else {
-//        viewModel.finishAlarm(context)
-//    }
-
-    Log.d("차고지", homeUiState.isBusDeparted.toString())
 
     Box(
         modifier = modifier
@@ -253,8 +237,6 @@ fun HomeScreen(
 
         //TODO : 알림 등록 후 지도 테스트 후 삭제
         val itineraryInfo = homeUiState.itineraryInfo?.legs
-        val departureTime = homeUiState.departureTime
-        val timerFinish = homeUiState.timerFinish
 
         if (itineraryInfo != null) {
             AfterRegisterMap(
