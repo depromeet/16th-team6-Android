@@ -6,7 +6,9 @@ import com.depromeet.team6.data.dataremote.model.response.locations.ResponseAddr
 import com.depromeet.team6.data.dataremote.model.response.locations.ResponseLocationsDto
 import com.depromeet.team6.data.dataremote.util.ApiConstraints.API
 import com.depromeet.team6.data.dataremote.util.ApiConstraints.LOCATIONS
+import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Query
@@ -34,5 +36,10 @@ interface LocationsService {
     @POST("api/locations/histories")
     suspend fun postSearchHistories(
         @Body requestSearchHistoryDto: RequestSearchHistoryDto
-    ): ApiResponse<Unit>
+    ): Response<Unit>
+
+    @DELETE("api/locations/history")
+    suspend fun deleteSearchHistory(
+        @Body requestSearchHistoryDto: RequestSearchHistoryDto
+    ): Response<Unit>
 }

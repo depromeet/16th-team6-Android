@@ -5,6 +5,7 @@ import com.depromeet.team6.data.dataremote.model.response.base.toResult
 import com.depromeet.team6.data.dataremote.model.response.locations.ResponseAddressDto
 import com.depromeet.team6.data.dataremote.model.response.locations.ResponseLocationsDto
 import com.depromeet.team6.data.dataremote.service.LocationsService
+import retrofit2.Response
 import javax.inject.Inject
 
 class LocationsRemoteDataSource @Inject constructor(
@@ -23,7 +24,9 @@ class LocationsRemoteDataSource @Inject constructor(
     suspend fun getSearchHistories(lat: Double, lon: Double): Result<List<ResponseLocationsDto>> =
         locationsService.getSearchHistories(lat = lat, lon = lon).toResult()
 
-    suspend fun postSearchHistories(requestSearchHistoryDto: RequestSearchHistoryDto): Result<Unit> =
+    suspend fun postSearchHistories(requestSearchHistoryDto: RequestSearchHistoryDto): Response<Unit> =
         locationsService.postSearchHistories(requestSearchHistoryDto = requestSearchHistoryDto)
-            .toResult()
+
+    suspend fun deleteSearchHistory(requestSearchHistoryDto: RequestSearchHistoryDto): Response<Unit> =
+        locationsService.deleteSearchHistory(requestSearchHistoryDto = requestSearchHistoryDto)
 }

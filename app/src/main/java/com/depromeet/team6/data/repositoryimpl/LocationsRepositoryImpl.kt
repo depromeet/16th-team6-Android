@@ -7,6 +7,7 @@ import com.depromeet.team6.domain.model.Location
 import com.depromeet.team6.domain.model.SearchHistory
 import com.depromeet.team6.data.mapper.todata.toData
 import com.depromeet.team6.domain.repository.LocationsRepository
+import retrofit2.Response
 import javax.inject.Inject
 
 class LocationsRepositoryImpl @Inject constructor(
@@ -28,7 +29,9 @@ class LocationsRepositoryImpl @Inject constructor(
         locationsRemoteDataSource.getSearchHistories(lat = lat, lon = lon)
             .mapCatching { it.toDomain() }
 
-    override suspend fun postSearchHistories(requestSearchHistoryDto: SearchHistory): Result<Unit> =
+    override suspend fun postSearchHistories(requestSearchHistoryDto: SearchHistory): Response<Unit> =
         locationsRemoteDataSource.postSearchHistories(requestSearchHistoryDto = requestSearchHistoryDto.toData())
-            .mapCatching { Unit }
+
+    override suspend fun deleteSearchHistory(requestSearchHistoryDto: SearchHistory): Response<Unit> =
+        locationsRemoteDataSource.deleteSearchHistory(requestSearchHistoryDto = requestSearchHistoryDto.toData())
 }
