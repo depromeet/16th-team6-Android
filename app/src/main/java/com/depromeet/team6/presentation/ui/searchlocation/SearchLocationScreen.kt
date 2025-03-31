@@ -153,12 +153,16 @@ fun SearchLocationScreen(
                  * 3. 검색 리스트 삭제 시 다시 최근 검색 내역 보여주기
                  */
 
+                // 검색 창에 검색어가 없을 때 or 현위치 떠있을 때
                 if (uiState.searchQuery.isEmpty()) {
+                    // 최근 검색 내역 호출
                     //viewModel.updateRecentSearches(location = location)
 
-                    if (uiState.recentSearches.isEmpty()) { // 검색 내역이 없을 때
+                    // 최근 검색 내역 호출 후 검색 내역이 없을 때
+                    if (uiState.recentSearches.isEmpty()) {
                         SearchHistoryEmptyContainer()
-                    } else {
+                    }
+                    else { // 최근 검색 내역이 있을 때
                         SearchHistoryContainer(
                             modifier = Modifier,
                             uiState = SearchLocationContract.SearchLocationUiState(),
@@ -174,7 +178,8 @@ fun SearchLocationScreen(
                             }
                         )
                     }
-                } else {
+                }
+                else { // 검색어 입력 시
 //                    LazyColumn {
 //                        if ()
 //                    }
