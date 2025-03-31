@@ -48,6 +48,7 @@ import com.depromeet.team6.ui.theme.Team6Theme
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import kotlinx.coroutines.delay
 import retrofit2.http.Tag
+import java.text.NumberFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -91,6 +92,8 @@ fun LockScreen(
 
     var timeLeft by remember { mutableIntStateOf(60) }
     var currentTime by remember { mutableStateOf("") }
+
+    val formattedCost = NumberFormat.getNumberInstance(Locale.US).format(uiState.taxiCost)
 
     // Lottie 애니메이션 설정
     val composition by rememberLottieComposition(
@@ -152,7 +155,7 @@ fun LockScreen(
             )
 
             Text(
-                text = "-" + uiState.taxiCost.toString(),
+                text = "-$formattedCost",
                 color = colors.systemRed,
                 style = typography.heading1ExtraBold56,
                 modifier = Modifier.padding(vertical = 8.dp)
