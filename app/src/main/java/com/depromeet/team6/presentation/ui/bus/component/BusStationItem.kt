@@ -23,26 +23,22 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.depromeet.team6.R
+import com.depromeet.team6.domain.model.course.TransportType
+import com.depromeet.team6.presentation.util.view.TransportTypeUiMapper
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.depromeet.team6.ui.theme.defaultTeam6Typography
 
 @Composable
-fun BusStationItem(modifier: Modifier = Modifier) {
+fun BusStationItem(
+   busSubtypeIdx : Int,
+   modifier: Modifier = Modifier
+) {
     val stationName = "버스정류장"
     val stationNumber = 14502
-    val subwayLine = 2
-    val subwayLineIconRes = when (subwayLine) {
-        1 -> R.drawable.ic_subway_1
-        2 -> R.drawable.ic_subway_2
-        3 -> R.drawable.ic_subway_3
-        4 -> R.drawable.ic_subway_4
-        5 -> R.drawable.ic_subway_5
-        6 -> R.drawable.ic_subway_6
-        7 -> R.drawable.ic_subway_7
-        8 -> R.drawable.ic_subway_8
-        9 -> R.drawable.ic_subway_9
-        else -> R.drawable.ic_subway_9
-    }
+
+    val subwaySubtypeIdx = 4
+    val subwayLineIconRes = TransportTypeUiMapper.getIconResId(TransportType.SUBWAY, subwaySubtypeIdx)
+    val busColor = TransportTypeUiMapper.getColor(TransportType.BUS, busSubtypeIdx)
     Row(
         modifier = modifier.fillMaxWidth()
             .height(IntrinsicSize.Min),
@@ -53,7 +49,7 @@ fun BusStationItem(modifier: Modifier = Modifier) {
                 modifier = Modifier
                     .fillMaxHeight()
                     .width(4.dp)
-                    .background(color = defaultTeam6Colors.busColors[0].second)
+                    .background(color = busColor)
             )
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.ic_bus_station_check_14),
@@ -96,5 +92,7 @@ fun BusStationItem(modifier: Modifier = Modifier) {
 @Preview
 @Composable
 private fun BusStationItemPreview() {
-    BusStationItem()
+    BusStationItem(
+        busSubtypeIdx = 1,
+    )
 }

@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Icon
@@ -33,9 +34,12 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import com.depromeet.team6.R
+import com.depromeet.team6.domain.model.course.TransportType
 import com.depromeet.team6.presentation.model.bus.BusArrivalParameter
+import com.depromeet.team6.presentation.ui.common.TransportVectorIconComposable
 import com.depromeet.team6.presentation.ui.common.view.AtChaLoadingView
 import com.depromeet.team6.presentation.util.view.LoadState
+import com.depromeet.team6.presentation.util.view.TransportTypeUiMapper
 import com.depromeet.team6.ui.theme.LocalTeam6Colors
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.depromeet.team6.ui.theme.defaultTeam6Typography
@@ -61,6 +65,7 @@ fun BusCourseRoute(
     }
 
     LaunchedEffect(Unit) {
+        viewModel.initUiState(busArrivalParameter)
         viewModel.getBusArrival(
             routeName = busArrivalParameter.routeName,
             stationName = busArrivalParameter.stationName,
@@ -123,10 +128,12 @@ fun BusCourseScreen(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
             ) {
-                Icon(
-                    imageVector = ImageVector.vectorResource(R.drawable.ic_all_bus_18),
-                    tint = busIconTint,
-                    contentDescription = null
+                TransportVectorIconComposable(
+                    type = TransportType.BUS,
+                    color = TransportTypeUiMapper.getColor(TransportType.BUS, uiState.subtypeIdx),
+                    isMarker = false,
+                    modifier = Modifier
+                        .size(18.dp)
                 )
                 Spacer(modifier = Modifier.width(3.dp))
                 Text(

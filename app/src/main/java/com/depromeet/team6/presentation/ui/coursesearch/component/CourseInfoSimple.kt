@@ -58,7 +58,7 @@ fun CourseInfoSimple(
                 Image(
                     modifier = Modifier
                         .size(26.dp),
-                    imageVector = ImageVector.vectorResource(id = TransportTypeUiMapper.getCourseInfoIconId(courseInfo.transportType, courseInfo.subTypeIdx)),
+                    imageVector = ImageVector.vectorResource(id = TransportTypeUiMapper.getIconResId(courseInfo.transportType, courseInfo.subTypeIdx)),
                     contentDescription = "transport course icon"
                 )
 

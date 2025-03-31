@@ -3,6 +3,7 @@ package com.depromeet.team6.presentation.ui.bus
 import androidx.lifecycle.viewModelScope
 import com.depromeet.team6.domain.usecase.GetBusArrivalUseCase
 import com.depromeet.team6.domain.usecase.GetBusPositionsUseCase
+import com.depromeet.team6.presentation.model.bus.BusArrivalParameter
 import com.depromeet.team6.presentation.util.base.BaseViewModel
 import com.depromeet.team6.presentation.util.view.LoadState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,6 +22,14 @@ class BusCourseViewModel @Inject constructor(
     override suspend fun handleEvent(event: BusCourseContract.BusCourseEvent) {
         when (event) {
             is BusCourseContract.BusCourseEvent.SetScreenLoadState -> setState { copy(loadState = event.loadState) }
+        }
+    }
+
+    fun initUiState(uiParameter: BusArrivalParameter) {
+        setState {
+            copy(
+                subtypeIdx = uiParameter.subtypeIdx
+            )
         }
     }
 
