@@ -49,8 +49,7 @@ fun CurrentLocationSheet(
                 location = currentLocation,
                 textColor = colors.systemGreen,
                 backgroundColor = colors.greyDefaultButton,
-                onClick = {},
-                modifier = Modifier.noRippleClickable { onSearchLocationClick() }
+                onClick = { onSearchLocationClick() },
             )
 
             Spacer(modifier = Modifier.height(4.dp))

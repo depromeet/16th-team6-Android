@@ -124,7 +124,7 @@ fun HomeRoute(
             onFinishClick = {
                 viewModel.finishAlarm(context)
             },
-            navigateToSearchLocation = navigateToSearchLocation
+            navigateToSearchLocation = { navigateToSearchLocation() }
         )
         LoadState.Error -> navigateToLogin()
 
