@@ -16,6 +16,15 @@ val properties = Properties().apply {
 }
 
 android {
+    signingConfigs {
+        create("release") {
+            storeFile = file(properties["keystore.path"] as String)
+            storePassword = properties["keystore.password"] as String
+            keyAlias = properties["keystore.alias"] as String
+            keyPassword = properties["key.password"] as String
+        }
+    }
+
     namespace = "com.depromeet.team6"
     compileSdk = 35
 
@@ -41,6 +50,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("release")
         }
         debug {
             isMinifyEnabled = false
