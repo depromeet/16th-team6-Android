@@ -53,7 +53,8 @@ fun MainNavHost(
         )
 
         itineraryNavGraph(
-            padding = padding
+            padding = padding,
+            popBackStack = navigator::popBackStack
         )
         val previousRoute = navigator.navHostController.previousBackStackEntry?.destination?.route ?: "Unknown"
     }

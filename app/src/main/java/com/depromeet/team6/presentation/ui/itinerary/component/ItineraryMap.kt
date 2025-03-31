@@ -47,7 +47,8 @@ import kotlinx.coroutines.withContext
 fun ItineraryMap(
     currentLocation: LatLng,
     legs: List<LegInfo>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onBackPressed : () -> Unit
 ) {
     val context = LocalContext.current
     val tMapView = remember { TMapView(context) }
@@ -176,7 +177,7 @@ fun ItineraryMap(
                 .align(Alignment.TopStart)
                 .offset(x = 16.dp, y = 12.dp)
                 .noRippleClickable {
-                    // TODO : 뒤로가기
+
                 }
         )
 
@@ -186,7 +187,7 @@ fun ItineraryMap(
                 .align(Alignment.BottomEnd)
                 .offset(x = (-16).dp, y = (-16).dp)
                 .noRippleClickable {
-                    tMapView.setCenterPoint(currentLocation.latitude, currentLocation.longitude)
+                    onBackPressed()
                 },
             imageVector = ImageVector.vectorResource(R.drawable.ic_all_current_location),
             contentDescription = "ItineraryCircleBtnBack"
@@ -241,6 +242,7 @@ fun ItineraryMapPreview(
 ) {
     ItineraryMap(
         legs = legs,
-        currentLocation = LatLng(37.5665, 126.9780)
+        currentLocation = LatLng(37.5665, 126.9780),
+        onBackPressed = {  }
     )
 }
