@@ -1,5 +1,6 @@
 package com.depromeet.team6.presentation.ui.bus
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -39,6 +40,7 @@ import com.depromeet.team6.presentation.ui.bus.navigation.BusCourseRoute
 import com.depromeet.team6.presentation.ui.common.view.AtChaLoadingView
 import com.depromeet.team6.presentation.ui.mypage.MypageContract
 import com.depromeet.team6.presentation.ui.mypage.MypageScreen
+import com.depromeet.team6.presentation.ui.onboarding.OnboardingContract
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.depromeet.team6.ui.theme.LocalTeam6Colors
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
@@ -77,7 +79,8 @@ fun BusCourseRoute(
         LoadState.Loading -> AtChaLoadingView()
         LoadState.Success -> {
             BusCourseScreen(
-                modifier = Modifier.fillMaxSize().padding(padding),
+                padding = padding,
+                modifier = Modifier.fillMaxSize(),
                 backButtonClicked = { viewModel.setSideEffect(BusCourseContract.BusCourseSideEffect.NavigateToBackStack) }
             )
         }
@@ -88,7 +91,9 @@ fun BusCourseRoute(
 
 @Composable
 fun BusCourseScreen(
+    padding: PaddingValues,
     modifier: Modifier = Modifier,
+    uiState: BusCourseContract.BusCourseUiState = BusCourseContract.BusCourseUiState(),
     backButtonClicked: () -> Unit = {}
 ) {
     val busNumber = 350
@@ -102,7 +107,14 @@ fun BusCourseScreen(
     val numberStart = fullText.indexOf(runningBusCount.toString())
     val numberEnd = numberStart + runningBusCount.toString().length
 
-    Column(modifier = modifier) {
+    val color = LocalTeam6Colors.current
+
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .background(color = color.greyElevatedBackground)
+            .padding(padding)
+    ) {
         Box(modifier = Modifier.fillMaxWidth()) {
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.ic_all_arrow_left_grey),
@@ -160,11 +172,13 @@ fun BusCourseScreen(
             )
         }
     }
-    LazyColumn { }
+    LazyColumn (modifier = Modifier.fillMaxWidth().background(color = color.greyWashBackground)){
+
+    }
 }
 
 @Preview
 @Composable
 private fun BusCourseScreenPreview() {
-    BusCourseScreen()
+    BusCourseScreen(padding = PaddingValues(0.dp))
 }
