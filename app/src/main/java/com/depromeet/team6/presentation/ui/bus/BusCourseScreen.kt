@@ -3,6 +3,7 @@ package com.depromeet.team6.presentation.ui.bus
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,6 +14,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -24,9 +27,54 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.flowWithLifecycle
 import com.depromeet.team6.R
+import com.depromeet.team6.presentation.ui.bus.navigation.BusCourseRoute
+import com.depromeet.team6.presentation.ui.common.view.AtChaLoadingView
+import com.depromeet.team6.presentation.ui.mypage.MypageContract
+import com.depromeet.team6.presentation.ui.mypage.MypageScreen
+import com.depromeet.team6.presentation.util.view.LoadState
+import com.depromeet.team6.ui.theme.LocalTeam6Colors
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.depromeet.team6.ui.theme.defaultTeam6Typography
+
+@Composable
+fun BusCourseRoute(
+    padding: PaddingValues,
+    viewModel: BusCourseViewModel = hiltViewModel(),
+    navigateToBackStack: () -> Unit
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    LaunchedEffect(viewModel.sideEffect, lifecycleOwner) {
+        viewModel.sideEffect.flowWithLifecycle(lifecycle = lifecycleOwner.lifecycle)
+            .collect { sideEffect ->
+                when (sideEffect) {
+                    is BusCourseContract.BusCourseSideEffect.NavigateToBackStack -> navigateToBackStack()
+                }
+            }
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.setEvent(BusCourseContract.BusCourseEvent.PostSignUp())
+    }
+
+    when (uiState.loadState) {
+        LoadState.Idle -> AtChaLoadingView()
+        LoadState.Success -> {
+            BusCourseScreen(
+                backButtonClicked = { viewModel.setSideEffect(BusCourseContract.BusCourseSideEffect.NavigateToBackStack) }
+            )
+        }
+
+        else -> Unit
+    }
+}
 
 @Composable
 fun BusCourseScreen(
@@ -34,7 +82,7 @@ fun BusCourseScreen(
     backButtonClicked: () -> Unit = {}
 ) {
     val busNumber = 350
-    val busIconTint = defaultTeam6Colors.busMainLine
+    val busIconTint = defaultTeam6Colors.busColors[0].second
     val runningBusCount = 2
 
     val grey = defaultTeam6Colors.greySecondaryLabel
@@ -102,7 +150,7 @@ fun BusCourseScreen(
             )
         }
     }
-    LazyColumn {  }
+    LazyColumn { }
 }
 
 @Preview
