@@ -55,7 +55,7 @@ fun SearchLocationTextField(
                     backgroundColor = defaultTeam6Colors.greyQuaternaryLabel,
                     cornerRadius = 8.dp
                 )
-                .padding(horizontal = 12.dp),
+                .padding(horizontal = 16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(

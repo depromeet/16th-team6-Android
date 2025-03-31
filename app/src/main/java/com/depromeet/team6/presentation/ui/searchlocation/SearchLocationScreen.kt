@@ -113,7 +113,7 @@ fun SearchLocationScreen(
         modifier = modifier
             .fillMaxSize()
             .background(
-                color = defaultTeam6Colors.greyElevatedBackground
+                color = defaultTeam6Colors.greyWashBackground
             )
     ) {
         Column(
@@ -154,7 +154,7 @@ fun SearchLocationScreen(
                  */
 
                 if (uiState.searchQuery.isEmpty()) {
-                    viewModel.updateRecentSearches(location = location)
+                    //viewModel.updateRecentSearches(location = location)
 
                     if (uiState.recentSearches.isEmpty()) { // 검색 내역이 없을 때
                         SearchHistoryEmptyContainer()
