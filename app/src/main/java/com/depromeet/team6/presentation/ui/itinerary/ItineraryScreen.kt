@@ -66,8 +66,8 @@ fun ItineraryRoute(
 fun ItineraryScreen(
     modifier: Modifier = Modifier,
     uiState: ItineraryContract.ItineraryUiState = ItineraryContract.ItineraryUiState(),
-    navigateToBusCourse: (BusArrivalParameter)  -> Unit = {}, // 테스트용
-    onBackPressed: () -> Unit = {},
+    navigateToBusCourse: (BusArrivalParameter) -> Unit = {}, // 테스트용
+    onBackPressed: () -> Unit = {}
 ) {
     val itineraryInfo = uiState.itineraryInfo!!
     AtchaCommonBottomSheet(

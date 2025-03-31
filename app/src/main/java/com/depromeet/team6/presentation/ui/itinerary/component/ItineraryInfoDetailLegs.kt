@@ -16,7 +16,7 @@ import com.depromeet.team6.ui.theme.defaultTeam6Colors
 
 @Composable
 fun ItineraryInfoDetailLegs(
-    modifier : Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     DottedLineWithCircles()
 }
@@ -46,6 +46,6 @@ private fun DottedLineWithCircles(
 
 @Preview
 @Composable
-fun ItineraryInfoDetailLegsPreview(){
+fun ItineraryInfoDetailLegsPreview() {
     ItineraryInfoDetailLegs()
 }

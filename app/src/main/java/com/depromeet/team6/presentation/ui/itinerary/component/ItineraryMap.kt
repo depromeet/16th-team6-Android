@@ -48,7 +48,7 @@ fun ItineraryMap(
     currentLocation: LatLng,
     legs: List<LegInfo>,
     modifier: Modifier = Modifier,
-    onBackPressed : () -> Unit
+    onBackPressed: () -> Unit
 ) {
     val context = LocalContext.current
     val tMapView = remember { TMapView(context) }
@@ -186,7 +186,7 @@ fun ItineraryMap(
                 .size(36.dp)
                 .align(Alignment.BottomEnd)
                 .offset(x = (-16).dp, y = (-16).dp)
-                .noRippleClickable {  },
+                .noRippleClickable { },
             imageVector = ImageVector.vectorResource(R.drawable.ic_all_current_location),
             contentDescription = "ItineraryCircleBtnBack"
         )
@@ -241,6 +241,6 @@ fun ItineraryMapPreview(
     ItineraryMap(
         legs = legs,
         currentLocation = LatLng(37.5665, 126.9780),
-        onBackPressed = {  }
+        onBackPressed = { }
     )
 }

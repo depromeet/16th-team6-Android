@@ -27,22 +27,22 @@ import java.time.LocalDateTime
 
 @Composable
 fun ItineraryInfoDetail(
-    legs : List<LegInfo>,
-    departureTime : String,
-    departureName : String,
-    arrivalTime : String,
-    arrivalName : String,
+    legs: List<LegInfo>,
+    departureTime: String,
+    departureName: String,
+    arrivalTime: String,
+    arrivalName: String,
     modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier
             .fillMaxWidth(),
-        horizontalAlignment = Alignment.Start,
+        horizontalAlignment = Alignment.Start
     ) {
         // 출발
         Row(
             modifier = Modifier,
-            verticalAlignment = Alignment.CenterVertically,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             val departureDateTime = LocalDateTime.parse(departureTime)
             Text(
@@ -120,5 +120,5 @@ fun ItineraryInfoDetailPreview(
         departureName = "중앙빌딩",
         arrivalTime = "2025-03-11T23:21:00",
         arrivalName = "우리집"
-        )
+    )
 }
