@@ -1,20 +1,28 @@
 package com.depromeet.team6.presentation.ui.home.component
 
 import android.widget.FrameLayout
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
@@ -25,7 +33,9 @@ import com.depromeet.team6.BuildConfig
 import com.depromeet.team6.R
 import com.depromeet.team6.domain.model.course.LegInfo
 import com.depromeet.team6.presentation.ui.common.TransportVectorIconBitmap
+import com.depromeet.team6.presentation.ui.home.HomeViewModel
 import com.depromeet.team6.presentation.ui.itinerary.LegInfoDummyProvider
+import com.depromeet.team6.presentation.ui.itinerary.component.getWayPointList
 import com.depromeet.team6.presentation.util.view.TransportTypeUiMapper
 import com.depromeet.team6.presentation.util.view.toPx
 import com.google.android.gms.maps.model.LatLng
@@ -42,9 +52,11 @@ import kotlin.math.abs
 fun AfterRegisterMap(
     currentLocation: LatLng,
     legs: List<LegInfo>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: HomeViewModel
 ) {
     val context = LocalContext.current
+    val uiState = viewModel.uiState.collectAsState().value
     val tMapView = remember { TMapView(context) }
     var isMapReady by remember { mutableStateOf(false) }
 
@@ -73,7 +85,7 @@ fun AfterRegisterMap(
             for (leg in legs) {
                 // 라인 그리기
                 val lineWayPoints =
-                    com.depromeet.team6.presentation.ui.itinerary.component.getWayPointList(leg.passShape)
+                    getWayPointList(leg.passShape)
                 // TMapTrafficLine 객체 생성
                 val tmapTrafficLine = TMapTrafficLine("line_${leg.transportType}_${leg.sectionTime}")
                 // 교통 정보 표출 여부 설정
@@ -174,6 +186,28 @@ fun AfterRegisterMap(
                 // Update logic if needed (e.g., map settings)
             }
         )
+
+        // 현위치 버튼
+        Image(
+            imageVector = ImageVector.vectorResource(id = R.drawable.ic_all_current_location),
+            contentDescription = stringResource(R.string.home_current_location_btn),
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .then(
+                    if (uiState.isAlarmRegistered) {
+                        Modifier.padding(bottom = 50.dp, end = 16.dp)
+                    } else {
+                        Modifier.padding(bottom = 50.dp, end = 16.dp)
+                    }
+                )
+                .clickable(enabled = isMapReady) {
+                    val tMapPoint = TMapPoint(currentLocation.latitude, currentLocation.longitude)
+                    tMapView.setCenterPoint(tMapPoint.latitude, tMapPoint.longitude)
+
+                    viewModel.getCenterLocation(LatLng(tMapPoint.latitude, tMapPoint.longitude))
+                }
+                .graphicsLayer { alpha = if (isMapReady) 1f else 0.5f } // 비활성화 시 투명도 조정
+        )
     }
 }
 
@@ -190,6 +224,8 @@ fun AfterRegisterMapPreview(
 ) {
     AfterRegisterMap(
         legs = legs,
-        currentLocation = LatLng(37.5665, 126.9780)
+        currentLocation = LatLng(37.5665, 126.9780),
+        modifier = TODO(),
+        viewModel = TODO()
     )
 }
