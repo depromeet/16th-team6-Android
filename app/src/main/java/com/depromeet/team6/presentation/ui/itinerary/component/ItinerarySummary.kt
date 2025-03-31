@@ -33,7 +33,9 @@ fun ItinerarySummary(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
-    val totalTimeHour = totalTimeMinute / 60
+    val durationHour = totalTimeMinute / 60
+    val durationMinute = totalTimeMinute % 60
+
     Column {
         // 남은 시간
         Row(
@@ -42,9 +44,9 @@ fun ItinerarySummary(
                 .padding(vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            if (totalTimeHour > 0) {
+            if (durationHour > 0) {
                 Text(
-                    text = totalTimeHour.toString(),
+                    text = durationHour.toString(),
                     style = defaultTeam6Typography.heading2Bold26,
                     fontSize = 28.sp,
                     color = defaultTeam6Colors.white
@@ -58,7 +60,7 @@ fun ItinerarySummary(
                 Spacer(modifier = Modifier.width(12.dp))
             }
             Text(
-                text = totalTimeMinute.toString(),
+                text = durationMinute.toString(),
                 style = defaultTeam6Typography.heading2Bold26,
                 fontSize = 28.sp,
                 color = defaultTeam6Colors.white
@@ -80,8 +82,8 @@ fun ItinerarySummary(
                 R.string.itinerary_summary_total_time,
                 departHour,
                 departMinute,
-                (departHour + totalTimeHour + ((departMinute + totalTimeMinute) / 60)) % 24,
-                (departMinute + totalTimeMinute) % 60
+                (departHour + durationHour + ((departMinute + durationMinute) / 60)) % 24,
+                (departMinute + durationMinute) % 60
             ),
             style = defaultTeam6Typography.bodyRegular12,
             color = defaultTeam6Colors.greyTertiaryLabel

@@ -124,7 +124,7 @@ val defaultTeam6Colors = Team6Colors(
 
     // WALK
     walkColor = listOf(
-        "walk" to Color(0xFF90E772)
+        "walk" to Color(0xFF999CA4)
     ),
 
     // BUS
