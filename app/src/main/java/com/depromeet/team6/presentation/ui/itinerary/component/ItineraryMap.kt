@@ -177,7 +177,7 @@ fun ItineraryMap(
                 .align(Alignment.TopStart)
                 .offset(x = 16.dp, y = 12.dp)
                 .noRippleClickable {
-
+                    onBackPressed()
                 }
         )
 
@@ -186,9 +186,7 @@ fun ItineraryMap(
                 .size(36.dp)
                 .align(Alignment.BottomEnd)
                 .offset(x = (-16).dp, y = (-16).dp)
-                .noRippleClickable {
-                    onBackPressed()
-                },
+                .noRippleClickable {  },
             imageVector = ImageVector.vectorResource(R.drawable.ic_all_current_location),
             contentDescription = "ItineraryCircleBtnBack"
         )

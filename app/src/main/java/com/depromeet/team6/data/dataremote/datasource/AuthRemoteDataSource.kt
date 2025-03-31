@@ -4,6 +4,7 @@ import com.depromeet.team6.data.dataremote.model.request.signup.RequestSignUpDto
 import com.depromeet.team6.data.dataremote.model.response.base.toResult
 import com.depromeet.team6.data.dataremote.model.response.user.ResponseAuthDto
 import com.depromeet.team6.data.dataremote.model.response.user.ResponseCheckDto
+import com.depromeet.team6.data.dataremote.model.response.user.ResponseUserInfoDto
 import com.depromeet.team6.data.dataremote.service.AuthService
 import retrofit2.Response
 import javax.inject.Inject
@@ -25,4 +26,7 @@ class AuthRemoteDataSource @Inject constructor(
 
     suspend fun deleteWithDraw(): Response<Unit> =
         authService.deleteWithDraw()
+
+    suspend fun getUserInfo(): Result<ResponseUserInfoDto> =
+        authService.getUserInfo().toResult()
 }

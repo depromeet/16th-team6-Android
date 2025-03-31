@@ -96,6 +96,11 @@
     <string name="course_detail_description">상세보기</string>
     <string name="course_search_result_empty">검색 가능한 막차 정보가 없습니다.</string>
 
+    <!-- Bus Course -->
+    <string name="bus_course_info">운행정보</string>
+    <string name="bus_course_running_bus_count">%1d대 운행 중</string>
+
+
     <!--    itinerary   -->
     <string name="itinerary_summary_remaining_hour">%1d시간</string>
     <string name="itinerary_summary_remaining_minute">%1d분</string>
@@ -112,5 +117,11 @@
     <string name="mypage_account_logout_text">로그아웃</string>
     <string name="mypage_account_signout_text">계정 탈퇴</string>
     <string name="mypage_icon_description">마이페이지 아이콘</string>
+    <string name="mypage_logout_dialog_title">로그아웃하시겠어요?</string>
+    <string name="mypage_withdraw_dialog_title">탈퇴하시겠어요?</string>
+    <string name="mypage_logout_dialog_confirm">로그아웃</string>
+    <string name="mypage_withdraw_dialog_confirm">탈퇴하기</string>
+    <string name="mypage_dialog_cancle">취소</string>
+
 
 </resources>

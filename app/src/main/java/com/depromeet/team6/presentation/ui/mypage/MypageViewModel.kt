@@ -21,32 +21,36 @@ class MypageViewModel @Inject constructor(
     override suspend fun handleEvent(event: MypageContract.MypageEvent) {
         when (event) {
             is MypageContract.MypageEvent.BackPressed -> navigateBack()
-            is MypageContract.MypageEvent.LogoutClicked -> setState { copy(loadState = event.loadState) }
-            is MypageContract.MypageEvent.WithDrawClicked -> setState { copy(loadState = event.loadState) }
+            is MypageContract.MypageEvent.LogoutClicked -> setState { copy(logoutDialogVisible = true, withDrawDialogVisible = false) }
+            is MypageContract.MypageEvent.WithDrawClicked -> setState { copy(withDrawDialogVisible = true) }
             is MypageContract.MypageEvent.PolicyClicked -> setState { copy(isWebViewOpened = true) }
             is MypageContract.MypageEvent.PolicyClosed -> setState { copy(isWebViewOpened = false) }
+            is MypageContract.MypageEvent.LogoutConfirmed -> logout()
+            is MypageContract.MypageEvent.WithDrawConfirmed -> withDraw()
+            is MypageContract.MypageEvent.DismissDialog -> setState { copy(logoutDialogVisible = false, withDrawDialogVisible = false) }
         }
     }
 
-    fun logout() {
+    private fun logout() {
         userInfoRepositoryImpl.setAccessToken(userInfoRepositoryImpl.getRefreshToken())
         viewModelScope.launch {
             if (postLogoutUseCase().isSuccessful) {
-                setEvent(MypageContract.MypageEvent.LogoutClicked(loadState = LoadState.Error))
+                setSideEffect(MypageContract.MypageSideEffect.NavigateToLogin)
+                setState { copy(loadState = LoadState.Error) }
                 userInfoRepositoryImpl.clear()
             } else {
-                setEvent(MypageContract.MypageEvent.LogoutClicked(loadState = LoadState.Idle))
+                setEvent(MypageContract.MypageEvent.LogoutClicked)
             }
         }
     }
 
-    fun withDraw() {
+    private fun withDraw() {
         viewModelScope.launch {
             if (deleteWithDrawUseCase().isSuccessful) {
                 userInfoRepositoryImpl.clear()
-                setEvent(MypageContract.MypageEvent.WithDrawClicked(loadState = LoadState.Error))
+                setSideEffect(MypageContract.MypageSideEffect.NavigateToLogin)
             } else {
-                setEvent(MypageContract.MypageEvent.WithDrawClicked(loadState = LoadState.Idle))
+                setEvent(MypageContract.MypageEvent.WithDrawClicked)
             }
         }
     }

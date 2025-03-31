@@ -1,6 +1,6 @@
 package com.depromeet.team6.data.mapper.todomain
 
-import com.depromeet.team6.data.dataremote.model.response.course.ResponseCourseSearchDto
+import com.depromeet.team6.data.dataremote.model.response.transits.ResponseCourseSearchDto
 import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.course.CourseInfo
 import com.depromeet.team6.domain.model.course.LegInfo
