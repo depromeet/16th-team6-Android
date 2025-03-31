@@ -7,7 +7,7 @@ import com.depromeet.team6.presentation.util.view.LoadState
 
 class BusCourseContract {
     data class BusCourseUiState(
-        val loadState: LoadState = LoadState.Idle,
+        val loadState: LoadState = LoadState.Idle
     ) : UiState
 
     sealed interface BusCourseSideEffect : UiSideEffect {

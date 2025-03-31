@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -34,13 +33,8 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import com.depromeet.team6.R
-import com.depromeet.team6.domain.model.course.LegInfo
 import com.depromeet.team6.presentation.model.bus.BusArrivalParameter
-import com.depromeet.team6.presentation.ui.bus.navigation.BusCourseRoute
 import com.depromeet.team6.presentation.ui.common.view.AtChaLoadingView
-import com.depromeet.team6.presentation.ui.mypage.MypageContract
-import com.depromeet.team6.presentation.ui.mypage.MypageScreen
-import com.depromeet.team6.presentation.ui.onboarding.OnboardingContract
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.depromeet.team6.ui.theme.LocalTeam6Colors
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
@@ -172,8 +166,7 @@ fun BusCourseScreen(
             )
         }
     }
-    LazyColumn (modifier = Modifier.fillMaxWidth().background(color = color.greyWashBackground)){
-
+    LazyColumn(modifier = Modifier.fillMaxWidth().background(color = color.greyWashBackground)) {
     }
 }
 

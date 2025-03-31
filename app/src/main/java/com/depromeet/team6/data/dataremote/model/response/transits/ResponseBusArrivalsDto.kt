@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class ResponseBusArrival(
+data class ResponseBusArrivalsDto(
     @SerialName("busRouteId") val busRouteId: String,
     @SerialName("routeName") val routeName: String,
     @SerialName("serviceRegion") val serviceRegion: String,
@@ -23,5 +23,5 @@ data class RealTimeBusArrival(
     @SerialName("remainingSeats") val remainingSeats: Int,
     @SerialName("expectedArrivalTime") val expectedArrivalTime: String? = null,
     @SerialName("vehicleId") val vehicleId: String,
-    @SerialName("remainingStations") val remainingStations: Int?=0,
+    @SerialName("remainingStations") val remainingStations: Int? = 0
 )

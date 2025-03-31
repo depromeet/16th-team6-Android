@@ -3,7 +3,8 @@ package com.depromeet.team6.data.dataremote.datasource
 import com.depromeet.team6.data.dataremote.model.request.exeption.RequestException
 import com.depromeet.team6.data.dataremote.model.response.base.ApiResponse
 import com.depromeet.team6.data.dataremote.model.response.base.toResult
-import com.depromeet.team6.data.dataremote.model.response.transits.ResponseBusArrival
+import com.depromeet.team6.data.dataremote.model.response.transits.ResponseBusArrivalsDto
+import com.depromeet.team6.data.dataremote.model.response.transits.ResponseBusPositionsDto
 import com.depromeet.team6.data.dataremote.model.response.transits.ResponseCourseSearchDto
 import com.depromeet.team6.data.dataremote.service.TransitsService
 import com.google.gson.Gson
@@ -44,10 +45,20 @@ class TransitsRemoteDataSource @Inject constructor(
         stationName: String,
         lat: Double,
         lon: Double
-    ): Result<ResponseBusArrival> = transitsService.getBusArrival(
+    ): Result<ResponseBusArrivalsDto> = transitsService.getBusArrival(
         routeName = routeName,
         stationName = stationName,
         lat = lat,
         lon = lon
+    ).toResult()
+
+    suspend fun getBusPositions(
+        busRouteId: String,
+        routeName: String,
+        serviceRegion: String
+    ): Result<ResponseBusPositionsDto> = transitsService.getBusPositions(
+        busRouteId = busRouteId,
+        routeName = routeName,
+        serviceRegion = serviceRegion
     ).toResult()
 }

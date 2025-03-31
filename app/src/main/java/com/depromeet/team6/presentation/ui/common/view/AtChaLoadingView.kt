@@ -17,7 +17,7 @@ fun AtChaLoadingView() {
         modifier = Modifier.fillMaxSize().background(color = defaultTeam6Colors.greyWashBackground),
         contentAlignment = Alignment.Center
     ) {
-       Text(text = "Loading...", color = LocalTeam6Colors.current.white)
+        Text(text = "Loading...", color = LocalTeam6Colors.current.white)
     }
 }
 

@@ -14,9 +14,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.depromeet.team6.data.dataremote.model.response.transits.Leg
 import com.depromeet.team6.domain.model.course.LegInfo
-import com.depromeet.team6.domain.model.course.TransportType
 import com.depromeet.team6.presentation.model.bus.BusArrivalParameter
 import com.depromeet.team6.presentation.ui.common.AtchaCommonBottomSheet
 import com.depromeet.team6.presentation.ui.itinerary.component.ItineraryDetail
@@ -30,7 +28,7 @@ import com.google.android.gms.maps.model.LatLng
 fun ItineraryRoute(
     padding: PaddingValues,
     courseInfoJSON: String,
-    navigateToBusCourse:(BusArrivalParameter)->Unit,
+    navigateToBusCourse: (BusArrivalParameter) -> Unit,
     viewModel: ItineraryViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -82,13 +80,15 @@ fun ItineraryScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(horizontal = 16.dp)
-                    .noRippleClickable{
-                        navigateToBusCourse(BusArrivalParameter(
-                            routeName = "일반:700-2",
-                            stationName = "정평중학교",
-                            lat = 37.318197222222224,
-                            lon = 127.08745555555555
-                        ))
+                    .noRippleClickable {
+                        navigateToBusCourse(
+                            BusArrivalParameter(
+                                routeName = "일반:700-2",
+                                stationName = "정평중학교",
+                                lat = 37.318197222222224,
+                                lon = 127.08745555555555
+                            )
+                        )
                     }
             ) {
                 ItinerarySummary(

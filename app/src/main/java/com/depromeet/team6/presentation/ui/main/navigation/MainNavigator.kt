@@ -4,7 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.depromeet.team6.domain.model.course.LegInfo
 import com.depromeet.team6.presentation.model.bus.BusArrivalParameter
 import com.depromeet.team6.presentation.ui.bus.navigation.navigationToBusCourse
 import com.depromeet.team6.presentation.ui.coursesearch.navigation.CourseSearchRoute
@@ -62,7 +61,7 @@ class MainNavigator(
         navHostController.navigationMypage()
     }
 
-    fun navigateToBusCourse(busArrivalParameter: BusArrivalParameter){
+    fun navigateToBusCourse(busArrivalParameter: BusArrivalParameter) {
         navHostController.navigationToBusCourse(busArrivalParameter = busArrivalParameter)
     }
 
