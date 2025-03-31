@@ -59,7 +59,8 @@ fun MainNavHost(
         )
 
         busCourseNavGraph(
-            padding = padding
+            padding = padding,
+            navigateToBackStack = navigator::popBackStack
         )
 
         val previousRoute = navigator.navHostController.previousBackStackEntry?.destination?.route ?: "Unknown"
