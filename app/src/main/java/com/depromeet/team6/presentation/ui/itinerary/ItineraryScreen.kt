@@ -29,7 +29,8 @@ fun ItineraryRoute(
     padding: PaddingValues,
     courseInfoJSON: String,
     navigateToBusCourse: (BusArrivalParameter) -> Unit,
-    viewModel: ItineraryViewModel = hiltViewModel()
+    viewModel: ItineraryViewModel = hiltViewModel(),
+    onBackPressed: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
@@ -52,6 +53,7 @@ fun ItineraryRoute(
         LoadState.Idle -> {}
         LoadState.Success -> ItineraryScreen(
             uiState = uiState,
+            onBackPressed = onBackPressed,
             modifier = Modifier
                 .padding(padding),
             navigateToBusCourse = navigateToBusCourse
@@ -64,7 +66,8 @@ fun ItineraryRoute(
 fun ItineraryScreen(
     modifier: Modifier = Modifier,
     uiState: ItineraryContract.ItineraryUiState = ItineraryContract.ItineraryUiState(),
-    navigateToBusCourse: (BusArrivalParameter) -> Unit = {} // 테스트용
+    navigateToBusCourse: (BusArrivalParameter) -> Unit = {}, // 테스트용
+    onBackPressed: () -> Unit = {}
 ) {
     val itineraryInfo = uiState.itineraryInfo!!
     AtchaCommonBottomSheet(
@@ -72,7 +75,8 @@ fun ItineraryScreen(
         mainContent = {
             ItineraryMap(
                 legs = itineraryInfo.legs,
-                currentLocation = LatLng(37.5665, 126.9780)
+                currentLocation = LatLng(37.5665, 126.9780),
+                onBackPressed = onBackPressed
             )
         },
         sheetContent = {

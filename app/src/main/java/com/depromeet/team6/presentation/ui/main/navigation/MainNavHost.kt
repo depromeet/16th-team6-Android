@@ -55,6 +55,7 @@ fun MainNavHost(
 
         itineraryNavGraph(
             padding = padding,
+            popBackStack = navigator::popBackStack,
             navigateToBusCourse = navigator::navigateToBusCourse
         )
 

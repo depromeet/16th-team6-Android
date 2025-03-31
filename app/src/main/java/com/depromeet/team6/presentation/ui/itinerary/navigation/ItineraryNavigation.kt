@@ -22,7 +22,8 @@ fun NavController.navigateToItinerary(
 
 fun NavGraphBuilder.itineraryNavGraph(
     padding: PaddingValues,
-    navigateToBusCourse: (BusArrivalParameter) -> Unit
+    navigateToBusCourse: (BusArrivalParameter) -> Unit,
+    popBackStack: () -> Unit
 ) {
     composable(
         route = "${ItineraryRoute.ROUTE}/{courseInfoJSON}",
@@ -35,8 +36,8 @@ fun NavGraphBuilder.itineraryNavGraph(
         ItineraryRoute(
             padding = padding,
             courseInfoJSON = departurePoint,
-            navigateToBusCourse = navigateToBusCourse
-
+            navigateToBusCourse = navigateToBusCourse,
+            onBackPressed = popBackStack
         )
     }
 }
