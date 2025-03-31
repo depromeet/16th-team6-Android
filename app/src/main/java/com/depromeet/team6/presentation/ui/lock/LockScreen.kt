@@ -167,7 +167,7 @@ fun LockScreen(
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 20.dp),
+                    .padding(horizontal = 20.dp, vertical = 32.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = colors.main
                 ),
@@ -181,27 +181,27 @@ fun LockScreen(
                 )
             }
 
-            Button(
-                onClick = {
-                    onTimerFinish()
-                    onLateClick()
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp, vertical = 12.dp)
-                    .padding(bottom = 20.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = colors.greenButtonOpacity
-                ),
-                shape = RoundedCornerShape(8.dp)
-            ) {
-                Text(
-                    text = stringResource(R.string.lock_screen_late_btn),
-                    color = colors.main,
-                    style = typography.bodyMedium17,
-                    modifier = Modifier.padding(vertical = 8.dp)
-                )
-            }
+//            Button(
+//                onClick = {
+//                    onTimerFinish()
+//                    onLateClick()
+//                },
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .padding(horizontal = 20.dp, vertical = 12.dp)
+//                    .padding(bottom = 20.dp),
+//                colors = ButtonDefaults.buttonColors(
+//                    containerColor = colors.greenButtonOpacity
+//                ),
+//                shape = RoundedCornerShape(8.dp)
+//            ) {
+//                Text(
+//                    text = stringResource(R.string.lock_screen_late_btn),
+//                    color = colors.main,
+//                    style = typography.bodyMedium17,
+//                    modifier = Modifier.padding(vertical = 8.dp)
+//                )
+//            }
         }
     }
 }
