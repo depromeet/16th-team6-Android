@@ -32,6 +32,8 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import com.depromeet.team6.R
+import com.depromeet.team6.domain.model.course.LegInfo
+import com.depromeet.team6.presentation.model.bus.BusArrivalParameter
 import com.depromeet.team6.presentation.ui.bus.navigation.BusCourseRoute
 import com.depromeet.team6.presentation.ui.common.view.AtChaLoadingView
 import com.depromeet.team6.presentation.ui.mypage.MypageContract
@@ -45,7 +47,8 @@ import com.depromeet.team6.ui.theme.defaultTeam6Typography
 fun BusCourseRoute(
     padding: PaddingValues,
     viewModel: BusCourseViewModel = hiltViewModel(),
-    navigateToBackStack: () -> Unit
+    navigateToBackStack: () -> Unit,
+    busArrivalParameter: BusArrivalParameter
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -61,11 +64,16 @@ fun BusCourseRoute(
     }
 
     LaunchedEffect(Unit) {
-        viewModel.setEvent(BusCourseContract.BusCourseEvent.PostSignUp())
+        viewModel.getBusArrival(
+            routeName = busArrivalParameter.routeName,
+            stationName = busArrivalParameter.stationName,
+            lat = busArrivalParameter.lat,
+            lon = busArrivalParameter.lon
+        )
     }
 
     when (uiState.loadState) {
-        LoadState.Idle -> AtChaLoadingView()
+        LoadState.Loading -> AtChaLoadingView()
         LoadState.Success -> {
             BusCourseScreen(
                 backButtonClicked = { viewModel.setSideEffect(BusCourseContract.BusCourseSideEffect.NavigateToBackStack) }

@@ -1,4 +1,4 @@
-package com.depromeet.team6.data.dataremote.model.response.course
+package com.depromeet.team6.data.dataremote.model.response.transits
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
