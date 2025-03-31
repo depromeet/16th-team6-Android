@@ -42,7 +42,7 @@ fun OnboardingSelectLocationButton(
             )
             .roundedBackgroundWithPadding(
                 cornerRadius = 8.dp,
-                padding = PaddingValues(vertical = 10.dp)
+                padding = PaddingValues(vertical = 11.dp)
             )
             .noRippleClickable { onClick() },
         verticalAlignment = Alignment.CenterVertically,
@@ -66,7 +66,7 @@ fun OnboardingSelectLocationButton(
                     R.string.onboarding_edit_location_button_current_region
                 }
             ),
-            style = defaultTeam6Typography.bodyRegular13,
+            style = defaultTeam6Typography.bodyRegular14,
             color = defaultTeam6Colors.white
         )
     }
