@@ -2,6 +2,7 @@ package com.depromeet.team6.domain.repository
 
 import com.depromeet.team6.domain.model.Auth
 import com.depromeet.team6.domain.model.SignUp
+import com.depromeet.team6.domain.model.UserInfo
 import retrofit2.Response
 
 interface AuthRepository {
@@ -14,4 +15,6 @@ interface AuthRepository {
     suspend fun postLogout(): Response<Unit>
 
     suspend fun deleteWithDraw(): Response<Unit>
+
+    suspend fun getUserInfo(): Result<UserInfo>
 }

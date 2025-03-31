@@ -4,6 +4,7 @@ import com.depromeet.team6.data.dataremote.model.request.signup.RequestSignUpDto
 import com.depromeet.team6.data.dataremote.model.response.base.ApiResponse
 import com.depromeet.team6.data.dataremote.model.response.user.ResponseAuthDto
 import com.depromeet.team6.data.dataremote.model.response.user.ResponseCheckDto
+import com.depromeet.team6.data.dataremote.model.response.user.ResponseUserInfoDto
 import com.depromeet.team6.data.dataremote.util.ApiConstraints.API
 import com.depromeet.team6.data.dataremote.util.ApiConstraints.AUTH
 import com.depromeet.team6.data.dataremote.util.ApiConstraints.CHECK
@@ -43,4 +44,7 @@ interface AuthService {
 
     @DELETE("$API/$MEMBERS/$ME")
     suspend fun deleteWithDraw(): Response<Unit>
+
+    @GET("$API/$MEMBERS/$ME")
+    suspend fun getUserInfo(): ApiResponse<ResponseUserInfoDto>
 }

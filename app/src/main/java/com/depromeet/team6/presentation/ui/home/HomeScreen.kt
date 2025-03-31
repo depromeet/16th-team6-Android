@@ -107,6 +107,10 @@ fun HomeRoute(
         }
     }
 
+    LaunchedEffect(Unit) {
+        viewModel.setEvent(HomeContract.HomeEvent.SetDestination)
+    }
+
     when (uiState.loadState) {
         LoadState.Idle -> HomeScreen(
             userLocation = LatLng(userLocation.latitude, userLocation.longitude),

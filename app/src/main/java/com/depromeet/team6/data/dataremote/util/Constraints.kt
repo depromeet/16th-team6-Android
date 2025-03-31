@@ -25,6 +25,6 @@ object ApiConstraints {
     // FcmToken
     const val FCM_TOKEN = "fcmToken"
 
-    const val VERSION = "v1"
-    const val USERS = "users"
+    // Transits
+    const val TRANSITS = "transits"
 }

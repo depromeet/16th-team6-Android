@@ -50,7 +50,7 @@ fun CourseInfoDetailItem(
             Image(
                 modifier = Modifier
                     .size(26.dp),
-                imageVector = ImageVector.vectorResource(TransportTypeUiMapper.getCourseInfoIconId(transportType, subtypeIndex)),
+                imageVector = ImageVector.vectorResource(TransportTypeUiMapper.getIconResId(transportType, subtypeIndex)),
                 contentDescription = "transport course icon"
             )
             Text(
@@ -76,7 +76,7 @@ fun CourseInfoDetailItem(
                 Image(
                     modifier = Modifier
                         .size(26.dp),
-                    imageVector = ImageVector.vectorResource(TransportTypeUiMapper.getCourseInfoIconId(transportType, subtypeIndex)),
+                    imageVector = ImageVector.vectorResource(TransportTypeUiMapper.getIconResId(transportType, subtypeIndex)),
                     contentDescription = "transport course icon"
                 )
                 VerticalLine()
