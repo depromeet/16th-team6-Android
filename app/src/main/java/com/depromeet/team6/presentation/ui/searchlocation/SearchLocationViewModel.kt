@@ -61,6 +61,8 @@ class SearchLocationViewModel @Inject constructor(
                     searchResults = emptyList()
                 )
             }
+
+            is SearchLocationContract.SearchLocationEvent.UpdateUserLocationSate -> setState { copy(userLocation = event.userLocation) }
         }
     }
 
@@ -72,13 +74,6 @@ class SearchLocationViewModel @Inject constructor(
 
     // 최근 검색 내역 조회
     fun updateRecentSearches(location: LatLng) {
-        setEvent(
-            SearchLocationContract.SearchLocationEvent.UpdateRecentSearches(
-                lat = location.latitude,
-                lon = location.longitude
-            )
-        )
-
         viewModelScope.launch {
             getSearchHistoriesUseCase(location.latitude, location.longitude)
                 .onSuccess { searchHistories ->

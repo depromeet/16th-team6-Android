@@ -10,6 +10,7 @@ import com.depromeet.team6.presentation.util.view.LoadState
 class SearchLocationContract {
     data class SearchLocationUiState(
         val loadState: LoadState = LoadState.Idle,
+        val userLocation: LoadState = LoadState.Idle,
         val searchQuery: String = "",
         val searchResults: List<Location> = emptyList(),
         val recentSearches: List<Location> = emptyList()
@@ -34,5 +35,7 @@ class SearchLocationContract {
         data class DeleteSearchHistory(val searchHistory: SearchHistory) : SearchLocationEvent()
 
         data object ClearRecentSearches : SearchLocationEvent()
+
+        data class UpdateUserLocationSate(val userLocation: LoadState) : SearchLocationEvent()
     }
 }

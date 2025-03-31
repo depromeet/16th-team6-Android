@@ -21,6 +21,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
+import com.depromeet.team6.domain.model.Location
 import com.depromeet.team6.presentation.ui.searchlocation.component.BackTopBar
 import com.depromeet.team6.presentation.ui.searchlocation.component.SearchDepartureTextField
 import com.depromeet.team6.presentation.ui.searchlocation.component.SearchHistoryContainer
@@ -45,13 +46,24 @@ fun SearchLocationRoute(
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
 
-    var userLocation by remember { mutableStateOf(LatLng(DEFAULT_LNT, DEFAULT_LNG)) } // 서울시 기본 위치
+    var userLocation by remember { mutableStateOf(LatLng(DEFAULT_LNT, DEFAULT_LNG)) }
 
     LaunchedEffect(Unit) {
         Timber.tag("Location Permission").d("${PermissionUtil.hasLocationPermissions(context)}")
         if (PermissionUtil.hasLocationPermissions(context)) {
             val location = context.getUserLocation()
             userLocation = location
+            viewModel.setEvent(SearchLocationContract.SearchLocationEvent.UpdateUserLocationSate(LoadState.Success))
+        }
+    }
+
+    LaunchedEffect(uiState.userLocation) {
+        viewModel.updateRecentSearches(location = userLocation)
+    }
+
+    LaunchedEffect(uiState.searchResults) {
+        if (uiState.searchResults.isEmpty()) {
+            Toast.makeText(context, "검색 결과가 없습니다.", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -83,6 +95,26 @@ fun SearchLocationRoute(
                         lon = userLocation.longitude
                     )
                 )
+            },
+            onDeleteAllButtonClicked = { viewModel.deleteAllSearchHistory() },
+            onDeleteButtonClicked =
+            { searchHistory -> // 검색 내역 삭제
+                viewModel.deleteSearchHistory(searchHistory = searchHistory, location = userLocation)
+            },
+            selectButtonClicked = { searchHistory -> // 장소 선택
+                // 장소 텍스트 검색
+                viewModel.setState {
+                    copy(searchQuery = searchHistory.name)
+                }
+                viewModel.setEvent(
+                    SearchLocationContract.SearchLocationEvent.UpdateSearchQuery(
+                        text = searchHistory.name,
+                        lat = userLocation.latitude,
+                        lon = userLocation.longitude
+                    )
+                )
+                // 최근 검색 내역 추가
+                viewModel.postSearchHistory(searchHistory)
             }
         )
 
@@ -99,16 +131,12 @@ fun SearchLocationScreen(
     location: LatLng,
     uiState: SearchLocationContract.SearchLocationUiState = SearchLocationContract.SearchLocationUiState(),
     searchText: String = "",
-    onSearchTextChange: (String) -> Unit = {}
+    onSearchTextChange: (String) -> Unit = {},
+    onDeleteButtonClicked: (Location) -> Unit = {},
+    onDeleteAllButtonClicked: () -> Unit = {},
+    selectButtonClicked: (Location) -> Unit = {}
+
 ) {
-    val context = LocalContext.current
-
-    LaunchedEffect(uiState.searchResults) {
-        if (uiState.searchResults.isEmpty()) {
-            Toast.makeText(context, "검색 결과가 없습니다.", Toast.LENGTH_SHORT).show()
-        }
-    }
-
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -156,30 +184,21 @@ fun SearchLocationScreen(
                 // 검색 창에 검색어가 없을 때 or 현위치 떠있을 때
                 if (uiState.searchQuery.isEmpty()) {
                     // 최근 검색 내역 호출
-                    //viewModel.updateRecentSearches(location = location)
+                    // viewModel.updateRecentSearches(location = location)
 
                     // 최근 검색 내역 호출 후 검색 내역이 없을 때
                     if (uiState.recentSearches.isEmpty()) {
                         SearchHistoryEmptyContainer()
-                    }
-                    else { // 최근 검색 내역이 있을 때
+                    } else { // 최근 검색 내역이 있을 때
                         SearchHistoryContainer(
                             modifier = Modifier,
                             uiState = SearchLocationContract.SearchLocationUiState(),
-                            onDeleteButtonClicked = { searchHistory -> // 검색 내역 삭제
-                                viewModel.deleteSearchHistory(searchHistory = searchHistory, location = location)
-                            },
-                            onDeleteAllButtonClicked = { viewModel.deleteAllSearchHistory() },
-                            selectButtonClicked = { searchHistory -> // 장소 선택
-                                // 장소 텍스트 검색
-                                onSearchTextChange(searchHistory.name)
-                                // 최근 검색 내역 추가
-                                viewModel.postSearchHistory(searchHistory)
-                            }
+                            onDeleteButtonClicked = onDeleteButtonClicked,
+                            onDeleteAllButtonClicked = onDeleteAllButtonClicked,
+                            selectButtonClicked = selectButtonClicked
                         )
                     }
-                }
-                else { // 검색어 입력 시
+                } else { // 검색어 입력 시
 //                    LazyColumn {
 //                        if ()
 //                    }
