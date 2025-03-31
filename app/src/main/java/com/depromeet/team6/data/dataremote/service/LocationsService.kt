@@ -31,7 +31,7 @@ interface LocationsService {
     suspend fun getSearchHistories(
         @Query("lat") lat: Double,
         @Query("lon") lon: Double
-    ):ApiResponse<List<ResponseLocationsDto>>
+    ): ApiResponse<List<ResponseLocationsDto>>
 
     @POST("api/locations/histories")
     suspend fun postSearchHistories(

@@ -2,7 +2,6 @@
 <resources>
     <integer-array name="ic_transport_type_walk">
         <item>@drawable/ic_walk</item>
-    <integer-array name="transport_type_walk">
     </integer-array>
     <array name="ic_transport_type_bus">
         <item>@drawable/ic_bus_regular</item>
@@ -10,7 +9,6 @@
         <item>@drawable/ic_bus_main_line</item>
         <item>@drawable/ic_bus_wide_area</item>
         <item>@drawable/ic_bus_airport</item>
-    <array name="transport_type_bus">
     </array>
     <array name="ic_transport_type_subway">
         <item>@drawable/ic_subway_1</item>

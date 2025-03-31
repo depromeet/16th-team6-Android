@@ -7,7 +7,7 @@ import javax.inject.Inject
 
 class DeleteSearchHistoryUseCase @Inject constructor(
     private val locationsRepository: LocationsRepository
-){
+) {
     suspend operator fun invoke(searchHistory: SearchHistory): Response<Unit> =
         locationsRepository.deleteSearchHistory(requestSearchHistoryDto = searchHistory)
 }

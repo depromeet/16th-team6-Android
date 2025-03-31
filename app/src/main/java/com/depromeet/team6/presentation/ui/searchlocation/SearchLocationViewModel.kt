@@ -46,9 +46,7 @@ class SearchLocationViewModel @Inject constructor(
             )
 
             is SearchLocationContract.SearchLocationEvent.DeleteSearchHistory -> setState {
-                copy(
-
-                )
+                copy()
             }
 
             is SearchLocationContract.SearchLocationEvent.ClearRecentSearches -> setState {
@@ -84,9 +82,11 @@ class SearchLocationViewModel @Inject constructor(
         viewModelScope.launch {
             getSearchHistoriesUseCase(location.latitude, location.longitude)
                 .onSuccess { searchHistories ->
-                    setState { copy(
-                        recentSearches = searchHistories
-                    ) }
+                    setState {
+                        copy(
+                            recentSearches = searchHistories
+                        )
+                    }
                 }
                 .onFailure {
                     setState { copy(recentSearches = emptyList()) }
@@ -96,7 +96,6 @@ class SearchLocationViewModel @Inject constructor(
 
     // 검색 내역 삭제
     fun deleteSearchHistory(searchHistory: Location, location: LatLng) {
-
         val convertedSearchHistory = SearchHistory(
             name = searchHistory.name,
             lat = searchHistory.lat,
@@ -120,8 +119,7 @@ class SearchLocationViewModel @Inject constructor(
                         searchHistory = convertedSearchHistory
                     )
                 )
-            }
-            else {
+            } else {
                 Timber.e("deleteSearchHistory failure")
             }
         }
@@ -148,10 +146,9 @@ class SearchLocationViewModel @Inject constructor(
     // 최근 검색 내역 전체 삭제
     fun deleteAllSearchHistory() {
         viewModelScope.launch {
-            if(deleteAllSearchHistoryUseCase().isSuccessful) {
+            if (deleteAllSearchHistoryUseCase().isSuccessful) {
                 setEvent(SearchLocationContract.SearchLocationEvent.ClearRecentSearches)
-            }
-            else {
+            } else {
                 Timber.e("deleteAllSearchHistory failure")
             }
         }

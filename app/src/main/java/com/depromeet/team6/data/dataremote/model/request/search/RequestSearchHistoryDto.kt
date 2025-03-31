@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class RequestSearchHistoryDto (
+data class RequestSearchHistoryDto(
     @SerialName("name")
     val name: String,
 
@@ -18,5 +18,5 @@ data class RequestSearchHistoryDto (
     val businessCategory: String,
 
     @SerialName("address")
-    val address: String,
+    val address: String
 )

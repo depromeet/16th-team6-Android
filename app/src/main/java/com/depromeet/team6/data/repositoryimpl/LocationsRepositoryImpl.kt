@@ -1,11 +1,11 @@
 package com.depromeet.team6.data.repositoryimpl
 
 import com.depromeet.team6.data.dataremote.datasource.LocationsRemoteDataSource
+import com.depromeet.team6.data.mapper.todata.toData
 import com.depromeet.team6.data.mapper.todomain.toDomain
 import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.Location
 import com.depromeet.team6.domain.model.SearchHistory
-import com.depromeet.team6.data.mapper.todata.toData
 import com.depromeet.team6.domain.repository.LocationsRepository
 import retrofit2.Response
 import javax.inject.Inject
