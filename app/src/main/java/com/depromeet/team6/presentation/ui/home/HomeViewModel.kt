@@ -4,7 +4,9 @@ import android.content.Context
 import androidx.lifecycle.viewModelScope
 import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.usecase.GetAddressFromCoordinatesUseCase
+import com.depromeet.team6.domain.usecase.GetUserInfoUseCase
 import com.depromeet.team6.presentation.util.base.BaseViewModel
+import com.depromeet.team6.presentation.util.view.LoadState
 import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -14,7 +16,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val getAddressFromCoordinatesUseCase: GetAddressFromCoordinatesUseCase
+    private val getAddressFromCoordinatesUseCase: GetAddressFromCoordinatesUseCase,
+    private val getUserInfoUseCase: GetUserInfoUseCase
 ) : BaseViewModel<HomeContract.HomeUiState, HomeContract.HomeSideEffect, HomeContract.HomeEvent>() {
     private var speechBubbleJob: Job? = null
 
@@ -36,6 +39,7 @@ class HomeViewModel @Inject constructor(
             }
 
             is HomeContract.HomeEvent.OnCharacterClick -> onCharacterClick()
+            is HomeContract.HomeEvent.SetDestination -> setDestination()
         }
     }
 
@@ -101,6 +105,27 @@ class HomeViewModel @Inject constructor(
                         )
                     }
                 }
+        }
+    }
+
+    private fun setDestination() {
+        setState { copy(destinationState = LoadState.Loading) }
+        viewModelScope.launch {
+            getUserInfoUseCase().onSuccess { userInfo ->
+                setState {
+                    copy(
+                        destinationPoint = Address(
+                            name = userInfo.address,
+                            lat = userInfo.userHome.latitude,
+                            lon = userInfo.userHome.longitude,
+                            address = userInfo.address
+                        )
+                    )
+                }
+                setState { copy(destinationState = LoadState.Success) }
+            }.onFailure {
+                setState { copy(destinationState = LoadState.Error) }
+            }
         }
     }
 }
