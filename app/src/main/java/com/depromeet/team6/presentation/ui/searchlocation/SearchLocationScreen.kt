@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -145,25 +146,40 @@ fun SearchLocationScreen(
             Box(
                 modifier = Modifier.fillMaxSize()
             ) {
-                viewModel.updateRecentSearches(location = location)
+                /** 검색 리스트에 들어왔을 때
+                 * 1. 검색창에 현위치 띄우고 최근 검색 내역 보여주기
+                 *   1-1. 검색 기록이 있을 경우 SearchHistoryContainer
+                 *   1-2. 검색 기록이 없을 경우 SearchHistoryEmptyContainer
+                 * 2. 검색 시작 시 검색 리스트 연결
+                 * 3. 검색 리스트 삭제 시 다시 최근 검색 내역 보여주기
+                 */
 
-                if (uiState.recentSearches.isEmpty()) { // 검색 내역이 없을 때
-                    SearchHistoryEmptyContainer()
-                } else {
-                    SearchHistoryContainer(
-                        modifier = Modifier,
-                        uiState = SearchLocationContract.SearchLocationUiState(),
-                        onDeleteButtonClicked = { searchHistory -> // 검색 내역 삭제
-                            viewModel.deleteSearchHistory(searchHistory = searchHistory, location = location)
-                        },
-                        onDeleteAllButtonClicked = { viewModel.deleteAllSearchHistory() },
-                        selectButtonClicked = { searchHistory -> // 장소 선택
-                            // 장소 텍스트 검색
-                            onSearchTextChange(searchHistory.name)
-                            // 최근 검색 내역 추가
-                            viewModel.postSearchHistory(searchHistory)
-                        }
-                    )
+                if (uiState.searchQuery.isEmpty()) {
+                    viewModel.updateRecentSearches(location = location)
+
+                    if (uiState.recentSearches.isEmpty()) { // 검색 내역이 없을 때
+                        SearchHistoryEmptyContainer()
+                    } else {
+                        SearchHistoryContainer(
+                            modifier = Modifier,
+                            uiState = SearchLocationContract.SearchLocationUiState(),
+                            onDeleteButtonClicked = { searchHistory -> // 검색 내역 삭제
+                                viewModel.deleteSearchHistory(searchHistory = searchHistory, location = location)
+                            },
+                            onDeleteAllButtonClicked = { viewModel.deleteAllSearchHistory() },
+                            selectButtonClicked = { searchHistory -> // 장소 선택
+                                // 장소 텍스트 검색
+                                onSearchTextChange(searchHistory.name)
+                                // 최근 검색 내역 추가
+                                viewModel.postSearchHistory(searchHistory)
+                            }
+                        )
+                    }
+                }
+                else {
+//                    LazyColumn {
+//                        if ()
+//                    }
                 }
             }
         }
