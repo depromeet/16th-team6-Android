@@ -14,8 +14,9 @@ fun List<ResponseCourseSearchDto>.toDomain(): List<CourseInfo> = filter { respon
     val legInfo = response.legs.map { leg ->
         val passShape = if (leg.mode == "WALK") {
             // WALK 모드일 경우, step을 이어서 leg.passShape 생성
-            if (leg.step == null) ""
-            else {
+            if (leg.step == null) {
+                ""
+            } else {
                 leg.step.joinToString(" ") { step ->
                     step.linestring
                 }

@@ -67,7 +67,7 @@ fun TransportVectorIconComposable(
 }
 
 fun TransportVectorIconBitmap(
-    context : Context,
+    context: Context,
     type: TransportType,
     fillColor: Color,
     isMarker: Boolean,
@@ -79,7 +79,7 @@ fun TransportVectorIconBitmap(
 
     val scale = sizePx / baseSize
     canvas.save()
-    canvas.scale(scale, scale)  // 전체 path에 적용됨
+    canvas.scale(scale, scale) // 전체 path에 적용됨
 
     if (isMarker) {
         // 첫 번째 path (마커 배경)
@@ -173,8 +173,8 @@ fun TransportVectorIconBitmap(
 private fun transportVectorBuilder(
     type: TransportType,
     color: Color,
-    isMarker: Boolean,
-) : ImageVector{
+    isMarker: Boolean
+): ImageVector {
     val context = LocalContext.current
     val baseSize = if (isMarker) Dimens.TransportVectorMarkerDefaultSize else Dimens.TransportVectorIconDefaultSize
 

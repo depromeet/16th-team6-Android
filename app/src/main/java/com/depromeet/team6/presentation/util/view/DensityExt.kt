@@ -21,7 +21,7 @@ fun Dp.toPx(): Float {
     return this.value * density
 }
 
-fun Dp.toPxWidthContext(context : Context): Float {
+fun Dp.toPxWidthContext(context: Context): Float {
     val densityValue = context.resources.displayMetrics.density
     val density = Density(density = densityValue)
     return with(density) { toPx() }
@@ -34,8 +34,8 @@ fun Path.scaleFromBaseSize(baseSize: Float, targetSize: Int): Path {
     val actualSize = maxOf(bounds.width(), bounds.height())
     if (actualSize == 0f) return this
 
-    val designScale = baseSize / actualSize               // Path 자체의 상대 크기 보정
-    val densityScale = targetSize / baseSize              // 비트맵 해상도 대응 배율
+    val designScale = baseSize / actualSize // Path 자체의 상대 크기 보정
+    val densityScale = targetSize / baseSize // 비트맵 해상도 대응 배율
     val finalScale = designScale * densityScale
 
     val matrix = Matrix().apply {
@@ -50,6 +50,4 @@ fun Path.scaleFromBaseSize(baseSize: Float, targetSize: Int): Path {
     return Path().apply {
         this@scaleFromBaseSize.transform(matrix, this)
     }
-
 }
-

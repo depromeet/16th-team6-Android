@@ -43,7 +43,6 @@ import com.skt.tmap.overlay.TMapTrafficLine.TrafficLine
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-
 @Composable
 fun ItineraryMap(
     currentLocation: LatLng,
@@ -93,7 +92,6 @@ fun ItineraryMap(
                 tmapTrafficLine.passedColor = TransportTypeUiMapper.getColor(leg.transportType, leg.subTypeIdx).toArgb()
                 tmapTrafficLine.trafficLineList.add(trafficLine)
                 tMapView.addTrafficLine(tmapTrafficLine)
-
 
                 // 마커 그리기
                 val marker = TMapMarkerItem()
