@@ -38,6 +38,7 @@ import com.depromeet.team6.domain.model.course.TransportType
 import com.depromeet.team6.presentation.model.bus.BusArrivalParameter
 import com.depromeet.team6.presentation.ui.common.TransportVectorIconComposable
 import com.depromeet.team6.presentation.ui.common.view.AtChaLoadingView
+import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.depromeet.team6.presentation.util.view.TransportTypeUiMapper
 import com.depromeet.team6.ui.theme.LocalTeam6Colors
@@ -121,6 +122,7 @@ fun BusCourseScreen(
                 tint = Color.Unspecified,
                 modifier = Modifier
                     .padding(vertical = 18.dp, horizontal = 16.dp)
+                    .noRippleClickable { backButtonClicked() }
                     .align(Alignment.CenterStart)
             )
             Row(
