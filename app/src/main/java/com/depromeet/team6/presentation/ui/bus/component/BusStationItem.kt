@@ -30,8 +30,8 @@ import com.depromeet.team6.ui.theme.defaultTeam6Typography
 
 @Composable
 fun BusStationItem(
-   busSubtypeIdx : Int,
-   modifier: Modifier = Modifier
+    busSubtypeIdx: Int,
+    modifier: Modifier = Modifier
 ) {
     val stationName = "버스정류장"
     val stationNumber = 14502
@@ -93,6 +93,6 @@ fun BusStationItem(
 @Composable
 private fun BusStationItemPreview() {
     BusStationItem(
-        busSubtypeIdx = 1,
+        busSubtypeIdx = 1
     )
 }
