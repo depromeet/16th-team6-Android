@@ -63,6 +63,7 @@ fun ItineraryScreen(
 ) {
     val itineraryInfo = uiState.itineraryInfo!!
     AtchaCommonBottomSheet(
+        modifier = modifier,
         mainContent = {
             ItineraryMap(
                 legs = itineraryInfo.legs,

@@ -40,29 +40,31 @@ fun AtchaCommonBottomSheet(
     val scaffoldState = rememberBottomSheetScaffoldState(bottomSheetState = sheetState)
     val coroutineScope = rememberCoroutineScope()
 
-    BottomSheetScaffold(
-        modifier = modifier
-            .fillMaxHeight(),
-        scaffoldState = scaffoldState,
-        sheetContent = {
-            sheetContent()
-        },
-        sheetPeekHeight = 300.dp, // 필요하면 기본 노출 높이 조정 가능
-        sheetShape = RoundedCornerShape(
-            topStart = Dimens.BottomSheetRoundCornerRadius,
-            topEnd = Dimens.BottomSheetRoundCornerRadius
-        ),
-        sheetContainerColor = defaultTeam6Colors.greyWashBackground,
-        sheetDragHandle = {
-            DragHandle()
-        }
-    ) { paddingValues ->
-        Box(
+    Box(modifier = modifier) {
+        BottomSheetScaffold(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-        ) {
-            mainContent()
+                .fillMaxHeight(),
+            scaffoldState = scaffoldState,
+            sheetContent = {
+                sheetContent()
+            },
+            sheetPeekHeight = 300.dp, // 필요하면 기본 노출 높이 조정 가능
+            sheetShape = RoundedCornerShape(
+                topStart = Dimens.BottomSheetRoundCornerRadius,
+                topEnd = Dimens.BottomSheetRoundCornerRadius
+            ),
+            sheetContainerColor = defaultTeam6Colors.greyWashBackground,
+            sheetDragHandle = {
+                DragHandle()
+            }
+        ) { paddingValues ->
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+            ) {
+                mainContent()
+            }
         }
     }
 }
