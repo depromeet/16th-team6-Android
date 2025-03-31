@@ -1,4 +1,5 @@
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -27,9 +28,16 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import androidx.lifecycle.flowWithLifecycle
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.depromeet.team6.R
 import com.depromeet.team6.domain.model.RouteLocation
 import com.depromeet.team6.presentation.ui.lock.LockContract
@@ -82,8 +90,18 @@ fun LockScreen(
     val typography = LocalTeam6Typography.current
 
     var timeLeft by remember { mutableIntStateOf(60) }
-
     var currentTime by remember { mutableStateOf("") }
+
+    // Lottie 애니메이션 설정
+    val composition by rememberLottieComposition(
+        spec = LottieCompositionSpec.RawRes(R.raw.lock_background)
+    )
+
+    // 애니메이션 상태 제어
+    val progress by animateLottieCompositionAsState(
+        composition = composition,
+        iterations = LottieConstants.IterateForever
+    )
 
     LaunchedEffect(Unit) {
         while (true) {
@@ -101,83 +119,92 @@ fun LockScreen(
         }
     }
 
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(color = defaultTeam6Colors.greyWashBackground),
-        horizontalAlignment = Alignment.CenterHorizontally
+    Box(
+        modifier = Modifier.fillMaxSize()
+            .background(colors.black)
     ) {
-        Spacer(modifier = modifier.padding(vertical = 104.dp))
-
-        Icon(
-            imageVector = ImageVector.vectorResource(R.drawable.ic_lock_character),
-            contentDescription = null,
-            tint = Color.Unspecified
+        LottieAnimation(
+            composition = composition,
+            progress = { progress },
+            modifier = Modifier.fillMaxSize()
         )
 
-        Spacer(modifier = modifier.padding(vertical = 12.dp))
-
-        Text(
-            text = stringResource(R.string.lock_screen_taxi_text),
-            color = colors.white,
-            style = typography.heading3SemiBold22,
-            modifier = Modifier.padding(vertical = 16.dp),
-            textAlign = TextAlign.Center
-        )
-
-        Text(
-            text = "-"+uiState.taxiCost.toString(),
-            color = colors.systemRed,
-            style = typography.heading1ExtraBold56,
-            modifier = Modifier.padding(vertical = 8.dp)
-        )
-
-        Spacer(modifier = Modifier.weight(1f))
-
-        Button(
-            onClick = {
-                onTimerFinish()
-                onDepartureClick() },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = colors.main
-            ),
-            shape = RoundedCornerShape(8.dp)
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Spacer(modifier = Modifier.padding(vertical = 104.dp))
+
+            Icon(
+                imageVector = ImageVector.vectorResource(R.drawable.ic_lock_character),
+                contentDescription = null,
+                tint = Color.Unspecified
+            )
+
+            Spacer(modifier = Modifier.padding(vertical = 12.dp))
+
             Text(
-                text = stringResource(R.string.lock_screen_start_btn),
-                color = colors.black,
-                style = typography.heading5Bold17,
+                text = stringResource(R.string.lock_screen_taxi_text),
+                color = colors.white,
+                style = typography.heading3SemiBold22,
+                modifier = Modifier.padding(vertical = 16.dp),
+                textAlign = TextAlign.Center
+            )
+
+            Text(
+                text = "-" + uiState.taxiCost.toString(),
+                color = colors.systemRed,
+                style = typography.heading1ExtraBold56,
                 modifier = Modifier.padding(vertical = 8.dp)
             )
-        }
 
-        Button(
-            onClick = {
-                onTimerFinish()
-                onLateClick()
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 12.dp)
-                .padding(bottom = 20.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = colors.greenButtonOpacity
-            ),
-            shape = RoundedCornerShape(8.dp)
-        ) {
-            Text(
-                text = stringResource(R.string.lock_screen_late_btn),
-                color = colors.main,
-                style = typography.bodyMedium17,
-                modifier = Modifier.padding(vertical = 8.dp)
-            )
+            Spacer(modifier = Modifier.weight(1f))
+
+            Button(
+                onClick = {
+                    onTimerFinish()
+                    onDepartureClick()
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = colors.main
+                ),
+                shape = RoundedCornerShape(8.dp)
+            ) {
+                Text(
+                    text = stringResource(R.string.lock_screen_start_btn),
+                    color = colors.black,
+                    style = typography.heading5Bold17,
+                    modifier = Modifier.padding(vertical = 8.dp)
+                )
+            }
+
+            Button(
+                onClick = {
+                    onTimerFinish()
+                    onLateClick()
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp, vertical = 12.dp)
+                    .padding(bottom = 20.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = colors.greenButtonOpacity
+                ),
+                shape = RoundedCornerShape(8.dp)
+            ) {
+                Text(
+                    text = stringResource(R.string.lock_screen_late_btn),
+                    color = colors.main,
+                    style = typography.bodyMedium17,
+                    modifier = Modifier.padding(vertical = 8.dp)
+                )
+            }
         }
     }
 }
-
 
 @Preview(showBackground = true)
 @Composable
