@@ -6,6 +6,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.depromeet.team6.presentation.model.bus.BusArrivalParameter
 import com.depromeet.team6.presentation.ui.itinerary.ItineraryRoute
 
 fun NavController.navigateToItinerary(
@@ -20,7 +21,8 @@ fun NavController.navigateToItinerary(
 }
 
 fun NavGraphBuilder.itineraryNavGraph(
-    padding: PaddingValues
+    padding: PaddingValues,
+    navigateToBusCourse: (BusArrivalParameter) -> Unit
 ) {
     composable(
         route = "${ItineraryRoute.ROUTE}/{courseInfoJSON}",
@@ -32,7 +34,9 @@ fun NavGraphBuilder.itineraryNavGraph(
 
         ItineraryRoute(
             padding = padding,
-            courseInfoJSON = departurePoint
+            courseInfoJSON = departurePoint,
+            navigateToBusCourse = navigateToBusCourse
+
         )
     }
 }

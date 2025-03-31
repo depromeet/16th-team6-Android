@@ -11,8 +11,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -22,9 +22,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import com.depromeet.team6.R
 import com.depromeet.team6.presentation.ui.common.view.AtChaWebView
+import com.depromeet.team6.presentation.ui.mypage.component.MyPageConfirmDialog
 import com.depromeet.team6.presentation.ui.mypage.component.MypageListItem
 import com.depromeet.team6.presentation.ui.mypage.component.TitleBar
 import com.depromeet.team6.presentation.util.WebViewUrl.PRIVACY_POLICY_URL
+import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.depromeet.team6.ui.theme.LocalTeam6Colors
 
@@ -38,7 +40,6 @@ fun MypageRoute(
 ) {
     val uiState = mypageViewModel.uiState.collectAsStateWithLifecycle().value
     val lifecycleOwner = LocalLifecycleOwner.current
-    val context = LocalContext.current
 
     LaunchedEffect(mypageViewModel.sideEffect, lifecycleOwner) {
         mypageViewModel.sideEffect.flowWithLifecycle(lifecycle = lifecycleOwner.lifecycle)
@@ -52,15 +53,17 @@ fun MypageRoute(
 
     when (uiState.loadState) {
         LoadState.Idle -> MypageScreen(
-            modifier = Modifier.padding(padding),
+            modifier = modifier.padding(padding),
             mypageUiState = uiState,
-            logoutClicked = { mypageViewModel.logout() },
-            withDrawClicked = { mypageViewModel.withDraw() },
+            logoutClicked = { mypageViewModel.setEvent(MypageContract.MypageEvent.LogoutClicked) },
+            withDrawClicked = { mypageViewModel.setEvent(MypageContract.MypageEvent.WithDrawClicked) },
             onBackClick = navigateBack,
             onWebViewClicked = { mypageViewModel.setEvent(MypageContract.MypageEvent.PolicyClicked) },
-            webViewClose = { mypageViewModel.setEvent(MypageContract.MypageEvent.PolicyClosed) }
+            webViewClose = { mypageViewModel.setEvent(MypageContract.MypageEvent.PolicyClosed) },
+            logoutConfirmed = { mypageViewModel.setEvent(MypageContract.MypageEvent.LogoutConfirmed) },
+            withDrawConfirmed = { mypageViewModel.setEvent(MypageContract.MypageEvent.WithDrawConfirmed) },
+            dismissDialog = { mypageViewModel.setEvent(MypageContract.MypageEvent.DismissDialog) }
         )
-        LoadState.Error -> navigateToLogin()
         else -> Unit
     }
 }
@@ -73,7 +76,10 @@ fun MypageScreen(
     withDrawClicked: () -> Unit = {},
     onBackClick: () -> Unit = {},
     onWebViewClicked: () -> Unit = {},
-    webViewClose: () -> Unit = {}
+    webViewClose: () -> Unit = {},
+    logoutConfirmed: () -> Unit = {},
+    withDrawConfirmed: () -> Unit = {},
+    dismissDialog: () -> Unit = {}
 ) {
     val colors = LocalTeam6Colors.current
     if (mypageUiState.isWebViewOpened) {
@@ -84,24 +90,15 @@ fun MypageScreen(
                 .fillMaxSize()
                 .background(colors.greyWashBackground)
         ) {
-            Column {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .noRippleClickable { dismissDialog() }
+            ) {
                 TitleBar(
                     title = stringResource(R.string.mypage_title_text),
                     onBackClick = onBackClick
                 )
-//
-//            MypageListItem(
-//                title = stringResource(R.string.mypage_account_title_text),
-//                onClick = { },
-//                modifier = Modifier
-//            )
-//
-//            Spacer(
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .height(10.dp)
-//                    .background(colors.black))
-
                 MypageListItem(
                     title = stringResource(R.string.mypage_account_logout_text),
                     onClick = logoutClicked
@@ -123,12 +120,25 @@ fun MypageScreen(
                     title = stringResource(R.string.mypage_policy_text),
                     onClick = onWebViewClicked
                 )
-//
-//            MypageListItem(
-//                title = stringResource(R.string.mypage_version_title_text),
-//                onClick = { },
-//                modifier = Modifier
-//            )
+            }
+
+            if (mypageUiState.logoutDialogVisible) {
+                MyPageConfirmDialog(
+                    modifier = Modifier.align(Alignment.Center),
+                    title = stringResource(R.string.mypage_logout_dialog_title),
+                    confirmText = stringResource(R.string.mypage_logout_dialog_confirm),
+                    onDismiss = dismissDialog,
+                    onSuccess = logoutConfirmed
+                )
+            }
+            if (mypageUiState.withDrawDialogVisible) {
+                MyPageConfirmDialog(
+                    modifier = Modifier.align(Alignment.Center),
+                    title = stringResource(R.string.mypage_withdraw_dialog_title),
+                    confirmText = stringResource(R.string.mypage_withdraw_dialog_confirm),
+                    onDismiss = dismissDialog,
+                    onSuccess = withDrawConfirmed
+                )
             }
         }
     }
