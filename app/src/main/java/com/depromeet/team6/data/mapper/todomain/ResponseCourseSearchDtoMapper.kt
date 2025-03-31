@@ -12,7 +12,7 @@ fun List<ResponseCourseSearchDto>.toDomain(): List<CourseInfo> = filter { respon
 //        response.legs.all { it.passShape != null }      // passShape 이 하나라도 없으면 제거
 }.map { response ->
     val legInfo = response.legs.map { leg ->
-        val passShape = if (leg.mode == "WALK") {
+        val passShape = if (leg.mode == TransportType.WALK.name) {
             // WALK 모드일 경우, step을 이어서 leg.passShape 생성
             if (leg.step == null) {
                 ""
@@ -28,9 +28,9 @@ fun List<ResponseCourseSearchDto>.toDomain(): List<CourseInfo> = filter { respon
         LegInfo(
             transportType = when {
                 leg.type == null -> TransportType.WALK // 노선코드 없는경우 도보 처리
-                leg.mode == "WALK" -> TransportType.WALK
-                leg.mode == "BUS" -> TransportType.BUS
-                leg.mode == "SUBWAY" -> TransportType.SUBWAY
+                leg.mode == TransportType.WALK.name -> TransportType.WALK
+                leg.mode == TransportType.BUS.name -> TransportType.BUS
+                leg.mode == TransportType.SUBWAY.name -> TransportType.SUBWAY
                 else -> TransportType.WALK // fallback
             },
             subTypeIdx = leg.type ?: 0,

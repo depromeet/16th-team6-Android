@@ -101,7 +101,7 @@ fun ItinerarySummary(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(17.dp)
-                .padding(vertical = 8.dp)
+                .padding(top = 8.dp, bottom = 22.dp)
                 .background(Color(0x0AFFFFFF))
         )
     }
@@ -114,7 +114,7 @@ fun ItinerarySummaryPreview(
 ) {
     ItinerarySummary(
         totalTimeMinute = 78,
-        boardingTime = "2025-03-07 22:52:00",
+        boardingTime = "2025-03-07T22:52:00",
         legs = legs
     )
 }
@@ -126,7 +126,7 @@ fun ItinerarySummaryPreviewShort(
 ) {
     ItinerarySummary(
         totalTimeMinute = 13,
-        boardingTime = "2025-03-07 22:52:00",
+        boardingTime = "2025-03-07T22:52:00",
         legs = legs
     )
 }
