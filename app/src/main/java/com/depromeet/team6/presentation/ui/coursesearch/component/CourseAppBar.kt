@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -23,27 +24,31 @@ fun CourseAppBar(
 ) {
     Row(
         modifier = modifier
-            .fillMaxWidth()
-            .padding(6.dp),
+            .padding(vertical = 18.dp, horizontal = 16.dp)
+            .fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
-            imageVector = ImageVector.vectorResource(R.drawable.ic_all_arrow_left_white),
+            imageVector = ImageVector.vectorResource(R.drawable.ic_all_arrow_left_grey),
             contentDescription = "appbar back",
-            tint = defaultTeam6Colors.white,
-            modifier = Modifier.padding(12.dp).noRippleClickable {
-                backButtonClicked()
-            }
+            tint = defaultTeam6Colors.systemGrey1,
+            modifier = Modifier
+                .size(24.dp)
+                .noRippleClickable {
+                    backButtonClicked()
+                }
         )
 
         Icon(
-            imageVector = ImageVector.vectorResource(R.drawable.ic_all_home_white),
+            imageVector = ImageVector.vectorResource(R.drawable.ic_onboarding_close_24),
             contentDescription = "appbar home",
-            tint = defaultTeam6Colors.white,
-            modifier = Modifier.padding(12.dp).noRippleClickable {
-                backButtonClicked()
-            }
+            tint = defaultTeam6Colors.systemGrey1,
+            modifier = Modifier
+                .size(24.dp)
+                .noRippleClickable {
+                    backButtonClicked()
+                }
         )
     }
 }

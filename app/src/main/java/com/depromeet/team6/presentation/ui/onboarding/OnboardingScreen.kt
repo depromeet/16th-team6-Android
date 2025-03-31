@@ -21,7 +21,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -271,10 +270,10 @@ fun OnboardingRoute(
                     mapViewSelectButtonClicked = {
                         viewModel.setEvent(
                             (
-                                    OnboardingContract.OnboardingEvent.ChangeMapViewVisible(
-                                        false
-                                    )
-                                    )
+                                OnboardingContract.OnboardingEvent.ChangeMapViewVisible(
+                                    false
+                                )
+                                )
                         )
                     }
                 )
@@ -308,12 +307,12 @@ fun OnboardingScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
+            .background(color = defaultTeam6Colors.greyWashBackground)
             .padding(padding)
     ) {
         Column(
             modifier = modifier
                 .fillMaxSize()
-                .background(color = defaultTeam6Colors.greyWashBackground)
         ) {
             if (uiState.onboardingType == OnboardingType.HOME) {
                 Spacer(modifier = Modifier.height(72.dp))

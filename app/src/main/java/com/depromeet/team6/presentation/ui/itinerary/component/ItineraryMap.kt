@@ -25,7 +25,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
 import com.depromeet.team6.BuildConfig
 import com.depromeet.team6.R
-import com.depromeet.team6.presentation.model.course.LegInfo
+import com.depromeet.team6.domain.model.course.LegInfo
 import com.depromeet.team6.presentation.ui.itinerary.LegInfoDummyProvider
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.presentation.util.modifier.roundedBackgroundWithPadding
@@ -48,8 +48,8 @@ fun ItineraryMap(
     val tMapView = remember { TMapView(context) }
     var isMapReady by remember { mutableStateOf(false) }
 
-    val departLocation = LatLng(legs[0].startPoint.latitude, legs[0].startPoint.longitude)
-    val destinationLocation = LatLng(legs[legs.size - 1].endPoint.latitude, legs[legs.size - 1].endPoint.longitude)
+    val departLocation = LatLng(legs[0].startPoint.lat, legs[0].startPoint.lon)
+    val destinationLocation = LatLng(legs[legs.size - 1].endPoint.lat, legs[legs.size - 1].endPoint.lon)
 
     LaunchedEffect(Unit) {
         tMapView.setSKTMapApiKey(BuildConfig.TMAP_API_KEY)

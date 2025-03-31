@@ -20,7 +20,7 @@ fun NavGraphBuilder.homeNavGraph(
     navigateToLogin: () -> Unit,
     navigateToCourseSearch: (String, String) -> Unit,
     navigateToMypage: () -> Unit,
-    navigateToItinerary: () -> Unit,
+    navigateToItinerary: (String) -> Unit,
     navigateToSearchLocation: () -> Unit
 ) {
     composable(route = HomeRoute.ROUTE) {

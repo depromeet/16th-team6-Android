@@ -59,6 +59,14 @@ data class Team6Colors(
     // TextField Cursor
     val textFieldCursor: Color,
 
+    val walkColor: List<Pair<String, Color>>,
+
+    // BUS 색상 리스트
+    val busColors: List<Pair<String, Color>>,
+
+    // SUBWAY 색상 리스트
+    val subwayColors: List<Pair<String, Color>>,
+
     // BUS
     val busRegular: Color,
     val busTown: Color,
@@ -178,7 +186,49 @@ val defaultTeam6Colors = Team6Colors(
     subwayUiSinseol = Color(0xFFBBB51C),
     subwayGimpo = Color(0xFF9F7A10),
     subwaySillim = Color(0xFF608CC4),
-    subwayGTX_A = Color(0xFF8F5787)
+    subwayGTX_A = Color(0xFF8F5787),
+
+    // WALK
+    walkColor = listOf(
+        "walk" to Color(0xFF90E772)
+    ),
+
+    // BUS
+    busColors = listOf(
+        "busRegular" to Color(0xFF24B847),
+        "busTown" to Color(0xFF6FC53F),
+        "busMainLine" to Color(0xFF1777FF),
+        "busWideArea" to Color(0xFFF24747),
+        "busAirport" to Color(0xFF5FBBF9)
+    ),
+
+    // SUBWAY
+    subwayColors = listOf(
+        "subwayLine1" to Color(0xFF1777FF),
+        "subwayLine2" to Color(0xFF24B847),
+        "subwayLine3" to Color(0xFFED7B2A),
+        "subwayLine4" to Color(0xFF3EB1FF),
+        "subwayLine5" to Color(0xFF924FF6),
+        "subwayLine6" to Color(0xFFC86E31),
+        "subwayLine7" to Color(0xFF9BA81D),
+        "subwayLine8" to Color(0xFFF54B90),
+        "subwayLine9" to Color(0xFFD8A516),
+        "subwayAirport" to Color(0xFF5CA9DB),
+        "subwayGyeongUiJungang" to Color(0xFF3EADAD),
+        "subwayGyeongChun" to Color(0xFF2BBA8B),
+        "subwaySuinBundang" to Color(0xFFDDB421),
+        "subwayShinBundang" to Color(0xFFBF3649),
+        "subwayGyeongGang" to Color(0xFF396CC3),
+        "subwaySeoHae" to Color(0xFF90E772),
+        "subwayIncheon1" to Color(0xFF71A4E6),
+        "subwayIncheon2" to Color(0xFFD59F5E),
+        "subwayEverLine" to Color(0xFF66BA60),
+        "subwayUijeongbu" to Color(0xFFE68E24),
+        "subwayUiSinseol" to Color(0xFFBBB51C),
+        "subwayGimpoGold" to Color(0xFF9F7A10),
+        "subwaySillim" to Color(0xFF608CC4),
+        "subwayGTX_A" to Color(0xFF8F5787)
+    )
 )
 
 val LocalTeam6Colors = staticCompositionLocalOf { defaultTeam6Colors }
