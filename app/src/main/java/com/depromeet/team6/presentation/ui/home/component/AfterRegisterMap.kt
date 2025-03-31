@@ -32,6 +32,7 @@ import androidx.core.graphics.drawable.toBitmap
 import com.depromeet.team6.BuildConfig
 import com.depromeet.team6.R
 import com.depromeet.team6.domain.model.course.LegInfo
+import com.depromeet.team6.domain.model.course.TransportType
 import com.depromeet.team6.presentation.ui.common.TransportVectorIconBitmap
 import com.depromeet.team6.presentation.ui.home.HomeViewModel
 import com.depromeet.team6.presentation.ui.itinerary.LegInfoDummyProvider
@@ -64,6 +65,8 @@ fun AfterRegisterMap(
     val destinationLocation = LatLng(legs[legs.size - 1].endPoint.lat, legs[legs.size - 1].endPoint.lon)
     val markerSizePx = 28.dp.toPx().toInt()
 
+    var firstTransportationPoint = LatLng(legs[0].startPoint.lat, legs[0].startPoint.lon)
+
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
 
     LaunchedEffect(Unit) {
@@ -80,9 +83,16 @@ fun AfterRegisterMap(
             val departTMapPoint = TMapPoint(departLocation.latitude, departLocation.longitude)
             val destinationTMapPoint = TMapPoint(destinationLocation.latitude, destinationLocation.longitude)
 
+            for (leg in legs) {
+                if (leg.transportType != TransportType.WALK) {
+                    firstTransportationPoint = LatLng(leg.startPoint.lat, leg.startPoint.lon)
+                    break
+                }
+            }
 
             // 경로 그리기
             for (leg in legs) {
+
                 // 라인 그리기
                 val lineWayPoints =
                     getWayPointList(leg.passShape)
@@ -131,13 +141,13 @@ fun AfterRegisterMap(
             marker.icon = ContextCompat.getDrawable(context, R.drawable.ic_all_location_black)?.toBitmap()
             tMapView.addTMapMarkerItem(marker)
 
-            // 지도 위치 설정 - 현위치와 출발지의 중간 지점
-            val midPoint = getMidPoint(currentLocation, departLocation)
+            // 지도 위치 설정 - 출발지와 첫 대중교통의 중간 지점
+            val midPoint = getMidPoint(firstTransportationPoint, departLocation)
             tMapView.setCenterPoint(midPoint.latitude, midPoint.longitude)
 
-            // 지도 Scale 조정 - 현위치와 출발지 차이 + 일정 값
-            val latSpan = abs(currentLocation.latitude - departLocation.latitude) + 0.001
-            val lonSpan = abs(currentLocation.longitude - departLocation.longitude) + 0.003
+            // 지도 Scale 조정 - 출발지와 첫 대중교통의 중간 지점 + 일정 값
+            val latSpan = abs(firstTransportationPoint.latitude - departLocation.latitude) + 0.01 // 0.01 or 0.001
+            val lonSpan = abs(firstTransportationPoint.longitude - departLocation.longitude) + 0.003
             tMapView.zoomToSpan(latSpan, lonSpan)
         }
     }
