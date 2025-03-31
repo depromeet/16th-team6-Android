@@ -47,6 +47,7 @@ import com.depromeet.team6.presentation.ui.alarm.NotificationScheduler
 import com.depromeet.team6.presentation.ui.alarm.NotificationTimeConstants
 import com.depromeet.team6.presentation.ui.home.component.AfterRegisterMap
 import com.depromeet.team6.presentation.ui.home.component.AfterRegisterSheet
+import com.depromeet.team6.presentation.ui.home.component.CharacterLottieSpeechBubble
 import com.depromeet.team6.presentation.ui.home.component.CharacterSpeechBubble
 import com.depromeet.team6.presentation.ui.home.component.CurrentLocationSheet
 import com.depromeet.team6.presentation.ui.home.component.DeleteAlarmDialog
@@ -355,16 +356,30 @@ fun HomeScreen(
                 )
         }
 
-        CharacterSpeechBubble(
-            prefixText = prefixText,
-            emphasisText = emphasisText,
-            suffixText = suffixText,
-            modifier = Modifier
-                .align(Alignment.BottomStart)
-                .padding(start = 8.dp, bottom = bottomPadding)
-                .noRippleClickable(onClick = onCharacterClick),
-            showSpeechBubble = homeUiState.showSpeechBubble
-        )
+        if (!homeUiState.isAlarmRegistered) {
+            CharacterLottieSpeechBubble(
+                prefixText = prefixText,
+                emphasisText = emphasisText,
+                suffixText = suffixText,
+                modifier = Modifier
+                    .align(Alignment.BottomStart)
+                    .padding(start = 8.dp, bottom = bottomPadding)
+                    .noRippleClickable(onClick = onCharacterClick),
+                showSpeechBubble = homeUiState.showSpeechBubble,
+                lottieResId = R.raw.character_alarm_not_registered
+            )
+        } else {
+            CharacterSpeechBubble(
+                prefixText = prefixText,
+                emphasisText = emphasisText,
+                suffixText = suffixText,
+                modifier = Modifier
+                    .align(Alignment.BottomStart)
+                    .padding(start = 8.dp, bottom = bottomPadding)
+                    .noRippleClickable(onClick = onCharacterClick),
+                showSpeechBubble = homeUiState.showSpeechBubble
+            )
+        }
 
         if (homeUiState.deleteAlarmDialogVisible) {
             // 반투명 검은색 배경 오버레이 추가

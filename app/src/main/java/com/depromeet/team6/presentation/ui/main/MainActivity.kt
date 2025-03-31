@@ -1,5 +1,6 @@
 package com.depromeet.team6.presentation.ui.main
 
+import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
@@ -54,6 +55,8 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        clearAllSharedPrefs(applicationContext)
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             installSplashScreen()
         }
@@ -95,6 +98,11 @@ class MainActivity : ComponentActivity() {
 //        lockServiceManager.start()
 //        Toast.makeText(this, getString(R.string.lock_service_start_text), Toast.LENGTH_SHORT).show()
 //    }
+
+    fun clearAllSharedPrefs(context: Context) {
+        val sharedPreferences = context.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
+        sharedPreferences.edit().clear().apply()
+    }
 
     @Composable
     private fun <T> ObserveEvents(
