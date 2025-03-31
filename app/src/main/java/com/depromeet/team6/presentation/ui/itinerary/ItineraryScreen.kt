@@ -86,7 +86,8 @@ fun ItineraryScreen(
                                 routeName = "일반:700-2",
                                 stationName = "정평중학교",
                                 lat = 37.318197222222224,
-                                lon = 127.08745555555555
+                                lon = 127.08745555555555,
+                                subtypeIdx = 2
                             )
                         )
                     }

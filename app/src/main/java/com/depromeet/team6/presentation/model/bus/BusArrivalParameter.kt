@@ -7,5 +7,6 @@ data class BusArrivalParameter(
     val routeName: String,
     val stationName: String,
     val lat: Double,
-    val lon: Double
+    val lon: Double,
+    val subtypeIdx : Int
 )

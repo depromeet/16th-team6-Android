@@ -18,7 +18,8 @@ fun NavController.navigationToBusCourse(busArrivalParameter: BusArrivalParameter
         routeName = busArrivalParameter.routeName,
         stationName = busArrivalParameter.stationName,
         lat = busArrivalParameter.lat,
-        lon = busArrivalParameter.lon
+        lon = busArrivalParameter.lon,
+        subtypeIdx = busArrivalParameter.subtypeIdx
     )
 
     val encoded = URLEncoder.encode(Json.encodeToString(param), "UTF-8")
