@@ -15,11 +15,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.depromeet.team6.R
 import com.depromeet.team6.domain.model.course.TransportType
-import com.depromeet.team6.presentation.ui.common.TransportVectorIcon
+import com.depromeet.team6.presentation.ui.common.TransportVectorIconComposable
 import com.depromeet.team6.presentation.util.view.TransportTypeUiMapper
 import com.depromeet.team6.ui.theme.LocalTeam6Colors
 import com.depromeet.team6.ui.theme.LocalTeam6Typography
-import com.depromeet.team6.ui.theme.defaultTeam6Colors
 
 @Composable
 fun TransportStatus(
@@ -39,7 +38,7 @@ fun TransportStatus(
     }
 
     Row {
-        TransportVectorIcon(
+        TransportVectorIconComposable(
             modifier = Modifier.size(15.dp),
             type = transportationType,
             color = TransportTypeUiMapper.getColor(transportationType, transportationNumber),
