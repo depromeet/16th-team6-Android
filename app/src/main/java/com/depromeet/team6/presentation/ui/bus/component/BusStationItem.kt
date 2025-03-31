@@ -32,16 +32,16 @@ fun BusStationItem(modifier: Modifier = Modifier) {
     val stationNumber = 14502
     val subwayLine = 2
     val subwayLineIconRes = when (subwayLine) {
-        1 -> R.drawable.ic_all_subway_1
-        2 -> R.drawable.ic_all_subway_2
-        3 -> R.drawable.ic_all_subway_3
-        4 -> R.drawable.ic_all_subway_4
-        5 -> R.drawable.ic_all_subway_5
-        6 -> R.drawable.ic_all_subway_6
-        7 -> R.drawable.ic_all_subway_7
-        8 -> R.drawable.ic_all_subway_8
-        9 -> R.drawable.ic_all_subway_9
-        else -> R.drawable.ic_all_subway_9
+        1 -> R.drawable.ic_subway_1
+        2 -> R.drawable.ic_subway_2
+        3 -> R.drawable.ic_subway_3
+        4 -> R.drawable.ic_subway_4
+        5 -> R.drawable.ic_subway_5
+        6 -> R.drawable.ic_subway_6
+        7 -> R.drawable.ic_subway_7
+        8 -> R.drawable.ic_subway_8
+        9 -> R.drawable.ic_subway_9
+        else -> R.drawable.ic_subway_9
     }
     Row(
         modifier = modifier.fillMaxWidth()
@@ -53,7 +53,7 @@ fun BusStationItem(modifier: Modifier = Modifier) {
                 modifier = Modifier
                     .fillMaxHeight()
                     .width(4.dp)
-                    .background(color = defaultTeam6Colors.busMainLine)
+                    .background(color = defaultTeam6Colors.busColors[0].second)
             )
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.ic_bus_station_check_14),
