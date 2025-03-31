@@ -13,6 +13,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -50,6 +51,8 @@ fun AfterRegisterMap(
     val departLocation = LatLng(legs[0].startPoint.lat, legs[0].startPoint.lon)
     val destinationLocation = LatLng(legs[legs.size - 1].endPoint.lat, legs[legs.size - 1].endPoint.lon)
     val markerSizePx = 28.dp.toPx().toInt()
+
+    val screenHeight = LocalConfiguration.current.screenHeightDp.dp
 
     LaunchedEffect(Unit) {
         tMapView.setSKTMapApiKey(BuildConfig.TMAP_API_KEY)
@@ -157,7 +160,7 @@ fun AfterRegisterMap(
             modifier = modifier
                 .fillMaxWidth()
                 // TODO : 하단 모달 영역 제외한 부분에 띄우도록 수정
-                .height(500.dp)
+                .height(screenHeight - 228.dp)
                 .align(Alignment.TopCenter)
             ,
             factory = { context ->
