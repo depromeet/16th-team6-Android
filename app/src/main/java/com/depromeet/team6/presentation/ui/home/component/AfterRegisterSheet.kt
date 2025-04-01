@@ -74,7 +74,7 @@ fun AfterRegisterSheet(
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center,
-                    modifier = modifier.padding(top = 8.dp, bottom = 2.dp)
+                    modifier = modifier.padding(top = 6.dp, bottom = 2.dp)
                 ) {
                     if (afterUserDeparted && !timerFinish) { // 사용자 출발 후
                         TransportStatus(
@@ -133,27 +133,28 @@ fun AfterRegisterSheet(
                     }
                 }
 
+
             // 사용자가 잠금화면 출발하기 버튼 눌러서 출발했을 때
             if (afterUserDeparted) {
                 if (!timerFinish) {
                     LastTimer(
                         departureTime = boardingTime,
                         textColor = colors.systemRed,
-                        modifier = Modifier.padding(top = 4.dp, bottom = 6.dp),
+                        modifier = Modifier.padding(top = 8.dp, bottom = 6.dp),
                         onTimerFinished = onTimerFinished
                     )
                 } else {
                     TimeText(
                         timeToLeave = timeToLeave,
                         textColor = colors.white,
-                        modifier = Modifier.padding(top = 4.dp, bottom = 6.dp)
+                        modifier = Modifier.padding(top = 8.dp, bottom = 6.dp)
                     )
                 }
             } else {
                 TimeText(
                     timeToLeave = timeToLeave,
                     textColor = timeTextColor,
-                    modifier = Modifier.padding(top = 4.dp, bottom = 6.dp)
+                    modifier = Modifier.padding(top = 8.dp, bottom = 6.dp)
                 )
             }
 
@@ -183,7 +184,7 @@ fun AfterRegisterSheet(
 fun AfterRegisterSheetPreview() {
     AfterRegisterSheet(
         timerFinish = true,
-        afterUserDeparted = true,
+        afterUserDeparted = false,
         transportType = TransportType.BUS,
         transportationNumber = 0,
         transportationName = "잠실새내역",
@@ -195,7 +196,7 @@ fun AfterRegisterSheetPreview() {
         onCourseDetailClick = { },
         modifier = Modifier,
         onRefreshClick = { },
-        isConfirmed = true,
+        isConfirmed = false,
         boardingTime = "15:30:00"
     )
 }
