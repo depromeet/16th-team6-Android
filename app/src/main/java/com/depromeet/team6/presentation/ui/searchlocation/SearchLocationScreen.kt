@@ -1,11 +1,14 @@
 package com.depromeet.team6.presentation.ui.searchlocation
 
+import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -21,11 +24,15 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
+import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.Location
+import com.depromeet.team6.presentation.ui.home.HomeViewModel
 import com.depromeet.team6.presentation.ui.searchlocation.component.BackTopBar
 import com.depromeet.team6.presentation.ui.searchlocation.component.SearchDepartureTextField
 import com.depromeet.team6.presentation.ui.searchlocation.component.SearchHistoryContainer
 import com.depromeet.team6.presentation.ui.searchlocation.component.SearchHistoryEmptyContainer
+import com.depromeet.team6.presentation.ui.searchlocation.component.SearchLocationItem
+import com.depromeet.team6.presentation.ui.searchlocation.component.SearchLocationMapView
 import com.depromeet.team6.presentation.ui.searchlocation.component.SearchLocationTextField
 import com.depromeet.team6.presentation.util.DefaultLntLng.DEFAULT_LNG
 import com.depromeet.team6.presentation.util.DefaultLntLng.DEFAULT_LNT
@@ -39,10 +46,13 @@ import timber.log.Timber
 @Composable
 fun SearchLocationRoute(
     viewModel: SearchLocationViewModel = hiltViewModel(),
+    homeViewModel: HomeViewModel = hiltViewModel(),
     navigateToBack: () -> Unit = {},
     navigateToLogin: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val homeUiState by homeViewModel.uiState.collectAsStateWithLifecycle()
+
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
 
@@ -52,8 +62,18 @@ fun SearchLocationRoute(
         Timber.tag("Location Permission").d("${PermissionUtil.hasLocationPermissions(context)}")
         if (PermissionUtil.hasLocationPermissions(context)) {
             val location = context.getUserLocation()
-            userLocation = location
-            viewModel.setEvent(SearchLocationContract.SearchLocationEvent.UpdateUserLocationSate(LoadState.Success))
+            userLocation = LatLng(DEFAULT_LNT, DEFAULT_LNG)
+
+//            homeViewModel.getCenterLocation(userLocation)
+//            viewModel.setState {
+//                copy(searchQuery = homeUiState.departurePoint.name)
+//            }
+
+            viewModel.setEvent(
+                SearchLocationContract.SearchLocationEvent.UpdateUserLocationSate(
+                    LoadState.Success
+                )
+            )
         }
     }
 
@@ -62,7 +82,7 @@ fun SearchLocationRoute(
     }
 
     LaunchedEffect(uiState.searchResults) {
-        if (uiState.searchResults.isEmpty()) {
+        if (uiState.searchQuery.isNotEmpty() && uiState.searchResults.isEmpty()) {
             Toast.makeText(context, "검색 결과가 없습니다.", Toast.LENGTH_SHORT).show()
         }
     }
@@ -78,6 +98,7 @@ fun SearchLocationRoute(
 
     when (uiState.loadState) {
         LoadState.Idle -> SearchLocationScreen(
+            context = context,
             modifier = Modifier,
             viewModel = viewModel,
             backButtonClick = navigateToBack,
@@ -99,12 +120,25 @@ fun SearchLocationRoute(
             onDeleteAllButtonClicked = { viewModel.deleteAllSearchHistory() },
             onDeleteButtonClicked =
             { searchHistory -> // 검색 내역 삭제
-                viewModel.deleteSearchHistory(searchHistory = searchHistory, location = userLocation)
+                viewModel.deleteSearchHistory(
+                    searchHistory = searchHistory,
+                    location = userLocation
+                )
             },
             selectButtonClicked = { searchHistory -> // 장소 선택
                 // 장소 텍스트 검색
                 viewModel.setState {
                     copy(searchQuery = searchHistory.name)
+                }
+                viewModel.setState {
+                    copy(
+                        selectLocation = Address(
+                            searchHistory.name,
+                            searchHistory.lat,
+                            searchHistory.lon,
+                            searchHistory.address
+                        )
+                    )
                 }
                 viewModel.setEvent(
                     SearchLocationContract.SearchLocationEvent.UpdateSearchQuery(
@@ -113,10 +147,30 @@ fun SearchLocationRoute(
                         lon = userLocation.longitude
                     )
                 )
+                viewModel.setEvent(
+                    SearchLocationContract.SearchLocationEvent.ChangeSearchSelectMapViewVisible(true)
+                )
                 // 최근 검색 내역 추가
                 viewModel.postSearchHistory(searchHistory)
-            }
-        )
+            },
+            mapViewSelectButtonClicked = {
+                viewModel.setEvent(
+                    SearchLocationContract.SearchLocationEvent.ChangeSearchSelectMapViewVisible(
+                        false
+                    )
+                )
+
+            },
+            clearAddress = {
+                viewModel.setEvent(SearchLocationContract.SearchLocationEvent.ClearText)
+                viewModel.setEvent(
+                    SearchLocationContract.SearchLocationEvent.ChangeSearchSelectMapViewVisible(
+                        searchSelectMapView = false
+                    )
+                )
+            },
+            getCenterLocation = { viewModel.getCenterLocation(it) },
+            )
 
         LoadState.Error -> navigateToLogin()
         else -> Unit
@@ -125,6 +179,7 @@ fun SearchLocationRoute(
 
 @Composable
 fun SearchLocationScreen(
+    context: Context = LocalContext.current,
     modifier: Modifier = Modifier,
     viewModel: SearchLocationViewModel = hiltViewModel(),
     backButtonClick: () -> Unit,
@@ -134,8 +189,10 @@ fun SearchLocationScreen(
     onSearchTextChange: (String) -> Unit = {},
     onDeleteButtonClicked: (Location) -> Unit = {},
     onDeleteAllButtonClicked: () -> Unit = {},
-    selectButtonClicked: (Location) -> Unit = {}
-
+    selectButtonClicked: (Location) -> Unit = {},
+    mapViewSelectButtonClicked: () -> Unit = {},
+    clearAddress: () -> Unit = {},
+    getCenterLocation: (LatLng) -> Unit = {},
 ) {
     Box(
         modifier = modifier
@@ -158,6 +215,7 @@ fun SearchLocationScreen(
                 onValueChange = onSearchTextChange,
                 onTextClearButtonClicked = {
                     viewModel.setEvent(SearchLocationContract.SearchLocationEvent.ClearText)
+                    viewModel.updateRecentSearches(location = location)
                 },
                 modifier = Modifier.fillMaxWidth()
             )
@@ -181,29 +239,45 @@ fun SearchLocationScreen(
                  * 3. 검색 리스트 삭제 시 다시 최근 검색 내역 보여주기
                  */
 
-                // 검색 창에 검색어가 없을 때 or 현위치 떠있을 때
+                // 검색 창이 비었거나 현위치가 띄워져 있을 때
                 if (uiState.searchQuery.isEmpty()) {
-                    // 최근 검색 내역 호출
-                    // viewModel.updateRecentSearches(location = location)
-
-                    // 최근 검색 내역 호출 후 검색 내역이 없을 때
-                    if (uiState.recentSearches.isEmpty()) {
-                        SearchHistoryEmptyContainer()
-                    } else { // 최근 검색 내역이 있을 때
+                    if (uiState.recentSearches.isNotEmpty()) { // 최근 검색 내역이 존재할 때
                         SearchHistoryContainer(
                             modifier = Modifier,
-                            uiState = SearchLocationContract.SearchLocationUiState(),
+                            uiState = uiState,
                             onDeleteButtonClicked = onDeleteButtonClicked,
                             onDeleteAllButtonClicked = onDeleteAllButtonClicked,
                             selectButtonClicked = selectButtonClicked
                         )
+                    } else {
+                        SearchHistoryEmptyContainer()
                     }
                 } else { // 검색어 입력 시
-//                    LazyColumn {
-//                        if ()
-//                    }
+                    if (uiState.searchResults.isNotEmpty()) {
+                        LazyColumn {
+                            items(uiState.searchResults) { location ->
+                                SearchLocationItem(
+                                    homeSearchLocation = location,
+                                    modifier = Modifier,
+                                    selectButtonClicked = selectButtonClicked
+                                )
+                            }
+                        }
+                    }
                 }
             }
+        }
+
+        if (uiState.searchSelectMapView) {
+            val currentLocation by remember { mutableStateOf(uiState.selectLocation) }
+            SearchLocationMapView(
+                context = context,
+                myAddress = uiState.selectLocation,
+                getCenterLocation = getCenterLocation,
+                currentLocation = currentLocation,
+                buttonClicked = mapViewSelectButtonClicked,
+                backButtonClicked = clearAddress
+            )
         }
     }
 }
