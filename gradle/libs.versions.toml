@@ -2,6 +2,8 @@
 accompanistWebview = "0.24.13-rc"
 agp = "8.7.0"
 firebaseBom = "33.10.0"
+flatbuffersJava = "2.0.6"
+flatbuffersJavaVersion = "24.3.25"
 kotlin = "2.0.0"
 coreKtx = "1.15.0"
 junit = "4.13.2"
@@ -43,6 +45,7 @@ androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = 
 androidx-security-crypto = { module = "androidx.security:security-crypto", version.ref = "securityCrypto" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
+flatbuffers-java = { module = "com.google.flatbuffers:flatbuffers-java", version.ref = "flatbuffersJavaVersion" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }

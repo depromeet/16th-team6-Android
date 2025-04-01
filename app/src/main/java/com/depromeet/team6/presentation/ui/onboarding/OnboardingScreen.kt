@@ -357,7 +357,7 @@ fun OnboardingScreen(
                 if (uiState.onboardingType == OnboardingType.ALARM) {
                     uiState.alertFrequencies.isNotEmpty()
                 } else {
-                    uiState.myAddress.name.isNotEmpty()
+                    uiState.myAddress.address.isNotEmpty()
                 }
             ) { onNextButtonClicked() }
             Spacer(modifier = Modifier.height(20.dp))

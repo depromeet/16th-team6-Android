@@ -4,6 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.depromeet.team6.presentation.model.bus.BusArrivalParameter
+import com.depromeet.team6.presentation.ui.bus.navigation.navigationToBusCourse
 import com.depromeet.team6.presentation.ui.coursesearch.navigation.CourseSearchRoute
 import com.depromeet.team6.presentation.ui.coursesearch.navigation.navigateCourseSearch
 import com.depromeet.team6.presentation.ui.home.navigation.HomeRoute
@@ -62,6 +64,10 @@ class MainNavigator(
 
     fun navigateToSearchLocation() {
         navHostController.navigationSearchLocation()
+    }
+    
+    fun navigateToBusCourse(busArrivalParameter: BusArrivalParameter) {
+        navHostController.navigationToBusCourse(busArrivalParameter = busArrivalParameter)
     }
 
     fun popBackStack() {

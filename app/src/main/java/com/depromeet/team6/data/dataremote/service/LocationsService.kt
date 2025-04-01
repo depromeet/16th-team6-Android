@@ -21,7 +21,7 @@ interface LocationsService {
         @Query("lon") lon: Double
     ): ApiResponse<List<ResponseLocationsDto>>
 
-    @GET("api/locations/rgeo")
+    @GET("$API/$LOCATIONS/rgeo")
     suspend fun getAddressFromCoordinates(
         @Query("lat") lat: Double,
         @Query("lon") lon: Double

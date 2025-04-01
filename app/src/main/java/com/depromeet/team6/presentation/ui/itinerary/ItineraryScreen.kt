@@ -15,10 +15,12 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.depromeet.team6.domain.model.course.LegInfo
+import com.depromeet.team6.presentation.model.bus.BusArrivalParameter
 import com.depromeet.team6.presentation.ui.common.AtchaCommonBottomSheet
 import com.depromeet.team6.presentation.ui.itinerary.component.ItineraryDetail
 import com.depromeet.team6.presentation.ui.itinerary.component.ItineraryMap
 import com.depromeet.team6.presentation.ui.itinerary.component.ItinerarySummary
+import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.google.android.gms.maps.model.LatLng
 
@@ -26,7 +28,9 @@ import com.google.android.gms.maps.model.LatLng
 fun ItineraryRoute(
     padding: PaddingValues,
     courseInfoJSON: String,
-    viewModel: ItineraryViewModel = hiltViewModel()
+    navigateToBusCourse: (BusArrivalParameter) -> Unit,
+    viewModel: ItineraryViewModel = hiltViewModel(),
+    onBackPressed: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
@@ -49,8 +53,10 @@ fun ItineraryRoute(
         LoadState.Idle -> {}
         LoadState.Success -> ItineraryScreen(
             uiState = uiState,
+            onBackPressed = onBackPressed,
             modifier = Modifier
-                .padding(padding)
+                .padding(padding),
+            navigateToBusCourse = navigateToBusCourse
         )
         else -> Unit
     }
@@ -59,14 +65,18 @@ fun ItineraryRoute(
 @Composable
 fun ItineraryScreen(
     modifier: Modifier = Modifier,
-    uiState: ItineraryContract.ItineraryUiState = ItineraryContract.ItineraryUiState()
+    uiState: ItineraryContract.ItineraryUiState = ItineraryContract.ItineraryUiState(),
+    navigateToBusCourse: (BusArrivalParameter) -> Unit = {}, // 테스트용
+    onBackPressed: () -> Unit = {}
 ) {
     val itineraryInfo = uiState.itineraryInfo!!
     AtchaCommonBottomSheet(
+        modifier = modifier,
         mainContent = {
             ItineraryMap(
                 legs = itineraryInfo.legs,
-                currentLocation = LatLng(37.5665, 126.9780)
+                currentLocation = LatLng(37.5665, 126.9780),
+                onBackPressed = onBackPressed
             )
         },
         sheetContent = {
@@ -74,6 +84,17 @@ fun ItineraryScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(horizontal = 16.dp)
+                    .noRippleClickable {
+                        navigateToBusCourse(
+                            BusArrivalParameter(
+                                routeName = "일반:700-2",
+                                stationName = "정평중학교",
+                                lat = 37.318197222222224,
+                                lon = 127.08745555555555,
+                                subtypeIdx = 2
+                            )
+                        )
+                    }
             ) {
                 ItinerarySummary(
                     totalTimeMinute = itineraryInfo.remainingTime / 60,

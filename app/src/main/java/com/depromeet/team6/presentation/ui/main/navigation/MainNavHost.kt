@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
+import com.depromeet.team6.presentation.ui.bus.navigation.busCourseNavGraph
 import com.depromeet.team6.presentation.ui.coursesearch.navigation.courseSearchNavGraph
 import com.depromeet.team6.presentation.ui.home.navigation.homeNavGraph
 import com.depromeet.team6.presentation.ui.itinerary.navigation.itineraryNavGraph
@@ -55,12 +56,19 @@ fun MainNavHost(
         )
 
         itineraryNavGraph(
-            padding = padding
+            padding = padding,
+            popBackStack = navigator::popBackStack,
+            navigateToBusCourse = navigator::navigateToBusCourse
         )
 
         searchLocationNavigation(
             navigateToBack = navigator::popBackStack,
             navigateToLogin = navigator::navigateToLogin
+        )
+        
+        busCourseNavGraph(
+            padding = padding,
+            navigateToBackStack = navigator::popBackStack
         )
 
         val previousRoute = navigator.navHostController.previousBackStackEntry?.destination?.route ?: "Unknown"

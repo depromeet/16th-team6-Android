@@ -14,6 +14,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
@@ -26,15 +27,19 @@ import androidx.core.graphics.drawable.toBitmap
 import com.depromeet.team6.BuildConfig
 import com.depromeet.team6.R
 import com.depromeet.team6.domain.model.course.LegInfo
+import com.depromeet.team6.presentation.ui.common.TransportVectorIconBitmap
 import com.depromeet.team6.presentation.ui.itinerary.LegInfoDummyProvider
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.presentation.util.modifier.roundedBackgroundWithPadding
+import com.depromeet.team6.presentation.util.view.TransportTypeUiMapper
+import com.depromeet.team6.presentation.util.view.toPx
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.google.android.gms.maps.model.LatLng
 import com.skt.tmap.TMapPoint
 import com.skt.tmap.TMapView
 import com.skt.tmap.overlay.TMapMarkerItem
-import com.skt.tmap.overlay.TMapPolyLine
+import com.skt.tmap.overlay.TMapTrafficLine
+import com.skt.tmap.overlay.TMapTrafficLine.TrafficLine
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -42,7 +47,8 @@ import kotlinx.coroutines.withContext
 fun ItineraryMap(
     currentLocation: LatLng,
     legs: List<LegInfo>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onBackPressed: () -> Unit
 ) {
     val context = LocalContext.current
     val tMapView = remember { TMapView(context) }
@@ -50,6 +56,7 @@ fun ItineraryMap(
 
     val departLocation = LatLng(legs[0].startPoint.lat, legs[0].startPoint.lon)
     val destinationLocation = LatLng(legs[legs.size - 1].endPoint.lat, legs[legs.size - 1].endPoint.lon)
+    val markerSizePx = 28.dp.toPx().toInt()
 
     LaunchedEffect(Unit) {
         tMapView.setSKTMapApiKey(BuildConfig.TMAP_API_KEY)
@@ -65,11 +72,40 @@ fun ItineraryMap(
             val departTMapPoint = TMapPoint(departLocation.latitude, departLocation.longitude)
             val destinationTMapPoint = TMapPoint(destinationLocation.latitude, destinationLocation.longitude)
 
-            // 라인 그리기
+            // 경로 그리기
             for (leg in legs) {
+                // 라인 그리기
                 val lineWayPoints = getWayPointList(leg.passShape)
-                val line = TMapPolyLine("line_${leg.transportType}_${leg.sectionTime}", lineWayPoints)
-                tMapView.addTMapPolyLine(line)
+                // TMapTrafficLine 객체 생성
+                val tmapTrafficLine = TMapTrafficLine("line_${leg.transportType}_${leg.sectionTime}")
+                // 교통 정보 표출 여부 설정
+                tmapTrafficLine.isShowTraffic = false
+                // 방향 인디케이터(화살표) 표시 설정
+                tmapTrafficLine.isShowIndicator = true
+                // 경로 선의 두께 설정
+                tmapTrafficLine.lineWidth = 9
+                // 경로 외곽선의 두께 설정
+                tmapTrafficLine.outLineWidth = 0
+
+                // TrafficLine 객체 생성 후 리스트에 추가
+                val trafficLine = TrafficLine(1, lineWayPoints)
+                tmapTrafficLine.basicColor = TransportTypeUiMapper.getColor(leg.transportType, leg.subTypeIdx).toArgb()
+                tmapTrafficLine.passedColor = TransportTypeUiMapper.getColor(leg.transportType, leg.subTypeIdx).toArgb()
+                tmapTrafficLine.trafficLineList.add(trafficLine)
+                tMapView.addTrafficLine(tmapTrafficLine)
+
+                // 마커 그리기
+                val marker = TMapMarkerItem()
+                marker.id = "marker_${leg.transportType}_${leg.sectionTime}"
+                marker.tMapPoint = TMapPoint(leg.startPoint.lat, leg.startPoint.lon)
+                marker.icon = TransportVectorIconBitmap(
+                    type = leg.transportType,
+                    fillColor = TransportTypeUiMapper.getColor(leg.transportType, leg.subTypeIdx),
+                    isMarker = true,
+                    sizePx = markerSizePx,
+                    context = context
+                )
+                tMapView.addTMapMarkerItem(marker)
             }
 
             // 마커 설정
@@ -81,7 +117,7 @@ fun ItineraryMap(
 
             marker.id = "destinationPoint"
             marker.tMapPoint = destinationTMapPoint
-            marker.icon = ContextCompat.getDrawable(context, R.drawable.ic_all_location_black)?.toBitmap()
+            marker.icon = ContextCompat.getDrawable(context, R.drawable.map_marker_arrival)?.toBitmap()
             tMapView.addTMapMarkerItem(marker)
 
             // 지도 위치 조정
@@ -141,7 +177,7 @@ fun ItineraryMap(
                 .align(Alignment.TopStart)
                 .offset(x = 16.dp, y = 12.dp)
                 .noRippleClickable {
-                    // TODO : 뒤로가기
+                    onBackPressed()
                 }
         )
 
@@ -150,9 +186,7 @@ fun ItineraryMap(
                 .size(36.dp)
                 .align(Alignment.BottomEnd)
                 .offset(x = (-16).dp, y = (-16).dp)
-                .noRippleClickable {
-                    tMapView.setCenterPoint(currentLocation.latitude, currentLocation.longitude)
-                },
+                .noRippleClickable { },
             imageVector = ImageVector.vectorResource(R.drawable.ic_all_current_location),
             contentDescription = "ItineraryCircleBtnBack"
         )
@@ -206,6 +240,7 @@ fun ItineraryMapPreview(
 ) {
     ItineraryMap(
         legs = legs,
-        currentLocation = LatLng(37.5665, 126.9780)
+        currentLocation = LatLng(37.5665, 126.9780),
+        onBackPressed = { }
     )
 }
