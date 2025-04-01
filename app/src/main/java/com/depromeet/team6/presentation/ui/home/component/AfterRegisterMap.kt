@@ -142,7 +142,7 @@ fun AfterRegisterMap(
 
             marker.id = "destinationPoint"
             marker.tMapPoint = destinationTMapPoint
-            marker.icon = ContextCompat.getDrawable(context, R.drawable.ic_all_location_black)?.toBitmap()
+            marker.icon = ContextCompat.getDrawable(context, R.drawable.map_marker_arrival)?.toBitmap()
             tMapView.addTMapMarkerItem(marker)
 
             // 지도 위치 설정 - 출발지와 첫 대중교통의 중간 지점
