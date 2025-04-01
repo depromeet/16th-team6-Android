@@ -1,5 +1,6 @@
 package com.depromeet.team6.presentation.ui.searchlocation
 
+import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.Location
 import com.depromeet.team6.domain.model.SearchHistory
 import com.depromeet.team6.presentation.util.base.UiEvent
@@ -13,7 +14,14 @@ class SearchLocationContract {
         val userLocation: LoadState = LoadState.Idle,
         val searchQuery: String = "",
         val searchResults: List<Location> = emptyList(),
-        val recentSearches: List<Location> = emptyList()
+        val recentSearches: List<Location> = emptyList(),
+        val searchSelectMapView: Boolean = false,
+        val selectLocation: Address = Address(
+            name = "",
+            lat = 0.0,
+            lon = 0.0,
+            address = ""
+        )
     ) : UiState
 
     sealed interface SearchLocationSideEffect : UiSideEffect {
@@ -37,5 +45,7 @@ class SearchLocationContract {
         data object ClearRecentSearches : SearchLocationEvent()
 
         data class UpdateUserLocationSate(val userLocation: LoadState) : SearchLocationEvent()
+
+        data class ChangeSearchSelectMapViewVisible(val searchSelectMapView: Boolean) : SearchLocationEvent()
     }
 }
