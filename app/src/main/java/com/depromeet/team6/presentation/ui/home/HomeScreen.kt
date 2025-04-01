@@ -362,22 +362,48 @@ fun HomeScreen(
                 )
         }
 
+        // 상태로 관리
+        var speechBubbleFlag by remember { mutableStateOf(true) }
+
+        // 클릭 핸들러
+        val handleCharacterClick = {
+            // 상태 토글
+            speechBubbleFlag = !speechBubbleFlag
+            // 필요한 경우 여기서 onCharacterClick() 호출
+            onCharacterClick()
+        }
+
         if (!homeUiState.isAlarmRegistered) { // 첫 화면
-            CharacterLottieSpeechBubble(
-                prefixText = prefixText,
-                emphasisText = emphasisText,
-                suffixText = suffixText,
-                topPrefixText = "",
-                topEmphasisText = "지도를 움직여 출발지를 설정해 봐요",
-                topSuffixText = "",
-                modifier = Modifier
-                    .align(Alignment.BottomStart)
-                    .padding(start = 8.dp, bottom = bottomPadding)
-                    .noRippleClickable(onClick = onCharacterClick),
-                onClick = {},
-                lottieResId = R.raw.atcha_character_1,
-                lineCount = 2
-            )
+            if (speechBubbleFlag) {
+                CharacterLottieSpeechBubble(
+                    prefixText = prefixText,
+                    emphasisText = emphasisText,
+                    suffixText = suffixText,
+                    topPrefixText = "",
+                    topEmphasisText = "지도를 움직여 출발지를 설정해 봐요",
+                    topSuffixText = "",
+                    modifier = Modifier
+                        .align(Alignment.BottomStart)
+                        .padding(start = 8.dp, bottom = bottomPadding)
+                        .noRippleClickable(onClick = onCharacterClick),
+                    onClick = handleCharacterClick,
+                    lottieResId = R.raw.atcha_character_1,
+                    lineCount = 2
+                )
+            } else {
+                CharacterLottieSpeechBubble(
+                    prefixText = prefixText,
+                    emphasisText = emphasisText,
+                    suffixText = suffixText,
+                    modifier = Modifier
+                        .align(Alignment.BottomStart)
+                        .padding(start = 8.dp, bottom = bottomPadding)
+                        .noRippleClickable(onClick = onCharacterClick),
+                    onClick = handleCharacterClick,
+                    lottieResId = R.raw.atcha_character_2,
+                    lineCount = 1
+                )
+            }
         }
         if (homeUiState.isAlarmRegistered && !homeUiState.isBusDeparted) { // 알림 등록 후 예상 출발 시간 화면
             CharacterLottieSpeechBubble(
