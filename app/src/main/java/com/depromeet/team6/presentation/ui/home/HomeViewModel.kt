@@ -276,6 +276,7 @@ class HomeViewModel @Inject constructor(
 
     fun onCharacterClick() {
         showSpeechBubbleTemporarily()
+        getTaxiCost()
     }
 
     fun getCenterLocation(location: LatLng) {
