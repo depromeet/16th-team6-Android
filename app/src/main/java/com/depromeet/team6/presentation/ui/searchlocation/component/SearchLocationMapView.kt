@@ -155,9 +155,11 @@ fun SearchLocationMapView(
 
             // 하단 UI
             Column(modifier = modifier.fillMaxSize()) {
-                Box(Modifier
-                    .fillMaxWidth()
-                    .weight(1f)) {
+                Box(
+                    Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                ) {
                     Icon(
                         tint = Color.Unspecified,
                         imageVector = ImageVector.vectorResource(id = R.drawable.ic_map_marker_setting),
@@ -196,7 +198,6 @@ fun SearchLocationMapView(
     }
 }
 
-
 private var checkScrollJob: Job? = null
 
 fun startScrollIdleCheck(
@@ -228,7 +229,6 @@ fun startScrollIdleCheck(
         getCenterLocation(previousLatLng!!)
     }
 }
-
 
 @Preview
 @Composable

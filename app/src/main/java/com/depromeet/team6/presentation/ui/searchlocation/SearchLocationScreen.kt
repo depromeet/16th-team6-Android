@@ -159,7 +159,6 @@ fun SearchLocationRoute(
                         false
                     )
                 )
-
             },
             clearAddress = {
                 viewModel.setEvent(SearchLocationContract.SearchLocationEvent.ClearText)
@@ -169,8 +168,8 @@ fun SearchLocationRoute(
                     )
                 )
             },
-            getCenterLocation = { viewModel.getCenterLocation(it) },
-            )
+            getCenterLocation = { viewModel.getCenterLocation(it) }
+        )
 
         LoadState.Error -> navigateToLogin()
         else -> Unit
@@ -192,7 +191,7 @@ fun SearchLocationScreen(
     selectButtonClicked: (Location) -> Unit = {},
     mapViewSelectButtonClicked: () -> Unit = {},
     clearAddress: () -> Unit = {},
-    getCenterLocation: (LatLng) -> Unit = {},
+    getCenterLocation: (LatLng) -> Unit = {}
 ) {
     Box(
         modifier = modifier
