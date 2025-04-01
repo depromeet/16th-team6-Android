@@ -92,7 +92,6 @@ fun AfterRegisterMap(
 
             // 경로 그리기
             for (leg in legs) {
-
                 // 라인 그리기
                 val lineWayPoints =
                     getWayPointList(leg.passShape)
@@ -117,7 +116,12 @@ fun AfterRegisterMap(
                 // 마커 그리기
                 val marker = TMapMarkerItem()
                 marker.id = "marker_${leg.transportType}_${leg.sectionTime}"
-                marker.tMapPoint = TMapPoint(leg.startPoint.lat, leg.startPoint.lon)
+
+                if ((leg.transportType == TransportType.WALK) && (lineWayPoints.isNotEmpty())){
+                    marker.tMapPoint = lineWayPoints[0]
+                } else {
+                    marker.tMapPoint = TMapPoint(leg.startPoint.lat, leg.startPoint.lon)
+                }
                 marker.icon = TransportVectorIconBitmap(
                     type = leg.transportType,
                     fillColor = TransportTypeUiMapper.getColor(leg.transportType, leg.subTypeIdx),
