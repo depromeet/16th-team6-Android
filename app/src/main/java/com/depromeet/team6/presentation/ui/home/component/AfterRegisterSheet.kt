@@ -123,16 +123,13 @@ fun AfterRegisterSheet(
                     if ((isConfirmed || afterUserDeparted) && !timerFinish) {
                         Spacer(modifier = Modifier.weight(1f))
 
-                        Icon(
-                            imageVector = ImageVector.vectorResource(R.drawable.ic_all_refresh_white),
-                            contentDescription = stringResource(R.string.home_icon_refresh),
-                            modifier = Modifier
-                                .padding(horizontal = 5.dp)
-                                .noRippleClickable {
-                                    onRefreshClick()
-                                },
-                            tint = colors.white
+                        // 기존 아이콘을 Lottie 버튼으로 변경
+                        RefreshLottieButton(
+                            onClick = onRefreshClick,
+                            tint = colors.white,
+                            modifier = Modifier.padding(horizontal = 5.dp)
                         )
+
                     }
                 }
 
