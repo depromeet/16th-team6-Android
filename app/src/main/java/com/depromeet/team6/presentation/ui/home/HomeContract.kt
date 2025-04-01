@@ -11,6 +11,7 @@ import com.depromeet.team6.presentation.util.view.LoadState
 class HomeContract {
     data class HomeUiState(
         val loadState: LoadState = LoadState.Idle,
+        val destinationState: LoadState = LoadState.Idle,
         val isAlarmRegistered: Boolean = false,
         val isBusDeparted: Boolean = false,
         val showSpeechBubble: Boolean = true,
@@ -73,5 +74,6 @@ class HomeContract {
         data object FinishAlarmClicked: HomeEvent()
         data object DeleteAlarmConfirmed: HomeEvent()
         data object DismissDialog: HomeEvent()
+        data object SetDestination : HomeEvent()
     }
 }

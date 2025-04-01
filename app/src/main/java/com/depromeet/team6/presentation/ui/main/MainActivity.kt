@@ -18,9 +18,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -61,6 +62,7 @@ class MainActivity : ComponentActivity() {
             installSplashScreen()
         }
         WindowCompat.setDecorFitsSystemWindows(window, false)
+
         enableEdgeToEdge()
 
         if (PermissionUtil.alertPermissionCheck(this)) {
@@ -71,6 +73,10 @@ class MainActivity : ComponentActivity() {
             val viewModel: MainViewModel = hiltViewModel()
             val navigator: MainNavigator = rememberMainNavigator()
             val showSplash by viewModel.showSplash.observeAsState(true)
+
+            SideEffect {
+                WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = false
+            }
 
             Team6Theme {
                 LaunchedEffect(Unit) {

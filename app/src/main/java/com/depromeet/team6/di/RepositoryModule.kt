@@ -2,21 +2,21 @@ package com.depromeet.team6.di
 
 import com.depromeet.team6.data.repositoryimpl.AlarmRepositoryImpl
 import com.depromeet.team6.data.repositoryimpl.AuthRepositoryImpl
-import com.depromeet.team6.data.repositoryimpl.CourseSearchRepositoryImpl
 import com.depromeet.team6.data.repositoryimpl.DummyRepositoryImpl
 import com.depromeet.team6.data.repositoryimpl.HomeRepositoryImpl
 import com.depromeet.team6.data.repositoryimpl.LocationsRepositoryImpl
 import com.depromeet.team6.data.repositoryimpl.TaxiCostRepositoryImpl
 import com.depromeet.team6.data.repositoryimpl.TimeLeftRepositoryImpl
+import com.depromeet.team6.data.repositoryimpl.TransitsRepositoryImpl
 import com.depromeet.team6.data.repositoryimpl.UserInfoRepositoryImpl
 import com.depromeet.team6.domain.repository.AlarmRepository
 import com.depromeet.team6.domain.repository.AuthRepository
-import com.depromeet.team6.domain.repository.CourseSearchRepository
 import com.depromeet.team6.domain.repository.DummyRepository
 import com.depromeet.team6.domain.repository.HomeRepository
 import com.depromeet.team6.domain.repository.LocationsRepository
 import com.depromeet.team6.domain.repository.TaxiCostRepository
 import com.depromeet.team6.domain.repository.TimeLeftRepository
+import com.depromeet.team6.domain.repository.TransitsRepository
 import com.depromeet.team6.domain.repository.UserInfoRepository
 import dagger.Binds
 import dagger.Module
@@ -49,7 +49,7 @@ abstract class RepositoryModule {
 
     @Binds
     @Singleton
-    abstract fun bindCourseRepository(courseRepositoryImpl: CourseSearchRepositoryImpl): CourseSearchRepository
+    abstract fun bindCourseRepository(transitsRepositoryImpl: TransitsRepositoryImpl): TransitsRepository
 
     @Binds
     @Singleton

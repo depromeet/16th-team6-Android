@@ -26,7 +26,6 @@ object ApiConstraints {
     const val FCM_TOKEN = "fcmToken"
 
     // Home
-    const val TRANSITS = "transits"
     const val LAST_ROUTES = "last-routes"
     const val LAST_ROUTE_ID = "lastRouteId"
     const val BUS_STARTED = "bus-started"
@@ -46,4 +45,6 @@ object ApiConstraints {
     // Alarm
     const val NOTIFICATIONS = "notifications"
     const val ROUTE = "route"
+    // Transits
+    const val TRANSITS = "transits"
 }

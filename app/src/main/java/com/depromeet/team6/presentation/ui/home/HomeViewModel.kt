@@ -19,6 +19,7 @@ import com.depromeet.team6.presentation.model.route.Route
 import com.depromeet.team6.domain.usecase.GetTaxiCostUseCase
 import com.depromeet.team6.domain.usecase.GetTimeLeftUseCase
 import com.depromeet.team6.presentation.ui.coursesearch.CourseSearchContract
+import com.depromeet.team6.domain.usecase.GetUserInfoUseCase
 import com.depromeet.team6.presentation.util.base.BaseViewModel
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.google.android.gms.maps.model.LatLng
@@ -35,6 +36,7 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val getAddressFromCoordinatesUseCase: GetAddressFromCoordinatesUseCase,
+    private val getUserInfoUseCase: GetUserInfoUseCase,
     private val getTaxiCostUseCase: GetTaxiCostUseCase,
     val getCourseSearchResultUseCase : GetCourseSearchResultsUseCase, // TODO : 실제 UseCase 로 교체
     private val getBusStartedUseCase: GetBusStartedUseCase,
@@ -65,6 +67,7 @@ class HomeViewModel @Inject constructor(
             }
 
             is HomeContract.HomeEvent.OnCharacterClick -> onCharacterClick()
+            is HomeContract.HomeEvent.SetDestination -> setDestination()
             is HomeContract.HomeEvent.LoadLegsResult -> {
                 setState {
                     copy(
@@ -482,4 +485,25 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+
+    private fun setDestination() {
+        setState { copy(destinationState = LoadState.Loading) }
+        viewModelScope.launch {
+            getUserInfoUseCase().onSuccess { userInfo ->
+                setState {
+                    copy(
+                        destinationPoint = Address(
+                            name = userInfo.address,
+                            lat = userInfo.userHome.latitude,
+                            lon = userInfo.userHome.longitude,
+                            address = userInfo.address
+                        )
+                    )
+                }
+                setState { copy(destinationState = LoadState.Success) }
+            }.onFailure {
+                setState { copy(destinationState = LoadState.Error) }
+            }
+        }
+    }
 }

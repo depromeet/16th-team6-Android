@@ -140,7 +140,7 @@ object TransportTypeUiMapper {
         return colorTable.get(colorTableKey) ?: defaultTeam6Colors.walkColor[0].second
     }
 
-    fun getCourseInfoIconId(type: TransportType, subtypeIndex: Int): Int {
+    fun getIconResId(type: TransportType, subtypeIndex: Int): Int {
         val iconTableKey = key(type, subtypeIndex)
         return iconTable.get(iconTableKey)
     }
