@@ -55,6 +55,8 @@ object ServiceModule {
     fun providesTimeLeftService(@Team6 retrofit: Retrofit): TimeLeftService =
         retrofit.create(TimeLeftService::class.java)
 
+    @Provides
+    @Singleton
     fun providesCourseService(@Team6 retrofit: Retrofit): TransitsService =
         retrofit.create(TransitsService::class.java)
 }
