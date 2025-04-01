@@ -19,23 +19,23 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.depromeet.team6.R
-import com.depromeet.team6.domain.model.HomeSearchLocation
+import com.depromeet.team6.domain.model.Location
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.depromeet.team6.ui.theme.defaultTeam6Typography
 
 @Composable
 fun SearchLocationItem(
-    homeSearchLocation: HomeSearchLocation,
+    homeSearchLocation: Location,
     modifier: Modifier = Modifier,
-    selectButtonClicked: () -> Unit = {}
+    selectButtonClicked: (Location) -> Unit = {}
 ) {
     Row(
         modifier = modifier
             .fillMaxWidth()
             .padding(vertical = 19.dp, horizontal = 16.dp)
             .noRippleClickable {
-                selectButtonClicked()
+                selectButtonClicked(homeSearchLocation)
             },
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -53,7 +53,7 @@ fun SearchLocationItem(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = homeSearchLocation.distance,
+                    text = homeSearchLocation.radius,
                     style = defaultTeam6Typography.bodyRegular14,
                     color = defaultTeam6Colors.greySecondaryLabel,
                     overflow = TextOverflow.Ellipsis
@@ -70,7 +70,7 @@ fun SearchLocationItem(
                 Spacer(Modifier.width(6.dp))
 
                 Text(
-                    text = homeSearchLocation.roadAddress,
+                    text = homeSearchLocation.address,
                     style = defaultTeam6Typography.bodyRegular14,
                     color = defaultTeam6Colors.greySecondaryLabel,
                     overflow = TextOverflow.Ellipsis
@@ -86,10 +86,13 @@ fun SearchLocationItem(
 @Composable
 private fun SearchLocationItemPreview() {
     SearchLocationItem(
-        homeSearchLocation = HomeSearchLocation(
-            name = "60계 치킨 강남점",
-            distance = "1.9km",
-            roadAddress = "강남구 테헤란로 4길 6"
+        homeSearchLocation = Location(
+            name = "60계 치킨 강남정",
+            lat = 0.0,
+            lon = 0.0,
+            radius = "1.9km",
+            address = "강남구 테헤란로 4길 6",
+            businessCategory = ""
         )
     )
 }
