@@ -305,7 +305,7 @@ fun HomeScreen(
                 },
                 onCourseDetailClick = {
                     val courseInfoJSON =
-                        Gson().toJson(homeUiState.courseInfo)
+                        Gson().toJson(homeUiState.itineraryInfo)
                     navigateToItinerary(courseInfoJSON)
                 },
                 onTimerFinished = {
