@@ -43,13 +43,14 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = true
-            isShrinkResources = true
+//            isMinifyEnabled = true
+            isMinifyEnabled = false
+//            isShrinkResources = true
             buildConfigField("String", "BASE_URL", properties["release.base.url"].toString())
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
+//            proguardFiles(
+//                getDefaultProguardFile("proguard-android-optimize.txt"),
+//                "proguard-rules.pro"
+//            )
             signingConfig = signingConfigs.getByName("release")
         }
         debug {
