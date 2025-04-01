@@ -342,7 +342,7 @@ fun HomeScreen(
                     stringResource(R.string.home_bubble_alarm_departed_text),
                     null,
                     null,
-                    241.dp
+                    231.dp
                 )
 
             homeUiState.isAlarmRegistered ->
@@ -350,7 +350,7 @@ fun HomeScreen(
                     "",
                     stringResource(R.string.home_bubble_alarm_emphasis_text),
                     "",
-                    241.dp
+                    231.dp
                 )
 
             else ->
