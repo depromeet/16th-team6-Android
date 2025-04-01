@@ -29,6 +29,10 @@ fun CharacterLottieSpeechBubble(
     modifier: Modifier = Modifier,
     emphasisText: String? = null,
     suffixText: String? = null,
+    topPrefixText: String? = null,
+    topEmphasisText: String? = null,
+    topSuffixText: String? = null,
+    lineCount: Int,
     onClick: () -> Unit = {},
     showSpeechBubble: Boolean = true,
     lottieResId: Int = R.raw.character_alarm_not_registered
@@ -42,8 +46,9 @@ fun CharacterLottieSpeechBubble(
     var playAnimation by remember { mutableStateOf(true) }
     var iteration by remember { mutableStateOf(0) }
 
-    // 말풍선 표시 여부 상태 관리
-    var isSpeechBubbleVisible by remember { mutableStateOf(false) }
+    // 각 말풍선 표시 여부 상태 관리
+    var isTopSpeechBubbleVisible by remember { mutableStateOf(false) }
+    var isBottomSpeechBubbleVisible by remember { mutableStateOf(false) }
 
     // 말풍선 표시 트리거 (화면 진입 시 또는 탭할 때)
     var speechBubbleTrigger by remember { mutableStateOf(0) }
@@ -51,16 +56,32 @@ fun CharacterLottieSpeechBubble(
     // 말풍선 표시 로직 (화면 진입 시 또는 탭할 때마다 실행)
     LaunchedEffect(speechBubbleTrigger) {
         if (showSpeechBubble) {
-            // 이미 표시 중이라면 즉시 숨김
-            isSpeechBubbleVisible = false
+            // 이미 표시 중인 말풍선들을 모두 숨김
+            isTopSpeechBubbleVisible = false
+            isBottomSpeechBubbleVisible = false
 
-            // 0.7초 후에 말풍선 표시
-            delay(700)
-            isSpeechBubbleVisible = true
+            if (lineCount == 2) {
+                // 0.7초 후에 위쪽 말풍선 표시
+                delay(700)
+                isTopSpeechBubbleVisible = true
 
-            // 2.5초 후에 말풍선 숨김
-            delay(2500)
-            isSpeechBubbleVisible = false
+                // 1.5초 후에 아래쪽 말풍선 표시
+                delay(1500)
+                isBottomSpeechBubbleVisible = true
+
+                // 2.5초 후에 모든 말풍선 숨김
+                delay(1000)
+                isTopSpeechBubbleVisible = false
+                delay(1000)
+                isBottomSpeechBubbleVisible = false
+            } else {
+                // 단일 말풍선인 경우 기존 로직
+                delay(700)
+                isBottomSpeechBubbleVisible = true
+
+                delay(2500)
+                isBottomSpeechBubbleVisible = false
+            }
         }
     }
 
@@ -99,22 +120,39 @@ fun CharacterLottieSpeechBubble(
     Column(
         modifier = modifier.noRippleClickable { handleClick() }
     ) {
-        // 말풍선 부분 (애니메이션 적용)
+        if (lineCount == 2) {
+            // 위쪽 말풍선
+            AnimatedVisibility(
+                visible = isTopSpeechBubbleVisible && showSpeechBubble,
+                enter = fadeIn(),
+                exit = fadeOut()
+            ) {
+                SpeechBubble(
+                    prefix = topPrefixText ?: "",
+                    modifier = Modifier,
+                    emphasisText = topEmphasisText,
+                    suffix = topSuffixText,
+                    tailExist = false
+                )
+            }
+
+        }
+
+        // 아래쪽 말풍선
         AnimatedVisibility(
-            visible = isSpeechBubbleVisible && showSpeechBubble,
+            visible = isBottomSpeechBubbleVisible && showSpeechBubble,
             enter = fadeIn(),
             exit = fadeOut()
         ) {
-            Column {
-                SpeechBubble(
-                    prefix = prefixText,
-                    modifier = Modifier,
-                    emphasisText = emphasisText,
-                    suffix = suffixText
-                )
+            Spacer(modifier = Modifier.height(6.dp))
 
-                Spacer(modifier = Modifier.height(2.dp))
-            }
+            SpeechBubble(
+                prefix = prefixText,
+                modifier = Modifier,
+                emphasisText = emphasisText,
+                suffix = suffixText,
+                tailExist = true
+            )
         }
 
         // 캐릭터 애니메이션 부분
@@ -131,6 +169,14 @@ fun CharacterLottieSpeechBubblePreview() {
     CharacterLottieSpeechBubble(
         prefixText = "여기서 놓치면 택시비",
         modifier = Modifier,
-        emphasisText = "34,000"
+        emphasisText = "34,000",
+        suffixText = TODO(),
+        lineCount = TODO(),
+        onClick = TODO(),
+        showSpeechBubble = TODO(),
+        lottieResId = TODO(),
+        topPrefixText = TODO(),
+        topEmphasisText = TODO(),
+        topSuffixText = TODO()
     )
 }

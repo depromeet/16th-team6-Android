@@ -367,12 +367,16 @@ fun HomeScreen(
                 prefixText = prefixText,
                 emphasisText = emphasisText,
                 suffixText = suffixText,
+                topPrefixText = "",
+                topEmphasisText = "지도를 움직여 출발지를 설정해 봐요",
+                topSuffixText = "",
                 modifier = Modifier
                     .align(Alignment.BottomStart)
                     .padding(start = 8.dp, bottom = bottomPadding)
                     .noRippleClickable(onClick = onCharacterClick),
                 onClick = {},
-                lottieResId = R.raw.atcha_character_1
+                lottieResId = R.raw.atcha_character_1,
+                lineCount = 2
             )
         }
         if (homeUiState.isAlarmRegistered && !homeUiState.isBusDeparted) { // 알림 등록 후 예상 출발 시간 화면
@@ -385,7 +389,8 @@ fun HomeScreen(
                     .padding(start = 8.dp, bottom = bottomPadding)
                     .noRippleClickable(onClick = onCharacterClick),
                 onClick = {},
-                lottieResId = R.raw.atcha_chararcter_3
+                lottieResId = R.raw.atcha_chararcter_3,
+                lineCount = 1
             )
         }
 

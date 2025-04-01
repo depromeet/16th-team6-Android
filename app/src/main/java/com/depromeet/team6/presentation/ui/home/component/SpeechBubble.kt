@@ -24,7 +24,10 @@ import androidx.compose.ui.unit.dp
 import com.depromeet.team6.ui.theme.LocalTeam6Colors
 import com.depromeet.team6.ui.theme.LocalTeam6Typography
 
-class SpeechBubbleShape(private val cornerRadius: Dp = 16.dp) : Shape {
+class SpeechBubbleShape(
+    private val cornerRadius: Dp = 16.dp,
+    private val tailExist: Boolean
+) : Shape {
     override fun createOutline(
         size: Size,
         layoutDirection: LayoutDirection,
@@ -58,9 +61,11 @@ class SpeechBubbleShape(private val cornerRadius: Dp = 16.dp) : Shape {
                     false
                 )
 
+                if (tailExist) {
                 lineTo(size.width * 0.12f, size.height - tailHeight)
                 lineTo(size.width * 0.15f, size.height)
                 lineTo(size.width * 0.18f, size.height - tailHeight)
+                }
 
                 arcTo(
                     Rect(
@@ -93,7 +98,8 @@ fun SpeechBubble(
     prefix: String,
     modifier: Modifier = Modifier,
     emphasisText: String? = null,
-    suffix: String? = null
+    suffix: String? = null,
+    tailExist: Boolean
 ) {
     val colors = LocalTeam6Colors.current
     val typography = LocalTeam6Typography.current
@@ -102,7 +108,7 @@ fun SpeechBubble(
         modifier = modifier
             .background(
                 color = colors.greyElevatedBackground,
-                shape = SpeechBubbleShape()
+                shape = SpeechBubbleShape(tailExist = tailExist)
             ),
         contentAlignment = Alignment.Center
     ) {
@@ -143,6 +149,7 @@ fun SpeechBubblePreview() {
     SpeechBubble(
         prefix = "여기서 놓치면 택시비",
         emphasisText = "34,000원",
-        modifier = Modifier
+        modifier = Modifier,
+        tailExist = true
     )
 }
