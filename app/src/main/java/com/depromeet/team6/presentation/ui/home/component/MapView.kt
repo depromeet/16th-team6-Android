@@ -115,7 +115,7 @@ fun TMapViewCompose(
 
         // 출발 마커
         Image(
-            imageVector = ImageVector.vectorResource(id = R.drawable.map_marker_departure),
+            imageVector = ImageVector.vectorResource(id = R.drawable.ic_home_dearture_marker),
             contentDescription = "Start Marker",
             modifier = Modifier
                 .align(Alignment.Center)
