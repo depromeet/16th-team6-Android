@@ -1,19 +1,12 @@
 package com.depromeet.team6.data.datalocal.service
 
-import android.app.Notification
-import android.app.NotificationManager
 import android.app.Service
-import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.media.MediaPlayer
-import android.os.Handler
 import android.os.IBinder
-import android.os.Looper
 import android.util.Log
-import androidx.annotation.StringRes
 import com.depromeet.team6.R
-import com.depromeet.team6.data.datalocal.builder.SimpleNotificationBuilder
 import com.depromeet.team6.data.datalocal.manager.LockServiceManager
 import com.depromeet.team6.domain.usecase.GetTaxiCostUseCase
 import com.depromeet.team6.domain.usecase.GetTimeLeftUseCase
@@ -24,7 +17,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
-import kotlin.math.log
 
 @AndroidEntryPoint
 class LockService : Service() {
@@ -42,7 +34,6 @@ class LockService : Service() {
     lateinit var getTimeLeftUseCase: GetTimeLeftUseCase
 
     private var mediaPlayer: MediaPlayer? = null
-
 
     private fun playAlarmSound() {
         try {
@@ -96,13 +87,11 @@ class LockService : Service() {
 
         startLockReceiver()
 
-
         if (showLockScreen) {
             CoroutineScope(Dispatchers.IO).launch {
                 val taxiCost = taxiCostUseCase.getLastSavedTaxiCost()
 
                 withContext(Dispatchers.Main) {
-
                     playAlarmSound()
 
                     lockScreenNavigator.navigateToLockScreen(applicationContext, taxiCost)

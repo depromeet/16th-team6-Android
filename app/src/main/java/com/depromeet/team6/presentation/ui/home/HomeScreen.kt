@@ -1,20 +1,14 @@
 package com.depromeet.team6.presentation.ui.home
 
-import android.app.Application
-import android.content.Context
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -27,7 +21,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -43,18 +36,14 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import com.depromeet.team6.R
 import com.depromeet.team6.domain.model.course.TransportType
-import com.depromeet.team6.domain.model.RouteLocation
-import com.depromeet.team6.presentation.model.route.Route
 import com.depromeet.team6.presentation.ui.alarm.NotificationScheduler
 import com.depromeet.team6.presentation.ui.alarm.NotificationTimeConstants
 import com.depromeet.team6.presentation.ui.home.component.AfterRegisterMap
 import com.depromeet.team6.presentation.ui.home.component.AfterRegisterSheet
 import com.depromeet.team6.presentation.ui.home.component.CharacterLottieSpeechBubble
-import com.depromeet.team6.presentation.ui.home.component.CharacterSpeechBubble
 import com.depromeet.team6.presentation.ui.home.component.CurrentLocationSheet
 import com.depromeet.team6.presentation.ui.home.component.DeleteAlarmDialog
 import com.depromeet.team6.presentation.ui.home.component.TMapViewCompose
-import com.depromeet.team6.presentation.ui.itinerary.component.ItineraryMap
 import com.depromeet.team6.presentation.util.DefaultLntLng.DEFAULT_LNG
 import com.depromeet.team6.presentation.util.DefaultLntLng.DEFAULT_LNT
 import com.depromeet.team6.presentation.util.context.getUserLocation
@@ -64,7 +53,6 @@ import com.depromeet.team6.presentation.util.view.LoadState
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.google.android.gms.maps.model.LatLng
 import com.google.gson.Gson
-import dagger.hilt.android.internal.Contexts.getApplication
 import timber.log.Timber
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -203,11 +191,11 @@ fun HomeRoute(
 //                viewModel.deleteAlarm(uiState.lastRouteId, context)
             },
             deleteAlarmConfirmed = {
-               viewModel.setEvent(HomeContract.HomeEvent.DeleteAlarmConfirmed)
+                viewModel.setEvent(HomeContract.HomeEvent.DeleteAlarmConfirmed)
                 viewModel.deleteAlarm(uiState.lastRouteId, context)
             },
             dismissDialog = {
-              viewModel.setEvent(HomeContract.HomeEvent.DismissDialog)
+                viewModel.setEvent(HomeContract.HomeEvent.DismissDialog)
             },
             onRefreshClick = {
                 // TODO : getLegs 함수가 막차 경로 상세 API를 받아오는게 맞는지 확인
@@ -274,11 +262,13 @@ fun HomeScreen(
         var isConfirmed = false
 
         val firstTransportation = homeUiState.firtTransportTation
-        if (firstTransportation == TransportType.SUBWAY)
+        if (firstTransportation == TransportType.SUBWAY) {
             isConfirmed = true
+        }
 
-        if (homeUiState.isBusDeparted)
+        if (homeUiState.isBusDeparted) {
             isConfirmed = true
+        }
 
         // 알람 등록 시 Home UI
         if (homeUiState.isAlarmRegistered) {
@@ -356,7 +346,7 @@ fun HomeScreen(
             else ->
                 SpeechBubbleText(
                     stringResource(R.string.home_bubble_basic_text),
-                    "약 "+homeUiState.taxiCost.toString() + "원",
+                    "약 " + homeUiState.taxiCost.toString() + "원",
                     null,
                     207.dp
                 )
@@ -448,8 +438,6 @@ fun HomeScreen(
             }
         }
     }
-
-
 }
 
 // TimeFormatter 유틸 함수 (HomeScreen.kt 파일 내에 추가)

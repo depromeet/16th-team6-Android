@@ -28,26 +28,19 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-
-import com.airbnb.lottie.compose.animateLottieCompositionAsState
-import androidx.lifecycle.flowWithLifecycle
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.depromeet.team6.R
-import com.depromeet.team6.domain.model.RouteLocation
 import com.depromeet.team6.presentation.ui.lock.LockContract
 import com.depromeet.team6.presentation.ui.lock.LockViewModel
 import com.depromeet.team6.ui.theme.LocalTeam6Colors
 import com.depromeet.team6.ui.theme.LocalTeam6Typography
 import com.depromeet.team6.ui.theme.Team6Theme
-import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import kotlinx.coroutines.delay
-import retrofit2.http.Tag
 import java.text.NumberFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -67,7 +60,6 @@ fun LockRoute(
     LaunchedEffect(Unit) {
         viewModel.loadTaxiCost()
     }
-
 
     LockScreen(
         uiState = uiState,

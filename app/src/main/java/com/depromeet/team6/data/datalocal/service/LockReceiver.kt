@@ -26,7 +26,7 @@ object LockReceiver : BroadcastReceiver() {
                         try {
                             val taxiCost = taxiCostUseCase.getLastSavedTaxiCost()
                             navigator.navigateToLockScreen(context, taxiCost)
-                        } catch (e:Exception) {
+                        } catch (e: Exception) {
                             navigator.navigateToLockScreen(context, 0)
                         }
                     }

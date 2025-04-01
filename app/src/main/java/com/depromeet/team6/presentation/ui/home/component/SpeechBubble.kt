@@ -62,9 +62,9 @@ class SpeechBubbleShape(
                 )
 
                 if (tailExist) {
-                lineTo(size.width * 0.12f, size.height - tailHeight)
-                lineTo(size.width * 0.15f, size.height)
-                lineTo(size.width * 0.18f, size.height - tailHeight)
+                    lineTo(size.width * 0.12f, size.height - tailHeight)
+                    lineTo(size.width * 0.15f, size.height)
+                    lineTo(size.width * 0.18f, size.height - tailHeight)
                 }
 
                 arcTo(

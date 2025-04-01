@@ -14,5 +14,5 @@ interface TaxiCostService {
         @Query("startLon") startLon: Double,
         @Query("endLat") endLat: Double,
         @Query("endLon") endLon: Double
-    ) : ApiResponse<Int>
+    ): ApiResponse<Int>
 }

@@ -1,8 +1,8 @@
 package com.depromeet.team6.presentation.ui.home
 
+import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.course.CourseInfo
 import com.depromeet.team6.domain.model.course.TransportType
-import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.presentation.util.base.UiEvent
 import com.depromeet.team6.presentation.util.base.UiSideEffect
 import com.depromeet.team6.presentation.util.base.UiState
@@ -71,9 +71,9 @@ class HomeContract {
         data class LoadUserDeparture(val userDeparture: Boolean) : HomeEvent()
         data class LoadTimerFinish(val timerFinish: Boolean) : HomeEvent()
         data object OnCharacterClick : HomeEvent()
-        data object FinishAlarmClicked: HomeEvent()
-        data object DeleteAlarmConfirmed: HomeEvent()
-        data object DismissDialog: HomeEvent()
+        data object FinishAlarmClicked : HomeEvent()
+        data object DeleteAlarmConfirmed : HomeEvent()
+        data object DismissDialog : HomeEvent()
         data object SetDestination : HomeEvent()
     }
 }

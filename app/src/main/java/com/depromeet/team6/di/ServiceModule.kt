@@ -39,7 +39,6 @@ object ServiceModule {
     fun providesHomeService(@Team6 retrofit: Retrofit): HomeService =
         retrofit.create(HomeService::class.java)
 
-
     @Provides
     @Singleton
     fun providesAlarmService(@Team6 retrofit: Retrofit): AlarmService =

@@ -112,7 +112,7 @@ fun CharacterLottieSpeechBubble(
     // 애니메이션 진행 상태
     val progress by animateLottieCompositionAsState(
         composition = composition,
-        iterations = 1,  // 한 번만 재생
+        iterations = 1, // 한 번만 재생
         isPlaying = playAnimation,
         restartOnPlay = true
     )
@@ -135,7 +135,6 @@ fun CharacterLottieSpeechBubble(
                     tailExist = false
                 )
             }
-
         }
 
         // 아래쪽 말풍선

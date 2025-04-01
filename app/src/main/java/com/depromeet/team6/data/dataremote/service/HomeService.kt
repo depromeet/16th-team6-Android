@@ -13,5 +13,5 @@ interface HomeService {
     @GET("$API/$TRANSITS/$LAST_ROUTES/{$LAST_ROUTE_ID}/$BUS_STARTED")
     suspend fun getBusStarted(
         @Path(LAST_ROUTE_ID) lastRouteId: String
-    ) : ApiResponse<Boolean>
+    ): ApiResponse<Boolean>
 }

@@ -7,7 +7,7 @@ import javax.inject.Inject
 
 class TaxiCostRemoteDataSource @Inject constructor(
     private val lockService: TaxiCostService
-){
+) {
     suspend fun getTaxiCost(requestTaxiDto: RequestTaxiCostDto): Result<Int> =
         lockService.getTaxiCost(
             startLat = requestTaxiDto.startLat,

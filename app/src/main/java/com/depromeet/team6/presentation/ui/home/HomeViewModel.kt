@@ -1,30 +1,24 @@
 package com.depromeet.team6.presentation.ui.home
 
-import android.app.Application
 import android.content.Context
 import android.util.Log
-import android.content.LocusId
 import androidx.lifecycle.viewModelScope
-import com.depromeet.team6.domain.model.Address
-import com.depromeet.team6.domain.model.course.CourseInfo
-import com.depromeet.team6.domain.model.course.TransportType
 import com.depromeet.team6.data.datalocal.manager.LockServiceManager
+import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.RouteLocation
+import com.depromeet.team6.domain.model.course.CourseInfo
+import com.depromeet.team6.domain.model.course.LegInfo
+import com.depromeet.team6.domain.model.course.TransportType
+import com.depromeet.team6.domain.usecase.DeleteAlarmUseCase
 import com.depromeet.team6.domain.usecase.GetAddressFromCoordinatesUseCase
 import com.depromeet.team6.domain.usecase.GetBusStartedUseCase
-import com.depromeet.team6.domain.model.course.LegInfo
-import com.depromeet.team6.domain.usecase.DeleteAlarmUseCase
 import com.depromeet.team6.domain.usecase.GetCourseSearchResultsUseCase
-import com.depromeet.team6.presentation.model.route.Route
 import com.depromeet.team6.domain.usecase.GetTaxiCostUseCase
-import com.depromeet.team6.domain.usecase.GetTimeLeftUseCase
-import com.depromeet.team6.presentation.ui.coursesearch.CourseSearchContract
 import com.depromeet.team6.domain.usecase.GetUserInfoUseCase
 import com.depromeet.team6.presentation.util.base.BaseViewModel
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.google.android.gms.maps.model.LatLng
 import com.google.gson.Gson
-import dagger.hilt.android.internal.Contexts.getApplication
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -38,7 +32,7 @@ class HomeViewModel @Inject constructor(
     private val getAddressFromCoordinatesUseCase: GetAddressFromCoordinatesUseCase,
     private val getUserInfoUseCase: GetUserInfoUseCase,
     private val getTaxiCostUseCase: GetTaxiCostUseCase,
-    val getCourseSearchResultUseCase : GetCourseSearchResultsUseCase, // TODO : 실제 UseCase 로 교체
+    val getCourseSearchResultUseCase: GetCourseSearchResultsUseCase, // TODO : 실제 UseCase 로 교체
     private val getBusStartedUseCase: GetBusStartedUseCase,
     private val deleteAlarmUseCase: DeleteAlarmUseCase
 ) : BaseViewModel<HomeContract.HomeUiState, HomeContract.HomeSideEffect, HomeContract.HomeEvent>() {
@@ -79,7 +73,7 @@ class HomeViewModel @Inject constructor(
             is HomeContract.HomeEvent.LoadDepartureDateTime -> {
                 setState {
                     copy(
-                        departureTime = event.departureTime.substring(11,16)
+                        departureTime = event.departureTime.substring(11, 16)
                     )
                 }
             }
@@ -197,7 +191,8 @@ class HomeViewModel @Inject constructor(
                 stopPollingBusStarted()
 
                 val sharedPreferences = context.getSharedPreferences(
-                    "MyPreferences", Context.MODE_PRIVATE
+                    "MyPreferences",
+                    Context.MODE_PRIVATE
                 )
                 val editor = sharedPreferences.edit()
 
@@ -210,7 +205,6 @@ class HomeViewModel @Inject constructor(
                 editor.apply()
 
                 setEvent(HomeContract.HomeEvent.DismissDialog)
-
             } else {
                 Log.d("알림 삭제 실패", "알림 삭제 실패")
             }
@@ -364,7 +358,7 @@ class HomeViewModel @Inject constructor(
             setEvent(HomeContract.HomeEvent.UpdateAlarmRegistered(isAlarmRegistered))
             lastRouteId?.let { HomeContract.HomeEvent.UpdateLastRouteId(it) }?.let { setEvent(it) }
 
-            val departurePointJson = prefs.getString("departurePoint",null)
+            val departurePointJson = prefs.getString("departurePoint", null)
             departurePointJson?.let {
                 try {
                     val departurePoint = Gson().fromJson(it, Address::class.java)
@@ -400,8 +394,7 @@ class HomeViewModel @Inject constructor(
                 }
             }
         }
-
-}
+    }
 
     // 막차 경로 중 첫번째 대중 교통 수단
     private fun getFirstTransportation(legs: List<LegInfo>): TransportType {
@@ -410,7 +403,8 @@ class HomeViewModel @Inject constructor(
         for (leg in legs) {
             if (leg.transportType != TransportType.WALK) {
                 firstTransportation = leg.transportType
-                break }
+                break
+            }
         }
         return firstTransportation
     }
@@ -424,7 +418,8 @@ class HomeViewModel @Inject constructor(
             if (leg.transportType != TransportType.WALK) {
                 firstTransportation = leg.transportType
                 firstTransportationNumber = leg.subTypeIdx
-                break }
+                break
+            }
         }
         return firstTransportationNumber
     }
@@ -437,8 +432,7 @@ class HomeViewModel @Inject constructor(
             if (leg.transportType != TransportType.WALK) {
                 if (leg.transportType == TransportType.BUS) {
                     firstTransportationName = leg.routeName.toString().split(":")[1]
-                }
-                else if (leg.transportType == TransportType.SUBWAY) {
+                } else if (leg.transportType == TransportType.SUBWAY) {
                     firstTransportationName = leg.startPoint.name + "역"
                 }
                 break
@@ -485,7 +479,6 @@ class HomeViewModel @Inject constructor(
                 }
         }
     }
-
 
     private fun setDestination() {
         setState { copy(destinationState = LoadState.Loading) }

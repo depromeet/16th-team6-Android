@@ -25,7 +25,6 @@ fun RefreshLottieButton(
     tint: Color = Color.White,
     modifier: Modifier = Modifier
 ) {
-
     val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(lottieResId))
 
     var isPlaying by remember { mutableStateOf(false) }

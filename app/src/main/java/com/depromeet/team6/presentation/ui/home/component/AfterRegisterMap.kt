@@ -43,7 +43,6 @@ import com.google.android.gms.maps.model.LatLng
 import com.skt.tmap.TMapPoint
 import com.skt.tmap.TMapView
 import com.skt.tmap.overlay.TMapMarkerItem
-import com.skt.tmap.overlay.TMapPolyLine
 import com.skt.tmap.overlay.TMapTrafficLine
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -117,7 +116,7 @@ fun AfterRegisterMap(
                 val marker = TMapMarkerItem()
                 marker.id = "marker_${leg.transportType}_${leg.sectionTime}"
 
-                if ((leg.transportType == TransportType.WALK) && (lineWayPoints.isNotEmpty())){
+                if ((leg.transportType == TransportType.WALK) && (lineWayPoints.isNotEmpty())) {
                     marker.tMapPoint = lineWayPoints[0]
                 } else {
                     marker.tMapPoint = TMapPoint(leg.startPoint.lat, leg.startPoint.lon)
@@ -131,7 +130,6 @@ fun AfterRegisterMap(
                 )
                 tMapView.addTMapMarkerItem(marker)
             }
-
 
             // 마커 설정
             val marker = TMapMarkerItem()
@@ -187,8 +185,7 @@ fun AfterRegisterMap(
                 .fillMaxWidth()
                 // TODO : 하단 모달 영역 제외한 부분에 띄우도록 수정
                 .height(screenHeight - 228.dp)
-                .align(Alignment.TopCenter)
-            ,
+                .align(Alignment.TopCenter),
             factory = { context ->
                 // FrameLayout을 직접 생성
                 FrameLayout(context).apply {

@@ -41,10 +41,10 @@ object ApiConstraints {
     const val DEPARTUREREMAINING = "departure-remaining"
     const val ROUTEID = "routeId"
 
-
     // Alarm
     const val NOTIFICATIONS = "notifications"
     const val ROUTE = "route"
+
     // Transits
     const val TRANSITS = "transits"
 }

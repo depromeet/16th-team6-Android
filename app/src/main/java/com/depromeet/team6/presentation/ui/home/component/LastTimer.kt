@@ -1,6 +1,5 @@
 package com.depromeet.team6.presentation.ui.home.component
 
-import android.util.Log
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
@@ -65,7 +64,6 @@ fun LastTimer(
 
                     // 여기서 값을 반환해야 함
                     LocalDateTime.of(targetDate, targetTime)
-
                 } catch (e: Exception) {
                     Timber.e("시간 파싱 오류: $departureTime - ${e.message}")
                     null

@@ -13,5 +13,5 @@ interface TimeLeftService {
     @GET("$API/$TRANSITS/$LASTROUTES/{$ROUTEID}/$DEPARTUREREMAINING")
     suspend fun getDepartureRemainingTime(
         @Path(ROUTEID) routeId: String
-    ) : ApiResponse<Int>
+    ): ApiResponse<Int>
 }

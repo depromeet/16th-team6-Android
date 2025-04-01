@@ -6,12 +6,10 @@ import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.depromeet.team6.domain.usecase.GetTaxiCostUseCase
 import com.depromeet.team6.presentation.util.base.BaseViewModel
-import dagger.hilt.android.internal.Contexts.getApplication
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.util.concurrent.locks.Lock
 import javax.inject.Inject
 
 @HiltViewModel
@@ -93,5 +91,4 @@ class LockViewModel @Inject constructor(
             }
         }
     }
-
 }

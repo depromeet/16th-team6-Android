@@ -1,7 +1,6 @@
 package com.depromeet.team6.presentation.ui.home.component
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,7 +23,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.depromeet.team6.R
 import com.depromeet.team6.domain.model.course.TransportType
-import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.ui.theme.LocalTeam6Colors
 import com.depromeet.team6.ui.theme.LocalTeam6Typography
 
@@ -47,7 +45,7 @@ fun AfterRegisterSheet(
     onCourseDetailClick: () -> Unit,
     onRefreshClick: () -> Unit,
     onTimerFinished: () -> Unit = {},
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     val colors = LocalTeam6Colors.current
     val typography = LocalTeam6Typography.current
@@ -71,68 +69,63 @@ fun AfterRegisterSheet(
                 )
                 .padding(horizontal = 16.dp, vertical = 20.dp)
         ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center,
-                    modifier = modifier.padding(top = 6.dp, bottom = 2.dp)
-                ) {
-                    if (afterUserDeparted && !timerFinish) { // 사용자 출발 후
-                        TransportStatus(
-                            modifier = modifier,
-                            transportationType = transportType,
-                            transportationNumber = transportationNumber,
-                            transportationName = transportationName,
-                            stopLeft = 6
-                        )
-
-                    }
-                    else if (afterUserDeparted && timerFinish) {
-                        Text(
-                            text = stringResource(R.string.home_final_departure_time_text),
-                            style = typography.bodyMedium13,
-                            color = colors.white,
-                            modifier = Modifier
-                        )
-                    }
-                    else if (isConfirmed) {
-                        Text(
-                            text = stringResource(R.string.home_start_time_text),
-                            style = typography.bodyMedium13,
-                            color = colors.white,
-                            modifier = Modifier
-                        )
-                    } else {
-                        Text(
-                            text = stringResource(R.string.home_expect_start_time_text),
-                            style = typography.bodyMedium13,
-                            color = colors.white,
-                            modifier = Modifier
-                        )
-                    }
-
-                    if (!afterUserDeparted) {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(R.drawable.ic_all_info_grey),
-                            contentDescription = stringResource(R.string.home_icon_info),
-                            modifier = Modifier
-                                .padding(horizontal = 5.dp),
-                            tint = colors.systemGrey1
-                        )
-                    }
-
-                    if ((isConfirmed || afterUserDeparted) && !timerFinish) {
-                        Spacer(modifier = Modifier.weight(1f))
-
-                        // 기존 아이콘을 Lottie 버튼으로 변경
-                        RefreshLottieButton(
-                            onClick = onRefreshClick,
-                            tint = colors.white,
-                            modifier = Modifier.padding(horizontal = 5.dp)
-                        )
-
-                    }
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center,
+                modifier = modifier.padding(top = 6.dp, bottom = 2.dp)
+            ) {
+                if (afterUserDeparted && !timerFinish) { // 사용자 출발 후
+                    TransportStatus(
+                        modifier = modifier,
+                        transportationType = transportType,
+                        transportationNumber = transportationNumber,
+                        transportationName = transportationName,
+                        stopLeft = 6
+                    )
+                } else if (afterUserDeparted && timerFinish) {
+                    Text(
+                        text = stringResource(R.string.home_final_departure_time_text),
+                        style = typography.bodyMedium13,
+                        color = colors.white,
+                        modifier = Modifier
+                    )
+                } else if (isConfirmed) {
+                    Text(
+                        text = stringResource(R.string.home_start_time_text),
+                        style = typography.bodyMedium13,
+                        color = colors.white,
+                        modifier = Modifier
+                    )
+                } else {
+                    Text(
+                        text = stringResource(R.string.home_expect_start_time_text),
+                        style = typography.bodyMedium13,
+                        color = colors.white,
+                        modifier = Modifier
+                    )
                 }
 
+                if (!afterUserDeparted) {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(R.drawable.ic_all_info_grey),
+                        contentDescription = stringResource(R.string.home_icon_info),
+                        modifier = Modifier
+                            .padding(horizontal = 5.dp),
+                        tint = colors.systemGrey1
+                    )
+                }
+
+                if ((isConfirmed || afterUserDeparted) && !timerFinish) {
+                    Spacer(modifier = Modifier.weight(1f))
+
+                    // 기존 아이콘을 Lottie 버튼으로 변경
+                    RefreshLottieButton(
+                        onClick = onRefreshClick,
+                        tint = colors.white,
+                        modifier = Modifier.padding(horizontal = 5.dp)
+                    )
+                }
+            }
 
             // 사용자가 잠금화면 출발하기 버튼 눌러서 출발했을 때
             if (afterUserDeparted) {
@@ -157,7 +150,6 @@ fun AfterRegisterSheet(
                     modifier = Modifier.padding(top = 8.dp, bottom = 6.dp)
                 )
             }
-
 
             CourseTextButton(
                 startLocation = startLocation,
