@@ -347,9 +347,9 @@ fun HomeScreen(
 
             homeUiState.isAlarmRegistered ->
                 SpeechBubbleText(
-                    stringResource(R.string.home_bubble_alarm_prefix_text),
+                    "",
                     stringResource(R.string.home_bubble_alarm_emphasis_text),
-                    stringResource(R.string.home_bubble_alarm_suffix_text),
+                    "",
                     241.dp
                 )
 
@@ -374,8 +374,9 @@ fun HomeScreen(
                 onClick = {},
                 lottieResId = R.raw.atcha_character_1
             )
-        } else {
-            CharacterSpeechBubble(
+        }
+        if (homeUiState.isAlarmRegistered && !homeUiState.isBusDeparted) { // 알림 등록 후 예상 출발 시간 화면
+            CharacterLottieSpeechBubble(
                 prefixText = prefixText,
                 emphasisText = emphasisText,
                 suffixText = suffixText,
@@ -383,7 +384,8 @@ fun HomeScreen(
                     .align(Alignment.BottomStart)
                     .padding(start = 8.dp, bottom = bottomPadding)
                     .noRippleClickable(onClick = onCharacterClick),
-                showSpeechBubble = homeUiState.showSpeechBubble
+                onClick = {},
+                lottieResId = R.raw.atcha_chararcter_3
             )
         }
 
