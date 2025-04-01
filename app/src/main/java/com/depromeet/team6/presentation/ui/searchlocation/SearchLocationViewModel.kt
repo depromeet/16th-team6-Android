@@ -1,10 +1,12 @@
 package com.depromeet.team6.presentation.ui.searchlocation
 
 import androidx.lifecycle.viewModelScope
+import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.Location
 import com.depromeet.team6.domain.model.SearchHistory
 import com.depromeet.team6.domain.usecase.DeleteAllSearchHistoryUseCase
 import com.depromeet.team6.domain.usecase.DeleteSearchHistoryUseCase
+import com.depromeet.team6.domain.usecase.GetAddressFromCoordinatesUseCase
 import com.depromeet.team6.domain.usecase.GetLocationsUseCase
 import com.depromeet.team6.domain.usecase.GetSearchHistoriesUseCase
 import com.depromeet.team6.domain.usecase.PostSearchHistoriesUseCase
@@ -23,7 +25,8 @@ class SearchLocationViewModel @Inject constructor(
     private val getSearchHistoriesUseCase: GetSearchHistoriesUseCase,
     private val postSearchHistoriesUseCase: PostSearchHistoriesUseCase,
     private val deleteSearchHistoryUseCase: DeleteSearchHistoryUseCase,
-    private val deleteAllSearchHistoryUseCase: DeleteAllSearchHistoryUseCase
+    private val deleteAllSearchHistoryUseCase: DeleteAllSearchHistoryUseCase,
+    private val getAddressFromCoordinatesUseCase: GetAddressFromCoordinatesUseCase
 ) : BaseViewModel<SearchLocationContract.SearchLocationUiState, SearchLocationContract.SearchLocationSideEffect, SearchLocationContract.SearchLocationEvent>() {
 
     override fun createInitialState(): SearchLocationContract.SearchLocationUiState =
@@ -63,6 +66,10 @@ class SearchLocationViewModel @Inject constructor(
             }
 
             is SearchLocationContract.SearchLocationEvent.UpdateUserLocationSate -> setState { copy(userLocation = event.userLocation) }
+
+            is SearchLocationContract.SearchLocationEvent.ChangeSearchSelectMapViewVisible -> setState {
+                copy(searchSelectMapView = event.searchSelectMapView)
+            }
         }
     }
 
@@ -172,6 +179,18 @@ class SearchLocationViewModel @Inject constructor(
                     setState { copy(searchResults = emptyList()) }
                 }
             }
+        }
+    }
+
+    fun getCenterLocation(location: LatLng, onComplete: (Address) -> Unit = {}) {
+        viewModelScope.launch {
+            getAddressFromCoordinatesUseCase(location.latitude, location.longitude)
+                .onSuccess { address ->
+                    setState { copy(selectLocation = address) }
+                    onComplete(address)
+                }
+                .onFailure {
+                }
         }
     }
 }
