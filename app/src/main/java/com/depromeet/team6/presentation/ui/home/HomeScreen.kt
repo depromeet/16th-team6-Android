@@ -9,7 +9,9 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -354,13 +356,13 @@ fun HomeScreen(
             else ->
                 SpeechBubbleText(
                     stringResource(R.string.home_bubble_basic_text),
-                    homeUiState.taxiCost.toString() + "원",
+                    "약 "+homeUiState.taxiCost.toString() + "원",
                     null,
                     207.dp
                 )
         }
 
-        if (!homeUiState.isAlarmRegistered) {
+        if (!homeUiState.isAlarmRegistered) { // 첫 화면
             CharacterLottieSpeechBubble(
                 prefixText = prefixText,
                 emphasisText = emphasisText,
@@ -369,8 +371,8 @@ fun HomeScreen(
                     .align(Alignment.BottomStart)
                     .padding(start = 8.dp, bottom = bottomPadding)
                     .noRippleClickable(onClick = onCharacterClick),
-                showSpeechBubble = homeUiState.showSpeechBubble,
-                lottieResId = R.raw.character_alarm_not_registered
+                onClick = {},
+                lottieResId = R.raw.atcha_character_1
             )
         } else {
             CharacterSpeechBubble(
