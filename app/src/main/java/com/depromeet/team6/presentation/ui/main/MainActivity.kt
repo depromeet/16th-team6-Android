@@ -55,8 +55,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        clearAllSharedPrefs(applicationContext)
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             installSplashScreen()
         }
@@ -99,16 +97,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-//    private fun startLockService() {
-//        lockServiceManager.start()
-//        Toast.makeText(this, getString(R.string.lock_service_start_text), Toast.LENGTH_SHORT).show()
-//    }
-
-    fun clearAllSharedPrefs(context: Context) {
-        val sharedPreferences = context.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
-        sharedPreferences.edit().clear().apply()
-    }
-
     @Composable
     private fun <T> ObserveEvents(
         flow: Flow<T>,
@@ -123,23 +111,6 @@ class MainActivity : ComponentActivity() {
                     flow.collect(onEvent)
                 }
             }
-        }
-    }
-}
-
-@Composable
-fun LockTestScreen(btnClick: () -> Unit) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(text = stringResource(id = R.string.app_name), fontSize = 24.sp)
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = { btnClick() }) {
-            Text(text = stringResource(id = R.string.lock_service_start_text))
         }
     }
 }
