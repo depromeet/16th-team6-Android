@@ -101,12 +101,14 @@ fun ItineraryScreen(
                     }
             ) {
                 ItinerarySummary(
-                    totalTimeMinute = itineraryInfo.remainingTime / 60,
+                    totalTimeMinute = itineraryInfo.totalTime / 60,
                     boardingTime = itineraryInfo.boardingTime,
                     legs = itineraryInfo.legs
                 )
                 ItineraryDetail(
-                    legs = itineraryInfo.legs
+                    courseInfo = itineraryInfo,
+                    departurePoint = uiState.departurePoint!!,
+                    destinationPoint = uiState.destinationPoint!!
                 )
             }
         }

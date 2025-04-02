@@ -59,7 +59,7 @@ fun List<ResponseCourseSearchDto>.toDomain(): List<CourseInfo> = filter { respon
     CourseInfo(
         routeId = response.routeId,
         filterCategory = (response.pathType + 1) % 3, // 1 버스, 2 지하철, 3 전체 ->  0 : 전체,  1: 버스,  2: 지하철
-        remainingTime = response.totalTime,
+        totalTime = response.totalTime,
         departureTime = response.departureDateTime,
         boardingTime = boardingDateTime ?: "1999-06-06T00:00:00",
         legs = legInfo

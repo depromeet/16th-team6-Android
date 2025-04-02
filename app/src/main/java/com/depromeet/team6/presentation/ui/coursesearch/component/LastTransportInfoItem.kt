@@ -46,8 +46,8 @@ fun LastTransportInfoItem(
             .padding(vertical = 20.dp, horizontal = 16.dp)
     ) {
         // 남은 시간
-        val remainingHour = courseSearchResult.remainingTime / 60 / 60
-        val remainingMinute = courseSearchResult.remainingTime / 60 % 60
+        val remainingHour = courseSearchResult.totalTime / 60 / 60
+        val remainingMinute = courseSearchResult.totalTime / 60 % 60
 
         Row {
             if (remainingHour > 0) {
@@ -227,7 +227,7 @@ fun LastTransportInfoItemPreview(
     val mockData = CourseInfo(
         routeId = "123",
         filterCategory = 0,
-        remainingTime = 83 * 60,
+        totalTime = 83 * 60,
         departureTime = "2025-03-11T23:12:00",
         boardingTime = "2025-03-11T23:21:00",
         legs = courseInfo
@@ -245,7 +245,7 @@ fun LastTransportInfoItemPreview2(
     val mockData = CourseInfo(
         routeId = "123",
         filterCategory = 0,
-        remainingTime = 23 * 60,
+        totalTime = 23 * 60,
         departureTime = "2025-03-11T23:12:00",
         boardingTime = "2025-03-11T23:21:00",
         legs = courseInfo
