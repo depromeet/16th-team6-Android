@@ -2,6 +2,7 @@ package com.depromeet.team6.presentation.ui.itinerary.component
 
 import android.widget.FrameLayout
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
@@ -161,6 +162,7 @@ fun ItineraryMap(
 
     Box(
         modifier = modifier
+            .background(defaultTeam6Colors.greyWashBackground)
     ) {
         // Tmap
         AndroidView(

@@ -1,6 +1,7 @@
 package com.depromeet.team6.presentation.ui.main.navigation
 
 import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
@@ -34,6 +35,9 @@ fun MainNavHost(
                 AnimatedContentTransitionScope.SlideDirection.Right,
                 animationSpec = tween(500)
             )
+        },
+        popEnterTransition = {
+            EnterTransition.None
         }
     ) {
         homeNavGraph(
