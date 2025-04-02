@@ -1,5 +1,6 @@
 package com.depromeet.team6.presentation.ui.itinerary
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,6 +23,7 @@ import com.depromeet.team6.presentation.ui.itinerary.component.ItineraryMap
 import com.depromeet.team6.presentation.ui.itinerary.component.ItinerarySummary
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.presentation.util.view.LoadState
+import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.google.android.gms.maps.model.LatLng
 
 @Composable
@@ -55,7 +57,9 @@ fun ItineraryRoute(
             uiState = uiState,
             onBackPressed = onBackPressed,
             modifier = Modifier
-                .padding(padding),
+                .fillMaxSize()
+                .padding(padding)
+                .background(defaultTeam6Colors.greyWashBackground),
             navigateToBusCourse = navigateToBusCourse
         )
         else -> Unit

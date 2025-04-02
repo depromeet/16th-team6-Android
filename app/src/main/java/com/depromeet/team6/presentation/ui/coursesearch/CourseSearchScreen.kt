@@ -65,6 +65,8 @@ fun CourseSearchRoute(
             CourseSearchScreen(
                 uiState = uiState,
                 modifier = Modifier
+                    .fillMaxSize()
+                    .background(defaultTeam6Colors.greyWashBackground)
                     .padding(padding)
             )
             Box(modifier = Modifier.fillMaxSize()) {
@@ -74,6 +76,8 @@ fun CourseSearchRoute(
         LoadState.Success -> CourseSearchScreen(
             uiState = uiState,
             modifier = Modifier
+                .fillMaxSize()
+                .background(defaultTeam6Colors.greyWashBackground)
                 .padding(padding),
             navigateToItinerary = navigateToItinerary,
             setNotification = {

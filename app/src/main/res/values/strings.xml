@@ -108,6 +108,8 @@
     <string name="itinerary_info_legs_walk_time">%d분 걷기</string>
     <string name="itinerary_info_legs_walk_distance">%dm</string>
     <string name="itinerary_info_legs_boarding_HHmm">%02d:%02d</string>
+    <string name="itinerary_info_legs_boarding">승차</string>
+    <string name="itinerary_info_legs_disembarking">하차</string>
 
     <!--    mypage      -->
     <string name="mypage_icon_arrow_text">마이페이지 화살표</string>

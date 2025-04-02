@@ -41,7 +41,7 @@ fun CourseInfoSimple(
         modifier = Modifier
             .clip(RoundedCornerShape(8.dp))
             .background(defaultTeam6Colors.systemGrey5)
-            .padding(start = 7.dp, end = 10.dp, top = 5.dp, bottom = 5.dp)
+            .padding(start = 7.dp, end = 10.dp, top = 6.dp, bottom = 6.dp)
             .fillMaxWidth()
             .wrapContentHeight()
             .noRippleClickable {
@@ -69,7 +69,7 @@ fun CourseInfoSimple(
                             .width(4.dp)
                     )
                     Image(
-                        imageVector = ImageVector.vectorResource(id = R.drawable.ic_all_arrow_right_grey),
+                        imageVector = ImageVector.vectorResource(id = R.drawable.ic_arrow_right_big),
                         contentDescription = "transport course divider",
                         modifier = Modifier
                             .size(12.dp)
@@ -82,7 +82,7 @@ fun CourseInfoSimple(
             modifier = Modifier
                 .size(16.dp)
                 .align(Alignment.CenterVertically),
-            imageVector = ImageVector.vectorResource(id = R.drawable.ic_all_arrow_down_grey),
+            imageVector = ImageVector.vectorResource(id = R.drawable.ic_arrow_down_big),
             contentDescription = "arrow down"
         )
     }
