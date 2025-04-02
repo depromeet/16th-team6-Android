@@ -25,6 +25,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import com.depromeet.team6.R
 import com.depromeet.team6.domain.model.course.LegInfo
+import com.depromeet.team6.domain.model.course.TransportType
 import com.depromeet.team6.presentation.ui.itinerary.LegInfoDummyProvider
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.presentation.util.view.TransportTypeUiMapper
@@ -55,6 +56,7 @@ fun CourseInfoSimple(
             verticalAlignment = Alignment.CenterVertically
         ) {
             itemsIndexed(legs) { index, courseInfo ->
+                if (index in 1 until legs.size - 1 && courseInfo.transportType == TransportType.WALK) return@itemsIndexed
                 Image(
                     modifier = Modifier
                         .size(26.dp),

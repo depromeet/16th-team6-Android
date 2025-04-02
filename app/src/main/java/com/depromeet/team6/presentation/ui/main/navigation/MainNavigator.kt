@@ -6,11 +6,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.depromeet.team6.presentation.model.bus.BusArrivalParameter
 import com.depromeet.team6.presentation.ui.bus.navigation.navigationToBusCourse
-import com.depromeet.team6.presentation.ui.coursesearch.navigation.CourseSearchRoute
 import com.depromeet.team6.presentation.ui.coursesearch.navigation.navigateCourseSearch
 import com.depromeet.team6.presentation.ui.home.navigation.HomeRoute
 import com.depromeet.team6.presentation.ui.home.navigation.navigationHome
-import com.depromeet.team6.presentation.ui.itinerary.navigation.ItineraryRoute
 import com.depromeet.team6.presentation.ui.itinerary.navigation.navigateToItinerary
 import com.depromeet.team6.presentation.ui.login.navigation.LoginRoute
 import com.depromeet.team6.presentation.ui.login.navigation.navigationLogin
@@ -43,7 +41,6 @@ class MainNavigator(
         departure: String,
         destination: String
     ) {
-        clearBackStackTo(CourseSearchRoute.ROUTE)
         navHostController.navigateCourseSearch(
             departurePoint = departure,
             destinationPoint = destination
@@ -55,7 +52,6 @@ class MainNavigator(
         departurePointJSON: String,
         destinationPointJSON: String
     ) {
-        clearBackStackTo(ItineraryRoute.ROUTE)
         navHostController.navigateToItinerary(
             courseInfoJSON,
             departurePointJSON,

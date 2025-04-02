@@ -17,8 +17,7 @@ fun NavController.navigateToItinerary(
     navigate(
         route = "${ItineraryRoute.ROUTE}/$courseInfoJSON/$departurePointJSON/$destinationPointJSON"
     ) {
-        popUpTo(graph.startDestinationId) { inclusive = true }
-        launchSingleTop = true
+
     }
 }
 

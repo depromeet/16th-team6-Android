@@ -20,6 +20,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
@@ -50,6 +51,7 @@ fun ItineraryMap(
     legs: List<LegInfo>,
     departurePoint: Address,
     destinationPoint: Address,
+    marginTop : Dp,
     modifier: Modifier = Modifier,
     onBackPressed: () -> Unit
 ) {
@@ -178,7 +180,7 @@ fun ItineraryMap(
             modifier = Modifier
                 .size(36.dp)
                 .align(Alignment.TopStart)
-                .offset(x = 16.dp, y = 12.dp)
+                .offset(x = 16.dp, y = 12.dp + marginTop)
                 .noRippleClickable {
                     onBackPressed()
                 }
@@ -242,6 +244,7 @@ fun ItineraryMapPreview(
     @PreviewParameter(LegInfoDummyProvider::class) legs: List<LegInfo>
 ) {
     ItineraryMap(
+        marginTop = 10.dp ,
         legs = legs,
         currentLocation = LatLng(37.5665, 126.9780),
         departurePoint = Address(
@@ -256,7 +259,6 @@ fun ItineraryMapPreview(
             lon = 126.97755824522,
             address = ""
         ),
-
         onBackPressed = { }
     )
 }

@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -64,11 +65,11 @@ fun ItineraryRoute(
     when (uiState.courseDataLoadState) {
         LoadState.Idle -> {}
         LoadState.Success -> ItineraryScreen(
+            marginTop = padding.calculateTopPadding(),
             uiState = uiState,
             onBackPressed = onBackPressed,
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding)
                 .background(defaultTeam6Colors.greyWashBackground),
             navigateToBusCourse = navigateToBusCourse
         )
@@ -78,6 +79,7 @@ fun ItineraryRoute(
 
 @Composable
 fun ItineraryScreen(
+    marginTop : Dp,
     modifier: Modifier = Modifier,
     uiState: ItineraryContract.ItineraryUiState = ItineraryContract.ItineraryUiState(),
     navigateToBusCourse: (BusArrivalParameter) -> Unit = {}, // 테스트용
@@ -88,6 +90,7 @@ fun ItineraryScreen(
         modifier = modifier,
         mainContent = {
             ItineraryMap(
+                marginTop = marginTop,
                 legs = itineraryInfo.legs,
                 currentLocation = LatLng(37.5665, 126.9780),
                 departurePoint = uiState.departurePoint!!,
@@ -134,5 +137,7 @@ fun ItineraryScreen(
 fun ItineraryScreenPreview(
     @PreviewParameter(LegInfoDummyProvider::class) legs: List<LegInfo>
 ) {
-    ItineraryScreen()
+    ItineraryScreen(
+        marginTop = 10.dp
+    )
 }

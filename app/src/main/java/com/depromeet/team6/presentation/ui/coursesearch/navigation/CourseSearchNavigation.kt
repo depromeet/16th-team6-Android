@@ -12,8 +12,8 @@ fun NavController.navigateCourseSearch(departurePoint: String, destinationPoint:
     navigate(
         route = "${CourseSearchRoute.ROUTE}/$departurePoint/$destinationPoint"
     ) {
-        popUpTo(graph.startDestinationId) { inclusive = true }
-        launchSingleTop = true
+//        popUpTo(graph.startDestinationId) { inclusive = true }
+//        launchSingleTop = true
     }
 }
 
