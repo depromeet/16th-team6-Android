@@ -97,7 +97,8 @@ fun BusCourseScreen(
     padding: PaddingValues,
     modifier: Modifier = Modifier,
     uiState: BusCourseContract.BusCourseUiState = BusCourseContract.BusCourseUiState(),
-    backButtonClicked: () -> Unit = {}
+    backButtonClicked: () -> Unit = {},
+    refreshButtonClicked: () -> Unit = {}
 ) {
     val busNumber = 350
     val runningBusCount = 2
@@ -119,85 +120,102 @@ fun BusCourseScreen(
         }
     }
 
-    Column(
+    Box(
         modifier = modifier
             .fillMaxSize()
             .background(color = defaultTeam6Colors.greyElevatedBackground)
             .padding(padding)
     ) {
-        Box(modifier = Modifier.fillMaxWidth()) {
-            Icon(
-                imageVector = ImageVector.vectorResource(R.drawable.ic_all_arrow_left_grey),
-                contentDescription = null,
-                tint = Color.Unspecified,
-                modifier = Modifier
-                    .padding(vertical = 18.dp, horizontal = 16.dp)
-                    .noRippleClickable { backButtonClicked() }
-                    .align(Alignment.CenterStart)
-            )
-            Row(
-                modifier = Modifier.align(Alignment.Center),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
-            ) {
-                TransportVectorIconComposable(
-                    type = TransportType.BUS,
-                    color = TransportTypeUiMapper.getColor(TransportType.BUS, uiState.subtypeIdx),
-                    isMarker = false,
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+        ) {
+            Box(modifier = Modifier.fillMaxWidth()) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(R.drawable.ic_all_arrow_left_grey),
+                    contentDescription = null,
+                    tint = Color.Unspecified,
                     modifier = Modifier
-                        .size(18.dp)
+                        .padding(vertical = 18.dp, horizontal = 16.dp)
+                        .noRippleClickable { backButtonClicked() }
+                        .align(Alignment.CenterStart)
                 )
-                Spacer(modifier = Modifier.width(3.dp))
+                Row(
+                    modifier = Modifier.align(Alignment.Center),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    TransportVectorIconComposable(
+                        type = TransportType.BUS,
+                        color = TransportTypeUiMapper.getColor(TransportType.BUS, uiState.subtypeIdx),
+                        isMarker = false,
+                        modifier = Modifier
+                            .size(18.dp)
+                    )
+                    Spacer(modifier = Modifier.width(3.dp))
+                    Text(
+                        text = busNumber.toString(),
+                        style = defaultTeam6Typography.heading5SemiBold17,
+                        color = defaultTeam6Colors.white
+                    )
+                }
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 12.dp, horizontal = 16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 Text(
-                    text = busNumber.toString(),
-                    style = defaultTeam6Typography.heading5SemiBold17,
+                    text = stringResource(R.string.bus_course_info),
+                    style = defaultTeam6Typography.bodyRegular14,
                     color = defaultTeam6Colors.white
                 )
-            }
-        }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 12.dp, horizontal = 16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = stringResource(R.string.bus_course_info),
-                style = defaultTeam6Typography.bodyRegular14,
-                color = defaultTeam6Colors.white
-            )
-            Spacer(modifier = Modifier.width(3.dp))
-            Icon(
-                imageVector = ImageVector.vectorResource(R.drawable.ic_bus_course_info_12),
-                contentDescription = null,
-                tint = Color.Unspecified
-            )
-            Spacer(modifier = Modifier.weight(1f))
-            Text(
-                text = buildAnnotatedString {
-                    append(fullText.substring(0, numberStart))
-                    withStyle(style = SpanStyle(color = defaultTeam6Colors.white)) {
-                        append(fullText.substring(numberStart, numberEnd))
-                    }
-                    append(fullText.substring(numberEnd))
-                },
-                style = defaultTeam6Typography.bodyRegular14.copy(color = defaultTeam6Colors.greySecondaryLabel)
-            )
-        }
-        LazyColumn(
-            modifier = Modifier.fillMaxWidth().background(color = defaultTeam6Colors.greyWashBackground),
-            state = listState
-        ) {
-            items(uiState.busRouteStationList) { busRouteStation ->
-                BusStationItem(
-                    busRouteStation = busRouteStation,
-                    busSubtypeIdx = 2,
-                    isTurnPoint = (busRouteStation.order == uiState.turnPoint),
-                    isCurrentStation = (busRouteStation.busStationId == uiState.currentBusStationId),
-                    busRemainTime = Pair(400, 5000)
+                Spacer(modifier = Modifier.width(3.dp))
+                Icon(
+                    imageVector = ImageVector.vectorResource(R.drawable.ic_bus_course_info_12),
+                    contentDescription = null,
+                    tint = Color.Unspecified
+                )
+                Spacer(modifier = Modifier.weight(1f))
+                Text(
+                    text = buildAnnotatedString {
+                        append(fullText.substring(0, numberStart))
+                        withStyle(style = SpanStyle(color = defaultTeam6Colors.white)) {
+                            append(fullText.substring(numberStart, numberEnd))
+                        }
+                        append(fullText.substring(numberEnd))
+                    },
+                    style = defaultTeam6Typography.bodyRegular14.copy(color = defaultTeam6Colors.greySecondaryLabel)
                 )
             }
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(color = defaultTeam6Colors.greyWashBackground),
+                state = listState
+            ) {
+                items(uiState.busRouteStationList) { busRouteStation ->
+                    BusStationItem(
+                        busRouteStation = busRouteStation,
+                        busSubtypeIdx = 2,
+                        isTurnPoint = (busRouteStation.order == uiState.turnPoint),
+                        isCurrentStation = (busRouteStation.busStationId == uiState.currentBusStationId),
+                        busRemainTime = Pair(400, 5000)
+                    )
+                }
+            }
         }
+        Icon(
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(16.dp)
+                .noRippleClickable {
+                    refreshButtonClicked()
+                },
+            imageVector = ImageVector.vectorResource(R.drawable.ic_all_course_refresh),
+            contentDescription = null
+        )
     }
 }
 

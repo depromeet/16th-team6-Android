@@ -23,6 +23,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.depromeet.team6.R
+import com.depromeet.team6.domain.model.BusCongestion
 import com.depromeet.team6.domain.model.BusRouteStation
 import com.depromeet.team6.domain.model.course.TransportType
 import com.depromeet.team6.presentation.ui.common.text.AtChaRemainTimeText
@@ -51,10 +52,13 @@ fun BusStationItem(
             Spacer(
                 modifier = Modifier
                     .fillMaxHeight()
+                    .padding(start = 66.dp)
                     .width(4.dp)
                     .background(color = busColor)
             )
             Icon(
+                modifier = Modifier
+                    .padding(start = 66.dp),
                 imageVector = ImageVector.vectorResource(R.drawable.ic_bus_station_check_14),
                 contentDescription = null,
                 tint = Color.Unspecified
@@ -64,8 +68,12 @@ fun BusStationItem(
                 contentDescription = null,
                 tint = Color.Unspecified,
                 modifier = Modifier
-                    .padding(end = 22.dp)
+                    .padding(start = 44.dp)
                     .alpha(if (isTurnPoint) 1f else 0f)
+            )
+            BusStatusIcon(
+                busNumber = 5400.toString(), busCongestion = BusCongestion.LOW,
+                modifier = Modifier.padding(start = 12.dp)
             )
         }
         Column(modifier = Modifier.padding(top = 16.dp, start = 10.dp, bottom = 17.dp)) {
