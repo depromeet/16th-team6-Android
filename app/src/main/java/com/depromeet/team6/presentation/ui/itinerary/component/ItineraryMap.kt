@@ -26,6 +26,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
 import com.depromeet.team6.BuildConfig
 import com.depromeet.team6.R
+import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.course.LegInfo
 import com.depromeet.team6.presentation.ui.common.TransportVectorIconBitmap
 import com.depromeet.team6.presentation.ui.itinerary.LegInfoDummyProvider
@@ -47,6 +48,8 @@ import kotlinx.coroutines.withContext
 fun ItineraryMap(
     currentLocation: LatLng,
     legs: List<LegInfo>,
+    departurePoint : Address,
+    destinationPoint : Address,
     modifier: Modifier = Modifier,
     onBackPressed: () -> Unit
 ) {
@@ -54,8 +57,8 @@ fun ItineraryMap(
     val tMapView = remember { TMapView(context) }
     var isMapReady by remember { mutableStateOf(false) }
 
-    val departLocation = LatLng(legs[0].startPoint.lat, legs[0].startPoint.lon)
-    val destinationLocation = LatLng(legs[legs.size - 1].endPoint.lat, legs[legs.size - 1].endPoint.lon)
+    val departLocation = LatLng(departurePoint.lat, departurePoint.lon)
+    val destinationLocation = LatLng(destinationPoint.lat, destinationPoint.lon)
     val markerSizePx = 28.dp.toPx().toInt()
 
     LaunchedEffect(Unit) {

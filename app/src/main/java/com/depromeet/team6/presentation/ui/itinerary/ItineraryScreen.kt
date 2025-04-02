@@ -80,6 +80,8 @@ fun ItineraryScreen(
             ItineraryMap(
                 legs = itineraryInfo.legs,
                 currentLocation = LatLng(37.5665, 126.9780),
+                departurePoint = uiState.departurePoint!!,
+                destinationPoint = uiState.destinationPoint!!,
                 onBackPressed = onBackPressed
             )
         },
