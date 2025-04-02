@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -36,12 +38,12 @@ import androidx.lifecycle.flowWithLifecycle
 import com.depromeet.team6.R
 import com.depromeet.team6.domain.model.course.TransportType
 import com.depromeet.team6.presentation.model.bus.BusArrivalParameter
+import com.depromeet.team6.presentation.ui.bus.component.BusStationItem
 import com.depromeet.team6.presentation.ui.common.TransportVectorIconComposable
 import com.depromeet.team6.presentation.ui.common.view.AtChaLoadingView
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.depromeet.team6.presentation.util.view.TransportTypeUiMapper
-import com.depromeet.team6.ui.theme.LocalTeam6Colors
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.depromeet.team6.ui.theme.defaultTeam6Typography
 
@@ -81,6 +83,7 @@ fun BusCourseRoute(
             BusCourseScreen(
                 padding = padding,
                 modifier = Modifier.fillMaxSize(),
+                uiState = uiState,
                 backButtonClicked = { viewModel.setSideEffect(BusCourseContract.BusCourseSideEffect.NavigateToBackStack) }
             )
         }
@@ -97,22 +100,29 @@ fun BusCourseScreen(
     backButtonClicked: () -> Unit = {}
 ) {
     val busNumber = 350
-    val busIconTint = defaultTeam6Colors.busColors[0].second
     val runningBusCount = 2
-
-    val grey = defaultTeam6Colors.greySecondaryLabel
-    val white = defaultTeam6Colors.white
 
     val fullText = stringResource(R.string.bus_course_running_bus_count, runningBusCount)
     val numberStart = fullText.indexOf(runningBusCount.toString())
     val numberEnd = numberStart + runningBusCount.toString().length
 
-    val color = LocalTeam6Colors.current
+    val listState = rememberLazyListState()
+    val currentIndex = uiState.busRouteStationList.indexOfFirst {
+        it.busStationId == uiState.currentBusStationId
+    }
+
+    val targetIndex = maxOf(currentIndex - 3, 0)
+
+    LaunchedEffect(currentIndex) {
+        if (currentIndex != -1) {
+            listState.scrollToItem(targetIndex)
+        }
+    }
 
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(color = color.greyElevatedBackground)
+            .background(color = defaultTeam6Colors.greyElevatedBackground)
             .padding(padding)
     ) {
         Box(modifier = Modifier.fillMaxWidth()) {
@@ -166,16 +176,28 @@ fun BusCourseScreen(
             Text(
                 text = buildAnnotatedString {
                     append(fullText.substring(0, numberStart))
-                    withStyle(style = SpanStyle(color = white)) {
+                    withStyle(style = SpanStyle(color = defaultTeam6Colors.white)) {
                         append(fullText.substring(numberStart, numberEnd))
                     }
                     append(fullText.substring(numberEnd))
                 },
-                style = defaultTeam6Typography.bodyRegular14.copy(color = grey)
+                style = defaultTeam6Typography.bodyRegular14.copy(color = defaultTeam6Colors.greySecondaryLabel)
             )
         }
-    }
-    LazyColumn(modifier = Modifier.fillMaxWidth().background(color = color.greyWashBackground)) {
+        LazyColumn(
+            modifier = Modifier.fillMaxWidth().background(color = defaultTeam6Colors.greyWashBackground),
+            state = listState
+        ) {
+            items(uiState.busRouteStationList) { busRouteStation ->
+                BusStationItem(
+                    busRouteStation = busRouteStation,
+                    busSubtypeIdx = 2,
+                    isTurnPoint = (busRouteStation.order == uiState.turnPoint),
+                    isCurrentStation = (busRouteStation.busStationId == uiState.currentBusStationId),
+                    busRemainTime = Pair(400, 5000)
+                )
+            }
+        }
     }
 }
 

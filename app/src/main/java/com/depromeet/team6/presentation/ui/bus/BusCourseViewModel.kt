@@ -47,6 +47,7 @@ class BusCourseViewModel @Inject constructor(
                     routeName = busArrival.routeName,
                     serviceRegion = busArrival.serviceRegion
                 )
+                setState { copy(currentBusStationId = busArrival.busStationId) }
             }.onFailure {
                 setEvent(BusCourseContract.BusCourseEvent.SetScreenLoadState(loadState = LoadState.Error))
             }
@@ -65,6 +66,8 @@ class BusCourseViewModel @Inject constructor(
                 serviceRegion = serviceRegion
             ).onSuccess { result ->
                 Timber.d(result.toString())
+                setState { copy(turnPoint = result.turnPoint) }
+                setState { copy(busRouteStationList = result.busRouteStationList) }
                 setEvent(BusCourseContract.BusCourseEvent.SetScreenLoadState(loadState = LoadState.Success))
             }.onFailure {
                 setEvent(BusCourseContract.BusCourseEvent.SetScreenLoadState(loadState = LoadState.Error))

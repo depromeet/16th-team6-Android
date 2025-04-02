@@ -13,6 +13,6 @@ enum class BusCongestion {
     LOW,
     MEDIUM,
     HIGH,
-    ERY_HIGH,
+    VERY_HIGH,
     UNKNOWN
 }
