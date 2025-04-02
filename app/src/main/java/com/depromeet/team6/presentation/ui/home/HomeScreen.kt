@@ -277,7 +277,7 @@ fun HomeScreen(
                 transportationName = homeUiState.firstTransportationName,
                 timeToLeave = formatTimeString(homeUiState.departureTime),
                 boardingTime = formatTimeString(homeUiState.boardingTime),
-                destination = "우리집",
+                destination = stringResource(R.string.home_my_home_text),
                 onCourseTextClick = {},
                 deleteAlarmConfirmed = deleteAlarmConfirmed,
                 dismissDialog = dismissDialog,
@@ -304,7 +304,7 @@ fun HomeScreen(
 
             CurrentLocationSheet(
                 currentLocation = homeUiState.departurePoint.name,
-                destination = "우리집",
+                destination = stringResource(R.string.home_my_home_text),
                 onSearchClick = {
                     onSearchClick()
                 },
@@ -335,7 +335,7 @@ fun HomeScreen(
             else ->
                 SpeechBubbleText(
                     stringResource(R.string.home_bubble_basic_text),
-                    "약 " + homeUiState.taxiCost.toString() + "원",
+                    stringResource(R.string.home_bubble_least_text) + homeUiState.taxiCost.toString() + stringResource(R.string.home_bubble_won_text),
                     null,
                     207.dp
                 )
@@ -355,7 +355,7 @@ fun HomeScreen(
                     emphasisText = emphasisText,
                     suffixText = suffixText,
                     topPrefixText = "",
-                    topEmphasisText = "지도를 움직여 출발지를 설정해 봐요",
+                    topEmphasisText = stringResource(R.string.home_move_set_destination),
                     topSuffixText = "",
                     modifier = Modifier
                         .align(Alignment.BottomStart)
@@ -435,7 +435,6 @@ private fun formatTimeString(timeString: String): String {
             timeString
         }
     } catch (e: Exception) {
-        Timber.e("시간 형식 변환 오류: $timeString")
         timeString
     }
 }

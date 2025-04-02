@@ -312,7 +312,7 @@ class HomeViewModel @Inject constructor(
     // SharedPreferences에서 사용자 출발 상태를 로드
     fun loadUserDepartureState(context: Context) {
         viewModelScope.launch {
-            val sharedPreferences = context.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
+            val sharedPreferences = context.getSharedPreferences(MY_PREFERENCES_NAME, Context.MODE_PRIVATE)
             val userDeparture = sharedPreferences.getBoolean("userDeparture", false)
             setEvent(HomeContract.HomeEvent.LoadUserDeparture(userDeparture))
         }
@@ -320,7 +320,7 @@ class HomeViewModel @Inject constructor(
 
     fun loadAlarmAndCourseInfoFromPrefs(context: Context) {
         viewModelScope.launch {
-            val prefs = context.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
+            val prefs = context.getSharedPreferences(MY_PREFERENCES_NAME, Context.MODE_PRIVATE)
             val isAlarmRegistered = prefs.getBoolean("alarmRegistered", false)
             val lastRouteId = prefs.getString("lastRouteId", null)
 
@@ -453,5 +453,9 @@ class HomeViewModel @Inject constructor(
                 setState { copy(destinationState = LoadState.Error) }
             }
         }
+    }
+
+    companion object {
+        private const val MY_PREFERENCES_NAME = "MyPreferences"
     }
 }
