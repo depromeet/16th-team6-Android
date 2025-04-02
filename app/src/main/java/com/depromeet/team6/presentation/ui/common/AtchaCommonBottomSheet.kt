@@ -30,7 +30,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.depromeet.team6.presentation.util.Dimens
+import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -61,7 +63,15 @@ fun AtchaCommonBottomSheet(
             ),
             sheetContainerColor = defaultTeam6Colors.greyWashBackground,
             sheetDragHandle = {
-                DragHandle()
+                DragHandle{
+                    coroutineScope.launch {
+                        if (sheetState.currentValue == SheetValue.PartiallyExpanded) {
+                            sheetState.expand()
+                        } else {
+                            sheetState.partialExpand()
+                        }
+                    }
+                }
             }
         ) { paddingValues ->
             Box(
@@ -86,10 +96,12 @@ fun DragHandle(
     width: Dp = 40.dp,
     height: Dp = 4.dp,
     shape: Shape = MaterialTheme.shapes.extraLarge,
-    color: Color = defaultTeam6Colors.greyQuaternaryLabel
+    color: Color = defaultTeam6Colors.greyQuaternaryLabel,
+    onClick: () -> Unit = {}
 ) {
     Surface(
         modifier = modifier
+            .noRippleClickable { onClick() }
             .padding(top = 14.dp, bottom = 4.dp),
         color = color,
         shape = shape
