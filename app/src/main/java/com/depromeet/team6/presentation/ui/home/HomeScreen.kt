@@ -130,10 +130,6 @@ fun HomeRoute(
     }
 
     LaunchedEffect(Unit) {
-        // viewModel.getLegs()
-    }
-
-    LaunchedEffect(Unit) {
         if (uiState.isAlarmRegistered) {
             viewModel.registerAlarm()
         }
@@ -141,10 +137,8 @@ fun HomeRoute(
 
     LaunchedEffect(uiState.isAlarmRegistered, uiState.firtTransportTation) {
         if (uiState.isAlarmRegistered && uiState.firtTransportTation == TransportType.BUS) {
-            // 버스이면서 알람이 등록된 경우 폴링 시작
             viewModel.startPollingBusStarted(routeId = uiState.lastRouteId)
         } else {
-            // 그 외의 경우 폴링 중지
             viewModel.stopPollingBusStarted()
         }
     }
@@ -187,8 +181,6 @@ fun HomeRoute(
             },
             onFinishClick = {
                 viewModel.setEvent(HomeContract.HomeEvent.FinishAlarmClicked)
-//                showDeleteDialog = true
-//                viewModel.deleteAlarm(uiState.lastRouteId, context)
             },
             deleteAlarmConfirmed = {
                 viewModel.setEvent(HomeContract.HomeEvent.DeleteAlarmConfirmed)
@@ -198,9 +190,6 @@ fun HomeRoute(
                 viewModel.setEvent(HomeContract.HomeEvent.DismissDialog)
             },
             onRefreshClick = {
-                // TODO : getLegs 함수가 막차 경로 상세 API를 받아오는게 맞는지 확인
-                // viewModel.getLegs()
-                // TODO : 말풍선 표출
             }
         )
         LoadState.Error -> navigateToLogin()
@@ -352,14 +341,10 @@ fun HomeScreen(
                 )
         }
 
-        // 상태로 관리
         var speechBubbleFlag by remember { mutableStateOf(true) }
 
-        // 클릭 핸들러
         val handleCharacterClick = {
-            // 상태 토글
             speechBubbleFlag = !speechBubbleFlag
-            // 필요한 경우 여기서 onCharacterClick() 호출
             onCharacterClick()
         }
 
@@ -411,7 +396,6 @@ fun HomeScreen(
         }
 
         if (homeUiState.deleteAlarmDialogVisible) {
-            // 반투명 검은색 배경 오버레이 추가
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -419,20 +403,18 @@ fun HomeScreen(
                     .zIndex(2f)
             )
 
-            // 알림 삭제 다이얼로그
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
                     .fillMaxSize()
                     .zIndex(3f)
             ) {
-                // DeleteAlarmDialog 컴포넌트에 콜백 전달
                 DeleteAlarmDialog(
                     onDismiss = {
-                        dismissDialog() // 다이얼로그 닫기
+                        dismissDialog()
                     },
                     onSuccess = {
-                        deleteAlarmConfirmed() // 알림 삭제 실행
+                        deleteAlarmConfirmed()
                     }
                 )
             }
@@ -440,25 +422,21 @@ fun HomeScreen(
     }
 }
 
-// TimeFormatter 유틸 함수 (HomeScreen.kt 파일 내에 추가)
 private fun formatTimeString(timeString: String): String {
     return try {
         if (timeString.contains("T")) {
-            // ISO 형식 (2025-03-14T23:46)
             val dateTime = LocalDateTime.parse(timeString)
             val formatter = DateTimeFormatter.ofPattern("HH:mm")
             dateTime.format(formatter)
         } else if (timeString.contains(":") && timeString.split(":").size == 3) {
-            // HH:mm:ss 형식
             val timeParts = timeString.split(":")
             "${timeParts[0]}:${timeParts[1]}"
         } else {
-            // 그 외의 경우 원본 반환
             timeString
         }
     } catch (e: Exception) {
         Timber.e("시간 형식 변환 오류: $timeString")
-        timeString // 실패 시 원본 반환
+        timeString
     }
 }
 

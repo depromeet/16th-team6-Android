@@ -32,13 +32,13 @@ class HomeViewModel @Inject constructor(
     private val getAddressFromCoordinatesUseCase: GetAddressFromCoordinatesUseCase,
     private val getUserInfoUseCase: GetUserInfoUseCase,
     private val getTaxiCostUseCase: GetTaxiCostUseCase,
-    val getCourseSearchResultUseCase: GetCourseSearchResultsUseCase, // TODO : 실제 UseCase 로 교체
+    val getCourseSearchResultUseCase: GetCourseSearchResultsUseCase,
     private val getBusStartedUseCase: GetBusStartedUseCase,
     private val deleteAlarmUseCase: DeleteAlarmUseCase
 ) : BaseViewModel<HomeContract.HomeUiState, HomeContract.HomeSideEffect, HomeContract.HomeEvent>() {
     private var speechBubbleJob: Job? = null
     private var busStartedPollingJob: Job? = null
-    private var lastRouteId: String = "" // TODO : 실제값으로 변경
+    private var lastRouteId: String = ""
 
     @Inject
     lateinit var lockServiceManager: LockServiceManager
@@ -158,8 +158,6 @@ class HomeViewModel @Inject constructor(
     }
 
     fun onTimerFinished() {
-        Timber.d("타이머 종료됨")
-
         setState {
             copy(
                 timerFinish = true
@@ -170,12 +168,6 @@ class HomeViewModel @Inject constructor(
     fun registerAlarm() {
         viewModelScope.launch {
             setEvent(HomeContract.HomeEvent.UpdateAlarmRegistered(true))
-
-//            when (currentState.firtTransportTation) {
-//                TransportType.BUS -> startPollingBusStarted(routeId = lastRouteId)
-//                TransportType.SUBWAY -> setEvent(HomeContract.HomeEvent.UpdateBusDeparted(true))
-//                else -> {}
-//            }
         }
     }
 
@@ -208,28 +200,6 @@ class HomeViewModel @Inject constructor(
             } else {
                 Log.d("알림 삭제 실패", "알림 삭제 실패")
             }
-        }
-    }
-
-    fun finishAlarm(context: Context) {
-        viewModelScope.launch {
-            // TODO : 알림 등록 API 연동 후 SharedPreferences 로직 삭제
-            val sharedPreferences = context.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
-            sharedPreferences.edit().apply {
-                putBoolean("isUserLoggedIn", false)
-                apply()
-            }
-
-            setEvent(HomeContract.HomeEvent.UpdateAlarmRegistered(false))
-            setEvent(HomeContract.HomeEvent.UpdateBusDeparted(false))
-
-            stopPollingBusStarted()
-        }
-    }
-
-    fun setBusDeparted() {
-        viewModelScope.launch {
-            setEvent(HomeContract.HomeEvent.UpdateBusDeparted(true))
         }
     }
 
@@ -344,7 +314,6 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             val sharedPreferences = context.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
             val userDeparture = sharedPreferences.getBoolean("userDeparture", false)
-            Log.d("userDeparture 가져옴", userDeparture.toString())
             setEvent(HomeContract.HomeEvent.LoadUserDeparture(userDeparture))
         }
     }
@@ -374,9 +343,7 @@ class HomeViewModel @Inject constructor(
                 try {
                     val courseInfo = Gson().fromJson(it, CourseInfo::class.java)
                     setEvent(HomeContract.HomeEvent.LoadLegsResult(courseInfo))
-                    Log.d("courseInfo", courseInfo.toString())
-                    Log.d("departureTime", courseInfo.departureTime)
-                    Log.d("lastRouteId", courseInfo.routeId)
+
                     setEvent(HomeContract.HomeEvent.LoadDepartureDateTime(courseInfo.departureTime))
                     setEvent(HomeContract.HomeEvent.LoadBoardingDateTime(courseInfo.boardingTime))
                     setEvent(HomeContract.HomeEvent.LoadFirstTransportation(getFirstTransportation(courseInfo.legs)))
@@ -389,14 +356,12 @@ class HomeViewModel @Inject constructor(
                         setEvent(HomeContract.HomeEvent.UpdateBusDeparted(true))
                     }
                 } catch (e: Exception) {
-                    // 역직렬화 실패 시 로그
                     Timber.e("CourseInfo 불러오기 실패: ${e.message}")
                 }
             }
         }
     }
 
-    // 막차 경로 중 첫번째 대중 교통 수단
     private fun getFirstTransportation(legs: List<LegInfo>): TransportType {
         var firstTransportation = legs[0].transportType
 
@@ -409,14 +374,11 @@ class HomeViewModel @Inject constructor(
         return firstTransportation
     }
 
-    // 막차 경로 중 첫번째 대중 교통 수단 색상
     private fun getFirstTransportationNumber(legs: List<LegInfo>): Int {
-        var firstTransportation = legs[0].transportType
         var firstTransportationNumber = 0
 
         for (leg in legs) {
             if (leg.transportType != TransportType.WALK) {
-                firstTransportation = leg.transportType
                 firstTransportationNumber = leg.subTypeIdx
                 break
             }
@@ -424,7 +386,6 @@ class HomeViewModel @Inject constructor(
         return firstTransportationNumber
     }
 
-    // 막차 경로 중 첫번째 대중 교통 이름 저장
     private fun getFirstTransportationName(legs: List<LegInfo>): String {
         var firstTransportationName = ""
 
@@ -444,13 +405,6 @@ class HomeViewModel @Inject constructor(
     override fun onCleared() {
         super.onCleared()
         stopPollingBusStarted()
-    }
-
-    // TODO : 잠금화면에서 출발 클릭했을 때 호출
-    fun setUserDeparture() {
-        viewModelScope.launch {
-            setEvent(HomeContract.HomeEvent.LoadUserDeparture(true))
-        }
     }
 
     fun getTaxiCost() {

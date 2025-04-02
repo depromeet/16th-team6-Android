@@ -22,9 +22,9 @@ import com.depromeet.team6.ui.theme.LocalTeam6Typography
 
 @Composable
 fun TransportStatus(
-    transportationType: TransportType, // 종류 : 버스 or 지하철
-    transportationNumber: Int, // 몇호선인지
-    transportationName: String, // 타야하는 것 : 버스 번호 or 지하철역 이름
+    transportationType: TransportType,
+    transportationNumber: Int,
+    transportationName: String,
     stopLeft: Int,
     modifier: Modifier = Modifier
 ) {

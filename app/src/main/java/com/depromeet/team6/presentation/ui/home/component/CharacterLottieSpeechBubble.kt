@@ -37,26 +37,21 @@ fun CharacterLottieSpeechBubble(
     showSpeechBubble: Boolean = true,
     lottieResId: Int = R.raw.character_alarm_not_registered
 ) {
-    // Lottie 애니메이션 컴포지션 불러오기
     val composition by rememberLottieComposition(
         spec = LottieCompositionSpec.RawRes(lottieResId)
     )
 
-    // 애니메이션 재생 관련 상태 관리
     var playAnimation by remember { mutableStateOf(true) }
     var iteration by remember { mutableStateOf(0) }
 
-    // 각 말풍선 표시 여부 상태 관리
     var isTopSpeechBubbleVisible by remember { mutableStateOf(false) }
     var isBottomSpeechBubbleVisible by remember { mutableStateOf(false) }
 
-    // 말풍선 표시 트리거 (화면 진입 시 또는 탭할 때)
     var speechBubbleTrigger by remember { mutableStateOf(0) }
 
     // 말풍선 표시 로직 (화면 진입 시 또는 탭할 때마다 실행)
     LaunchedEffect(speechBubbleTrigger) {
         if (showSpeechBubble) {
-            // 이미 표시 중인 말풍선들을 모두 숨김
             isTopSpeechBubbleVisible = false
             isBottomSpeechBubbleVisible = false
 
@@ -85,34 +80,25 @@ fun CharacterLottieSpeechBubble(
         }
     }
 
-    // 초기 화면 진입 시 말풍선 표시 트리거
     LaunchedEffect(Unit) {
         speechBubbleTrigger = 1
     }
 
-    // 애니메이션 재시작을 위한 효과
     LaunchedEffect(iteration) {
         playAnimation = false
         delay(10) // 짧은 지연 후 재시작
         playAnimation = true
     }
 
-    // 클릭 시 애니메이션을 재생하고 말풍선을 표시하기 위한 핸들러
     val handleClick = {
-        // 애니메이션 재시작
         iteration++
-
-        // 말풍선 표시 트리거
         speechBubbleTrigger++
-
-        // 사용자 정의 onClick 호출
         onClick()
     }
 
-    // 애니메이션 진행 상태
     val progress by animateLottieCompositionAsState(
         composition = composition,
-        iterations = 1, // 한 번만 재생
+        iterations = 1,
         isPlaying = playAnimation,
         restartOnPlay = true
     )
@@ -154,7 +140,6 @@ fun CharacterLottieSpeechBubble(
             )
         }
 
-        // 캐릭터 애니메이션 부분
         LottieAnimation(
             composition = composition,
             progress = { progress }

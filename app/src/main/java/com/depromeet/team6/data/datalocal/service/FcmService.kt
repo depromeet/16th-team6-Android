@@ -4,6 +4,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
+import android.os.PowerManager
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
@@ -38,6 +39,7 @@ class FcmService : FirebaseMessagingService() {
         }
         if (message.data.isNotEmpty()) {
             if (type == "FULL_SCREEN_ALERT") {
+                wakeLockAcquire()
                 startLockScreenService()
             } else if (type == "PUSH_ALERT") {
                 sendNotification(title, body)
@@ -46,6 +48,21 @@ class FcmService : FirebaseMessagingService() {
             }
         } else {
             Log.d("FCM", "[FCM] FcmService -> 알림 및 데이터 필드 모두 없음")
+        }
+    }
+
+    private fun wakeLockAcquire() {
+        try {
+            val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
+            val wakeLock = powerManager.newWakeLock(
+                PowerManager.FULL_WAKE_LOCK or PowerManager.ACQUIRE_CAUSES_WAKEUP,
+                "Atcha:WakeLock"
+            )
+
+            // 10초 동안 화면 유지
+            wakeLock.acquire(10 * 1000L)
+        } catch (e: Exception) {
+            Log.e("FCM", "WakeLock error: ${e.message}")
         }
     }
 

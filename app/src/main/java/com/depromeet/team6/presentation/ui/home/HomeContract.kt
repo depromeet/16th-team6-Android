@@ -27,7 +27,6 @@ class HomeContract {
         val firstTransportationNumber: Int = 0,
         val firstTransportationName: String = "",
         // 사용자 출발 여부
-        // TODO : 잠금화면에서 출발하기 버튼 클릭하면 해당 값 변경
         val userDeparture: Boolean = false,
         // 타이머 시간이 끝났을 때
         val timerFinish: Boolean = false,
