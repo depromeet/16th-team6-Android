@@ -118,7 +118,7 @@ fun TMapViewCompose(
             contentDescription = "Start Marker",
             modifier = Modifier
                 .align(Alignment.Center)
-                .padding(bottom = 105.dp)
+                .padding(bottom = 118.dp)
         )
 
         // 현위치 버튼
