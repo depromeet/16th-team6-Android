@@ -244,6 +244,19 @@ fun ItineraryMapPreview(
     ItineraryMap(
         legs = legs,
         currentLocation = LatLng(37.5665, 126.9780),
-        onBackPressed = { }
+        departurePoint = Address(
+            name = "성균관대학교 자연과학캠퍼스",
+            lat = 37.303534788694,
+            lon = 127.01085807594,
+            address = ""
+        ),
+        destinationPoint = Address(
+        name = "우리집",
+        lat = 37.296391553347,
+        lon = 126.97755824522,
+        address = ""
+    ),
+
+    onBackPressed = { }
     )
 }

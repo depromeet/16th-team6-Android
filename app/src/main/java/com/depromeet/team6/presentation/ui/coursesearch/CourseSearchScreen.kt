@@ -28,13 +28,14 @@ import com.depromeet.team6.presentation.ui.coursesearch.component.TransportTabMe
 import com.depromeet.team6.presentation.ui.itinerary.LegInfoDummyProvider
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
+import com.google.gson.Gson
 
 @Composable
 fun CourseSearchRoute(
     padding: PaddingValues,
     departurePoint: String,
     destinationPoint: String,
-    navigateToItinerary: (String) -> Unit,
+    navigateToItinerary: (String, String, String) -> Unit,
     navigateToHome: () -> Unit,
     viewModel: CourseSearchViewModel = hiltViewModel()
 ) {
@@ -102,7 +103,7 @@ fun CourseSearchRoute(
 fun CourseSearchScreen(
     modifier: Modifier = Modifier,
     uiState: CourseSearchContract.CourseUiState = CourseSearchContract.CourseUiState(),
-    navigateToItinerary: (String) -> Unit = {},
+    navigateToItinerary: (String, String, String) -> Unit = { s: String, s1: String, s2: String -> },
     setNotification: () -> Unit = {},
     backButtonClicked: () -> Unit = {}
 ) {
@@ -120,7 +121,13 @@ fun CourseSearchScreen(
 
         TransportTabMenu(
             availableCourses = uiState.courseData,
-            onItemClick = navigateToItinerary,
+            onItemClick = { courseInfoJson ->
+                navigateToItinerary(
+                    courseInfoJson,
+                    Gson().toJson(uiState.startingPoint!!),
+                    Gson().toJson(uiState.destinationPoint!!)
+                )
+            },
             onRegisterAlarmBtnClick = {
                 setNotification()
             }

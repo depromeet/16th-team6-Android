@@ -10,10 +10,12 @@ import com.depromeet.team6.presentation.model.bus.BusArrivalParameter
 import com.depromeet.team6.presentation.ui.itinerary.ItineraryRoute
 
 fun NavController.navigateToItinerary(
-    courseInfoJSON: String
+    courseInfoJSON: String,
+    departurePointJSON : String,
+    destinationPointJSON : String
 ) {
     navigate(
-        route = "${ItineraryRoute.ROUTE}/$courseInfoJSON"
+        route = "${ItineraryRoute.ROUTE}/$courseInfoJSON/$departurePointJSON/$destinationPointJSON"
     ) {
         popUpTo(graph.startDestinationId) { inclusive = true }
         launchSingleTop = true
@@ -26,16 +28,22 @@ fun NavGraphBuilder.itineraryNavGraph(
     popBackStack: () -> Unit
 ) {
     composable(
-        route = "${ItineraryRoute.ROUTE}/{courseInfoJSON}",
+        route = "${ItineraryRoute.ROUTE}/{courseInfoJSON}/{departurePointJSON}/{destinationPointJSON}",
         arguments = listOf(
-            navArgument("courseInfoJSON") { type = NavType.StringType }
+            navArgument("courseInfoJSON") { type = NavType.StringType },
+            navArgument("departurePointJSON") { type = NavType.StringType },
+            navArgument("destinationPointJSON") { type = NavType.StringType }
         )
     ) { backStackEntry ->
-        val departurePoint = backStackEntry.arguments?.getString("courseInfoJSON") ?: ""
+        val courseInfo = backStackEntry.arguments?.getString("courseInfoJSON") ?: ""
+        val departurePoint = backStackEntry.arguments?.getString("departurePointJSON") ?: ""
+        val destinationPoint = backStackEntry.arguments?.getString("destinationPointJSON") ?: ""
 
         ItineraryRoute(
             padding = padding,
-            courseInfoJSON = departurePoint,
+            courseInfoJSON = courseInfo,
+            departurePointJSON = departurePoint,
+            destinationPointJSON = destinationPoint,
             navigateToBusCourse = navigateToBusCourse,
             onBackPressed = popBackStack
         )
