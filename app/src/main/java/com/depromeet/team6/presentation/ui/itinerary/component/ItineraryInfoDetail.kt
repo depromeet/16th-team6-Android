@@ -40,6 +40,7 @@ fun ItineraryInfoDetail(
         // 출발
         ItineraryInfoSuffix(
             name = departureName,
+            arrivalTime = departureTime,
             isDestination = false
         )
 
@@ -78,12 +79,10 @@ private fun ItineraryInfoSuffix(
                 imageVector = ImageVector.vectorResource(markerIconId),
                 contentDescription = ""
             )
-            if (isDestination) {
-                BoardingTime(
-                    boardingDateTime = arrivalTime,
-                    modifier = Modifier
-                )
-            }
+            BoardingTime(
+                boardingDateTime = arrivalTime,
+                modifier = Modifier
+            )
         }
         Spacer(
             modifier = Modifier.width(6.dp)

@@ -125,7 +125,7 @@ private fun DetailLegsBus(
                 modifier = Modifier
                     .fillMaxHeight()
                     .width(4.dp)
-                    .padding(top = 15.dp)
+                    .padding(top = 15.dp, bottom = 20.dp)
                     .background(busColor)
                     .align(Alignment.Center)
             )
@@ -154,6 +154,11 @@ private fun DetailLegsBus(
                         .size(18.dp) // 지름 크기
                         .clip(CircleShape)
                         .background(busColor)
+                )
+                Spacer(modifier = Modifier.height(2.dp))
+                BoardingTime(
+                    boardingDateTime = boardingDateTime,
+                    modifier = Modifier
                 )
             }
         }
@@ -205,7 +210,10 @@ private fun DetailLegsBus(
             )
             Spacer(Modifier.height(36.dp))
             // 하차
-            Row {
+            Row (
+                modifier = Modifier
+                    .padding(bottom = 20.dp)
+            ){
                 Text(
                     text = disembarkingStation,
                     style = defaultTeam6Typography.bodySemiBold14,
@@ -220,7 +228,6 @@ private fun DetailLegsBus(
             }
         }
     }
-    Spacer(Modifier.height(5.dp))
 }
 
 @Composable
@@ -254,7 +261,7 @@ private fun DetailLegsSubway(
                 modifier = Modifier
                     .fillMaxHeight()
                     .width(4.dp)
-                    .padding(top = 15.dp)
+                    .padding(top = 15.dp, bottom = 20.dp)
                     .background(subwayColor)
                     .align(Alignment.Center)
             )
@@ -283,6 +290,11 @@ private fun DetailLegsSubway(
                         .size(18.dp) // 지름 크기
                         .clip(CircleShape)
                         .background(subwayColor)
+                )
+                Spacer(modifier = Modifier.height(2.dp))
+                BoardingTime(
+                    boardingDateTime = boardingDateTime,
+                    modifier = Modifier
                 )
             }
         }
@@ -335,7 +347,10 @@ private fun DetailLegsSubway(
             )
             Spacer(Modifier.height(36.dp))
             // 하차
-            Row {
+            Row(
+                modifier = Modifier
+                    .padding(bottom = 20.dp)
+            ) {
                 Text(
                     text = disembarkingStation,
                     style = defaultTeam6Typography.bodySemiBold14,
@@ -350,7 +365,6 @@ private fun DetailLegsSubway(
             }
         }
     }
-    Spacer(Modifier.height(5.dp))
 }
 
 @Composable
@@ -370,9 +384,6 @@ private fun DetailLegsWalk(
                 .width(Dimens.LegDetailVerticalLineWidth),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            BoardingTime(
-                boardingDateTime = boardingDateTime
-            )
             Spacer(
                 modifier = Modifier.height(5.dp)
             )
