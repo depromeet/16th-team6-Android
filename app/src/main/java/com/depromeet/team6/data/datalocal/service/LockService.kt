@@ -1,7 +1,6 @@
 package com.depromeet.team6.data.datalocal.service
 
 import android.app.Service
-import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.media.MediaPlayer
