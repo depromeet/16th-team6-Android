@@ -84,7 +84,8 @@ fun BusCourseRoute(
                 padding = padding,
                 modifier = Modifier.fillMaxSize(),
                 uiState = uiState,
-                backButtonClicked = { viewModel.setSideEffect(BusCourseContract.BusCourseSideEffect.NavigateToBackStack) }
+                backButtonClicked = { viewModel.setSideEffect(BusCourseContract.BusCourseSideEffect.NavigateToBackStack) },
+                refreshButtonClicked = { viewModel.setEvent(BusCourseContract.BusCourseEvent.refreshButtonClicked) }
             )
         }
 
@@ -100,8 +101,8 @@ fun BusCourseScreen(
     backButtonClicked: () -> Unit = {},
     refreshButtonClicked: () -> Unit = {}
 ) {
-    val busNumber = 350
-    val runningBusCount = 2
+    val busNumber = uiState.busRouteName
+    val runningBusCount = uiState.busPositions.size
 
     val fullText = stringResource(R.string.bus_course_running_bus_count, runningBusCount)
     val numberStart = fullText.indexOf(runningBusCount.toString())
@@ -201,7 +202,8 @@ fun BusCourseScreen(
                         busSubtypeIdx = 2,
                         isTurnPoint = (busRouteStation.order == uiState.turnPoint),
                         isCurrentStation = (busRouteStation.busStationId == uiState.currentBusStationId),
-                        busRemainTime = Pair(400, 5000)
+                        busRemainTime = Pair(400, 5000),
+                        busPosition = uiState.busPositions.find { it.sectionOrder == busRouteStation.order }
                     )
                 }
             }
@@ -214,7 +216,8 @@ fun BusCourseScreen(
                     refreshButtonClicked()
                 },
             imageVector = ImageVector.vectorResource(R.drawable.ic_all_course_refresh),
-            contentDescription = null
+            contentDescription = null,
+            tint = Color.Unspecified
         )
     }
 }

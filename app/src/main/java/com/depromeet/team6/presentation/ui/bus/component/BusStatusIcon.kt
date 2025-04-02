@@ -1,9 +1,9 @@
 package com.depromeet.team6.presentation.ui.bus.component
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -26,17 +26,29 @@ import com.depromeet.team6.ui.theme.defaultTeam6Typography
 fun BusStatusIcon(
     busNumber: String,
     busCongestion: BusCongestion,
+    color: Color,
     modifier: Modifier = Modifier
 ) {
     val busCongestionInfo = busCongestion.toInfo()
 
-    Row(verticalAlignment = Alignment.CenterVertically) {
+    val busIconRes =
+        when (color) {
+            Color(0xFF24B847) -> R.drawable.ic_bus_course_position_regular_20
+            Color(0xFF6FC53F) -> R.drawable.ic_bus_course_position_town_20
+            Color(0xFF1777FF) -> R.drawable.ic_bus_course_position_main_line_20
+            Color(0xFFF24747) -> R.drawable.ic_bus_course_position_wide_area_20
+            Color(0xFF5FbbF9) -> R.drawable.ic_bus_course_position_airport_20
+            else -> R.drawable.ic_bus_course_position_regular_20
+        }
+
+    Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
         Row(
-            modifier = modifier.roundedBackgroundWithPadding(
+            modifier = Modifier.width(53.dp).roundedBackgroundWithPadding(
                 cornerRadius = 3.dp,
-                padding = PaddingValues(vertical = 1.dp, horizontal = 4.dp),
+                padding = PaddingValues(vertical = 1.dp),
                 backgroundColor = defaultTeam6Colors.greyElevatedBackground
-            )
+            ),
+            horizontalArrangement = Arrangement.Center
         ) {
             Text(
                 text = busNumber,
@@ -52,9 +64,8 @@ fun BusStatusIcon(
         }
         Spacer(modifier = Modifier.width(2.dp))
         Icon(
-            imageVector = ImageVector.vectorResource(R.drawable.ic_bus_main_line),
+            imageVector = ImageVector.vectorResource(busIconRes),
             contentDescription = null,
-            modifier = Modifier.size(20.dp),
             tint = Color.Unspecified
         )
     }
@@ -63,5 +74,5 @@ fun BusStatusIcon(
 @Preview
 @Composable
 private fun BusStatusIconPreview() {
-    BusStatusIcon(busNumber = 5200.toString(), busCongestion = BusCongestion.LOW)
+    BusStatusIcon(busNumber = 5200.toString(), busCongestion = BusCongestion.LOW, color = Color(0xFF1777FF))
 }

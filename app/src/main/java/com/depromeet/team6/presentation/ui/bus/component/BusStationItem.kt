@@ -23,7 +23,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.depromeet.team6.R
-import com.depromeet.team6.domain.model.BusCongestion
+import com.depromeet.team6.domain.model.BusPosition
 import com.depromeet.team6.domain.model.BusRouteStation
 import com.depromeet.team6.domain.model.course.TransportType
 import com.depromeet.team6.presentation.ui.common.text.AtChaRemainTimeText
@@ -38,7 +38,8 @@ fun BusStationItem(
     modifier: Modifier = Modifier,
     isTurnPoint: Boolean = false,
     isCurrentStation: Boolean = false,
-    busRemainTime: Pair<Int, Int>? = null
+    busRemainTime: Pair<Int, Int>? = null,
+    busPosition: BusPosition? = null
 ) {
     val busColor = TransportTypeUiMapper.getColor(TransportType.BUS, busSubtypeIdx)
 
@@ -48,17 +49,18 @@ fun BusStationItem(
             .height(IntrinsicSize.Min),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Box(contentAlignment = Alignment.Center) {
+        Box {
             Spacer(
                 modifier = Modifier
                     .fillMaxHeight()
-                    .padding(start = 66.dp)
+                    .padding(start = 69.dp)
                     .width(4.dp)
                     .background(color = busColor)
             )
             Icon(
                 modifier = Modifier
-                    .padding(start = 66.dp),
+                    .padding(start = 64.dp, end = 3.dp)
+                    .align(Alignment.Center),
                 imageVector = ImageVector.vectorResource(R.drawable.ic_bus_station_check_14),
                 contentDescription = null,
                 tint = Color.Unspecified
@@ -68,13 +70,22 @@ fun BusStationItem(
                 contentDescription = null,
                 tint = Color.Unspecified,
                 modifier = Modifier
-                    .padding(start = 44.dp)
+                    .padding(start = 39.dp)
+                    .align(Alignment.Center)
                     .alpha(if (isTurnPoint) 1f else 0f)
+
             )
-            BusStatusIcon(
-                busNumber = 5400.toString(), busCongestion = BusCongestion.LOW,
-                modifier = Modifier.padding(start = 12.dp)
-            )
+
+            if (busPosition != null) {
+                BusStatusIcon(
+                    busNumber = busPosition.vehicleNumber,
+                    busCongestion = busPosition.busCongestion,
+                    color = busColor,
+                    modifier = Modifier
+                        .padding(start = 7.dp)
+                        .fillMaxHeight()
+                )
+            }
         }
         Column(modifier = Modifier.padding(top = 16.dp, start = 10.dp, bottom = 17.dp)) {
             Text(
@@ -111,7 +122,15 @@ private fun BusStationItemPreview() {
             order = 73
         ),
         busSubtypeIdx = 1,
+//        isTurnPoint = true,
         isCurrentStation = true,
         busRemainTime = Pair(400, 5000)
+//        busPosition = BusPosition(
+//            vehicleId = 123.toString(),
+//            sectionOrder = 2,
+//            vehicleNumber = 24002.toString(),
+//            sectionProgress = 0.7,
+//            busCongestion = BusCongestion.LOW
+//        )
     )
 }

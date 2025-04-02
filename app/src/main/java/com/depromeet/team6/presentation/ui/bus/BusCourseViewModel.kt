@@ -4,11 +4,11 @@ import androidx.lifecycle.viewModelScope
 import com.depromeet.team6.domain.usecase.GetBusArrivalUseCase
 import com.depromeet.team6.domain.usecase.GetBusPositionsUseCase
 import com.depromeet.team6.presentation.model.bus.BusArrivalParameter
+import com.depromeet.team6.presentation.model.bus.BusPositionParameter
 import com.depromeet.team6.presentation.util.base.BaseViewModel
 import com.depromeet.team6.presentation.util.view.LoadState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -22,6 +22,9 @@ class BusCourseViewModel @Inject constructor(
     override suspend fun handleEvent(event: BusCourseContract.BusCourseEvent) {
         when (event) {
             is BusCourseContract.BusCourseEvent.SetScreenLoadState -> setState { copy(loadState = event.loadState) }
+            BusCourseContract.BusCourseEvent.refreshButtonClicked -> {
+                refreshBusPosition()
+            }
         }
     }
 
@@ -47,7 +50,17 @@ class BusCourseViewModel @Inject constructor(
                     routeName = busArrival.routeName,
                     serviceRegion = busArrival.serviceRegion
                 )
+                setState {
+                    copy(
+                        busPositionParameter = BusPositionParameter(
+                            busRouteId = busArrival.busRouteId,
+                            routeName = busArrival.routeName,
+                            serviceRegion = busArrival.serviceRegion
+                        )
+                    )
+                }
                 setState { copy(currentBusStationId = busArrival.busStationId) }
+                setState { copy(busRouteName = busArrival.routeName) }
             }.onFailure {
                 setEvent(BusCourseContract.BusCourseEvent.SetScreenLoadState(loadState = LoadState.Error))
             }
@@ -65,9 +78,27 @@ class BusCourseViewModel @Inject constructor(
                 routeName = routeName,
                 serviceRegion = serviceRegion
             ).onSuccess { result ->
-                Timber.d(result.toString())
                 setState { copy(turnPoint = result.turnPoint) }
                 setState { copy(busRouteStationList = result.busRouteStationList) }
+                setState { copy(busPositions = result.busPositions) }
+                setEvent(BusCourseContract.BusCourseEvent.SetScreenLoadState(loadState = LoadState.Success))
+            }.onFailure {
+                setEvent(BusCourseContract.BusCourseEvent.SetScreenLoadState(loadState = LoadState.Error))
+            }
+        }
+    }
+
+    private fun refreshBusPosition() {
+        setEvent(BusCourseContract.BusCourseEvent.SetScreenLoadState(loadState = LoadState.Loading))
+        viewModelScope.launch {
+            getBusPositionsUseCase(
+                busRouteId = currentState.busPositionParameter.busRouteId,
+                routeName = currentState.busPositionParameter.routeName,
+                serviceRegion = currentState.busPositionParameter.serviceRegion
+            ).onSuccess { result ->
+                setState { copy(turnPoint = result.turnPoint) }
+                setState { copy(busRouteStationList = result.busRouteStationList) }
+                setState { copy(busPositions = result.busPositions) }
                 setEvent(BusCourseContract.BusCourseEvent.SetScreenLoadState(loadState = LoadState.Success))
             }.onFailure {
                 setEvent(BusCourseContract.BusCourseEvent.SetScreenLoadState(loadState = LoadState.Error))

@@ -49,7 +49,6 @@ data class Team6Colors(
     val systemRed: Color,
     val systemBlue: Color,
 
-
     // System Grey
     val systemGrey1: Color,
     val systemGrey2: Color,
