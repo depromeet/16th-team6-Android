@@ -34,8 +34,8 @@ import com.google.android.gms.maps.model.LatLng
 fun ItineraryRoute(
     padding: PaddingValues,
     courseInfoJSON: String,
-    departurePointJSON : String,
-    destinationPointJSON : String,
+    departurePointJSON: String,
+    destinationPointJSON: String,
     navigateToBusCourse: (BusArrivalParameter) -> Unit,
     viewModel: ItineraryViewModel = hiltViewModel(),
     onBackPressed: () -> Unit

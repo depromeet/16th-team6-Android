@@ -11,8 +11,8 @@ import com.depromeet.team6.presentation.ui.itinerary.ItineraryRoute
 
 fun NavController.navigateToItinerary(
     courseInfoJSON: String,
-    departurePointJSON : String,
-    destinationPointJSON : String
+    departurePointJSON: String,
+    destinationPointJSON: String
 ) {
     navigate(
         route = "${ItineraryRoute.ROUTE}/$courseInfoJSON/$departurePointJSON/$destinationPointJSON"

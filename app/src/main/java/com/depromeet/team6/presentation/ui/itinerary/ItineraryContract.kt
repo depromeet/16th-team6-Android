@@ -12,7 +12,7 @@ class ItineraryContract {
         val courseDataLoadState: LoadState = LoadState.Idle,
         val itineraryInfo: CourseInfo? = null,
         val departurePoint: Address? = null,
-        val destinationPoint :Address? = null
+        val destinationPoint: Address? = null
     ) : UiState
 
     sealed interface ItinerarySideEffect : UiSideEffect

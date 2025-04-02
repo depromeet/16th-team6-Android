@@ -11,9 +11,9 @@ import java.time.LocalDateTime
 
 @Composable
 fun ItineraryDetail(
-    courseInfo : CourseInfo,
-    departurePoint : Address,
-    destinationPoint : Address,
+    courseInfo: CourseInfo,
+    departurePoint: Address,
+    destinationPoint: Address,
     modifier: Modifier = Modifier
 ) {
     val arrivalDateTime = LocalDateTime.parse(courseInfo.departureTime).plusSeconds(courseInfo.totalTime.toLong())
@@ -28,7 +28,7 @@ fun ItineraryDetail(
             departureName = departurePoint.name,
             arrivalTime = arrivalDateTime.toString(),
             arrivalName = destinationPoint.name,
-            modifier = Modifier,
+            modifier = Modifier
         )
     }
 }

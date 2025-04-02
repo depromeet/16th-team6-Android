@@ -48,8 +48,8 @@ import kotlinx.coroutines.withContext
 fun ItineraryMap(
     currentLocation: LatLng,
     legs: List<LegInfo>,
-    departurePoint : Address,
-    destinationPoint : Address,
+    departurePoint: Address,
+    destinationPoint: Address,
     modifier: Modifier = Modifier,
     onBackPressed: () -> Unit
 ) {
@@ -251,12 +251,12 @@ fun ItineraryMapPreview(
             address = ""
         ),
         destinationPoint = Address(
-        name = "우리집",
-        lat = 37.296391553347,
-        lon = 126.97755824522,
-        address = ""
-    ),
+            name = "우리집",
+            lat = 37.296391553347,
+            lon = 126.97755824522,
+            address = ""
+        ),
 
-    onBackPressed = { }
+        onBackPressed = { }
     )
 }

@@ -54,11 +54,11 @@ import java.time.LocalDateTime
 
 @Composable
 fun ItineraryInfoDetailLegs(
-    legs : List<LegInfo>,
+    legs: List<LegInfo>,
     modifier: Modifier = Modifier
 ) {
     Column {
-        for (leg in legs){
+        for (leg in legs) {
             when (leg.transportType) {
                 TransportType.WALK -> {
                     DetailLegsWalk(
@@ -96,30 +96,30 @@ fun ItineraryInfoDetailLegs(
 
 @Composable
 private fun DetailLegsBus(
-    busName : String,
-    subtypeIdx : Int,
-    boardingStation : String,
-    disembarkingStation : String,
-    boardingDateTime : String,
-    timeMinute : Int,
-    distanceMeter : Int,
-    modifier : Modifier = Modifier,
+    busName: String,
+    subtypeIdx: Int,
+    boardingStation: String,
+    disembarkingStation: String,
+    boardingDateTime: String,
+    timeMinute: Int,
+    distanceMeter: Int,
+    modifier: Modifier = Modifier
 ) {
     var rowHeight by remember { mutableStateOf(0) }
 
     Row(
         modifier = modifier
             .wrapContentHeight()
-    ){
+    ) {
         val busColor = TransportTypeUiMapper.getColor(TransportType.BUS, subtypeIdx)
         val busIconId = TransportTypeUiMapper.getIconResId(TransportType.BUS, subtypeIdx)
         // 좌측 버스 수직라인
-        Box (
+        Box(
             modifier = Modifier
                 .width(Dimens.LegDetailVerticalLineWidth)
                 .height(rowHeight.dp),
             contentAlignment = Alignment.TopCenter
-        ){
+        ) {
             // 세로 직선
             Box(
                 modifier = Modifier
@@ -133,7 +133,7 @@ private fun DetailLegsBus(
                 modifier = Modifier
                     .wrapContentWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
-            ){
+            ) {
                 // 버스 아이콘
                 Image(
                     imageVector = ImageVector.vectorResource(busIconId),
@@ -178,8 +178,8 @@ private fun DetailLegsBus(
                     with(density) {
                         rowHeight = layoutCoordinates.size.height.toDp().value.toInt()
                     }
-                },
-            ) {
+                }
+        ) {
             Spacer(
                 modifier = Modifier.height(9.dp)
             )
@@ -210,10 +210,10 @@ private fun DetailLegsBus(
             )
             Spacer(Modifier.height(36.dp))
             // 하차
-            Row (
+            Row(
                 modifier = Modifier
                     .padding(bottom = 20.dp)
-            ){
+            ) {
                 Text(
                     text = disembarkingStation,
                     style = defaultTeam6Typography.bodySemiBold14,
@@ -232,30 +232,30 @@ private fun DetailLegsBus(
 
 @Composable
 private fun DetailLegsSubway(
-    subwayName : String,
-    subtypeIdx : Int,
-    boardingStation : String,
-    disembarkingStation : String,
-    boardingDateTime : String,
-    timeMinute : Int,
-    distanceMeter : Int,
-    modifier : Modifier = Modifier,
+    subwayName: String,
+    subtypeIdx: Int,
+    boardingStation: String,
+    disembarkingStation: String,
+    boardingDateTime: String,
+    timeMinute: Int,
+    distanceMeter: Int,
+    modifier: Modifier = Modifier
 ) {
     var rowHeight by remember { mutableStateOf(0) }
 
     Row(
         modifier = modifier
             .wrapContentHeight()
-    ){
+    ) {
         val subwayColor = TransportTypeUiMapper.getColor(TransportType.SUBWAY, subtypeIdx)
         val subwayIconId = TransportTypeUiMapper.getIconResId(TransportType.SUBWAY, subtypeIdx)
         // 좌측 버스 수직라인
-        Box (
+        Box(
             modifier = Modifier
                 .width(Dimens.LegDetailVerticalLineWidth)
                 .height(rowHeight.dp),
             contentAlignment = Alignment.TopCenter
-        ){
+        ) {
             // 세로 직선
             Box(
                 modifier = Modifier
@@ -269,7 +269,7 @@ private fun DetailLegsSubway(
                 modifier = Modifier
                     .wrapContentWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
-            ){
+            ) {
                 // 지하철 아이콘
                 Image(
                     imageVector = ImageVector.vectorResource(subwayIconId),
@@ -314,7 +314,7 @@ private fun DetailLegsSubway(
                     with(density) {
                         rowHeight = layoutCoordinates.size.height.toDp().value.toInt()
                     }
-                },
+                }
         ) {
             Spacer(
                 modifier = Modifier.height(9.dp)
@@ -369,15 +369,15 @@ private fun DetailLegsSubway(
 
 @Composable
 private fun DetailLegsWalk(
-    boardingDateTime : String,
-    timeMinute : Int,
-    distanceMeter : Int,
-    modifier : Modifier = Modifier,
+    boardingDateTime: String,
+    timeMinute: Int,
+    distanceMeter: Int,
+    modifier: Modifier = Modifier
 ) {
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically
-    ){
+    ) {
         // 좌측 점선
         Column(
             modifier = Modifier
@@ -414,8 +414,8 @@ private fun DetailLegsWalk(
 
 @Composable
 fun BoardingTime(
-    boardingDateTime : String,
-    modifier : Modifier = Modifier,
+    boardingDateTime: String,
+    modifier: Modifier = Modifier
 ) {
     val boardingTime = LocalDateTime.parse(boardingDateTime)
     Box(
@@ -510,12 +510,11 @@ private fun BusNumberButton(
                 modifier = Modifier
                     .size(10.dp),
                 imageVector = ImageVector.vectorResource(R.drawable.ic_all_arrow_right_grey),
-                contentDescription = "Go",
+                contentDescription = "Go"
             )
         }
     }
 }
-
 
 @Preview
 @Composable

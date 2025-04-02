@@ -52,8 +52,8 @@ class MainNavigator(
 
     fun navigateToItinerary(
         courseInfoJSON: String,
-        departurePointJSON : String,
-        destinationPointJSON : String
+        departurePointJSON: String,
+        destinationPointJSON: String
     ) {
         clearBackStackTo(ItineraryRoute.ROUTE)
         navHostController.navigateToItinerary(

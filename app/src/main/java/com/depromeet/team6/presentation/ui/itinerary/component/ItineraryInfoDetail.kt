@@ -46,9 +46,8 @@ fun ItineraryInfoDetail(
             isDestination = false
         )
 
-
         ItineraryInfoDetailLegs(
-            legs = legs,
+            legs = legs
         )
 
         // 도착
@@ -65,24 +64,24 @@ fun ItineraryInfoDetail(
                 .align(Alignment.CenterHorizontally),
             text = stringResource(R.string.itinerary_info_legs_data_source),
             style = defaultTeam6Typography.bodyRegular12,
-            color = defaultTeam6Colors.systemGrey1,
+            color = defaultTeam6Colors.systemGrey1
         )
     }
 }
 
 @Composable
 private fun ItineraryInfoSuffix(
-    name : String,
-    isDestination : Boolean,
-    arrivalTime : String = "",
+    name: String,
+    isDestination: Boolean,
+    arrivalTime: String = "",
     modifier: Modifier = Modifier
-){
-    val markerIconId = if(isDestination) R.drawable.map_marker_arrival else R.drawable.map_marker_departure
+) {
+    val markerIconId = if (isDestination) R.drawable.map_marker_arrival else R.drawable.map_marker_departure
     Row(
         modifier = Modifier,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Column (
+        Column(
             modifier = Modifier.width(Dimens.LegDetailVerticalLineWidth),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {

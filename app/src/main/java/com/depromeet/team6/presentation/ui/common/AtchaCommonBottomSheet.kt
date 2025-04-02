@@ -50,8 +50,7 @@ fun AtchaCommonBottomSheet(
     ) {
         BottomSheetScaffold(
             modifier = Modifier
-                .fillMaxHeight()
-            ,
+                .fillMaxHeight(),
             scaffoldState = scaffoldState,
             sheetContent = {
                 sheetContent()
@@ -63,7 +62,7 @@ fun AtchaCommonBottomSheet(
             ),
             sheetContainerColor = defaultTeam6Colors.greyWashBackground,
             sheetDragHandle = {
-                DragHandle{
+                DragHandle {
                     coroutineScope.launch {
                         if (sheetState.currentValue == SheetValue.PartiallyExpanded) {
                             sheetState.expand()
