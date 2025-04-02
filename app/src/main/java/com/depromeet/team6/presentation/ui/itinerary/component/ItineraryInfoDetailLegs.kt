@@ -509,7 +509,7 @@ private fun BusNumberButton(
             Image(
                 modifier = Modifier
                     .size(10.dp),
-                imageVector = ImageVector.vectorResource(R.drawable.ic_all_arrow_right_grey),
+                imageVector = ImageVector.vectorResource(R.drawable.ic_arrow_right_big),
                 contentDescription = "Go"
             )
         }
