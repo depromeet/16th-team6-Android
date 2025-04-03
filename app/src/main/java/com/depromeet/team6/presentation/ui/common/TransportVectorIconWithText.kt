@@ -39,7 +39,7 @@ fun TransportVectorIconWithTextBitmap(
         typeface = customTypeface
         textAlign = Paint.Align.CENTER
         style = Paint.Style.STROKE
-        strokeWidth = 5f  // 테두리 두께
+        strokeWidth = 5f // 테두리 두께
         isAntiAlias = true
     }
 

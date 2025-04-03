@@ -127,7 +127,7 @@ fun AfterRegisterMap(
                     marker.tMapPoint = TMapPoint(leg.startPoint.lat, leg.startPoint.lon)
                 }
 
-                if ((firstTransportationPoint ==  LatLng(leg.startPoint.lat, leg.startPoint.lon)) && (leg.transportType == TransportType.BUS))  {
+                if ((firstTransportationPoint == LatLng(leg.startPoint.lat, leg.startPoint.lon)) && (leg.transportType == TransportType.BUS)) {
                     marker.icon = TransportVectorIconWithTextBitmap(
                         type = leg.transportType,
                         fillColor = TransportTypeUiMapper.getColor(
