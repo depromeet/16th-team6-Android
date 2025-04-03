@@ -75,9 +75,12 @@ class SpeechBubbleShape(private val cornerRadius: Dp = 16.dp) : Shape {
                 lineTo(tailPositionX / 2f, size.height - tailHeight)
 // 둥근 말꼬리 만들기
                 cubicTo(
-                    tailPositionX - tailWidth / 7, size.height + 50, // 제어점1 (오른쪽 곡선)
-                    tailPositionX / 1.5f, size.height - 130, // 제어점2 (왼쪽 곡선)
-                    tailPositionX - tailWidth / 10, size.height - tailHeight// 끝점 (더 앞쪽)
+                    tailPositionX - tailWidth / 7,
+                    size.height + 50, // 제어점1 (오른쪽 곡선)
+                    tailPositionX / 1.5f,
+                    size.height - 130, // 제어점2 (왼쪽 곡선)
+                    tailPositionX - tailWidth / 10,
+                    size.height - tailHeight // 끝점 (더 앞쪽)
                 )
 
                 arcTo(
