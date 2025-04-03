@@ -9,12 +9,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.depromeet.team6.domain.model.BusStatus
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.depromeet.team6.ui.theme.defaultTeam6Typography
 import kotlinx.coroutines.delay
 
 @Composable
-fun AtChaRemainTimeText(remainSecond: Int, modifier: Modifier = Modifier) {
+fun AtChaRemainTimeText(remainSecond: Int,busStatus: BusStatus, modifier: Modifier = Modifier) {
     var timeLeft by remember { mutableIntStateOf(remainSecond) }
 
     LaunchedEffect(Unit) {
@@ -24,9 +25,15 @@ fun AtChaRemainTimeText(remainSecond: Int, modifier: Modifier = Modifier) {
         }
     }
 
+    val displayText = if (busStatus == BusStatus.OPERATING) {
+        formatRemainTime(timeLeft)
+    } else {
+        busStatus.string
+    }
+
     Text(
         modifier = modifier,
-        text = formatRemainTime(timeLeft),
+        text = displayText,
         style = defaultTeam6Typography.bodyRegular13,
         color = defaultTeam6Colors.systemRed
     )
@@ -35,11 +42,11 @@ fun AtChaRemainTimeText(remainSecond: Int, modifier: Modifier = Modifier) {
 @Preview
 @Composable
 private fun AtChaRemainTimeTextPreview() {
-    AtChaRemainTimeText(remainSecond = 400)
+    AtChaRemainTimeText(remainSecond = 400, busStatus = BusStatus.END)
 }
 
 fun formatRemainTime(seconds: Int): String {
-    if (seconds < 10) {
+    if (seconds < 60) {
         return "곧 도착"
     } else {
         val minutes = seconds / 60

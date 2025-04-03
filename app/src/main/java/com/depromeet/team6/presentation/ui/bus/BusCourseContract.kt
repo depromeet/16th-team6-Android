@@ -2,6 +2,7 @@ package com.depromeet.team6.presentation.ui.bus
 
 import com.depromeet.team6.domain.model.BusPosition
 import com.depromeet.team6.domain.model.BusRouteStation
+import com.depromeet.team6.domain.model.BusStatus
 import com.depromeet.team6.presentation.model.bus.BusArrivalParameter
 import com.depromeet.team6.presentation.model.bus.BusPositionParameter
 import com.depromeet.team6.presentation.util.base.UiEvent
@@ -29,7 +30,9 @@ class BusCourseContract {
             routeName = "",
             serviceRegion = ""
         ),
-        val remainingTime: Pair<Int, Int> = Pair(0, 0)
+        val remainingTime: Pair<Int, Int> = Pair(0, 0),
+        val busStatus: Pair<BusStatus, BusStatus> = Pair(BusStatus.WAITING, BusStatus.WAITING)
+
     ) : UiState
 
     sealed interface BusCourseSideEffect : UiSideEffect {

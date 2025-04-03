@@ -200,6 +200,7 @@ fun BusCourseScreen(
                         afterTurnPoint = (busRouteStation.order > uiState.turnPoint),
                         isCurrentStation = (busRouteStation.busStationId == uiState.currentBusStationId),
                         busRemainTime = uiState.remainingTime,
+                        busStatus = uiState.busStatus,
                         busPosition = uiState.busPositions.find {
                             val busPosition =
                                 if (it.sectionProgress > 0.5) {

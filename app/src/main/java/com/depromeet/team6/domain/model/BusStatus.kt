@@ -3,12 +3,11 @@ package com.depromeet.team6.domain.model
 import androidx.compose.ui.graphics.Color
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 
-enum class BusStatus {
-    WAITING, // 출발 대기
-    SOON, // 곧 도착
-    OPERATING, // 운행 중
-    END, // 운행 종료
-    UNKNOWN
+enum class BusStatus(val string: String) {
+    WAITING("출발 대기"),
+    SOON("곧 도착"),
+    OPERATING("운행 중"),
+    END("운행 종료")
 }
 
 // 버스 혼잡도

@@ -36,6 +36,7 @@ class BusCourseViewModel @Inject constructor(
         }
         getBusArrival()
     }
+
     private fun getBusArrival() {
         val busArrivalParameter = currentState.busArrivalParameter
         viewModelScope.launch {
@@ -51,11 +52,16 @@ class BusCourseViewModel @Inject constructor(
                     serviceRegion = busArrival.serviceRegion
                 )
                 val remainingTimes = busArrival.realTimeBusArrival.map { it.remainingTime }
+                val busStatus = busArrival.realTimeBusArrival.map { it.busStatus }
                 setState {
                     copy(
                         remainingTime = Pair(
                             remainingTimes.getOrNull(0) ?: -1,
                             remainingTimes.getOrNull(1) ?: -1
+                        ),
+                        busStatus = Pair(
+                            busStatus[0],
+                            busStatus[1]
                         ),
                         busPositionParameter = BusPositionParameter(
                             busRouteId = busArrival.busRouteId,
