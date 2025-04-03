@@ -5,6 +5,7 @@ import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.depromeet.team6.presentation.model.bus.BusArrivalParameter
+import com.depromeet.team6.presentation.model.itinerary.FocusedMarkerParameter
 import com.depromeet.team6.presentation.ui.bus.navigation.navigationToBusCourse
 import com.depromeet.team6.presentation.ui.coursesearch.navigation.navigateCourseSearch
 import com.depromeet.team6.presentation.ui.home.navigation.HomeRoute
@@ -50,12 +51,14 @@ class MainNavigator(
     fun navigateToItinerary(
         courseInfoJSON: String,
         departurePointJSON: String,
-        destinationPointJSON: String
+        destinationPointJSON: String,
+        focusedMarkerParameter: FocusedMarkerParameter? = null
     ) {
         navHostController.navigateToItinerary(
             courseInfoJSON,
             departurePointJSON,
-            destinationPointJSON
+            destinationPointJSON,
+            focusedMarkerParameter
         )
     }
 

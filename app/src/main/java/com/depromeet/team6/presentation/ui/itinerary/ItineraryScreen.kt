@@ -8,12 +8,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.rememberNestedScrollInteropConnection
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.Dp
@@ -22,6 +23,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.depromeet.team6.domain.model.course.LegInfo
 import com.depromeet.team6.presentation.model.bus.BusArrivalParameter
+import com.depromeet.team6.presentation.model.itinerary.FocusedMarkerParameter
 import com.depromeet.team6.presentation.ui.common.AtchaCommonBottomSheet
 import com.depromeet.team6.presentation.ui.itinerary.component.ItineraryDetail
 import com.depromeet.team6.presentation.ui.itinerary.component.ItineraryMap
@@ -36,6 +38,7 @@ fun ItineraryRoute(
     courseInfoJSON: String,
     departurePointJSON: String,
     destinationPointJSON: String,
+    focusedMarkerParam : FocusedMarkerParameter?,
     navigateToBusCourse: (BusArrivalParameter) -> Unit,
     viewModel: ItineraryViewModel = hiltViewModel(),
     onBackPressed: () -> Unit
@@ -66,6 +69,7 @@ fun ItineraryRoute(
         LoadState.Success -> ItineraryScreen(
             marginTop = padding.calculateTopPadding(),
             uiState = uiState,
+            focusedMarkerParam = focusedMarkerParam,
             onBackPressed = onBackPressed,
             modifier = Modifier
                 .fillMaxSize()
@@ -82,6 +86,7 @@ fun ItineraryScreen(
     marginTop : Dp,
     modifier: Modifier = Modifier,
     uiState: ItineraryContract.ItineraryUiState = ItineraryContract.ItineraryUiState(),
+    focusedMarkerParam : FocusedMarkerParameter? = null,
     navigateToBusCourse: (BusArrivalParameter) -> Unit = {},
     onBackPressed: () -> Unit = {}
 ) {
@@ -96,7 +101,8 @@ fun ItineraryScreen(
                 currentLocation = LatLng(37.5665, 126.9780),
                 departurePoint = uiState.departurePoint!!,
                 destinationPoint = uiState.destinationPoint!!,
-                onBackPressed = onBackPressed
+                onBackPressed = onBackPressed,
+                focusedMarkerParameter = focusedMarkerParam
             )
         },
         sheetContent = {
@@ -104,19 +110,8 @@ fun ItineraryScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight()
-                    .verticalScroll(sheetScrollState)
+                    .nestedScroll(rememberNestedScrollInteropConnection())
                     .padding(horizontal = 16.dp)
-//                    .noRippleClickable {
-//                        navigateToBusCourse(
-//                            BusArrivalParameter(
-//                                routeName = "일반:700-2",
-//                                stationName = "정평중학교",
-//                                lat = 37.318197222222224,
-//                                lon = 127.08745555555555,
-//                                subtypeIdx = 2
-//                            )
-//                        )
-//                    }
             ) {
                 ItinerarySummary(
                     totalTimeMinute = itineraryInfo.totalTime / 60,

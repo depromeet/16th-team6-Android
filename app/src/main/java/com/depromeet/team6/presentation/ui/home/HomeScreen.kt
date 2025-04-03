@@ -36,6 +36,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import com.depromeet.team6.R
 import com.depromeet.team6.domain.model.course.TransportType
+import com.depromeet.team6.presentation.model.itinerary.FocusedMarkerParameter
 import com.depromeet.team6.presentation.ui.alarm.NotificationScheduler
 import com.depromeet.team6.presentation.ui.alarm.NotificationTimeConstants
 import com.depromeet.team6.presentation.ui.home.component.AfterRegisterMap
@@ -68,7 +69,7 @@ fun HomeRoute(
     navigateToLogin: () -> Unit,
     navigateToCourseSearch: (String, String) -> Unit,
     navigateToMypage: () -> Unit,
-    navigateToItinerary: (String, String, String) -> Unit,
+    navigateToItinerary: (String, String, String, FocusedMarkerParameter?) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
@@ -121,8 +122,8 @@ fun HomeRoute(
                     is HomeContract.HomeSideEffect.NavigateToItinerary -> navigateToItinerary(
                         Gson().toJson(uiState.courseInfo),
                         Gson().toJson(uiState.departurePoint),
-                        Gson().toJson(uiState.destinationPoint)
-
+                        Gson().toJson(uiState.destinationPoint),
+                        sideEffect.markerParameter
                     )
                 }
             }
@@ -217,7 +218,7 @@ fun HomeScreen(
     onFinishClick: () -> Unit = {},
     onRefreshClick: () -> Unit = {},
     navigateToMypage: () -> Unit = {},
-    navigateToItinerary: (String, String, String) -> Unit = { s: String, s1: String, s2: String -> },
+    navigateToItinerary: (String, String, String, FocusedMarkerParameter?) -> Unit = { s: String, s1: String, s2: String, transportMarkerParameter: FocusedMarkerParameter? -> },
     deleteAlarmConfirmed: () -> Unit = {},
     dismissDialog: () -> Unit = {},
     viewModel: HomeViewModel = hiltViewModel() // TODO : TmapViewCompose 변경 후 제거
@@ -250,7 +251,15 @@ fun HomeScreen(
             AfterRegisterMap(
                 currentLocation = userLocation,
                 legs = homeUiState.itineraryInfo!!.legs,
-                viewModel = viewModel
+                viewModel = viewModel,
+                onTransportMarkerClick = { markerParameter ->
+                    navigateToItinerary(
+                        Gson().toJson(homeUiState.itineraryInfo),
+                        Gson().toJson(homeUiState.departurePoint),
+                        Gson().toJson(homeUiState.destinationPoint),
+                        markerParameter
+                    )
+                }
             )
         } else {
             TMapViewCompose(
@@ -296,12 +305,11 @@ fun HomeScreen(
                     onFinishClick()
                 },
                 onCourseDetailClick = {
-                    val courseInfoJSON =
-                        Gson().toJson(homeUiState.itineraryInfo)
                     navigateToItinerary(
-                        courseInfoJSON,
+                        Gson().toJson(homeUiState.itineraryInfo),
                         Gson().toJson(homeUiState.departurePoint),
-                        Gson().toJson(homeUiState.destinationPoint)
+                        Gson().toJson(homeUiState.destinationPoint),
+                        null
                     )
                 },
                 onTimerFinished = {

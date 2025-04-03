@@ -195,7 +195,7 @@ fun BusCourseScreen(
                         isFirstStation = (busRouteStation.order == 1),
                         isLastStation = (busRouteStation.order == uiState.busRouteStationList.size),
                         busRouteStation = busRouteStation,
-                        busSubtypeIdx = 2,
+                        busSubtypeIdx = uiState.busArrivalParameter.subtypeIdx,
                         isTurnPoint = (busRouteStation.order == uiState.turnPoint),
                         afterTurnPoint = (busRouteStation.order > uiState.turnPoint),
                         isCurrentStation = (busRouteStation.busStationId == uiState.currentBusStationId),

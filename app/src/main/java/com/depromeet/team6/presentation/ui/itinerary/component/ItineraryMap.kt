@@ -31,6 +31,7 @@ import com.depromeet.team6.BuildConfig
 import com.depromeet.team6.R
 import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.course.LegInfo
+import com.depromeet.team6.presentation.model.itinerary.FocusedMarkerParameter
 import com.depromeet.team6.presentation.ui.common.TransportVectorIconBitmap
 import com.depromeet.team6.presentation.ui.itinerary.LegInfoDummyProvider
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
@@ -53,6 +54,7 @@ fun ItineraryMap(
     legs: List<LegInfo>,
     departurePoint: Address,
     destinationPoint: Address,
+    focusedMarkerParameter: FocusedMarkerParameter?,
     marginTop : Dp,
     modifier: Modifier = Modifier,
     onBackPressed: () -> Unit
@@ -127,14 +129,26 @@ fun ItineraryMap(
             marker.icon = ContextCompat.getDrawable(context, R.drawable.map_marker_arrival)?.toBitmap()
             tMapView.addTMapMarkerItem(marker)
 
+            // scale 기준점 설정
+            val leftTopLocation =
+                if (focusedMarkerParameter == null) departTMapPoint
+                else TMapPoint(
+                    focusedMarkerParameter.lat,
+                    focusedMarkerParameter.lon
+                )
+            val rightBottomLocation =
+                if (focusedMarkerParameter == null) destinationTMapPoint
+                else TMapPoint(
+                    legs[focusedMarkerParameter.legIndex].endPoint.lat,
+                    legs[focusedMarkerParameter.legIndex].endPoint.lon,
+                )
+
             // 지도 위치 조정
-            val midPoint = getMidPoint(departLocation, destinationLocation)
+            val midPoint = getMidPoint(leftTopLocation, rightBottomLocation)
             tMapView.setCenterPoint(midPoint.latitude, midPoint.longitude)
 
             // 지도 Scale 조정
-            val leftTop = departTMapPoint
-            val rightBottom = destinationTMapPoint
-            tMapView.zoomToTMapPoint(leftTop, rightBottom)
+            tMapView.zoomToTMapPoint(leftTopLocation, rightBottomLocation)
             tMapView.mapZoomOut()
         }
     }
@@ -222,7 +236,7 @@ fun CircleBtnBack(
     }
 }
 
-private fun getMidPoint(point1: LatLng, point2: LatLng): LatLng {
+private fun getMidPoint(point1: TMapPoint, point2: TMapPoint): LatLng {
     val midLatitude = (point1.latitude + point2.latitude) / 2
     val midLongitude = (point1.longitude + point2.longitude) / 2
     return LatLng(midLatitude, midLongitude)
@@ -263,6 +277,7 @@ fun ItineraryMapPreview(
             lon = 126.97755824522,
             address = ""
         ),
-        onBackPressed = { }
+        onBackPressed = { },
+        focusedMarkerParameter = null
     )
 }

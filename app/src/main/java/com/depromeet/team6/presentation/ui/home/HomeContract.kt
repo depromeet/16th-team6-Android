@@ -3,6 +3,7 @@ package com.depromeet.team6.presentation.ui.home
 import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.course.CourseInfo
 import com.depromeet.team6.domain.model.course.TransportType
+import com.depromeet.team6.presentation.model.itinerary.FocusedMarkerParameter
 import com.depromeet.team6.presentation.util.base.UiEvent
 import com.depromeet.team6.presentation.util.base.UiSideEffect
 import com.depromeet.team6.presentation.util.base.UiState
@@ -51,7 +52,7 @@ class HomeContract {
 
     sealed interface HomeSideEffect : UiSideEffect {
         data object NavigateToMypage : HomeSideEffect
-        data object NavigateToItinerary : HomeSideEffect
+        data class NavigateToItinerary(val markerParameter: FocusedMarkerParameter?) : HomeSideEffect
     }
 
     sealed class HomeEvent : UiEvent {

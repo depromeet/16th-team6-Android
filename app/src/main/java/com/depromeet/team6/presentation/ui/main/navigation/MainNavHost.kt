@@ -45,7 +45,7 @@ fun MainNavHost(
             navigateToLogin = navigator::navigateToLogin,
             navigateToCourseSearch = navigator::navigateToCourseSearch,
             navigateToMypage = navigator::navigateToMypage,
-            navigateToItinerary = navigator::navigateToItinerary
+            navigateToItinerary = navigator::navigateToItinerary,
         )
 
         onboardingNavGraph(

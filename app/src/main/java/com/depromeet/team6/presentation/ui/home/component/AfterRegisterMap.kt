@@ -1,5 +1,6 @@
 package com.depromeet.team6.presentation.ui.home.component
 
+import android.graphics.PointF
 import android.widget.FrameLayout
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -33,6 +34,7 @@ import com.depromeet.team6.BuildConfig
 import com.depromeet.team6.R
 import com.depromeet.team6.domain.model.course.LegInfo
 import com.depromeet.team6.domain.model.course.TransportType
+import com.depromeet.team6.presentation.model.itinerary.FocusedMarkerParameter
 import com.depromeet.team6.presentation.ui.common.TransportVectorIconBitmap
 import com.depromeet.team6.presentation.ui.home.HomeViewModel
 import com.depromeet.team6.presentation.ui.itinerary.LegInfoDummyProvider
@@ -42,10 +44,13 @@ import com.depromeet.team6.presentation.util.view.toPx
 import com.google.android.gms.maps.model.LatLng
 import com.skt.tmap.TMapPoint
 import com.skt.tmap.TMapView
+import com.skt.tmap.TMapView.OnClickListenerCallback
 import com.skt.tmap.overlay.TMapMarkerItem
 import com.skt.tmap.overlay.TMapTrafficLine
+import com.skt.tmap.poi.TMapPOIItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import kotlin.math.abs
 
 @Composable
@@ -53,7 +58,8 @@ fun AfterRegisterMap(
     currentLocation: LatLng,
     legs: List<LegInfo>,
     modifier: Modifier = Modifier,
-    viewModel: HomeViewModel
+    viewModel: HomeViewModel,
+    onTransportMarkerClick : (FocusedMarkerParameter) -> Unit = {}
 ) {
     val context = LocalContext.current
     val uiState = viewModel.uiState.collectAsState().value
@@ -90,7 +96,7 @@ fun AfterRegisterMap(
             }
 
             // 경로 그리기
-            for (leg in legs) {
+            for ((index, leg) in legs.withIndex()) {
                 // 라인 그리기
                 val lineWayPoints =
                     getWayPointList(leg.passShape)
@@ -114,7 +120,7 @@ fun AfterRegisterMap(
 
                 // 마커 그리기
                 val marker = TMapMarkerItem()
-                marker.id = "marker_${leg.transportType}_${leg.sectionTime}"
+                marker.id = "marker_${leg.transportType}_${leg.subTypeIdx}_${index}"
 
                 if ((leg.transportType == TransportType.WALK) && (lineWayPoints.isNotEmpty())) {
                     marker.tMapPoint = lineWayPoints[0]
@@ -130,6 +136,43 @@ fun AfterRegisterMap(
                 )
                 tMapView.addTMapMarkerItem(marker)
             }
+
+            tMapView.setOnClickListenerCallback(object : OnClickListenerCallback {
+                override fun onPressDown(
+                    p0: ArrayList<TMapMarkerItem>?,
+                    p1: ArrayList<TMapPOIItem>?,
+                    p2: TMapPoint?,
+                    p3: PointF?
+                ) {
+                    Timber.d("on TMap Press Down : $p0 / $p1 / $p2 / $p3")
+                }
+
+                override fun onPressUp(
+                    markerItems: ArrayList<TMapMarkerItem>?,
+                    p1: ArrayList<TMapPOIItem>?,
+                    latLng: TMapPoint?,
+                    p3: PointF?
+                ) {
+                    if (markerItems?.isEmpty() == true) return
+
+                    val marker = markerItems!![0]
+                    val parts = marker.id.split("_")
+                    val transportTypeStr = parts[1]
+                    val subTypeIdx = parts[2].toInt()
+                    val transportType = enumValueOf<TransportType>(transportTypeStr)
+                    val legIndex = parts[3].toInt()
+
+                    onTransportMarkerClick(
+                        FocusedMarkerParameter(
+                            lat = latLng!!.latitude,
+                            lon = latLng.longitude,
+                            transportType = transportType,
+                            subTypeIdx = subTypeIdx,
+                            legIndex = legIndex
+                        )
+                    )
+                }
+            })
 
             // 마커 설정
             val marker = TMapMarkerItem()

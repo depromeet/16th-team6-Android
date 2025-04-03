@@ -122,7 +122,6 @@ fun AtchaCommonBottomSheet(
     val scaffoldState = rememberBottomSheetScaffoldState(bottomSheetState = sheetState)
     val coroutineScope = rememberCoroutineScope()
 
-
     BottomSheetScaffold(
         modifier = Modifier
             .fillMaxHeight(),
