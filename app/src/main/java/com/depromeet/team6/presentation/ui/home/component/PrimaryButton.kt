@@ -1,6 +1,8 @@
 package com.depromeet.team6.presentation.ui.home.component
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -34,31 +36,37 @@ fun PrimaryButton(
 
     Button(
         onClick = onClick,
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(vertical = 14.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = colors.systemGreen,
             contentColor = colors.black
         ),
-        shape = RoundedCornerShape(8.dp)
+        shape = RoundedCornerShape(10.dp),
+        contentPadding = PaddingValues(0.dp)
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 14.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Icon(
-                imageVector = ImageVector.vectorResource(R.drawable.ic_all_search_black),
-                contentDescription = stringResource(R.string.home_icon_search_text)
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(R.drawable.ic_all_search_black),
+                    contentDescription = stringResource(R.string.home_icon_search_text)
+                )
 
-            Spacer(modifier = Modifier.width(8.dp))
+                Spacer(modifier = Modifier.width(8.dp))
 
-            Text(
-                text = text,
-                style = typography.heading5Bold17
-            )
+                Text(
+                    text = text,
+                    style = typography.heading5Bold17
+                )
+            }
         }
+
     }
 }
 
