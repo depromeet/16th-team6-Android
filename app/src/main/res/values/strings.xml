@@ -104,7 +104,7 @@
     <!--    itinerary   -->
     <string name="itinerary_summary_remaining_hour">%1d시간</string>
     <string name="itinerary_summary_remaining_minute">%1d분</string>
-    <string name="itinerary_summary_total_time">%02d:%02d 출발 ~ %02d:%02d 도착 예정</string>
+    <string name="itinerary_summary_total_time">%02d:%02d ~ %02d:%02d</string>
     <string name="itinerary_info_legs_walk_time">%d분 걷기</string>
     <string name="itinerary_info_legs_walk_distance">%dm</string>
     <string name="itinerary_info_legs_boarding_HHmm">%02d:%02d</string>

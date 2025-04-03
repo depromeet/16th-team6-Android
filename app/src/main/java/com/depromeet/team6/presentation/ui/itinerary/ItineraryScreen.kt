@@ -70,6 +70,7 @@ fun ItineraryRoute(
             onBackPressed = onBackPressed,
             modifier = Modifier
                 .fillMaxSize()
+                .padding(paddingValues = padding)
                 .background(defaultTeam6Colors.greyWashBackground),
             navigateToBusCourse = navigateToBusCourse
         )

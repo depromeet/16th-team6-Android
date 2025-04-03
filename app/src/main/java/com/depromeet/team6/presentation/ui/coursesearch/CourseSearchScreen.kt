@@ -114,7 +114,7 @@ fun CourseSearchScreen(
         CourseAppBar(backButtonClicked = backButtonClicked)
         DestinationSearchBar(
             startingPoint = uiState.startingPoint?.name ?: "",
-            destination = uiState.destinationPoint?.name ?: "",
+            destination = "우리집",
             modifier = Modifier
                 .padding(top = 6.dp, start = 16.dp, end = 16.dp, bottom = 10.dp)
         )

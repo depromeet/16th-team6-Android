@@ -31,6 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
@@ -510,6 +511,7 @@ private fun BusNumberButton(
                 modifier = Modifier
                     .size(10.dp),
                 imageVector = ImageVector.vectorResource(R.drawable.ic_arrow_right_big),
+                colorFilter = ColorFilter.tint(Color(0x80FFFFFF)),
                 contentDescription = "Go"
             )
         }

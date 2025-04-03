@@ -22,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
@@ -63,10 +64,10 @@ fun SummaryBarChart(
         modifier = modifier
             .fillMaxWidth()
             .height(16.dp)
+            .clip(RoundedCornerShape(20.dp))
             .roundedBackgroundWithPadding(
                 backgroundColor = defaultTeam6Colors.greyButtonOutline,
-                cornerRadius = 20.dp,
-                padding = PaddingValues(horizontal = 10.dp)
+                padding = PaddingValues(horizontal = 4.dp)
             )
             .onGloballyPositioned { layoutCoordinates ->
                 rowWidthPx = layoutCoordinates.size.width.toFloat() // Row의 너비를 저장

@@ -24,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -45,6 +46,9 @@ fun AtchaCommonBottomSheet(
     val scaffoldState = rememberBottomSheetScaffoldState(bottomSheetState = sheetState)
     val coroutineScope = rememberCoroutineScope()
 
+    val screenHeightPx = LocalConfiguration.current.screenHeightDp
+    val sheetPeekHeight = (screenHeightPx / 2).dp
+
     Box(
         modifier = modifier
     ) {
@@ -55,7 +59,7 @@ fun AtchaCommonBottomSheet(
             sheetContent = {
                 sheetContent()
             },
-            sheetPeekHeight = 300.dp, // 필요하면 기본 노출 높이 조정 가능
+            sheetPeekHeight = sheetPeekHeight, // 필요하면 기본 노출 높이 조정 가능
             sheetShape = RoundedCornerShape(
                 topStart = Dimens.BottomSheetRoundCornerRadius,
                 topEnd = Dimens.BottomSheetRoundCornerRadius
