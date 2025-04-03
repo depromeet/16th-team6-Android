@@ -4,7 +4,8 @@ import android.widget.FrameLayout
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -18,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -47,6 +49,8 @@ fun TMapViewCompose(
     val context = LocalContext.current
     val tMapView = remember { TMapView(context) }
     var isMapReady by remember { mutableStateOf(false) }
+
+    val screenHeight = LocalConfiguration.current.screenHeightDp.dp
 
     LaunchedEffect(Unit) {
         tMapView.setSKTMapApiKey(BuildConfig.TMAP_API_KEY)
@@ -90,10 +94,12 @@ fun TMapViewCompose(
     }
 
     Box(
-        modifier = modifier.fillMaxSize()
+        modifier = modifier
     ) {
         AndroidView(
-            modifier = modifier.fillMaxSize(),
+            modifier = modifier.fillMaxWidth()
+                .height(screenHeight - 210.dp)
+                .align(Alignment.TopCenter),
             factory = { context ->
                 // FrameLayout을 직접 생성
                 FrameLayout(context).apply {
@@ -108,11 +114,11 @@ fun TMapViewCompose(
 
         // 출발 마커
         Image(
-            imageVector = ImageVector.vectorResource(id = R.drawable.map_marker_departure),
+            imageVector = ImageVector.vectorResource(id = R.drawable.ic_home_dearture_marker),
             contentDescription = "Start Marker",
             modifier = Modifier
                 .align(Alignment.Center)
-                .padding(bottom = 105.dp)
+                .padding(bottom = 118.dp)
         )
 
         // 현위치 버튼
@@ -123,9 +129,9 @@ fun TMapViewCompose(
                 .align(Alignment.BottomEnd)
                 .then(
                     if (uiState.isAlarmRegistered) {
-                        Modifier.padding(bottom = 274.dp, end = 16.dp)
+                        Modifier.padding(bottom = 35.dp, end = 16.dp)
                     } else {
-                        Modifier.padding(bottom = 240.dp, end = 16.dp)
+                        Modifier.padding(bottom = 35.dp, end = 16.dp)
                     }
                 )
                 .clickable(enabled = isMapReady) {
