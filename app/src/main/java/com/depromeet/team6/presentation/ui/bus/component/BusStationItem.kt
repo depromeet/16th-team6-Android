@@ -15,8 +15,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,7 +22,6 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -37,7 +34,6 @@ import com.depromeet.team6.presentation.ui.common.text.AtChaRemainTimeText
 import com.depromeet.team6.presentation.util.view.TransportTypeUiMapper
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.depromeet.team6.ui.theme.defaultTeam6Typography
-import timber.log.Timber
 
 @Composable
 fun BusStationItem(
@@ -66,7 +62,7 @@ fun BusStationItem(
             .height(IntrinsicSize.Min),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Box (){
+        Box() {
             Column(
                 modifier = Modifier
                     .fillMaxHeight()
@@ -108,7 +104,7 @@ fun BusStationItem(
             )
             if (busPosition != null) {
                 val busProgress = ((busPosition.sectionProgress) + 0.5) % 1
-                Column (modifier = Modifier.fillMaxHeight()){
+                Column(modifier = Modifier.fillMaxHeight()) {
                     Spacer(modifier = Modifier.weight(busProgress.toFloat()))
                     BusStatusIcon(
                         busNumber = busPosition.vehicleNumber,
@@ -117,7 +113,7 @@ fun BusStationItem(
                         modifier = Modifier
                             .padding(start = 7.dp)
                     )
-                    Spacer(modifier = Modifier.weight(1-busProgress.toFloat()))
+                    Spacer(modifier = Modifier.weight(1 - busProgress.toFloat()))
                 }
             }
         }
@@ -135,10 +131,12 @@ fun BusStationItem(
             )
             if (isCurrentStation && busRemainTime != null) {
                 Spacer(modifier = Modifier.height(5.dp))
-                if (busRemainTime.first != -1)
+                if (busRemainTime.first != -1) {
                     AtChaRemainTimeText(remainSecond = busRemainTime.first)
-                if (busRemainTime.second != -1)
+                }
+                if (busRemainTime.second != -1) {
                     AtChaRemainTimeText(remainSecond = busRemainTime.second)
+                }
             }
         }
     }

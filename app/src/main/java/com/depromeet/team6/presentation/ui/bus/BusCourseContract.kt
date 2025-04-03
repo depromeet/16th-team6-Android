@@ -14,7 +14,7 @@ class BusCourseContract {
         val loadState: LoadState = LoadState.Idle,
         val busArrivalParameter: BusArrivalParameter = BusArrivalParameter(
             routeName = "",
-            stationName ="",
+            stationName = "",
             lat = 0.0,
             lon = 0.0,
             subtypeIdx = 0
@@ -29,7 +29,7 @@ class BusCourseContract {
             routeName = "",
             serviceRegion = ""
         ),
-        val remainingTime: Pair<Int,Int> = Pair(0,0)
+        val remainingTime: Pair<Int, Int> = Pair(0, 0)
     ) : UiState
 
     sealed interface BusCourseSideEffect : UiSideEffect {

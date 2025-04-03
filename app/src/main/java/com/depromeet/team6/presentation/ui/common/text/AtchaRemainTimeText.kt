@@ -5,7 +5,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -40,8 +39,11 @@ private fun AtChaRemainTimeTextPreview() {
 }
 
 fun formatRemainTime(seconds: Int): String {
-    if(seconds<10) return "곧 도착"
-    else{  val minutes = seconds / 60
+    if (seconds < 10) {
+        return "곧 도착"
+    } else {
+        val minutes = seconds / 60
         val remainingSeconds = seconds % 60
-        return "${minutes}분 ${remainingSeconds}초"}
+        return "${minutes}분 ${remainingSeconds}초"
+    }
 }

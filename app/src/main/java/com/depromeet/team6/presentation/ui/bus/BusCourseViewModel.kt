@@ -83,16 +83,17 @@ class BusCourseViewModel @Inject constructor(
                 routeName = routeName,
                 serviceRegion = serviceRegion
             ).onSuccess { result ->
-                setState { copy(
-                    turnPoint = result.turnPoint,
-                    busRouteStationList = result.busRouteStationList,
-                    busPositions = result.busPositions
-                ) }
+                setState {
+                    copy(
+                        turnPoint = result.turnPoint,
+                        busRouteStationList = result.busRouteStationList,
+                        busPositions = result.busPositions
+                    )
+                }
                 setEvent(BusCourseContract.BusCourseEvent.SetScreenLoadState(loadState = LoadState.Success))
             }.onFailure {
                 setEvent(BusCourseContract.BusCourseEvent.SetScreenLoadState(loadState = LoadState.Error))
             }
         }
     }
-
 }
