@@ -114,10 +114,10 @@ fun AtchaCommonBottomSheet(
     }
     val sheetState = rememberStandardBottomSheetState(
         initialValue = SheetValue.PartiallyExpanded,
-        confirmValueChange = { newValue ->
-            if (allowExpand) true
-            else false
-        }
+//        confirmValueChange = { newValue ->
+//            if (allowExpand) true
+//            else false
+//        }
     )
     val scaffoldState = rememberBottomSheetScaffoldState(bottomSheetState = sheetState)
     val coroutineScope = rememberCoroutineScope()

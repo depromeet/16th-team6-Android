@@ -3,18 +3,19 @@ package com.depromeet.team6.presentation.ui.itinerary
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.rememberNestedScrollInteropConnection
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.Dp
@@ -68,6 +69,7 @@ fun ItineraryRoute(
         LoadState.Idle -> {}
         LoadState.Success -> ItineraryScreen(
             marginTop = padding.calculateTopPadding(),
+            marginBottom = padding.calculateBottomPadding(),
             uiState = uiState,
             focusedMarkerParam = focusedMarkerParam,
             onBackPressed = onBackPressed,
@@ -84,6 +86,7 @@ fun ItineraryRoute(
 @Composable
 fun ItineraryScreen(
     marginTop : Dp,
+    marginBottom : Dp,
     modifier: Modifier = Modifier,
     uiState: ItineraryContract.ItineraryUiState = ItineraryContract.ItineraryUiState(),
     focusedMarkerParam : FocusedMarkerParameter? = null,
@@ -92,6 +95,7 @@ fun ItineraryScreen(
 ) {
     val sheetScrollState = rememberScrollState()
     val itineraryInfo = uiState.itineraryInfo!!
+
     AtchaCommonBottomSheet(
         modifier = modifier,
         mainContent = {
@@ -107,11 +111,12 @@ fun ItineraryScreen(
         },
         sheetContent = {
             Column(
-                modifier = Modifier
+                modifier = modifier
                     .fillMaxWidth()
                     .wrapContentHeight()
-                    .nestedScroll(rememberNestedScrollInteropConnection())
-                    .padding(horizontal = 16.dp)
+//                    .nestedScroll(rememberNestedScrollInteropConnection())
+                    .verticalScroll(sheetScrollState)
+                    .padding(start = 16.dp, end = 16.dp, top = 0.dp)
             ) {
                 ItinerarySummary(
                     totalTimeMinute = itineraryInfo.totalTime / 60,
@@ -124,6 +129,7 @@ fun ItineraryScreen(
                     destinationPoint = uiState.destinationPoint!!,
                     onClickBusInfo = navigateToBusCourse
                 )
+                Spacer(Modifier.height(marginBottom))
             }
         },
         sheetScrollState = sheetScrollState
@@ -136,6 +142,7 @@ fun ItineraryScreenPreview(
     @PreviewParameter(LegInfoDummyProvider::class) legs: List<LegInfo>
 ) {
     ItineraryScreen(
-        marginTop = 10.dp
+        marginTop = 10.dp,
+        marginBottom = 10.dp
     )
 }
