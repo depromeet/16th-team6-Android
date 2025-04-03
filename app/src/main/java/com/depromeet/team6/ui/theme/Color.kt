@@ -128,7 +128,7 @@ val defaultTeam6Colors = Team6Colors(
     systemGrey6 = Color(0xFF1F1F23),
 
     // TextField Cursor
-    textFieldCursor = Color(0xFF999CA4),
+    textFieldCursor = Color(0xFF90E772),
 
     // WALK
     walkColor = listOf(
