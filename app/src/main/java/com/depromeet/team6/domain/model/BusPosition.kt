@@ -10,6 +10,7 @@ data class BusRouteStation(
     val busRouteId: String,
     val busRouteName: String,
     val busStationId: String,
+    val busStationNumber:String,
     val busStationName: String,
     val busStationLat: Double,
     val busStationLon: Double,

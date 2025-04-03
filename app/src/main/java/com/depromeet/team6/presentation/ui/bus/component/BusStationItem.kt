@@ -95,7 +95,7 @@ fun BusStationItem(
             )
             Spacer(modifier = Modifier.height(1.dp))
             Text(
-                text = busRouteStation.busStationId,
+                text = busRouteStation.busStationNumber,
                 style = defaultTeam6Typography.bodyRegular13,
                 color = defaultTeam6Colors.greySecondaryLabel
             )
@@ -115,6 +115,7 @@ private fun BusStationItemPreview() {
         busRouteStation = BusRouteStation(
             busRouteId = 14501.toString(),
             busRouteName = "버스정류장",
+            busStationNumber = "23241",
             busStationId = 14503.toString(),
             busStationName = "버스정류장 이름",
             busStationLat = 127.0,

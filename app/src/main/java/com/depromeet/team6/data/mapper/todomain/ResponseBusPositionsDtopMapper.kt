@@ -18,6 +18,7 @@ fun com.depromeet.team6.data.dataremote.model.response.transits.BusRouteStation.
         busRouteId = busRouteId,
         busRouteName = busRouteName,
         busStationId = busStationId,
+        busStationNumber = busStationNumber,
         busStationName = busStationName,
         busStationLat = busStationLat,
         busStationLon = busStationLon,
