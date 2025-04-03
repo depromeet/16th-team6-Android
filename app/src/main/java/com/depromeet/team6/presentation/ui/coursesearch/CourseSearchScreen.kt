@@ -57,7 +57,7 @@ fun CourseSearchRoute(
 
                 is CourseSearchContract.CourseSideEffect.NavigateHomeWithToast -> {
                     navigateToHome()
-                    atChaToastMessage(context, R.string.course_set_notification_snackbar)
+                    atChaToastMessage(context, R.string.course_set_notification_snackbar, Toast.LENGTH_SHORT)
                 }
             }
         }
