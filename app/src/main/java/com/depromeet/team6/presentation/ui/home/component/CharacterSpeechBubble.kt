@@ -31,7 +31,8 @@ fun CharacterSpeechBubble(
                 prefix = prefixText,
                 modifier = Modifier,
                 emphasisText = emphasisText,
-                suffix = suffixText
+                suffix = suffixText,
+                tailExist = true
             )
 
             Spacer(modifier = Modifier.height(2.dp))

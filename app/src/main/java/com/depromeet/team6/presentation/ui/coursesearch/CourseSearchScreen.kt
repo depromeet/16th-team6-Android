@@ -26,8 +26,10 @@ import com.depromeet.team6.presentation.ui.coursesearch.component.CourseAppBar
 import com.depromeet.team6.presentation.ui.coursesearch.component.DestinationSearchBar
 import com.depromeet.team6.presentation.ui.coursesearch.component.TransportTabMenu
 import com.depromeet.team6.presentation.ui.itinerary.LegInfoDummyProvider
+import com.depromeet.team6.presentation.util.toast.atChaToastMessage
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
+import com.google.gson.Gson
 
 @Composable
 fun CourseSearchRoute(
@@ -51,6 +53,11 @@ fun CourseSearchRoute(
 
                 is CourseSearchContract.CourseSideEffect.ShowSearchFailedToast -> {
                     Toast.makeText(context, sideEffect.message, Toast.LENGTH_SHORT).show()
+                }
+
+                is CourseSearchContract.CourseSideEffect.NavigateHomeWithToast -> {
+                    navigateToHome()
+                    atChaToastMessage(context, R.string.course_set_notification_snackbar, Toast.LENGTH_SHORT)
                 }
             }
         }
@@ -76,12 +83,25 @@ fun CourseSearchRoute(
             modifier = Modifier
                 .padding(padding),
             navigateToItinerary = navigateToItinerary,
-            setNotification = {
+            setNotification = { routeId ->
+
                 val sharedPreferences = context.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
                 val editor = sharedPreferences.edit()
-                editor.putBoolean("isUserLoggedIn", true) // "isUserLoggedIn" 키에 true 값을 저장
-                editor.apply() // 또는 editor.commit()
-                navigateToHome()
+
+                val registeredCourse = uiState.courseData.find { it.routeId == routeId }
+
+                if (registeredCourse != null) {
+                    val courseJson = Gson().toJson(registeredCourse)
+                    editor.putString("departurePoint", departurePoint) // 출발지
+                    editor.putBoolean("alarmRegistered", true) // 알람 등록 여부
+                    editor.putString("lastRouteId", routeId) // 막차 경로 Id
+                    editor.putString("lastCourseInfo", courseJson) // 막차 경로
+                    editor.apply()
+
+                    viewModel.postAlarm(lastRouteId = routeId)
+                } else {
+                    atChaToastMessage(context, R.string.course_set_notification_failed_snackbar)
+                }
             },
             backButtonClicked = { navigateToHome() }
         )
@@ -99,7 +119,7 @@ fun CourseSearchScreen(
     modifier: Modifier = Modifier,
     uiState: CourseSearchContract.CourseUiState = CourseSearchContract.CourseUiState(),
     navigateToItinerary: (String) -> Unit = {},
-    setNotification: () -> Unit = {},
+    setNotification: (String) -> Unit = {},
     backButtonClicked: () -> Unit = {}
 ) {
     Column(
@@ -117,8 +137,8 @@ fun CourseSearchScreen(
         TransportTabMenu(
             availableCourses = uiState.courseData,
             onItemClick = navigateToItinerary,
-            onRegisterAlarmBtnClick = {
-                setNotification()
+            onRegisterAlarmBtnClick = { routeId ->
+                setNotification(routeId)
             }
         )
     }

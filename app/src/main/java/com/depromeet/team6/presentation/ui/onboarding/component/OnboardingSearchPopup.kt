@@ -57,10 +57,10 @@ fun OnboardingSearchPopup(
 
     Column(
         modifier = modifier
-            .padding(padding)
             .fillMaxSize()
             .addFocusCleaner(focusManager)
             .background(color = defaultTeam6Colors.greyWashBackground)
+            .padding(padding)
     ) {
         OnboardingSearchTextField(
             value = searchText,

@@ -14,6 +14,7 @@ activityCompose = "1.10.0"
 composeBom = "2024.04.01"
 androidxComposeNavigation = "2.8.2"
 appcompat = "1.7.0"
+lottieCompose = "6.0.0"
 material = "1.11.0"
 coreSplashscreen = "1.0.1"
 accompanistPager = "0.25.0"
@@ -64,6 +65,7 @@ androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", versi
 androidx-paging-common-android = { group = "androidx.paging", name = "paging-common-android", version.ref = "pagingCommonAndroid" }
 accompanist-pager = { module = "com.google.accompanist:accompanist-pager", version.ref = "accompanistPager" }
 accompanist-pager-indicators = { module = "com.google.accompanist:accompanist-pager-indicators", version.ref = "accompanistPager" }
+lottie-compose = { module = "com.airbnb.android:lottie-compose", version.ref = "lottieCompose" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 
