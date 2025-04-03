@@ -329,6 +329,7 @@ fun OnboardingScreen(
                     Spacer(modifier = Modifier.height(31.dp))
 
                     OnboardingSelectLocationButton(
+                        modifier = Modifier.padding(horizontal = 16.dp),
                         searchLocationButtonType = OnboardingSelectLocationButtonType.EDIT,
                         onClick = onSearchBoxClicked
                     )
