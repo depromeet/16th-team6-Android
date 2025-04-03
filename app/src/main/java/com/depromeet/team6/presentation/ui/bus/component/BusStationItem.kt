@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -36,12 +37,22 @@ fun BusStationItem(
     busRouteStation: BusRouteStation,
     busSubtypeIdx: Int,
     modifier: Modifier = Modifier,
+    isFirstStation:Boolean = false,
+    isLastStation:Boolean = false,
     isTurnPoint: Boolean = false,
+    afterTurnPoint: Boolean = false,
     isCurrentStation: Boolean = false,
     busRemainTime: Pair<Int, Int>? = null,
     busPosition: BusPosition? = null
 ) {
     val busColor = TransportTypeUiMapper.getColor(TransportType.BUS, busSubtypeIdx)
+    val (topAlpha, bottomAlpha) = when {
+        isFirstStation -> 0f to 1f
+        isLastStation -> 0.3f to 0f
+        isTurnPoint -> 1f to 0.3f
+        afterTurnPoint -> 0.3f to 0.3f
+        else -> 1f to 1f
+    }
 
     Row(
         modifier = modifier
@@ -50,16 +61,29 @@ fun BusStationItem(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box {
-            Spacer(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .padding(start = 69.dp)
+            Column(
+                modifier = Modifier.fillMaxHeight()
+                    .padding(start = 71.dp)
                     .width(4.dp)
-                    .background(color = busColor)
-            )
+            ) {
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth()
+                        .graphicsLayer { alpha = topAlpha }
+                        .background(busColor)
+                )
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth()
+                        .graphicsLayer { alpha = bottomAlpha }
+                        .background(busColor)
+                )
+            }
             Icon(
                 modifier = Modifier
-                    .padding(start = 64.dp, end = 3.dp)
+                    .padding(start = 66.dp, end = 3.dp)
                     .align(Alignment.Center),
                 imageVector = ImageVector.vectorResource(R.drawable.ic_bus_station_check_14),
                 contentDescription = null,
@@ -70,7 +94,7 @@ fun BusStationItem(
                 contentDescription = null,
                 tint = Color.Unspecified,
                 modifier = Modifier
-                    .padding(start = 39.dp)
+                    .padding(start = 41.dp)
                     .align(Alignment.Center)
                     .alpha(if (isTurnPoint) 1f else 0f)
 

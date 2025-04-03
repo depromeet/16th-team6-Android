@@ -78,6 +78,7 @@ class BusCourseViewModel @Inject constructor(
                 routeName = routeName,
                 serviceRegion = serviceRegion
             ).onSuccess { result ->
+
                 setState { copy(turnPoint = result.turnPoint) }
                 setState { copy(busRouteStationList = result.busRouteStationList) }
                 setState { copy(busPositions = result.busPositions) }

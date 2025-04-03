@@ -198,9 +198,12 @@ fun BusCourseScreen(
             ) {
                 items(uiState.busRouteStationList) { busRouteStation ->
                     BusStationItem(
+                        isFirstStation = (busRouteStation.order == 1),
+                        isLastStation = (busRouteStation.order == uiState.busRouteStationList.size),
                         busRouteStation = busRouteStation,
                         busSubtypeIdx = 2,
                         isTurnPoint = (busRouteStation.order == uiState.turnPoint),
+                        afterTurnPoint = (busRouteStation.order>uiState.turnPoint),
                         isCurrentStation = (busRouteStation.busStationId == uiState.currentBusStationId),
                         busRemainTime = Pair(400, 5000),
                         busPosition = uiState.busPositions.find { it.sectionOrder == busRouteStation.order }

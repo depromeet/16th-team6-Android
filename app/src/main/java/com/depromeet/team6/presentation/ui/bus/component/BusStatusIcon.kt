@@ -43,9 +43,9 @@ fun BusStatusIcon(
 
     Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
         Row(
-            modifier = Modifier.width(53.dp).roundedBackgroundWithPadding(
+            modifier = Modifier.width(54.dp).roundedBackgroundWithPadding(
                 cornerRadius = 3.dp,
-                padding = PaddingValues(vertical = 1.dp),
+                padding = PaddingValues(vertical = 5.dp),
                 backgroundColor = defaultTeam6Colors.greyElevatedBackground
             ),
             horizontalArrangement = Arrangement.Center
