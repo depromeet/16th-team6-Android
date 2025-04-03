@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -126,6 +128,8 @@ fun AfterRegisterSheet(
                         tint = colors.white,
                         modifier = modifier.padding(horizontal = 5.dp)
                     )
+                } else if (!isConfirmed) {
+                    Spacer(modifier = Modifier.size(24.dp))
                 }
             }
 
