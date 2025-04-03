@@ -15,7 +15,7 @@ import com.depromeet.team6.ui.theme.defaultTeam6Typography
 import kotlinx.coroutines.delay
 
 @Composable
-fun AtChaRemainTimeText(remainSecond: Int,busStatus: BusStatus, modifier: Modifier = Modifier) {
+fun AtChaRemainTimeText(remainSecond: Int, busStatus: BusStatus, modifier: Modifier = Modifier) {
     var timeLeft by remember { mutableIntStateOf(remainSecond) }
 
     LaunchedEffect(Unit) {
