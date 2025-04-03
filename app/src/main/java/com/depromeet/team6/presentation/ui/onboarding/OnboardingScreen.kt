@@ -339,7 +339,7 @@ fun OnboardingScreen(
                     modifier = Modifier
                         .padding(vertical = 18.dp, horizontal = 16.dp)
                         .noRippleClickable { onBackPressed() },
-                    imageVector = ImageVector.vectorResource(R.drawable.ic_all_arrow_left_white),
+                    imageVector = ImageVector.vectorResource(R.drawable.ic_all_arrow_left_grey),
                     contentDescription = null,
                     tint = Color.Unspecified
                 )
