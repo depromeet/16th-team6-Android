@@ -53,10 +53,13 @@ fun AfterRegisterSheet(
     onCourseDetailClick: () -> Unit,
     onRefreshClick: () -> Unit,
     onTimerFinished: () -> Unit = {},
+    onIconClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val colors = LocalTeam6Colors.current
     val typography = LocalTeam6Typography.current
+
+    var externalTriggerCount by remember { mutableStateOf(0) }
 
     var timeTextColor = colors.systemGrey1
     if (isConfirmed) timeTextColor = colors.white
@@ -118,16 +121,13 @@ fun AfterRegisterSheet(
                     }
 
                     if (!afterUserDeparted) {
-                        var iconClicked by remember { mutableStateOf(false) }
-
                         Icon(
                             imageVector = ImageVector.vectorResource(R.drawable.ic_all_info_grey),
                             contentDescription = stringResource(R.string.home_icon_info),
                             modifier = Modifier
                                 .padding(horizontal = 5.dp)
                                 .clickable {
-                                    iconClicked = !iconClicked
-                                    Log.d("클릭", "클릭하다.")
+                                    onIconClick()
                                 },
                             tint = colors.systemGrey1
                         )

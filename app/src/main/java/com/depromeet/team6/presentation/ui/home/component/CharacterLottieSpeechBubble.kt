@@ -35,7 +35,8 @@ fun CharacterLottieSpeechBubble(
     lineCount: Int,
     onClick: () -> Unit = {},
     showSpeechBubble: Boolean = true,
-    lottieResId: Int = R.raw.character_alarm_not_registered
+    lottieResId: Int = R.raw.character_alarm_not_registered,
+    externalTrigger: Int = 0 // 외부 트리거 값 추가
 ) {
     val composition by rememberLottieComposition(
         spec = LottieCompositionSpec.RawRes(lottieResId)
@@ -48,6 +49,14 @@ fun CharacterLottieSpeechBubble(
     var isBottomSpeechBubbleVisible by remember { mutableStateOf(false) }
 
     var speechBubbleTrigger by remember { mutableStateOf(0) }
+
+    // 외부 트리거 값이 변경될 때마다 애니메이션 재생 및 말풍선 표시 트리거
+    LaunchedEffect(externalTrigger) {
+        if (externalTrigger > 0) {
+            iteration++
+            speechBubbleTrigger++
+        }
+    }
 
     // 말풍선 표시 로직 (화면 진입 시 또는 탭할 때마다 실행)
     LaunchedEffect(speechBubbleTrigger) {
@@ -154,13 +163,13 @@ fun CharacterLottieSpeechBubblePreview() {
         prefixText = "여기서 놓치면 택시비",
         modifier = Modifier,
         emphasisText = "34,000",
-        suffixText = TODO(),
-        lineCount = TODO(),
-        onClick = TODO(),
-        showSpeechBubble = TODO(),
-        lottieResId = TODO(),
-        topPrefixText = TODO(),
-        topEmphasisText = TODO(),
-        topSuffixText = TODO()
+        suffixText = "원",
+        lineCount = 1,
+        onClick = {},
+        showSpeechBubble = true,
+        lottieResId = R.raw.atcha_character_2,
+        topPrefixText = "",
+        topEmphasisText = "",
+        topSuffixText = ""
     )
 }

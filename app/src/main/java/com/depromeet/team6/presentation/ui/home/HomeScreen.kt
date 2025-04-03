@@ -226,6 +226,8 @@ fun HomeScreen(
 
     val notificationScheduler = NotificationScheduler(context)
 
+    var characterAnimationTrigger by remember { mutableStateOf(0) }
+
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -305,6 +307,9 @@ fun HomeScreen(
                     .zIndex(1f),
                 onRefreshClick = {
                     onRefreshClick()
+                },
+                onIconClick = {
+                    characterAnimationTrigger++
                 }
             )
         } else {
@@ -384,7 +389,8 @@ fun HomeScreen(
                     .noRippleClickable(onClick = onCharacterClick),
                 onClick = handleCharacterClick,
                 lottieResId = R.raw.atcha_character_2,
-                lineCount = 1
+                lineCount = 1,
+                externalTrigger = characterAnimationTrigger
             )
         }
         if (homeUiState.userDeparture) { // 사용자 출발 후
@@ -398,7 +404,8 @@ fun HomeScreen(
                     .noRippleClickable(onClick = onCharacterClick),
                 onClick = {},
                 lottieResId = R.raw.atcha_character_4,
-                lineCount = 1
+                lineCount = 1,
+                externalTrigger = characterAnimationTrigger
             )
         } else {
             if (homeUiState.isAlarmRegistered && !homeUiState.isBusDeparted) { // 알림 등록 후 예상 출발 시간 화면
@@ -412,7 +419,8 @@ fun HomeScreen(
                         .noRippleClickable(onClick = onCharacterClick),
                     onClick = {},
                     lottieResId = R.raw.atcha_chararcter_3,
-                    lineCount = 1
+                    lineCount = 1,
+                    externalTrigger = characterAnimationTrigger
                 )
             }
             if (homeUiState.isAlarmRegistered && homeUiState.isBusDeparted) { // 알림 등록 후 예상 출발 시간 화면
@@ -426,7 +434,8 @@ fun HomeScreen(
                         .noRippleClickable(onClick = onCharacterClick),
                     onClick = {},
                     lottieResId = R.raw.atcha_chararcter_3,
-                    lineCount = 1
+                    lineCount = 1,
+                    externalTrigger = characterAnimationTrigger
                 )
             }
         }
