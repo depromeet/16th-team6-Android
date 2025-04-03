@@ -65,7 +65,7 @@ fun MainNavHost(
             navigateToBack = navigator::popBackStack,
             navigateToLogin = navigator::navigateToLogin
         )
-        
+
         busCourseNavGraph(
             padding = padding,
             navigateToBackStack = navigator::popBackStack
