@@ -18,10 +18,10 @@ val properties = Properties().apply {
 android {
     signingConfigs {
         create("release") {
-//            storeFile = file(properties["keystore.path"] as String)
-//            storePassword = properties["keystore.password"] as String
-//            keyAlias = properties["keystore.alias"] as String
-//            keyPassword = properties["key.password"] as String
+            storeFile = file(properties["keystore.path"] as String)
+            storePassword = properties["keystore.password"] as String
+            keyAlias = properties["keystore.alias"] as String
+            keyPassword = properties["key.password"] as String
         }
     }
 
@@ -32,8 +32,8 @@ android {
         applicationId = "com.depromeet.team6"
         minSdk = 26
         targetSdk = 34
-        versionCode = 6
-        versionName = "1.0.5"
+        versionCode = 8
+        versionName = "1.0.7"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "KAKAO_NATIVE_APP_KEY", properties["kakao.native.app.key"].toString())

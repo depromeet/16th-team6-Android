@@ -23,6 +23,11 @@
 -keep class com.kakao.sdk.**.model.* { <fields>; }
 -keep class * extends com.google.gson.TypeAdapter
 -keep interface com.kakao.sdk.**.*Api
+# Keep Gson model classes
+-keep class com.depromeet.team6.data.dataremote.model.** { *; }
+-keep class com.depromeet.team6.data.datalocal.model.** { *; }
+-keep class com.depromeet.team6.domain.model.** { *; }
+-keep class com.depromeet.team6.presentation.model.** { *; }
 
 -keepattributes Signature, InnerClasses, EnclosingMethod
 -keepattributes RuntimeVisibleAnnotations, RuntimeVisibleParameterAnnotations
@@ -51,3 +56,11 @@
 -dontwarn org.openjsse.**
 -dontwarn com.google.flatbuffers.Struct
 -dontwarn com.google.flatbuffers.Table
+
+# Keep annotations
+-keepattributes *Annotation*
+
+# Optional: if you're using Retrofit + Gson
+-keep class retrofit2.** { *; }
+-keep class com.google.gson.** { *; }
+-keep class okhttp3.** { *; }

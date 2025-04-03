@@ -1,6 +1,7 @@
 package com.depromeet.team6.presentation.ui.itinerary
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -8,13 +9,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -113,17 +114,28 @@ fun ItineraryScreen(
             Column(
                 modifier = modifier
                     .fillMaxWidth()
-                    .wrapContentHeight()
+                    .fillMaxSize()
 //                    .nestedScroll(rememberNestedScrollInteropConnection())
-                    .verticalScroll(sheetScrollState)
-                    .padding(start = 16.dp, end = 16.dp, top = 0.dp)
+                    .verticalScroll(sheetScrollState),
+                verticalArrangement = Arrangement.Top
             ) {
                 ItinerarySummary(
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp),
                     totalTimeMinute = itineraryInfo.totalTime / 60,
                     boardingTime = itineraryInfo.boardingTime,
                     legs = itineraryInfo.legs
                 )
+                Spacer(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(31.dp) // 8 + 1 + 22
+                        .padding(top = 8.dp, bottom = 22.dp) // mimic the spacing
+                        .background(Color(0x0AFFFFFF)) // applies to the 1.dp middle line
+                )
                 ItineraryDetail(
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp),
                     courseInfo = itineraryInfo,
                     departurePoint = uiState.departurePoint!!,
                     destinationPoint = uiState.destinationPoint!!,
