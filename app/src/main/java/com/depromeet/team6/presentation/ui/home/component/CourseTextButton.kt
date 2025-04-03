@@ -40,7 +40,7 @@ fun CourseTextButton(
             contentDescription = stringResource(R.string.home_icon_location_text),
             modifier = Modifier
                 .padding(end = 6.dp),
-            tint = colors.systemGrey1
+            tint = colors.white
         )
 
         Text(

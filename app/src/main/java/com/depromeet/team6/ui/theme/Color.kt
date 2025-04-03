@@ -23,6 +23,7 @@ data class Team6Colors(
     val main: Color,
 
     // Text
+    val greyOneLabel: Color,
     val greySecondaryLabel: Color,
     val greyTertiaryLabel: Color,
     val greyQuaternaryLabel: Color,
@@ -88,6 +89,7 @@ val defaultTeam6Colors = Team6Colors(
     main = Color(0xFF99F977),
 
     // Text
+    greyOneLabel = Color(0xFFB9B9C2),
     greySecondaryLabel = Color(0xFF999CA4),
     greyTertiaryLabel = Color(0xFF666970),
     greyQuaternaryLabel = Color(0xFF393C42),

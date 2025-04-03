@@ -118,7 +118,7 @@ fun SpeechBubble(
         ) {
             Text(
                 text = prefix,
-                color = colors.greySecondaryLabel,
+                color = colors.greyOneLabel,
                 style = typography.bodyMedium12
             )
 
@@ -135,7 +135,7 @@ fun SpeechBubble(
                 Spacer(modifier = Modifier.width(2.dp))
                 Text(
                     text = suffix,
-                    color = colors.greySecondaryLabel,
+                    color = colors.greyOneLabel,
                     style = typography.bodyMedium12
                 )
             }

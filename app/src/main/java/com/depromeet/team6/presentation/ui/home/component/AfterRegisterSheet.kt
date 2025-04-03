@@ -21,6 +21,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import com.depromeet.team6.R
 import com.depromeet.team6.domain.model.course.TransportType
 import com.depromeet.team6.ui.theme.LocalTeam6Colors
@@ -55,9 +56,10 @@ fun AfterRegisterSheet(
     if (afterUserDeparted) timeTextColor = colors.systemRed
 
     Box(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxSize()
-            .height(248.dp),
+            .height(248.dp)
+            .zIndex(1f),
         contentAlignment = Alignment.BottomCenter
     ) {
         Column(
@@ -72,7 +74,7 @@ fun AfterRegisterSheet(
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center,
-                modifier = modifier.padding(top = 6.dp, bottom = 2.dp)
+                modifier = modifier.padding(top = 6.dp, bottom = 0.dp)
             ) {
                 if (afterUserDeparted && !timerFinish) { // 사용자 출발 후
                     TransportStatus(
@@ -122,7 +124,7 @@ fun AfterRegisterSheet(
                     RefreshLottieButton(
                         onClick = onRefreshClick,
                         tint = colors.white,
-                        modifier = Modifier.padding(horizontal = 5.dp)
+                        modifier = modifier.padding(horizontal = 5.dp)
                     )
                 }
             }
@@ -133,21 +135,21 @@ fun AfterRegisterSheet(
                     LastTimer(
                         departureTime = boardingTime,
                         textColor = colors.systemRed,
-                        modifier = Modifier.padding(top = 8.dp, bottom = 6.dp),
+                        modifier = Modifier.padding(top = 8.dp, bottom = 4.dp),
                         onTimerFinished = onTimerFinished
                     )
                 } else {
                     TimeText(
                         timeToLeave = timeToLeave,
                         textColor = colors.white,
-                        modifier = Modifier.padding(top = 8.dp, bottom = 6.dp)
+                        modifier = Modifier.padding(top = 8.dp, bottom = 4.dp)
                     )
                 }
             } else {
                 TimeText(
                     timeToLeave = timeToLeave,
                     textColor = timeTextColor,
-                    modifier = Modifier.padding(top = 8.dp, bottom = 6.dp)
+                    modifier = Modifier.padding(top = 8.dp, bottom = 4.dp)
                 )
             }
 

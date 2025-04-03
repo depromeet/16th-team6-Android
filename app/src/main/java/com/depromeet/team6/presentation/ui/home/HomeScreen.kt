@@ -2,7 +2,6 @@ package com.depromeet.team6.presentation.ui.home
 
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -10,6 +9,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -50,12 +50,15 @@ import com.depromeet.team6.presentation.util.context.getUserLocation
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.presentation.util.permission.PermissionUtil
 import com.depromeet.team6.presentation.util.view.LoadState
+import com.depromeet.team6.ui.theme.LocalTeam6Colors
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.google.android.gms.maps.model.LatLng
 import com.google.gson.Gson
 import timber.log.Timber
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+
+// TODO : maxsize -> 백그라운드 -> padding
 
 @Composable
 fun HomeRoute(
@@ -215,15 +218,16 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel() // TODO : TmapViewCompose 변경 후 제거
 ) {
     val context = LocalContext.current
+    val colors = LocalTeam6Colors.current
 
     val notificationScheduler = NotificationScheduler(context)
 
     Box(
-        modifier = modifier
-            .padding(padding)
+        modifier = Modifier
             .fillMaxSize()
+            .padding(padding)
     ) {
-        Image(
+        Icon(
             imageVector = ImageVector.vectorResource(R.drawable.ic_home_mypage),
             contentDescription = stringResource(R.string.mypage_icon_description),
             modifier = Modifier
@@ -244,7 +248,10 @@ fun HomeScreen(
         } else {
             TMapViewCompose(
                 userLocation,
-                viewModel = viewModel
+                viewModel = viewModel,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
             ) // Replace with your actual API key
         }
 
@@ -321,7 +328,7 @@ fun HomeScreen(
                     stringResource(R.string.home_bubble_alarm_departed_text),
                     null,
                     null,
-                    231.dp
+                    240.dp
                 )
 
             homeUiState.isAlarmRegistered ->
@@ -329,15 +336,15 @@ fun HomeScreen(
                     "",
                     stringResource(R.string.home_bubble_alarm_emphasis_text),
                     "",
-                    231.dp
+                    240.dp
                 )
 
             else ->
                 SpeechBubbleText(
                     stringResource(R.string.home_bubble_basic_text),
-                    stringResource(R.string.home_bubble_least_text) + homeUiState.taxiCost.toString() + stringResource(R.string.home_bubble_won_text),
+                    "약 " + homeUiState.taxiCost.toString() + stringResource(R.string.home_bubble_won_text),
                     null,
-                    207.dp
+                    209.dp
                 )
         }
 
@@ -381,6 +388,20 @@ fun HomeScreen(
             }
         }
         if (homeUiState.isAlarmRegistered && !homeUiState.isBusDeparted) { // 알림 등록 후 예상 출발 시간 화면
+            CharacterLottieSpeechBubble(
+                prefixText = prefixText,
+                emphasisText = emphasisText,
+                suffixText = suffixText,
+                modifier = Modifier
+                    .align(Alignment.BottomStart)
+                    .padding(start = 8.dp, bottom = bottomPadding)
+                    .noRippleClickable(onClick = onCharacterClick),
+                onClick = {},
+                lottieResId = R.raw.atcha_chararcter_3,
+                lineCount = 1
+            )
+        }
+        if (homeUiState.isAlarmRegistered && homeUiState.isBusDeparted) { // 알림 등록 후 예상 출발 시간 화면
             CharacterLottieSpeechBubble(
                 prefixText = prefixText,
                 emphasisText = emphasisText,
