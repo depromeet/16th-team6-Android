@@ -69,12 +69,6 @@ fun BusCourseRoute(
 
     LaunchedEffect(Unit) {
         viewModel.initUiState(busArrivalParameter)
-        viewModel.getBusArrival(
-            routeName = busArrivalParameter.routeName,
-            stationName = busArrivalParameter.stationName,
-            lat = busArrivalParameter.lat,
-            lon = busArrivalParameter.lon
-        )
     }
 
     when (uiState.loadState) {
@@ -85,7 +79,7 @@ fun BusCourseRoute(
                 modifier = Modifier.fillMaxSize(),
                 uiState = uiState,
                 backButtonClicked = { viewModel.setSideEffect(BusCourseContract.BusCourseSideEffect.NavigateToBackStack) },
-                refreshButtonClicked = { viewModel.setEvent(BusCourseContract.BusCourseEvent.refreshButtonClicked) }
+                refreshButtonClicked = { viewModel.setEvent(BusCourseContract.BusCourseEvent.RefreshButtonClicked) }
             )
         }
 
@@ -148,14 +142,14 @@ fun BusCourseScreen(
                 ) {
                     TransportVectorIconComposable(
                         type = TransportType.BUS,
-                        color = TransportTypeUiMapper.getColor(TransportType.BUS, uiState.subtypeIdx),
+                        color = TransportTypeUiMapper.getColor(TransportType.BUS, uiState.busArrivalParameter.subtypeIdx),
                         isMarker = false,
                         modifier = Modifier
                             .size(18.dp)
                     )
                     Spacer(modifier = Modifier.width(3.dp))
                     Text(
-                        text = busNumber.toString(),
+                        text = busNumber,
                         style = defaultTeam6Typography.heading5SemiBold17,
                         color = defaultTeam6Colors.white
                     )
@@ -205,7 +199,7 @@ fun BusCourseScreen(
                         isTurnPoint = (busRouteStation.order == uiState.turnPoint),
                         afterTurnPoint = (busRouteStation.order>uiState.turnPoint),
                         isCurrentStation = (busRouteStation.busStationId == uiState.currentBusStationId),
-                        busRemainTime = Pair(400, 5000),
+                        busRemainTime = uiState.remainingTime,
                         busPosition = uiState.busPositions.find { it.sectionOrder == busRouteStation.order }
                     )
                 }

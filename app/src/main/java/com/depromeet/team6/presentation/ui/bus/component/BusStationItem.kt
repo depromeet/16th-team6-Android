@@ -125,8 +125,10 @@ fun BusStationItem(
             )
             if (isCurrentStation && busRemainTime != null) {
                 Spacer(modifier = Modifier.height(5.dp))
-                AtChaRemainTimeText(remainSecond = busRemainTime.first)
-                AtChaRemainTimeText(remainSecond = busRemainTime.second)
+                if (busRemainTime.first !=-1)
+                    AtChaRemainTimeText(remainSecond = busRemainTime.first)
+                if (busRemainTime.second !=-1)
+                    AtChaRemainTimeText(remainSecond = busRemainTime.second)
             }
         }
     }

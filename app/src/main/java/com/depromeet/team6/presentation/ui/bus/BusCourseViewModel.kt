@@ -22,45 +22,50 @@ class BusCourseViewModel @Inject constructor(
     override suspend fun handleEvent(event: BusCourseContract.BusCourseEvent) {
         when (event) {
             is BusCourseContract.BusCourseEvent.SetScreenLoadState -> setState { copy(loadState = event.loadState) }
-            BusCourseContract.BusCourseEvent.refreshButtonClicked -> {
-                refreshBusPosition()
+            BusCourseContract.BusCourseEvent.RefreshButtonClicked -> {
+                setEvent(BusCourseContract.BusCourseEvent.SetScreenLoadState(loadState = LoadState.Loading))
+                getBusArrival()
             }
         }
     }
 
     fun initUiState(uiParameter: BusArrivalParameter) {
-        setState {
-            copy(
-                subtypeIdx = uiParameter.subtypeIdx
-            )
-        }
-    }
-
-    fun getBusArrival(routeName: String, stationName: String, lat: Double, lon: Double) {
         setEvent(BusCourseContract.BusCourseEvent.SetScreenLoadState(loadState = LoadState.Loading))
+        setState {
+            copy(busArrivalParameter = uiParameter)
+        }
+        getBusArrival()
+    }
+    private fun getBusArrival() {
+        val busArrivalParameter = currentState.busArrivalParameter
         viewModelScope.launch {
             getBusArrivalUseCase(
-                routeName = routeName,
-                stationName = stationName,
-                lat = lat,
-                lon = lon
+                routeName = currentState.busArrivalParameter.routeName,
+                stationName = busArrivalParameter.stationName,
+                lat = busArrivalParameter.lat,
+                lon = busArrivalParameter.lon
             ).onSuccess { busArrival ->
                 getBusPositions(
                     busRouteId = busArrival.busRouteId,
                     routeName = busArrival.routeName,
                     serviceRegion = busArrival.serviceRegion
                 )
+                val remainingTimes = busArrival.realTimeBusArrival.map { it.remainingTime }
                 setState {
                     copy(
+                        remainingTime = Pair(
+                            remainingTimes.getOrNull(0) ?: -1,
+                            remainingTimes.getOrNull(1) ?: -1
+                        ),
                         busPositionParameter = BusPositionParameter(
                             busRouteId = busArrival.busRouteId,
                             routeName = busArrival.routeName,
                             serviceRegion = busArrival.serviceRegion
-                        )
+                        ),
+                        currentBusStationId = busArrival.busStationId,
+                        busRouteName = busArrival.routeName
                     )
                 }
-                setState { copy(currentBusStationId = busArrival.busStationId) }
-                setState { copy(busRouteName = busArrival.routeName) }
             }.onFailure {
                 setEvent(BusCourseContract.BusCourseEvent.SetScreenLoadState(loadState = LoadState.Error))
             }
@@ -78,10 +83,11 @@ class BusCourseViewModel @Inject constructor(
                 routeName = routeName,
                 serviceRegion = serviceRegion
             ).onSuccess { result ->
-
-                setState { copy(turnPoint = result.turnPoint) }
-                setState { copy(busRouteStationList = result.busRouteStationList) }
-                setState { copy(busPositions = result.busPositions) }
+                setState { copy(
+                    turnPoint = result.turnPoint,
+                    busRouteStationList = result.busRouteStationList,
+                    busPositions = result.busPositions
+                ) }
                 setEvent(BusCourseContract.BusCourseEvent.SetScreenLoadState(loadState = LoadState.Success))
             }.onFailure {
                 setEvent(BusCourseContract.BusCourseEvent.SetScreenLoadState(loadState = LoadState.Error))
@@ -89,21 +95,4 @@ class BusCourseViewModel @Inject constructor(
         }
     }
 
-    private fun refreshBusPosition() {
-        setEvent(BusCourseContract.BusCourseEvent.SetScreenLoadState(loadState = LoadState.Loading))
-        viewModelScope.launch {
-            getBusPositionsUseCase(
-                busRouteId = currentState.busPositionParameter.busRouteId,
-                routeName = currentState.busPositionParameter.routeName,
-                serviceRegion = currentState.busPositionParameter.serviceRegion
-            ).onSuccess { result ->
-                setState { copy(turnPoint = result.turnPoint) }
-                setState { copy(busRouteStationList = result.busRouteStationList) }
-                setState { copy(busPositions = result.busPositions) }
-                setEvent(BusCourseContract.BusCourseEvent.SetScreenLoadState(loadState = LoadState.Success))
-            }.onFailure {
-                setEvent(BusCourseContract.BusCourseEvent.SetScreenLoadState(loadState = LoadState.Error))
-            }
-        }
-    }
 }
