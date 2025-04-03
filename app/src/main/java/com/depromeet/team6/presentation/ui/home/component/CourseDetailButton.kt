@@ -1,6 +1,7 @@
 package com.depromeet.team6.presentation.ui.home.component
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -36,9 +37,10 @@ fun CourseDetailButton(
         onClick = onClick,
         modifier = modifier
             .fillMaxWidth(),
+        contentPadding = PaddingValues(0.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = colors.systemGrey5,
-            contentColor = colors.white
+            contentColor = colors.white,
         ),
         shape = RoundedCornerShape(8.dp)
     ) {

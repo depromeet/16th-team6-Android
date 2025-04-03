@@ -3,6 +3,7 @@ package com.depromeet.team6.presentation.ui.home.component
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -17,6 +18,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.depromeet.team6.R
+import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.ui.theme.LocalTeam6Colors
 import com.depromeet.team6.ui.theme.LocalTeam6Typography
 
@@ -29,6 +31,9 @@ fun FinishCourseDetailButton(
     val colors = LocalTeam6Colors.current
     val typography = LocalTeam6Typography.current
 
+    val outlinedButtonWeight = 1f
+    val courseDetailButtonWeight = 2.8f
+
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -36,10 +41,12 @@ fun FinishCourseDetailButton(
             .fillMaxWidth()
     ) {
         OutlinedButton(
-            onClick = {
-                onFinishClick()
-            },
-            modifier = modifier,
+            modifier = Modifier
+                .weight(outlinedButtonWeight)
+                .noRippleClickable {
+                    onFinishClick()
+                },
+            contentPadding = PaddingValues(0.dp),
             border = BorderStroke(
                 width = 1.dp,
                 color = colors.systemGrey6
@@ -48,7 +55,8 @@ fun FinishCourseDetailButton(
                 containerColor = colors.greyWashBackground,
                 contentColor = colors.white
             ),
-            shape = RoundedCornerShape(10.dp)
+            shape = RoundedCornerShape(10.dp),
+            onClick = onFinishClick
         ) {
             Text(
                 text = stringResource(R.string.home_finish_button_text),
@@ -60,7 +68,7 @@ fun FinishCourseDetailButton(
         CourseDetailButton(
             text = stringResource(R.string.home_course_detail_button_text),
             onClick = onCourseDetailClick,
-            modifier = modifier
+            modifier = Modifier.weight(courseDetailButtonWeight)
         )
     }
 }

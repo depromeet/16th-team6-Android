@@ -206,9 +206,9 @@ fun AfterRegisterMap(
                 .align(Alignment.BottomEnd)
                 .then(
                     if (uiState.isAlarmRegistered) {
-                        Modifier.padding(bottom = 50.dp, end = 16.dp)
+                        Modifier.padding(bottom = 25.dp, end = 16.dp)
                     } else {
-                        Modifier.padding(bottom = 50.dp, end = 16.dp)
+                        Modifier.padding(bottom = 25.dp, end = 16.dp)
                     }
                 )
                 .clickable(enabled = isMapReady) {
