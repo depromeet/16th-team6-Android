@@ -317,13 +317,14 @@ fun OnboardingScreen(
             if (uiState.onboardingType == OnboardingType.HOME) {
                 Spacer(modifier = Modifier.height(72.dp))
                 OnboardingTitle(onboardingType = uiState.onboardingType)
-                Spacer(modifier = Modifier.height(48.dp))
                 if (uiState.myAddress.address.isEmpty()) {
+                    Spacer(modifier = Modifier.height(48.dp))
                     OnboardingSearchContainer(
                         onSearchBoxClicked = onSearchBoxClicked,
                         onLocationButtonClick = onLocationButtonClicked
                     )
                 } else {
+                    Spacer(modifier = Modifier.height(28.dp))
                     OnboardingSelectedHome(onboardingSearchLocation = uiState.myAddress)
                     Spacer(modifier = Modifier.height(31.dp))
 
