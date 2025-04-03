@@ -7,6 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.course.CourseInfo
+import com.depromeet.team6.presentation.model.bus.BusArrivalParameter
 import java.time.LocalDateTime
 
 @Composable
@@ -14,7 +15,8 @@ fun ItineraryDetail(
     courseInfo: CourseInfo,
     departurePoint: Address,
     destinationPoint: Address,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClickBusInfo: (BusArrivalParameter) -> Unit = {}
 ) {
     val arrivalDateTime = LocalDateTime.parse(courseInfo.departureTime).plusSeconds(courseInfo.totalTime.toLong())
 
@@ -28,7 +30,8 @@ fun ItineraryDetail(
             departureName = departurePoint.name,
             arrivalTime = arrivalDateTime.toString(),
             arrivalName = destinationPoint.name,
-            modifier = Modifier
+            modifier = Modifier,
+            onClickBusInfo = onClickBusInfo
         )
     }
 }

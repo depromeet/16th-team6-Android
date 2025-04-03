@@ -20,6 +20,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import com.depromeet.team6.R
 import com.depromeet.team6.domain.model.course.LegInfo
+import com.depromeet.team6.presentation.model.bus.BusArrivalParameter
 import com.depromeet.team6.presentation.ui.itinerary.LegInfoDummyProvider
 import com.depromeet.team6.presentation.util.Dimens
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
@@ -32,7 +33,8 @@ fun ItineraryInfoDetail(
     departureName: String,
     arrivalTime: String,
     arrivalName: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClickBusInfo: (BusArrivalParameter) -> Unit = {}
 ) {
     Column(
         modifier = modifier
@@ -47,7 +49,8 @@ fun ItineraryInfoDetail(
         )
 
         ItineraryInfoDetailLegs(
-            legs = legs
+            legs = legs,
+            onClickBusInfo = onClickBusInfo
         )
 
         // 도착

@@ -44,6 +44,7 @@ import androidx.compose.ui.unit.dp
 import com.depromeet.team6.R
 import com.depromeet.team6.domain.model.course.LegInfo
 import com.depromeet.team6.domain.model.course.TransportType
+import com.depromeet.team6.presentation.model.bus.BusArrivalParameter
 import com.depromeet.team6.presentation.ui.itinerary.LegInfoDummyProvider
 import com.depromeet.team6.presentation.util.Dimens
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
@@ -56,7 +57,8 @@ import java.time.LocalDateTime
 @Composable
 fun ItineraryInfoDetailLegs(
     legs: List<LegInfo>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClickBusInfo: (BusArrivalParameter) -> Unit = {}
 ) {
     Column {
         for (leg in legs) {
@@ -76,7 +78,18 @@ fun ItineraryInfoDetailLegs(
                         disembarkingStation = leg.endPoint.name,
                         boardingDateTime = leg.departureDateTime!!,
                         timeMinute = leg.sectionTime,
-                        distanceMeter = leg.distance
+                        distanceMeter = leg.distance,
+                        onClickBusInfo = { routeName, stationName, subtypeIdx ->
+                            onClickBusInfo(
+                                BusArrivalParameter(
+                                    routeName = routeName,
+                                    stationName = stationName,
+                                    lat = leg.startPoint.lat,
+                                    lon = leg.startPoint.lon,
+                                    subtypeIdx = subtypeIdx
+                                )
+                            )
+                        }
                     )
                 }
                 TransportType.SUBWAY -> {
@@ -104,7 +117,8 @@ private fun DetailLegsBus(
     boardingDateTime: String,
     timeMinute: Int,
     distanceMeter: Int,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClickBusInfo: (String, String, Int) -> Unit = { routeName: String, stationName: String, subtypeIdx: Int -> }
 ) {
     var rowHeight by remember { mutableStateOf(0) }
 
@@ -200,6 +214,14 @@ private fun DetailLegsBus(
             }
             Spacer(Modifier.height(19.dp))
             BusNumberButton(
+                modifier = Modifier
+                    .noRippleClickable {
+                        onClickBusInfo(
+                            busName,
+                            boardingStation,
+                            subtypeIdx
+                        )
+                    },
                 number = busName,
                 busColor = busColor
             )
@@ -488,13 +510,12 @@ private fun DottedLineWithCircles(
 private fun BusNumberButton(
     number: String,
     busColor: Color,
-    onClick: () -> Unit = {}
+    modifier: Modifier = Modifier
 ) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .clip(RoundedCornerShape(4.dp)) // 둥근 모서리
             .background(busColor)
-            .noRippleClickable { onClick() }
             .padding(top = 4.dp, bottom = 4.dp, start = 8.dp, end = 5.dp)
     ) {
         Row(

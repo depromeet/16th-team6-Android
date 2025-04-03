@@ -26,7 +26,6 @@ import com.depromeet.team6.presentation.ui.common.AtchaCommonBottomSheet
 import com.depromeet.team6.presentation.ui.itinerary.component.ItineraryDetail
 import com.depromeet.team6.presentation.ui.itinerary.component.ItineraryMap
 import com.depromeet.team6.presentation.ui.itinerary.component.ItinerarySummary
-import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.google.android.gms.maps.model.LatLng
@@ -83,9 +82,10 @@ fun ItineraryScreen(
     marginTop : Dp,
     modifier: Modifier = Modifier,
     uiState: ItineraryContract.ItineraryUiState = ItineraryContract.ItineraryUiState(),
-    navigateToBusCourse: (BusArrivalParameter) -> Unit = {}, // 테스트용
+    navigateToBusCourse: (BusArrivalParameter) -> Unit = {},
     onBackPressed: () -> Unit = {}
 ) {
+    val sheetScrollState = rememberScrollState()
     val itineraryInfo = uiState.itineraryInfo!!
     AtchaCommonBottomSheet(
         modifier = modifier,
@@ -104,19 +104,19 @@ fun ItineraryScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight()
-                    .verticalScroll(rememberScrollState())
+                    .verticalScroll(sheetScrollState)
                     .padding(horizontal = 16.dp)
-                    .noRippleClickable {
-                        navigateToBusCourse(
-                            BusArrivalParameter(
-                                routeName = "일반:700-2",
-                                stationName = "정평중학교",
-                                lat = 37.318197222222224,
-                                lon = 127.08745555555555,
-                                subtypeIdx = 2
-                            )
-                        )
-                    }
+//                    .noRippleClickable {
+//                        navigateToBusCourse(
+//                            BusArrivalParameter(
+//                                routeName = "일반:700-2",
+//                                stationName = "정평중학교",
+//                                lat = 37.318197222222224,
+//                                lon = 127.08745555555555,
+//                                subtypeIdx = 2
+//                            )
+//                        )
+//                    }
             ) {
                 ItinerarySummary(
                     totalTimeMinute = itineraryInfo.totalTime / 60,
@@ -126,10 +126,12 @@ fun ItineraryScreen(
                 ItineraryDetail(
                     courseInfo = itineraryInfo,
                     departurePoint = uiState.departurePoint!!,
-                    destinationPoint = uiState.destinationPoint!!
+                    destinationPoint = uiState.destinationPoint!!,
+                    onClickBusInfo = navigateToBusCourse
                 )
             }
-        }
+        },
+        sheetScrollState = sheetScrollState
     )
 }
 
