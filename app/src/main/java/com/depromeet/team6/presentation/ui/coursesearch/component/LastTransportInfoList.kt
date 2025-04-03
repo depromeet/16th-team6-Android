@@ -24,7 +24,7 @@ import com.google.gson.Gson
 fun LastTransportInfoList(
     listData: List<CourseInfo>,
     modifier: Modifier = Modifier,
-    onRegisterAlarmBtnClick: () -> Unit = {},
+    onRegisterAlarmBtnClick: (String) -> Unit = {},
     onItemClick: (String) -> Unit = {}
 ) {
     LazyColumn(
@@ -44,8 +44,8 @@ fun LastTransportInfoList(
                         )
                     },
                 courseSearchResult = listData[index],
-                onRegisterAlarmBtnClick = {
-                    onRegisterAlarmBtnClick()
+                onRegisterAlarmBtnClick = { routeId ->
+                    onRegisterAlarmBtnClick(routeId)
                 }
             )
 

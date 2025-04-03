@@ -34,6 +34,8 @@
     <!-- LockScreen -->
     <string name="lock_screen_description">알림 잠금화면</string>
     <string name="lock_screen_start_btn">출발하기</string>
+    <string name="lock_screen_late_btn">더 늦은 경로 확인하기</string>
+    <string name="lock_screen_taxi_text">지금 안 일어나면\n 택시비</string>
 
     <string name="lock_service_start_text">잠금화면 서비스 시작됨</string>
     <string name="lock_screen_start_text">잠금화면 실행</string>
@@ -51,7 +53,7 @@
 
 
     <!-- HomeScreen -->
-    <string name="home_icon_search_text">검색 아이콘</string>
+    <string name="home_icon_search_text">경로 상세 아이콘</string>
     <string name="home_search_button_text">검색하기</string>
     <string name="home_current_location_btn">현위치 버튼</string>
     <string name="home_current_location_text">현위치:</string>
@@ -59,6 +61,7 @@
 
     <string name="home_search_location_search_text">출발지 검색</string>
     <string name="home_search_departure_home_text">도착지: 우리집</string>
+    <string name="home_my_home_text">우리집</string>
     <string name="home_search_back_text">뒤로 가기</string>
     <string name="home_search_empty_history">최근 내역이 없습니다.</string>
 
@@ -66,9 +69,12 @@
     <string name="home_icon_arrow_right_text">화살표 아이콘</string>
     <string name="home_icon_bell_text">알림 종 아이콘</string>
 
-    <string name="home_bubble_basic_text">여기서 놓치면 택시비 약</string>
+    <string name="home_bubble_basic_text">여기서 막차 놓치면 택시비</string>
+    <string name="home_bubble_least_text">약 </string>
+    <string name="home_bubble_won_text">원</string>
     <string name="home_bubble_alarm_prefix_text">차고지에서 출발하면</string>
-    <string name="home_bubble_alarm_emphasis_text">더 정확하게</string>
+    <string name="home_bubble_alarm_emphasis_text">이때쯤 자리에서 출발하면 돼요</string>
+    <string name="home_move_set_destination">"지도를 움직여 출발지를 설정해 봐요"</string>
     <string name="home_bubble_alarm_suffix_text">알려드려요</string>
     <string name="home_bubble_alarm_departed_text">이때 출발해야 막차를 탈 수 있어요</string>
 
@@ -89,7 +95,8 @@
     <string name="course_detail_info_duration">%1d분</string>
     <string name="course_detail_info_boarding_point">%1s 승차</string>
     <string name="course_detail_info_destination_point">%1s 하차</string>
-    <string name="course_set_notification_snackbar">알림이 등록되었어요</string>
+    <string name="course_set_notification_snackbar">알림이 등록되었습니다</string>
+    <string name="course_set_notification_failed_snackbar">알림을 등록하는데 실패했어요</string>
     <string name="notification_channel_name">앱 알림</string>
     <string name="notification_channel_description_text">앱 내부 알림 채널</string>
     <string name="course_search_failed_snackbar">경로를 조회하는데 실패했어요</string>
@@ -123,11 +130,19 @@
     <string name="mypage_account_logout_text">로그아웃</string>
     <string name="mypage_account_signout_text">계정 탈퇴</string>
     <string name="mypage_icon_description">마이페이지 아이콘</string>
+    <string name="home_icon_info">홈 안내 아이콘</string>
+    <string name="home_icon_refresh">홈 새로고침 아이콘</string>
+    <string name="home_finish_button_text">종료</string>
+    <string name="home_course_detail_button_text">상세 경로</string>
+    <string name="home_icon_transportation">홈 대중교통 아이콘</string>
+    <string name="home_icon_dot">홈 점 아이콘</string>
+    <string name="home_final_departure_time_text">우리집 도착시간</string>
     <string name="mypage_logout_dialog_title">로그아웃하시겠어요?</string>
     <string name="mypage_withdraw_dialog_title">탈퇴하시겠어요?</string>
     <string name="mypage_logout_dialog_confirm">로그아웃</string>
     <string name="mypage_withdraw_dialog_confirm">탈퇴하기</string>
     <string name="mypage_dialog_cancle">취소</string>
+    <string name="home_bubble_user_departure">출발~!</string>
 
 
 </resources>

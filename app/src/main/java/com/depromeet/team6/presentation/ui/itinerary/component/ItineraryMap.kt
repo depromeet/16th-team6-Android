@@ -228,7 +228,7 @@ private fun getMidPoint(point1: LatLng, point2: LatLng): LatLng {
     return LatLng(midLatitude, midLongitude)
 }
 
-private fun getWayPointList(passShape: String): ArrayList<TMapPoint> {
+fun getWayPointList(passShape: String): ArrayList<TMapPoint> {
     val pointList: ArrayList<TMapPoint> = passShape.split(" ").mapNotNull { pair ->
         val parts = pair.split(",")
         if (parts.size == 2) {

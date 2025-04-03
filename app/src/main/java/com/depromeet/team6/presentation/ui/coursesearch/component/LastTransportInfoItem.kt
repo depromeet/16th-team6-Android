@@ -37,7 +37,7 @@ import java.time.LocalDateTime
 fun LastTransportInfoItem(
     courseSearchResult: CourseInfo,
     modifier: Modifier = Modifier,
-    onRegisterAlarmBtnClick: () -> Unit = {}
+    onRegisterAlarmBtnClick: (lastRouteId: String) -> Unit = {}
 ) {
     Column(
         modifier = modifier
@@ -155,7 +155,9 @@ fun LastTransportInfoItem(
 
         // 막차 알림 받기 버튼
         SetNotificationButton(
-            btnClickEvent = onRegisterAlarmBtnClick
+            btnClickEvent = {
+                onRegisterAlarmBtnClick(courseSearchResult.routeId)
+            }
         )
     }
 }
