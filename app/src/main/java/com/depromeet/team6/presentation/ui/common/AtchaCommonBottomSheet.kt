@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -44,17 +43,18 @@ import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AtchaCommonBottomSheet(
     mainContent: @Composable () -> Unit, // 뒷 배경에 표시될 화면
     sheetContent: @Composable () -> Unit, // BottomSheet에 표시될 화면
     sheetScrollState : ScrollState,
+    marginBottom : Dp = 0.dp,
     modifier: Modifier = Modifier
 ) {
 
     val screenHeightPx = LocalConfiguration.current.screenHeightDp
-    val sheetPeekHeight = (screenHeightPx / 2).dp
+    val sheetPeekHeight = (screenHeightPx / 2).dp + marginBottom
 
 
 //    val coroutineScope = rememberCoroutineScope()

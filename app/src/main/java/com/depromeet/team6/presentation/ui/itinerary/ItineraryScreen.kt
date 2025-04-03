@@ -132,7 +132,8 @@ fun ItineraryScreen(
                 Spacer(Modifier.height(marginBottom))
             }
         },
-        sheetScrollState = sheetScrollState
+        sheetScrollState = sheetScrollState,
+        marginBottom = marginBottom
     )
 }
 

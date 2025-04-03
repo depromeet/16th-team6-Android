@@ -63,7 +63,7 @@ fun ItineraryInfoDetail(
         // 막차 정보 출처
         Text(
             modifier = Modifier
-                .padding(top = 72.dp, bottom = 32.dp)
+                .padding(top = 72.dp)
                 .align(Alignment.CenterHorizontally),
             text = stringResource(R.string.itinerary_info_legs_data_source),
             style = defaultTeam6Typography.bodyRegular12,
