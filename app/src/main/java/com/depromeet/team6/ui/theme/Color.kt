@@ -50,6 +50,7 @@ data class Team6Colors(
     // Non-Semantic
     val systemGreen: Color,
     val systemRed: Color,
+    val systemBlue: Color,
 
     // System Grey
     val systemGrey1: Color,
@@ -116,6 +117,7 @@ val defaultTeam6Colors = Team6Colors(
     // Non-Semantic
     systemGreen = Color(0xFF99ED7B),
     systemRed = Color(0xFFFF5D5D),
+    systemBlue = Color(0xFF1777FF),
 
     // System Grey
     systemGrey1 = Color(0xFF7E7E8A),
@@ -126,7 +128,7 @@ val defaultTeam6Colors = Team6Colors(
     systemGrey6 = Color(0xFF1F1F23),
 
     // TextField Cursor
-    textFieldCursor = Color(0xFF999CA4),
+    textFieldCursor = Color(0xFF90E772),
 
     // WALK
     walkColor = listOf(

@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ResponseBusPositionsDto(
     @SerialName("busRouteStationList") val busRouteStationList: List<BusRouteStation>,
-    @SerialName("turnPoint") val turnPoint: Int,
+    @SerialName("turnPoint") val turnPoint: Int? = null,
     @SerialName("busPositions") val busPositions: List<BusPosition>? = emptyList()
 )
 
@@ -16,6 +16,7 @@ data class BusRouteStation(
     @SerialName("busRouteId") val busRouteId: String,
     @SerialName("busRouteName") val busRouteName: String,
     @SerialName("busStationId") val busStationId: String,
+    @SerialName("busStationNumber") val busStationNumber: String,
     @SerialName("busStationName") val busStationName: String,
     @SerialName("busStationLat") val busStationLat: Double,
     @SerialName("busStationLon") val busStationLon: Double,
