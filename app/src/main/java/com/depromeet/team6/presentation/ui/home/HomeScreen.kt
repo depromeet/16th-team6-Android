@@ -251,9 +251,7 @@ fun HomeScreen(
         } else {
             TMapViewCompose(
                 userLocation,
-                viewModel = viewModel,
-                modifier = Modifier
-                    .fillMaxSize()
+                viewModel = viewModel
             ) // Replace with your actual API key
         }
 
