@@ -329,7 +329,7 @@ fun HomeScreen(
                     stringResource(R.string.home_bubble_basic_text),
                     "약 " + NumberFormat.getNumberInstance(Locale.US).format(homeUiState.taxiCost) + stringResource(R.string.home_bubble_won_text),
                     null,
-                    211.dp
+                    209.dp
                 )
 
             homeUiState.userDeparture ->
@@ -337,7 +337,7 @@ fun HomeScreen(
                     "",
                     stringResource(R.string.home_bubble_user_departure),
                     "",
-                    228.dp
+                    218.dp
                 )
 
             homeUiState.isAlarmRegistered && homeUiState.isBusDeparted ->
@@ -345,7 +345,7 @@ fun HomeScreen(
                     "",
                     stringResource(R.string.home_bubble_alarm_emphasis_text),
                     "",
-                    228.dp
+                    218.dp
                 )
 
             homeUiState.isAlarmRegistered ->
@@ -353,7 +353,7 @@ fun HomeScreen(
                     "",
                     stringResource(R.string.home_bubble_alarm_emphasis_text),
                     "",
-                    228.dp
+                    218.dp
                 )
 
             else ->
