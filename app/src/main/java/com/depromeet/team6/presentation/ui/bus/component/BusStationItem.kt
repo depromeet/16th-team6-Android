@@ -14,16 +14,22 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.depromeet.team6.R
+import com.depromeet.team6.domain.model.BusCongestion
 import com.depromeet.team6.domain.model.BusPosition
 import com.depromeet.team6.domain.model.BusRouteStation
 import com.depromeet.team6.domain.model.course.TransportType
@@ -31,14 +37,15 @@ import com.depromeet.team6.presentation.ui.common.text.AtChaRemainTimeText
 import com.depromeet.team6.presentation.util.view.TransportTypeUiMapper
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.depromeet.team6.ui.theme.defaultTeam6Typography
+import timber.log.Timber
 
 @Composable
 fun BusStationItem(
     busRouteStation: BusRouteStation,
     busSubtypeIdx: Int,
     modifier: Modifier = Modifier,
-    isFirstStation:Boolean = false,
-    isLastStation:Boolean = false,
+    isFirstStation: Boolean = false,
+    isLastStation: Boolean = false,
     isTurnPoint: Boolean = false,
     afterTurnPoint: Boolean = false,
     isCurrentStation: Boolean = false,
@@ -53,16 +60,16 @@ fun BusStationItem(
         afterTurnPoint -> 0.3f to 0.3f
         else -> 1f to 1f
     }
-
     Row(
         modifier = modifier
             .fillMaxWidth()
             .height(IntrinsicSize.Min),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Box {
+        Box (){
             Column(
-                modifier = Modifier.fillMaxHeight()
+                modifier = Modifier
+                    .fillMaxHeight()
                     .padding(start = 71.dp)
                     .width(4.dp)
             ) {
@@ -99,16 +106,19 @@ fun BusStationItem(
                     .alpha(if (isTurnPoint) 1f else 0f)
 
             )
-
             if (busPosition != null) {
-                BusStatusIcon(
-                    busNumber = busPosition.vehicleNumber,
-                    busCongestion = busPosition.busCongestion,
-                    color = busColor,
-                    modifier = Modifier
-                        .padding(start = 7.dp)
-                        .fillMaxHeight()
-                )
+                val busProgress = ((busPosition.sectionProgress) + 0.5) % 1
+                Column (modifier = Modifier.fillMaxHeight()){
+                    Spacer(modifier = Modifier.weight(busProgress.toFloat()))
+                    BusStatusIcon(
+                        busNumber = busPosition.vehicleNumber,
+                        busCongestion = busPosition.busCongestion,
+                        color = busColor,
+                        modifier = Modifier
+                            .padding(start = 7.dp)
+                    )
+                    Spacer(modifier = Modifier.weight(1-busProgress.toFloat()))
+                }
             }
         }
         Column(modifier = Modifier.padding(top = 16.dp, start = 10.dp, bottom = 17.dp)) {
@@ -125,9 +135,9 @@ fun BusStationItem(
             )
             if (isCurrentStation && busRemainTime != null) {
                 Spacer(modifier = Modifier.height(5.dp))
-                if (busRemainTime.first !=-1)
+                if (busRemainTime.first != -1)
                     AtChaRemainTimeText(remainSecond = busRemainTime.first)
-                if (busRemainTime.second !=-1)
+                if (busRemainTime.second != -1)
                     AtChaRemainTimeText(remainSecond = busRemainTime.second)
             }
         }
@@ -151,13 +161,13 @@ private fun BusStationItemPreview() {
         busSubtypeIdx = 1,
 //        isTurnPoint = true,
         isCurrentStation = true,
-        busRemainTime = Pair(400, 5000)
-//        busPosition = BusPosition(
-//            vehicleId = 123.toString(),
-//            sectionOrder = 2,
-//            vehicleNumber = 24002.toString(),
-//            sectionProgress = 0.7,
-//            busCongestion = BusCongestion.LOW
-//        )
+        busRemainTime = Pair(400, 5000),
+        busPosition = BusPosition(
+            vehicleId = 123.toString(),
+            sectionOrder = 2,
+            vehicleNumber = 24002.toString(),
+            sectionProgress = 0.9,
+            busCongestion = BusCongestion.LOW
+        )
     )
 }
