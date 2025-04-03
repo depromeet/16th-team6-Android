@@ -1,6 +1,5 @@
 package com.depromeet.team6.presentation.ui.home.component
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -195,8 +194,8 @@ fun AfterRegisterSheet(
 @Composable
 fun AfterRegisterSheetPreview() {
     AfterRegisterSheet(
-        timerFinish = false,  // 새로고침 버튼이 보이도록 false로 설정
-        afterUserDeparted = true,  // 새로고침 버튼이 보이도록 true로 설정
+        timerFinish = false, // 새로고침 버튼이 보이도록 false로 설정
+        afterUserDeparted = true, // 새로고침 버튼이 보이도록 true로 설정
         transportType = TransportType.BUS,
         transportationNumber = 0,
         transportationName = "잠실새내역",
@@ -212,6 +211,6 @@ fun AfterRegisterSheetPreview() {
         boardingTime = "15:30:00",
         deleteAlarmConfirmed = {},
         dismissDialog = {},
-        onTimerFinished = {},
+        onTimerFinished = {}
     )
 }

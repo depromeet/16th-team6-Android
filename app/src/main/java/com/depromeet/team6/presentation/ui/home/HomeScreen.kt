@@ -1,6 +1,5 @@
 package com.depromeet.team6.presentation.ui.home
 
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -11,7 +10,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -376,7 +374,6 @@ fun HomeScreen(
             speechBubbleFlag = !speechBubbleFlag
             onCharacterClick()
         }
-
 
         if (!homeUiState.isAlarmRegistered) { // 첫 화면
             CharacterLottieSpeechBubble(
