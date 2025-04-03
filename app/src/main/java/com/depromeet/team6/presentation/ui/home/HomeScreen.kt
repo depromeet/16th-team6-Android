@@ -1,5 +1,6 @@
 package com.depromeet.team6.presentation.ui.home
 
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -55,8 +56,10 @@ import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.google.android.gms.maps.model.LatLng
 import com.google.gson.Gson
 import timber.log.Timber
+import java.text.NumberFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 // TODO : maxsize -> 백그라운드 -> padding
 
@@ -223,7 +226,7 @@ fun HomeScreen(
     val notificationScheduler = NotificationScheduler(context)
 
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .padding(padding)
     ) {
@@ -251,7 +254,6 @@ fun HomeScreen(
                 viewModel = viewModel,
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(padding)
             ) // Replace with your actual API key
         }
 
@@ -323,11 +325,27 @@ fun HomeScreen(
         }
 
         val (prefixText, emphasisText, suffixText, bottomPadding) = when {
+            !homeUiState.isAlarmRegistered ->
+                SpeechBubbleText(
+                    stringResource(R.string.home_bubble_basic_text),
+                    "약 " + NumberFormat.getNumberInstance(Locale.US).format(homeUiState.taxiCost) + stringResource(R.string.home_bubble_won_text),
+                    null,
+                    209.dp
+                )
+
+            homeUiState.userDeparture ->
+                SpeechBubbleText(
+                    "",
+                    stringResource(R.string.home_bubble_user_departure),
+                    "",
+                    240.dp
+                )
+
             homeUiState.isAlarmRegistered && homeUiState.isBusDeparted ->
                 SpeechBubbleText(
-                    stringResource(R.string.home_bubble_alarm_departed_text),
-                    null,
-                    null,
+                    "",
+                    stringResource(R.string.home_bubble_alarm_emphasis_text),
+                    "",
                     240.dp
                 )
 
@@ -342,7 +360,7 @@ fun HomeScreen(
             else ->
                 SpeechBubbleText(
                     stringResource(R.string.home_bubble_basic_text),
-                    "약 " + homeUiState.taxiCost.toString() + stringResource(R.string.home_bubble_won_text),
+                    "약 " + NumberFormat.getNumberInstance(Locale.US).format(homeUiState.taxiCost) + stringResource(R.string.home_bubble_won_text),
                     null,
                     209.dp
                 )
@@ -355,65 +373,63 @@ fun HomeScreen(
             onCharacterClick()
         }
 
+
         if (!homeUiState.isAlarmRegistered) { // 첫 화면
-            if (speechBubbleFlag) {
+            CharacterLottieSpeechBubble(
+                prefixText = prefixText,
+                emphasisText = emphasisText,
+                suffixText = suffixText,
+                modifier = Modifier
+                    .align(Alignment.BottomStart)
+                    .padding(start = 8.dp, bottom = bottomPadding)
+                    .noRippleClickable(onClick = onCharacterClick),
+                onClick = handleCharacterClick,
+                lottieResId = R.raw.atcha_character_2,
+                lineCount = 1
+            )
+        }
+        if (homeUiState.userDeparture) { // 사용자 출발 후
+            CharacterLottieSpeechBubble(
+                prefixText = prefixText,
+                emphasisText = emphasisText,
+                suffixText = suffixText,
+                modifier = Modifier
+                    .align(Alignment.BottomStart)
+                    .padding(start = 8.dp, bottom = bottomPadding)
+                    .noRippleClickable(onClick = onCharacterClick),
+                onClick = {},
+                lottieResId = R.raw.atcha_character_4,
+                lineCount = 1
+            )
+        } else {
+            if (homeUiState.isAlarmRegistered && !homeUiState.isBusDeparted) { // 알림 등록 후 예상 출발 시간 화면
                 CharacterLottieSpeechBubble(
                     prefixText = prefixText,
                     emphasisText = emphasisText,
                     suffixText = suffixText,
-                    topPrefixText = "",
-                    topEmphasisText = stringResource(R.string.home_move_set_destination),
-                    topSuffixText = "",
                     modifier = Modifier
                         .align(Alignment.BottomStart)
                         .padding(start = 8.dp, bottom = bottomPadding)
                         .noRippleClickable(onClick = onCharacterClick),
-                    onClick = handleCharacterClick,
-                    lottieResId = R.raw.atcha_character_1,
-                    lineCount = 2
-                )
-            } else {
-                CharacterLottieSpeechBubble(
-                    prefixText = prefixText,
-                    emphasisText = emphasisText,
-                    suffixText = suffixText,
-                    modifier = Modifier
-                        .align(Alignment.BottomStart)
-                        .padding(start = 8.dp, bottom = bottomPadding)
-                        .noRippleClickable(onClick = onCharacterClick),
-                    onClick = handleCharacterClick,
-                    lottieResId = R.raw.atcha_character_2,
+                    onClick = {},
+                    lottieResId = R.raw.atcha_chararcter_3,
                     lineCount = 1
                 )
             }
-        }
-        if (homeUiState.isAlarmRegistered && !homeUiState.isBusDeparted) { // 알림 등록 후 예상 출발 시간 화면
-            CharacterLottieSpeechBubble(
-                prefixText = prefixText,
-                emphasisText = emphasisText,
-                suffixText = suffixText,
-                modifier = Modifier
-                    .align(Alignment.BottomStart)
-                    .padding(start = 8.dp, bottom = bottomPadding)
-                    .noRippleClickable(onClick = onCharacterClick),
-                onClick = {},
-                lottieResId = R.raw.atcha_chararcter_3,
-                lineCount = 1
-            )
-        }
-        if (homeUiState.isAlarmRegistered && homeUiState.isBusDeparted) { // 알림 등록 후 예상 출발 시간 화면
-            CharacterLottieSpeechBubble(
-                prefixText = prefixText,
-                emphasisText = emphasisText,
-                suffixText = suffixText,
-                modifier = Modifier
-                    .align(Alignment.BottomStart)
-                    .padding(start = 8.dp, bottom = bottomPadding)
-                    .noRippleClickable(onClick = onCharacterClick),
-                onClick = {},
-                lottieResId = R.raw.atcha_chararcter_3,
-                lineCount = 1
-            )
+            if (homeUiState.isAlarmRegistered && homeUiState.isBusDeparted) { // 알림 등록 후 예상 출발 시간 화면
+                CharacterLottieSpeechBubble(
+                    prefixText = prefixText,
+                    emphasisText = emphasisText,
+                    suffixText = suffixText,
+                    modifier = Modifier
+                        .align(Alignment.BottomStart)
+                        .padding(start = 8.dp, bottom = bottomPadding)
+                        .noRippleClickable(onClick = onCharacterClick),
+                    onClick = {},
+                    lottieResId = R.raw.atcha_chararcter_3,
+                    lineCount = 1
+                )
+            }
         }
 
         if (homeUiState.deleteAlarmDialogVisible) {
