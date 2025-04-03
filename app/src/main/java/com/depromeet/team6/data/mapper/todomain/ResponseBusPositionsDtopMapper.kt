@@ -7,7 +7,7 @@ import com.depromeet.team6.domain.model.BusPositions
 fun ResponseBusPositionsDto.toDomain(): BusPositions {
     return BusPositions(
         busRouteStationList = this.busRouteStationList.map { it.toDomain() },
-        turnPoint = this.turnPoint,
+        turnPoint = this.turnPoint ?: (busRouteStationList.size + 1),
         busPositions = this.busPositions.orEmpty().map { it.toDomain() }
     )
 }
@@ -18,6 +18,7 @@ fun com.depromeet.team6.data.dataremote.model.response.transits.BusRouteStation.
         busRouteId = busRouteId,
         busRouteName = busRouteName,
         busStationId = busStationId,
+        busStationNumber = busStationNumber,
         busStationName = busStationName,
         busStationLat = busStationLat,
         busStationLon = busStationLon,

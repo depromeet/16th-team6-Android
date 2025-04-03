@@ -317,17 +317,19 @@ fun OnboardingScreen(
             if (uiState.onboardingType == OnboardingType.HOME) {
                 Spacer(modifier = Modifier.height(72.dp))
                 OnboardingTitle(onboardingType = uiState.onboardingType)
-                Spacer(modifier = Modifier.height(48.dp))
                 if (uiState.myAddress.address.isEmpty()) {
+                    Spacer(modifier = Modifier.height(48.dp))
                     OnboardingSearchContainer(
                         onSearchBoxClicked = onSearchBoxClicked,
                         onLocationButtonClick = onLocationButtonClicked
                     )
                 } else {
+                    Spacer(modifier = Modifier.height(28.dp))
                     OnboardingSelectedHome(onboardingSearchLocation = uiState.myAddress)
                     Spacer(modifier = Modifier.height(31.dp))
 
                     OnboardingSelectLocationButton(
+                        modifier = Modifier.padding(horizontal = 16.dp),
                         searchLocationButtonType = OnboardingSelectLocationButtonType.EDIT,
                         onClick = onSearchBoxClicked
                     )
@@ -337,7 +339,7 @@ fun OnboardingScreen(
                     modifier = Modifier
                         .padding(vertical = 18.dp, horizontal = 16.dp)
                         .noRippleClickable { onBackPressed() },
-                    imageVector = ImageVector.vectorResource(R.drawable.ic_all_arrow_left_white),
+                    imageVector = ImageVector.vectorResource(R.drawable.ic_all_arrow_left_grey),
                     contentDescription = null,
                     tint = Color.Unspecified
                 )

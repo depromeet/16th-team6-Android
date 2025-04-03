@@ -3,6 +3,7 @@ package com.depromeet.team6.presentation.ui.coursesearch
 import androidx.lifecycle.viewModelScope
 import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.usecase.GetCourseSearchResultsUseCase
+import com.depromeet.team6.domain.usecase.PostAlarmUseCase
 import com.depromeet.team6.presentation.util.base.BaseViewModel
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.google.gson.Gson
@@ -12,7 +13,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CourseSearchViewModel @Inject constructor(
-    private val loadSearchResult: GetCourseSearchResultsUseCase
+    private val loadSearchResult: GetCourseSearchResultsUseCase,
+    private val postAlarmUseCase: PostAlarmUseCase
 ) : BaseViewModel<CourseSearchContract.CourseUiState, CourseSearchContract.CourseSideEffect, CourseSearchContract.CourseEvent>() {
     override fun createInitialState(): CourseSearchContract.CourseUiState = CourseSearchContract.CourseUiState()
 
@@ -72,6 +74,20 @@ class CourseSearchViewModel @Inject constructor(
     fun registerAlarm() {
         viewModelScope.launch {
             setEvent(CourseSearchContract.CourseEvent.RegisterAlarm)
+        }
+    }
+
+    fun postAlarm(lastRouteId: String) {
+        viewModelScope.launch {
+            if (postAlarmUseCase(
+                    lastRouteId = lastRouteId
+                ).isSuccessful
+            ) {
+                setEvent(CourseSearchContract.CourseEvent.RegisterAlarm)
+                setSideEffect(CourseSearchContract.CourseSideEffect.NavigateHomeWithToast)
+            } else {
+                setEvent(CourseSearchContract.CourseEvent.RegisterAlarm)
+            }
         }
     }
 }

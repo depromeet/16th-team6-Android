@@ -26,7 +26,7 @@ import kotlinx.coroutines.launch
 fun TransportTabMenu(
     availableCourses: List<CourseInfo>,
     modifier: Modifier = Modifier,
-    onRegisterAlarmBtnClick: () -> Unit = {},
+    onRegisterAlarmBtnClick: (String) -> Unit = {},
     onItemClick: (String) -> Unit = {}
 ) {
     val context = LocalContext.current
@@ -77,8 +77,8 @@ fun TransportTabMenu(
                 LastTransportInfoList(
                     listData = resultItems,
                     onItemClick = onItemClick,
-                    onRegisterAlarmBtnClick = {
-                        onRegisterAlarmBtnClick()
+                    onRegisterAlarmBtnClick = { routeId ->
+                        onRegisterAlarmBtnClick(routeId)
                     }
                 )
             }

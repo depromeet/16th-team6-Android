@@ -20,3 +20,8 @@ data class RealTimeBusArrival(
     val vehicleId: String,
     val remainingStations: Int
 )
+
+enum class ServiceRegion {
+    GYEONGGI,
+    SEOUL
+}
