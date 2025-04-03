@@ -320,7 +320,6 @@ fun HomeScreen(
 
             CurrentLocationSheet(
                 currentLocation = homeUiState.departurePoint.name,
-                destination = "우리집",
                 onSearchLocationClick = navigateToSearchLocation,
                 destination = stringResource(R.string.home_my_home_text),
                 onSearchClick = {
