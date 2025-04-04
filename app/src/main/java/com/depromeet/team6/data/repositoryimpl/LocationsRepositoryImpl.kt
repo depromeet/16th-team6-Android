@@ -33,7 +33,7 @@ class LocationsRepositoryImpl @Inject constructor(
         locationsRemoteDataSource.postSearchHistories(requestSearchHistoryDto = requestSearchHistoryDto.toData())
 
     override suspend fun deleteSearchHistory(name: String, lat: Double, lon: Double, businessCategory: String, address: String): Response<Unit> =
-        locationsRemoteDataSource.deleteSearchHistory(name = name, lat = lat, lon = lon, businessCategory= businessCategory, address = address)
+        locationsRemoteDataSource.deleteSearchHistory(name = name, lat = lat, lon = lon, businessCategory = businessCategory, address = address)
 
     override suspend fun deleteAllSearchHistory(): Response<Unit> =
         locationsRemoteDataSource.deleteAllSearchHistory()

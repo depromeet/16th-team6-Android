@@ -44,7 +44,7 @@ interface LocationsService {
         @Query("lat") lat: Double,
         @Query("lon") lon: Double,
         @Query("businessCategory") businessCategory: String,
-        @Query("address") address: String,
+        @Query("address") address: String
     ): Response<Unit>
 
     @DELETE("api/locations/histories")
