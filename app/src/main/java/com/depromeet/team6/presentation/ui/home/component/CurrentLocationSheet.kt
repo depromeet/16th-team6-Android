@@ -48,7 +48,7 @@ fun CurrentLocationSheet(
                 location = currentLocation,
                 textColor = colors.systemGreen,
                 backgroundColor = colors.systemGrey6,
-                modifier = Modifier
+                modifier = Modifier,
                 onClick = { onSearchLocationClick() }
             )
 
