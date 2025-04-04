@@ -16,6 +16,7 @@ import com.depromeet.team6.presentation.ui.login.navigation.navigationLogin
 import com.depromeet.team6.presentation.ui.mypage.navigation.navigationMypage
 import com.depromeet.team6.presentation.ui.onboarding.navigation.OnboardingRoute
 import com.depromeet.team6.presentation.ui.onboarding.navigation.navigationOnboarding
+import com.depromeet.team6.presentation.ui.searchlocation.navigation.navigationSearchLocation
 
 class MainNavigator(
     val navHostController: NavHostController
@@ -64,6 +65,10 @@ class MainNavigator(
 
     fun navigateToMypage() {
         navHostController.navigationMypage()
+    }
+
+    fun navigateToSearchLocation() {
+        navHostController.navigationSearchLocation()
     }
 
     fun navigateToBusCourse(busArrivalParameter: BusArrivalParameter) {

@@ -1,5 +1,6 @@
 package com.depromeet.team6.presentation.ui.home.component
 
+import TransportVectorIconWithTextBitmap
 import android.graphics.PointF
 import android.widget.FrameLayout
 import androidx.compose.foundation.Image
@@ -71,6 +72,7 @@ fun AfterRegisterMap(
     val markerSizePx = 28.dp.toPx().toInt()
 
     var firstTransportationPoint = LatLng(legs[0].startPoint.lat, legs[0].startPoint.lon)
+    var markBusStationName = ""
 
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
 
@@ -91,6 +93,9 @@ fun AfterRegisterMap(
             for (leg in legs) {
                 if (leg.transportType != TransportType.WALK) {
                     firstTransportationPoint = LatLng(leg.startPoint.lat, leg.startPoint.lon)
+                    if (leg.transportType == TransportType.BUS) {
+                        markBusStationName = leg.startPoint.name
+                    }
                     break
                 }
             }
@@ -127,13 +132,33 @@ fun AfterRegisterMap(
                 } else {
                     marker.tMapPoint = TMapPoint(leg.startPoint.lat, leg.startPoint.lon)
                 }
-                marker.icon = TransportVectorIconBitmap(
-                    type = leg.transportType,
-                    fillColor = TransportTypeUiMapper.getColor(leg.transportType, leg.subTypeIdx),
-                    isMarker = true,
-                    sizePx = markerSizePx,
-                    context = context
-                )
+
+                if ((firstTransportationPoint == LatLng(leg.startPoint.lat, leg.startPoint.lon)) && (leg.transportType == TransportType.BUS)) {
+                    marker.icon = TransportVectorIconWithTextBitmap(
+                        type = leg.transportType,
+                        fillColor = TransportTypeUiMapper.getColor(
+                            leg.transportType,
+                            leg.subTypeIdx
+                        ),
+                        isMarker = true,
+                        context = context,
+                        iconSizePx = markerSizePx,
+                        name = markBusStationName,
+                        textPadding = 4
+                    )
+                } else {
+                    marker.icon = TransportVectorIconBitmap(
+                        type = leg.transportType,
+                        fillColor = TransportTypeUiMapper.getColor(
+                            leg.transportType,
+                            leg.subTypeIdx
+                        ),
+                        isMarker = true,
+                        sizePx = markerSizePx,
+                        context = context
+                    )
+                }
+
                 tMapView.addTMapMarkerItem(marker)
             }
 

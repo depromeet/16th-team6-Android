@@ -22,6 +22,7 @@ fun NavGraphBuilder.homeNavGraph(
     navigateToCourseSearch: (String, String) -> Unit,
     navigateToMypage: () -> Unit,
     navigateToItinerary: (String, String, String, FocusedMarkerParameter?) -> Unit,
+    navigateToSearchLocation: () -> Unit
 ) {
     composable(route = HomeRoute.ROUTE) {
         HomeRoute(
@@ -30,6 +31,7 @@ fun NavGraphBuilder.homeNavGraph(
             navigateToLogin = navigateToLogin,
             navigateToCourseSearch = navigateToCourseSearch,
             navigateToItinerary = navigateToItinerary,
+            navigateToSearchLocation = navigateToSearchLocation
         )
     }
 }

@@ -154,6 +154,12 @@ class HomeViewModel @Inject constructor(
             HomeContract.HomeEvent.FinishAlarmClicked -> {
                 setState { copy(deleteAlarmDialogVisible = true) }
             }
+
+            is HomeContract.HomeEvent.UpdateDeparturePoint -> setState {
+                copy(
+                    departurePoint = event.departurePoint
+                )
+            }
         }
     }
 
@@ -203,31 +209,41 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun getBusStarted(lastRouteId: String) {
+    private fun getBusStarted(lastRouteId: String) {
         this.lastRouteId = lastRouteId
         viewModelScope.launch {
-            getBusStartedUseCase.invoke(lastRouteId = lastRouteId)
-                .onSuccess {
-                    Timber.d("버스 출발여부 getBusStarted: $it")
-                    setState {
-                        copy(
-                            isBusDeparted = it
-                        )
-                    }
-                    if (it) {
+            try {
+                getBusStartedUseCase.invoke(lastRouteId = lastRouteId)
+                    .onSuccess {
+                        Timber.d("버스 출발여부 getBusStarted: $it")
+                        setState {
+                            copy(
+                                isBusDeparted = it
+                            )
+                        }
+                        if (it) {
+                            stopPollingBusStarted()
+                        }
+                    }.onFailure {
+                        Timber.e("버스 출발여부 에러: ${it.message}")
+                        setState {
+                            copy(
+                                isBusDeparted = true
+                            )
+                        }
                         stopPollingBusStarted()
                     }
-                }.onFailure {
-                    setState {
-                        copy(
-                            isBusDeparted = true
-                        )
-                    }
-                    stopPollingBusStarted()
+            } catch (e: Exception) {
+                Timber.e("예상치 못한 예외 발생: ${e.message}")
+                setState {
+                    copy(
+                        isBusDeparted = true
+                    )
                 }
+                stopPollingBusStarted()
+            }
         }
     }
-
     private fun showSpeechBubbleTemporarily() {
         speechBubbleJob?.cancel()
 
@@ -249,14 +265,14 @@ class HomeViewModel @Inject constructor(
                 .onSuccess {
                     setState {
                         copy(
-                            departurePoint = it
+                            markerPoint = it
                         )
                     }
                 }.onFailure {
                     setState {
                         // 위치 찾을 수 없는 경우 서울시청으로 임의 초기화
                         copy(
-                            departurePoint = Address(
+                            markerPoint = Address(
                                 name = "서울특별시청",
                                 lat = 37.56681744674135,
                                 lon = 126.97866075004276,
@@ -331,8 +347,8 @@ class HomeViewModel @Inject constructor(
             departurePointJson?.let {
                 try {
                     val departurePoint = Gson().fromJson(it, Address::class.java)
-
                     setEvent(HomeContract.HomeEvent.UpdateDeparturePointName(departurePoint.name))
+                    setEvent(HomeContract.HomeEvent.UpdateDeparturePoint(departurePoint))
                 } catch (e: Exception) {
                     Timber.e("DeparturePoint 불러오기 실패: ${e.message}")
                     e.printStackTrace()
@@ -343,7 +359,6 @@ class HomeViewModel @Inject constructor(
                 try {
                     val courseInfo = Gson().fromJson(it, CourseInfo::class.java)
                     setEvent(HomeContract.HomeEvent.LoadLegsResult(courseInfo))
-
                     setEvent(HomeContract.HomeEvent.LoadDepartureDateTime(courseInfo.departureTime))
                     setEvent(HomeContract.HomeEvent.LoadBoardingDateTime(courseInfo.boardingTime))
                     setEvent(HomeContract.HomeEvent.LoadFirstTransportation(getFirstTransportation(courseInfo.legs)))
@@ -411,8 +426,8 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             getTaxiCostUseCase(
                 routeLocation = RouteLocation(
-                    startLat = currentState.departurePoint.lat,
-                    startLon = currentState.departurePoint.lon,
+                    startLat = currentState.markerPoint.lat,
+                    startLon = currentState.markerPoint.lon,
                     endLat = currentState.destinationPoint.lat,
                     endLon = currentState.destinationPoint.lon
                 )

@@ -14,6 +14,7 @@ import com.depromeet.team6.presentation.ui.itinerary.navigation.itineraryNavGrap
 import com.depromeet.team6.presentation.ui.login.navigation.loginGraph
 import com.depromeet.team6.presentation.ui.mypage.navigation.mypageNavGraph
 import com.depromeet.team6.presentation.ui.onboarding.navigation.onboardingNavGraph
+import com.depromeet.team6.presentation.ui.searchlocation.navigation.searchLocationNavigation
 
 @Composable
 fun MainNavHost(
@@ -46,6 +47,7 @@ fun MainNavHost(
             navigateToCourseSearch = navigator::navigateToCourseSearch,
             navigateToMypage = navigator::navigateToMypage,
             navigateToItinerary = navigator::navigateToItinerary,
+            navigateToSearchLocation = navigator::navigateToSearchLocation
         )
 
         onboardingNavGraph(
@@ -75,6 +77,11 @@ fun MainNavHost(
             padding = padding,
             popBackStack = navigator::popBackStack,
             navigateToBusCourse = navigator::navigateToBusCourse
+        )
+
+        searchLocationNavigation(
+            navigateToBack = navigator::popBackStack,
+            navigateToLogin = navigator::navigateToLogin
         )
 
         busCourseNavGraph(

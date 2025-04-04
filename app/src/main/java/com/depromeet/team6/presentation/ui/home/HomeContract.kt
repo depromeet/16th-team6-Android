@@ -32,6 +32,12 @@ class HomeContract {
         // 타이머 시간이 끝났을 때
         val timerFinish: Boolean = false,
         val departurePointName: String = "",
+        val markerPoint : Address = Address(
+            name = "성균관대학교 자연과학캠퍼스",
+            lat = 37.303534788694,
+            lon = 127.01085807594,
+            address = ""
+        ),
         val departurePoint: Address = Address(
             name = "성균관대학교 자연과학캠퍼스",
             lat = 37.303534788694,
@@ -60,6 +66,7 @@ class HomeContract {
         data class UpdateAlarmRegistered(val isRegistered: Boolean) : HomeEvent()
         data class UpdateLastRouteId(val lastRouteId: String) : HomeEvent()
         data class UpdateDeparturePointName(val departurePointName: String) : HomeEvent()
+        data class UpdateDeparturePoint(val departurePoint: Address) : HomeEvent()
         data class UpdateBusDeparted(val isBusDeparted: Boolean) : HomeEvent()
         data class UpdateSpeechBubbleVisibility(val show: Boolean) : HomeEvent()
         data class LoadLegsResult(val result: CourseInfo) : HomeEvent()

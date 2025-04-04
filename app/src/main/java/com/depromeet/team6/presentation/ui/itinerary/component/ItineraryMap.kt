@@ -47,6 +47,7 @@ import com.skt.tmap.overlay.TMapTrafficLine
 import com.skt.tmap.overlay.TMapTrafficLine.TrafficLine
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 
 @Composable
 fun ItineraryMap(
@@ -63,6 +64,7 @@ fun ItineraryMap(
     val tMapView = remember { TMapView(context) }
     var isMapReady by remember { mutableStateOf(false) }
 
+    Timber.d("departurelocation : $departurePoint")
     val departLocation = LatLng(departurePoint.lat, departurePoint.lon)
     val destinationLocation = LatLng(destinationPoint.lat, destinationPoint.lon)
     val markerSizePx = 28.dp.toPx().toInt()
