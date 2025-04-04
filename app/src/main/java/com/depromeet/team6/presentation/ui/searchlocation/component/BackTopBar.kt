@@ -26,14 +26,14 @@ fun BackTopBar(
         modifier = modifier
             .fillMaxWidth()
             .background(
-                color = defaultTeam6Colors.greyElevatedBackground
+                color = defaultTeam6Colors.greyWashBackground
             ),
         contentAlignment = Alignment.CenterStart
     ) {
         Icon(
             imageVector = ImageVector.vectorResource(R.drawable.ic_all_arrow_left_white),
             contentDescription = stringResource(R.string.home_search_back_text),
-            tint = defaultTeam6Colors.greyTertiaryLabel,
+            tint = defaultTeam6Colors.systemGrey1,
             modifier = Modifier
                 .padding(18.dp)
                 .noRippleClickable {
