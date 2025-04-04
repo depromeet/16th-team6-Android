@@ -3,6 +3,7 @@ package com.depromeet.team6.presentation.ui.home
 import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.course.CourseInfo
 import com.depromeet.team6.domain.model.course.TransportType
+import com.depromeet.team6.presentation.model.itinerary.FocusedMarkerParameter
 import com.depromeet.team6.presentation.util.base.UiEvent
 import com.depromeet.team6.presentation.util.base.UiSideEffect
 import com.depromeet.team6.presentation.util.base.UiState
@@ -31,6 +32,12 @@ class HomeContract {
         // 타이머 시간이 끝났을 때
         val timerFinish: Boolean = false,
         val departurePointName: String = "",
+        val markerPoint: Address = Address(
+            name = "성균관대학교 자연과학캠퍼스",
+            lat = 37.303534788694,
+            lon = 127.01085807594,
+            address = ""
+        ),
         val departurePoint: Address = Address(
             name = "성균관대학교 자연과학캠퍼스",
             lat = 37.303534788694,
@@ -51,7 +58,7 @@ class HomeContract {
 
     sealed interface HomeSideEffect : UiSideEffect {
         data object NavigateToMypage : HomeSideEffect
-        data object NavigateToItinerary : HomeSideEffect
+        data class NavigateToItinerary(val markerParameter: FocusedMarkerParameter?) : HomeSideEffect
     }
 
     sealed class HomeEvent : UiEvent {

@@ -4,13 +4,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.presentation.model.bus.BusArrivalParameter
+import com.depromeet.team6.presentation.model.itinerary.FocusedMarkerParameter
 import com.depromeet.team6.presentation.ui.bus.navigation.navigationToBusCourse
-import com.depromeet.team6.presentation.ui.coursesearch.navigation.CourseSearchRoute
 import com.depromeet.team6.presentation.ui.coursesearch.navigation.navigateCourseSearch
 import com.depromeet.team6.presentation.ui.home.navigation.HomeRoute
 import com.depromeet.team6.presentation.ui.home.navigation.navigationHome
-import com.depromeet.team6.presentation.ui.itinerary.navigation.ItineraryRoute
 import com.depromeet.team6.presentation.ui.itinerary.navigation.navigateToItinerary
 import com.depromeet.team6.presentation.ui.login.navigation.LoginRoute
 import com.depromeet.team6.presentation.ui.login.navigation.navigationLogin
@@ -44,7 +44,6 @@ class MainNavigator(
         departure: String,
         destination: String
     ) {
-        clearBackStackTo(CourseSearchRoute.ROUTE)
         navHostController.navigateCourseSearch(
             departurePoint = departure,
             destinationPoint = destination
@@ -52,18 +51,25 @@ class MainNavigator(
     }
 
     fun navigateToItinerary(
-        courseInfoJSON: String
+        courseInfoJSON: String,
+        departurePointJSON: String,
+        destinationPointJSON: String,
+        focusedMarkerParameter: FocusedMarkerParameter? = null
     ) {
-        clearBackStackTo(ItineraryRoute.ROUTE)
-        navHostController.navigateToItinerary(courseInfoJSON)
+        navHostController.navigateToItinerary(
+            courseInfoJSON,
+            departurePointJSON,
+            destinationPointJSON,
+            focusedMarkerParameter
+        )
     }
 
     fun navigateToMypage() {
         navHostController.navigationMypage()
     }
 
-    fun navigateToSearchLocation() {
-        navHostController.navigationSearchLocation()
+    fun navigateToSearchLocation(destinationLocation: Address) {
+        navHostController.navigationSearchLocation(destinationLocation = destinationLocation)
     }
 
     fun navigateToBusCourse(busArrivalParameter: BusArrivalParameter) {

@@ -35,7 +35,9 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import com.depromeet.team6.R
+import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.course.TransportType
+import com.depromeet.team6.presentation.model.itinerary.FocusedMarkerParameter
 import com.depromeet.team6.presentation.ui.alarm.NotificationScheduler
 import com.depromeet.team6.presentation.ui.alarm.NotificationTimeConstants
 import com.depromeet.team6.presentation.ui.home.component.AfterRegisterMap
@@ -68,8 +70,8 @@ fun HomeRoute(
     navigateToLogin: () -> Unit,
     navigateToCourseSearch: (String, String) -> Unit,
     navigateToMypage: () -> Unit,
-    navigateToItinerary: (String) -> Unit,
-    navigateToSearchLocation: () -> Unit,
+    navigateToItinerary: (String, String, String, FocusedMarkerParameter?) -> Unit,
+    navigateToSearchLocation: (Address) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
@@ -120,7 +122,10 @@ fun HomeRoute(
                 when (sideEffect) {
                     is HomeContract.HomeSideEffect.NavigateToMypage -> navigateToMypage()
                     is HomeContract.HomeSideEffect.NavigateToItinerary -> navigateToItinerary(
-                        Gson().toJson(uiState.courseInfo)
+                        Gson().toJson(uiState.courseInfo),
+                        Gson().toJson(uiState.departurePoint),
+                        Gson().toJson(uiState.destinationPoint),
+                        sideEffect.markerParameter
                     )
                 }
             }
@@ -178,10 +183,10 @@ fun HomeRoute(
             modifier = modifier,
             padding = padding,
             onSearchClick = {
-                val departurePointJSON = Gson().toJson(uiState.departurePoint)
+                val currentLocationJSON = Gson().toJson(uiState.markerPoint)
                 val destinationPointJSON = Gson().toJson(uiState.destinationPoint)
                 navigateToCourseSearch(
-                    departurePointJSON,
+                    currentLocationJSON,
                     destinationPointJSON
                 )
             },
@@ -198,8 +203,11 @@ fun HomeRoute(
             },
             onRefreshClick = {
             },
-            navigateToSearchLocation = { navigateToSearchLocation() }
-
+            navigateToSearchLocation = {
+                navigateToSearchLocation(
+                    uiState.destinationPoint
+                )
+            }
         )
         LoadState.Error -> navigateToLogin()
 
@@ -218,7 +226,7 @@ fun HomeScreen(
     onFinishClick: () -> Unit = {},
     onRefreshClick: () -> Unit = {},
     navigateToMypage: () -> Unit = {},
-    navigateToItinerary: (String) -> Unit = {},
+    navigateToItinerary: (String, String, String, FocusedMarkerParameter?) -> Unit = { s: String, s1: String, s2: String, transportMarkerParameter: FocusedMarkerParameter? -> },
     deleteAlarmConfirmed: () -> Unit = {},
     dismissDialog: () -> Unit = {},
     navigateToSearchLocation: () -> Unit = {},
@@ -252,7 +260,15 @@ fun HomeScreen(
             AfterRegisterMap(
                 currentLocation = userLocation,
                 legs = homeUiState.itineraryInfo!!.legs,
-                viewModel = viewModel
+                viewModel = viewModel,
+                onTransportMarkerClick = { markerParameter ->
+                    navigateToItinerary(
+                        Gson().toJson(homeUiState.itineraryInfo),
+                        Gson().toJson(homeUiState.departurePoint),
+                        Gson().toJson(homeUiState.destinationPoint),
+                        markerParameter
+                    )
+                }
             )
         } else {
             TMapViewCompose(
@@ -298,9 +314,13 @@ fun HomeScreen(
                     onFinishClick()
                 },
                 onCourseDetailClick = {
-                    val courseInfoJSON =
-                        Gson().toJson(homeUiState.itineraryInfo)
-                    navigateToItinerary(courseInfoJSON)
+                    Timber.d("departurelocation 3 : ${homeUiState.departurePoint}")
+                    navigateToItinerary(
+                        Gson().toJson(homeUiState.itineraryInfo),
+                        Gson().toJson(homeUiState.departurePoint),
+                        Gson().toJson(homeUiState.destinationPoint),
+                        null
+                    )
                 },
                 onTimerFinished = {
                     viewModel.onTimerFinished()
@@ -319,7 +339,7 @@ fun HomeScreen(
             notificationScheduler.cancelAllNotifications()
 
             CurrentLocationSheet(
-                currentLocation = homeUiState.departurePoint.name,
+                currentLocation = homeUiState.markerPoint.name,
                 onSearchLocationClick = navigateToSearchLocation,
                 destination = stringResource(R.string.home_my_home_text),
                 onSearchClick = {
@@ -338,7 +358,7 @@ fun HomeScreen(
                     stringResource(R.string.home_bubble_basic_text),
                     "약 " + NumberFormat.getNumberInstance(Locale.US).format(homeUiState.taxiCost) + stringResource(R.string.home_bubble_won_text),
                     null,
-                    209.dp
+                    194.dp
                 )
 
             homeUiState.userDeparture ->

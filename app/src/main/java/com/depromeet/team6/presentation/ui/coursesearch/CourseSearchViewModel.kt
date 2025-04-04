@@ -2,6 +2,7 @@ package com.depromeet.team6.presentation.ui.coursesearch
 
 import androidx.lifecycle.viewModelScope
 import com.depromeet.team6.domain.model.Address
+import com.depromeet.team6.domain.repository.UserInfoRepository
 import com.depromeet.team6.domain.usecase.GetCourseSearchResultsUseCase
 import com.depromeet.team6.domain.usecase.PostAlarmUseCase
 import com.depromeet.team6.presentation.util.base.BaseViewModel
@@ -14,7 +15,8 @@ import javax.inject.Inject
 @HiltViewModel
 class CourseSearchViewModel @Inject constructor(
     private val loadSearchResult: GetCourseSearchResultsUseCase,
-    private val postAlarmUseCase: PostAlarmUseCase
+    private val postAlarmUseCase: PostAlarmUseCase,
+    private val userInfoRepository: UserInfoRepository
 ) : BaseViewModel<CourseSearchContract.CourseUiState, CourseSearchContract.CourseSideEffect, CourseSearchContract.CourseEvent>() {
     override fun createInitialState(): CourseSearchContract.CourseUiState = CourseSearchContract.CourseUiState()
 

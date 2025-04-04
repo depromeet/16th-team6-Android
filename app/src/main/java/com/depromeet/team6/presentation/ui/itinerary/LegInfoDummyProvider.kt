@@ -10,7 +10,9 @@ class LegInfoDummyProvider : PreviewParameterProvider<List<LegInfo>> {
         listOf(
             LegInfo(
                 transportType = TransportType.WALK,
+                routeName = "",
                 sectionTime = 7,
+                departureDateTime = "2023-06-06T23:17:00",
                 startPoint = Address(
                     name = "화서역",
                     lat = 0.1,
@@ -28,7 +30,9 @@ class LegInfoDummyProvider : PreviewParameterProvider<List<LegInfo>> {
             ),
             LegInfo(
                 transportType = TransportType.BUS,
+                routeName = "152",
                 subTypeIdx = 2,
+                departureDateTime = "2023-06-06T23:54:00",
                 sectionTime = 27,
                 startPoint = Address(
                     name = "수원 KT위즈파크",
@@ -47,7 +51,9 @@ class LegInfoDummyProvider : PreviewParameterProvider<List<LegInfo>> {
             ),
             LegInfo(
                 transportType = TransportType.SUBWAY,
+                routeName = "성수(내선)행",
                 subTypeIdx = 2,
+                departureDateTime = "2023-06-06T22:23:00",
                 sectionTime = 17,
                 startPoint = Address(
                     name = "사당역 2호선",
@@ -67,6 +73,7 @@ class LegInfoDummyProvider : PreviewParameterProvider<List<LegInfo>> {
             LegInfo(
                 transportType = TransportType.WALK,
                 sectionTime = 13,
+                departureDateTime = "2023-06-06T23:39:00",
                 startPoint = Address(
                     name = "강남역 신분당선",
                     lat = 0.1,

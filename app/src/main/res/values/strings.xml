@@ -57,7 +57,7 @@
     <string name="home_search_button_text">검색하기</string>
     <string name="home_current_location_btn">현위치 버튼</string>
     <string name="home_current_location_text">현위치:</string>
-    <string name="home_destination_text">목적지:</string>
+    <string name="home_destination_text">도착지:</string>
 
     <string name="home_search_location_search_text">출발지 검색</string>
     <string name="home_search_departure_home_text">도착지: 우리집</string>
@@ -115,7 +115,13 @@
     <!--    itinerary   -->
     <string name="itinerary_summary_remaining_hour">%1d시간</string>
     <string name="itinerary_summary_remaining_minute">%1d분</string>
-    <string name="itinerary_summary_total_time">%02d:%02d 출발 ~ %02d:%02d 도착 예정</string>
+    <string name="itinerary_summary_total_time">%02d:%02d ~ %02d:%02d</string>
+    <string name="itinerary_info_legs_walk_time">%d분 걷기</string>
+    <string name="itinerary_info_legs_walk_distance">%dm</string>
+    <string name="itinerary_info_legs_boarding_HHmm">%02d:%02d</string>
+    <string name="itinerary_info_legs_boarding">승차</string>
+    <string name="itinerary_info_legs_disembarking">하차</string>
+    <string name="itinerary_info_legs_data_source">티맵 API와 공공데이터로 막차 정보를 제공합니다.</string>
 
     <!--    mypage      -->
     <string name="mypage_icon_arrow_text">마이페이지 화살표</string>

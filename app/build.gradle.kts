@@ -16,6 +16,20 @@ val properties = Properties().apply {
 }
 
 android {
+    val keystorePath = properties["keystore.path"] as? String
+    val isSigningAvailable = !keystorePath.isNullOrBlank()
+
+    signingConfigs {
+        create("release") {
+            if (isSigningAvailable) {
+                storeFile = if (!keystorePath.isNullOrBlank()) file(keystorePath) else null
+                storePassword = properties["keystore.password"] as? String ?: ""
+                keyAlias = properties["keystore.alias"] as? String ?: ""
+                keyPassword = properties["key.password"] as? String ?: ""
+            }
+        }
+    }
+
     namespace = "com.depromeet.team6"
     compileSdk = 35
 
@@ -23,8 +37,8 @@ android {
         applicationId = "com.depromeet.team6"
         minSdk = 26
         targetSdk = 34
-        versionCode = 6
-        versionName = "1.0.5"
+        versionCode = 9
+        versionName = "1.0.8"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "KAKAO_NATIVE_APP_KEY", properties["kakao.native.app.key"].toString())
@@ -41,6 +55,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            if (isSigningAvailable) signingConfig = signingConfigs.getByName("release")
         }
         debug {
             isMinifyEnabled = false

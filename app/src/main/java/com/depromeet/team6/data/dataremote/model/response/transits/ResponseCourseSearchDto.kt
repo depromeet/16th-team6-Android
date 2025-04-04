@@ -1,8 +1,10 @@
 package com.depromeet.team6.data.dataremote.model.response.transits
 
+import androidx.annotation.Keep
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+@Keep
 @Serializable
 data class ResponseCourseSearchDto(
     @SerialName("routeId") val routeId: String,
@@ -16,6 +18,7 @@ data class ResponseCourseSearchDto(
     @SerialName("legs") val legs: List<Leg>
 )
 
+@Keep
 @Serializable
 data class Leg(
     @SerialName("distance") val distance: Float,
@@ -32,6 +35,7 @@ data class Leg(
     @SerialName("passShape") val passShape: String? = null
 )
 
+@Keep
 @Serializable
 data class Location(
     @SerialName("name") val name: String,
@@ -39,6 +43,7 @@ data class Location(
     @SerialName("lat") val lat: String
 )
 
+@Keep
 @Serializable
 data class Step(
     @SerialName("streetName") val streetName: String,
@@ -47,6 +52,7 @@ data class Step(
     @SerialName("linestring") val linestring: String
 )
 
+@Keep
 @Serializable
 data class Station(
     @SerialName("index") val index: Int? = null,
