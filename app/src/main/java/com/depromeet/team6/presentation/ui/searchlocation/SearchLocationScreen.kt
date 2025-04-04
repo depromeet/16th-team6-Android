@@ -41,14 +41,17 @@ import com.depromeet.team6.presentation.util.permission.PermissionUtil
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.google.android.gms.maps.model.LatLng
+import com.google.gson.Gson
 import timber.log.Timber
 
 @Composable
 fun SearchLocationRoute(
     viewModel: SearchLocationViewModel = hiltViewModel(),
     homeViewModel: HomeViewModel = hiltViewModel(),
+    destinationLocation : Address,
     navigateToBack: () -> Unit = {},
-    navigateToLogin: () -> Unit = {}
+    navigateToLogin: () -> Unit = {},
+    navigateToCourseSearch: (String, String) -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val homeUiState by homeViewModel.uiState.collectAsStateWithLifecycle()
@@ -153,11 +156,18 @@ fun SearchLocationRoute(
                 // 최근 검색 내역 추가
                 viewModel.postSearchHistory(searchHistory)
             },
-            mapViewSelectButtonClicked = {
+            navigateToCourseSearch = {
                 viewModel.setEvent(
                     SearchLocationContract.SearchLocationEvent.ChangeSearchSelectMapViewVisible(
                         false
                     )
+                )
+
+                val currentLocationJSON = Gson().toJson(uiState.selectLocation)
+                val destinationPointJSON = Gson().toJson(destinationLocation)
+                navigateToCourseSearch(
+                    currentLocationJSON,
+                    destinationPointJSON
                 )
             },
             clearAddress = {
@@ -189,7 +199,7 @@ fun SearchLocationScreen(
     onDeleteButtonClicked: (Location) -> Unit = {},
     onDeleteAllButtonClicked: () -> Unit = {},
     selectButtonClicked: (Location) -> Unit = {},
-    mapViewSelectButtonClicked: () -> Unit = {},
+    navigateToCourseSearch: () -> Unit = {},
     clearAddress: () -> Unit = {},
     getCenterLocation: (LatLng) -> Unit = {}
 ) {
@@ -274,7 +284,7 @@ fun SearchLocationScreen(
                 myAddress = uiState.selectLocation,
                 getCenterLocation = getCenterLocation,
                 currentLocation = currentLocation,
-                buttonClicked = mapViewSelectButtonClicked,
+                setDepartureButtonClicked = navigateToCourseSearch,
                 backButtonClicked = clearAddress
             )
         }

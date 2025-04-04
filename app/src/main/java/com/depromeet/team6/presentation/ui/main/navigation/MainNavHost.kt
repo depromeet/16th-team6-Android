@@ -81,7 +81,8 @@ fun MainNavHost(
 
         searchLocationNavigation(
             navigateToBack = navigator::popBackStack,
-            navigateToLogin = navigator::navigateToLogin
+            navigateToLogin = navigator::navigateToLogin,
+            navigateToCourseSearch = navigator::navigateToCourseSearch
         )
 
         busCourseNavGraph(

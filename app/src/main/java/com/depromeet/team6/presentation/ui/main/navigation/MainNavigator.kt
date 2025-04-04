@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.presentation.model.bus.BusArrivalParameter
 import com.depromeet.team6.presentation.model.itinerary.FocusedMarkerParameter
 import com.depromeet.team6.presentation.ui.bus.navigation.navigationToBusCourse
@@ -67,8 +68,8 @@ class MainNavigator(
         navHostController.navigationMypage()
     }
 
-    fun navigateToSearchLocation() {
-        navHostController.navigationSearchLocation()
+    fun navigateToSearchLocation(destinationLocation : Address) {
+        navHostController.navigationSearchLocation(destinationLocation = destinationLocation)
     }
 
     fun navigateToBusCourse(busArrivalParameter: BusArrivalParameter) {

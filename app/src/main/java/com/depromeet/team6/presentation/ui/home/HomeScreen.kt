@@ -35,6 +35,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import com.depromeet.team6.R
+import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.course.TransportType
 import com.depromeet.team6.presentation.model.itinerary.FocusedMarkerParameter
 import com.depromeet.team6.presentation.ui.alarm.NotificationScheduler
@@ -70,7 +71,7 @@ fun HomeRoute(
     navigateToCourseSearch: (String, String) -> Unit,
     navigateToMypage: () -> Unit,
     navigateToItinerary: (String, String, String, FocusedMarkerParameter?) -> Unit,
-    navigateToSearchLocation: () -> Unit,
+    navigateToSearchLocation: (Address) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
@@ -202,8 +203,11 @@ fun HomeRoute(
             },
             onRefreshClick = {
             },
-            navigateToSearchLocation = { navigateToSearchLocation() }
-
+            navigateToSearchLocation = {
+                navigateToSearchLocation(
+                    uiState.destinationPoint
+                )
+            }
         )
         LoadState.Error -> navigateToLogin()
 

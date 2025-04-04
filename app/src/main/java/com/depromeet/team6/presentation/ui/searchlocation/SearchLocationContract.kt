@@ -21,6 +21,12 @@ class SearchLocationContract {
             lat = 0.0,
             lon = 0.0,
             address = ""
+        ),
+        val destinationLocation: Address = Address(
+            name = "",
+            lat = 0.0,
+            lon = 0.0,
+            address = ""
         )
     ) : UiState
 

@@ -56,7 +56,7 @@ fun SearchLocationMapView(
     context: Context,
     modifier: Modifier = Modifier,
     getCenterLocation: (LatLng) -> Unit = {},
-    buttonClicked: () -> Unit = {},
+    setDepartureButtonClicked: () -> Unit = {},
     backButtonClicked: () -> Unit = {}
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -191,7 +191,7 @@ fun SearchLocationMapView(
                     locationName = myAddress.name,
                     locationAddress = myAddress.address,
                     completeButtonText = "출발지로 설정",
-                    buttonClicked = buttonClicked
+                    buttonClicked = setDepartureButtonClicked
                 )
             }
         }
