@@ -1,8 +1,8 @@
 package com.depromeet.team6.data.dataremote.model.response.transits
 
+import androidx.annotation.Keep
 import com.depromeet.team6.domain.model.BusCongestion
 import com.depromeet.team6.domain.model.toText
-import androidx.annotation.Keep
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
