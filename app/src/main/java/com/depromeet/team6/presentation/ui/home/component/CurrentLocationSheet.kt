@@ -22,6 +22,7 @@ import com.depromeet.team6.ui.theme.LocalTeam6Colors
 fun CurrentLocationSheet(
     currentLocation: String,
     destination: String,
+    onSearchLocationClick: () -> Unit,
     onSearchClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -47,8 +48,8 @@ fun CurrentLocationSheet(
                 location = currentLocation,
                 textColor = colors.systemGreen,
                 backgroundColor = colors.systemGrey6,
-                onClick = {},
                 modifier = Modifier
+                onClick = { onSearchLocationClick() }
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -79,6 +80,7 @@ fun CurrentLocationSheetPreview() {
     CurrentLocationSheet(
         currentLocation = "중앙빌딩",
         destination = "우리집",
+        onSearchLocationClick = {},
         onSearchClick = { },
         modifier = Modifier
     )

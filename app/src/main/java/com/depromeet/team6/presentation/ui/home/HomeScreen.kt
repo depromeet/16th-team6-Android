@@ -69,6 +69,7 @@ fun HomeRoute(
     navigateToCourseSearch: (String, String) -> Unit,
     navigateToMypage: () -> Unit,
     navigateToItinerary: (String) -> Unit,
+    navigateToSearchLocation: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
@@ -186,6 +187,7 @@ fun HomeRoute(
             },
             onFinishClick = {
                 viewModel.setEvent(HomeContract.HomeEvent.FinishAlarmClicked)
+//                viewModel.finishAlarm(context)
             },
             deleteAlarmConfirmed = {
                 viewModel.setEvent(HomeContract.HomeEvent.DeleteAlarmConfirmed)
@@ -195,7 +197,9 @@ fun HomeRoute(
                 viewModel.setEvent(HomeContract.HomeEvent.DismissDialog)
             },
             onRefreshClick = {
-            }
+            },
+            navigateToSearchLocation = { navigateToSearchLocation() }
+
         )
         LoadState.Error -> navigateToLogin()
 
@@ -217,6 +221,7 @@ fun HomeScreen(
     navigateToItinerary: (String) -> Unit = {},
     deleteAlarmConfirmed: () -> Unit = {},
     dismissDialog: () -> Unit = {},
+    navigateToSearchLocation: () -> Unit = {},
     viewModel: HomeViewModel = hiltViewModel() // TODO : TmapViewCompose 변경 후 제거
 ) {
     val context = LocalContext.current
@@ -315,6 +320,7 @@ fun HomeScreen(
 
             CurrentLocationSheet(
                 currentLocation = homeUiState.departurePoint.name,
+                onSearchLocationClick = navigateToSearchLocation,
                 destination = stringResource(R.string.home_my_home_text),
                 onSearchClick = {
                     onSearchClick()
