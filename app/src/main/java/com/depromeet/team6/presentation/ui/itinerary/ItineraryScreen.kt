@@ -87,10 +87,10 @@ fun ItineraryScreen(
                     .noRippleClickable {
                         navigateToBusCourse(
                             BusArrivalParameter(
-                                routeName = "일반:700-2",
-                                stationName = "정평중학교",
-                                lat = 37.318197222222224,
-                                lon = 127.08745555555555,
+                                routeName = "일반:9-3",
+                                stationName = "남서울중학교.성보중고등학교",
+                                lat=37.482817,
+                                lon=126.921012,
                                 subtypeIdx = 2
                             )
                         )

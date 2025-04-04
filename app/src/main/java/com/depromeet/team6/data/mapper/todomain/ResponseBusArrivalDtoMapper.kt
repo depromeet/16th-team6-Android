@@ -24,7 +24,7 @@ fun RealTimeBusArrival.toDomain(): com.depromeet.team6.domain.model.RealTimeBusA
         busStatus = BusStatus.entries.find { it.name == this.busStatus } ?: BusStatus.END,
         remainingTime = this.remainingTime,
         busCongestion = BusCongestion.entries.find { it.name == this.busCongestion } ?: BusCongestion.UNKNOWN,
-        remainingSeats = this.remainingSeats,
+        remainingSeats = this.remainingSeats?:0,
         expectedArrivalTime = this.expectedArrivalTime,
         vehicleId = this.vehicleId,
         remainingStations = this.remainingStations ?: 0

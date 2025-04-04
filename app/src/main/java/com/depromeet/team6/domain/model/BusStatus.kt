@@ -32,3 +32,13 @@ fun BusCongestion.toInfo(): BusCongestionInfo {
         BusCongestion.UNKNOWN -> BusCongestionInfo("", Color.Gray)
     }
 }
+
+fun BusCongestion.toText(): String {
+    return when (this) {
+        BusCongestion.LOW -> "LOW"
+        BusCongestion.MEDIUM -> "MEDIUM"
+        BusCongestion.HIGH -> "HIGH"
+        BusCongestion.VERY_HIGH -> "VERY_HIGH"
+        BusCongestion.UNKNOWN -> "UNKNOWN"
+    }
+}

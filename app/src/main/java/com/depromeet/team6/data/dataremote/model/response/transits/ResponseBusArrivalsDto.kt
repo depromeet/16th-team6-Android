@@ -1,5 +1,7 @@
 package com.depromeet.team6.data.dataremote.model.response.transits
 
+import com.depromeet.team6.domain.model.BusCongestion
+import com.depromeet.team6.domain.model.toText
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -19,8 +21,8 @@ data class ResponseBusArrivalsDto(
 data class RealTimeBusArrival(
     @SerialName("busStatus") val busStatus: String,
     @SerialName("remainingTime") val remainingTime: Int,
-    @SerialName("busCongestion") val busCongestion: String,
-    @SerialName("remainingSeats") val remainingSeats: Int,
+    @SerialName("busCongestion") val busCongestion: String ? =BusCongestion.UNKNOWN.toText(),
+    @SerialName("remainingSeats") val remainingSeats: Int? =0 ,
     @SerialName("expectedArrivalTime") val expectedArrivalTime: String? = null,
     @SerialName("vehicleId") val vehicleId: String,
     @SerialName("remainingStations") val remainingStations: Int? = 0
