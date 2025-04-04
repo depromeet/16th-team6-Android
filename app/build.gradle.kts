@@ -16,13 +16,17 @@ val properties = Properties().apply {
 }
 
 android {
+    val keystorePath = properties["keystore.path"] as? String
+    val isSigningAvailable = !keystorePath.isNullOrBlank()
+
     signingConfigs {
-        create("release") {
-            val keystorePath = properties["keystore.path"] as? String
-            storeFile = if (!keystorePath.isNullOrBlank()) file(keystorePath) else null
-            storePassword = properties["keystore.password"] as? String ?: ""
-            keyAlias = properties["keystore.alias"] as? String ?: ""
-            keyPassword = properties["key.password"] as? String ?: ""
+        if (isSigningAvailable) {
+            create("release") {
+                storeFile = if (!keystorePath.isNullOrBlank()) file(keystorePath) else null
+                storePassword = properties["keystore.password"] as? String ?: ""
+                keyAlias = properties["keystore.alias"] as? String ?: ""
+                keyPassword = properties["key.password"] as? String ?: ""
+            }
         }
     }
 
@@ -45,7 +49,6 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = true
-//            isMinifyEnabled = false
             isShrinkResources = true
             buildConfigField("String", "BASE_URL", properties["release.base.url"].toString())
             proguardFiles(
