@@ -9,5 +9,5 @@ class DeleteSearchHistoryUseCase @Inject constructor(
     private val locationsRepository: LocationsRepository
 ) {
     suspend operator fun invoke(searchHistory: SearchHistory): Response<Unit> =
-        locationsRepository.deleteSearchHistory(requestSearchHistoryDto = searchHistory)
+        locationsRepository.deleteSearchHistory(name = searchHistory.name, lat = searchHistory.lat, lon = searchHistory.lon, businessCategory= searchHistory.businessCategory, address = searchHistory.address)
 }

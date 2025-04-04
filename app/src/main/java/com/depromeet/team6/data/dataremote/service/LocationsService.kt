@@ -40,7 +40,11 @@ interface LocationsService {
 
     @DELETE("api/locations/history")
     suspend fun deleteSearchHistory(
-        @Body requestSearchHistoryDto: RequestSearchHistoryDto
+        @Query("name") name: String,
+        @Query("lat") lat: Double,
+        @Query("lon") lon: Double,
+        @Query("businessCategory") businessCategory: String,
+        @Query("address") address: String,
     ): Response<Unit>
 
     @DELETE("api/locations/histories")
