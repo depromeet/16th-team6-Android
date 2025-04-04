@@ -40,7 +40,7 @@ fun ItineraryRoute(
     courseInfoJSON: String,
     departurePointJSON: String,
     destinationPointJSON: String,
-    focusedMarkerParam : FocusedMarkerParameter?,
+    focusedMarkerParam: FocusedMarkerParameter?,
     navigateToBusCourse: (BusArrivalParameter) -> Unit,
     viewModel: ItineraryViewModel = hiltViewModel(),
     onBackPressed: () -> Unit
@@ -86,11 +86,11 @@ fun ItineraryRoute(
 
 @Composable
 fun ItineraryScreen(
-    marginTop : Dp,
-    marginBottom : Dp,
+    marginTop: Dp,
+    marginBottom: Dp,
     modifier: Modifier = Modifier,
     uiState: ItineraryContract.ItineraryUiState = ItineraryContract.ItineraryUiState(),
-    focusedMarkerParam : FocusedMarkerParameter? = null,
+    focusedMarkerParam: FocusedMarkerParameter? = null,
     navigateToBusCourse: (BusArrivalParameter) -> Unit = {},
     onBackPressed: () -> Unit = {}
 ) {

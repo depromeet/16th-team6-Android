@@ -9,5 +9,5 @@ data class FocusedMarkerParameter(
     val lon: Double,
     val transportType: TransportType,
     val subTypeIdx: Int,
-    val legIndex : Int
+    val legIndex: Int
 )

@@ -108,7 +108,7 @@ fun SearchLocationTextField(
 
         Icon(
             modifier = Modifier
-                .noRippleClickable {  },
+                .noRippleClickable { },
             imageVector = ImageVector.vectorResource(R.drawable.ic_search_list_map_28dp),
             tint = defaultTeam6Colors.greySecondaryLabel,
             contentDescription = stringResource(R.string.home_search_map_icon)

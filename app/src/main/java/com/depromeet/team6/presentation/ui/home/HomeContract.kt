@@ -32,7 +32,7 @@ class HomeContract {
         // 타이머 시간이 끝났을 때
         val timerFinish: Boolean = false,
         val departurePointName: String = "",
-        val markerPoint : Address = Address(
+        val markerPoint: Address = Address(
             name = "성균관대학교 자연과학캠퍼스",
             lat = 37.303534788694,
             lon = 127.01085807594,

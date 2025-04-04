@@ -48,14 +48,12 @@ import kotlinx.coroutines.launch
 fun AtchaCommonBottomSheet(
     mainContent: @Composable () -> Unit, // 뒷 배경에 표시될 화면
     sheetContent: @Composable () -> Unit, // BottomSheet에 표시될 화면
-    sheetScrollState : ScrollState,
-    marginBottom : Dp = 0.dp,
+    sheetScrollState: ScrollState,
+    marginBottom: Dp = 0.dp,
     modifier: Modifier = Modifier
 ) {
-
     val screenHeightPx = LocalConfiguration.current.screenHeightDp
     val sheetPeekHeight = (screenHeightPx / 2).dp + marginBottom
-
 
 //    val coroutineScope = rememberCoroutineScope()
 //    val sheetState = rememberModalBottomSheetState(
@@ -94,7 +92,7 @@ fun AtchaCommonBottomSheet(
 //                }
 //            },
 //            onDismissRequest = {
-////                showSheet.value = false
+// //                showSheet.value = false
 //            }
 //        ) {
 //            // 시트 내부 콘텐츠
@@ -113,7 +111,7 @@ fun AtchaCommonBottomSheet(
         allowExpand = scrollReachedBottom.value
     }
     val sheetState = rememberStandardBottomSheetState(
-        initialValue = SheetValue.PartiallyExpanded,
+        initialValue = SheetValue.PartiallyExpanded
 //        confirmValueChange = { newValue ->
 //            if (allowExpand) true
 //            else false

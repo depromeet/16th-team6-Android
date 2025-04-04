@@ -56,7 +56,7 @@ fun ItineraryMap(
     departurePoint: Address,
     destinationPoint: Address,
     focusedMarkerParameter: FocusedMarkerParameter?,
-    marginTop : Dp,
+    marginTop: Dp,
     modifier: Modifier = Modifier,
     onBackPressed: () -> Unit
 ) {
@@ -133,17 +133,23 @@ fun ItineraryMap(
 
             // scale 기준점 설정
             val leftTopLocation =
-                if (focusedMarkerParameter == null) departTMapPoint
-                else TMapPoint(
-                    focusedMarkerParameter.lat,
-                    focusedMarkerParameter.lon
-                )
+                if (focusedMarkerParameter == null) {
+                    departTMapPoint
+                } else {
+                    TMapPoint(
+                        focusedMarkerParameter.lat,
+                        focusedMarkerParameter.lon
+                    )
+                }
             val rightBottomLocation =
-                if (focusedMarkerParameter == null) destinationTMapPoint
-                else TMapPoint(
-                    legs[focusedMarkerParameter.legIndex].endPoint.lat,
-                    legs[focusedMarkerParameter.legIndex].endPoint.lon,
-                )
+                if (focusedMarkerParameter == null) {
+                    destinationTMapPoint
+                } else {
+                    TMapPoint(
+                        legs[focusedMarkerParameter.legIndex].endPoint.lat,
+                        legs[focusedMarkerParameter.legIndex].endPoint.lon
+                    )
+                }
 
             // 지도 위치 조정
             val midPoint = getMidPoint(leftTopLocation, rightBottomLocation)
@@ -264,7 +270,7 @@ fun ItineraryMapPreview(
     @PreviewParameter(LegInfoDummyProvider::class) legs: List<LegInfo>
 ) {
     ItineraryMap(
-        marginTop = 10.dp ,
+        marginTop = 10.dp,
         legs = legs,
         currentLocation = LatLng(37.5665, 126.9780),
         departurePoint = Address(

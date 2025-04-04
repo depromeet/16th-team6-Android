@@ -68,7 +68,7 @@ class MainNavigator(
         navHostController.navigationMypage()
     }
 
-    fun navigateToSearchLocation(destinationLocation : Address) {
+    fun navigateToSearchLocation(destinationLocation: Address) {
         navHostController.navigationSearchLocation(destinationLocation = destinationLocation)
     }
 

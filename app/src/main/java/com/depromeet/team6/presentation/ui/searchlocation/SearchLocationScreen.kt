@@ -52,13 +52,13 @@ import timber.log.Timber
 
 @Composable
 fun SearchLocationRoute(
-    padding : PaddingValues = PaddingValues(0.dp),
+    padding: PaddingValues = PaddingValues(0.dp),
     viewModel: SearchLocationViewModel = hiltViewModel(),
     homeViewModel: HomeViewModel = hiltViewModel(),
-    destinationLocation : Address,
+    destinationLocation: Address,
     navigateToBack: () -> Unit = {},
     navigateToLogin: () -> Unit = {},
-    navigateToCourseSearch: (String, String) -> Unit,
+    navigateToCourseSearch: (String, String) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val homeUiState by homeViewModel.uiState.collectAsStateWithLifecycle()
@@ -112,12 +112,14 @@ fun SearchLocationRoute(
             modifier = Modifier
                 .fillMaxSize()
                 .background(defaultTeam6Colors.greyWashBackground)
-                .padding(paddingValues = PaddingValues(
-                    start = padding.calculateStartPadding(LocalLayoutDirection.current),
-                    end = padding.calculateEndPadding(LocalLayoutDirection.current),
-                    top = 0.dp,
-                    bottom = padding.calculateBottomPadding()
-                )),
+                .padding(
+                    paddingValues = PaddingValues(
+                        start = padding.calculateStartPadding(LocalLayoutDirection.current),
+                        end = padding.calculateEndPadding(LocalLayoutDirection.current),
+                        top = 0.dp,
+                        bottom = padding.calculateBottomPadding()
+                    )
+                ),
             marginTop = padding.calculateTopPadding(),
             viewModel = viewModel,
             backButtonClick = navigateToBack,
@@ -204,7 +206,7 @@ fun SearchLocationRoute(
 
 @Composable
 fun SearchLocationScreen(
-    marginTop : Dp,
+    marginTop: Dp,
     context: Context = LocalContext.current,
     modifier: Modifier = Modifier,
     viewModel: SearchLocationViewModel = hiltViewModel(),

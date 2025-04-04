@@ -40,10 +40,10 @@ fun ItinerarySummary(
 //        fontSize = 28.sp,
 //        color = defaultTeam6Colors.white
 //    )
-    Column (
+    Column(
         modifier = modifier
             .background(defaultTeam6Colors.greyWashBackground)
-    ){
+    ) {
         // 남은 시간
         Row(
             modifier = Modifier

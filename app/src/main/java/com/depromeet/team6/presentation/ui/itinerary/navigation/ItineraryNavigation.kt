@@ -18,16 +18,18 @@ fun NavController.navigateToItinerary(
     courseInfoJSON: String,
     departurePointJSON: String,
     destinationPointJSON: String,
-    param : FocusedMarkerParameter?
+    param: FocusedMarkerParameter?
 ) {
     val paramEncoded =
-        if (param != null) URLEncoder.encode(Json.encodeToString(param), "UTF-8")
-        else ""
+        if (param != null) {
+            URLEncoder.encode(Json.encodeToString(param), "UTF-8")
+        } else {
+            ""
+        }
 
     navigate(
         route = "${ItineraryRoute.ROUTE}/$courseInfoJSON/$departurePointJSON/$destinationPointJSON/$paramEncoded"
     ) {
-
     }
 }
 

@@ -11,11 +11,11 @@ import com.depromeet.team6.presentation.ui.searchlocation.SearchLocationRoute
 import com.google.gson.Gson
 
 fun NavController.navigationSearchLocation(
-    destinationLocation : Address
+    destinationLocation: Address
 ) {
     val destinationLocationJSON = Gson().toJson(destinationLocation)
     navigate(
-        route = "${SearchLocationRoute.ROUTE}/${destinationLocationJSON}"
+        route = "${SearchLocationRoute.ROUTE}/$destinationLocationJSON"
     ) {
         launchSingleTop = true
     }
@@ -25,7 +25,7 @@ fun NavGraphBuilder.searchLocationNavigation(
     padding: PaddingValues,
     navigateToBack: () -> Unit,
     navigateToLogin: () -> Unit,
-    navigateToCourseSearch: (String, String) -> Unit,
+    navigateToCourseSearch: (String, String) -> Unit
 ) {
     composable(
         route = "${SearchLocationRoute.ROUTE}/{destinationLocationJSON}",

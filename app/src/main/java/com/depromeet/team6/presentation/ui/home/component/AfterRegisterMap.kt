@@ -60,7 +60,7 @@ fun AfterRegisterMap(
     legs: List<LegInfo>,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel,
-    onTransportMarkerClick : (FocusedMarkerParameter) -> Unit = {}
+    onTransportMarkerClick: (FocusedMarkerParameter) -> Unit = {}
 ) {
     val context = LocalContext.current
     val uiState = viewModel.uiState.collectAsState().value
@@ -125,7 +125,7 @@ fun AfterRegisterMap(
 
                 // 마커 그리기
                 val marker = TMapMarkerItem()
-                marker.id = "marker_${leg.transportType}_${leg.subTypeIdx}_${index}"
+                marker.id = "marker_${leg.transportType}_${leg.subTypeIdx}_$index"
 
                 if ((leg.transportType == TransportType.WALK) && (lineWayPoints.isNotEmpty())) {
                     marker.tMapPoint = lineWayPoints[0]

@@ -28,7 +28,7 @@ fun MainNavHost(
         enterTransition = {
             slideIntoContainer(
                 AnimatedContentTransitionScope.SlideDirection.Left,
-                animationSpec = tween(500),
+                animationSpec = tween(500)
             )
         },
         popExitTransition = {

@@ -53,7 +53,7 @@ import timber.log.Timber
 
 @Composable
 fun SearchLocationMapView(
-    marginTop : Dp,
+    marginTop: Dp,
     currentLocation: Address,
     myAddress: Address,
     context: Context,
