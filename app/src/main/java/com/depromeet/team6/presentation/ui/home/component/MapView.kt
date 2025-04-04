@@ -98,7 +98,7 @@ fun TMapViewCompose(
     ) {
         AndroidView(
             modifier = modifier.fillMaxWidth()
-                .height(screenHeight - 210.dp)
+                .height(screenHeight - 200.dp)
                 .align(Alignment.TopCenter),
             factory = { context ->
                 // FrameLayout을 직접 생성
