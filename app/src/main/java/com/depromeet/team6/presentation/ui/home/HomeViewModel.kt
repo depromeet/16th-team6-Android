@@ -262,10 +262,14 @@ class HomeViewModel @Inject constructor(
     fun getCenterLocation(location: LatLng) {
         viewModelScope.launch {
             getAddressFromCoordinatesUseCase.invoke(location.latitude, location.longitude)
-                .onSuccess {
+                .onSuccess { addressData ->
                     setState {
                         copy(
-                            departurePoint = it
+                            departurePoint = if (addressData.name.isEmpty()) {
+                                addressData.copy(name = addressData.address)
+                            } else {
+                                addressData
+                            }
                         )
                     }
                 }.onFailure {
