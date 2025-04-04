@@ -1,5 +1,8 @@
 package com.depromeet.team6.presentation.ui.main.navigation
 
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -21,7 +24,22 @@ fun MainNavHost(
 ) {
     NavHost(
         navController = navigator.navHostController,
-        startDestination = navigator.startDestination
+        startDestination = navigator.startDestination,
+        enterTransition = {
+            slideIntoContainer(
+                AnimatedContentTransitionScope.SlideDirection.Left,
+                animationSpec = tween(500)
+            )
+        },
+        popExitTransition = {
+            slideOutOfContainer(
+                AnimatedContentTransitionScope.SlideDirection.Right,
+                animationSpec = tween(500)
+            )
+        },
+        popEnterTransition = {
+            EnterTransition.None
+        }
     ) {
         homeNavGraph(
             padding = padding,
@@ -62,8 +80,10 @@ fun MainNavHost(
         )
 
         searchLocationNavigation(
+            padding = padding,
             navigateToBack = navigator::popBackStack,
-            navigateToLogin = navigator::navigateToLogin
+            navigateToLogin = navigator::navigateToLogin,
+            navigateToCourseSearch = navigator::navigateToCourseSearch
         )
 
         busCourseNavGraph(

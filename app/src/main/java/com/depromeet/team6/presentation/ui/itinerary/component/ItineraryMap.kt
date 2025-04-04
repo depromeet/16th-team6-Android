@@ -2,6 +2,7 @@ package com.depromeet.team6.presentation.ui.itinerary.component
 
 import android.widget.FrameLayout
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
@@ -14,19 +15,23 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
 import com.depromeet.team6.BuildConfig
 import com.depromeet.team6.R
+import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.course.LegInfo
+import com.depromeet.team6.presentation.model.itinerary.FocusedMarkerParameter
 import com.depromeet.team6.presentation.ui.common.TransportVectorIconBitmap
 import com.depromeet.team6.presentation.ui.itinerary.LegInfoDummyProvider
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
@@ -42,11 +47,16 @@ import com.skt.tmap.overlay.TMapTrafficLine
 import com.skt.tmap.overlay.TMapTrafficLine.TrafficLine
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 
 @Composable
 fun ItineraryMap(
     currentLocation: LatLng,
     legs: List<LegInfo>,
+    departurePoint: Address,
+    destinationPoint: Address,
+    focusedMarkerParameter: FocusedMarkerParameter?,
+    marginTop: Dp,
     modifier: Modifier = Modifier,
     onBackPressed: () -> Unit
 ) {
@@ -54,8 +64,9 @@ fun ItineraryMap(
     val tMapView = remember { TMapView(context) }
     var isMapReady by remember { mutableStateOf(false) }
 
-    val departLocation = LatLng(legs[0].startPoint.lat, legs[0].startPoint.lon)
-    val destinationLocation = LatLng(legs[legs.size - 1].endPoint.lat, legs[legs.size - 1].endPoint.lon)
+    Timber.d("departurelocation : $departurePoint")
+    val departLocation = LatLng(departurePoint.lat, departurePoint.lon)
+    val destinationLocation = LatLng(destinationPoint.lat, destinationPoint.lon)
     val markerSizePx = 28.dp.toPx().toInt()
 
     LaunchedEffect(Unit) {
@@ -120,14 +131,32 @@ fun ItineraryMap(
             marker.icon = ContextCompat.getDrawable(context, R.drawable.map_marker_arrival)?.toBitmap()
             tMapView.addTMapMarkerItem(marker)
 
+            // scale 기준점 설정
+            val leftTopLocation =
+                if (focusedMarkerParameter == null) {
+                    departTMapPoint
+                } else {
+                    TMapPoint(
+                        focusedMarkerParameter.lat,
+                        focusedMarkerParameter.lon
+                    )
+                }
+            val rightBottomLocation =
+                if (focusedMarkerParameter == null) {
+                    destinationTMapPoint
+                } else {
+                    TMapPoint(
+                        legs[focusedMarkerParameter.legIndex].endPoint.lat,
+                        legs[focusedMarkerParameter.legIndex].endPoint.lon
+                    )
+                }
+
             // 지도 위치 조정
-            val midPoint = getMidPoint(departLocation, destinationLocation)
+            val midPoint = getMidPoint(leftTopLocation, rightBottomLocation)
             tMapView.setCenterPoint(midPoint.latitude, midPoint.longitude)
 
             // 지도 Scale 조정
-            val leftTop = departTMapPoint
-            val rightBottom = destinationTMapPoint
-            tMapView.zoomToTMapPoint(leftTop, rightBottom)
+            tMapView.zoomToTMapPoint(leftTopLocation, rightBottomLocation)
             tMapView.mapZoomOut()
         }
     }
@@ -156,6 +185,7 @@ fun ItineraryMap(
 
     Box(
         modifier = modifier
+            .background(defaultTeam6Colors.greyWashBackground)
     ) {
         // Tmap
         AndroidView(
@@ -175,7 +205,7 @@ fun ItineraryMap(
             modifier = Modifier
                 .size(36.dp)
                 .align(Alignment.TopStart)
-                .offset(x = 16.dp, y = 12.dp)
+                .offset(x = 16.dp, y = 12.dp + marginTop)
                 .noRippleClickable {
                     onBackPressed()
                 }
@@ -185,7 +215,7 @@ fun ItineraryMap(
             modifier = Modifier
                 .size(36.dp)
                 .align(Alignment.BottomEnd)
-                .offset(x = (-16).dp, y = (-16).dp)
+                .offset(x = (-16).dp, y = (-36).dp)
                 .noRippleClickable { },
             imageVector = ImageVector.vectorResource(R.drawable.ic_all_current_location),
             contentDescription = "ItineraryCircleBtnBack"
@@ -206,14 +236,15 @@ fun CircleBtnBack(
         contentAlignment = Alignment.Center
     ) {
         Image(
-            modifier = Modifier.size(24.dp),
-            imageVector = ImageVector.vectorResource(R.drawable.ic_all_arrow_left_white),
+            modifier = Modifier.size(20.dp),
+            imageVector = ImageVector.vectorResource(R.drawable.ic_all_arrow_left_grey),
+            colorFilter = ColorFilter.tint(defaultTeam6Colors.white),
             contentDescription = "ItineraryCircleBtnBack"
         )
     }
 }
 
-private fun getMidPoint(point1: LatLng, point2: LatLng): LatLng {
+private fun getMidPoint(point1: TMapPoint, point2: TMapPoint): LatLng {
     val midLatitude = (point1.latitude + point2.latitude) / 2
     val midLongitude = (point1.longitude + point2.longitude) / 2
     return LatLng(midLatitude, midLongitude)
@@ -239,8 +270,22 @@ fun ItineraryMapPreview(
     @PreviewParameter(LegInfoDummyProvider::class) legs: List<LegInfo>
 ) {
     ItineraryMap(
+        marginTop = 10.dp,
         legs = legs,
         currentLocation = LatLng(37.5665, 126.9780),
-        onBackPressed = { }
+        departurePoint = Address(
+            name = "성균관대학교 자연과학캠퍼스",
+            lat = 37.303534788694,
+            lon = 127.01085807594,
+            address = ""
+        ),
+        destinationPoint = Address(
+            name = "우리집",
+            lat = 37.296391553347,
+            lon = 126.97755824522,
+            address = ""
+        ),
+        onBackPressed = { },
+        focusedMarkerParameter = null
     )
 }

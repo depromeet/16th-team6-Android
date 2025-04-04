@@ -1,9 +1,11 @@
 package com.depromeet.team6.data.dataremote.model.response.transits
 
+import androidx.annotation.Keep
 import com.depromeet.team6.domain.model.BusCongestion
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+@Keep
 @Serializable
 data class ResponseBusPositionsDto(
     @SerialName("busRouteStationList") val busRouteStationList: List<BusRouteStation>,
@@ -11,6 +13,7 @@ data class ResponseBusPositionsDto(
     @SerialName("busPositions") val busPositions: List<BusPosition>? = emptyList()
 )
 
+@Keep
 @Serializable
 data class BusRouteStation(
     @SerialName("busRouteId") val busRouteId: String,
@@ -23,6 +26,7 @@ data class BusRouteStation(
     @SerialName("order") val order: Int
 )
 
+@Keep
 @Serializable
 data class BusPosition(
     @SerialName("vehicleId") val vehicleId: String,

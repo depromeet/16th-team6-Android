@@ -265,7 +265,7 @@ class HomeViewModel @Inject constructor(
                 .onSuccess { addressData ->
                     setState {
                         copy(
-                            departurePoint = if (addressData.name.isEmpty()) {
+                            markerPoint = if (addressData.name.isEmpty()) {
                                 addressData.copy(name = addressData.address)
                             } else {
                                 addressData
@@ -276,7 +276,7 @@ class HomeViewModel @Inject constructor(
                     setState {
                         // 위치 찾을 수 없는 경우 서울시청으로 임의 초기화
                         copy(
-                            departurePoint = Address(
+                            markerPoint = Address(
                                 name = "서울특별시청",
                                 lat = 37.56681744674135,
                                 lon = 126.97866075004276,
@@ -430,8 +430,8 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             getTaxiCostUseCase(
                 routeLocation = RouteLocation(
-                    startLat = currentState.departurePoint.lat,
-                    startLon = currentState.departurePoint.lon,
+                    startLat = currentState.markerPoint.lat,
+                    startLon = currentState.markerPoint.lon,
                     endLat = currentState.destinationPoint.lat,
                     endLon = currentState.destinationPoint.lon
                 )

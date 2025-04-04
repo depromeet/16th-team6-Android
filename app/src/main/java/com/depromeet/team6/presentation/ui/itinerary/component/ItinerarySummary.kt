@@ -5,14 +5,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -36,7 +34,16 @@ fun ItinerarySummary(
     val durationHour = totalTimeMinute / 60
     val durationMinute = totalTimeMinute % 60
 
-    Column {
+//    Text(
+//        text = durationHour.toString(),
+//        style = defaultTeam6Typography.heading2Bold26,
+//        fontSize = 28.sp,
+//        color = defaultTeam6Colors.white
+//    )
+    Column(
+        modifier = modifier
+            .background(defaultTeam6Colors.greyWashBackground)
+    ) {
         // 남은 시간
         Row(
             modifier = Modifier
@@ -53,7 +60,7 @@ fun ItinerarySummary(
                 )
                 Text(
                     text = "시간",
-                    style = defaultTeam6Typography.bodyMedium14,
+                    style = defaultTeam6Typography.heading2Bold26,
                     fontSize = 24.sp,
                     color = defaultTeam6Colors.white
                 )
@@ -67,7 +74,7 @@ fun ItinerarySummary(
             )
             Text(
                 text = "분",
-                style = defaultTeam6Typography.bodyMedium14,
+                style = defaultTeam6Typography.heading2Bold26,
                 fontSize = 24.sp,
                 color = defaultTeam6Colors.white
             )
@@ -96,14 +103,23 @@ fun ItinerarySummary(
             legs = legs
         )
 
-        // 구분선
-        Spacer(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(17.dp)
-                .padding(top = 8.dp, bottom = 22.dp)
-                .background(Color(0x0AFFFFFF))
-        )
+//        // 구분선
+//        Spacer(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .height(8.dp)
+//        )
+//        Spacer(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .height(1.dp)
+//                .background(Color(0x0AFFFFFF))
+//        )
+//        Spacer(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .height(22.dp)
+//        )
     }
 }
 

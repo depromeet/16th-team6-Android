@@ -1,8 +1,10 @@
 package com.depromeet.team6.data.dataremote.model.response.transits
 
+import androidx.annotation.Keep
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+@Keep
 @Serializable
 data class ResponseBusArrivalsDto(
     @SerialName("busRouteId") val busRouteId: String,
@@ -15,6 +17,7 @@ data class ResponseBusArrivalsDto(
     @SerialName("realTimeBusArrival") val realTimeBusArrival: List<RealTimeBusArrival>? = emptyList()
 )
 
+@Keep
 @Serializable
 data class RealTimeBusArrival(
     @SerialName("busStatus") val busStatus: String,

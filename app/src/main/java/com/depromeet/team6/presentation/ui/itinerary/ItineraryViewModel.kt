@@ -1,5 +1,6 @@
 package com.depromeet.team6.presentation.ui.itinerary
 
+import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.course.CourseInfo
 import com.depromeet.team6.presentation.util.base.BaseViewModel
 import com.depromeet.team6.presentation.util.view.LoadState
@@ -25,11 +26,16 @@ class ItineraryViewModel @Inject constructor() : BaseViewModel<ItineraryContract
         }
     }
 
-    fun initItineraryInfo(courseInfoJSON: String) {
+    fun initItineraryInfo(courseInfoJSON: String, departurePointJSON: String, destinationPointJSON: String) {
         val courseInfo = Gson().fromJson(courseInfoJSON, CourseInfo::class.java)
+        val departurePoint = Gson().fromJson(departurePointJSON, Address::class.java)
+        val destinationPoint = Gson().fromJson(destinationPointJSON, Address::class.java)
+
         setState {
             copy(
                 courseDataLoadState = LoadState.Success,
+                departurePoint = departurePoint,
+                destinationPoint = destinationPoint,
                 itineraryInfo = courseInfo
             )
         }

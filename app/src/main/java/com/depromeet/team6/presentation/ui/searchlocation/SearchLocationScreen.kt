@@ -5,8 +5,12 @@ import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.HorizontalDivider
@@ -18,7 +22,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -41,14 +47,18 @@ import com.depromeet.team6.presentation.util.permission.PermissionUtil
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.google.android.gms.maps.model.LatLng
+import com.google.gson.Gson
 import timber.log.Timber
 
 @Composable
 fun SearchLocationRoute(
+    padding: PaddingValues = PaddingValues(0.dp),
     viewModel: SearchLocationViewModel = hiltViewModel(),
     homeViewModel: HomeViewModel = hiltViewModel(),
+    destinationLocation: Address,
     navigateToBack: () -> Unit = {},
-    navigateToLogin: () -> Unit = {}
+    navigateToLogin: () -> Unit = {},
+    navigateToCourseSearch: (String, String) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val homeUiState by homeViewModel.uiState.collectAsStateWithLifecycle()
@@ -99,7 +109,18 @@ fun SearchLocationRoute(
     when (uiState.loadState) {
         LoadState.Idle -> SearchLocationScreen(
             context = context,
-            modifier = Modifier,
+            modifier = Modifier
+                .fillMaxSize()
+                .background(defaultTeam6Colors.greyWashBackground)
+                .padding(
+                    paddingValues = PaddingValues(
+                        start = padding.calculateStartPadding(LocalLayoutDirection.current),
+                        end = padding.calculateEndPadding(LocalLayoutDirection.current),
+                        top = 0.dp,
+                        bottom = padding.calculateBottomPadding()
+                    )
+                ),
+            marginTop = padding.calculateTopPadding(),
             viewModel = viewModel,
             backButtonClick = navigateToBack,
             location = userLocation,
@@ -153,11 +174,18 @@ fun SearchLocationRoute(
                 // 최근 검색 내역 추가
                 viewModel.postSearchHistory(searchHistory)
             },
-            mapViewSelectButtonClicked = {
+            navigateToCourseSearch = {
                 viewModel.setEvent(
                     SearchLocationContract.SearchLocationEvent.ChangeSearchSelectMapViewVisible(
                         false
                     )
+                )
+
+                val currentLocationJSON = Gson().toJson(uiState.selectLocation)
+                val destinationPointJSON = Gson().toJson(destinationLocation)
+                navigateToCourseSearch(
+                    currentLocationJSON,
+                    destinationPointJSON
                 )
             },
             clearAddress = {
@@ -178,6 +206,7 @@ fun SearchLocationRoute(
 
 @Composable
 fun SearchLocationScreen(
+    marginTop: Dp,
     context: Context = LocalContext.current,
     modifier: Modifier = Modifier,
     viewModel: SearchLocationViewModel = hiltViewModel(),
@@ -189,7 +218,7 @@ fun SearchLocationScreen(
     onDeleteButtonClicked: (Location) -> Unit = {},
     onDeleteAllButtonClicked: () -> Unit = {},
     selectButtonClicked: (Location) -> Unit = {},
-    mapViewSelectButtonClicked: () -> Unit = {},
+    navigateToCourseSearch: () -> Unit = {},
     clearAddress: () -> Unit = {},
     getCenterLocation: (LatLng) -> Unit = {}
 ) {
@@ -270,11 +299,12 @@ fun SearchLocationScreen(
         if (uiState.searchSelectMapView) {
             val currentLocation by remember { mutableStateOf(uiState.selectLocation) }
             SearchLocationMapView(
+                marginTop = marginTop,
                 context = context,
                 myAddress = uiState.selectLocation,
                 getCenterLocation = getCenterLocation,
                 currentLocation = currentLocation,
-                buttonClicked = mapViewSelectButtonClicked,
+                setDepartureButtonClicked = navigateToCourseSearch,
                 backButtonClicked = clearAddress
             )
         }
@@ -286,6 +316,7 @@ fun SearchLocationScreen(
 fun SearchLocationScreenPreview() {
     SearchLocationScreen(
         backButtonClick = {},
-        location = LatLng(37.5665, 126.9780)
+        location = LatLng(37.5665, 126.9780),
+        marginTop = 1.dp
     )
 }

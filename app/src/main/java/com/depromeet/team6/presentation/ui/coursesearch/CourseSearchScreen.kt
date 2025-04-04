@@ -36,7 +36,7 @@ fun CourseSearchRoute(
     padding: PaddingValues,
     departurePoint: String,
     destinationPoint: String,
-    navigateToItinerary: (String) -> Unit,
+    navigateToItinerary: (String, String, String) -> Unit,
     navigateToHome: () -> Unit,
     viewModel: CourseSearchViewModel = hiltViewModel()
 ) {
@@ -72,6 +72,8 @@ fun CourseSearchRoute(
             CourseSearchScreen(
                 uiState = uiState,
                 modifier = Modifier
+                    .fillMaxSize()
+                    .background(defaultTeam6Colors.greyWashBackground)
                     .padding(padding)
             )
             Box(modifier = Modifier.fillMaxSize()) {
@@ -81,6 +83,8 @@ fun CourseSearchRoute(
         LoadState.Success -> CourseSearchScreen(
             uiState = uiState,
             modifier = Modifier
+                .fillMaxSize()
+                .background(defaultTeam6Colors.greyWashBackground)
                 .padding(padding),
             navigateToItinerary = navigateToItinerary,
             setNotification = { routeId ->
@@ -118,7 +122,7 @@ fun CourseSearchRoute(
 fun CourseSearchScreen(
     modifier: Modifier = Modifier,
     uiState: CourseSearchContract.CourseUiState = CourseSearchContract.CourseUiState(),
-    navigateToItinerary: (String) -> Unit = {},
+    navigateToItinerary: (String, String, String) -> Unit = { s: String, s1: String, s2: String -> },
     setNotification: (String) -> Unit = {},
     backButtonClicked: () -> Unit = {}
 ) {
@@ -128,15 +132,21 @@ fun CourseSearchScreen(
     ) {
         CourseAppBar(backButtonClicked = backButtonClicked)
         DestinationSearchBar(
-            startingPoint = uiState.startingPoint?.name ?: "",
-            destination = uiState.destinationPoint?.name ?: "",
+            startingPoint = uiState.startingPoint?.name ?: uiState.startingPoint?.address!!,
+            destination = "우리집",
             modifier = Modifier
                 .padding(top = 6.dp, start = 16.dp, end = 16.dp, bottom = 10.dp)
         )
 
         TransportTabMenu(
             availableCourses = uiState.courseData,
-            onItemClick = navigateToItinerary,
+            onItemClick = { courseInfoJson ->
+                navigateToItinerary(
+                    courseInfoJson,
+                    Gson().toJson(uiState.startingPoint!!),
+                    Gson().toJson(uiState.destinationPoint!!)
+                )
+            },
             onRegisterAlarmBtnClick = { routeId ->
                 setNotification(routeId)
             }

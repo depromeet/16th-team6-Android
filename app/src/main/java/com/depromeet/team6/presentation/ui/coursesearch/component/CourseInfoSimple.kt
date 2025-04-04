@@ -25,6 +25,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import com.depromeet.team6.R
 import com.depromeet.team6.domain.model.course.LegInfo
+import com.depromeet.team6.domain.model.course.TransportType
 import com.depromeet.team6.presentation.ui.itinerary.LegInfoDummyProvider
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.presentation.util.view.TransportTypeUiMapper
@@ -41,7 +42,7 @@ fun CourseInfoSimple(
         modifier = Modifier
             .clip(RoundedCornerShape(8.dp))
             .background(defaultTeam6Colors.systemGrey5)
-            .padding(start = 7.dp, end = 10.dp, top = 5.dp, bottom = 5.dp)
+            .padding(start = 7.dp, end = 10.dp, top = 6.dp, bottom = 6.dp)
             .fillMaxWidth()
             .wrapContentHeight()
             .noRippleClickable {
@@ -55,6 +56,7 @@ fun CourseInfoSimple(
             verticalAlignment = Alignment.CenterVertically
         ) {
             itemsIndexed(legs) { index, courseInfo ->
+                if (index in 1 until legs.size - 1 && courseInfo.transportType == TransportType.WALK) return@itemsIndexed
                 Image(
                     modifier = Modifier
                         .size(26.dp),
@@ -69,7 +71,7 @@ fun CourseInfoSimple(
                             .width(4.dp)
                     )
                     Image(
-                        imageVector = ImageVector.vectorResource(id = R.drawable.ic_all_arrow_right_grey),
+                        imageVector = ImageVector.vectorResource(id = R.drawable.ic_arrow_right_big),
                         contentDescription = "transport course divider",
                         modifier = Modifier
                             .size(12.dp)
@@ -82,7 +84,7 @@ fun CourseInfoSimple(
             modifier = Modifier
                 .size(16.dp)
                 .align(Alignment.CenterVertically),
-            imageVector = ImageVector.vectorResource(id = R.drawable.ic_all_arrow_down_grey),
+            imageVector = ImageVector.vectorResource(id = R.drawable.ic_arrow_down_big),
             contentDescription = "arrow down"
         )
     }

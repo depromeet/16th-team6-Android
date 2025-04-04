@@ -94,7 +94,7 @@ fun PreviewTabMenu(
     val mockData = CourseInfo(
         routeId = "123",
         filterCategory = 0,
-        remainingTime = 23 * 60,
+        totalTime = 23 * 60,
         departureTime = "2025-03-11 23:12:00",
         boardingTime = "2025-03-11 23:21:00",
         legs = courseInfo
