@@ -106,13 +106,13 @@ fun SearchLocationTextField(
 
         Spacer(Modifier.width(6.dp))
 
-        Icon(
-            modifier = Modifier
-                .noRippleClickable { },
-            imageVector = ImageVector.vectorResource(R.drawable.ic_search_list_map_28dp),
-            tint = defaultTeam6Colors.greySecondaryLabel,
-            contentDescription = stringResource(R.string.home_search_map_icon)
-        )
+//        Icon(
+//            modifier = Modifier
+//                .noRippleClickable { },
+//            imageVector = ImageVector.vectorResource(R.drawable.ic_search_list_map_28dp),
+//            tint = defaultTeam6Colors.greySecondaryLabel,
+//            contentDescription = stringResource(R.string.home_search_map_icon)
+//        )
     }
 }
 

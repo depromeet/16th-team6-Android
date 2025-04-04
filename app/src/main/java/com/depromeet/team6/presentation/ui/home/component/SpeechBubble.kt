@@ -72,24 +72,17 @@ class SpeechBubbleShape(
 //                lineTo(size.width * 0.125f, size.height)
 //                lineTo(size.width * 0.16f, size.height - tailHeight)
 
-                // 🔹 둥근 꼬리 만들기 (cubicTo 사용)
+//                // 말풍선 본체에서 말꼬리가 시작되는 지점을 왼쪽으로 당김
+//                lineTo(tailPositionX / 2f, size.height - tailHeight)
+// // 둥근 말꼬리 만들기
 //                cubicTo(
-//                    tailPositionX - tailWidth / 6, size.height, // 제어점1 (오른쪽 곡선)
-//                    tailPositionX + tailWidth / 5, size.height, // 제어점2 (왼쪽 곡선)
-//                    tailPositionX + tailWidth / 60, size.height - tailHeight // 끝점
+//                    tailPositionX - tailWidth / 7,
+//                    size.height + 50, // 제어점1 (오른쪽 곡선)
+//                    tailPositionX / 1.5f,
+//                    size.height - 130, // 제어점2 (왼쪽 곡선)
+//                    tailPositionX - tailWidth / 10,
+//                    size.height - tailHeight // 끝점 (더 앞쪽)
 //                )
-
-                // 말풍선 본체에서 말꼬리가 시작되는 지점을 왼쪽으로 당김
-                lineTo(tailPositionX / 2f, size.height - tailHeight)
-// 둥근 말꼬리 만들기
-                cubicTo(
-                    tailPositionX - tailWidth / 7,
-                    size.height + 50, // 제어점1 (오른쪽 곡선)
-                    tailPositionX / 1.5f,
-                    size.height - 130, // 제어점2 (왼쪽 곡선)
-                    tailPositionX - tailWidth / 10,
-                    size.height - tailHeight // 끝점 (더 앞쪽)
-                )
 
                 arcTo(
                     Rect(
