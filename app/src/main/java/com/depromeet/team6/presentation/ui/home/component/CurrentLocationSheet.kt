@@ -41,28 +41,29 @@ fun CurrentLocationSheet(
                     colors.greyWashBackground,
                     shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)
                 )
-                .padding(start = 16.dp, end = 16.dp, top = 28.dp, bottom = 20.dp)
+                .padding(start = 16.dp, end = 16.dp, top = 24.dp, bottom = 20.dp)
         ) {
             LocationText(
                 locationTitle = stringResource(R.string.home_current_location_text),
                 location = currentLocation,
                 textColor = colors.systemGreen,
-                backgroundColor = colors.greyDefaultButton,
+                backgroundColor = colors.systemGrey6,
+                modifier = Modifier,
                 onClick = { onSearchLocationClick() }
             )
 
-            Spacer(modifier = Modifier.height(4.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
             LocationText(
                 locationTitle = stringResource(R.string.home_destination_text),
                 location = destination,
-                textColor = colors.greyTertiaryLabel,
+                textColor = colors.greySecondaryLabel,
                 backgroundColor = colors.greyWashBackground,
                 onClick = {},
                 modifier = Modifier
             )
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
             PrimaryButton(
                 text = stringResource(R.string.home_search_button_text),

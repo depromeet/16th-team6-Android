@@ -57,7 +57,7 @@
     <string name="home_search_button_text">검색하기</string>
     <string name="home_current_location_btn">현위치 버튼</string>
     <string name="home_current_location_text">현위치:</string>
-    <string name="home_destination_text">목적지:</string>
+    <string name="home_destination_text">도착지:</string>
 
     <string name="home_search_location_search_text">출발지 검색</string>
     <string name="home_search_departure_home_text">도착지: 우리집</string>
