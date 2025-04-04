@@ -18,7 +18,8 @@ val properties = Properties().apply {
 android {
     signingConfigs {
         create("release") {
-            storeFile = file(properties["keystore.path"] as? String ?: "")
+            val keystorePath = properties["keystore.path"] as? String
+            storeFile = if (!keystorePath.isNullOrBlank()) file(keystorePath) else null
             storePassword = properties["keystore.password"] as? String ?: ""
             keyAlias = properties["keystore.alias"] as? String ?: ""
             keyPassword = properties["key.password"] as? String ?: ""
