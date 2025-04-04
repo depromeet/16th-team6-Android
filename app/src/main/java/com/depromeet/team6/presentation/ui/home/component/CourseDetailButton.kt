@@ -42,7 +42,7 @@ fun CourseDetailButton(
             containerColor = colors.systemGrey5,
             contentColor = colors.white
         ),
-        shape = RoundedCornerShape(8.dp)
+        shape = RoundedCornerShape(10.dp)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,

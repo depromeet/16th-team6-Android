@@ -131,7 +131,7 @@ fun SpeechBubble(
     Box(
         modifier = modifier
             .background(
-                color = colors.white,
+                color = colors.greyElevatedBackground,
                 shape = SpeechBubbleShape(tailExist = tailExist)
             ),
         contentAlignment = Alignment.Center

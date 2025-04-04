@@ -358,7 +358,7 @@ fun HomeScreen(
                     stringResource(R.string.home_bubble_basic_text),
                     "약 " + NumberFormat.getNumberInstance(Locale.US).format(homeUiState.taxiCost) + stringResource(R.string.home_bubble_won_text),
                     null,
-                    209.dp
+                    194.dp
                 )
 
             homeUiState.userDeparture ->
