@@ -59,6 +59,7 @@ class HomeContract {
         data class UpdateAlarmRegistered(val isRegistered: Boolean) : HomeEvent()
         data class UpdateLastRouteId(val lastRouteId: String) : HomeEvent()
         data class UpdateDeparturePointName(val departurePointName: String) : HomeEvent()
+        data class UpdateDeparturePoint(val departurePoint: Address) : HomeEvent()
         data class UpdateBusDeparted(val isBusDeparted: Boolean) : HomeEvent()
         data class UpdateSpeechBubbleVisibility(val show: Boolean) : HomeEvent()
         data class LoadLegsResult(val result: CourseInfo) : HomeEvent()
