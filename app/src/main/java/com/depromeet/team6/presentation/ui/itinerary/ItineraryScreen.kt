@@ -89,8 +89,8 @@ fun ItineraryScreen(
                             BusArrivalParameter(
                                 routeName = "일반:9-3",
                                 stationName = "남서울중학교.성보중고등학교",
-                                lat=37.482817,
-                                lon=126.921012,
+                                lat = 37.482817,
+                                lon = 126.921012,
                                 subtypeIdx = 2
                             )
                         )

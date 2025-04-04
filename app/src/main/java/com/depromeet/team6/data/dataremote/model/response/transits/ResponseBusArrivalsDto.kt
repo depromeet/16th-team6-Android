@@ -21,8 +21,8 @@ data class ResponseBusArrivalsDto(
 data class RealTimeBusArrival(
     @SerialName("busStatus") val busStatus: String,
     @SerialName("remainingTime") val remainingTime: Int,
-    @SerialName("busCongestion") val busCongestion: String ? =BusCongestion.UNKNOWN.toText(),
-    @SerialName("remainingSeats") val remainingSeats: Int? =0 ,
+    @SerialName("busCongestion") val busCongestion: String ? = BusCongestion.UNKNOWN.toText(),
+    @SerialName("remainingSeats") val remainingSeats: Int? = 0,
     @SerialName("expectedArrivalTime") val expectedArrivalTime: String? = null,
     @SerialName("vehicleId") val vehicleId: String,
     @SerialName("remainingStations") val remainingStations: Int? = 0
