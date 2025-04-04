@@ -80,6 +80,7 @@ fun MainNavHost(
         )
 
         searchLocationNavigation(
+            padding = padding,
             navigateToBack = navigator::popBackStack,
             navigateToLogin = navigator::navigateToLogin,
             navigateToCourseSearch = navigator::navigateToCourseSearch

@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
@@ -27,6 +28,7 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
@@ -51,6 +53,7 @@ import timber.log.Timber
 
 @Composable
 fun SearchLocationMapView(
+    marginTop : Dp,
     currentLocation: Address,
     myAddress: Address,
     context: Context,
@@ -147,7 +150,8 @@ fun SearchLocationMapView(
                 modifier = Modifier
                     .align(Alignment.TopStart)
                     .noRippleClickable { backButtonClicked() }
-                    .padding(vertical = 16.dp, horizontal = 18.dp),
+                    .padding(vertical = 16.dp, horizontal = 18.dp)
+                    .offset(y = marginTop),
                 imageVector = ImageVector.vectorResource(R.drawable.ic_all_arrow_left_white),
                 tint = Color.Unspecified,
                 contentDescription = null
@@ -246,6 +250,7 @@ fun SearchLocationMapViewPreview() {
             lon = 126.9780,
             address = "서울특별시"
         ),
-        context = LocalContext.current
+        context = LocalContext.current,
+        marginTop = 0.dp
     )
 }

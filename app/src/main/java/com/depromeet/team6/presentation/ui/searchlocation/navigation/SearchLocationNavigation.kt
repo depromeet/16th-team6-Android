@@ -1,5 +1,6 @@
 package com.depromeet.team6.presentation.ui.searchlocation.navigation
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
@@ -21,6 +22,7 @@ fun NavController.navigationSearchLocation(
 }
 
 fun NavGraphBuilder.searchLocationNavigation(
+    padding: PaddingValues,
     navigateToBack: () -> Unit,
     navigateToLogin: () -> Unit,
     navigateToCourseSearch: (String, String) -> Unit,
@@ -35,6 +37,7 @@ fun NavGraphBuilder.searchLocationNavigation(
         val destinationLocation = Gson().fromJson(destinationLocationJSON, Address::class.java)
 
         SearchLocationRoute(
+            padding = padding,
             navigateToBack = navigateToBack,
             navigateToLogin = navigateToLogin,
             navigateToCourseSearch = navigateToCourseSearch,
