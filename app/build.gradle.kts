@@ -146,6 +146,9 @@ dependencies {
 
     // Lottie
     implementation(libs.lottie.compose)
+
+    // SystemUiController
+    implementation(libs.accompanist.systemuicontroller)
 }
 java {
     toolchain {
