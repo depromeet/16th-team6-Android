@@ -18,10 +18,10 @@ val properties = Properties().apply {
 android {
     signingConfigs {
         create("release") {
-//            storeFile = file(properties["keystore.path"] as String)
-//            storePassword = properties["keystore.password"] as String
-//            keyAlias = properties["keystore.alias"] as String
-//            keyPassword = properties["key.password"] as String
+            storeFile = file(properties["keystore.path"] as? String ?: "")
+            storePassword = properties["keystore.password"] as? String ?: ""
+            keyAlias = properties["keystore.alias"] as? String ?: ""
+            keyPassword = properties["key.password"] as? String ?: ""
         }
     }
 
