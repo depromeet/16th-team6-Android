@@ -72,10 +72,9 @@ class SpeechBubbleShape(
 //                lineTo(size.width * 0.125f, size.height)
 //                lineTo(size.width * 0.16f, size.height - tailHeight)
 
-
 //                // 말풍선 본체에서 말꼬리가 시작되는 지점을 왼쪽으로 당김
 //                lineTo(tailPositionX / 2f, size.height - tailHeight)
-//// 둥근 말꼬리 만들기
+// // 둥근 말꼬리 만들기
 //                cubicTo(
 //                    tailPositionX - tailWidth / 7,
 //                    size.height + 50, // 제어점1 (오른쪽 곡선)
