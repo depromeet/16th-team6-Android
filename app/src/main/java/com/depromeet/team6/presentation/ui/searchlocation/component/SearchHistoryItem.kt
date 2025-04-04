@@ -19,21 +19,25 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.depromeet.team6.R
-import com.depromeet.team6.domain.model.HomeSearchLocation
+import com.depromeet.team6.domain.model.Location
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.depromeet.team6.ui.theme.defaultTeam6Typography
 
 @Composable
 fun SearchHistoryItem(
-    homeSearchLocation: HomeSearchLocation,
+    homeSearchLocation: Location,
     modifier: Modifier = Modifier,
-    deleteButtonClicked: () -> Unit = {}
+    deleteButtonClicked: (Location) -> Unit = {},
+    selectItemClicked: (Location) -> Unit = {}
 ) {
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = 19.dp, horizontal = 16.dp),
+            .padding(vertical = 19.dp, horizontal = 16.dp)
+            .noRippleClickable {
+                selectItemClicked(homeSearchLocation)
+            },
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column(modifier = modifier.weight(1f)) {
@@ -46,22 +50,43 @@ fun SearchHistoryItem(
 
             Spacer(modifier = Modifier.height(4.dp))
 
-            Text(
-                text = homeSearchLocation.distance + "" + homeSearchLocation.roadAddress,
-                style = defaultTeam6Typography.bodyRegular14,
-                color = defaultTeam6Colors.greySecondaryLabel,
-                overflow = TextOverflow.Ellipsis
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = homeSearchLocation.radius,
+                    style = defaultTeam6Typography.bodyRegular14,
+                    color = defaultTeam6Colors.greySecondaryLabel,
+                    overflow = TextOverflow.Ellipsis
+                )
+
+                Spacer(Modifier.width(6.dp))
+
+                Icon(
+                    imageVector = ImageVector.vectorResource(R.drawable.ic_home_location_grey_3dp),
+                    contentDescription = stringResource(R.string.home_search_dot_icon),
+                    tint = defaultTeam6Colors.white
+                )
+
+                Spacer(Modifier.width(6.dp))
+
+                Text(
+                    text = homeSearchLocation.address,
+                    style = defaultTeam6Typography.bodyRegular14,
+                    color = defaultTeam6Colors.greySecondaryLabel,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
         }
 
         Spacer(modifier = Modifier.width(12.dp))
 
         Icon(
-            imageVector = ImageVector.vectorResource(R.drawable.ic_all_close_white),
+            imageVector = ImageVector.vectorResource(R.drawable.ic_search_list_close_grey),
             contentDescription = stringResource(R.string.home_icon_search_text),
-            tint = defaultTeam6Colors.greyQuaternaryLabel,
+            tint = defaultTeam6Colors.greyTertiaryLabel,
             modifier = Modifier.noRippleClickable {
-                deleteButtonClicked()
+                deleteButtonClicked(homeSearchLocation)
             }
         )
     }
@@ -71,10 +96,13 @@ fun SearchHistoryItem(
 @Composable
 fun SearchHistoryItemPreview() {
     SearchHistoryItem(
-        homeSearchLocation = HomeSearchLocation(
+        homeSearchLocation = Location(
             name = "60계 치킨 강남정",
-            distance = "1.9km",
-            roadAddress = "강남구 테헤란로 4길 6"
+            lat = 0.0,
+            lon = 0.0,
+            radius = "1.9km",
+            address = "강남구 테헤란로 4길 6",
+            businessCategory = ""
         )
     )
 }

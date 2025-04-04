@@ -25,6 +25,26 @@ object ApiConstraints {
     // FcmToken
     const val FCM_TOKEN = "fcmToken"
 
+    // Home
+    const val LAST_ROUTES = "last-routes"
+    const val LAST_ROUTE_ID = "lastRouteId"
+    const val BUS_STARTED = "bus-started"
+
+    const val VERSION = "v1"
+    const val USERS = "users"
+
+    // Taxi
+    const val TAXIFARE = "taxi-fare"
+
+    // TimeLeft
+    const val LASTROUTES = "last-routes"
+    const val DEPARTUREREMAINING = "departure-remaining"
+    const val ROUTEID = "routeId"
+
+    // Alarm
+    const val NOTIFICATIONS = "notifications"
+    const val ROUTE = "route"
+
     // Transits
     const val TRANSITS = "transits"
 }

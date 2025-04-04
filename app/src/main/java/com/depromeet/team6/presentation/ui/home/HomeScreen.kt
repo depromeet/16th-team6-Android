@@ -1,9 +1,9 @@
 package com.depromeet.team6.presentation.ui.home
 
-import android.content.Context
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
@@ -28,15 +29,20 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import com.depromeet.team6.R
+import com.depromeet.team6.domain.model.course.TransportType
 import com.depromeet.team6.presentation.ui.alarm.NotificationScheduler
 import com.depromeet.team6.presentation.ui.alarm.NotificationTimeConstants
+import com.depromeet.team6.presentation.ui.home.component.AfterRegisterMap
 import com.depromeet.team6.presentation.ui.home.component.AfterRegisterSheet
-import com.depromeet.team6.presentation.ui.home.component.CharacterSpeechBubble
+import com.depromeet.team6.presentation.ui.home.component.CharacterLottieSpeechBubble
 import com.depromeet.team6.presentation.ui.home.component.CurrentLocationSheet
+import com.depromeet.team6.presentation.ui.home.component.DeleteAlarmDialog
 import com.depromeet.team6.presentation.ui.home.component.TMapViewCompose
 import com.depromeet.team6.presentation.util.DefaultLntLng.DEFAULT_LNG
 import com.depromeet.team6.presentation.util.DefaultLntLng.DEFAULT_LNT
@@ -44,9 +50,17 @@ import com.depromeet.team6.presentation.util.context.getUserLocation
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.presentation.util.permission.PermissionUtil
 import com.depromeet.team6.presentation.util.view.LoadState
+import com.depromeet.team6.ui.theme.LocalTeam6Colors
+import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.google.android.gms.maps.model.LatLng
 import com.google.gson.Gson
 import timber.log.Timber
+import java.text.NumberFormat
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.util.Locale
+
+// TODO : maxsize -> 백그라운드 -> padding
 
 @Composable
 fun HomeRoute(
@@ -55,6 +69,7 @@ fun HomeRoute(
     navigateToCourseSearch: (String, String) -> Unit,
     navigateToMypage: () -> Unit,
     navigateToItinerary: (String) -> Unit,
+    navigateToSearchLocation: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
@@ -75,6 +90,30 @@ fun HomeRoute(
         }
     )
 
+    LaunchedEffect(Unit) {
+        viewModel.loadAlarmAndCourseInfoFromPrefs(context)
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.loadUserDepartureState(context)
+    }
+
+    // 화면이 다시 활성화될 때마다 사용자 출발 상태를 새로 로드
+    DisposableEffect(lifecycleOwner) {
+        val observer = object : DefaultLifecycleObserver {
+            override fun onResume(owner: LifecycleOwner) {
+                super.onResume(owner)
+                // 화면이 다시 보일 때마다 사용자 출발 상태 로드
+                viewModel.loadUserDepartureState(context)
+            }
+        }
+
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
+
     LaunchedEffect(viewModel.sideEffect, lifecycleOwner) {
         viewModel.sideEffect.flowWithLifecycle(lifecycle = lifecycleOwner.lifecycle)
             .collect { sideEffect ->
@@ -94,6 +133,24 @@ fun HomeRoute(
         }
 
         viewModel.getCenterLocation(LatLng(userLocation.latitude, userLocation.longitude))
+    }
+
+    LaunchedEffect(Unit) {
+        if (uiState.isAlarmRegistered) {
+            viewModel.registerAlarm()
+        }
+    }
+
+    LaunchedEffect(uiState.isAlarmRegistered, uiState.firtTransportTation) {
+        if (uiState.isAlarmRegistered && uiState.firtTransportTation == TransportType.BUS) {
+            viewModel.startPollingBusStarted(routeId = uiState.lastRouteId)
+        } else {
+            viewModel.stopPollingBusStarted()
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.getTaxiCost()
     }
 
     SideEffect {
@@ -129,8 +186,20 @@ fun HomeRoute(
                 )
             },
             onFinishClick = {
-                viewModel.finishAlarm(context)
-            }
+                viewModel.setEvent(HomeContract.HomeEvent.FinishAlarmClicked)
+//                viewModel.finishAlarm(context)
+            },
+            deleteAlarmConfirmed = {
+                viewModel.setEvent(HomeContract.HomeEvent.DeleteAlarmConfirmed)
+                viewModel.deleteAlarm(uiState.lastRouteId, context)
+            },
+            dismissDialog = {
+                viewModel.setEvent(HomeContract.HomeEvent.DismissDialog)
+            },
+            onRefreshClick = {
+            },
+            navigateToSearchLocation = { navigateToSearchLocation() }
+
         )
         LoadState.Error -> navigateToLogin()
 
@@ -147,28 +216,25 @@ fun HomeScreen(
     onCharacterClick: () -> Unit = {},
     onSearchClick: () -> Unit = {},
     onFinishClick: () -> Unit = {},
+    onRefreshClick: () -> Unit = {},
     navigateToMypage: () -> Unit = {},
     navigateToItinerary: (String) -> Unit = {},
+    deleteAlarmConfirmed: () -> Unit = {},
+    dismissDialog: () -> Unit = {},
+    navigateToSearchLocation: () -> Unit = {},
     viewModel: HomeViewModel = hiltViewModel() // TODO : TmapViewCompose 변경 후 제거
 ) {
     val context = LocalContext.current
-
-    val sharedPreferences = context.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
-    val isUserLoggedIn = sharedPreferences.getBoolean("isUserLoggedIn", false) // 기본값은 false
+    val colors = LocalTeam6Colors.current
 
     val notificationScheduler = NotificationScheduler(context)
 
-    if (isUserLoggedIn) {
-        viewModel.registerAlarm()
-        viewModel.setBusDeparted()
-    } else {
-        viewModel.finishAlarm(context)
-    }
+    var characterAnimationTrigger by remember { mutableStateOf(0) }
 
     Box(
         modifier = modifier
-            .padding(padding)
             .fillMaxSize()
+            .padding(padding)
     ) {
         Image(
             imageVector = ImageVector.vectorResource(R.drawable.ic_home_mypage),
@@ -182,10 +248,29 @@ fun HomeScreen(
                 .zIndex(1f)
         )
 
-        TMapViewCompose(
-            userLocation,
-            viewModel = viewModel
-        ) // Replace with your actual API key
+        if (homeUiState.isAlarmRegistered) {
+            AfterRegisterMap(
+                currentLocation = userLocation,
+                legs = homeUiState.itineraryInfo!!.legs,
+                viewModel = viewModel
+            )
+        } else {
+            TMapViewCompose(
+                userLocation,
+                viewModel = viewModel
+            ) // Replace with your actual API key
+        }
+
+        var isConfirmed = false
+
+        val firstTransportation = homeUiState.firtTransportTation
+        if (firstTransportation == TransportType.SUBWAY) {
+            isConfirmed = true
+        }
+
+        if (homeUiState.isBusDeparted) {
+            isConfirmed = true
+        }
 
         // 알람 등록 시 Home UI
         if (homeUiState.isAlarmRegistered) {
@@ -196,29 +281,47 @@ fun HomeScreen(
             )
 
             AfterRegisterSheet(
-                timeToLeave = "23:21:00",
-                startLocation = homeUiState.departurePoint.name,
-                destination = "우리집",
+                timerFinish = homeUiState.timerFinish,
+                startLocation = homeUiState.departurePointName,
+                isConfirmed = isConfirmed,
+                afterUserDeparted = homeUiState.userDeparture,
+                transportType = homeUiState.firtTransportTation,
+                transportationNumber = homeUiState.firstTransportationNumber,
+                transportationName = homeUiState.firstTransportationName,
+                timeToLeave = formatTimeString(homeUiState.departureTime),
+                boardingTime = formatTimeString(homeUiState.boardingTime),
+                destination = stringResource(R.string.home_my_home_text),
                 onCourseTextClick = {},
+                deleteAlarmConfirmed = deleteAlarmConfirmed,
+                dismissDialog = dismissDialog,
                 onFinishClick = {
                     onFinishClick()
                 },
                 onCourseDetailClick = {
                     val courseInfoJSON =
-                        Gson().toJson(homeUiState.courseInfo)
+                        Gson().toJson(homeUiState.itineraryInfo)
                     navigateToItinerary(courseInfoJSON)
+                },
+                onTimerFinished = {
+                    viewModel.onTimerFinished()
                 },
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .zIndex(1f),
-                isBusDeparted = homeUiState.isBusDeparted
+                onRefreshClick = {
+                    onRefreshClick()
+                },
+                onIconClick = {
+                    characterAnimationTrigger++
+                }
             )
         } else {
             notificationScheduler.cancelAllNotifications()
 
             CurrentLocationSheet(
                 currentLocation = homeUiState.departurePoint.name,
-                destination = "우리집",
+                onSearchLocationClick = navigateToSearchLocation,
+                destination = stringResource(R.string.home_my_home_text),
                 onSearchClick = {
                     onSearchClick()
                 },
@@ -230,41 +333,157 @@ fun HomeScreen(
         }
 
         val (prefixText, emphasisText, suffixText, bottomPadding) = when {
+            !homeUiState.isAlarmRegistered ->
+                SpeechBubbleText(
+                    stringResource(R.string.home_bubble_basic_text),
+                    "약 " + NumberFormat.getNumberInstance(Locale.US).format(homeUiState.taxiCost) + stringResource(R.string.home_bubble_won_text),
+                    null,
+                    209.dp
+                )
+
+            homeUiState.userDeparture ->
+                SpeechBubbleText(
+                    "",
+                    stringResource(R.string.home_bubble_user_departure),
+                    "",
+                    218.dp
+                )
+
             homeUiState.isAlarmRegistered && homeUiState.isBusDeparted ->
                 SpeechBubbleText(
-                    stringResource(R.string.home_bubble_alarm_departed_text),
-                    null,
-                    null,
-                    241.dp
+                    "",
+                    stringResource(R.string.home_bubble_alarm_emphasis_text),
+                    "",
+                    218.dp
                 )
 
             homeUiState.isAlarmRegistered ->
                 SpeechBubbleText(
-                    stringResource(R.string.home_bubble_alarm_prefix_text),
+                    "",
                     stringResource(R.string.home_bubble_alarm_emphasis_text),
-                    stringResource(R.string.home_bubble_alarm_suffix_text),
-                    241.dp
+                    "",
+                    218.dp
                 )
 
             else ->
                 SpeechBubbleText(
                     stringResource(R.string.home_bubble_basic_text),
-                    "34,000원",
+                    "약 " + NumberFormat.getNumberInstance(Locale.US).format(homeUiState.taxiCost) + stringResource(R.string.home_bubble_won_text),
                     null,
-                    207.dp
+                    209.dp
                 )
         }
 
-        CharacterSpeechBubble(
-            prefixText = prefixText,
-            emphasisText = emphasisText,
-            suffixText = suffixText,
-            modifier = Modifier
-                .align(Alignment.BottomStart)
-                .padding(start = 8.dp, bottom = bottomPadding)
-                .noRippleClickable(onClick = onCharacterClick),
-            showSpeechBubble = homeUiState.showSpeechBubble
-        )
+        var speechBubbleFlag by remember { mutableStateOf(true) }
+
+        val handleCharacterClick = {
+            speechBubbleFlag = !speechBubbleFlag
+            onCharacterClick()
+        }
+
+        if (!homeUiState.isAlarmRegistered) { // 첫 화면
+            CharacterLottieSpeechBubble(
+                prefixText = prefixText,
+                emphasisText = emphasisText,
+                suffixText = suffixText,
+                modifier = Modifier
+                    .align(Alignment.BottomStart)
+                    .padding(start = 8.dp, bottom = bottomPadding)
+                    .noRippleClickable(onClick = onCharacterClick),
+                onClick = handleCharacterClick,
+                lottieResId = R.raw.atcha_character_2,
+                lineCount = 1,
+                externalTrigger = characterAnimationTrigger
+            )
+        }
+        if (homeUiState.userDeparture) { // 사용자 출발 후
+            CharacterLottieSpeechBubble(
+                prefixText = prefixText,
+                emphasisText = emphasisText,
+                suffixText = suffixText,
+                modifier = Modifier
+                    .align(Alignment.BottomStart)
+                    .padding(start = 8.dp, bottom = bottomPadding)
+                    .noRippleClickable(onClick = onCharacterClick),
+                onClick = {},
+                lottieResId = R.raw.atcha_character_4,
+                lineCount = 1,
+                externalTrigger = characterAnimationTrigger
+            )
+        } else {
+            if (homeUiState.isAlarmRegistered && !homeUiState.isBusDeparted) { // 알림 등록 후 예상 출발 시간 화면
+                CharacterLottieSpeechBubble(
+                    prefixText = prefixText,
+                    emphasisText = emphasisText,
+                    suffixText = suffixText,
+                    modifier = Modifier
+                        .align(Alignment.BottomStart)
+                        .padding(start = 8.dp, bottom = bottomPadding)
+                        .noRippleClickable(onClick = onCharacterClick),
+                    onClick = {},
+                    lottieResId = R.raw.atcha_chararcter_3,
+                    lineCount = 1,
+                    externalTrigger = characterAnimationTrigger
+                )
+            }
+            if (homeUiState.isAlarmRegistered && homeUiState.isBusDeparted) { // 알림 등록 후 예상 출발 시간 화면
+                CharacterLottieSpeechBubble(
+                    prefixText = prefixText,
+                    emphasisText = emphasisText,
+                    suffixText = suffixText,
+                    modifier = Modifier
+                        .align(Alignment.BottomStart)
+                        .padding(start = 8.dp, bottom = bottomPadding)
+                        .noRippleClickable(onClick = onCharacterClick),
+                    onClick = {},
+                    lottieResId = R.raw.atcha_chararcter_3,
+                    lineCount = 1,
+                    externalTrigger = characterAnimationTrigger
+                )
+            }
+        }
+
+        if (homeUiState.deleteAlarmDialogVisible) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(color = defaultTeam6Colors.black.copy(alpha = 0.76f))
+                    .zIndex(2f)
+            )
+
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .zIndex(3f)
+            ) {
+                DeleteAlarmDialog(
+                    onDismiss = {
+                        dismissDialog()
+                    },
+                    onSuccess = {
+                        deleteAlarmConfirmed()
+                    }
+                )
+            }
+        }
+    }
+}
+
+private fun formatTimeString(timeString: String): String {
+    return try {
+        if (timeString.contains("T")) {
+            val dateTime = LocalDateTime.parse(timeString)
+            val formatter = DateTimeFormatter.ofPattern("HH:mm")
+            dateTime.format(formatter)
+        } else if (timeString.contains(":") && timeString.split(":").size == 3) {
+            val timeParts = timeString.split(":")
+            "${timeParts[0]}:${timeParts[1]}"
+        } else {
+            timeString
+        }
+    } catch (e: Exception) {
+        timeString
     }
 }
 
