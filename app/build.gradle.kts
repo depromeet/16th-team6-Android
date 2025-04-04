@@ -20,8 +20,8 @@ android {
     val isSigningAvailable = !keystorePath.isNullOrBlank()
 
     signingConfigs {
-        if (isSigningAvailable) {
-            create("release") {
+        create("release") {
+            if (isSigningAvailable) {
                 storeFile = if (!keystorePath.isNullOrBlank()) file(keystorePath) else null
                 storePassword = properties["keystore.password"] as? String ?: ""
                 keyAlias = properties["keystore.alias"] as? String ?: ""
