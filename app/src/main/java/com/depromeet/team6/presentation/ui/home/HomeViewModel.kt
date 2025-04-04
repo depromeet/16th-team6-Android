@@ -209,31 +209,41 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun getBusStarted(lastRouteId: String) {
+    private fun getBusStarted(lastRouteId: String) {
         this.lastRouteId = lastRouteId
         viewModelScope.launch {
-            getBusStartedUseCase.invoke(lastRouteId = lastRouteId)
-                .onSuccess {
-                    Timber.d("버스 출발여부 getBusStarted: $it")
-                    setState {
-                        copy(
-                            isBusDeparted = it
-                        )
-                    }
-                    if (it) {
+            try {
+                getBusStartedUseCase.invoke(lastRouteId = lastRouteId)
+                    .onSuccess {
+                        Timber.d("버스 출발여부 getBusStarted: $it")
+                        setState {
+                            copy(
+                                isBusDeparted = it
+                            )
+                        }
+                        if (it) {
+                            stopPollingBusStarted()
+                        }
+                    }.onFailure {
+                        Timber.e("버스 출발여부 에러: ${it.message}")
+                        setState {
+                            copy(
+                                isBusDeparted = true
+                            )
+                        }
                         stopPollingBusStarted()
                     }
-                }.onFailure {
-                    setState {
-                        copy(
-                            isBusDeparted = true
-                        )
-                    }
-                    stopPollingBusStarted()
+            } catch (e: Exception) {
+                Timber.e("예상치 못한 예외 발생: ${e.message}")
+                setState {
+                    copy(
+                        isBusDeparted = true
+                    )
                 }
+                stopPollingBusStarted()
+            }
         }
     }
-
     private fun showSpeechBubbleTemporarily() {
         speechBubbleJob?.cancel()
 
