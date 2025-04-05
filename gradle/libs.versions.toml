@@ -1,4 +1,5 @@
 [versions]
+accompanistSystemuicontroller = "0.30.1"
 accompanistWebview = "0.24.13-rc"
 agp = "8.7.0"
 firebaseBom = "33.10.0"
@@ -41,6 +42,7 @@ timber = "5.0.1"
 runtimeLivedata = "1.7.8"
 
 [libraries]
+accompanist-systemuicontroller = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanistSystemuicontroller" }
 accompanist-webview = { module = "com.google.accompanist:accompanist-webview", version.ref = "accompanistWebview" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-security-crypto = { module = "androidx.security:security-crypto", version.ref = "securityCrypto" }
