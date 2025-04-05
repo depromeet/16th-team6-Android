@@ -30,7 +30,6 @@ import com.depromeet.team6.presentation.ui.common.AtchaCommonBottomSheet
 import com.depromeet.team6.presentation.ui.itinerary.component.ItineraryDetail
 import com.depromeet.team6.presentation.ui.itinerary.component.ItineraryMap
 import com.depromeet.team6.presentation.ui.itinerary.component.ItinerarySummary
-import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.google.android.gms.maps.model.LatLng
@@ -116,17 +115,6 @@ fun ItineraryScreen(
                 modifier = modifier
                     .fillMaxSize()
                     .padding(horizontal = 16.dp)
-                    .noRippleClickable {
-                        navigateToBusCourse(
-                            BusArrivalParameter(
-                                routeName = "일반:9-3",
-                                stationName = "남서울중학교.성보중고등학교",
-                                lat = 37.482817,
-                                lon = 126.921012,
-                                subtypeIdx = 2
-                            )
-                        )
-                    }
 //                    .nestedScroll(rememberNestedScrollInteropConnection())
                     .verticalScroll(sheetScrollState),
                 verticalArrangement = Arrangement.Top

@@ -104,7 +104,7 @@ fun BusCourseScreen(
 
     val listState = rememberLazyListState()
     val currentIndex = uiState.busRouteStationList.indexOfFirst {
-        it.busStationId == uiState.currentBusStationId
+        it.busStationNumber == uiState.currentBusStationId
     }
 
     val targetIndex = maxOf(currentIndex - 3, 0)
@@ -198,7 +198,7 @@ fun BusCourseScreen(
                         busSubtypeIdx = uiState.busArrivalParameter.subtypeIdx,
                         isTurnPoint = (busRouteStation.order == uiState.turnPoint),
                         afterTurnPoint = (busRouteStation.order > uiState.turnPoint),
-                        isCurrentStation = (busRouteStation.busStationId == uiState.currentBusStationId),
+                        isCurrentStation = (busRouteStation.busStationNumber == uiState.currentBusStationId),
                         busRemainTime = uiState.remainingTime,
                         busStatus = uiState.busStatus,
                         busPosition = uiState.busPositions.find {
