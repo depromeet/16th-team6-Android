@@ -57,7 +57,7 @@ import kotlin.math.abs
 
 @Composable
 fun AfterRegisterMap(
-    padding : PaddingValues,
+    padding: PaddingValues,
     currentLocation: LatLng,
     legs: List<LegInfo>,
     modifier: Modifier = Modifier,

@@ -41,7 +41,7 @@ import timber.log.Timber
 
 @Composable
 fun TMapViewCompose(
-    padding : PaddingValues,
+    padding: PaddingValues,
     currentLocation: LatLng,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel
