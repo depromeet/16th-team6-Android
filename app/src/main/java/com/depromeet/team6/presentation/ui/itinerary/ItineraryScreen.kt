@@ -113,8 +113,8 @@ fun ItineraryScreen(
         sheetContent = {
             Column(
                 modifier = modifier
-                    .fillMaxWidth()
                     .fillMaxSize()
+                    .padding(horizontal = 16.dp)
 //                    .nestedScroll(rememberNestedScrollInteropConnection())
                     .verticalScroll(sheetScrollState),
                 verticalArrangement = Arrangement.Top

@@ -4,6 +4,7 @@ import android.widget.FrameLayout
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -40,6 +41,7 @@ import timber.log.Timber
 
 @Composable
 fun TMapViewCompose(
+    padding: PaddingValues,
     currentLocation: LatLng,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel
@@ -98,7 +100,7 @@ fun TMapViewCompose(
     ) {
         AndroidView(
             modifier = modifier.fillMaxWidth()
-                .height(screenHeight - 200.dp)
+                .height(screenHeight - 200.dp + padding.calculateTopPadding())
                 .align(Alignment.TopCenter),
             factory = { context ->
                 // FrameLayout을 직접 생성

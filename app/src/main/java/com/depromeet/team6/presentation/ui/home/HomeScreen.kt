@@ -253,14 +253,17 @@ fun HomeScreen(
         modifier = modifier
             .fillMaxSize()
             .background(color = colors.black)
-            .padding(padding)
+            .padding(
+                top = 0.dp,
+                bottom = padding.calculateBottomPadding()
+            )
     ) {
         Image(
             imageVector = ImageVector.vectorResource(R.drawable.ic_home_mypage),
             contentDescription = stringResource(R.string.mypage_icon_description),
             modifier = Modifier
                 .align(Alignment.TopEnd)
-                .padding(top = 12.dp, end = 16.dp)
+                .padding(top = 12.dp + padding.calculateTopPadding(), end = 16.dp)
                 .clickable {
                     navigateToMypage()
                 }
@@ -269,6 +272,7 @@ fun HomeScreen(
 
         if (homeUiState.isAlarmRegistered) {
             AfterRegisterMap(
+                padding,
                 currentLocation = userLocation,
                 legs = homeUiState.itineraryInfo!!.legs,
                 viewModel = viewModel,
@@ -283,6 +287,7 @@ fun HomeScreen(
             )
         } else {
             TMapViewCompose(
+                padding,
                 userLocation,
                 viewModel = viewModel
             ) // Replace with your actual API key
