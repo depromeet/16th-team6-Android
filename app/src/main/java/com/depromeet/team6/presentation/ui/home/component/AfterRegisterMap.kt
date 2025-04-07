@@ -6,6 +6,7 @@ import android.widget.FrameLayout
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -56,6 +57,7 @@ import kotlin.math.abs
 
 @Composable
 fun AfterRegisterMap(
+    padding : PaddingValues,
     currentLocation: LatLng,
     legs: List<LegInfo>,
     modifier: Modifier = Modifier,
@@ -187,6 +189,7 @@ fun AfterRegisterMap(
                     val transportType = enumValueOf<TransportType>(transportTypeStr)
                     val legIndex = parts[3].toInt()
 
+                    if (transportType == TransportType.WALK) return
                     onTransportMarkerClick(
                         FocusedMarkerParameter(
                             lat = latLng!!.latitude,
@@ -252,7 +255,7 @@ fun AfterRegisterMap(
             modifier = modifier
                 .fillMaxWidth()
                 // TODO : 하단 모달 영역 제외한 부분에 띄우도록 수정
-                .height(screenHeight - 228.dp)
+                .height(screenHeight - 248.dp + padding.calculateBottomPadding())
                 .align(Alignment.TopCenter),
             factory = { context ->
                 // FrameLayout을 직접 생성
@@ -302,6 +305,7 @@ fun AfterRegisterMapPreview(
     @PreviewParameter(LegInfoDummyProvider::class) legs: List<LegInfo>
 ) {
     AfterRegisterMap(
+        padding = PaddingValues(),
         legs = legs,
         currentLocation = LatLng(37.5665, 126.9780),
         modifier = TODO(),
