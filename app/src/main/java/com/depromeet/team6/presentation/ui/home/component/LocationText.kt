@@ -48,7 +48,7 @@ fun LocationText(
                 .fillMaxSize()
                 .background(
                     backgroundColor,
-                    shape = RoundedCornerShape(12.dp)
+                    shape = RoundedCornerShape(10.dp)
                 )
                 .padding(16.dp)
                 .clickable(onClick = onClick),

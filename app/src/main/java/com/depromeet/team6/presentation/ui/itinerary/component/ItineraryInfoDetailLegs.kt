@@ -77,7 +77,7 @@ fun ItineraryInfoDetailLegs(
                         boardingStation = leg.startPoint.name,
                         disembarkingStation = leg.endPoint.name,
                         boardingDateTime = leg.departureDateTime!!,
-                        timeMinute = leg.sectionTime,
+                        timeMinute = leg.sectionTime / 60,
                         distanceMeter = leg.distance,
                         onClickBusInfo = { routeName, stationName, subtypeIdx ->
                             onClickBusInfo(
@@ -99,7 +99,7 @@ fun ItineraryInfoDetailLegs(
                         boardingStation = leg.startPoint.name,
                         disembarkingStation = leg.endPoint.name,
                         boardingDateTime = leg.departureDateTime!!,
-                        timeMinute = leg.sectionTime,
+                        timeMinute = leg.sectionTime / 60,
                         distanceMeter = leg.distance
                     )
                 }

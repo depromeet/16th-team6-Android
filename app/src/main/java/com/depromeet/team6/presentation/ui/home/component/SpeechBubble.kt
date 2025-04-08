@@ -37,6 +37,8 @@ class SpeechBubbleShape(
             Path().apply {
                 val radius = with(density) { cornerRadius.toPx() }
                 val tailHeight = size.height * 0.2f
+                val tailWidth = size.width * 0.12f // 꼬리 너비
+                val tailPositionX = size.width * 0.2f
 
                 reset()
                 moveTo(radius, 0f)
@@ -66,6 +68,21 @@ class SpeechBubbleShape(
                     lineTo(size.width * 0.15f, size.height)
                     lineTo(size.width * 0.18f, size.height - tailHeight)
                 }
+//                lineTo(size.width * 0.09f, size.height - tailHeight)
+//                lineTo(size.width * 0.125f, size.height)
+//                lineTo(size.width * 0.16f, size.height - tailHeight)
+
+//                // 말풍선 본체에서 말꼬리가 시작되는 지점을 왼쪽으로 당김
+//                lineTo(tailPositionX / 2f, size.height - tailHeight)
+// // 둥근 말꼬리 만들기
+//                cubicTo(
+//                    tailPositionX - tailWidth / 7,
+//                    size.height + 50, // 제어점1 (오른쪽 곡선)
+//                    tailPositionX / 1.5f,
+//                    size.height - 130, // 제어점2 (왼쪽 곡선)
+//                    tailPositionX - tailWidth / 10,
+//                    size.height - tailHeight // 끝점 (더 앞쪽)
+//                )
 
                 arcTo(
                     Rect(
@@ -114,7 +131,7 @@ fun SpeechBubble(
     ) {
         Row(
             modifier = Modifier
-                .padding(top = 10.dp, bottom = 16.dp, start = 10.dp, end = 10.dp)
+                .padding(top = 10.dp, bottom = 16.dp, start = 12.dp, end = 12.dp)
         ) {
             Text(
                 text = prefix,

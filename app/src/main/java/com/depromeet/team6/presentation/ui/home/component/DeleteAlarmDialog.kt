@@ -2,6 +2,7 @@ package com.depromeet.team6.presentation.ui.home.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -61,6 +62,7 @@ fun DeleteAlarmDialog(
                     modifier = Modifier
                         .weight(1f)
                         .padding(bottom = 28.dp),
+                    contentPadding = PaddingValues(0.dp),
                     shape = RoundedCornerShape(8.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = colors.greyDefaultButton
@@ -79,6 +81,7 @@ fun DeleteAlarmDialog(
                     modifier = Modifier
                         .padding(bottom = 28.dp)
                         .weight(1f),
+                    contentPadding = PaddingValues(0.dp),
                     shape = RoundedCornerShape(8.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = colors.systemGreen

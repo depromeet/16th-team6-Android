@@ -53,7 +53,8 @@ fun MypageRoute(
 
     when (uiState.loadState) {
         LoadState.Idle -> MypageScreen(
-            modifier = modifier.padding(padding),
+            padding = padding,
+            modifier = modifier,
             mypageUiState = uiState,
             logoutClicked = { mypageViewModel.setEvent(MypageContract.MypageEvent.LogoutClicked) },
             withDrawClicked = { mypageViewModel.setEvent(MypageContract.MypageEvent.WithDrawClicked) },
@@ -71,6 +72,7 @@ fun MypageRoute(
 @Composable
 fun MypageScreen(
     modifier: Modifier = Modifier,
+    padding: PaddingValues = PaddingValues(0.dp),
     mypageUiState: MypageContract.MypageUiState = MypageContract.MypageUiState(),
     logoutClicked: () -> Unit = {},
     withDrawClicked: () -> Unit = {},
@@ -89,6 +91,7 @@ fun MypageScreen(
             modifier = modifier
                 .fillMaxSize()
                 .background(colors.greyWashBackground)
+                .padding(padding)
         ) {
             Column(
                 modifier = Modifier

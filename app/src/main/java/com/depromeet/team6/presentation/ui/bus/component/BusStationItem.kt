@@ -14,8 +14,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -29,6 +27,7 @@ import com.depromeet.team6.R
 import com.depromeet.team6.domain.model.BusCongestion
 import com.depromeet.team6.domain.model.BusPosition
 import com.depromeet.team6.domain.model.BusRouteStation
+import com.depromeet.team6.domain.model.BusStatus
 import com.depromeet.team6.domain.model.course.TransportType
 import com.depromeet.team6.presentation.ui.common.text.AtChaRemainTimeText
 import com.depromeet.team6.presentation.util.view.TransportTypeUiMapper
@@ -39,6 +38,7 @@ import com.depromeet.team6.ui.theme.defaultTeam6Typography
 fun BusStationItem(
     busRouteStation: BusRouteStation,
     busSubtypeIdx: Int,
+    busStatus: Pair<BusStatus, BusStatus>,
     modifier: Modifier = Modifier,
     isFirstStation: Boolean = false,
     isLastStation: Boolean = false,
@@ -131,12 +131,8 @@ fun BusStationItem(
             )
             if (isCurrentStation && busRemainTime != null) {
                 Spacer(modifier = Modifier.height(5.dp))
-                if (busRemainTime.first != -1) {
-                    AtChaRemainTimeText(remainSecond = busRemainTime.first)
-                }
-                if (busRemainTime.second != -1) {
-                    AtChaRemainTimeText(remainSecond = busRemainTime.second)
-                }
+                AtChaRemainTimeText(remainSecond = busRemainTime.first, busStatus = busStatus.first)
+                AtChaRemainTimeText(remainSecond = busRemainTime.second, busStatus = busStatus.second)
             }
         }
     }
@@ -156,6 +152,7 @@ private fun BusStationItemPreview() {
             busStationLon = 37.0,
             order = 73
         ),
+        busStatus = Pair(BusStatus.WAITING, BusStatus.END),
         busSubtypeIdx = 1,
 //        isTurnPoint = true,
         isCurrentStation = true,

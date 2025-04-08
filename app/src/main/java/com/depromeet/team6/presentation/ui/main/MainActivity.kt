@@ -61,6 +61,10 @@ class MainActivity : ComponentActivity() {
 
             SideEffect {
                 WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = false
+
+                WindowCompat.getInsetsController(window, window.decorView).apply {
+                    isAppearanceLightNavigationBars = false
+                }
             }
 
             Team6Theme {

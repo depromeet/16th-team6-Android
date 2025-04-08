@@ -20,6 +20,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -54,6 +55,7 @@ import com.depromeet.team6.presentation.util.permission.PermissionUtil
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.depromeet.team6.ui.theme.LocalTeam6Colors
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.android.gms.maps.model.LatLng
 import com.google.gson.Gson
 import timber.log.Timber
@@ -91,6 +93,14 @@ fun HomeRoute(
             }
         }
     )
+
+    val systemUiController = rememberSystemUiController()
+
+    SideEffect {
+        systemUiController.setStatusBarColor(
+            color = Color.Black
+        )
+    }
 
     LaunchedEffect(Unit) {
         viewModel.loadAlarmAndCourseInfoFromPrefs(context)
@@ -242,14 +252,18 @@ fun HomeScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .padding(padding)
+            .background(color = colors.black)
+            .padding(
+                top = 0.dp,
+                bottom = padding.calculateBottomPadding()
+            )
     ) {
         Image(
             imageVector = ImageVector.vectorResource(R.drawable.ic_home_mypage),
             contentDescription = stringResource(R.string.mypage_icon_description),
             modifier = Modifier
                 .align(Alignment.TopEnd)
-                .padding(top = 12.dp, end = 16.dp)
+                .padding(top = 12.dp + padding.calculateTopPadding(), end = 16.dp)
                 .clickable {
                     navigateToMypage()
                 }
@@ -258,6 +272,7 @@ fun HomeScreen(
 
         if (homeUiState.isAlarmRegistered) {
             AfterRegisterMap(
+                padding,
                 currentLocation = userLocation,
                 legs = homeUiState.itineraryInfo!!.legs,
                 viewModel = viewModel,
@@ -272,6 +287,7 @@ fun HomeScreen(
             )
         } else {
             TMapViewCompose(
+                padding,
                 userLocation,
                 viewModel = viewModel
             ) // Replace with your actual API key
@@ -358,7 +374,7 @@ fun HomeScreen(
                     stringResource(R.string.home_bubble_basic_text),
                     "약 " + NumberFormat.getNumberInstance(Locale.US).format(homeUiState.taxiCost) + stringResource(R.string.home_bubble_won_text),
                     null,
-                    209.dp
+                    194.dp
                 )
 
             homeUiState.userDeparture ->
