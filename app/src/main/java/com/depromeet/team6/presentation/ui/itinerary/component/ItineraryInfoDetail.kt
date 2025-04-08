@@ -5,9 +5,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -82,7 +84,6 @@ private fun ItineraryInfoSuffix(
     val markerIconId = if (isDestination) R.drawable.map_marker_arrival else R.drawable.map_marker_departure
     Row(
         modifier = Modifier,
-        verticalAlignment = Alignment.CenterVertically
     ) {
         Column(
             modifier = Modifier.width(Dimens.LegDetailVerticalLineWidth),
@@ -102,7 +103,9 @@ private fun ItineraryInfoSuffix(
             modifier = Modifier.width(6.dp)
         )
         Text(
-            modifier = Modifier,
+            modifier = Modifier
+                .height(36.dp)
+                .wrapContentSize(Alignment.Center),
             text = name,
             style = defaultTeam6Typography.bodySemiBold14,
             color = defaultTeam6Colors.white
