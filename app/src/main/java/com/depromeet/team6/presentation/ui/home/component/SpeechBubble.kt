@@ -37,8 +37,8 @@ class SpeechBubbleShape(
             Path().apply {
                 val radius = with(density) { cornerRadius.toPx() }
                 val tailHeight = size.height * 0.2f
-                val tailWidth = size.width * 0.12f // 꼬리 너비
-                val tailPositionX = size.width * 0.2f
+                val tailWidth = size.width * 0.06f
+                val tailCenterX = size.width * 0.11f
 
                 reset()
                 moveTo(radius, 0f)
@@ -64,25 +64,19 @@ class SpeechBubbleShape(
                 )
 
                 if (tailExist) {
-                    lineTo(size.width * 0.12f, size.height - tailHeight)
-                    lineTo(size.width * 0.15f, size.height)
-                    lineTo(size.width * 0.18f, size.height - tailHeight)
-                }
-//                lineTo(size.width * 0.09f, size.height - tailHeight)
-//                lineTo(size.width * 0.125f, size.height)
-//                lineTo(size.width * 0.16f, size.height - tailHeight)
+                    lineTo(tailCenterX + tailWidth / 2.2f, size.height - tailHeight)
 
-//                // 말풍선 본체에서 말꼬리가 시작되는 지점을 왼쪽으로 당김
-//                lineTo(tailPositionX / 2f, size.height - tailHeight)
-// // 둥근 말꼬리 만들기
-//                cubicTo(
-//                    tailPositionX - tailWidth / 7,
-//                    size.height + 50, // 제어점1 (오른쪽 곡선)
-//                    tailPositionX / 1.5f,
-//                    size.height - 130, // 제어점2 (왼쪽 곡선)
-//                    tailPositionX - tailWidth / 10,
-//                    size.height - tailHeight // 끝점 (더 앞쪽)
-//                )
+                    val tailTipY = size.height + (tailHeight * 0.45f) // 높이는 유지
+                    val controlX = tailCenterX                      // 중간 제어점은 중앙
+                    val tipEndX = tailCenterX - tailWidth / 2.3f    // 좌우 폭을 좁힘 (더 날카롭게)
+
+                    // 꼭짓점 둥글게
+                    quadraticTo(
+                        controlX, tailTipY,
+                        tipEndX, size.height - tailHeight
+                    )
+
+                }
 
                 arcTo(
                     Rect(
