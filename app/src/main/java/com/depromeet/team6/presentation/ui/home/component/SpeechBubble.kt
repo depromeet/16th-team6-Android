@@ -67,15 +67,16 @@ class SpeechBubbleShape(
                     lineTo(tailCenterX + tailWidth / 2.2f, size.height - tailHeight)
 
                     val tailTipY = size.height + (tailHeight * 0.45f) // 높이는 유지
-                    val controlX = tailCenterX                      // 중간 제어점은 중앙
-                    val tipEndX = tailCenterX - tailWidth / 2.3f    // 좌우 폭을 좁힘 (더 날카롭게)
+                    val controlX = tailCenterX // 중간 제어점은 중앙
+                    val tipEndX = tailCenterX - tailWidth / 2.3f // 좌우 폭을 좁힘 (더 날카롭게)
 
                     // 꼭짓점 둥글게
                     quadraticTo(
-                        controlX, tailTipY,
-                        tipEndX, size.height - tailHeight
+                        controlX,
+                        tailTipY,
+                        tipEndX,
+                        size.height - tailHeight
                     )
-
                 }
 
                 arcTo(
