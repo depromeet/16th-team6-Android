@@ -222,18 +222,18 @@ private fun DetailLegsBus(
             }
             Spacer(Modifier.height(19.dp))
             Row(
-                modifier = Modifier,
+                modifier = Modifier
+                    .noRippleClickable {
+                        onClickBusInfo(
+                            busName,
+                            boardingStation,
+                            subtypeIdx
+                        )
+                    },
                 verticalAlignment = Alignment.CenterVertically
             ){
                 BusNumberButton(
-                    modifier = Modifier
-                        .noRippleClickable {
-                            onClickBusInfo(
-                                busName,
-                                boardingStation,
-                                subtypeIdx
-                            )
-                        },
+                    modifier = Modifier,
                     number = busName,
                     busColor = busColor
                 )
