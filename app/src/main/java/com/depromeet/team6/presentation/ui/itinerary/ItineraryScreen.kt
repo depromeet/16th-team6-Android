@@ -62,10 +62,6 @@ fun ItineraryRoute(
         }
     }
 
-    LaunchedEffect(Unit) {
-//        viewModel.getLegs()
-    }
-
     when (uiState.courseDataLoadState) {
         LoadState.Idle -> {}
         LoadState.Success -> ItineraryScreen(
@@ -98,7 +94,7 @@ fun ItineraryScreen(
     val itineraryInfo = uiState.itineraryInfo!!
 
     AtchaCommonBottomSheet(
-        modifier = modifier,
+        modifier = Modifier,
         mainContent = {
             ItineraryMap(
                 marginTop = marginTop,
@@ -112,9 +108,8 @@ fun ItineraryScreen(
         },
         sheetContent = {
             Column(
-                modifier = modifier
+                modifier = Modifier
                     .fillMaxSize()
-                    .padding(horizontal = 16.dp)
 //                    .nestedScroll(rememberNestedScrollInteropConnection())
                     .verticalScroll(sheetScrollState),
                 verticalArrangement = Arrangement.Top
@@ -137,6 +132,7 @@ fun ItineraryScreen(
                     modifier = Modifier
                         .padding(horizontal = 16.dp),
                     courseInfo = itineraryInfo,
+                    busArrivalStatus = uiState.busArrivalStatus,
                     departurePoint = uiState.departurePoint!!,
                     destinationPoint = uiState.destinationPoint!!,
                     onClickBusInfo = navigateToBusCourse

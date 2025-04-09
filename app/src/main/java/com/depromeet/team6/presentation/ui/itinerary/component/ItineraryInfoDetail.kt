@@ -1,5 +1,6 @@
 package com.depromeet.team6.presentation.ui.itinerary.component
 
+import android.util.SparseArray
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,6 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import com.depromeet.team6.R
+import com.depromeet.team6.domain.model.RealTimeBusArrival
 import com.depromeet.team6.domain.model.course.LegInfo
 import com.depromeet.team6.presentation.model.bus.BusArrivalParameter
 import com.depromeet.team6.presentation.ui.itinerary.LegInfoDummyProvider
@@ -31,6 +33,7 @@ import com.depromeet.team6.ui.theme.defaultTeam6Typography
 @Composable
 fun ItineraryInfoDetail(
     legs: List<LegInfo>,
+    busArrivalStatus : SparseArray<RealTimeBusArrival>,
     departureTime: String,
     departureName: String,
     arrivalTime: String,
@@ -52,7 +55,8 @@ fun ItineraryInfoDetail(
 
         ItineraryInfoDetailLegs(
             legs = legs,
-            onClickBusInfo = onClickBusInfo
+            onClickBusInfo = onClickBusInfo,
+            busArrivalStatus = busArrivalStatus,
         )
 
         // 도착
@@ -123,6 +127,7 @@ fun ItineraryInfoDetailPreview(
         departureTime = "2025-03-11T22:12:00",
         departureName = "중앙빌딩",
         arrivalTime = "2025-03-11T00:21:00",
-        arrivalName = "우리집"
+        arrivalName = "우리집",
+        busArrivalStatus = SparseArray()
     )
 }

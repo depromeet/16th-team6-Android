@@ -46,7 +46,7 @@ fun ItinerarySummary(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 8.dp),
-            text = stringResource(R.string.itinerary_summary_remaining_time, durationHour, durationMinute),
+            text = stringResource(R.string.itinerary_summary_duration_time, durationHour, durationMinute),
             style = defaultTeam6Typography.heading2Bold26,
             fontSize = 28.sp,
             color = defaultTeam6Colors.white

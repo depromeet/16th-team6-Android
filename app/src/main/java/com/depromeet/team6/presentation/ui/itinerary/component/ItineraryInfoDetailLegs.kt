@@ -1,5 +1,6 @@
 package com.depromeet.team6.presentation.ui.itinerary.component
 
+import android.util.SparseArray
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -42,9 +43,13 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.depromeet.team6.R
+import com.depromeet.team6.domain.model.BusStatus
+import com.depromeet.team6.domain.model.RealTimeBusArrival
 import com.depromeet.team6.domain.model.course.LegInfo
 import com.depromeet.team6.domain.model.course.TransportType
+import com.depromeet.team6.domain.model.toInfo
 import com.depromeet.team6.presentation.model.bus.BusArrivalParameter
+import com.depromeet.team6.presentation.ui.common.text.AtChaRemainTimeText
 import com.depromeet.team6.presentation.ui.itinerary.LegInfoDummyProvider
 import com.depromeet.team6.presentation.util.Dimens
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
@@ -57,11 +62,12 @@ import java.time.LocalDateTime
 @Composable
 fun ItineraryInfoDetailLegs(
     legs: List<LegInfo>,
+    busArrivalStatus : SparseArray<RealTimeBusArrival>,
     modifier: Modifier = Modifier,
     onClickBusInfo: (BusArrivalParameter) -> Unit = {}
 ) {
     Column {
-        for (leg in legs) {
+        for ((idx, leg) in legs.withIndex()) {
             when (leg.transportType) {
                 TransportType.WALK -> {
                     DetailLegsWalk(
@@ -79,6 +85,7 @@ fun ItineraryInfoDetailLegs(
                         boardingDateTime = leg.departureDateTime!!,
                         timeMinute = leg.sectionTime / 60,
                         distanceMeter = leg.distance,
+                        busArrivalStatus = busArrivalStatus.get(idx),
                         onClickBusInfo = { routeName, stationName, subtypeIdx ->
                             onClickBusInfo(
                                 BusArrivalParameter(
@@ -117,6 +124,7 @@ private fun DetailLegsBus(
     boardingDateTime: String,
     timeMinute: Int,
     distanceMeter: Int,
+    busArrivalStatus : RealTimeBusArrival?,
     modifier: Modifier = Modifier,
     onClickBusInfo: (String, String, Int) -> Unit = { routeName: String, stationName: String, subtypeIdx: Int -> }
 ) {
@@ -213,21 +221,39 @@ private fun DetailLegsBus(
                 )
             }
             Spacer(Modifier.height(19.dp))
-            BusNumberButton(
-                modifier = Modifier
-                    .noRippleClickable {
-                        onClickBusInfo(
-                            busName,
-                            boardingStation,
-                            subtypeIdx
-                        )
-                    },
-                number = busName,
-                busColor = busColor
-            )
+            Row(
+                modifier = Modifier,
+                verticalAlignment = Alignment.CenterVertically
+            ){
+                BusNumberButton(
+                    modifier = Modifier
+                        .noRippleClickable {
+                            onClickBusInfo(
+                                busName,
+                                boardingStation,
+                                subtypeIdx
+                            )
+                        },
+                    number = busName,
+                    busColor = busColor
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                if (busArrivalStatus == null) {
+                    AtChaRemainTimeText(remainSecond = 0, busStatus = BusStatus.WAITING)
+                }
+                else {
+                    AtChaRemainTimeText(remainSecond = busArrivalStatus.remainingTime, busStatus = busArrivalStatus.busStatus)
+                    Text(
+                        text = "(${busArrivalStatus.busCongestion.toInfo().label})",
+                        style = defaultTeam6Typography.bodyRegular13,
+                        color = defaultTeam6Colors.systemRed
+                    )
+                }
+            }
+
             Spacer(Modifier.height(16.dp))
             Text(
-                text = stringResource(R.string.itinerary_summary_remaining_minute, timeMinute),
+                text = stringResource(R.string.itinerary_summary_duration_minute, timeMinute),
                 style = defaultTeam6Typography.bodyMedium13,
                 color = defaultTeam6Colors.white
             )
@@ -364,7 +390,7 @@ private fun DetailLegsSubway(
             )
             Spacer(Modifier.height(16.dp))
             Text(
-                text = stringResource(R.string.itinerary_summary_remaining_minute, timeMinute),
+                text = stringResource(R.string.itinerary_summary_duration_minute, timeMinute),
                 style = defaultTeam6Typography.bodyMedium13,
                 color = defaultTeam6Colors.white
             )
@@ -545,7 +571,8 @@ fun ItineraryInfoDetailLegsPreview(
     @PreviewParameter(LegInfoDummyProvider::class) legs: List<LegInfo>
 ) {
     ItineraryInfoDetailLegs(
-        legs = legs
+        legs = legs,
+        busArrivalStatus = SparseArray<RealTimeBusArrival>()
     )
 
 //    Column(){
