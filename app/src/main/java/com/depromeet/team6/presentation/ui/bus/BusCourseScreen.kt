@@ -80,7 +80,8 @@ fun BusCourseRoute(
                 modifier = Modifier.fillMaxSize(),
                 uiState = uiState,
                 backButtonClicked = { viewModel.setSideEffect(BusCourseContract.BusCourseSideEffect.NavigateToBackStack) },
-                refreshButtonClicked = { viewModel.setEvent(BusCourseContract.BusCourseEvent.RefreshButtonClicked) }
+                refreshButtonClicked = { viewModel.setEvent(BusCourseContract.BusCourseEvent.RefreshButtonClicked) },
+                changeBusOperationInfoVisible = { viewModel.setEvent(BusCourseContract.BusCourseEvent.ChangeBusOperationInfoVisible) }
             )
         }
 
@@ -95,7 +96,7 @@ fun BusCourseScreen(
     uiState: BusCourseContract.BusCourseUiState = BusCourseContract.BusCourseUiState(),
     backButtonClicked: () -> Unit = {},
     refreshButtonClicked: () -> Unit = {},
-    changeBusOperationInfoVisible:() -> Unit = {}
+    changeBusOperationInfoVisible: () -> Unit = {}
 ) {
     val busNumber = uiState.busRouteName
     val busColor = TransportTypeUiMapper.getColor(TransportType.BUS, uiState.busArrivalParameter.subtypeIdx)
@@ -168,7 +169,7 @@ fun BusCourseScreen(
                     text = stringResource(R.string.bus_course_info),
                     style = defaultTeam6Typography.bodyRegular14,
                     color = defaultTeam6Colors.white,
-                    modifier = Modifier.noRippleClickable{changeBusOperationInfoVisible()}
+                    modifier = Modifier.noRippleClickable { changeBusOperationInfoVisible() }
                 )
                 Spacer(modifier = Modifier.width(3.dp))
                 Icon(
@@ -229,11 +230,11 @@ fun BusCourseScreen(
             contentDescription = null,
             tint = Color.Unspecified
         )
-        if (uiState.busOperationInfoVisible){
+        if (uiState.busOperationInfoVisible) {
             BusOperationInfo(
+                busOperationInfo = uiState.busOperationInfo,
                 busNumber = busNumber,
                 busColor = busColor,
-                innerPaddingValues = padding,
                 backButtonClicked = changeBusOperationInfoVisible
             )
         }

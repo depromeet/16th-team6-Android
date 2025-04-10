@@ -2,6 +2,7 @@ package com.depromeet.team6.presentation.ui.bus
 
 import androidx.lifecycle.viewModelScope
 import com.depromeet.team6.domain.usecase.GetBusArrivalUseCase
+import com.depromeet.team6.domain.usecase.GetBusOperationInfoUseCase
 import com.depromeet.team6.domain.usecase.GetBusPositionsUseCase
 import com.depromeet.team6.presentation.model.bus.BusArrivalParameter
 import com.depromeet.team6.presentation.model.bus.BusPositionParameter
@@ -14,7 +15,8 @@ import javax.inject.Inject
 @HiltViewModel
 class BusCourseViewModel @Inject constructor(
     private val getBusArrivalUseCase: GetBusArrivalUseCase,
-    private val getBusPositionsUseCase: GetBusPositionsUseCase
+    private val getBusPositionsUseCase: GetBusPositionsUseCase,
+    private val getBusOperationInfoUseCase: GetBusOperationInfoUseCase
 ) : BaseViewModel<BusCourseContract.BusCourseUiState, BusCourseContract.BusCourseSideEffect, BusCourseContract.BusCourseEvent>() {
     override fun createInitialState(): BusCourseContract.BusCourseUiState =
         BusCourseContract.BusCourseUiState()
@@ -28,7 +30,7 @@ class BusCourseViewModel @Inject constructor(
             }
 
             is BusCourseContract.BusCourseEvent.ChangeBusOperationInfoVisible -> {
-                setState { copy(busOperationInfoVisible = currentState.busOperationInfoVisible) }
+                setState { copy(busOperationInfoVisible = !currentState.busOperationInfoVisible) }
             }
         }
     }
@@ -116,7 +118,19 @@ class BusCourseViewModel @Inject constructor(
         busRouteId: String,
         routeName: String,
         serviceRegion: String
-    ){
-
+    ) {
+        viewModelScope.launch {
+            getBusOperationInfoUseCase(
+                busRouteId = busRouteId,
+                routeName = routeName,
+                serviceRegion = serviceRegion
+            ).onSuccess { busOperationInfo ->
+                setState {
+                    copy(
+                        busOperationInfo = busOperationInfo
+                    )
+                }
+            }
+        }
     }
 }
