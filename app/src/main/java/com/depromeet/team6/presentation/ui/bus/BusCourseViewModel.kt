@@ -22,9 +22,13 @@ class BusCourseViewModel @Inject constructor(
     override suspend fun handleEvent(event: BusCourseContract.BusCourseEvent) {
         when (event) {
             is BusCourseContract.BusCourseEvent.SetScreenLoadState -> setState { copy(loadState = event.loadState) }
-            BusCourseContract.BusCourseEvent.RefreshButtonClicked -> {
+            is BusCourseContract.BusCourseEvent.RefreshButtonClicked -> {
                 setEvent(BusCourseContract.BusCourseEvent.SetScreenLoadState(loadState = LoadState.Loading))
                 getBusArrival()
+            }
+
+            is BusCourseContract.BusCourseEvent.ChangeBusOperationInfoVisible -> {
+                setState { copy(busOperationInfoVisible = currentState.busOperationInfoVisible) }
             }
         }
     }
@@ -47,6 +51,11 @@ class BusCourseViewModel @Inject constructor(
                 lon = busArrivalParameter.lon
             ).onSuccess { busArrival ->
                 getBusPositions(
+                    busRouteId = busArrival.busRouteId,
+                    routeName = busArrival.routeName,
+                    serviceRegion = busArrival.serviceRegion
+                )
+                getBusOperationInfo(
                     busRouteId = busArrival.busRouteId,
                     routeName = busArrival.routeName,
                     serviceRegion = busArrival.serviceRegion
@@ -101,5 +110,13 @@ class BusCourseViewModel @Inject constructor(
                 setEvent(BusCourseContract.BusCourseEvent.SetScreenLoadState(loadState = LoadState.Error))
             }
         }
+    }
+
+    private fun getBusOperationInfo(
+        busRouteId: String,
+        routeName: String,
+        serviceRegion: String
+    ){
+
     }
 }

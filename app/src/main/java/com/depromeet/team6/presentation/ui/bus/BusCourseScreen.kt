@@ -38,6 +38,7 @@ import androidx.lifecycle.flowWithLifecycle
 import com.depromeet.team6.R
 import com.depromeet.team6.domain.model.course.TransportType
 import com.depromeet.team6.presentation.model.bus.BusArrivalParameter
+import com.depromeet.team6.presentation.ui.bus.component.BusOperationInfo
 import com.depromeet.team6.presentation.ui.bus.component.BusStationItem
 import com.depromeet.team6.presentation.ui.common.TransportVectorIconComposable
 import com.depromeet.team6.presentation.ui.common.view.AtChaLoadingView
@@ -93,9 +94,11 @@ fun BusCourseScreen(
     modifier: Modifier = Modifier,
     uiState: BusCourseContract.BusCourseUiState = BusCourseContract.BusCourseUiState(),
     backButtonClicked: () -> Unit = {},
-    refreshButtonClicked: () -> Unit = {}
+    refreshButtonClicked: () -> Unit = {},
+    changeBusOperationInfoVisible:() -> Unit = {}
 ) {
     val busNumber = uiState.busRouteName
+    val busColor = TransportTypeUiMapper.getColor(TransportType.BUS, uiState.busArrivalParameter.subtypeIdx)
     val runningBusCount = uiState.busPositions.size
 
     val fullText = stringResource(R.string.bus_course_running_bus_count, runningBusCount)
@@ -142,7 +145,7 @@ fun BusCourseScreen(
                 ) {
                     TransportVectorIconComposable(
                         type = TransportType.BUS,
-                        color = TransportTypeUiMapper.getColor(TransportType.BUS, uiState.busArrivalParameter.subtypeIdx),
+                        color = busColor,
                         isMarker = false,
                         modifier = Modifier
                             .size(18.dp)
@@ -164,7 +167,8 @@ fun BusCourseScreen(
                 Text(
                     text = stringResource(R.string.bus_course_info),
                     style = defaultTeam6Typography.bodyRegular14,
-                    color = defaultTeam6Colors.white
+                    color = defaultTeam6Colors.white,
+                    modifier = Modifier.noRippleClickable{changeBusOperationInfoVisible()}
                 )
                 Spacer(modifier = Modifier.width(3.dp))
                 Icon(
@@ -225,6 +229,14 @@ fun BusCourseScreen(
             contentDescription = null,
             tint = Color.Unspecified
         )
+        if (uiState.busOperationInfoVisible){
+            BusOperationInfo(
+                busNumber = busNumber,
+                busColor = busColor,
+                innerPaddingValues = padding,
+                backButtonClicked = changeBusOperationInfoVisible
+            )
+        }
     }
 }
 
