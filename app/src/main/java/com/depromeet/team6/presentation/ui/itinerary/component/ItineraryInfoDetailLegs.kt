@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -70,10 +71,12 @@ fun ItineraryInfoDetailLegs(
         for ((idx, leg) in legs.withIndex()) {
             when (leg.transportType) {
                 TransportType.WALK -> {
+                    val verticalHeight = if (idx == 0 || idx == legs.size-1) 48.dp else 60.dp
                     DetailLegsWalk(
                         boardingDateTime = leg.departureDateTime!!,
                         timeMinute = leg.sectionTime / 60,
-                        distanceMeter = leg.distance
+                        distanceMeter = leg.distance,
+                        verticalHeight = verticalHeight
                     )
                 }
                 TransportType.BUS -> {
@@ -220,7 +223,7 @@ private fun DetailLegsBus(
                     color = defaultTeam6Colors.greySecondaryLabel
                 )
             }
-            Spacer(Modifier.height(19.dp))
+            Spacer(Modifier.height(16.dp))
             Row(
                 modifier = Modifier
                     .noRippleClickable {
@@ -382,7 +385,7 @@ private fun DetailLegsSubway(
                     color = defaultTeam6Colors.greySecondaryLabel
                 )
             }
-            Spacer(Modifier.height(19.dp))
+            Spacer(Modifier.height(16.dp))
             Text(
                 text = subwayName,
                 style = defaultTeam6Typography.bodyMedium13,
@@ -421,6 +424,7 @@ private fun DetailLegsWalk(
     boardingDateTime: String,
     timeMinute: Int,
     distanceMeter: Int,
+    verticalHeight : Dp,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -437,7 +441,7 @@ private fun DetailLegsWalk(
                 modifier = Modifier.height(5.dp)
             )
             DottedLineWithCircles(
-                height = 50.dp
+                height = verticalHeight
             )
         }
         Spacer(
@@ -446,6 +450,8 @@ private fun DetailLegsWalk(
 
         // 우측 도보 경로정보 텍스트
         Text(
+            modifier = Modifier
+                .offset(y = (-8).dp),
             text = stringResource(R.string.itinerary_info_legs_walk_time, timeMinute),
             style = defaultTeam6Typography.bodyMedium13,
             color = defaultTeam6Colors.greySecondaryLabel
@@ -454,6 +460,8 @@ private fun DetailLegsWalk(
             modifier = Modifier.width(4.dp)
         )
         Text(
+            modifier = Modifier
+                .offset(y = (-8).dp),
             text = stringResource(R.string.itinerary_info_legs_walk_distance, distanceMeter),
             style = defaultTeam6Typography.bodyMedium13,
             color = defaultTeam6Colors.systemGrey2
