@@ -38,7 +38,7 @@ import androidx.lifecycle.flowWithLifecycle
 import com.depromeet.team6.R
 import com.depromeet.team6.domain.model.course.TransportType
 import com.depromeet.team6.presentation.model.bus.BusArrivalParameter
-import com.depromeet.team6.presentation.ui.bus.component.BusOperationInfo
+import com.depromeet.team6.presentation.ui.bus.component.BusOperationInfoView
 import com.depromeet.team6.presentation.ui.bus.component.BusStationItem
 import com.depromeet.team6.presentation.ui.common.TransportVectorIconComposable
 import com.depromeet.team6.presentation.ui.common.view.AtChaLoadingView
@@ -231,7 +231,7 @@ fun BusCourseScreen(
             tint = Color.Unspecified
         )
         if (uiState.busOperationInfoVisible) {
-            BusOperationInfo(
+            BusOperationInfoView(
                 busOperationInfo = uiState.busOperationInfo,
                 busNumber = busNumber,
                 busColor = busColor,

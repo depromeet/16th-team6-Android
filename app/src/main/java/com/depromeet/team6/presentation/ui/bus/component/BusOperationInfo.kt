@@ -32,7 +32,7 @@ import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.depromeet.team6.ui.theme.defaultTeam6Typography
 
 @Composable
-fun BusOperationInfo(
+fun BusOperationInfoView(
     busOperationInfo: BusOperationInfo,
     busNumber: String,
     busColor: Color,
@@ -179,7 +179,7 @@ fun BusOperationInfo(
 @Preview
 @Composable
 private fun BusOperationInfoPreview() {
-    BusOperationInfo(
+    BusOperationInfoView(
         busOperationInfo = BusOperationInfo(
             startStationName = "복정역환승센터",
             endStationName = "노들역",
