@@ -57,14 +57,15 @@ class FcmService : FirebaseMessagingService() {
         Log.d("FCM", "[FCM] FcmService -> type: $type")
 
         if (message.notification != null) {
-            sendNotification(title, body)
+            sendHeadsUpNotification(title, body)
         }
         if (message.data.isNotEmpty()) {
             if (type == "FULL_SCREEN_ALERT") {
                 wakeLockAcquire()
                 startLockScreenService()
             } else if (type == "PUSH_ALERT") {
-                sendNotification(title, body)
+                wakeLockAcquire()
+                sendHeadsUpNotification(title, body)
             } else {
                 sendDefaultNotification()
             }
@@ -109,6 +110,38 @@ class FcmService : FirebaseMessagingService() {
             .build()
 
         notificationManager.notify(FCM_NOTIFICATION_ID, notification)
+    }
+
+    private fun sendHeadsUpNotification(title: String?, body: String?) {
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+        val channelId = "ATCHA_HEADS_UP_CHANNEL"
+        val channelName = "앗차 중요 알림"
+        val channel = NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_HIGH)
+        channel.description = "앗차 중요 알림"
+        channel.enableLights(true)
+        channel.enableVibration(true)
+        channel.lockscreenVisibility = Notification.VISIBILITY_PUBLIC
+        notificationManager.createNotificationChannel(channel)
+
+        val intent = packageManager.getLaunchIntentForPackage(packageName)?.apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+        }
+        val pendingIntent = PendingIntent.getActivity(
+            this, 0, intent,
+            PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val notification = Notification.Builder(this, channelId)
+            .setContentTitle(title ?: "앗차")
+            .setContentText(body ?: "막차 출발 시간을 확인해보세요!")
+            .setSmallIcon(R.drawable.ic_app_logo_foreground)
+            .setAutoCancel(true)
+            .setContentIntent(pendingIntent)
+            .setCategory(Notification.CATEGORY_MESSAGE)
+            .build()
+
+        notificationManager.notify(9999, notification)
     }
 
     private fun sendDefaultNotification() {
