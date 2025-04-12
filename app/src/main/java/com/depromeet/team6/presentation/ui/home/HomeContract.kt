@@ -22,6 +22,7 @@ class HomeContract {
         val courseDataLoadState: LoadState = LoadState.Idle,
         val departureTime: String = "", // 사용자 출발 시간
         val boardingTime: String = "", // 막차 출발 시간
+        val homeArrivedTime: String = "",
         val lastRouteId: String = "",
         // 막차 첫번째 교통 수단
         val firtTransportTation: TransportType = TransportType.WALK,
@@ -72,6 +73,7 @@ class HomeContract {
         data class LoadLegsResult(val result: CourseInfo) : HomeEvent()
         data class LoadDepartureDateTime(val departureTime: String) : HomeEvent()
         data class LoadBoardingDateTime(val boardingTime: String) : HomeEvent()
+        data class LoadHomeArrivedTime(val homeArrivedTime: String) : HomeEvent()
         data class LoadFirstTransportation(val transportation: TransportType) : HomeEvent()
         data class LoadFirstTransportationNumber(val firstTransportationNumber: Int) : HomeEvent()
         data class LoadFirstTransportationName(val firstTransportationName: String) : HomeEvent()

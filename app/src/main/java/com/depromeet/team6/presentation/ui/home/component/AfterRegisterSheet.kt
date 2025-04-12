@@ -43,6 +43,7 @@ fun AfterRegisterSheet(
     transportationName: String,
     timeToLeave: String,
     boardingTime: String,
+    homeArrivedTime: String,
     startLocation: String,
     destination: String,
     deleteAlarmConfirmed: () -> Unit = {},
@@ -157,7 +158,7 @@ fun AfterRegisterSheet(
                     )
                 } else {
                     TimeText(
-                        timeToLeave = timeToLeave,
+                        timeToLeave = homeArrivedTime,
                         textColor = colors.white,
                         modifier = Modifier.padding(top = 8.dp, bottom = 4.dp)
                     )
@@ -211,6 +212,8 @@ fun AfterRegisterSheetPreview() {
         boardingTime = "15:30:00",
         deleteAlarmConfirmed = {},
         dismissDialog = {},
-        onTimerFinished = {}
+        onTimerFinished = {},
+        homeArrivedTime = TODO(),
+        onIconClick = TODO()
     )
 }

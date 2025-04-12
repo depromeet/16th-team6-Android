@@ -25,6 +25,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 @HiltViewModel
@@ -159,6 +161,14 @@ class HomeViewModel @Inject constructor(
                 copy(
                     departurePoint = event.departurePoint
                 )
+            }
+
+            is HomeContract.HomeEvent.LoadHomeArrivedTime -> {
+                setState {
+                    copy(
+                        homeArrivedTime = event.homeArrivedTime
+                    )
+                }
             }
         }
     }
@@ -366,6 +376,7 @@ class HomeViewModel @Inject constructor(
                     setEvent(HomeContract.HomeEvent.LoadLegsResult(courseInfo))
                     setEvent(HomeContract.HomeEvent.LoadDepartureDateTime(courseInfo.departureTime))
                     setEvent(HomeContract.HomeEvent.LoadBoardingDateTime(courseInfo.boardingTime))
+                    setEvent(HomeContract.HomeEvent.LoadHomeArrivedTime(calculateArrivalTime(courseInfo.departureTime, courseInfo.totalTime)))
                     setEvent(HomeContract.HomeEvent.LoadFirstTransportation(getFirstTransportation(courseInfo.legs)))
                     setEvent(HomeContract.HomeEvent.LoadFirstTransportationNumber(getFirstTransportationNumber(courseInfo.legs)))
                     setEvent(HomeContract.HomeEvent.LoadFirstTransportationName(getFirstTransportationName(courseInfo.legs)))
@@ -472,6 +483,20 @@ class HomeViewModel @Inject constructor(
             }.onFailure {
                 setState { copy(destinationState = LoadState.Error) }
             }
+        }
+    }
+
+    private fun calculateArrivalTime(departureDateTime: String, totalTimeInSeconds: Int): String {
+        try {
+            val formatter = DateTimeFormatter.ISO_DATE_TIME
+            val departure = LocalDateTime.parse(departureDateTime, formatter)
+
+            val arrival = departure.plusSeconds(totalTimeInSeconds.toLong())
+
+            val outputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+            return arrival.format(outputFormatter)
+        } catch (e: Exception) {
+            return "날짜 변환 중 오류 발생: ${e.message}"
         }
     }
 
