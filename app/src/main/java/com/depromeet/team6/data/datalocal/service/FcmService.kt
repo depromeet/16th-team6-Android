@@ -10,6 +10,7 @@ import android.media.RingtoneManager
 import android.os.Build
 import android.os.PowerManager
 import android.util.Log
+import androidx.compose.ui.res.stringResource
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.depromeet.team6.R
@@ -60,10 +61,10 @@ class FcmService : FirebaseMessagingService() {
             sendHeadsUpNotification(title, body)
         }
         if (message.data.isNotEmpty()) {
-            if (type == "FULL_SCREEN_ALERT") {
+            if (type == FULL_SCREEN_ALERT) {
                 wakeLockAcquire()
                 startLockScreenService()
-            } else if (type == "PUSH_ALERT") {
+            } else if (type == PUSH_ALERT) {
                 wakeLockAcquire()
                 sendHeadsUpNotification(title, body)
             } else {
@@ -79,7 +80,7 @@ class FcmService : FirebaseMessagingService() {
             val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
             val wakeLock = powerManager.newWakeLock(
                 PowerManager.FULL_WAKE_LOCK or PowerManager.ACQUIRE_CAUSES_WAKEUP,
-                "Atcha:WakeLock"
+                WAKE_LOCK_TAG
             )
 
             // 10초 동안 화면 유지
@@ -103,8 +104,8 @@ class FcmService : FirebaseMessagingService() {
         notificationManager.createNotificationChannel(channel)
 
         val notification = NotificationCompat.Builder(this, CHANNEL_ID)
-            .setContentTitle(title ?: "앗차")
-            .setContentText(body ?: "막차 출발 시간을 확인해보세요!")
+            .setContentTitle(title ?: getString(R.string.notification_title_text))
+            .setContentText(body ?: getString(R.string.notification_body_text))
             .setSmallIcon(R.drawable.ic_app_logo_foreground)
             .setAutoCancel(true)
             .build()
@@ -115,10 +116,10 @@ class FcmService : FirebaseMessagingService() {
     private fun sendHeadsUpNotification(title: String?, body: String?) {
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-        val channelId = "ATCHA_HEADS_UP_CHANNEL"
-        val channelName = "앗차 중요 알림"
+        val channelId = HEAD_UP_CHANNEL_ID
+        val channelName = getString(R.string.notification_head_up_channel_name)
         val channel = NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_HIGH)
-        channel.description = "앗차 중요 알림"
+        channel.description = getString(R.string.notification_head_up_channel_name)
         channel.enableLights(true)
         channel.enableVibration(true)
         channel.lockscreenVisibility = Notification.VISIBILITY_PUBLIC
@@ -133,8 +134,8 @@ class FcmService : FirebaseMessagingService() {
         )
 
         val notification = Notification.Builder(this, channelId)
-            .setContentTitle(title ?: "앗차")
-            .setContentText(body ?: "막차 출발 시간을 확인해보세요!")
+            .setContentTitle(title ?: getString(R.string.notification_title_text))
+            .setContentText(body ?: getString(R.string.notification_body_text))
             .setSmallIcon(R.drawable.ic_app_logo_foreground)
             .setAutoCancel(true)
             .setContentIntent(pendingIntent)
@@ -156,8 +157,8 @@ class FcmService : FirebaseMessagingService() {
         notificationManager.createNotificationChannel(channel)
 
         val notification = NotificationCompat.Builder(this, CHANNEL_ID)
-            .setContentTitle("")
-            .setContentText("막차 출발 시간을 확인해보세요!")
+            .setContentTitle(title)
+            .setContentText(body)
             .setSmallIcon(R.drawable.ic_app_logo_foreground)
             .setAutoCancel(true)
             .build()
@@ -179,5 +180,9 @@ class FcmService : FirebaseMessagingService() {
         private const val CHANNEL_ID = "ATCHA_CHANNEL"
         private const val CHANNEL_NAME = "ATCHA"
         private const val FCM_NOTIFICATION_ID = 0
+        private const val FULL_SCREEN_ALERT = "FULL_SCREEN_ALERT"
+        private const val PUSH_ALERT = "PUSH_ALERT"
+        private const val WAKE_LOCK_TAG = "Atcha:WakeLock"
+        private const val HEAD_UP_CHANNEL_ID = "ATCHA_HEADS_UP_CHANNEL"
     }
 }

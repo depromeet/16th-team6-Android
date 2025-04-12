@@ -42,6 +42,9 @@
     <string name="lock_screen_start_alarm_text">출발 알림</string>
 
     <string name="notification_content_text">"지금 바로 출발하셔야 해요!"</string>
+    <string name="notification_title_text">"앗차!"</string>
+    <string name="notification_body_text">"막차 출발 시간을 확인해보세요!"</string>
+    <string name="notification_head_up_channel_name">앗차 중요 알림</string>
 
     <!-- LoginScreen -->
     <string name="login_pager_main_text_first">오후 10시에 미리\n막차알림 등록하세요</string>
