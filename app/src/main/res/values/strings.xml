@@ -128,8 +128,8 @@
     <string name="mypage_title_text">마이페이지</string>
     <string name="mypage_account_title_text">내 계정</string>
     <string name="mypage_change_home_title_text">우리집 변경</string>
-    <string name="mypage_alarm_title_text">푸시 알림 빈도 설정</string>
-    <string name="mypage_policy_text">개인정보처리방침</string>
+    <string name="mypage_alarm_title_text">알림 설정</string>
+    <string name="mypage_policy_text">약관</string>
     <string name="mypage_version_title_text">현재 버전 1.0.0</string>
     <string name="mypage_account_logout_text">로그아웃</string>
     <string name="mypage_account_signout_text">계정 탈퇴</string>

@@ -28,6 +28,7 @@ class MypageViewModel @Inject constructor(
             is MypageContract.MypageEvent.LogoutConfirmed -> logout()
             is MypageContract.MypageEvent.WithDrawConfirmed -> withDraw()
             is MypageContract.MypageEvent.DismissDialog -> setState { copy(logoutDialogVisible = false, withDrawDialogVisible = false) }
+            is MypageContract.MypageEvent.AccountClicked -> navigateToAccount()
         }
     }
 
@@ -55,7 +56,16 @@ class MypageViewModel @Inject constructor(
         }
     }
 
+    private fun navigateToAccount() {
+        setState { copy(currentScreen = MypageContract.MypageScreen.ACCOUNT) }
+    }
+
     private fun navigateBack() {
-        setSideEffect(MypageContract.MypageSideEffect.NavigateBack)
+        val currentScreen = currentState.currentScreen
+        if (currentScreen == MypageContract.MypageScreen.MAIN) {
+            setSideEffect(MypageContract.MypageSideEffect.NavigateBack)
+        } else if (currentScreen == MypageContract.MypageScreen.ACCOUNT) {
+            setState { copy(currentScreen = MypageContract.MypageScreen.MAIN) }
+        }
     }
 }

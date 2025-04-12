@@ -1,5 +1,6 @@
 package com.depromeet.team6.presentation.ui.mypage
 
+import android.graphics.Paint.Align
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -29,6 +31,7 @@ import com.depromeet.team6.presentation.util.WebViewUrl.PRIVACY_POLICY_URL
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.depromeet.team6.ui.theme.LocalTeam6Colors
+import com.depromeet.team6.ui.theme.LocalTeam6Typography
 
 @Composable
 fun MypageRoute(
@@ -52,21 +55,45 @@ fun MypageRoute(
     }
 
     when (uiState.loadState) {
-        LoadState.Idle -> MypageScreen(
-            padding = padding,
-            modifier = modifier,
-            mypageUiState = uiState,
-            logoutClicked = { mypageViewModel.setEvent(MypageContract.MypageEvent.LogoutClicked) },
-            withDrawClicked = { mypageViewModel.setEvent(MypageContract.MypageEvent.WithDrawClicked) },
-            onBackClick = navigateBack,
-            onWebViewClicked = { mypageViewModel.setEvent(MypageContract.MypageEvent.PolicyClicked) },
-            webViewClose = { mypageViewModel.setEvent(MypageContract.MypageEvent.PolicyClosed) },
-            logoutConfirmed = { mypageViewModel.setEvent(MypageContract.MypageEvent.LogoutConfirmed) },
-            withDrawConfirmed = { mypageViewModel.setEvent(MypageContract.MypageEvent.WithDrawConfirmed) },
-            dismissDialog = { mypageViewModel.setEvent(MypageContract.MypageEvent.DismissDialog) }
-        )
+        LoadState.Idle -> {
+            if (uiState.isWebViewOpened) {
+                AtChaWebView(
+                    url = PRIVACY_POLICY_URL,
+                    onClose = { mypageViewModel.setEvent(MypageContract.MypageEvent.PolicyClosed) },
+                    modifier = modifier
+                )
+            } else {
+                when (uiState.currentScreen) {
+                    MypageContract.MypageScreen.MAIN -> {
+                        MypageScreen(
+                            padding = padding,
+                            modifier = modifier,
+                            mypageUiState = uiState,
+                            onAccountClick = { mypageViewModel.setEvent(MypageContract.MypageEvent.AccountClicked) },
+                            onBackClick = { mypageViewModel.setEvent(MypageContract.MypageEvent.BackPressed) },
+                            onWebViewClicked = { mypageViewModel.setEvent(MypageContract.MypageEvent.PolicyClicked) },
+                            dismissDialog = { mypageViewModel.setEvent(MypageContract.MypageEvent.DismissDialog) }
+                        )
+                    }
+                    MypageContract.MypageScreen.ACCOUNT -> {
+                        MypageAccountScreen(
+                            padding = padding,
+                            modifier = modifier,
+                            mypageUiState = uiState,
+                            logoutClicked = { mypageViewModel.setEvent(MypageContract.MypageEvent.LogoutClicked) },
+                            withDrawClicked = { mypageViewModel.setEvent(MypageContract.MypageEvent.WithDrawClicked) },
+                            onBackClick = { mypageViewModel.setEvent(MypageContract.MypageEvent.BackPressed) },
+                            logoutConfirmed = { mypageViewModel.setEvent(MypageContract.MypageEvent.LogoutConfirmed) },
+                            withDrawConfirmed = { mypageViewModel.setEvent(MypageContract.MypageEvent.WithDrawConfirmed) },
+                            dismissDialog = { mypageViewModel.setEvent(MypageContract.MypageEvent.DismissDialog) }
+                        )
+                    }
+                }
+            }
+        }
         else -> Unit
     }
+
 }
 
 @Composable
@@ -76,6 +103,7 @@ fun MypageScreen(
     mypageUiState: MypageContract.MypageUiState = MypageContract.MypageUiState(),
     logoutClicked: () -> Unit = {},
     withDrawClicked: () -> Unit = {},
+    onAccountClick: () -> Unit = {},
     onBackClick: () -> Unit = {},
     onWebViewClicked: () -> Unit = {},
     webViewClose: () -> Unit = {},
@@ -84,6 +112,8 @@ fun MypageScreen(
     dismissDialog: () -> Unit = {}
 ) {
     val colors = LocalTeam6Colors.current
+    val typography = LocalTeam6Typography.current
+
     if (mypageUiState.isWebViewOpened) {
         AtChaWebView(url = PRIVACY_POLICY_URL, onClose = webViewClose, modifier = modifier)
     } else {
@@ -102,25 +132,30 @@ fun MypageScreen(
                     title = stringResource(R.string.mypage_title_text),
                     onBackClick = onBackClick
                 )
+
                 MypageListItem(
-                    title = stringResource(R.string.mypage_account_logout_text),
+                    title = stringResource(R.string.mypage_account_title_text),
+                    onClick = onAccountClick
+                )
+
+                MypageListItem(
+                    title = stringResource(R.string.mypage_change_home_title_text),
                     onClick = logoutClicked
                 )
 
                 MypageListItem(
-                    title = stringResource(R.string.mypage_account_signout_text),
-                    onClick = withDrawClicked
-                )
-
-                Spacer(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(10.dp)
-                        .background(colors.black)
+                    title = stringResource(R.string.mypage_alarm_title_text),
+                    onClick = logoutClicked
                 )
 
                 MypageListItem(
                     title = stringResource(R.string.mypage_policy_text),
+                    onClick = onWebViewClicked
+                )
+
+                MypageListItem(
+                    title = stringResource(R.string.mypage_version_title_text),
+                    arrowVisible = false,
                     onClick = onWebViewClicked
                 )
             }
@@ -143,6 +178,15 @@ fun MypageScreen(
                     onSuccess = withDrawConfirmed
                 )
             }
+
+            Text(
+                text = stringResource(R.string.itinerary_info_legs_data_source),
+                style = typography.bodyRegular12,
+                color = colors.systemGrey1,
+                modifier = Modifier.align(Alignment.BottomCenter)
+                    .padding(bottom = 32.dp)
+            )
+
         }
     }
 }
