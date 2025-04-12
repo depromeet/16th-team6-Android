@@ -21,6 +21,7 @@ import com.depromeet.team6.ui.theme.LocalTeam6Colors
 fun MypageChangeHomeScreen(
     modifier: Modifier = Modifier,
     padding: PaddingValues = PaddingValues(0.dp),
+    mypageUiState: MypageContract.MypageUiState = MypageContract.MypageUiState(),
     onBackClick: () -> Unit = {},
     dismissDialog: () -> Unit = {}
 ) {
@@ -43,8 +44,7 @@ fun MypageChangeHomeScreen(
             )
 
             MypageSelectedHome(
-//                homeLocation = mypageUiState.location,
-                homeLocation = "우리집"
+                homeLocation = mypageUiState.myAdress,
             )
         }
     }

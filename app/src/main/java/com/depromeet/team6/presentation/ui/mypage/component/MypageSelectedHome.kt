@@ -32,8 +32,7 @@ import com.depromeet.team6.ui.theme.defaultTeam6Typography
 
 @Composable
 fun MypageSelectedHome(
-//    homeLocation: Address,
-    homeLocation: String,
+    homeLocation: Address,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -46,21 +45,21 @@ fun MypageSelectedHome(
                 .fillMaxWidth()
                 .padding(vertical = 23.dp)
         ) {
-            if (homeLocation.isNotEmpty()) {
+            if (homeLocation.name.isNotEmpty()) {
                 Text(
-                    text = homeLocation,
+                    text = homeLocation.name,
                     style = defaultTeam6Typography.heading6Bold15,
                     color = defaultTeam6Colors.white
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = homeLocation,
+                    text = homeLocation.address,
                     style = defaultTeam6Typography.bodySemiBold13,
                     color = defaultTeam6Colors.greyTertiaryLabel
                 )
             } else {
                 Text(
-                    text = homeLocation,
+                    text = homeLocation.address,
                     style = defaultTeam6Typography.heading6Bold15,
                     color = defaultTeam6Colors.white
                 )
@@ -104,6 +103,6 @@ private fun MypageSelectedHomePreview() {
             lat = 0.0,
             lon = 0.0,
             address = "서울시 강남구 논현로 339 1층"
-        ).toString()
+        )
     )
 }

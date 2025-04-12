@@ -54,6 +54,10 @@ fun MypageRoute(
             }
     }
 
+    LaunchedEffect(mypageViewModel.uiState, lifecycleOwner) {
+        mypageViewModel.getUserInfo()
+    }
+
     when (uiState.loadState) {
         LoadState.Idle -> {
             if (uiState.isWebViewOpened) {

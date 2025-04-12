@@ -1,5 +1,6 @@
 package com.depromeet.team6.presentation.ui.mypage
 
+import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.presentation.util.base.UiEvent
 import com.depromeet.team6.presentation.util.base.UiSideEffect
 import com.depromeet.team6.presentation.util.base.UiState
@@ -12,7 +13,13 @@ class MypageContract {
         val logoutState: Boolean = false,
         val isWebViewOpened: Boolean = false,
         val logoutDialogVisible: Boolean = false,
-        val withDrawDialogVisible: Boolean = false
+        val withDrawDialogVisible: Boolean = false,
+        val myAdress: Address = Address(
+            name = "",
+            lat = 0.0,
+            lon = 0.0,
+            address = ""
+        )
     ) : UiState
 
     enum class MypageScreen {
@@ -35,5 +42,7 @@ class MypageContract {
         data object LogoutConfirmed : MypageEvent()
         data object WithDrawConfirmed : MypageEvent()
         data object DismissDialog : MypageEvent()
+
+        data class UpdateMyAddress(val myAdress: Address) : MypageEvent()
     }
 }
