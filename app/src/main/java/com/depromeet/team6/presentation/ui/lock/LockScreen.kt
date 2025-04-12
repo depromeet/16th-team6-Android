@@ -50,6 +50,7 @@ import com.depromeet.team6.ui.theme.LocalTeam6Typography
 import com.depromeet.team6.ui.theme.Team6Theme
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.delay
+import java.text.NumberFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -105,8 +106,7 @@ fun LockScreen(
     var timeLeft by remember { mutableIntStateOf(60) }
     var currentTime by remember { mutableStateOf("") }
 
-    // val formattedCost = NumberFormat.getNumberInstance(Locale.US).format(uiState.taxiCost)
-    val formattedCost = "33,000"
+    val formattedCost = NumberFormat.getNumberInstance(Locale.US).format(uiState.taxiCost)
 
     // Lottie 애니메이션 설정
     val composition by rememberLottieComposition(
