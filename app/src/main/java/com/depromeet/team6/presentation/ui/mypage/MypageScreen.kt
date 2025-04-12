@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -27,6 +28,9 @@ import com.depromeet.team6.presentation.ui.common.view.AtChaWebView
 import com.depromeet.team6.presentation.ui.mypage.component.MyPageConfirmDialog
 import com.depromeet.team6.presentation.ui.mypage.component.MypageListItem
 import com.depromeet.team6.presentation.ui.mypage.component.TitleBar
+import com.depromeet.team6.presentation.ui.onboarding.OnboardingContract
+import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingSearchPopup
+import com.depromeet.team6.presentation.util.WebViewUrl
 import com.depromeet.team6.presentation.util.WebViewUrl.PRIVACY_POLICY_URL
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.presentation.util.view.LoadState
@@ -43,6 +47,7 @@ fun MypageRoute(
 ) {
     val uiState = mypageViewModel.uiState.collectAsStateWithLifecycle().value
     val lifecycleOwner = LocalLifecycleOwner.current
+    val context = LocalContext.current
 
     LaunchedEffect(mypageViewModel.sideEffect, lifecycleOwner) {
         mypageViewModel.sideEffect.flowWithLifecycle(lifecycle = lifecycleOwner.lifecycle)
@@ -58,55 +63,95 @@ fun MypageRoute(
         mypageViewModel.getUserInfo()
     }
 
-    when (uiState.loadState) {
-        LoadState.Idle -> {
-            if (uiState.isWebViewOpened) {
-                AtChaWebView(
-                    url = PRIVACY_POLICY_URL,
-                    onClose = { mypageViewModel.setEvent(MypageContract.MypageEvent.PolicyClosed) },
-                    modifier = modifier
+    if (uiState.searchPopupVisible) {
+        OnboardingSearchPopup(
+            context = context,
+            searchLocations = uiState.searchLocations,
+            padding = padding,
+            searchText = uiState.searchText,
+            onSearchTextChange = { newText ->
+                mypageViewModel.setState {
+                    copy(searchText = newText)
+                }
+                mypageViewModel.setEvent(MypageContract.MypageEvent.UpdateSearchText(text = newText))
+            },
+            onBackButtonClicked = {
+                mypageViewModel.setEvent(MypageContract.MypageEvent.SearchPopUpBackPressed)
+            },
+            selectButtonClicked = { address ->
+                mypageViewModel.setEvent(
+                    MypageContract.MypageEvent.LocationSelectButtonClicked(
+                        address
+                    )
                 )
-            } else {
-                when (uiState.currentScreen) {
-                    MypageContract.MypageScreen.MAIN -> {
-                        MypageScreen(
-                            padding = padding,
-                            modifier = modifier,
-                            mypageUiState = uiState,
-                            onAccountClick = { mypageViewModel.setEvent(MypageContract.MypageEvent.AccountClicked) },
-                            onChangeHomeClick = { mypageViewModel.setEvent(MypageContract.MypageEvent.ChangeHomeClicked) },
-                            onBackClick = { mypageViewModel.setEvent(MypageContract.MypageEvent.BackPressed) },
-                            onWebViewClicked = { mypageViewModel.setEvent(MypageContract.MypageEvent.PolicyClicked) },
-                            dismissDialog = { mypageViewModel.setEvent(MypageContract.MypageEvent.DismissDialog) }
-                        )
-                    }
-                    MypageContract.MypageScreen.ACCOUNT -> {
-                        MypageAccountScreen(
-                            padding = padding,
-                            modifier = modifier,
-                            mypageUiState = uiState,
-                            logoutClicked = { mypageViewModel.setEvent(MypageContract.MypageEvent.LogoutClicked) },
-                            withDrawClicked = { mypageViewModel.setEvent(MypageContract.MypageEvent.WithDrawClicked) },
-                            onBackClick = { mypageViewModel.setEvent(MypageContract.MypageEvent.BackPressed) },
-                            logoutConfirmed = { mypageViewModel.setEvent(MypageContract.MypageEvent.LogoutConfirmed) },
-                            withDrawConfirmed = { mypageViewModel.setEvent(MypageContract.MypageEvent.WithDrawConfirmed) },
-                            dismissDialog = { mypageViewModel.setEvent(MypageContract.MypageEvent.DismissDialog) }
-                        )
-                    }
-                    MypageContract.MypageScreen.CHANGE_HOME -> {
-                        MypageChangeHomeScreen(
-                            padding = padding,
-                            modifier = modifier,
-                            mypageUiState = uiState,
-                            onBackClick = { mypageViewModel.setEvent(MypageContract.MypageEvent.BackPressed) }
-                        )
+                mypageViewModel.setEvent(
+                    MypageContract.MypageEvent.ChangeMapViewVisible(
+                        true
+                    )
+                )
+            },
+            onTextClearButtonClicked = {
+                mypageViewModel.setEvent(MypageContract.MypageEvent.ClearText)
+            }
+        )
+    } else {
+        when (uiState.loadState) {
+            LoadState.Idle -> {
+                if (uiState.isWebViewOpened) {
+                    AtChaWebView(
+                        url = WebViewUrl.PRIVACY_POLICY_URL,
+                        onClose = { mypageViewModel.setEvent(MypageContract.MypageEvent.PolicyClosed) },
+                        modifier = modifier
+                    )
+                } else {
+                    when (uiState.currentScreen) {
+                        MypageContract.MypageScreen.MAIN -> {
+                            MypageScreen(
+                                padding = padding,
+                                modifier = modifier,
+                                mypageUiState = uiState,
+                                onAccountClick = { mypageViewModel.setEvent(MypageContract.MypageEvent.AccountClicked) },
+                                onChangeHomeClick = { mypageViewModel.setEvent(MypageContract.MypageEvent.ChangeHomeClicked) },
+                                onBackClick = { mypageViewModel.setEvent(MypageContract.MypageEvent.BackPressed) },
+                                onWebViewClicked = { mypageViewModel.setEvent(MypageContract.MypageEvent.PolicyClicked) },
+                                dismissDialog = { mypageViewModel.setEvent(MypageContract.MypageEvent.DismissDialog) }
+                            )
+                        }
+
+                        MypageContract.MypageScreen.ACCOUNT -> {
+                            MypageAccountScreen(
+                                padding = padding,
+                                modifier = modifier,
+                                mypageUiState = uiState,
+                                logoutClicked = { mypageViewModel.setEvent(MypageContract.MypageEvent.LogoutClicked) },
+                                withDrawClicked = { mypageViewModel.setEvent(MypageContract.MypageEvent.WithDrawClicked) },
+                                onBackClick = { mypageViewModel.setEvent(MypageContract.MypageEvent.BackPressed) },
+                                logoutConfirmed = { mypageViewModel.setEvent(MypageContract.MypageEvent.LogoutConfirmed) },
+                                withDrawConfirmed = { mypageViewModel.setEvent(MypageContract.MypageEvent.WithDrawConfirmed) },
+                                dismissDialog = { mypageViewModel.setEvent(MypageContract.MypageEvent.DismissDialog) }
+                            )
+                        }
+
+                        MypageContract.MypageScreen.CHANGE_HOME -> {
+                            MypageChangeHomeScreen(
+                                padding = padding,
+                                modifier = modifier,
+                                mypageUiState = uiState,
+                                onBackClick = { mypageViewModel.setEvent(MypageContract.MypageEvent.BackPressed) },
+                                onModifyHomeButtonClick = {
+                                    mypageViewModel.setEvent(MypageContract.MypageEvent.ShowSearchPopup)
+                                }
+                            )
+                        }
                     }
                 }
             }
-        }
-        else -> Unit
-    }
 
+            LoadState.Loading -> Unit
+            LoadState.Success -> Unit
+            LoadState.Error -> Unit
+        }
+    }
 }
 
 @Composable

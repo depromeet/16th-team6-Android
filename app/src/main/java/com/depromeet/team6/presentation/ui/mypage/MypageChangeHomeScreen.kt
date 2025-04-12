@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -23,9 +24,11 @@ fun MypageChangeHomeScreen(
     padding: PaddingValues = PaddingValues(0.dp),
     mypageUiState: MypageContract.MypageUiState = MypageContract.MypageUiState(),
     onBackClick: () -> Unit = {},
-    dismissDialog: () -> Unit = {}
+    dismissDialog: () -> Unit = {},
+    onModifyHomeButtonClick: () -> Unit = {}
 ) {
     val colors = LocalTeam6Colors.current
+    val context = LocalContext.current
 
     Box(
         modifier = modifier
@@ -45,10 +48,12 @@ fun MypageChangeHomeScreen(
 
             MypageSelectedHome(
                 homeLocation = mypageUiState.myAdress,
+                onClick = onModifyHomeButtonClick
             )
         }
     }
 }
+
 @Preview
 @Composable
 fun MypageChangeHomeScreenPreview() {
