@@ -22,4 +22,8 @@ class GetTaxiCostUseCase @Inject constructor(
     // 마지막으로 저장된 택시 비용 조회
     suspend fun getLastSavedTaxiCost(): Int =
         taxiCostRepository.getLastSavedTaxiCost()
+
+    // 잠금화면 용 택시 비용 조회 (SharedPreferences 사용)
+    suspend fun getPersistedTaxiCostForLockScreen(): Int =
+        taxiCostRepository.getPersistedTaxiCostForLockScreen()
 }
