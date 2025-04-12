@@ -16,7 +16,7 @@ class MypageContract {
     ) : UiState
 
     enum class MypageScreen {
-        MAIN, ACCOUNT
+        MAIN, ACCOUNT, CHANGE_HOME
     }
 
     sealed interface MypageSideEffect : UiSideEffect {
@@ -26,6 +26,7 @@ class MypageContract {
 
     sealed class MypageEvent : UiEvent {
         data object AccountClicked : MypageEvent()
+        data object ChangeHomeClicked : MypageEvent()
         data object LogoutClicked : MypageEvent()
         data object WithDrawClicked : MypageEvent()
         data object BackPressed : MypageEvent()

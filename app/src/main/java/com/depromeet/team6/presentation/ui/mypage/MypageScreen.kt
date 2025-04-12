@@ -70,6 +70,7 @@ fun MypageRoute(
                             modifier = modifier,
                             mypageUiState = uiState,
                             onAccountClick = { mypageViewModel.setEvent(MypageContract.MypageEvent.AccountClicked) },
+                            onChangeHomeClick = { mypageViewModel.setEvent(MypageContract.MypageEvent.ChangeHomeClicked) },
                             onBackClick = { mypageViewModel.setEvent(MypageContract.MypageEvent.BackPressed) },
                             onWebViewClicked = { mypageViewModel.setEvent(MypageContract.MypageEvent.PolicyClicked) },
                             dismissDialog = { mypageViewModel.setEvent(MypageContract.MypageEvent.DismissDialog) }
@@ -88,6 +89,14 @@ fun MypageRoute(
                             dismissDialog = { mypageViewModel.setEvent(MypageContract.MypageEvent.DismissDialog) }
                         )
                     }
+                    MypageContract.MypageScreen.CHANGE_HOME -> {
+                        MypageChangeHomeScreen(
+                            padding = padding,
+                            modifier = modifier,
+                            mypageUiState = uiState,
+                            onBackClick = { mypageViewModel.setEvent(MypageContract.MypageEvent.BackPressed) }
+                        )
+                    }
                 }
             }
         }
@@ -104,6 +113,7 @@ fun MypageScreen(
     logoutClicked: () -> Unit = {},
     withDrawClicked: () -> Unit = {},
     onAccountClick: () -> Unit = {},
+    onChangeHomeClick: () -> Unit = {},
     onBackClick: () -> Unit = {},
     onWebViewClicked: () -> Unit = {},
     webViewClose: () -> Unit = {},
@@ -140,7 +150,7 @@ fun MypageScreen(
 
                 MypageListItem(
                     title = stringResource(R.string.mypage_change_home_title_text),
-                    onClick = logoutClicked
+                    onClick = onChangeHomeClick
                 )
 
                 MypageListItem(
