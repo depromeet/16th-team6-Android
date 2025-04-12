@@ -23,12 +23,14 @@ class TaxiCostRepositoryImpl @Inject constructor(
     private val _taxiCost = MutableStateFlow(0)
 
     override suspend fun getTaxiCost(routeLocation: RouteLocation): Result<Int> =
-        taxiCostRemoteDataSource.getTaxiCost(requestTaxiDto = RequestTaxiCostDto(
-            routeLocation.startLat,
-            routeLocation.startLon,
-            routeLocation.endLat,
-            routeLocation.endLon
-        )).also { result ->
+        taxiCostRemoteDataSource.getTaxiCost(
+            requestTaxiDto = RequestTaxiCostDto(
+                routeLocation.startLat,
+                routeLocation.startLon,
+                routeLocation.endLat,
+                routeLocation.endLon
+            )
+        ).also { result ->
             result.getOrNull()?.let { cost ->
                 _taxiCost.value = cost
                 if (cost > 0) {
@@ -48,7 +50,7 @@ class TaxiCostRepositoryImpl @Inject constructor(
 
     override suspend fun getLastSavedTaxiCost(): Int = _taxiCost.value
 
-    override suspend fun getPersistedTaxiCostForLockScreen():Int {
+    override suspend fun getPersistedTaxiCostForLockScreen(): Int {
         val savedCost = getSharedPrefTaxiCost()
         return if (_taxiCost.value <= 0 && savedCost > 0) {
             savedCost

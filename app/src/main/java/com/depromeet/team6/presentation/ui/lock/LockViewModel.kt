@@ -17,8 +17,8 @@ class LockViewModel @Inject constructor(
     private val getTaxiCostUseCase: GetTaxiCostUseCase,
     @ApplicationContext private val context: Context
 ) : BaseViewModel<LockContract.LockUiState,
-        LockContract.LockSideEffect,
-        LockContract.LockEvent>() {
+    LockContract.LockSideEffect,
+    LockContract.LockEvent>() {
 
     override fun createInitialState(): LockContract.LockUiState = LockContract.LockUiState()
 
