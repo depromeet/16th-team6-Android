@@ -50,7 +50,7 @@ class MypageContract {
         data object DismissDialog : MypageEvent()
         data object AccountClicked : MypageEvent()
         data object ChangeHomeClicked : MypageEvent()
-        data object UpdateMyAddress : MypageEvent()
+        data class UpdateMyAddress(val myAdress: Address) : MypageEvent()
         data class ChangeMapViewVisible(val mapViewVisible: Boolean) : MypageEvent()
         data object ClearAddress : MypageEvent()
         data object ShowSearchPopup : MypageEvent()

@@ -9,11 +9,13 @@ import com.depromeet.team6.domain.usecase.GetAddressFromCoordinatesUseCase
 import com.depromeet.team6.domain.usecase.GetLocationsUseCase
 import com.depromeet.team6.domain.usecase.GetUserInfoUseCase
 import com.depromeet.team6.domain.usecase.PostLogoutUseCase
+import com.depromeet.team6.domain.usecase.UpdateUserAddressUseCase
 import com.depromeet.team6.presentation.mapper.toPresentationList
-import com.depromeet.team6.presentation.ui.onboarding.OnboardingContract
 import com.depromeet.team6.presentation.util.base.BaseViewModel
 import com.depromeet.team6.presentation.util.context.getUserLocation
+import com.depromeet.team6.presentation.util.permission.PermissionUtil
 import com.depromeet.team6.presentation.util.view.LoadState
+import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -29,7 +31,12 @@ class MypageViewModel @Inject constructor(
     private val getAddressFromCoordinatesUseCase: GetAddressFromCoordinatesUseCase,
     private val deleteWithDrawUseCase: DeleteWithDrawUseCase,
     private val getUserInfoUseCase: GetUserInfoUseCase,
+    private val updateUserAddressUseCase: UpdateUserAddressUseCase
 ) : BaseViewModel<MypageContract.MypageUiState, MypageContract.MypageSideEffect, MypageContract.MypageEvent>() {
+
+    // 주소 초기화 여부를 추적하는 플래그
+    private var isAddressInitialized = false
+
     override fun createInitialState(): MypageContract.MypageUiState = MypageContract.MypageUiState()
 
     override suspend fun handleEvent(event: MypageContract.MypageEvent) {
@@ -85,6 +92,11 @@ class MypageViewModel @Inject constructor(
     }
 
     fun getUserInfo() {
+        if (isAddressInitialized && currentState.myAdress.address.isNotEmpty()) {
+            Timber.d("주소가 이미 초기화되어 있어 getUserInfo에서 주소를 갱신하지 않습니다.")
+            return
+        }
+
         viewModelScope.launch {
             getUserInfoUseCase().onSuccess { userInfo ->
                 setState {
@@ -97,6 +109,7 @@ class MypageViewModel @Inject constructor(
                         )
                     )
                 }
+                isAddressInitialized = true
             }
         }
     }
@@ -144,6 +157,52 @@ class MypageViewModel @Inject constructor(
         }
     }
 
+    fun getCenterLocation(location: LatLng, onComplete: (Address) -> Unit = {}) {
+        viewModelScope.launch {
+            getAddressFromCoordinatesUseCase(location.latitude, location.longitude)
+                .onSuccess { address ->
+                    setState { copy(myAdress = address) }
+                    onComplete(address)
+                }
+                .onFailure {
+                    Timber.e("주소 변환 실패: ${it.message}")
+                }
+        }
+    }
+
+//    fun updateUserAddress() {
+//        viewModelScope.launch {
+//            val address = currentState.myAdress
+//            updateUserAddressUseCase(
+//                address = address.name,
+//                lat = address.lat,
+//                lon = address.lon
+//            ).onSuccess {
+//                // 저장 성공
+//                userInfoRepositoryImpl.updateUserAddress(address.lat, address.lon)
+//                setState { copy(loadState = LoadState.Success) }
+//
+//                // 메인 화면으로 이동
+//                setState { copy(currentScreen = MypageContract.MypageScreen.MAIN) }
+//            }.onFailure {
+//                Timber.e("주소 업데이트 실패: ${it.message}")
+//                setState { copy(loadState = LoadState.Error) }
+//            }
+//        }
+//    }
+
+    fun updateUserLocation(context: Context) {
+        viewModelScope.launch {
+            if (PermissionUtil.hasLocationPermissions(context)) {
+                val location = context.getUserLocation()
+                setState {
+                    copy(
+                        userCurrentLocation = location
+                    )
+                }
+            }
+        }
+    }
 
     private fun logout() {
         userInfoRepositoryImpl.setAccessToken(userInfoRepositoryImpl.getRefreshToken())

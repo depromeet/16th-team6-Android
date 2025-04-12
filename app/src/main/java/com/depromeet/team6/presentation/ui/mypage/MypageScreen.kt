@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -49,6 +50,8 @@ fun MypageRoute(
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
 
+    val isInitialized = remember { mutableMapOf("initialized" to false) }
+
     LaunchedEffect(mypageViewModel.sideEffect, lifecycleOwner) {
         mypageViewModel.sideEffect.flowWithLifecycle(lifecycle = lifecycleOwner.lifecycle)
             .collect { sideEffect ->
@@ -59,8 +62,11 @@ fun MypageRoute(
             }
     }
 
-    LaunchedEffect(mypageViewModel.uiState, lifecycleOwner) {
-        mypageViewModel.getUserInfo()
+    LaunchedEffect(Unit) {
+        if (!isInitialized["initialized"]!!) {
+            mypageViewModel.getUserInfo()
+            isInitialized["initialized"] = true
+        }
     }
 
     if (uiState.searchPopupVisible) {
@@ -140,6 +146,23 @@ fun MypageRoute(
                                 onBackClick = { mypageViewModel.setEvent(MypageContract.MypageEvent.BackPressed) },
                                 onModifyHomeButtonClick = {
                                     mypageViewModel.setEvent(MypageContract.MypageEvent.ShowSearchPopup)
+                                },
+                                getCenterLocation = { mypageViewModel.getCenterLocation(it) },
+                                clearAddress = {
+                                    mypageViewModel.setEvent(MypageContract.MypageEvent.ClearAddress)
+                                    mypageViewModel.setEvent(
+                                        MypageContract.MypageEvent.ChangeMapViewVisible(
+                                            mapViewVisible = false
+                                        )
+                                    )
+                                },
+                                mapViewSelectButtonClicked = {
+                                    mypageViewModel.updateUserLocation(context)
+                                    mypageViewModel.setEvent(
+                                        MypageContract.MypageEvent.ChangeMapViewVisible(
+                                            false
+                                        )
+                                    )
                                 }
                             )
                         }
@@ -153,7 +176,6 @@ fun MypageRoute(
         }
     }
 }
-
 @Composable
 fun MypageScreen(
     modifier: Modifier = Modifier,
