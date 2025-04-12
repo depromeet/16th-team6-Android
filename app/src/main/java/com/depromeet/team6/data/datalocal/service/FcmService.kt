@@ -1,23 +1,45 @@
 package com.depromeet.team6.data.datalocal.service
 
+import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.media.RingtoneManager
+import android.os.Build
 import android.os.PowerManager
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.depromeet.team6.R
+import com.google.firebase.messaging.Constants
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 
 class FcmService : FirebaseMessagingService() {
 
+    private lateinit var body: String
+    private lateinit var title: String
+
     override fun onNewToken(token: String) {
         super.onNewToken(token)
 
         Log.d("FCM", "[FCM] FcmService -> token: $token")
+    }
+
+    override fun handleIntent(intent: Intent?) {
+        body = intent?.extras?.getString("gcm.notification.body") ?: ""
+        title = intent?.extras?.getString("gcm.notification.title") ?: ""
+
+        val new = intent?.apply {
+            val temp = extras?.apply {
+                remove(Constants.MessageNotificationKeys.ENABLE_NOTIFICATION)
+                remove("gcm.notification.e")
+            }
+            replaceExtras(temp)
+        }
+        super.handleIntent(new)
     }
 
     override fun onMessageReceived(message: RemoteMessage) {
@@ -26,8 +48,8 @@ class FcmService : FirebaseMessagingService() {
         Log.d("FCM", "[FCM] FcmService -> data: ${message.data}")
         Log.d("FCM", "[FCM] FcmService -> notification: ${message.notification}")
 
-        val title = message.notification?.title
-        val body = message.notification?.body
+        val title = title
+        val body = body
         val type = message.data["type"] ?: ""
 
         Log.d("FCM", "[FCM] FcmService -> title: $title")
