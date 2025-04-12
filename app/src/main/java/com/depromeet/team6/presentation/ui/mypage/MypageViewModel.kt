@@ -1,19 +1,25 @@
 package com.depromeet.team6.presentation.ui.mypage
 
 import android.content.Context
+import android.widget.Toast
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewModelScope
+import com.depromeet.team6.R
+import com.depromeet.team6.data.dataremote.model.request.user.RequestModifyUserInfoDto
 import com.depromeet.team6.data.repositoryimpl.UserInfoRepositoryImpl
 import com.depromeet.team6.domain.model.Address
+import com.depromeet.team6.domain.model.MypageUserInfo
 import com.depromeet.team6.domain.usecase.DeleteWithDrawUseCase
 import com.depromeet.team6.domain.usecase.GetAddressFromCoordinatesUseCase
 import com.depromeet.team6.domain.usecase.GetLocationsUseCase
 import com.depromeet.team6.domain.usecase.GetUserInfoUseCase
+import com.depromeet.team6.domain.usecase.ModifyUserInfoUseCase
 import com.depromeet.team6.domain.usecase.PostLogoutUseCase
-import com.depromeet.team6.domain.usecase.UpdateUserAddressUseCase
 import com.depromeet.team6.presentation.mapper.toPresentationList
 import com.depromeet.team6.presentation.util.base.BaseViewModel
 import com.depromeet.team6.presentation.util.context.getUserLocation
 import com.depromeet.team6.presentation.util.permission.PermissionUtil
+import com.depromeet.team6.presentation.util.toast.atChaToastMessage
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -31,7 +37,7 @@ class MypageViewModel @Inject constructor(
     private val getAddressFromCoordinatesUseCase: GetAddressFromCoordinatesUseCase,
     private val deleteWithDrawUseCase: DeleteWithDrawUseCase,
     private val getUserInfoUseCase: GetUserInfoUseCase,
-    private val updateUserAddressUseCase: UpdateUserAddressUseCase
+    private val modifyUserInfoUseCase: ModifyUserInfoUseCase
 ) : BaseViewModel<MypageContract.MypageUiState, MypageContract.MypageSideEffect, MypageContract.MypageEvent>() {
 
     // 주소 초기화 여부를 추적하는 플래그
@@ -99,13 +105,28 @@ class MypageViewModel @Inject constructor(
 
         viewModelScope.launch {
             getUserInfoUseCase().onSuccess { userInfo ->
+                setLocationToHomeAddress(userInfo.userHome.latitude, userInfo.userHome.longitude)
                 setState {
                     copy(
                         myAdress = Address(
                             name = userInfo.address,
                             lat = userInfo.userHome.latitude,
                             lon = userInfo.userHome.longitude,
-                            address = userInfo.address
+                            address = currentState.myAdress.address
+                        )
+                    )
+                }
+
+                setState {
+                    copy(
+                        userInfo = MypageUserInfo(
+                            nickname = userInfo.nickname,
+                            profileImageUrl = userInfo.profileImageUrl,
+                            address = userInfo.address,
+                            lat = userInfo.userHome.latitude,
+                            lon = userInfo.userHome.longitude,
+                            alertFrequencies = userInfo.alertFrequencies,
+                            fcmToken = null
                         )
                     )
                 }
@@ -139,18 +160,70 @@ class MypageViewModel @Inject constructor(
         }
     }
 
-    fun setCurrentLocationToHomeAddress(
-        context: Context,
-        onSuccess: (Address) -> Unit = {}
+    fun modifyUserAddress(context: Context) {
+        viewModelScope.launch {
+            try {
+                val currentAddress = currentState.myAdress
+
+                val modifyUserInfoDto = RequestModifyUserInfoDto(
+                    address = currentAddress.name,
+                    lat = currentAddress.lat,
+                    lon = currentAddress.lon
+                )
+
+                modifyUserInfoUseCase(modifyUserInfoDto = modifyUserInfoDto)
+                    .onSuccess { userInfo ->
+                        setState {
+                            copy(
+                                myAdress = Address(
+                                    name = currentAddress.name,
+                                    lat = userInfo.userHome.latitude,
+                                    lon = userInfo.userHome.longitude,
+                                    address = currentAddress.address
+                                )
+                            )
+                        }
+
+                        setState {
+                            copy(
+                                userInfo = currentState.userInfo.copy(
+                                    address = currentAddress.name,
+                                    lat = userInfo.userHome.latitude,
+                                    lon = userInfo.userHome.longitude
+                                )
+                            )
+                        }
+
+                        setState { copy(mapViewVisible = false) }
+
+                        atChaToastMessage(context, R.string.mypage_change_home_toast_text, Toast.LENGTH_SHORT)
+
+                    }
+                    .onFailure { error ->
+                        Timber.e("주소 업데이트 실패: ${error.message}")
+                        setState { copy(loadState = LoadState.Error) }
+                    }
+            } catch (e: Exception) {
+                Timber.e("주소 업데이트 중 예외 발생: ${e.message}")
+                e.printStackTrace()
+                setState { copy(loadState = LoadState.Error) }
+            }
+        }
+    }
+
+    private fun setLocationToHomeAddress(
+        lat: Double,
+        lon: Double
     ) {
         viewModelScope.launch {
-            val location = context.getUserLocation()
-            setState { copy(userCurrentLocation = location) }
-
-            getAddressFromCoordinatesUseCase.invoke(location.latitude, location.longitude)
+            getAddressFromCoordinatesUseCase.invoke(lat, lon)
                 .onSuccess { address ->
-                    setState { copy(myAdress = address) }
-                    onSuccess.invoke(address)
+                    setState {
+                        copy(
+                        myAdress = myAdress.copy(
+                            address = address.address
+                        )
+                    ) }
                 }.onFailure {
                     Timber.e("주소 변환 실패: ${it.message}")
                 }
@@ -169,27 +242,6 @@ class MypageViewModel @Inject constructor(
                 }
         }
     }
-
-//    fun updateUserAddress() {
-//        viewModelScope.launch {
-//            val address = currentState.myAdress
-//            updateUserAddressUseCase(
-//                address = address.name,
-//                lat = address.lat,
-//                lon = address.lon
-//            ).onSuccess {
-//                // 저장 성공
-//                userInfoRepositoryImpl.updateUserAddress(address.lat, address.lon)
-//                setState { copy(loadState = LoadState.Success) }
-//
-//                // 메인 화면으로 이동
-//                setState { copy(currentScreen = MypageContract.MypageScreen.MAIN) }
-//            }.onFailure {
-//                Timber.e("주소 업데이트 실패: ${it.message}")
-//                setState { copy(loadState = LoadState.Error) }
-//            }
-//        }
-//    }
 
     fun updateUserLocation(context: Context) {
         viewModelScope.launch {

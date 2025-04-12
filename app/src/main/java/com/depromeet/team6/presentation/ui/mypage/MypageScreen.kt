@@ -158,6 +158,7 @@ fun MypageRoute(
                                 },
                                 mapViewSelectButtonClicked = {
                                     mypageViewModel.updateUserLocation(context)
+                                    mypageViewModel.modifyUserAddress(context)
                                     mypageViewModel.setEvent(
                                         MypageContract.MypageEvent.ChangeMapViewVisible(
                                             false

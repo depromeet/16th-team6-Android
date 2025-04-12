@@ -2,6 +2,8 @@ package com.depromeet.team6.presentation.ui.mypage
 
 import android.content.Context
 import com.depromeet.team6.domain.model.Address
+import com.depromeet.team6.domain.model.MypageUserInfo
+import com.depromeet.team6.domain.model.UserInfo
 import com.depromeet.team6.presentation.model.location.Location
 import com.depromeet.team6.presentation.util.DefaultLntLng
 import com.depromeet.team6.presentation.util.base.UiEvent
@@ -30,6 +32,15 @@ class MypageContract {
             lat = 0.0,
             lon = 0.0,
             address = ""
+        ),
+        val userInfo: MypageUserInfo = MypageUserInfo(
+            nickname = "",
+            profileImageUrl = "",
+            address = "",
+            lat = 0.0,
+            lon = 0.0,
+            alertFrequencies = emptySet(),
+            fcmToken = ""
         ),
         val mapViewVisible: Boolean = false
     ) : UiState

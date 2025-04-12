@@ -128,6 +128,7 @@
     <string name="mypage_title_text">마이페이지</string>
     <string name="mypage_account_title_text">내 계정</string>
     <string name="mypage_change_home_title_text">우리집 변경</string>
+    <string name="mypage_change_home_toast_text">집 주소가 변경되었습니다.</string>
     <string name="mypage_change_home_button_text">다른 주소로 변경하기</string>
     <string name="mypage_alarm_title_text">알림 설정</string>
     <string name="mypage_policy_text">약관</string>
