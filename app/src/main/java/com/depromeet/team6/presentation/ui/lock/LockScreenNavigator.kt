@@ -2,6 +2,7 @@ package com.depromeet.team6.presentation.ui.lock
 
 import android.content.Context
 import android.content.Intent
+import com.depromeet.team6.presentation.ui.main.MainActivity
 import javax.inject.Inject
 
 class LockScreenNavigator @Inject constructor() {
@@ -15,6 +16,13 @@ class LockScreenNavigator @Inject constructor() {
                 putExtra(EXTRA_TAXI_COST, taxiCost)
             }
         )
+    }
+
+    fun navigateToSpecificScreen(context: Context) {
+        val intent = Intent(context, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
+        context.startActivity(intent)
     }
 
     companion object {
