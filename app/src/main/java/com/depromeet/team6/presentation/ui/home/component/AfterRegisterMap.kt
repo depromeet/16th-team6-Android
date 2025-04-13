@@ -9,6 +9,7 @@ import android.location.LocationManager
 import android.os.Bundle
 import android.os.Looper
 import android.widget.FrameLayout
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -50,6 +51,7 @@ import com.depromeet.team6.presentation.ui.home.HomeViewModel
 import com.depromeet.team6.presentation.ui.itinerary.LegInfoDummyProvider
 import com.depromeet.team6.presentation.ui.itinerary.component.getWayPointList
 import com.depromeet.team6.presentation.util.permission.PermissionUtil
+import com.depromeet.team6.presentation.util.toast.atChaToastMessage
 import com.depromeet.team6.presentation.util.view.TransportTypeUiMapper
 import com.depromeet.team6.presentation.util.view.toPx
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -93,6 +95,8 @@ fun AfterRegisterMap(
 
     var firstTransportationPoint = LatLng(legs[0].startPoint.lat, legs[0].startPoint.lon)
     var markBusStationName = ""
+
+    var hasShownToast by remember { mutableStateOf(false) }
 
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
 
@@ -258,7 +262,11 @@ fun AfterRegisterMap(
                        newLocation.latitude, newLocation.longitude,
                        firstTransportationPoint.latitude, firstTransportationPoint.longitude
                    )
-                   // TODO : 거리 가까워지면 토스트 띄우기
+
+                   if (distance <= 50f && !hasShownToast) {
+                       atChaToastMessage(context, R.string.home_arrive_station_toast_text, Toast.LENGTH_LONG)
+                       hasShownToast = true
+                   }
                }
             }
         }
