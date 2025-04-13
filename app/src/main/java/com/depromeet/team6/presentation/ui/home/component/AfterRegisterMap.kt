@@ -1,7 +1,13 @@
 package com.depromeet.team6.presentation.ui.home.component
 
 import TransportVectorIconWithTextBitmap
+import android.content.Context
+import android.content.pm.PackageManager
 import android.graphics.PointF
+import android.location.Location
+import android.location.LocationManager
+import android.os.Bundle
+import android.os.Looper
 import android.widget.FrameLayout
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -11,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -30,6 +37,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
 import com.depromeet.team6.BuildConfig
@@ -41,8 +49,16 @@ import com.depromeet.team6.presentation.ui.common.TransportVectorIconBitmap
 import com.depromeet.team6.presentation.ui.home.HomeViewModel
 import com.depromeet.team6.presentation.ui.itinerary.LegInfoDummyProvider
 import com.depromeet.team6.presentation.ui.itinerary.component.getWayPointList
+import com.depromeet.team6.presentation.util.permission.PermissionUtil
 import com.depromeet.team6.presentation.util.view.TransportTypeUiMapper
 import com.depromeet.team6.presentation.util.view.toPx
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationListener
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
 import com.google.android.gms.maps.model.LatLng
 import com.skt.tmap.TMapPoint
 import com.skt.tmap.TMapView
@@ -68,6 +84,8 @@ fun AfterRegisterMap(
     val uiState = viewModel.uiState.collectAsState().value
     val tMapView = remember { TMapView(context) }
     var isMapReady by remember { mutableStateOf(false) }
+
+    var userLocation by remember { mutableStateOf(currentLocation) }
 
     val departLocation = LatLng(legs[0].startPoint.lat, legs[0].startPoint.lon)
     val destinationLocation = LatLng(legs[legs.size - 1].endPoint.lat, legs[legs.size - 1].endPoint.lon)
@@ -225,12 +243,65 @@ fun AfterRegisterMap(
         }
     }
 
-    // 현재 위치 변경될 때만 마커 갱신
+    val fusedLocationClient = remember {
+        LocationServices.getFusedLocationProviderClient(context)
+    }
+
+    val locationCallback = remember {
+        object : LocationCallback() {
+            override fun onLocationResult(locationResult: LocationResult) {
+               locationResult.lastLocation?.let { location ->
+                   val newLocation = LatLng(location.latitude, location.longitude)
+                   userLocation = newLocation
+
+                   val distance = calculateDistance(
+                       newLocation.latitude, newLocation.longitude,
+                       firstTransportationPoint.latitude, firstTransportationPoint.longitude
+                   )
+                   // TODO : 거리 가까워지면 토스트 띄우기
+               }
+            }
+        }
+    }
+
+    // 위치 업데이트 시작
+    LaunchedEffect(Unit) {
+        if (PermissionUtil.hasLocationPermissions(context)) {
+            val locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 3000)
+                .setMinUpdateIntervalMillis(1000)
+                .setMinUpdateDistanceMeters(1f)
+                .build()
+
+            try {
+                fusedLocationClient.requestLocationUpdates(
+                    locationRequest,
+                    locationCallback,
+                    Looper.getMainLooper()
+                )
+            } catch (e: SecurityException) {
+                Timber.e("위치 권한 오류: ${e.message}")
+            }
+        }
+    }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            fusedLocationClient.removeLocationUpdates(locationCallback)
+        }
+    }
+    
     LaunchedEffect(currentLocation, isMapReady) {
         if (isMapReady) {
             val tMapPoint = TMapPoint(currentLocation.latitude, currentLocation.longitude)
 
             withContext(Dispatchers.Main) {
+
+                try {
+                    tMapView.removeTMapMarkerItem("CurrentMarker")
+                } catch (e: Exception) {
+                    Timber.e(e)
+                }
+
                 val markerDrawable =
                     ContextCompat.getDrawable(context, R.drawable.ic_home_current_location)
                 val markerBitmap = markerDrawable?.toBitmap()
@@ -283,7 +354,7 @@ fun AfterRegisterMap(
                     }
                 )
                 .clickable(enabled = isMapReady) {
-                    val tMapPoint = TMapPoint(currentLocation.latitude, currentLocation.longitude)
+                    val tMapPoint = TMapPoint(userLocation.latitude, userLocation.longitude)
                     tMapView.setCenterPoint(tMapPoint.latitude, tMapPoint.longitude)
 
                     viewModel.getCenterLocation(LatLng(tMapPoint.latitude, tMapPoint.longitude))
@@ -291,6 +362,12 @@ fun AfterRegisterMap(
                 .graphicsLayer { alpha = if (isMapReady) 1f else 0.5f } // 비활성화 시 투명도 조정
         )
     }
+}
+
+private fun calculateDistance(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Float {
+    val results = FloatArray(1)
+    Location.distanceBetween(lat1, lon1, lat2, lon2, results)
+    return results[0]
 }
 
 private fun getMidPoint(point1: LatLng, point2: LatLng): LatLng {

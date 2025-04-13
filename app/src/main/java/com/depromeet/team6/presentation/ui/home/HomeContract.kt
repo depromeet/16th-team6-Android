@@ -6,10 +6,13 @@ import com.depromeet.team6.domain.model.course.CourseInfo
 import com.depromeet.team6.domain.model.course.TransportType
 import com.depromeet.team6.presentation.model.bus.BusArrivalParameter
 import com.depromeet.team6.presentation.model.itinerary.FocusedMarkerParameter
+import com.depromeet.team6.presentation.util.DefaultLntLng.DEFAULT_LNG
+import com.depromeet.team6.presentation.util.DefaultLntLng.DEFAULT_LNT
 import com.depromeet.team6.presentation.util.base.UiEvent
 import com.depromeet.team6.presentation.util.base.UiSideEffect
 import com.depromeet.team6.presentation.util.base.UiState
 import com.depromeet.team6.presentation.util.view.LoadState
+import com.google.android.gms.maps.model.LatLng
 
 class HomeContract {
     data class HomeUiState(
@@ -19,6 +22,7 @@ class HomeContract {
         val isBusDeparted: Boolean = false,
         val showSpeechBubble: Boolean = true,
         val locationAddress: String = "",
+        val currentLocation: LatLng = LatLng(DEFAULT_LNT, DEFAULT_LNG),
         // 알림 등록 후 경로 표시
         val itineraryInfo: CourseInfo? = null,
         val courseDataLoadState: LoadState = LoadState.Idle,
