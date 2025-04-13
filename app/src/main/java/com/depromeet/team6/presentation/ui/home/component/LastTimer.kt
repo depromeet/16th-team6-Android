@@ -5,9 +5,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -17,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import com.depromeet.team6.ui.theme.LocalTeam6Typography
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import timber.log.Timber
 import java.time.Duration
 import java.time.LocalDateTime
@@ -26,83 +30,50 @@ import java.time.format.DateTimeParseException
 
 @Composable
 fun LastTimer(
-    departureTime: String, // "2025-03-14T23:46" 형식 또는 "HH:mm:ss" 형식
+    departureTime: String,
     textColor: Color,
     modifier: Modifier = Modifier,
     onTimerFinished: () -> Unit = {}
 ) {
     val typography = LocalTeam6Typography.current
 
-    var remainingMinutes by remember { mutableStateOf(0) }
-    var remainingSeconds by remember { mutableStateOf(0) }
-    var isTimerFinished by remember { mutableStateOf(false) }
+    var currentTime by remember { mutableLongStateOf(System.currentTimeMillis()) }
+    val currentOnTimerFinished by rememberUpdatedState(onTimerFinished)
+    val currentDepartureTime by rememberUpdatedState(departureTime)
+
+    val targetTimeMillis by remember {
+        derivedStateOf {
+            parseTargetTimeMillis(currentDepartureTime)
+        }
+    }
+
+    val remainingTimeMillis by remember {
+        derivedStateOf {
+            if (targetTimeMillis == null) 0L
+            else {
+                val remaining = targetTimeMillis!! - currentTime
+                if (remaining < 0) 0L else remaining
+            }
+        }
+    }
+
+    val remainingMinutes = remember(remainingTimeMillis) { (remainingTimeMillis / 1000 / 60).toInt() }
+    val remainingSeconds = remember(remainingTimeMillis) { ((remainingTimeMillis / 1000) % 60).toInt() }
+
+    LaunchedEffect(remainingTimeMillis) {
+        if (remainingTimeMillis == 0L && targetTimeMillis != null) {
+            currentOnTimerFinished()
+        }
+    }
 
     LaunchedEffect(departureTime) {
-        try {
-            // 먼저 ISO 형식 (2025-03-14T23:46)으로 파싱 시도
-            val targetDateTime = try {
-                LocalDateTime.parse(departureTime)
-            } catch (e: DateTimeParseException) {
-                // ISO 형식이 아니면 HH:mm:ss 또는 HH:mm 형식으로 시도
-                try {
-                    val timeFormatter = if (departureTime.contains(":") && departureTime.split(":").size == 3) {
-                        DateTimeFormatter.ofPattern("HH:mm:ss")
-                    } else {
-                        DateTimeFormatter.ofPattern("HH:mm")
-                    }
+        Timber.d("departureTime 변경됨: $departureTime, 계산된 targetTimeMillis: $targetTimeMillis")
+    }
 
-                    val targetTime = LocalTime.parse(departureTime, timeFormatter)
-                    val now = LocalDateTime.now()
-
-                    // 현재 날짜에 목표 시간을 합쳐서 오늘 날짜의 목표 시간을 설정
-                    val targetDate = if (targetTime.hour == 0) {
-                        // 00시라면 다음날로 설정
-                        now.toLocalDate().plusDays(1)
-                    } else {
-                        now.toLocalDate()
-                    }
-
-                    // 여기서 값을 반환해야 함
-                    LocalDateTime.of(targetDate, targetTime)
-                } catch (e: Exception) {
-                    Timber.e("시간 파싱 오류: $departureTime - ${e.message}")
-                    null
-                }
-            }
-
-            if (targetDateTime != null) {
-                while (!isTimerFinished) {
-                    val now = LocalDateTime.now()
-                    val duration = Duration.between(now, targetDateTime)
-
-                    // 음수가 되지 않도록 처리
-                    if (duration.isNegative) {
-                        remainingMinutes = 0
-                        remainingSeconds = 0
-                        isTimerFinished = true
-                        onTimerFinished()
-                        break
-                    }
-
-                    val totalSeconds = duration.seconds
-                    remainingMinutes = (totalSeconds / 60).toInt()
-                    remainingSeconds = (totalSeconds % 60).toInt()
-
-                    // 타이머가 0이 되면 완료 콜백 호출
-                    if (remainingMinutes <= 0 && remainingSeconds <= 0) {
-                        isTimerFinished = true
-                        onTimerFinished()
-                        break
-                    }
-
-                    delay(1000) // 1초마다 업데이트
-                }
-            } else {
-                // 시간 파싱에 실패한 경우
-                Timber.e("시간 형식 파싱 실패: $departureTime")
-            }
-        } catch (e: Exception) {
-            Timber.e("타이머 오류: ${e.message}")
+    LaunchedEffect(Unit) {
+        while (isActive) {
+            currentTime = System.currentTimeMillis()
+            delay(1000)
         }
     }
 
@@ -138,11 +109,65 @@ fun LastTimer(
     }
 }
 
+private fun parseTargetTimeMillis(timeString: String): Long? {
+    return try {
+        if (timeString.matches(Regex("\\d+"))) {
+            val secondsToAdd = timeString.toLong()
+            System.currentTimeMillis() + (secondsToAdd * 1000)
+        } else {
+            val targetDateTime = try {
+                LocalDateTime.parse(timeString)
+            } catch (e: DateTimeParseException) {
+                try {
+                    val timeFormatter = if (timeString.contains(":") && timeString.split(":").size == 3) {
+                        DateTimeFormatter.ofPattern("HH:mm:ss")
+                    } else {
+                        DateTimeFormatter.ofPattern("HH:mm")
+                    }
+
+                    val targetTime = LocalTime.parse(timeString, timeFormatter)
+                    val now = LocalDateTime.now()
+
+                    val targetDate = if (targetTime.isBefore(now.toLocalTime())) {
+                        now.toLocalDate().plusDays(1)
+                    } else {
+                        now.toLocalDate()
+                    }
+
+                    LocalDateTime.of(targetDate, targetTime)
+                } catch (e: Exception) {
+                    Timber.e("시간 파싱 오류: $timeString - ${e.message}")
+                    return null
+                }
+            }
+            
+            val duration = Duration.between(LocalDateTime.now(), targetDateTime)
+            if (duration.isNegative) {
+                0L
+            } else {
+                System.currentTimeMillis() + duration.toMillis()
+            }
+        }
+    } catch (e: Exception) {
+        Timber.e("타이머 시간 변환 오류: ${e.message}")
+        null
+    }
+}
+
 @Preview
 @Composable
 fun LastTimerPreview() {
     LastTimer(
         departureTime = "2025-03-14T23:46",
+        textColor = defaultTeam6Colors.systemRed
+    )
+}
+
+@Preview
+@Composable
+fun LastTimerSecondsPreview() {
+    LastTimer(
+        departureTime = "300", // 5분
         textColor = defaultTeam6Colors.systemRed
     )
 }

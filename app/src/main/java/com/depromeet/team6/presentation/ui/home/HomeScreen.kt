@@ -321,7 +321,7 @@ fun HomeScreen(
                 transportationNumber = homeUiState.firstTransportationNumber,
                 transportationName = homeUiState.firstTransportationName,
                 timeToLeave = formatTimeString(homeUiState.departureTime),
-                boardingTime = formatTimeString(homeUiState.boardingTime),
+                boardingTime = homeUiState.boardingTime,
                 homeArrivedTime = formatTimeString(homeUiState.homeArrivedTime),
                 destination = stringResource(R.string.home_my_home_text),
                 onCourseTextClick = {},
@@ -512,16 +512,31 @@ fun HomeScreen(
 private fun formatTimeString(timeString: String): String {
     return try {
         if (timeString.contains("T")) {
+            // ISO 날짜 형식 (2023-01-01T12:30:00) 처리
             val dateTime = LocalDateTime.parse(timeString)
-            val formatter = DateTimeFormatter.ofPattern("HH:mm")
+            val formatter = DateTimeFormatter.ofPattern("HH:mm:ss")
             dateTime.format(formatter)
-        } else if (timeString.contains(":") && timeString.split(":").size == 3) {
-            val timeParts = timeString.split(":")
-            "${timeParts[0]}:${timeParts[1]}"
+        } else if (timeString.contains(":") && timeString.split(":").size >= 2) {
+            // 이미 시간 형식이면 그대로 반환 (HH:mm:ss 또는 HH:mm)
+            if (timeString.split(":").size == 2) {
+                // HH:mm 형식인 경우 HH:mm:00으로 변환
+                "${timeString}:00"
+            } else {
+                timeString
+            }
+        } else if (timeString.matches(Regex("\\d+"))) {
+            // 초 단위 값을 HH:mm:ss 형식으로 변환
+            val totalSeconds = timeString.toLong()
+            val hours = totalSeconds / 3600
+            val minutes = (totalSeconds % 3600) / 60
+            val seconds = totalSeconds % 60
+
+            String.format("%02d:%02d:%02d", hours, minutes, seconds)
         } else {
             timeString
         }
     } catch (e: Exception) {
+        Timber.e("formatTimeString 오류: ${e.message}")
         timeString
     }
 }

@@ -20,6 +20,7 @@ import com.depromeet.team6.domain.usecase.GetUserInfoUseCase
 import com.depromeet.team6.presentation.model.bus.BusArrivalParameter
 import com.depromeet.team6.presentation.model.bus.BusPositionParameter
 import com.depromeet.team6.presentation.ui.bus.BusCourseContract
+import com.depromeet.team6.presentation.ui.home.component.TimeText
 import com.depromeet.team6.presentation.util.base.BaseViewModel
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.google.android.gms.maps.model.LatLng
@@ -546,6 +547,12 @@ class HomeViewModel @Inject constructor(
                         busRemainingStations = busArrival.realTimeBusArrival[0].remainingStations
                     )
                 }
+                setState {
+                    copy(
+                        boardingTime = busArrival.realTimeBusArrival[0].remainingTime.toString()
+                    )
+                }
+                Timber.e("버스 남은 시간: ${currentState.boardingTime}")
             }.onFailure {
                 Timber.e("버스 도착 정보 조회 실패: ${it.message}")
             }
