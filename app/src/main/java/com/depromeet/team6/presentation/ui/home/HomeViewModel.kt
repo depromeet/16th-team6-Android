@@ -527,7 +527,7 @@ class HomeViewModel @Inject constructor(
 
             val arrival = departure.plusSeconds(totalTimeInSeconds.toLong())
 
-            val outputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+            val outputFormatter = DateTimeFormatter.ofPattern("HH:mm")
             return arrival.format(outputFormatter)
         } catch (e: Exception) {
             return "날짜 변환 중 오류 발생: ${e.message}"

@@ -322,7 +322,7 @@ fun HomeScreen(
                 transportationName = homeUiState.firstTransportationName,
                 timeToLeave = formatTimeString(homeUiState.departureTime),
                 boardingTime = homeUiState.boardingTime,
-                homeArrivedTime = formatTimeString(homeUiState.homeArrivedTime),
+                homeArrivedTime = homeUiState.homeArrivedTime,
                 destination = stringResource(R.string.home_my_home_text),
                 onCourseTextClick = {},
                 deleteAlarmConfirmed = deleteAlarmConfirmed,
