@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -28,6 +29,7 @@ import com.depromeet.team6.R
 import com.depromeet.team6.presentation.ui.common.view.AtChaWebView
 import com.depromeet.team6.presentation.ui.mypage.component.MyPageConfirmDialog
 import com.depromeet.team6.presentation.ui.mypage.component.MypageListItem
+import com.depromeet.team6.presentation.ui.mypage.component.MypageVersionItem
 import com.depromeet.team6.presentation.ui.mypage.component.TitleBar
 import com.depromeet.team6.presentation.ui.onboarding.OnboardingContract
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingSearchPopup
@@ -270,10 +272,9 @@ fun MypageScreen(
                     onClick = onWebViewClicked
                 )
 
-                MypageListItem(
+                MypageVersionItem(
                     title = stringResource(R.string.mypage_version_title_text),
-                    arrowVisible = false,
-                    onClick = onWebViewClicked
+                    onClick = {}
                 )
             }
 

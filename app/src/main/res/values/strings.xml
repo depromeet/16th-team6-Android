@@ -137,7 +137,8 @@
     <string name="mypage_alarm_submit_text">저장</string>
     <string name="mypage_change_alarm_time_toast_text">푸시 알림 빈도가 변경되었습니다.</string>
     <string name="mypage_policy_text">약관</string>
-    <string name="mypage_version_title_text">현재 버전 1.0.0</string>
+    <string name="mypage_version_title_text">현재 버전&#160;</string>
+    <string name="mypage_version_update_text">업데이트</string>
     <string name="mypage_account_logout_text">로그아웃</string>
     <string name="mypage_account_signout_text">계정 탈퇴</string>
     <string name="mypage_icon_description">마이페이지 아이콘</string>
