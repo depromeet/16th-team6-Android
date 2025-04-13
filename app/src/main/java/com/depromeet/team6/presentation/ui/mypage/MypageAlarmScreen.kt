@@ -29,8 +29,11 @@ import com.depromeet.team6.presentation.ui.mypage.component.TitleBar
 import com.depromeet.team6.presentation.ui.onboarding.component.AlarmTime
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingAlarmSelector
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
+import com.depromeet.team6.presentation.util.modifier.roundedBackgroundWithPadding
 import com.depromeet.team6.ui.theme.LocalTeam6Colors
 import com.depromeet.team6.ui.theme.LocalTeam6Typography
+import com.depromeet.team6.ui.theme.defaultTeam6Colors
+import com.depromeet.team6.ui.theme.defaultTeam6Typography
 import com.google.android.gms.maps.model.LatLng
 
 @Composable
@@ -42,7 +45,9 @@ fun MypageAlarmScreen(
     dismissDialog: () -> Unit = {},
     onSoundSettingClick: () -> Unit = {},
     onAlarmTimeSettingClick: () -> Unit = {},
-    onAlarmTypeSelected: (MypageContract.AlarmType) -> Unit = {}
+    onAlarmTypeSelected: (MypageContract.AlarmType) -> Unit = {},
+    onAlarmTimeSelected: (AlarmTime) -> Unit = {},
+    onAlarmTimeSubmitSelected: () -> Unit = {}
 ) {
     val colors = LocalTeam6Colors.current
     val typography = LocalTeam6Typography.current
@@ -107,21 +112,45 @@ fun MypageAlarmScreen(
                 }
 
                 MypageContract.AlarmScreenState.TIME_SETTING -> {
-                    Text(
-                        text = stringResource(R.string.mypage_alarm_info_text),
-                        style = typography.bodyRegular15,
-                        color = colors.white,
-                        modifier = Modifier.padding(vertical = 24.dp, horizontal = 16.dp)
-                    )
-                    OnboardingAlarmSelector(
-//                        selectedItems = uiState.alertFrequencies.mapNotNull { timeValue ->
-//                            AlarmTime.entries.find { it.minutes == timeValue }
-//                        }.toSet(),
-//                        onItemClick = onAlarmTimeSelected
-                        selectedItems = emptySet(),
-                        onItemClick = {},
-                        modifier = Modifier.padding(vertical = 12.dp)
-                    )
+                    Box(modifier = Modifier.fillMaxSize()) {
+                        Column(modifier = Modifier.fillMaxWidth()) {
+                            Text(
+                                text = stringResource(R.string.mypage_alarm_info_text),
+                                style = typography.bodyRegular15,
+                                color = colors.white,
+                                modifier = Modifier.padding(vertical = 24.dp, horizontal = 16.dp)
+                            )
+                            OnboardingAlarmSelector(
+                                selectedItems = mypageUiState.alertFrequencies.mapNotNull { timeValue ->
+                                    AlarmTime.entries.find { it.minutes == timeValue }
+                                }.toSet(),
+                                onItemClick = onAlarmTimeSelected,
+                                modifier = Modifier.padding(vertical = 12.dp)
+                            )
+                        }
+
+                        Row(
+                            modifier = modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 20.dp, vertical = 20.dp)
+                                .roundedBackgroundWithPadding(
+                                    backgroundColor = colors.main,
+                                    cornerRadius = 8.dp,
+                                    padding = PaddingValues(vertical = 14.dp)
+                                )
+                                .noRippleClickable {
+                                    onAlarmTimeSubmitSelected()
+                                }
+                                .align(Alignment.BottomCenter),
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Text(
+                                text = stringResource(id = R.string.mypage_alarm_submit_text),
+                                style = defaultTeam6Typography.heading5SemiBold17,
+                                color = defaultTeam6Colors.black
+                            )
+                        }
+                    }
                 }
             }
 

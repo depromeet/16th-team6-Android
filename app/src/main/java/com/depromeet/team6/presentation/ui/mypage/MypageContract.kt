@@ -50,6 +50,7 @@ class MypageContract {
             alertFrequencies = emptySet(),
             fcmToken = ""
         ),
+        val alertFrequencies: Set<Int> = setOf(1),
         val mapViewVisible: Boolean = false,
         val alarmScreenState: AlarmScreenState = AlarmScreenState.MAIN,
         val selectedAlarmType: AlarmType = AlarmType.SOUND
@@ -84,5 +85,7 @@ class MypageContract {
         data object TimeSettingClicked : MypageEvent()
         data object AlarmMainScreenClicked : MypageEvent()
         data class AlarmTypeSelected(val type: AlarmType) : MypageEvent()
+        data class UpdateAlertFrequencies(val alertFrequencies: Set<Int>) : MypageEvent()
+        data object SubmitAlarmTimeClicked: MypageEvent()
     }
 }

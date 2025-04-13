@@ -179,7 +179,26 @@ fun MypageRoute(
                                     mypageViewModel.setEvent(MypageContract.MypageEvent.AlarmTypeSelected(type))
                                 },
                                 onSoundSettingClick = { mypageViewModel.setEvent(MypageContract.MypageEvent.SoundSettingClicked) },
-                                onAlarmTimeSettingClick = { mypageViewModel.setEvent(MypageContract.MypageEvent.TimeSettingClicked) }
+                                onAlarmTimeSettingClick = { mypageViewModel.setEvent(MypageContract.MypageEvent.TimeSettingClicked) },
+                                onAlarmTimeSelected = { alarmTime ->
+                                    val timeValue = alarmTime.minutes
+                                    if (timeValue != 1) {
+                                        val newSelection = if (timeValue in uiState.alertFrequencies) {
+                                            uiState.alertFrequencies - timeValue
+                                        } else {
+                                            uiState.alertFrequencies + timeValue
+                                        }
+                                        mypageViewModel.setEvent(
+                                            MypageContract.MypageEvent.UpdateAlertFrequencies(
+                                                newSelection
+                                            )
+                                        )
+                                    }
+                                },
+                                onAlarmTimeSubmitSelected = {
+                                    mypageViewModel.setEvent(MypageContract.MypageEvent.SubmitAlarmTimeClicked)
+                                    mypageViewModel.modifyAlarmFrequencies(context)
+                                }
                             )
                         }
                     }
