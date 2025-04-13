@@ -20,6 +20,7 @@ material = "1.11.0"
 coreSplashscreen = "1.0.1"
 accompanistPager = "0.25.0"
 pagingCommonAndroid = "3.3.2"
+amplitude = "1.+"
 
 
 
@@ -93,6 +94,7 @@ kakao-cert = { group = "com.kakao.sdk", name = "v2-cert", version.ref = "kakao" 
 play-services-auth = { group = "com.google.android.gms", name = "play-services-auth", version.ref = "playServicesAuth" }
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 androidx-runtime-livedata = { group = "androidx.compose.runtime", name = "runtime-livedata", version.ref = "runtimeLivedata" }
+amplitude = { group = "com.amplitude", name = "analytics-android", version.ref = "amplitude" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
