@@ -48,6 +48,7 @@ fun AfterRegisterSheet(
     destination: String,
     deleteAlarmConfirmed: () -> Unit = {},
     dismissDialog: () -> Unit = {},
+    busStationLeft: Int,
     onCourseTextClick: () -> Unit,
     onFinishClick: () -> Unit,
     onCourseDetailClick: () -> Unit,
@@ -98,7 +99,7 @@ fun AfterRegisterSheet(
                             transportationType = transportType,
                             transportationNumber = transportationNumber,
                             transportationName = transportationName,
-                            stopLeft = 6
+                            stopLeft = busStationLeft
                         )
                     } else if (afterUserDeparted && timerFinish) {
                         Text(
@@ -214,6 +215,7 @@ fun AfterRegisterSheetPreview() {
         dismissDialog = {},
         onTimerFinished = {},
         homeArrivedTime = TODO(),
-        onIconClick = TODO()
+        onIconClick = TODO(),
+        busStationLeft = TODO()
     )
 }

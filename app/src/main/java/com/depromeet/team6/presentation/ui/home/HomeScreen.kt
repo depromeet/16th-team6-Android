@@ -347,10 +347,12 @@ fun HomeScreen(
                     .zIndex(1f),
                 onRefreshClick = {
                     onRefreshClick()
+                    viewModel.getBusArrival()
                 },
                 onIconClick = {
                     characterAnimationTrigger++
-                }
+                },
+                busStationLeft = homeUiState.busRemainingStations
             )
         } else {
             notificationScheduler.cancelAllNotifications()

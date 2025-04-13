@@ -5,16 +5,21 @@ import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.depromeet.team6.data.datalocal.manager.LockServiceManager
 import com.depromeet.team6.domain.model.Address
+import com.depromeet.team6.domain.model.BusArrival
 import com.depromeet.team6.domain.model.RouteLocation
 import com.depromeet.team6.domain.model.course.CourseInfo
 import com.depromeet.team6.domain.model.course.LegInfo
 import com.depromeet.team6.domain.model.course.TransportType
 import com.depromeet.team6.domain.usecase.DeleteAlarmUseCase
 import com.depromeet.team6.domain.usecase.GetAddressFromCoordinatesUseCase
+import com.depromeet.team6.domain.usecase.GetBusArrivalUseCase
 import com.depromeet.team6.domain.usecase.GetBusStartedUseCase
 import com.depromeet.team6.domain.usecase.GetCourseSearchResultsUseCase
 import com.depromeet.team6.domain.usecase.GetTaxiCostUseCase
 import com.depromeet.team6.domain.usecase.GetUserInfoUseCase
+import com.depromeet.team6.presentation.model.bus.BusArrivalParameter
+import com.depromeet.team6.presentation.model.bus.BusPositionParameter
+import com.depromeet.team6.presentation.ui.bus.BusCourseContract
 import com.depromeet.team6.presentation.util.base.BaseViewModel
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.google.android.gms.maps.model.LatLng
@@ -36,6 +41,7 @@ class HomeViewModel @Inject constructor(
     private val getTaxiCostUseCase: GetTaxiCostUseCase,
     val getCourseSearchResultUseCase: GetCourseSearchResultsUseCase,
     private val getBusStartedUseCase: GetBusStartedUseCase,
+    private val getBusArrivalUseCase: GetBusArrivalUseCase,
     private val deleteAlarmUseCase: DeleteAlarmUseCase
 ) : BaseViewModel<HomeContract.HomeUiState, HomeContract.HomeSideEffect, HomeContract.HomeEvent>() {
     private var speechBubbleJob: Job? = null
@@ -167,6 +173,14 @@ class HomeViewModel @Inject constructor(
                 setState {
                     copy(
                         homeArrivedTime = event.homeArrivedTime
+                    )
+                }
+            }
+
+            is HomeContract.HomeEvent.LoadBusArrivalParameter -> {
+                setState {
+                    copy(
+                        busArrivalParameter = event.busArrivalParameter
                     )
                 }
             }
@@ -346,6 +360,10 @@ class HomeViewModel @Inject constructor(
             val sharedPreferences = context.getSharedPreferences(MY_PREFERENCES_NAME, Context.MODE_PRIVATE)
             val userDeparture = sharedPreferences.getBoolean("userDeparture", false)
             setEvent(HomeContract.HomeEvent.LoadUserDeparture(userDeparture))
+            if (currentState.userDeparture && currentState.firtTransportTation == TransportType.BUS) {
+                getBusArrival()
+                Timber.e("busArrivalParameter", currentState.busArrivalParameter.toString())
+            }
         }
     }
 
@@ -405,6 +423,20 @@ class HomeViewModel @Inject constructor(
         return firstTransportation
     }
 
+    private fun getBusArrivalParameter(leg: LegInfo) {
+        setEvent(
+            HomeContract.HomeEvent.LoadBusArrivalParameter(
+                BusArrivalParameter(
+                    routeName = leg.routeName!!,
+                    stationName = leg.startPoint.name,
+                    lat = leg.startPoint.lat,
+                    lon = leg.startPoint.lon,
+                    subtypeIdx = 0,
+                )
+            )
+        )
+    }
+
     private fun getFirstTransportationNumber(legs: List<LegInfo>): Int {
         var firstTransportationNumber = 0
 
@@ -424,6 +456,7 @@ class HomeViewModel @Inject constructor(
             if (leg.transportType != TransportType.WALK) {
                 if (leg.transportType == TransportType.BUS) {
                     firstTransportationName = leg.routeName.toString().split(":")[1]
+                    getBusArrivalParameter(leg)
                 } else if (leg.transportType == TransportType.SUBWAY) {
                     firstTransportationName = leg.startPoint.name + "역"
                 }
@@ -497,6 +530,25 @@ class HomeViewModel @Inject constructor(
             return arrival.format(outputFormatter)
         } catch (e: Exception) {
             return "날짜 변환 중 오류 발생: ${e.message}"
+        }
+    }
+
+    fun getBusArrival() {
+        viewModelScope.launch {
+            getBusArrivalUseCase(
+                routeName = currentState.busArrivalParameter.routeName,
+                stationName = currentState.busArrivalParameter.stationName,
+                lat = currentState.busArrivalParameter.lat,
+                lon = currentState.busArrivalParameter.lon
+            ).onSuccess { busArrival ->
+                setState {
+                    copy(
+                        busRemainingStations = busArrival.realTimeBusArrival[0].remainingStations
+                    )
+                }
+            }.onFailure {
+                Timber.e("버스 도착 정보 조회 실패: ${it.message}")
+            }
         }
     }
 

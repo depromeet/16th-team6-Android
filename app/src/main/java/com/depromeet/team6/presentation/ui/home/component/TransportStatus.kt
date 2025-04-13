@@ -53,30 +53,32 @@ fun TransportStatus(
                 .padding(horizontal = 4.dp)
         )
 
-        Icon(
-            imageVector = ImageVector.vectorResource(R.drawable.ic_home_dot_grey),
-            contentDescription = stringResource(R.string.home_icon_dot),
-            modifier = Modifier
-                .padding(horizontal = 2.dp)
-                .align(Alignment.CenterVertically),
-            tint = colors.systemGrey1
-        )
+        if (transportationType == TransportType.BUS) {
+            Icon(
+                imageVector = ImageVector.vectorResource(R.drawable.ic_home_dot_grey),
+                contentDescription = stringResource(R.string.home_icon_dot),
+                modifier = Modifier
+                    .padding(horizontal = 2.dp)
+                    .align(Alignment.CenterVertically),
+                tint = colors.systemGrey1
+            )
 
-        Text(
-            text = stopLeft.toString(),
-            style = typography.bodyRegular13,
-            color = colors.systemGrey1,
-            modifier = Modifier
-                .padding(start = 4.dp)
-        )
+            Text(
+                text = stopLeft.toString(),
+                style = typography.bodyRegular13,
+                color = colors.systemGrey1,
+                modifier = Modifier
+                    .padding(start = 4.dp)
+            )
 
-        Text(
-            text = stopLeftText,
-            style = typography.bodyRegular13,
-            color = colors.systemGrey1,
-            modifier = Modifier
-                .padding(horizontal = 2.dp)
-        )
+            Text(
+                text = stopLeftText,
+                style = typography.bodyRegular13,
+                color = colors.systemGrey1,
+                modifier = Modifier
+                    .padding(horizontal = 2.dp)
+            )
+        }
     }
 }
 
