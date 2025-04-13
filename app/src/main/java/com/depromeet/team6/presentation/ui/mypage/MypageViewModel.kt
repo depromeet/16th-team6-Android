@@ -99,11 +99,13 @@ class MypageViewModel @Inject constructor(
             MypageContract.MypageEvent.AlarmMainScreenClicked -> TODO()
             is MypageContract.MypageEvent.AlarmTypeSelected -> {
                 setState { copy(selectedAlarmType = event.type) }
-
-                // TODO : 알림 타입 저장 saveAlarmSettings(event.type)
+                saveAlarmSettings(event.type)
             }
-            MypageContract.MypageEvent.SoundSettingClicked -> setState {
-                copy(alarmScreenState = MypageContract.AlarmScreenState.SOUND_SETTING)
+            MypageContract.MypageEvent.SoundSettingClicked -> {
+                setState {
+                    copy(alarmScreenState = MypageContract.AlarmScreenState.SOUND_SETTING)
+                }
+                loadAlarmSettings()
             }
         }
     }
@@ -262,6 +264,44 @@ class MypageViewModel @Inject constructor(
                     copy(
                         userCurrentLocation = location
                     )
+                }
+            }
+        }
+    }
+
+    private fun saveAlarmSettings(type: MypageContract.AlarmType) {
+        viewModelScope.launch {
+            try {
+                val isSound = when (type) {
+                    MypageContract.AlarmType.SOUND -> true
+                    MypageContract.AlarmType.VIBRATION -> false
+                }
+                userInfoRepositoryImpl.saveAlarmSound(isSound)
+            } catch (e: Exception) {
+                Timber.e("알람 설정 저장 실패: ${e.message}")
+            }
+        }
+    }
+
+    private fun loadAlarmSettings() {
+        viewModelScope.launch {
+            try {
+                val isSound = userInfoRepositoryImpl.getAlarmSound()
+
+                val alarmType = if (isSound) {
+                    MypageContract.AlarmType.SOUND
+                } else {
+                    MypageContract.AlarmType.VIBRATION
+                }
+
+                setState {
+                    copy(selectedAlarmType = alarmType)
+                }
+
+            } catch (e: Exception) {
+                Timber.e("알람 설정 불러오기 실패: ${e.message}")
+                setState {
+                    copy(selectedAlarmType = MypageContract.AlarmType.SOUND)
                 }
             }
         }

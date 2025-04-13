@@ -45,6 +45,10 @@ class UserInfoLocalDataSource @Inject constructor(
         get() = getValue(FCM_TOKEN)
         set(value) = setValue(FCM_TOKEN, value)
 
+    var alarmSound: Boolean
+        get() = getBooleanValue(ALARM_SOUND_SETTING, true)
+        set(value) = setBooleanValue(ALARM_SOUND_SETTING, value)
+
     var userHome: LatLng
         get() {
             val latLngStr = getValue(USER_HOME)
@@ -74,10 +78,17 @@ class UserInfoLocalDataSource @Inject constructor(
     private fun setValue(key: String, value: String) =
         sharedPreferences.edit { putString(key, value) }
 
+    private fun getBooleanValue(key: String, defaultValue: Boolean = true): Boolean =
+        sharedPreferences.getBoolean(key, defaultValue)
+
+    private fun setBooleanValue(key: String, value: Boolean) =
+        sharedPreferences.edit { putBoolean(key, value) }
+
     companion object {
         private const val FILE_NAME = "AtChaLocalDataSource"
         private const val INITIAL_VALUE = ""
         private const val FCM_TOKEN = "fcm_token"
         private const val USER_HOME = "user_home"
+        private const val ALARM_SOUND_SETTING = "alarm_sound_setting"
     }
 }
