@@ -81,6 +81,7 @@ fun AfterRegisterMap(
     var isMapReady by remember { mutableStateOf(false) }
 
     var userLocation by remember { mutableStateOf(currentLocation) }
+    var locationUpdateTrigger by remember { mutableStateOf(0) }
 
     val departLocation = LatLng(legs[0].startPoint.lat, legs[0].startPoint.lon)
     val destinationLocation = LatLng(legs[legs.size - 1].endPoint.lat, legs[legs.size - 1].endPoint.lon)
@@ -250,6 +251,7 @@ fun AfterRegisterMap(
                 locationResult.lastLocation?.let { location ->
                     val newLocation = LatLng(location.latitude, location.longitude)
                     userLocation = newLocation
+                    locationUpdateTrigger++
 
                     val distance = calculateDistance(
                         newLocation.latitude,
@@ -293,15 +295,15 @@ fun AfterRegisterMap(
         }
     }
 
-    LaunchedEffect(currentLocation, isMapReady) {
+    // userLocation 또는 locationUpdateTrigger가 변경될 때마다 현재 위치 마커 업데이트
+    LaunchedEffect(userLocation, locationUpdateTrigger, isMapReady) {
         if (isMapReady) {
-            val tMapPoint = TMapPoint(currentLocation.latitude, currentLocation.longitude)
+            val tMapPoint = TMapPoint(userLocation.latitude, userLocation.longitude)
 
             withContext(Dispatchers.Main) {
                 try {
                     tMapView.removeTMapMarkerItem("CurrentMarker")
                 } catch (e: Exception) {
-                    Timber.e(e)
                 }
 
                 val markerDrawable =
@@ -316,6 +318,8 @@ fun AfterRegisterMap(
                 }
 
                 tMapView.addTMapMarkerItem(markerItem)
+
+                viewModel.updateCurrentLocation(userLocation)
             }
         }
     }

@@ -555,6 +555,16 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    fun updateCurrentLocation(newLocation: LatLng) {
+        viewModelScope.launch {
+            setState {
+                copy(
+                    currentLocation = newLocation
+                )
+            }
+        }
+    }
+
     companion object {
         private const val MY_PREFERENCES_NAME = "MyPreferences"
     }
