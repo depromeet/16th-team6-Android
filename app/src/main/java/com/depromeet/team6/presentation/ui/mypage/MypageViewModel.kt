@@ -96,6 +96,15 @@ class MypageViewModel @Inject constructor(
             }
 
             MypageContract.MypageEvent.AlarmSettingClicked -> navigateToAlarmSetting()
+            MypageContract.MypageEvent.AlarmMainScreenClicked -> TODO()
+            is MypageContract.MypageEvent.AlarmTypeSelected -> {
+                setState { copy(selectedAlarmType = event.type) }
+
+                // TODO : 알림 타입 저장 saveAlarmSettings(event.type)
+            }
+            MypageContract.MypageEvent.SoundSettingClicked -> setState {
+                copy(alarmScreenState = MypageContract.AlarmScreenState.SOUND_SETTING)
+            }
         }
     }
 
@@ -303,7 +312,10 @@ class MypageViewModel @Inject constructor(
         } else if (currentScreen == MypageContract.MypageScreen.CHANGE_HOME) {
             setState { copy(currentScreen = MypageContract.MypageScreen.MAIN) }
         } else if (currentScreen == MypageContract.MypageScreen.ALARM) {
-            setState { copy(currentScreen = MypageContract.MypageScreen.MAIN) }
+            if (currentState.alarmScreenState == MypageContract.AlarmScreenState.SOUND_SETTING) {
+                setState { copy(alarmScreenState = MypageContract.AlarmScreenState.MAIN) }
+            } else
+                setState { copy(currentScreen = MypageContract.MypageScreen.MAIN) }
         }
     }
 }

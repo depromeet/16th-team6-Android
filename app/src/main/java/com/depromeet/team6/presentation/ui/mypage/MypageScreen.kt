@@ -174,7 +174,11 @@ fun MypageRoute(
                                 padding = padding,
                                 modifier = modifier,
                                 mypageUiState = uiState,
-                                onBackClick = { mypageViewModel.setEvent(MypageContract.MypageEvent.BackPressed) }
+                                onBackClick = { mypageViewModel.setEvent(MypageContract.MypageEvent.BackPressed) },
+                                onAlarmTypeSelected = { type ->
+                                    mypageViewModel.setEvent(MypageContract.MypageEvent.AlarmTypeSelected(type))
+                                },
+                                onSoundSettingClick = { mypageViewModel.setEvent(MypageContract.MypageEvent.SoundSettingClicked) }
                             )
                         }
                     }

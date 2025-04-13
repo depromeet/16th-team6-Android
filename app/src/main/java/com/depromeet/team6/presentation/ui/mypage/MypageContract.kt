@@ -17,6 +17,14 @@ class MypageContract {
         MAIN, ACCOUNT, CHANGE_HOME, ALARM
     }
 
+    enum class AlarmScreenState {
+        MAIN, SOUND_SETTING
+    }
+
+    enum class AlarmType {
+        VIBRATION, SOUND
+    }
+
     data class MypageUiState(
         val loadState: LoadState = LoadState.Idle,
         val currentScreen: MypageScreen = MypageScreen.MAIN,
@@ -42,7 +50,9 @@ class MypageContract {
             alertFrequencies = emptySet(),
             fcmToken = ""
         ),
-        val mapViewVisible: Boolean = false
+        val mapViewVisible: Boolean = false,
+        val alarmScreenState: AlarmScreenState = AlarmScreenState.MAIN,
+        val selectedAlarmType: AlarmType = AlarmType.SOUND
     ) : UiState
 
     sealed interface MypageSideEffect : UiSideEffect {
@@ -70,5 +80,8 @@ class MypageContract {
         data class UpdateSearchText(val text: String) : MypageEvent()
         data object SearchPopUpBackPressed : MypageEvent()
         data class LocationSelectButtonClicked(val mypageSearchLocation: Address) : MypageEvent()
+        data object SoundSettingClicked : MypageEvent()
+        data object AlarmMainScreenClicked : MypageEvent()
+        data class AlarmTypeSelected(val type: AlarmType) : MypageEvent()
     }
 }

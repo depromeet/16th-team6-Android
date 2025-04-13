@@ -151,6 +151,8 @@
     <string name="mypage_withdraw_dialog_confirm">탈퇴하기</string>
     <string name="mypage_dialog_cancle">취소</string>
     <string name="home_bubble_user_departure">출발~!</string>
+    <string name="mypage_alarm_vibration_text">진동</string>
+    <string name="mypage_alarm_sound_text">소리</string>
 
 
 </resources>

@@ -1,10 +1,13 @@
 package com.depromeet.team6.presentation.ui.mypage
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -20,6 +23,7 @@ import com.depromeet.team6.R
 import com.depromeet.team6.presentation.ui.mypage.component.MypageListItem
 import com.depromeet.team6.presentation.ui.mypage.component.MypageMapView
 import com.depromeet.team6.presentation.ui.mypage.component.MypageSelectedHome
+import com.depromeet.team6.presentation.ui.mypage.component.SoundVibrateSelectView
 import com.depromeet.team6.presentation.ui.mypage.component.TitleBar
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.ui.theme.LocalTeam6Colors
@@ -33,7 +37,8 @@ fun MypageAlarmScreen(
     onBackClick: () -> Unit = {},
     dismissDialog: () -> Unit = {},
     onSoundSettingClick: () -> Unit = {},
-    onAlarmTimeSettingClick: () -> Unit = {}
+    onAlarmTimeSettingClick: () -> Unit = {},
+    onAlarmTypeSelected: (MypageContract.AlarmType) -> Unit = {}
 ) {
     val colors = LocalTeam6Colors.current
     val context = LocalContext.current
@@ -50,19 +55,54 @@ fun MypageAlarmScreen(
                 .noRippleClickable { dismissDialog() }
         ) {
             TitleBar(
-                title = stringResource(R.string.mypage_alarm_title_text),
+                title = stringResource(
+                    if (mypageUiState.alarmScreenState == MypageContract.AlarmScreenState.MAIN)
+                        R.string.mypage_alarm_title_text
+                    else if (mypageUiState.alarmScreenState == MypageContract.AlarmScreenState.SOUND_SETTING)
+                        R.string.mypage_alarm_sound_setting_text
+                    else
+                        R.string.mypage_alarm_time_setting_text
+                ),
                 onBackClick = onBackClick
             )
 
-            MypageListItem(
-                title = stringResource(R.string.mypage_alarm_sound_setting_text),
-                onClick = onSoundSettingClick
-            )
+            when (mypageUiState.alarmScreenState) {
+                MypageContract.AlarmScreenState.MAIN -> {
+                    MypageListItem(
+                        title = stringResource(R.string.mypage_alarm_sound_setting_text),
+                        onClick = onSoundSettingClick
+                    )
 
-            MypageListItem(
-                title = stringResource(R.string.mypage_alarm_time_setting_text),
-                onClick = onAlarmTimeSettingClick
-            )
+                    MypageListItem(
+                        title = stringResource(R.string.mypage_alarm_time_setting_text),
+                        onClick = onAlarmTimeSettingClick
+                    )
+                }
+                MypageContract.AlarmScreenState.SOUND_SETTING -> {
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 20.dp, horizontal = 16.dp),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        SoundVibrateSelectView(
+                            type = MypageContract.AlarmType.SOUND,
+                            isSelected = mypageUiState.selectedAlarmType == MypageContract.AlarmType.SOUND,
+                            onSelected = {onAlarmTypeSelected(MypageContract.AlarmType.SOUND)},
+                            modifier = Modifier.weight(1f)
+                        )
+
+                        SoundVibrateSelectView(
+                            type = MypageContract.AlarmType.VIBRATION,
+                            isSelected = mypageUiState.selectedAlarmType == MypageContract.AlarmType.VIBRATION,
+                            onSelected = {onAlarmTypeSelected(MypageContract.AlarmType.VIBRATION)},
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
+                }
+            }
+
 
         }
 
