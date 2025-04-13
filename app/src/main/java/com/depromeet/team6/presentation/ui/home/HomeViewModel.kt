@@ -5,7 +5,6 @@ import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.depromeet.team6.data.datalocal.manager.LockServiceManager
 import com.depromeet.team6.domain.model.Address
-import com.depromeet.team6.domain.model.BusArrival
 import com.depromeet.team6.domain.model.RouteLocation
 import com.depromeet.team6.domain.model.course.CourseInfo
 import com.depromeet.team6.domain.model.course.LegInfo
@@ -18,9 +17,6 @@ import com.depromeet.team6.domain.usecase.GetCourseSearchResultsUseCase
 import com.depromeet.team6.domain.usecase.GetTaxiCostUseCase
 import com.depromeet.team6.domain.usecase.GetUserInfoUseCase
 import com.depromeet.team6.presentation.model.bus.BusArrivalParameter
-import com.depromeet.team6.presentation.model.bus.BusPositionParameter
-import com.depromeet.team6.presentation.ui.bus.BusCourseContract
-import com.depromeet.team6.presentation.ui.home.component.TimeText
 import com.depromeet.team6.presentation.util.base.BaseViewModel
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.google.android.gms.maps.model.LatLng
@@ -432,7 +428,7 @@ class HomeViewModel @Inject constructor(
                     stationName = leg.startPoint.name,
                     lat = leg.startPoint.lat,
                     lon = leg.startPoint.lon,
-                    subtypeIdx = 0,
+                    subtypeIdx = 0
                 )
             )
         )

@@ -8,7 +8,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
@@ -49,8 +48,9 @@ fun LastTimer(
 
     val remainingTimeMillis by remember {
         derivedStateOf {
-            if (targetTimeMillis == null) 0L
-            else {
+            if (targetTimeMillis == null) {
+                0L
+            } else {
                 val remaining = targetTimeMillis!! - currentTime
                 if (remaining < 0) 0L else remaining
             }
@@ -140,7 +140,7 @@ private fun parseTargetTimeMillis(timeString: String): Long? {
                     return null
                 }
             }
-            
+
             val duration = Duration.between(LocalDateTime.now(), targetDateTime)
             if (duration.isNegative) {
                 0L

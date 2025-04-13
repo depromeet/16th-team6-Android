@@ -1,12 +1,8 @@
 package com.depromeet.team6.presentation.ui.home.component
 
 import TransportVectorIconWithTextBitmap
-import android.content.Context
-import android.content.pm.PackageManager
 import android.graphics.PointF
 import android.location.Location
-import android.location.LocationManager
-import android.os.Bundle
 import android.os.Looper
 import android.widget.FrameLayout
 import android.widget.Toast
@@ -38,7 +34,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
 import com.depromeet.team6.BuildConfig
@@ -54,9 +49,7 @@ import com.depromeet.team6.presentation.util.permission.PermissionUtil
 import com.depromeet.team6.presentation.util.toast.atChaToastMessage
 import com.depromeet.team6.presentation.util.view.TransportTypeUiMapper
 import com.depromeet.team6.presentation.util.view.toPx
-import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationListener
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
@@ -254,20 +247,22 @@ fun AfterRegisterMap(
     val locationCallback = remember {
         object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult) {
-               locationResult.lastLocation?.let { location ->
-                   val newLocation = LatLng(location.latitude, location.longitude)
-                   userLocation = newLocation
+                locationResult.lastLocation?.let { location ->
+                    val newLocation = LatLng(location.latitude, location.longitude)
+                    userLocation = newLocation
 
-                   val distance = calculateDistance(
-                       newLocation.latitude, newLocation.longitude,
-                       firstTransportationPoint.latitude, firstTransportationPoint.longitude
-                   )
+                    val distance = calculateDistance(
+                        newLocation.latitude,
+                        newLocation.longitude,
+                        firstTransportationPoint.latitude,
+                        firstTransportationPoint.longitude
+                    )
 
-                   if (distance <= 50f && !hasShownToast) {
-                       atChaToastMessage(context, R.string.home_arrive_station_toast_text, Toast.LENGTH_LONG)
-                       hasShownToast = true
-                   }
-               }
+                    if (distance <= 50f && !hasShownToast) {
+                        atChaToastMessage(context, R.string.home_arrive_station_toast_text, Toast.LENGTH_LONG)
+                        hasShownToast = true
+                    }
+                }
             }
         }
     }
@@ -297,13 +292,12 @@ fun AfterRegisterMap(
             fusedLocationClient.removeLocationUpdates(locationCallback)
         }
     }
-    
+
     LaunchedEffect(currentLocation, isMapReady) {
         if (isMapReady) {
             val tMapPoint = TMapPoint(currentLocation.latitude, currentLocation.longitude)
 
             withContext(Dispatchers.Main) {
-
                 try {
                     tMapView.removeTMapMarkerItem("CurrentMarker")
                 } catch (e: Exception) {

@@ -1,7 +1,6 @@
 package com.depromeet.team6.presentation.ui.home
 
 import com.depromeet.team6.domain.model.Address
-import com.depromeet.team6.domain.model.BusArrival
 import com.depromeet.team6.domain.model.course.CourseInfo
 import com.depromeet.team6.domain.model.course.TransportType
 import com.depromeet.team6.presentation.model.bus.BusArrivalParameter

@@ -522,7 +522,7 @@ private fun formatTimeString(timeString: String): String {
             // 이미 시간 형식이면 그대로 반환 (HH:mm:ss 또는 HH:mm)
             if (timeString.split(":").size == 2) {
                 // HH:mm 형식인 경우 HH:mm:00으로 변환
-                "${timeString}:00"
+                "$timeString:00"
             } else {
                 timeString
             }
