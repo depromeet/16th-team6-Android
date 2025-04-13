@@ -133,6 +133,7 @@
     <string name="mypage_alarm_title_text">알림 설정</string>
     <string name="mypage_alarm_sound_setting_text">진동/벨소리 설정</string>
     <string name="mypage_alarm_time_setting_text">푸시 알림 빈도 설정</string>
+    <string name="mypage_alarm_info_text">출발지에서 막차 타는 곳까지 시간 내에 걸어갈 수 있게\n 푸시 알림 받는 빈도를 설정해주세요.</string>
     <string name="mypage_policy_text">약관</string>
     <string name="mypage_version_title_text">현재 버전 1.0.0</string>
     <string name="mypage_account_logout_text">로그아웃</string>

@@ -107,6 +107,12 @@ class MypageViewModel @Inject constructor(
                 }
                 loadAlarmSettings()
             }
+
+            MypageContract.MypageEvent.TimeSettingClicked -> {
+                setState {
+                    copy(alarmScreenState = MypageContract.AlarmScreenState.TIME_SETTING)
+                }
+            }
         }
     }
 
@@ -354,7 +360,10 @@ class MypageViewModel @Inject constructor(
         } else if (currentScreen == MypageContract.MypageScreen.ALARM) {
             if (currentState.alarmScreenState == MypageContract.AlarmScreenState.SOUND_SETTING) {
                 setState { copy(alarmScreenState = MypageContract.AlarmScreenState.MAIN) }
-            } else
+            } else if (currentState.alarmScreenState == MypageContract.AlarmScreenState.TIME_SETTING) {
+                setState { copy(alarmScreenState = MypageContract.AlarmScreenState.MAIN) }
+            }
+            else
                 setState { copy(currentScreen = MypageContract.MypageScreen.MAIN) }
         }
     }

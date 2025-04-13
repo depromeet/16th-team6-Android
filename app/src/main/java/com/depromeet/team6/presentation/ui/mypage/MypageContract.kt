@@ -18,7 +18,7 @@ class MypageContract {
     }
 
     enum class AlarmScreenState {
-        MAIN, SOUND_SETTING
+        MAIN, SOUND_SETTING, TIME_SETTING
     }
 
     enum class AlarmType {
@@ -81,6 +81,7 @@ class MypageContract {
         data object SearchPopUpBackPressed : MypageEvent()
         data class LocationSelectButtonClicked(val mypageSearchLocation: Address) : MypageEvent()
         data object SoundSettingClicked : MypageEvent()
+        data object TimeSettingClicked : MypageEvent()
         data object AlarmMainScreenClicked : MypageEvent()
         data class AlarmTypeSelected(val type: AlarmType) : MypageEvent()
     }

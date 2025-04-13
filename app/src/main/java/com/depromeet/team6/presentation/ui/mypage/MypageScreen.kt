@@ -178,7 +178,8 @@ fun MypageRoute(
                                 onAlarmTypeSelected = { type ->
                                     mypageViewModel.setEvent(MypageContract.MypageEvent.AlarmTypeSelected(type))
                                 },
-                                onSoundSettingClick = { mypageViewModel.setEvent(MypageContract.MypageEvent.SoundSettingClicked) }
+                                onSoundSettingClick = { mypageViewModel.setEvent(MypageContract.MypageEvent.SoundSettingClicked) },
+                                onAlarmTimeSettingClick = { mypageViewModel.setEvent(MypageContract.MypageEvent.TimeSettingClicked) }
                             )
                         }
                     }

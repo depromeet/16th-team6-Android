@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -25,8 +26,11 @@ import com.depromeet.team6.presentation.ui.mypage.component.MypageMapView
 import com.depromeet.team6.presentation.ui.mypage.component.MypageSelectedHome
 import com.depromeet.team6.presentation.ui.mypage.component.SoundVibrateSelectView
 import com.depromeet.team6.presentation.ui.mypage.component.TitleBar
+import com.depromeet.team6.presentation.ui.onboarding.component.AlarmTime
+import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingAlarmSelector
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.ui.theme.LocalTeam6Colors
+import com.depromeet.team6.ui.theme.LocalTeam6Typography
 import com.google.android.gms.maps.model.LatLng
 
 @Composable
@@ -41,6 +45,7 @@ fun MypageAlarmScreen(
     onAlarmTypeSelected: (MypageContract.AlarmType) -> Unit = {}
 ) {
     val colors = LocalTeam6Colors.current
+    val typography = LocalTeam6Typography.current
     val context = LocalContext.current
 
     Box(
@@ -56,12 +61,11 @@ fun MypageAlarmScreen(
         ) {
             TitleBar(
                 title = stringResource(
-                    if (mypageUiState.alarmScreenState == MypageContract.AlarmScreenState.MAIN)
-                        R.string.mypage_alarm_title_text
-                    else if (mypageUiState.alarmScreenState == MypageContract.AlarmScreenState.SOUND_SETTING)
-                        R.string.mypage_alarm_sound_setting_text
-                    else
-                        R.string.mypage_alarm_time_setting_text
+                    when (mypageUiState.alarmScreenState) {
+                        MypageContract.AlarmScreenState.MAIN -> R.string.mypage_alarm_title_text
+                        MypageContract.AlarmScreenState.SOUND_SETTING -> R.string.mypage_alarm_sound_setting_text
+                        else -> R.string.mypage_alarm_time_setting_text
+                    }
                 ),
                 onBackClick = onBackClick
             )
@@ -100,6 +104,24 @@ fun MypageAlarmScreen(
                             modifier = Modifier.weight(1f)
                         )
                     }
+                }
+
+                MypageContract.AlarmScreenState.TIME_SETTING -> {
+                    Text(
+                        text = stringResource(R.string.mypage_alarm_info_text),
+                        style = typography.bodyRegular15,
+                        color = colors.white,
+                        modifier = Modifier.padding(vertical = 24.dp, horizontal = 16.dp)
+                    )
+                    OnboardingAlarmSelector(
+//                        selectedItems = uiState.alertFrequencies.mapNotNull { timeValue ->
+//                            AlarmTime.entries.find { it.minutes == timeValue }
+//                        }.toSet(),
+//                        onItemClick = onAlarmTimeSelected
+                        selectedItems = emptySet(),
+                        onItemClick = {},
+                        modifier = Modifier.padding(vertical = 12.dp)
+                    )
                 }
             }
 
