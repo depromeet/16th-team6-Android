@@ -118,6 +118,7 @@ fun MypageRoute(
                                 mypageUiState = uiState,
                                 onAccountClick = { mypageViewModel.setEvent(MypageContract.MypageEvent.AccountClicked) },
                                 onChangeHomeClick = { mypageViewModel.setEvent(MypageContract.MypageEvent.ChangeHomeClicked) },
+                                onAlarmSettingClick = { mypageViewModel.setEvent(MypageContract.MypageEvent.AlarmSettingClicked) },
                                 onBackClick = { mypageViewModel.setEvent(MypageContract.MypageEvent.BackPressed) },
                                 onWebViewClicked = { mypageViewModel.setEvent(MypageContract.MypageEvent.PolicyClicked) },
                                 dismissDialog = { mypageViewModel.setEvent(MypageContract.MypageEvent.DismissDialog) }
@@ -167,6 +168,15 @@ fun MypageRoute(
                                 }
                             )
                         }
+
+                        MypageContract.MypageScreen.ALARM -> {
+                            MypageAlarmScreen(
+                                padding = padding,
+                                modifier = modifier,
+                                mypageUiState = uiState,
+                                onBackClick = { mypageViewModel.setEvent(MypageContract.MypageEvent.BackPressed) }
+                            )
+                        }
                     }
                 }
             }
@@ -186,6 +196,7 @@ fun MypageScreen(
     withDrawClicked: () -> Unit = {},
     onAccountClick: () -> Unit = {},
     onChangeHomeClick: () -> Unit = {},
+    onAlarmSettingClick: () -> Unit = {},
     onBackClick: () -> Unit = {},
     onWebViewClicked: () -> Unit = {},
     webViewClose: () -> Unit = {},
@@ -227,7 +238,7 @@ fun MypageScreen(
 
                 MypageListItem(
                     title = stringResource(R.string.mypage_alarm_title_text),
-                    onClick = logoutClicked
+                    onClick = onAlarmSettingClick
                 )
 
                 MypageListItem(

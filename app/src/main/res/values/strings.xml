@@ -131,6 +131,8 @@
     <string name="mypage_change_home_toast_text">집 주소가 변경되었습니다.</string>
     <string name="mypage_change_home_button_text">다른 주소로 변경하기</string>
     <string name="mypage_alarm_title_text">알림 설정</string>
+    <string name="mypage_alarm_sound_setting_text">진동/벨소리 설정</string>
+    <string name="mypage_alarm_time_setting_text">푸시 알림 빈도 설정</string>
     <string name="mypage_policy_text">약관</string>
     <string name="mypage_version_title_text">현재 버전 1.0.0</string>
     <string name="mypage_account_logout_text">로그아웃</string>

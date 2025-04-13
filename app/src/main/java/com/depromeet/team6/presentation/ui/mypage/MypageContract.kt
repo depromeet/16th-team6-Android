@@ -14,7 +14,7 @@ import com.google.android.gms.maps.model.LatLng
 
 class MypageContract {
     enum class MypageScreen {
-        MAIN, ACCOUNT, CHANGE_HOME
+        MAIN, ACCOUNT, CHANGE_HOME, ALARM
     }
 
     data class MypageUiState(
@@ -61,6 +61,7 @@ class MypageContract {
         data object DismissDialog : MypageEvent()
         data object AccountClicked : MypageEvent()
         data object ChangeHomeClicked : MypageEvent()
+        data object AlarmSettingClicked : MypageEvent()
         data class UpdateMyAddress(val myAdress: Address) : MypageEvent()
         data class ChangeMapViewVisible(val mapViewVisible: Boolean) : MypageEvent()
         data object ClearAddress : MypageEvent()

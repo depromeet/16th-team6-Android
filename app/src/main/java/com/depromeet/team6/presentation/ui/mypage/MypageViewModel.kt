@@ -94,6 +94,8 @@ class MypageViewModel @Inject constructor(
                     searchPopupVisible = false
                 )
             }
+
+            MypageContract.MypageEvent.AlarmSettingClicked -> navigateToAlarmSetting()
         }
     }
 
@@ -288,6 +290,10 @@ class MypageViewModel @Inject constructor(
         setState { copy(currentScreen = MypageContract.MypageScreen.CHANGE_HOME) }
     }
 
+    private fun navigateToAlarmSetting() {
+        setState { copy(currentScreen = MypageContract.MypageScreen.ALARM) }
+    }
+
     private fun navigateBack() {
         val currentScreen = currentState.currentScreen
         if (currentScreen == MypageContract.MypageScreen.MAIN) {
@@ -295,6 +301,8 @@ class MypageViewModel @Inject constructor(
         } else if (currentScreen == MypageContract.MypageScreen.ACCOUNT) {
             setState { copy(currentScreen = MypageContract.MypageScreen.MAIN) }
         } else if (currentScreen == MypageContract.MypageScreen.CHANGE_HOME) {
+            setState { copy(currentScreen = MypageContract.MypageScreen.MAIN) }
+        } else if (currentScreen == MypageContract.MypageScreen.ALARM) {
             setState { copy(currentScreen = MypageContract.MypageScreen.MAIN) }
         }
     }
