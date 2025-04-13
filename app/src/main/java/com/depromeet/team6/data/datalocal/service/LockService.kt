@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.media.MediaPlayer
-import android.os.Build
 import android.os.CountDownTimer
 import android.os.IBinder
 import android.os.VibrationEffect
@@ -98,7 +97,6 @@ class LockService : Service() {
                     stopVibration()
                 }
             }.start()
-
         } catch (e: Exception) {
             Log.e("LockService", "진동 중 오류 발생: ${e.message}", e)
         }

@@ -41,5 +41,4 @@ class UserInfoRepositoryImpl @Inject constructor(
     }
 
     override fun getAlarmSound(): Boolean = userInfoLocalDataSource.alarmSound
-
 }

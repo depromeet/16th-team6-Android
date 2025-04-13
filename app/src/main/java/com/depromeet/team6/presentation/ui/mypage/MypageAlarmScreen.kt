@@ -12,8 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -22,8 +20,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.depromeet.team6.R
 import com.depromeet.team6.presentation.ui.mypage.component.MypageListItem
-import com.depromeet.team6.presentation.ui.mypage.component.MypageMapView
-import com.depromeet.team6.presentation.ui.mypage.component.MypageSelectedHome
 import com.depromeet.team6.presentation.ui.mypage.component.SoundVibrateSelectView
 import com.depromeet.team6.presentation.ui.mypage.component.TitleBar
 import com.depromeet.team6.presentation.ui.onboarding.component.AlarmTime
@@ -34,7 +30,6 @@ import com.depromeet.team6.ui.theme.LocalTeam6Colors
 import com.depromeet.team6.ui.theme.LocalTeam6Typography
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.depromeet.team6.ui.theme.defaultTeam6Typography
-import com.google.android.gms.maps.model.LatLng
 
 @Composable
 fun MypageAlarmScreen(
@@ -88,7 +83,6 @@ fun MypageAlarmScreen(
                     )
                 }
                 MypageContract.AlarmScreenState.SOUND_SETTING -> {
-
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -98,14 +92,14 @@ fun MypageAlarmScreen(
                         SoundVibrateSelectView(
                             type = MypageContract.AlarmType.SOUND,
                             isSelected = mypageUiState.selectedAlarmType == MypageContract.AlarmType.SOUND,
-                            onSelected = {onAlarmTypeSelected(MypageContract.AlarmType.SOUND)},
+                            onSelected = { onAlarmTypeSelected(MypageContract.AlarmType.SOUND) },
                             modifier = Modifier.weight(1f)
                         )
 
                         SoundVibrateSelectView(
                             type = MypageContract.AlarmType.VIBRATION,
                             isSelected = mypageUiState.selectedAlarmType == MypageContract.AlarmType.VIBRATION,
-                            onSelected = {onAlarmTypeSelected(MypageContract.AlarmType.VIBRATION)},
+                            onSelected = { onAlarmTypeSelected(MypageContract.AlarmType.VIBRATION) },
                             modifier = Modifier.weight(1f)
                         )
                     }
@@ -153,10 +147,7 @@ fun MypageAlarmScreen(
                     }
                 }
             }
-
-
         }
-
     }
 }
 

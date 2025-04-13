@@ -1,9 +1,7 @@
 package com.depromeet.team6.presentation.ui.mypage
 
-import android.content.Context
 import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.MypageUserInfo
-import com.depromeet.team6.domain.model.UserInfo
 import com.depromeet.team6.presentation.model.location.Location
 import com.depromeet.team6.presentation.util.DefaultLntLng
 import com.depromeet.team6.presentation.util.base.UiEvent

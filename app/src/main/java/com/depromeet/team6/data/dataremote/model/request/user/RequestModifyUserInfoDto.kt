@@ -1,7 +1,6 @@
 package com.depromeet.team6.data.dataremote.model.request.user
 
 import com.depromeet.team6.data.dataremote.util.ApiConstraints.FCM_TOKEN
-import com.depromeet.team6.data.dataremote.util.ApiConstraints.PROVIDER
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 

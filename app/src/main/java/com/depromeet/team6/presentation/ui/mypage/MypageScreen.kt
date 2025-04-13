@@ -1,18 +1,10 @@
 package com.depromeet.team6.presentation.ui.mypage
 
-import android.content.Context
-import android.content.Intent
-import android.graphics.Paint.Align
-import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -34,7 +26,6 @@ import com.depromeet.team6.presentation.ui.mypage.component.MyPageConfirmDialog
 import com.depromeet.team6.presentation.ui.mypage.component.MypageListItem
 import com.depromeet.team6.presentation.ui.mypage.component.MypageVersionItem
 import com.depromeet.team6.presentation.ui.mypage.component.TitleBar
-import com.depromeet.team6.presentation.ui.onboarding.OnboardingContract
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingSearchPopup
 import com.depromeet.team6.presentation.util.WebViewUrl
 import com.depromeet.team6.presentation.util.WebViewUrl.PRIVACY_POLICY_URL
@@ -218,6 +209,7 @@ fun MypageRoute(
         }
     }
 }
+
 @Composable
 fun MypageScreen(
     modifier: Modifier = Modifier,
@@ -310,7 +302,6 @@ fun MypageScreen(
                 modifier = Modifier.align(Alignment.BottomCenter)
                     .padding(bottom = 32.dp)
             )
-
         }
     }
 }

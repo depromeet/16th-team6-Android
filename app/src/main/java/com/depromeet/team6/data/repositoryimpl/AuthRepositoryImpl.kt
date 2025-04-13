@@ -39,5 +39,4 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun modifyUserInfo(modifyUserInfoDto: RequestModifyUserInfoDto): Result<UserInfo> =
         authRemoteDataSource.modifyUserInfo(requestModifyUserInfoDto = modifyUserInfoDto)
             .mapCatching { it.toDomain() }
-
 }

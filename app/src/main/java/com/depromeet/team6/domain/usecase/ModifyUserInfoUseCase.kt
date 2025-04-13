@@ -10,5 +10,4 @@ class ModifyUserInfoUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(modifyUserInfoDto: RequestModifyUserInfoDto): Result<UserInfo> =
         authRepository.modifyUserInfo(modifyUserInfoDto = modifyUserInfoDto)
-
 }

@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
-import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewModelScope
 import com.depromeet.team6.R
 import com.depromeet.team6.data.dataremote.model.request.user.RequestModifyUserInfoDto
@@ -227,7 +226,6 @@ class MypageViewModel @Inject constructor(
                         setState { copy(mapViewVisible = false) }
 
                         atChaToastMessage(context, R.string.mypage_change_home_toast_text, Toast.LENGTH_SHORT)
-
                     }
                     .onFailure { error ->
                         Timber.e("주소 업데이트 실패: ${error.message}")
@@ -286,7 +284,6 @@ class MypageViewModel @Inject constructor(
         }
     }
 
-
     private fun setLocationToHomeAddress(
         lat: Double,
         lon: Double
@@ -296,10 +293,11 @@ class MypageViewModel @Inject constructor(
                 .onSuccess { address ->
                     setState {
                         copy(
-                        myAdress = myAdress.copy(
-                            address = address.address
+                            myAdress = myAdress.copy(
+                                address = address.address
+                            )
                         )
-                    ) }
+                    }
                 }.onFailure {
                     Timber.e("주소 변환 실패: ${it.message}")
                 }
@@ -360,7 +358,6 @@ class MypageViewModel @Inject constructor(
                 setState {
                     copy(selectedAlarmType = alarmType)
                 }
-
             } catch (e: Exception) {
                 Timber.e("알람 설정 불러오기 실패: ${e.message}")
                 setState {
@@ -419,9 +416,9 @@ class MypageViewModel @Inject constructor(
                 setState { copy(alarmScreenState = MypageContract.AlarmScreenState.MAIN) }
             } else if (currentState.alarmScreenState == MypageContract.AlarmScreenState.TIME_SETTING) {
                 setState { copy(alarmScreenState = MypageContract.AlarmScreenState.MAIN) }
-            }
-            else
+            } else {
                 setState { copy(currentScreen = MypageContract.MypageScreen.MAIN) }
+            }
         }
     }
 }
