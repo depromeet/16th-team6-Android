@@ -347,7 +347,9 @@ fun HomeScreen(
                     .zIndex(1f),
                 onRefreshClick = {
                     onRefreshClick()
-                    viewModel.getBusArrival()
+                    if (homeUiState.firtTransportTation == TransportType.BUS) {
+                        viewModel.getBusArrival()
+                    }
                 },
                 onIconClick = {
                     characterAnimationTrigger++
