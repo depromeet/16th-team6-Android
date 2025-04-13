@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.media.MediaPlayer
 import android.os.Build
+import android.os.CountDownTimer
 import android.os.IBinder
 import android.os.VibrationEffect
 import android.os.Vibrator
@@ -44,6 +45,8 @@ class LockService : Service() {
     private var mediaPlayer: MediaPlayer? = null
     private var vibrator: Vibrator? = null
 
+    private var vibrationTimer: CountDownTimer? = null
+
     private fun playAlarm() {
         val isSound = userInfoRepositoryImpl.getAlarmSound()
 
@@ -77,11 +80,25 @@ class LockService : Service() {
         try {
             vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
 
+            val pattern = longArrayOf(0, 1000, 500)
+            val repeatIndex = 0
+
             val vibrationEffect = VibrationEffect.createWaveform(
-                longArrayOf(0, 1000, 500, 1000, 500, 1000),
-                -1
+                pattern,
+                repeatIndex
             )
             vibrator?.vibrate(vibrationEffect)
+
+            vibrationTimer?.cancel()
+            vibrationTimer = object : CountDownTimer(60000, 60000) {
+                override fun onTick(millisUntilFinished: Long) {
+                }
+
+                override fun onFinish() {
+                    stopVibration()
+                }
+            }.start()
+
         } catch (e: Exception) {
             Log.e("LockService", "진동 중 오류 발생: ${e.message}", e)
         }
@@ -104,6 +121,8 @@ class LockService : Service() {
     }
 
     private fun stopVibration() {
+        vibrationTimer?.cancel()
+        vibrationTimer = null
         vibrator?.cancel()
         vibrator = null
         Log.d("LockService", "진동 중지")
@@ -151,6 +170,8 @@ class LockService : Service() {
 
         stopLockReceiver()
         stopAlarm()
+        vibrationTimer?.cancel()
+        vibrationTimer = null
         lockServiceManager.stop()
         super.onDestroy()
     }
