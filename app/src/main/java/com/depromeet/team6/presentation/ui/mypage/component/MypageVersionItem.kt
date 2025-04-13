@@ -43,7 +43,6 @@ fun MypageVersionItem(
             .background(
                 colors.greyWashBackground
             )
-            .noRippleClickable(onClick = onClick)
     ) {
         Row(
             modifier = modifier

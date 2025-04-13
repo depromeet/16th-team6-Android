@@ -1,6 +1,8 @@
 package com.depromeet.team6.presentation.ui.mypage
 
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.widget.Toast
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewModelScope
@@ -96,7 +98,6 @@ class MypageViewModel @Inject constructor(
             }
 
             MypageContract.MypageEvent.AlarmSettingClicked -> navigateToAlarmSetting()
-            MypageContract.MypageEvent.AlarmMainScreenClicked -> TODO()
             is MypageContract.MypageEvent.AlarmTypeSelected -> {
                 setState { copy(selectedAlarmType = event.type) }
                 saveAlarmSettings(event.type)
@@ -116,10 +117,6 @@ class MypageViewModel @Inject constructor(
 
             is MypageContract.MypageEvent.UpdateAlertFrequencies -> setState {
                 copy(alertFrequencies = event.alertFrequencies)
-            }
-
-            MypageContract.MypageEvent.SubmitAlarmTimeClicked -> {
-                // TODO : 서버에 저장
             }
         }
     }
@@ -273,6 +270,22 @@ class MypageViewModel @Inject constructor(
             }
         }
     }
+
+    fun navigateToPlayStore(context: Context) {
+        try {
+            val intent = Intent(Intent.ACTION_VIEW).apply {
+                data = Uri.parse("market://details?id=${context.packageName}")
+                setPackage("com.android.vending")
+            }
+            context.startActivity(intent)
+        } catch (e: android.content.ActivityNotFoundException) {
+            val intent = Intent(Intent.ACTION_VIEW).apply {
+                data = Uri.parse("https://play.google.com/store/apps/details?id=${context.packageName}")
+            }
+            context.startActivity(intent)
+        }
+    }
+
 
     private fun setLocationToHomeAddress(
         lat: Double,

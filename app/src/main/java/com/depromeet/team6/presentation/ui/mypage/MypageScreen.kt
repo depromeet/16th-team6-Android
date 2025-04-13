@@ -1,6 +1,9 @@
 package com.depromeet.team6.presentation.ui.mypage
 
+import android.content.Context
+import android.content.Intent
 import android.graphics.Paint.Align
+import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -123,7 +126,10 @@ fun MypageRoute(
                                 onAlarmSettingClick = { mypageViewModel.setEvent(MypageContract.MypageEvent.AlarmSettingClicked) },
                                 onBackClick = { mypageViewModel.setEvent(MypageContract.MypageEvent.BackPressed) },
                                 onWebViewClicked = { mypageViewModel.setEvent(MypageContract.MypageEvent.PolicyClicked) },
-                                dismissDialog = { mypageViewModel.setEvent(MypageContract.MypageEvent.DismissDialog) }
+                                dismissDialog = { mypageViewModel.setEvent(MypageContract.MypageEvent.DismissDialog) },
+                                onUpdateClicked = {
+                                    mypageViewModel.navigateToPlayStore(context)
+                                }
                             )
                         }
 
@@ -198,7 +204,6 @@ fun MypageRoute(
                                     }
                                 },
                                 onAlarmTimeSubmitSelected = {
-                                    mypageViewModel.setEvent(MypageContract.MypageEvent.SubmitAlarmTimeClicked)
                                     mypageViewModel.modifyAlarmFrequencies(context)
                                 }
                             )
@@ -226,6 +231,7 @@ fun MypageScreen(
     onBackClick: () -> Unit = {},
     onWebViewClicked: () -> Unit = {},
     webViewClose: () -> Unit = {},
+    onUpdateClicked: () -> Unit = {},
     logoutConfirmed: () -> Unit = {},
     withDrawConfirmed: () -> Unit = {},
     dismissDialog: () -> Unit = {}
@@ -274,7 +280,7 @@ fun MypageScreen(
 
                 MypageVersionItem(
                     title = stringResource(R.string.mypage_version_title_text),
-                    onClick = {}
+                    onClick = onUpdateClicked
                 )
             }
 

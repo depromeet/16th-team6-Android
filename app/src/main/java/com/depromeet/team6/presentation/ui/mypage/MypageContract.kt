@@ -83,9 +83,7 @@ class MypageContract {
         data class LocationSelectButtonClicked(val mypageSearchLocation: Address) : MypageEvent()
         data object SoundSettingClicked : MypageEvent()
         data object TimeSettingClicked : MypageEvent()
-        data object AlarmMainScreenClicked : MypageEvent()
         data class AlarmTypeSelected(val type: AlarmType) : MypageEvent()
         data class UpdateAlertFrequencies(val alertFrequencies: Set<Int>) : MypageEvent()
-        data object SubmitAlarmTimeClicked: MypageEvent()
     }
 }
