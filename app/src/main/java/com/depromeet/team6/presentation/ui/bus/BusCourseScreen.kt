@@ -73,16 +73,20 @@ fun BusCourseRoute(
     }
 
     when (uiState.loadState) {
-        LoadState.Loading -> AtChaLoadingView()
-        LoadState.Success -> {
-            BusCourseScreen(
-                padding = padding,
-                modifier = Modifier.fillMaxSize(),
-                uiState = uiState,
-                backButtonClicked = { viewModel.setSideEffect(BusCourseContract.BusCourseSideEffect.NavigateToBackStack) },
-                refreshButtonClicked = { viewModel.setEvent(BusCourseContract.BusCourseEvent.RefreshButtonClicked) },
-                changeBusOperationInfoVisible = { viewModel.setEvent(BusCourseContract.BusCourseEvent.ChangeBusOperationInfoVisible) }
-            )
+        LoadState.Loading , LoadState.Success -> {
+            Box{
+                BusCourseScreen(
+                    padding = padding,
+                    modifier = Modifier.fillMaxSize(),
+                    uiState = uiState,
+                    backButtonClicked = { viewModel.setSideEffect(BusCourseContract.BusCourseSideEffect.NavigateToBackStack) },
+                    refreshButtonClicked = { viewModel.setEvent(BusCourseContract.BusCourseEvent.RefreshButtonClicked) },
+                    changeBusOperationInfoVisible = { viewModel.setEvent(BusCourseContract.BusCourseEvent.ChangeBusOperationInfoVisible) }
+                )
+                if (uiState.loadState == LoadState.Loading) {
+                    AtChaLoadingView()
+                }
+            }
         }
 
         else -> Unit
