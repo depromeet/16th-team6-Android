@@ -73,8 +73,8 @@ fun BusCourseRoute(
     }
 
     when (uiState.loadState) {
-        LoadState.Loading , LoadState.Success -> {
-            Box{
+        LoadState.Loading, LoadState.Success -> {
+            Box {
                 BusCourseScreen(
                     padding = padding,
                     modifier = Modifier.fillMaxSize(),
