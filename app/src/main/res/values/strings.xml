@@ -125,6 +125,8 @@
     <string name="itinerary_info_legs_bus_remaining_time">%d분 %d초(%s)</string>
     <string name="itinerary_info_legs_bus_remaining_second">%d초(%s)</string>
     <string name="itinerary_info_legs_data_source">티맵 API와 공공데이터로 막차 정보를 제공합니다.</string>
+    <string name="itinerary_info_legs_bus_stopovers">%d분, %d개 정류장 이동</string>
+    <string name="itinerary_info_legs_subway_stopovers">%d분, %d개 역 이동</string>
 
     <!--    mypage      -->
     <string name="mypage_icon_arrow_text">마이페이지 화살표</string>

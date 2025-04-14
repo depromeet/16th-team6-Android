@@ -47,6 +47,7 @@ import com.depromeet.team6.R
 import com.depromeet.team6.domain.model.BusStatus
 import com.depromeet.team6.domain.model.RealTimeBusArrival
 import com.depromeet.team6.domain.model.course.LegInfo
+import com.depromeet.team6.domain.model.course.Station
 import com.depromeet.team6.domain.model.course.TransportType
 import com.depromeet.team6.domain.model.toInfo
 import com.depromeet.team6.presentation.model.bus.BusArrivalParameter
@@ -89,6 +90,7 @@ fun ItineraryInfoDetailLegs(
                         timeMinute = leg.sectionTime / 60,
                         distanceMeter = leg.distance,
                         busArrivalStatus = busArrivalStatus.get(idx),
+                        passStopList = leg.passStopList,
                         onClickBusInfo = { routeName, stationName, subtypeIdx ->
                             onClickBusInfo(
                                 BusArrivalParameter(
@@ -110,6 +112,7 @@ fun ItineraryInfoDetailLegs(
                         disembarkingStation = leg.endPoint.name,
                         boardingDateTime = leg.departureDateTime!!,
                         timeMinute = leg.sectionTime / 60,
+                        passStopList = leg.passStopList,
                         distanceMeter = leg.distance
                     )
                 }
@@ -128,10 +131,12 @@ private fun DetailLegsBus(
     timeMinute: Int,
     distanceMeter: Int,
     busArrivalStatus : RealTimeBusArrival?,
+    passStopList: List<Station>,
     modifier: Modifier = Modifier,
     onClickBusInfo: (String, String, Int) -> Unit = { routeName: String, stationName: String, subtypeIdx: Int -> }
 ) {
     var rowHeight by remember { mutableStateOf(0) }
+    var isPassStopShow by remember { mutableStateOf(false) }
 
     Row(
         modifier = modifier
@@ -255,11 +260,44 @@ private fun DetailLegsBus(
             }
 
             Spacer(Modifier.height(16.dp))
-            Text(
-                text = stringResource(R.string.itinerary_summary_duration_minute, timeMinute),
-                style = defaultTeam6Typography.bodyMedium13,
-                color = defaultTeam6Colors.white
-            )
+            // 정류장 이동정보 & 토글버튼
+            Row(
+                modifier = Modifier
+                    .noRippleClickable {
+                        isPassStopShow = !isPassStopShow
+                    },
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = stringResource(R.string.itinerary_info_legs_bus_stopovers, timeMinute, passStopList.size),
+                    style = defaultTeam6Typography.bodyMedium13,
+                    color = defaultTeam6Colors.white
+                )
+                Spacer(
+                    modifier = Modifier.width(4.dp)
+                )
+                Image(
+                    imageVector = ImageVector.vectorResource(R.drawable.ic_arrow_down_big),
+                    contentDescription = "arrow_down",
+                    modifier = Modifier.size(12.dp)
+                )
+            }
+
+            if (isPassStopShow) {
+                Spacer(modifier = Modifier.height(24.dp))
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    for (stop in passStopList){
+                        Text(
+                            text = stop.stationName,
+                            style = defaultTeam6Typography.bodyMedium13,
+                            color = defaultTeam6Colors.greySecondaryLabel
+                        )
+                    }
+                }
+            }
+
             Spacer(Modifier.height(36.dp))
             // 하차
             Row(
@@ -291,9 +329,11 @@ private fun DetailLegsSubway(
     boardingDateTime: String,
     timeMinute: Int,
     distanceMeter: Int,
+    passStopList: List<Station>,
     modifier: Modifier = Modifier
 ) {
     var rowHeight by remember { mutableStateOf(0) }
+    var isPassStopShow by remember { mutableStateOf(false) }
 
     Row(
         modifier = modifier
@@ -392,11 +432,44 @@ private fun DetailLegsSubway(
                 color = defaultTeam6Colors.greySecondaryLabel
             )
             Spacer(Modifier.height(16.dp))
-            Text(
-                text = stringResource(R.string.itinerary_summary_duration_minute, timeMinute),
-                style = defaultTeam6Typography.bodyMedium13,
-                color = defaultTeam6Colors.white
-            )
+            Row(
+                modifier = Modifier
+                    .noRippleClickable {
+                        isPassStopShow = !isPassStopShow
+                    },
+                verticalAlignment = Alignment.CenterVertically
+            ){
+                Text(
+                    text = stringResource(R.string.itinerary_info_legs_subway_stopovers, timeMinute, passStopList.size),
+                    style = defaultTeam6Typography.bodyMedium13,
+                    color = defaultTeam6Colors.white
+                )
+                Spacer(
+                    modifier = Modifier.width(4.dp)
+                )
+                Image(
+                    imageVector = ImageVector.vectorResource(R.drawable.ic_arrow_down_big),
+                    contentDescription = "arrow_down",
+                    modifier = Modifier.size(12.dp)
+                )
+            }
+
+            // 경유 역 정보
+            if (isPassStopShow) {
+                Spacer(modifier = Modifier.height(24.dp))
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    for (stop in passStopList){
+                        Text(
+                            text = stop.stationName,
+                            style = defaultTeam6Typography.bodyMedium13,
+                            color = defaultTeam6Colors.greySecondaryLabel
+                        )
+                    }
+                }
+            }
+
             Spacer(Modifier.height(36.dp))
             // 하차
             Row(
