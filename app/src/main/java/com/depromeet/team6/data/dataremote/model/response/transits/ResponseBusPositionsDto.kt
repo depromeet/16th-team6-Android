@@ -35,3 +35,21 @@ data class BusPosition(
     @SerialName("sectionProgress") val sectionProgress: Double,
     @SerialName("busCongestion") val busCongestion: String? = BusCongestion.UNKNOWN.toString()
 )
+
+@Keep
+@Serializable
+data class ResponseBusOperationInfoDto(
+    @SerialName("startStationName") val startStationName: String,
+    @SerialName("endStationName") val endStationName: String,
+    @SerialName("serviceHours") val serviceHours: List<BusServiceHour>
+)
+
+@Keep
+@Serializable
+data class BusServiceHour(
+    @SerialName("dailyType") val dailyType: String,
+    @SerialName("busDirection") val busDirection: String? = "",
+    @SerialName("startTime") val startTime: String,
+    @SerialName("endTime") val endTime: String,
+    @SerialName("term") val term: Int
+)

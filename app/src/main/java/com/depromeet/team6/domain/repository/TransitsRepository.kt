@@ -2,6 +2,7 @@ package com.depromeet.team6.domain.repository
 
 import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.BusArrival
+import com.depromeet.team6.domain.model.BusOperationInfo
 import com.depromeet.team6.domain.model.BusPositions
 import com.depromeet.team6.domain.model.course.CourseInfo
 
@@ -15,4 +16,10 @@ interface TransitsRepository {
         routeName: String,
         serviceRegion: String
     ): Result<BusPositions>
+
+    suspend fun getBusOperationInfo(
+        busRouteId: String,
+        routeName: String,
+        serviceRegion: String
+    ): Result<BusOperationInfo>
 }

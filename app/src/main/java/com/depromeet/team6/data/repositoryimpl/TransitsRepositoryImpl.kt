@@ -4,6 +4,7 @@ import com.depromeet.team6.data.dataremote.datasource.TransitsRemoteDataSource
 import com.depromeet.team6.data.mapper.todomain.toDomain
 import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.BusArrival
+import com.depromeet.team6.domain.model.BusOperationInfo
 import com.depromeet.team6.domain.model.BusPositions
 import com.depromeet.team6.domain.model.course.CourseInfo
 import com.depromeet.team6.domain.repository.TransitsRepository
@@ -42,6 +43,17 @@ class TransitsRepositoryImpl @Inject constructor(
         serviceRegion: String
     ): Result<BusPositions> =
         transitsRemoteDataSource.getBusPositions(
+            busRouteId = busRouteId,
+            routeName = routeName,
+            serviceRegion = serviceRegion
+        ).map { it.toDomain() }
+
+    override suspend fun getBusOperationInfo(
+        busRouteId: String,
+        routeName: String,
+        serviceRegion: String
+    ): Result<BusOperationInfo> =
+        transitsRemoteDataSource.getBusOperationInfo(
             busRouteId = busRouteId,
             routeName = routeName,
             serviceRegion = serviceRegion
