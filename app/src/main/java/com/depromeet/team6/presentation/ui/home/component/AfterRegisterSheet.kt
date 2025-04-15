@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.depromeet.team6.R
 import com.depromeet.team6.domain.model.course.TransportType
+import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.ui.theme.LocalTeam6Colors
 import com.depromeet.team6.ui.theme.LocalTeam6Typography
 
@@ -55,6 +56,8 @@ fun AfterRegisterSheet(
     onRefreshClick: () -> Unit,
     onTimerFinished: () -> Unit = {},
     onIconClick: () -> Unit = {},
+    onHomeDepartureTimeClick: () -> Unit = {},
+    onHomeExpectDepartureTimeClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val colors = LocalTeam6Colors.current
@@ -93,6 +96,12 @@ fun AfterRegisterSheet(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Start,
                     modifier = Modifier.align(Alignment.CenterStart)
+                        .noRippleClickable {
+                            when {
+                                isConfirmed && !afterUserDeparted -> onHomeDepartureTimeClick()
+                                !isConfirmed && !afterUserDeparted -> onHomeExpectDepartureTimeClick()
+                            }
+                        }
                 ) {
                     if (afterUserDeparted && !timerFinish) { // 사용자 출발 후
                         TransportStatus(

@@ -41,6 +41,12 @@ import com.depromeet.team6.domain.model.course.TransportType
 import com.depromeet.team6.presentation.model.itinerary.FocusedMarkerParameter
 import com.depromeet.team6.presentation.ui.alarm.NotificationScheduler
 import com.depromeet.team6.presentation.ui.alarm.NotificationTimeConstants
+import com.depromeet.team6.presentation.ui.home.HomeEvent.HOME
+import com.depromeet.team6.presentation.ui.home.HomeEvent.HOME_DEPARTURE_TIME_CLICKED
+import com.depromeet.team6.presentation.ui.home.HomeEvent.HOME_DEPARTURE_TIME_SUGGESTION_CLICKED
+import com.depromeet.team6.presentation.ui.home.HomeEvent.HOME_ROUTE_CLICKED
+import com.depromeet.team6.presentation.ui.home.HomeEvent.SCREEN_NAME
+import com.depromeet.team6.presentation.ui.home.HomeEvent.USER_ID
 import com.depromeet.team6.presentation.ui.home.component.AfterRegisterMap
 import com.depromeet.team6.presentation.ui.home.component.AfterRegisterSheet
 import com.depromeet.team6.presentation.ui.home.component.CharacterLottieSpeechBubble
@@ -49,6 +55,7 @@ import com.depromeet.team6.presentation.ui.home.component.DeleteAlarmDialog
 import com.depromeet.team6.presentation.ui.home.component.TMapViewCompose
 import com.depromeet.team6.presentation.util.DefaultLntLng.DEFAULT_LNG
 import com.depromeet.team6.presentation.util.DefaultLntLng.DEFAULT_LNT
+import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
 import com.depromeet.team6.presentation.util.context.getUserLocation
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.presentation.util.permission.PermissionUtil
@@ -324,7 +331,16 @@ fun HomeScreen(
                 boardingTime = homeUiState.boardingTime,
                 homeArrivedTime = homeUiState.homeArrivedTime,
                 destination = stringResource(R.string.home_my_home_text),
-                onCourseTextClick = {},
+                onCourseTextClick = {
+                    AmplitudeUtils.trackEventWithProperties(
+                        HOME_ROUTE_CLICKED,
+                        mapOf(
+                            SCREEN_NAME to HOME,
+                            USER_ID to viewModel.getUserId(),
+                            HOME_ROUTE_CLICKED to 1
+                        )
+                    )
+                },
                 deleteAlarmConfirmed = deleteAlarmConfirmed,
                 dismissDialog = dismissDialog,
                 onFinishClick = {
@@ -353,6 +369,26 @@ fun HomeScreen(
                 },
                 onIconClick = {
                     characterAnimationTrigger++
+                },
+                onHomeDepartureTimeClick = {
+                    AmplitudeUtils.trackEventWithProperties(
+                        HOME_DEPARTURE_TIME_CLICKED,
+                        mapOf(
+                            SCREEN_NAME to HOME,
+                            USER_ID to viewModel.getUserId(),
+                            HOME_DEPARTURE_TIME_CLICKED to 1
+                        )
+                    )
+                },
+                onHomeExpectDepartureTimeClick = {
+                    AmplitudeUtils.trackEventWithProperties(
+                        HOME_DEPARTURE_TIME_CLICKED,
+                        mapOf(
+                            SCREEN_NAME to HOME,
+                            USER_ID to viewModel.getUserId(),
+                            HOME_DEPARTURE_TIME_SUGGESTION_CLICKED to 1
+                        )
+                    )
                 },
                 busStationLeft = homeUiState.busRemainingStations
             )
@@ -549,6 +585,15 @@ private data class SpeechBubbleText(
     val suffix: String? = null,
     val bottomPadding: Dp
 )
+
+object HomeEvent {
+    const val HOME_DEPARTURE_TIME_CLICKED = "home_departure_time_clicked"
+    const val SCREEN_NAME = "screen_name"
+    const val USER_ID = "user_id"
+    const val HOME_DEPARTURE_TIME_SUGGESTION_CLICKED = "home_departure_time_suggestion_clicked"
+    const val HOME = "Home"
+    const val HOME_ROUTE_CLICKED = "home_route_clicked"
+}
 
 @Preview
 @Composable

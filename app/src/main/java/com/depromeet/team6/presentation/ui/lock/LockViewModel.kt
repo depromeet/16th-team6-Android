@@ -4,6 +4,7 @@ import android.content.ContentValues.TAG
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.viewModelScope
+import com.depromeet.team6.domain.repository.UserInfoRepository
 import com.depromeet.team6.domain.usecase.GetTaxiCostUseCase
 import com.depromeet.team6.presentation.util.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -14,6 +15,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LockViewModel @Inject constructor(
+    private val userInfoRepository: UserInfoRepository,
     private val getTaxiCostUseCase: GetTaxiCostUseCase,
     @ApplicationContext private val context: Context
 ) : BaseViewModel<LockContract.LockUiState,
@@ -69,6 +71,10 @@ class LockViewModel @Inject constructor(
                 setSideEffect(LockContract.LockSideEffect.NavigateToHome(false))
             }
         }
+    }
+
+    fun getUserId() {
+        userInfoRepository.getUserID()
     }
 
     fun loadTaxiCost() {
