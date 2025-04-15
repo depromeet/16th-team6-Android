@@ -23,8 +23,6 @@ import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -38,7 +36,7 @@ class HomeViewModel @Inject constructor(
     val getCourseSearchResultUseCase: GetCourseSearchResultsUseCase,
     private val getBusStartedUseCase: GetBusStartedUseCase,
     private val deleteAlarmUseCase: DeleteAlarmUseCase,
-    private val userInfoRepository: UserInfoRepository,
+    private val userInfoRepository: UserInfoRepository
     ) : BaseViewModel<HomeContract.HomeUiState, HomeContract.HomeSideEffect, HomeContract.HomeEvent>() {
     private var speechBubbleJob: Job? = null
     private var busStartedPollingJob: Job? = null
@@ -462,6 +460,7 @@ class HomeViewModel @Inject constructor(
         setState { copy(destinationState = LoadState.Loading) }
         viewModelScope.launch {
             getUserInfoUseCase().onSuccess { userInfo ->
+                userInfoRepository.setUserId(userId = userInfo.id)
                 setState {
                     copy(
                         destinationPoint = Address(
