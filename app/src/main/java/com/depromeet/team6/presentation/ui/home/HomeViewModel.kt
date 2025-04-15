@@ -9,6 +9,7 @@ import com.depromeet.team6.domain.model.RouteLocation
 import com.depromeet.team6.domain.model.course.CourseInfo
 import com.depromeet.team6.domain.model.course.LegInfo
 import com.depromeet.team6.domain.model.course.TransportType
+import com.depromeet.team6.domain.repository.UserInfoRepository
 import com.depromeet.team6.domain.usecase.DeleteAlarmUseCase
 import com.depromeet.team6.domain.usecase.GetAddressFromCoordinatesUseCase
 import com.depromeet.team6.domain.usecase.GetBusArrivalUseCase
@@ -39,7 +40,8 @@ class HomeViewModel @Inject constructor(
     val getCourseSearchResultUseCase: GetCourseSearchResultsUseCase,
     private val getBusStartedUseCase: GetBusStartedUseCase,
     private val getBusArrivalUseCase: GetBusArrivalUseCase,
-    private val deleteAlarmUseCase: DeleteAlarmUseCase
+    private val deleteAlarmUseCase: DeleteAlarmUseCase,
+    private val userInfoRepository: UserInfoRepository
 ) : BaseViewModel<HomeContract.HomeUiState, HomeContract.HomeSideEffect, HomeContract.HomeEvent>() {
     private var speechBubbleJob: Job? = null
     private var busStartedPollingJob: Job? = null
@@ -499,6 +501,7 @@ class HomeViewModel @Inject constructor(
         setState { copy(destinationState = LoadState.Loading) }
         viewModelScope.launch {
             getUserInfoUseCase().onSuccess { userInfo ->
+                userInfoRepository.setUserId(userId = userInfo.id)
                 setState {
                     copy(
                         destinationPoint = Address(
