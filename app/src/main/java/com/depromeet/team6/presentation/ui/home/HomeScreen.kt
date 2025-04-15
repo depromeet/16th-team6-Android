@@ -53,7 +53,6 @@ import com.depromeet.team6.presentation.util.DefaultLntLng.DEFAULT_LNG
 import com.depromeet.team6.presentation.util.DefaultLntLng.DEFAULT_LNT
 import com.depromeet.team6.presentation.util.HomeAmplitude.HOME
 import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_COURSESEARCH_ENTERED_DIRECT
-import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_COURSESEARCH_ENTERED_WITH_CURRENT_LOCATION
 import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_COURSESEARCH_ENTERED_WITH_INPUT
 import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_DESTINATION_CLICKED
 import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils

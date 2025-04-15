@@ -37,7 +37,7 @@ class HomeViewModel @Inject constructor(
     private val getBusStartedUseCase: GetBusStartedUseCase,
     private val deleteAlarmUseCase: DeleteAlarmUseCase,
     private val userInfoRepository: UserInfoRepository
-    ) : BaseViewModel<HomeContract.HomeUiState, HomeContract.HomeSideEffect, HomeContract.HomeEvent>() {
+) : BaseViewModel<HomeContract.HomeUiState, HomeContract.HomeSideEffect, HomeContract.HomeEvent>() {
     private var speechBubbleJob: Job? = null
     private var busStartedPollingJob: Job? = null
     private var lastRouteId: String = ""
