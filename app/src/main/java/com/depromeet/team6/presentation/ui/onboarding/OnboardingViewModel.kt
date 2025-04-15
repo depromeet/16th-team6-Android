@@ -148,6 +148,10 @@ class OnboardingViewModel @Inject constructor(
                 userInfoRepository.setRefreshToken(auth.refreshToken)
                 userInfoRepository.setUserHome(auth.userHome)
                 userInfoRepository.setUserId(auth.id)
+<<<<<<< HEAD
+//                AmplitudeUtils.setUserId(userId = auth.id.toString())
+=======
+>>>>>>> origin/feat/onboarding-amplitude#120
                 AmplitudeUtils.trackEventWithProperties(
                     eventName = USER_ALARM_FREQUENCIES,
                     mapOf(
