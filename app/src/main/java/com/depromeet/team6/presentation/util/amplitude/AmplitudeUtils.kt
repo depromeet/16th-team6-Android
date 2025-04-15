@@ -18,17 +18,23 @@ object AmplitudeUtils {
     }
 
     fun trackEvent(eventName: String) {
-        amplitude.track(eventType = eventName)
+        amplitude.track(eventType = eventName).flush()
     }
 
     fun <T> trackEventWithProperty(eventName: String, propertyName: String, propertyValue: T) {
         amplitude.track(
             eventType = eventName,
             eventProperties = mapOf(propertyName to propertyValue)
-        )
+        ).flush()
     }
 
     fun trackEventWithProperties(eventName: String, properties: Map<String, Any>) {
-        amplitude.track(eventType = eventName, eventProperties = properties)
+        amplitude.track(eventType = eventName, eventProperties = properties).flush()
+    }
+
+    fun setUserId(userId: String) {
+        if (::amplitude.isInitialized) {
+            amplitude.setUserId(userId)
+        }
     }
 }
