@@ -19,5 +19,9 @@ interface UserInfoRepository {
 
     fun getUserHome(): LatLng
 
+    fun getUserID(): Int
+
+    fun setUserId(userId: Int)
+
     fun clear()
 }
