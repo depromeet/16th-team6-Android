@@ -37,7 +37,7 @@ object AmplitudeUtils {
         amplitude.setUserId("$USER_ID: $userId")
     }
 
-    fun resetUserId(){
+    fun resetUserId() {
         amplitude.setUserId(null)
     }
 }
