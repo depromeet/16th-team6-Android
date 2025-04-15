@@ -157,7 +157,7 @@ fun CourseSearchRoute(
                                 AmplitudeUtils.trackEventWithProperties(
                                     ALERT_END_POPUP_2,
                                     mapOf(
-                                        SCREEN_NAME to POPUP,
+                                        POPUP to "팝업",
                                         USER_ID to viewModel.getUserId(),
                                         ALERT_END_POPUP_2 to 1
                                     )

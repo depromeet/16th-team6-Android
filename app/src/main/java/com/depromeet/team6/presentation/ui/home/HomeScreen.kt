@@ -48,7 +48,6 @@ import com.depromeet.team6.presentation.ui.home.AmplitudeHomeAlarm.HOME_DEPARTUR
 import com.depromeet.team6.presentation.ui.home.AmplitudeHomeAlarm.HOME_DEPARTURE_TIME_SUGGESTION_CLICKED
 import com.depromeet.team6.presentation.ui.home.AmplitudeHomeAlarm.HOME_ROUTE_CLICKED
 import com.depromeet.team6.presentation.ui.home.AmplitudeHomeAlarm.POPUP
-import com.depromeet.team6.presentation.ui.home.AmplitudeHomeAlarm.SCREEN_NAME
 import com.depromeet.team6.presentation.ui.home.AmplitudeHomeAlarm.USER_ID
 import com.depromeet.team6.presentation.ui.home.component.AfterRegisterMap
 import com.depromeet.team6.presentation.ui.home.component.AfterRegisterSheet
@@ -338,7 +337,7 @@ fun HomeScreen(
                     AmplitudeUtils.trackEventWithProperties(
                         HOME_ROUTE_CLICKED,
                         mapOf(
-                            SCREEN_NAME to HOME,
+                            HOME to "홈",
                             USER_ID to viewModel.getUserId(),
                             HOME_ROUTE_CLICKED to 1
                         )
@@ -377,7 +376,7 @@ fun HomeScreen(
                     AmplitudeUtils.trackEventWithProperties(
                         HOME_DEPARTURE_TIME_CLICKED,
                         mapOf(
-                            SCREEN_NAME to HOME,
+                            HOME to "홈",
                             USER_ID to viewModel.getUserId(),
                             HOME_DEPARTURE_TIME_CLICKED to 1
                         )
@@ -387,7 +386,7 @@ fun HomeScreen(
                     AmplitudeUtils.trackEventWithProperties(
                         HOME_DEPARTURE_TIME_CLICKED,
                         mapOf(
-                            SCREEN_NAME to HOME,
+                            HOME to "홈",
                             USER_ID to viewModel.getUserId(),
                             HOME_DEPARTURE_TIME_SUGGESTION_CLICKED to 1
                         )
@@ -546,7 +545,7 @@ fun HomeScreen(
                         AmplitudeUtils.trackEventWithProperties(
                             ALERT_END_POPUP_1,
                             mapOf(
-                                SCREEN_NAME to POPUP,
+                                POPUP to "팝업",
                                 USER_ID to viewModel.getUserId(),
                                 ALERT_END_POPUP_1 to 1
                             )

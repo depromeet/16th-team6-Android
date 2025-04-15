@@ -98,7 +98,7 @@ fun LockRoute(
             AmplitudeUtils.trackEventWithProperties(
                 LOCK_BUTTON,
                 mapOf(
-                    SCREEN_NAME to LOCK,
+                    LOCK to "잠금화면",
                     USER_ID to viewModel.getUserId(),
                     LOCK_BUTTON_START to 1
                 )
@@ -108,7 +108,7 @@ fun LockRoute(
             AmplitudeUtils.trackEventWithProperties(
                 LOCK_BUTTON,
                 mapOf(
-                    SCREEN_NAME to LOCK,
+                    LOCK to "잠금화면",
                     USER_ID to viewModel.getUserId(),
                     LOCK_BUTTON_LATER_ROUTE to 1
                 )
