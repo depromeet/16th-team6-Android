@@ -45,6 +45,19 @@ object HomeAmplitude {
     const val HOME_COURSESEARCH_ENTERED_WITH_CURRENT_LOCATION = "home_coursesearch_entered_with_current_location"
     const val HOME_COURSESEARCH_ENTERED_WITH_INPUT = "home_coursesearch_entered_with_input"
     const val HOME_DESTINATION_CLICKED = "home_destination_clicked"
+    const val HOME_DEPARTURE_TIME_CLICKED = "home_departure_time_clicked"
+    const val HOME_DEPARTURE_TIME_SUGGESTION_CLICKED = "home_departure_time_suggestion_clicked"
+    const val HOME_ROUTE_CLICKED = "home_route_clicked"
+    const val POPUP = "팝업"
+    const val ALERT_END_POPUP_1 = "alert_end_popup_1"
+    const val ALERT_END_POPUP_2 = "alert_end_popup_2"
+}
+
+object LockAmplitude {
+    const val LOCK = "잠금화면"
+    const val LOCK_BUTTON = "lock_button"
+    const val LOCK_BUTTON_START = "lock_button_start"
+    const val LOCK_BUTTON_LATER_ROUTE = "lock_button_later_route"
 }
 
 object CourseSearchAmplitude {

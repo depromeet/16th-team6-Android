@@ -46,6 +46,12 @@
     <string name="notification_body_text">"막차 출발 시간을 확인해보세요!"</string>
     <string name="notification_head_up_channel_name">앗차 중요 알림</string>
 
+    <string name="dialog_finish_alarm_title">막차 알림을 종료할까요?</string>
+    <string name="dialog_finish_alarm_back_text">돌아가기</string>
+    <string name="dialog_finish_alarm_finish_text">종료하기</string>
+
+    <string name="dialog_change_alarm_title">기존 막차 알림을 종료하고\n선택한 알림으로 변경할까요?</string>
+
     <!-- LoginScreen -->
     <string name="login_pager_main_text_first">오후 10시에 미리\n막차알림 등록하세요</string>
     <string name="login_pager_main_text_second">자리에서 떠나기 전에\n여러번 막차 알림 드려요</string>
@@ -87,6 +93,7 @@
 
     <string name="home_start_time_text">출발 시간</string>
     <string name="home_expect_start_time_text">예상 출발 시간</string>
+    <string name="home_arrive_station_toast_text">목적지 부근에 도착했습니다</string>
 
     <!-- All -->
     <string name="all_acha_character">앗차 캐릭터</string>

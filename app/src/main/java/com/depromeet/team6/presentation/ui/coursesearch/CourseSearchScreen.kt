@@ -29,11 +29,18 @@ import com.depromeet.team6.domain.model.course.LegInfo
 import com.depromeet.team6.presentation.ui.coursesearch.component.CourseAppBar
 import com.depromeet.team6.presentation.ui.coursesearch.component.DestinationSearchBar
 import com.depromeet.team6.presentation.ui.coursesearch.component.TransportTabMenu
+import com.depromeet.team6.presentation.ui.home.component.DeleteAlarmDialog
 import com.depromeet.team6.presentation.ui.itinerary.LegInfoDummyProvider
+import com.depromeet.team6.presentation.util.AmplitudeCommon.SCREEN_NAME
+import com.depromeet.team6.presentation.util.AmplitudeCommon.USER_ID
+import com.depromeet.team6.presentation.util.HomeAmplitude.ALERT_END_POPUP_2
+import com.depromeet.team6.presentation.util.HomeAmplitude.POPUP
+import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
 import com.depromeet.team6.presentation.util.toast.atChaToastMessage
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.google.gson.Gson
+import timber.log.Timber
 
 @Composable
 fun CourseSearchRoute(
@@ -42,6 +49,7 @@ fun CourseSearchRoute(
     destinationPoint: String,
     navigateToItinerary: (String, String, String) -> Unit,
     navigateToHome: () -> Unit,
+    fromLockScreen: Boolean = false,
     viewModel: CourseSearchViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -60,6 +68,17 @@ fun CourseSearchRoute(
 
         onDispose {
             lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        val sharedPreferences = context.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
+        val fromLockScreen = sharedPreferences.getBoolean("fromLockScreen", false)
+
+        if (fromLockScreen) {
+            viewModel.setSortType(2)
+
+            sharedPreferences.edit().remove("fromLockScreen").apply()
         }
     }
 
@@ -101,37 +120,106 @@ fun CourseSearchRoute(
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
             }
         }
-        LoadState.Success -> CourseSearchScreen(
-            uiState = uiState,
-            modifier = Modifier
-                .fillMaxSize()
-                .background(defaultTeam6Colors.greyWashBackground)
-                .padding(padding),
-            navigateToItinerary = navigateToItinerary,
-            setNotification = { routeId ->
+        LoadState.Success -> {
+            CourseSearchScreen(
+                uiState = uiState,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(defaultTeam6Colors.greyWashBackground)
+                    .padding(padding),
+                navigateToItinerary = navigateToItinerary,
+                setNotification = { routeId ->
+                    if (uiState.sortType == 1) {
+                        // 기존 코드 유지 - sortType이 1일 때 알림 등록
+                        val sharedPreferences = context.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
+                        val editor = sharedPreferences.edit()
 
-                val sharedPreferences = context.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
-                val editor = sharedPreferences.edit()
+                        val registeredCourse = uiState.courseData.find { it.routeId == routeId }
 
-                val registeredCourse = uiState.courseData.find { it.routeId == routeId }
+                        if (registeredCourse != null) {
+                            val courseJson = Gson().toJson(registeredCourse)
+                            editor.putString("departurePoint", departurePoint) // 출발지
+                            editor.putString("destinationPoint", destinationPoint) // 도착지
+                            editor.putBoolean("alarmRegistered", true) // 알람 등록 여부
+                            editor.putString("lastRouteId", routeId) // 막차 경로 Id
+                            editor.putString("lastCourseInfo", courseJson) // 막차 경로
+                            editor.apply()
 
-                if (registeredCourse != null) {
-                    val courseJson = Gson().toJson(registeredCourse)
-                    editor.putString("departurePoint", departurePoint) // 출발지
-                    editor.putBoolean("alarmRegistered", true) // 알람 등록 여부
-                    editor.putString("lastRouteId", routeId) // 막차 경로 Id
-                    editor.putString("lastCourseInfo", courseJson) // 막차 경로
-                    editor.apply()
+                            viewModel.postAlarm(lastRouteId = routeId)
+                        } else {
+                            atChaToastMessage(context, R.string.course_set_notification_failed_snackbar)
+                        }
+                    } else if (uiState.sortType == 2) {
+                        // 다이얼로그 표시
+                        viewModel.showDeleteAlarmDialog(routeId)
+                    }
+                },
+                backButtonClicked = { navigateToHome() },
+                courseInfoToggleClick = { viewModel.setEvent(CourseSearchContract.CourseEvent.ItemCourseDetailToggleClick) },
+                itemCardClick = { viewModel.setEvent(CourseSearchContract.CourseEvent.ItemCardClick(isTextClicked = it)) }
+            )
 
-                    viewModel.postAlarm(lastRouteId = routeId)
-                } else {
-                    atChaToastMessage(context, R.string.course_set_notification_failed_snackbar)
+            // 다이얼로그 표시
+            if (uiState.showDeleteAlarmDialog) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(color = defaultTeam6Colors.black.copy(alpha = 0.76f))
+                ) {
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        DeleteAlarmDialog(
+                            onDismiss = {
+                                viewModel.dismissDeleteAlarmDialog()
+                            },
+                            onSuccess = {
+                                Timber.e("여기 앰플 왜안됨요 ??????????????")
+                                AmplitudeUtils.trackEventWithProperties(
+                                    ALERT_END_POPUP_2,
+                                    mapOf(
+                                        SCREEN_NAME to POPUP,
+                                        USER_ID to viewModel.getUserId(),
+                                        ALERT_END_POPUP_2 to 1
+                                    )
+                                )
+
+                                // 알림 등록 로직 실행
+                                val sharedPreferences = context.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
+                                val editor = sharedPreferences.edit()
+
+                                val registeredCourse = uiState.courseData.find { it.routeId == uiState.selectedRouteId }
+
+                                editor.remove("departurePoint")
+                                editor.remove("lastCourseInfo")
+                                editor.remove("lastRouteId")
+                                editor.remove("alarmRegistered")
+                                editor.remove("userDeparture")
+
+                                if (registeredCourse != null) {
+                                    val courseJson = Gson().toJson(registeredCourse)
+                                    editor.remove("userDeparture")
+                                    editor.putString("departurePoint", departurePoint) // 출발지
+                                    editor.putString("destinationPoint", destinationPoint) // 도착지
+                                    editor.putBoolean("alarmRegistered", true) // 알람 등록 여부
+                                    editor.putString("lastRouteId", uiState.selectedRouteId) // 막차 경로 Id
+                                    editor.putString("lastCourseInfo", courseJson) // 막차 경로
+                                    editor.apply()
+
+                                    viewModel.postAlarm(lastRouteId = uiState.selectedRouteId)
+                                    viewModel.dismissDeleteAlarmDialog()
+                                } else {
+                                    atChaToastMessage(context, R.string.course_set_notification_failed_snackbar)
+                                    viewModel.dismissDeleteAlarmDialog()
+                                }
+                            },
+                            sortType = uiState.sortType
+                        )
+                    }
                 }
-            },
-            backButtonClicked = { navigateToHome() },
-            courseInfoToggleClick = { viewModel.setEvent(CourseSearchContract.CourseEvent.ItemCourseDetailToggleClick) },
-            itemCardClick = { viewModel.setEvent(CourseSearchContract.CourseEvent.ItemCardClick(isTextClicked = it)) }
-        )
+            }
+        }
         LoadState.Error -> {
             navigateToHome()
         }

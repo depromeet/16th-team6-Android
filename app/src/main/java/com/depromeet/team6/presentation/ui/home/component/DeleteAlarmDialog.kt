@@ -15,9 +15,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.depromeet.team6.R
 import com.depromeet.team6.ui.theme.LocalTeam6Colors
 import com.depromeet.team6.ui.theme.LocalTeam6Typography
 
@@ -25,10 +27,17 @@ import com.depromeet.team6.ui.theme.LocalTeam6Typography
 fun DeleteAlarmDialog(
     onDismiss: () -> Unit,
     onSuccess: () -> Unit,
+    sortType: Int,
     modifier: Modifier = Modifier
 ) {
     val colors = LocalTeam6Colors.current
     val typography = LocalTeam6Typography.current
+
+    var titleText = stringResource(R.string.dialog_finish_alarm_title)
+
+    if (sortType == 2) {
+        titleText = stringResource(R.string.dialog_change_alarm_title)
+    }
 
     Card(
         modifier = modifier
@@ -44,7 +53,7 @@ fun DeleteAlarmDialog(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "막차 알림을 종료할까요?",
+                text = titleText,
                 color = colors.white,
                 style = typography.heading5Bold17,
                 textAlign = TextAlign.Center,
@@ -69,7 +78,7 @@ fun DeleteAlarmDialog(
                     )
                 ) {
                     Text(
-                        text = "돌아가기",
+                        text = stringResource(R.string.dialog_finish_alarm_back_text),
                         color = colors.white,
                         style = typography.bodyMedium14,
                         modifier = Modifier.padding(vertical = 13.dp)
@@ -88,7 +97,7 @@ fun DeleteAlarmDialog(
                     )
                 ) {
                     Text(
-                        text = "종료하기",
+                        text = stringResource(R.string.dialog_finish_alarm_finish_text),
                         color = colors.black,
                         style = typography.bodySemiBold14,
                         modifier = Modifier.padding(vertical = 13.dp)
@@ -105,6 +114,7 @@ fun DeleteAlarmDialogPreview() {
     DeleteAlarmDialog(
         onDismiss = {},
         onSuccess = {},
-        modifier = Modifier
+        modifier = Modifier,
+        sortType = TODO()
     )
 }

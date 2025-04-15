@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.depromeet.team6.R
 import com.depromeet.team6.domain.model.course.TransportType
+import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.ui.theme.LocalTeam6Colors
 import com.depromeet.team6.ui.theme.LocalTeam6Typography
 
@@ -43,16 +44,20 @@ fun AfterRegisterSheet(
     transportationName: String,
     timeToLeave: String,
     boardingTime: String,
+    homeArrivedTime: String,
     startLocation: String,
     destination: String,
     deleteAlarmConfirmed: () -> Unit = {},
     dismissDialog: () -> Unit = {},
+    busStationLeft: Int,
     onCourseTextClick: () -> Unit,
     onFinishClick: () -> Unit,
     onCourseDetailClick: () -> Unit,
     onRefreshClick: () -> Unit,
     onTimerFinished: () -> Unit = {},
     onIconClick: () -> Unit = {},
+    onHomeDepartureTimeClick: () -> Unit = {},
+    onHomeExpectDepartureTimeClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val colors = LocalTeam6Colors.current
@@ -91,13 +96,19 @@ fun AfterRegisterSheet(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Start,
                     modifier = Modifier.align(Alignment.CenterStart)
+                        .noRippleClickable {
+                            when {
+                                isConfirmed && !afterUserDeparted -> onHomeDepartureTimeClick()
+                                !isConfirmed && !afterUserDeparted -> onHomeExpectDepartureTimeClick()
+                            }
+                        }
                 ) {
                     if (afterUserDeparted && !timerFinish) { // 사용자 출발 후
                         TransportStatus(
                             transportationType = transportType,
                             transportationNumber = transportationNumber,
                             transportationName = transportationName,
-                            stopLeft = 6
+                            stopLeft = busStationLeft
                         )
                     } else if (afterUserDeparted && timerFinish) {
                         Text(
@@ -157,7 +168,7 @@ fun AfterRegisterSheet(
                     )
                 } else {
                     TimeText(
-                        timeToLeave = timeToLeave,
+                        timeToLeave = homeArrivedTime,
                         textColor = colors.white,
                         modifier = Modifier.padding(top = 8.dp, bottom = 4.dp)
                     )
@@ -194,7 +205,7 @@ fun AfterRegisterSheet(
 @Composable
 fun AfterRegisterSheetPreview() {
     AfterRegisterSheet(
-        timerFinish = false, // 새로고침 버튼이 보이도록 false로 설정
+        timerFinish = true, // 새로고침 버튼이 보이도록 false로 설정
         afterUserDeparted = true, // 새로고침 버튼이 보이도록 true로 설정
         transportType = TransportType.BUS,
         transportationNumber = 0,
@@ -211,6 +222,9 @@ fun AfterRegisterSheetPreview() {
         boardingTime = "15:30:00",
         deleteAlarmConfirmed = {},
         dismissDialog = {},
-        onTimerFinished = {}
+        onTimerFinished = {},
+        homeArrivedTime = TODO(),
+        onIconClick = TODO(),
+        busStationLeft = TODO()
     )
 }
