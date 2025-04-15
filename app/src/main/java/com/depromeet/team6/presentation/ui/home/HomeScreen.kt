@@ -98,7 +98,7 @@ fun HomeRoute(
 
     SideEffect {
         systemUiController.setStatusBarColor(
-            color = Color.Black
+            color = Color.Transparent
         )
     }
 

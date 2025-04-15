@@ -143,6 +143,7 @@ class OnboardingViewModel @Inject constructor(
                 userInfoRepository.setAccessToken(BEARER + auth.accessToken)
                 userInfoRepository.setRefreshToken(auth.refreshToken)
                 userInfoRepository.setUserHome(auth.userHome)
+                userInfoRepository.setUserId(auth.id)
             }.onFailure {
                 setEvent(OnboardingContract.OnboardingEvent.PostSignUp(loadState = LoadState.Error))
             }

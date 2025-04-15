@@ -11,4 +11,6 @@ interface TaxiCostRepository {
     suspend fun saveTaxiCost(taxiCost: Int)
 
     suspend fun getLastSavedTaxiCost(): Int
+
+    suspend fun getPersistedTaxiCostForLockScreen(): Int
 }
