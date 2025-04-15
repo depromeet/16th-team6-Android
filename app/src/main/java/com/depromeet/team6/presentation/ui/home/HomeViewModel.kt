@@ -9,6 +9,7 @@ import com.depromeet.team6.domain.model.RouteLocation
 import com.depromeet.team6.domain.model.course.CourseInfo
 import com.depromeet.team6.domain.model.course.LegInfo
 import com.depromeet.team6.domain.model.course.TransportType
+import com.depromeet.team6.domain.repository.UserInfoRepository
 import com.depromeet.team6.domain.usecase.DeleteAlarmUseCase
 import com.depromeet.team6.domain.usecase.GetAddressFromCoordinatesUseCase
 import com.depromeet.team6.domain.usecase.GetBusStartedUseCase
@@ -22,6 +23,8 @@ import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -34,8 +37,9 @@ class HomeViewModel @Inject constructor(
     private val getTaxiCostUseCase: GetTaxiCostUseCase,
     val getCourseSearchResultUseCase: GetCourseSearchResultsUseCase,
     private val getBusStartedUseCase: GetBusStartedUseCase,
-    private val deleteAlarmUseCase: DeleteAlarmUseCase
-) : BaseViewModel<HomeContract.HomeUiState, HomeContract.HomeSideEffect, HomeContract.HomeEvent>() {
+    private val deleteAlarmUseCase: DeleteAlarmUseCase,
+    private val userInfoRepository: UserInfoRepository,
+    ) : BaseViewModel<HomeContract.HomeUiState, HomeContract.HomeSideEffect, HomeContract.HomeEvent>() {
     private var speechBubbleJob: Job? = null
     private var busStartedPollingJob: Job? = null
     private var lastRouteId: String = ""
@@ -473,6 +477,10 @@ class HomeViewModel @Inject constructor(
                 setState { copy(destinationState = LoadState.Error) }
             }
         }
+    }
+
+    fun getUserId(): Int {
+        return userInfoRepository.getUserID()
     }
 
     companion object {

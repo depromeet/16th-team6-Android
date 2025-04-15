@@ -47,8 +47,12 @@ import com.depromeet.team6.presentation.ui.home.component.CharacterLottieSpeechB
 import com.depromeet.team6.presentation.ui.home.component.CurrentLocationSheet
 import com.depromeet.team6.presentation.ui.home.component.DeleteAlarmDialog
 import com.depromeet.team6.presentation.ui.home.component.TMapViewCompose
+import com.depromeet.team6.presentation.util.AmplitudeCommon.SCREEN_NAME
+import com.depromeet.team6.presentation.util.AmplitudeCommon.USER_ID
 import com.depromeet.team6.presentation.util.DefaultLntLng.DEFAULT_LNG
 import com.depromeet.team6.presentation.util.DefaultLntLng.DEFAULT_LNT
+import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_COURSESEARCH_ENTERED_DIRECT
+import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
 import com.depromeet.team6.presentation.util.context.getUserLocation
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.presentation.util.permission.PermissionUtil
@@ -198,6 +202,15 @@ fun HomeRoute(
                 navigateToCourseSearch(
                     currentLocationJSON,
                     destinationPointJSON
+                )
+
+                AmplitudeUtils.trackEventWithProperties(
+                    eventName = HOME_COURSESEARCH_ENTERED_DIRECT,
+                    mapOf(
+                        USER_ID to viewModel.getUserId(),
+                        SCREEN_NAME to "온보딩",
+                        HOME_COURSESEARCH_ENTERED_DIRECT to 1
+                    )
                 )
             },
             onFinishClick = {
