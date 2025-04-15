@@ -45,6 +45,18 @@ class CourseSearchViewModel @Inject constructor(
                 }
                 getSearchResults()
             }
+            is CourseSearchContract.CourseEvent.ShowDeleteAlarmDialog -> setState {
+                copy(
+                    showDeleteAlarmDialog = true,
+                    selectedRouteId = event.routeId
+                )
+            }
+            is CourseSearchContract.CourseEvent.DismissDeleteAlarmDialog -> setState {
+                copy(
+                    showDeleteAlarmDialog = false,
+                    selectedRouteId = ""
+                )
+            }
         }
     }
 
@@ -79,6 +91,14 @@ class CourseSearchViewModel @Inject constructor(
                     setSideEffect(CourseSearchContract.CourseSideEffect.ShowSearchFailedToast(it.message!!))
                 }
         }
+    }
+
+    fun showDeleteAlarmDialog(routeId: String) {
+        setEvent(CourseSearchContract.CourseEvent.ShowDeleteAlarmDialog(routeId))
+    }
+
+    fun dismissDeleteAlarmDialog() {
+        setEvent(CourseSearchContract.CourseEvent.DismissDeleteAlarmDialog)
     }
 
     fun setDepartureDestination(departure: String, destination: String) {

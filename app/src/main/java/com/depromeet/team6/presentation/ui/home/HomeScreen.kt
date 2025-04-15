@@ -540,7 +540,8 @@ fun HomeScreen(
                     },
                     onSuccess = {
                         deleteAlarmConfirmed()
-                    }
+                    },
+                    sortType = 1
                 )
             }
         }

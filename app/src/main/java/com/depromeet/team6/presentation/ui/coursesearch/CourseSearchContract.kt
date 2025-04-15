@@ -13,7 +13,9 @@ class CourseSearchContract {
         val startingPoint: Address? = null,
         val destinationPoint: Address? = null,
         val courseData: List<CourseInfo> = emptyList(),
-        val sortType: Int = 1
+        val sortType: Int = 1,
+        val showDeleteAlarmDialog: Boolean = false,
+        val selectedRouteId: String = ""
     ) : UiState
 
     sealed interface CourseSideEffect : UiSideEffect {
@@ -26,5 +28,7 @@ class CourseSearchContract {
         data object RegisterAlarm : CourseEvent()
         data class LoadCourseSearchResult(val searchResult: List<CourseInfo>) : CourseEvent()
         data class InitiateDepartureDestinationPoint(val departurePoint: Address, val destinationPoint: Address) : CourseEvent()
+        data class ShowDeleteAlarmDialog(val routeId: String) : CourseEvent()
+        data object DismissDeleteAlarmDialog : CourseEvent()
     }
 }
