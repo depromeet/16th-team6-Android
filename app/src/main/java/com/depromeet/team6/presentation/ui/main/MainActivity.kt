@@ -65,6 +65,7 @@ class MainActivity : ComponentActivity() {
         val navigateToCourseSearch = intent.getBooleanExtra(LockScreenNavigator.EXTRA_NAVIGATE_TO_COURSE_SEARCH, false)
         val departurePoint = intent.getStringExtra(LockScreenNavigator.EXTRA_DEPARTURE_POINT) ?: ""
         val destinationPoint = intent.getStringExtra(LockScreenNavigator.EXTRA_DESTINATION_POINT) ?: ""
+        val fromLockScreen = intent.getBooleanExtra(LockScreenNavigator.EXTRA_FROM_LOCK_SCREEN, false)
 
         setContent {
             val viewModel: MainViewModel = hiltViewModel()
@@ -102,7 +103,8 @@ class MainActivity : ComponentActivity() {
                             LaunchedEffect(Unit) {
                                 navigator.navigateToCourseSearch(
                                     departure = departurePoint,
-                                    destination = destinationPoint
+                                    destination = destinationPoint,
+                                    fromLockScreen = fromLockScreen
                                 )
                                 shouldNavigateToCourseSearch = false
                             }

@@ -337,26 +337,6 @@ class HomeViewModel @Inject constructor(
         busStartedPollingJob = null
     }
 
-    // TODO : 상세 경로 조회 API로 교체
-    fun getLegs() {
-        viewModelScope.launch {
-            getCourseSearchResultUseCase(
-                startPoint = currentState.departurePoint,
-                endPoint = currentState.destinationPoint
-            ).onSuccess { courseInfo ->
-                setEvent(HomeContract.HomeEvent.LoadLegsResult(courseInfo[0]))
-                setEvent(HomeContract.HomeEvent.LoadDepartureDateTime(courseInfo[0].departureTime))
-                setEvent(
-                    HomeContract.HomeEvent.LoadFirstTransportation(
-                        getFirstTransportation(
-                            courseInfo[0].legs
-                        )
-                    )
-                )
-            }
-        }
-    }
-
     // SharedPreferences에서 사용자 출발 상태를 로드
     fun loadUserDepartureState(context: Context) {
         viewModelScope.launch {

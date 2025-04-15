@@ -12,7 +12,8 @@ class CourseSearchContract {
         val courseDataLoadState: LoadState = LoadState.Idle,
         val startingPoint: Address? = null,
         val destinationPoint: Address? = null,
-        val courseData: List<CourseInfo> = emptyList()
+        val courseData: List<CourseInfo> = emptyList(),
+        val sortType: Int = 1
     ) : UiState
 
     sealed interface CourseSideEffect : UiSideEffect {

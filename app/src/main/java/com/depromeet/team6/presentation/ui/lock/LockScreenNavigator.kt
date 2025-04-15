@@ -48,6 +48,6 @@ class LockScreenNavigator @Inject constructor() {
         const val EXTRA_NAVIGATE_TO_COURSE_SEARCH = "extra_navigate_to_course_search"
         const val EXTRA_DEPARTURE_POINT = "extra_departure_point"
         const val EXTRA_DESTINATION_POINT = "extra_destination_point"
-        const val EXTRA_LAST_ROUTE_ID = "extra_last_route_id"
+        const val EXTRA_FROM_LOCK_SCREEN = "extra_from_lock_screen" // 상수 추가
     }
 }

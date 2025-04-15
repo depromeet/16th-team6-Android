@@ -42,11 +42,13 @@ class MainNavigator(
 
     fun navigateToCourseSearch(
         departure: String,
-        destination: String
+        destination: String,
+        fromLockScreen: Boolean = false
     ) {
         navHostController.navigateCourseSearch(
             departurePoint = departure,
-            destinationPoint = destination
+            destinationPoint = destination,
+            fromLockScreen = fromLockScreen
         )
     }
 

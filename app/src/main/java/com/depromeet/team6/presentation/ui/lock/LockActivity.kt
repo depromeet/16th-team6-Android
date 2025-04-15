@@ -61,6 +61,10 @@ class LockActivity : ComponentActivity() {
                             val departurePoint = sharedPreferences.getString("departurePoint", "") ?: ""
                             val destinationPoint = sharedPreferences.getString("destinationPoint", "") ?: ""
 
+                            val editor = sharedPreferences.edit()
+                            editor.putBoolean("fromLockScreen", true)
+                            editor.apply()
+
                             Timber.d("LockActivity onLateClick: departurePoint=$departurePoint, destinationPoint=$destinationPoint")
 
                             lockScreenNavigator.navigateToCourseSearch(this, departurePoint, destinationPoint)

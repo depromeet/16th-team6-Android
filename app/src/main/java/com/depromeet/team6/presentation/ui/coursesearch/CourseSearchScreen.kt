@@ -30,6 +30,7 @@ import com.depromeet.team6.presentation.util.toast.atChaToastMessage
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.google.gson.Gson
+import timber.log.Timber
 
 @Composable
 fun CourseSearchRoute(
@@ -38,10 +39,23 @@ fun CourseSearchRoute(
     destinationPoint: String,
     navigateToItinerary: (String, String, String) -> Unit,
     navigateToHome: () -> Unit,
+    fromLockScreen: Boolean = false,
     viewModel: CourseSearchViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        val sharedPreferences = context.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
+        val fromLockScreen = sharedPreferences.getBoolean("fromLockScreen", false)
+
+        if (fromLockScreen) {
+            viewModel.setSortType(2)
+            
+            sharedPreferences.edit().remove("fromLockScreen").apply()
+        }
+    }
+
 
     // SideEffect 감지 및 Toast 띄우기
     LaunchedEffect(Unit) {

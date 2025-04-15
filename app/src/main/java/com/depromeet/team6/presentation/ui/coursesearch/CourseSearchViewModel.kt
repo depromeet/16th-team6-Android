@@ -1,5 +1,7 @@
 package com.depromeet.team6.presentation.ui.coursesearch
 
+import android.content.Context
+import android.content.SharedPreferences
 import androidx.lifecycle.viewModelScope
 import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.repository.UserInfoRepository
@@ -9,6 +11,7 @@ import com.depromeet.team6.presentation.util.base.BaseViewModel
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -17,9 +20,12 @@ import javax.inject.Inject
 class CourseSearchViewModel @Inject constructor(
     private val loadSearchResult: GetCourseSearchResultsUseCase,
     private val postAlarmUseCase: PostAlarmUseCase,
-    private val userInfoRepository: UserInfoRepository
+    private val userInfoRepository: UserInfoRepository,
+    @ApplicationContext private val context: Context
 ) : BaseViewModel<CourseSearchContract.CourseUiState, CourseSearchContract.CourseSideEffect, CourseSearchContract.CourseEvent>() {
     override fun createInitialState(): CourseSearchContract.CourseUiState = CourseSearchContract.CourseUiState()
+
+    private val sharedPreferences: SharedPreferences = context.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
 
     override suspend fun handleEvent(event: CourseSearchContract.CourseEvent) {
         when (event) {
@@ -42,6 +48,13 @@ class CourseSearchViewModel @Inject constructor(
         }
     }
 
+    fun setSortType(sortType: Int) {
+        setState { copy(sortType = sortType) }
+        if (uiState.value.startingPoint != null && uiState.value.destinationPoint != null) {
+            getSearchResults()
+        }
+    }
+
     private fun getSearchResults() {
         setState {
             copy(
@@ -51,7 +64,8 @@ class CourseSearchViewModel @Inject constructor(
         viewModelScope.launch {
             loadSearchResult(
                 startPoint = uiState.value.startingPoint!!,
-                endPoint = uiState.value.destinationPoint!!
+                endPoint = uiState.value.destinationPoint!!,
+                sortType = uiState.value.sortType
             )
                 .onSuccess {
                     setEvent(CourseSearchContract.CourseEvent.LoadCourseSearchResult(it))
@@ -69,6 +83,14 @@ class CourseSearchViewModel @Inject constructor(
 
     fun setDepartureDestination(departure: String, destination: String) {
         try {
+            val fromLockScreen = sharedPreferences.getBoolean("fromLockScreen", false)
+
+            if (fromLockScreen) {
+                setState { copy(sortType = 2) }
+
+                sharedPreferences.edit().remove("fromLockScreen").apply()
+            }
+
             val departurePoint = Gson().fromJson(departure, Address::class.java)
             val destinationPoint = Gson().fromJson(destination, Address::class.java)
 
