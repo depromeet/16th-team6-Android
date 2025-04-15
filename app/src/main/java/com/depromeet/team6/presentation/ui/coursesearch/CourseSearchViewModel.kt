@@ -60,6 +60,10 @@ class CourseSearchViewModel @Inject constructor(
         }
     }
 
+    fun getUserId(): Int {
+        return userInfoRepository.getUserID()
+    }
+
     fun setSortType(sortType: Int) {
         setState { copy(sortType = sortType) }
         if (uiState.value.startingPoint != null && uiState.value.destinationPoint != null) {

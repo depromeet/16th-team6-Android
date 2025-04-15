@@ -41,12 +41,15 @@ import com.depromeet.team6.domain.model.course.TransportType
 import com.depromeet.team6.presentation.model.itinerary.FocusedMarkerParameter
 import com.depromeet.team6.presentation.ui.alarm.NotificationScheduler
 import com.depromeet.team6.presentation.ui.alarm.NotificationTimeConstants
-import com.depromeet.team6.presentation.ui.home.HomeEvent.HOME
-import com.depromeet.team6.presentation.ui.home.HomeEvent.HOME_DEPARTURE_TIME_CLICKED
-import com.depromeet.team6.presentation.ui.home.HomeEvent.HOME_DEPARTURE_TIME_SUGGESTION_CLICKED
-import com.depromeet.team6.presentation.ui.home.HomeEvent.HOME_ROUTE_CLICKED
-import com.depromeet.team6.presentation.ui.home.HomeEvent.SCREEN_NAME
-import com.depromeet.team6.presentation.ui.home.HomeEvent.USER_ID
+import com.depromeet.team6.presentation.ui.home.AmplitudeHomeAlarm.ALERT_END_POPUP_1
+import com.depromeet.team6.presentation.ui.home.AmplitudeHomeAlarm.ALERT_END_POPUP_2
+import com.depromeet.team6.presentation.ui.home.AmplitudeHomeAlarm.HOME
+import com.depromeet.team6.presentation.ui.home.AmplitudeHomeAlarm.HOME_DEPARTURE_TIME_CLICKED
+import com.depromeet.team6.presentation.ui.home.AmplitudeHomeAlarm.HOME_DEPARTURE_TIME_SUGGESTION_CLICKED
+import com.depromeet.team6.presentation.ui.home.AmplitudeHomeAlarm.HOME_ROUTE_CLICKED
+import com.depromeet.team6.presentation.ui.home.AmplitudeHomeAlarm.POPUP
+import com.depromeet.team6.presentation.ui.home.AmplitudeHomeAlarm.SCREEN_NAME
+import com.depromeet.team6.presentation.ui.home.AmplitudeHomeAlarm.USER_ID
 import com.depromeet.team6.presentation.ui.home.component.AfterRegisterMap
 import com.depromeet.team6.presentation.ui.home.component.AfterRegisterSheet
 import com.depromeet.team6.presentation.ui.home.component.CharacterLottieSpeechBubble
@@ -540,6 +543,14 @@ fun HomeScreen(
                     },
                     onSuccess = {
                         deleteAlarmConfirmed()
+                        AmplitudeUtils.trackEventWithProperties(
+                            ALERT_END_POPUP_1,
+                            mapOf(
+                                SCREEN_NAME to POPUP,
+                                USER_ID to viewModel.getUserId(),
+                                ALERT_END_POPUP_1 to 1
+                            )
+                        )
                     },
                     sortType = 1
                 )
@@ -587,13 +598,16 @@ private data class SpeechBubbleText(
     val bottomPadding: Dp
 )
 
-object HomeEvent {
+object AmplitudeHomeAlarm {
     const val HOME_DEPARTURE_TIME_CLICKED = "home_departure_time_clicked"
     const val SCREEN_NAME = "screen_name"
     const val USER_ID = "user_id"
     const val HOME_DEPARTURE_TIME_SUGGESTION_CLICKED = "home_departure_time_suggestion_clicked"
     const val HOME = "Home"
     const val HOME_ROUTE_CLICKED = "home_route_clicked"
+    const val POPUP = "popup"
+    const val ALERT_END_POPUP_1 = "alert_end_popup_1"
+    const val ALERT_END_POPUP_2 = "alert_end_popup_2"
 }
 
 @Preview

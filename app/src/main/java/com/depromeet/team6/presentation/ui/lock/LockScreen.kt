@@ -47,10 +47,8 @@ import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.depromeet.team6.R
-import com.depromeet.team6.presentation.ui.home.HomeEvent.HOME
-import com.depromeet.team6.presentation.ui.home.HomeEvent.HOME_ROUTE_CLICKED
-import com.depromeet.team6.presentation.ui.home.HomeEvent.SCREEN_NAME
-import com.depromeet.team6.presentation.ui.home.HomeEvent.USER_ID
+import com.depromeet.team6.presentation.ui.home.AmplitudeHomeAlarm.SCREEN_NAME
+import com.depromeet.team6.presentation.ui.home.AmplitudeHomeAlarm.USER_ID
 import com.depromeet.team6.presentation.ui.lock.LockContract
 import com.depromeet.team6.presentation.ui.lock.LockViewModel
 import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils

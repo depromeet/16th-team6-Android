@@ -25,13 +25,19 @@ import com.depromeet.team6.domain.model.course.LegInfo
 import com.depromeet.team6.presentation.ui.coursesearch.component.CourseAppBar
 import com.depromeet.team6.presentation.ui.coursesearch.component.DestinationSearchBar
 import com.depromeet.team6.presentation.ui.coursesearch.component.TransportTabMenu
+import com.depromeet.team6.presentation.ui.home.AmplitudeHomeAlarm.ALERT_END_POPUP_2
+import com.depromeet.team6.presentation.ui.home.AmplitudeHomeAlarm.HOME
+import com.depromeet.team6.presentation.ui.home.AmplitudeHomeAlarm.HOME_ROUTE_CLICKED
+import com.depromeet.team6.presentation.ui.home.AmplitudeHomeAlarm.POPUP
+import com.depromeet.team6.presentation.ui.home.AmplitudeHomeAlarm.SCREEN_NAME
+import com.depromeet.team6.presentation.ui.home.AmplitudeHomeAlarm.USER_ID
 import com.depromeet.team6.presentation.ui.home.component.DeleteAlarmDialog
 import com.depromeet.team6.presentation.ui.itinerary.LegInfoDummyProvider
+import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
 import com.depromeet.team6.presentation.util.toast.atChaToastMessage
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.google.gson.Gson
-import timber.log.Timber
 
 @Composable
 fun CourseSearchRoute(
@@ -148,6 +154,15 @@ fun CourseSearchRoute(
                                 viewModel.dismissDeleteAlarmDialog()
                             },
                             onSuccess = {
+                                AmplitudeUtils.trackEventWithProperties(
+                                    ALERT_END_POPUP_2,
+                                    mapOf(
+                                        SCREEN_NAME to POPUP,
+                                        USER_ID to viewModel.getUserId(),
+                                        ALERT_END_POPUP_2 to 1
+                                    )
+                                )
+
                                 // 알림 등록 로직 실행
                                 val sharedPreferences = context.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
                                 val editor = sharedPreferences.edit()
