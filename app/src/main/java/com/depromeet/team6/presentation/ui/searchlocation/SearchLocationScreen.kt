@@ -40,8 +40,8 @@ import com.depromeet.team6.presentation.ui.searchlocation.component.SearchHistor
 import com.depromeet.team6.presentation.ui.searchlocation.component.SearchLocationItem
 import com.depromeet.team6.presentation.ui.searchlocation.component.SearchLocationMapView
 import com.depromeet.team6.presentation.ui.searchlocation.component.SearchLocationTextField
-import com.depromeet.team6.presentation.util.DefaultLatLng.DEFAULT_LNG
 import com.depromeet.team6.presentation.util.DefaultLatLng.DEFAULT_LAT
+import com.depromeet.team6.presentation.util.DefaultLatLng.DEFAULT_LNG
 import com.depromeet.team6.presentation.util.context.getUserLocation
 import com.depromeet.team6.presentation.util.permission.PermissionUtil
 import com.depromeet.team6.presentation.util.view.LoadState

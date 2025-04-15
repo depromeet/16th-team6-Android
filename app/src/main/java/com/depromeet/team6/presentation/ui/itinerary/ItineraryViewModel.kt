@@ -45,7 +45,7 @@ class ItineraryViewModel @Inject constructor(
         }
     }
 
-    fun initItineraryInfo(courseInfoJSON: String, departurePointJSON: String, destinationPointJSON: String, currentLocation : LatLng) {
+    fun initItineraryInfo(courseInfoJSON: String, departurePointJSON: String, destinationPointJSON: String, currentLocation: LatLng) {
         val courseInfo = Gson().fromJson(courseInfoJSON, CourseInfo::class.java)
         val departurePoint = Gson().fromJson(departurePointJSON, Address::class.java)
         val destinationPoint = Gson().fromJson(destinationPointJSON, Address::class.java)

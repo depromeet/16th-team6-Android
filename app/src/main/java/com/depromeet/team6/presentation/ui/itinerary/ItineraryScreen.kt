@@ -61,7 +61,7 @@ fun ItineraryRoute(
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
 
-    val getCurrentLocation : () -> Unit = {
+    val getCurrentLocation: () -> Unit = {
         coroutineScope.launch {
             if (PermissionUtil.hasLocationPermissions(context)) { // 위치 권한이 있으면
                 val location = context.getUserLocation()
@@ -122,7 +122,7 @@ fun ItineraryScreen(
     navigateToBusCourse: (BusArrivalParameter) -> Unit = {},
     onRefreshButtonClick: () -> Unit = {},
     onBackPressed: () -> Unit = {},
-    currentLocationBtnClick : () -> Unit = {}
+    currentLocationBtnClick: () -> Unit = {}
 ) {
     val sheetScrollState = rememberScrollState()
     val itineraryInfo = uiState.itineraryInfo!!

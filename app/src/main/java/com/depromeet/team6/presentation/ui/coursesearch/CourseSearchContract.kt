@@ -32,7 +32,7 @@ class CourseSearchContract {
         data class LoadCourseSearchResult(val searchResult: List<CourseInfo>) : CourseEvent()
         data class InitiateDepartureDestinationPoint(val departurePoint: Address, val destinationPoint: Address) : CourseEvent()
         data object ItemCourseDetailToggleClick : CourseEvent()
-        data class ItemCardClick(val isTextClicked : Boolean) : CourseEvent()
+        data class ItemCardClick(val isTextClicked: Boolean) : CourseEvent()
         data class ShowDeleteAlarmDialog(val routeId: String) : CourseEvent()
         data object DismissDeleteAlarmDialog : CourseEvent()
     }

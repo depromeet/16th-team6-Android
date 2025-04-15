@@ -5,8 +5,8 @@ import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.DummyData
 import com.depromeet.team6.presentation.model.location.Location
 import com.depromeet.team6.presentation.type.OnboardingType
-import com.depromeet.team6.presentation.util.DefaultLatLng.DEFAULT_LNG
 import com.depromeet.team6.presentation.util.DefaultLatLng.DEFAULT_LAT
+import com.depromeet.team6.presentation.util.DefaultLatLng.DEFAULT_LNG
 import com.depromeet.team6.presentation.util.base.UiEvent
 import com.depromeet.team6.presentation.util.base.UiSideEffect
 import com.depromeet.team6.presentation.util.base.UiState

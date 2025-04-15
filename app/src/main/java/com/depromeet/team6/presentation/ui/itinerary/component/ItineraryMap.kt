@@ -59,7 +59,7 @@ fun ItineraryMap(
     marginTop: Dp,
     modifier: Modifier = Modifier,
     onBackPressed: () -> Unit,
-    currentLocationBtnClick : () -> Unit
+    currentLocationBtnClick: () -> Unit
 ) {
     val context = LocalContext.current
     val tMapView = remember { TMapView(context) }
