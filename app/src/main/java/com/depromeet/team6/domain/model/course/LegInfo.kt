@@ -11,5 +11,13 @@ data class LegInfo(
     val distance: Int, // 구간 이동거리 (m)
     val startPoint: Address,
     val endPoint: Address,
-    val passShape: String
+    val passShape: String,
+    val passStopList: List<Station> = emptyList()
+)
+
+data class Station(
+    val index: Int,
+    val stationName: String = "(알 수 없음)",
+    val lon: String,
+    val lat: String
 )

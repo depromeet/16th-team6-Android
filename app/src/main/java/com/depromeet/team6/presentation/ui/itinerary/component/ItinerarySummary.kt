@@ -2,16 +2,13 @@ package com.depromeet.team6.presentation.ui.itinerary.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
@@ -45,40 +42,15 @@ fun ItinerarySummary(
             .background(defaultTeam6Colors.greyWashBackground)
     ) {
         // 남은 시간
-        Row(
+        Text(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            if (durationHour > 0) {
-                Text(
-                    text = durationHour.toString(),
-                    style = defaultTeam6Typography.heading2Bold26,
-                    fontSize = 28.sp,
-                    color = defaultTeam6Colors.white
-                )
-                Text(
-                    text = "시간",
-                    style = defaultTeam6Typography.heading2Bold26,
-                    fontSize = 24.sp,
-                    color = defaultTeam6Colors.white
-                )
-                Spacer(modifier = Modifier.width(12.dp))
-            }
-            Text(
-                text = durationMinute.toString(),
-                style = defaultTeam6Typography.heading2Bold26,
-                fontSize = 28.sp,
-                color = defaultTeam6Colors.white
-            )
-            Text(
-                text = "분",
-                style = defaultTeam6Typography.heading2Bold26,
-                fontSize = 24.sp,
-                color = defaultTeam6Colors.white
-            )
-        }
+            text = stringResource(R.string.itinerary_summary_duration_time, durationHour, durationMinute),
+            style = defaultTeam6Typography.heading2Bold26,
+            fontSize = 28.sp,
+            color = defaultTeam6Colors.white
+        )
 
         // 예상 도착, 출발 시간
         val (departHour, departMinute) = LocalDateTime
