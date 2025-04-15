@@ -67,7 +67,7 @@ class LockViewModel @Inject constructor(
                 setSideEffect(LockContract.LockSideEffect.NavigateToHome(true))
             }
             LockContract.LockEvent.OnLateClick -> {
-                saveUserDepartureStatus(false)
+                saveUserDepartureStatus(true)
                 setSideEffect(LockContract.LockSideEffect.NavigateToHome(false))
             }
         }

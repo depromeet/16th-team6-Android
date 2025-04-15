@@ -97,6 +97,7 @@ fun CourseSearchRoute(
                 if (registeredCourse != null) {
                     val courseJson = Gson().toJson(registeredCourse)
                     editor.putString("departurePoint", departurePoint) // 출발지
+                    editor.putString("destinationPoint", destinationPoint) // 도착지
                     editor.putBoolean("alarmRegistered", true) // 알람 등록 여부
                     editor.putString("lastRouteId", routeId) // 막차 경로 Id
                     editor.putString("lastCourseInfo", courseJson) // 막차 경로

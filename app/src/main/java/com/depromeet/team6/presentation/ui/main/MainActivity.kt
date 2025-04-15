@@ -13,6 +13,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
@@ -23,15 +26,19 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
 import com.depromeet.team6.data.datalocal.manager.LockServiceManager
 import com.depromeet.team6.data.datalocal.permission.PermissionUtil
+import com.depromeet.team6.domain.model.Address
+import com.depromeet.team6.presentation.ui.lock.LockScreenNavigator
 import com.depromeet.team6.presentation.ui.main.navigation.MainNavHost
 import com.depromeet.team6.presentation.ui.main.navigation.MainNavigator
 import com.depromeet.team6.presentation.ui.main.navigation.rememberMainNavigator
 import com.depromeet.team6.presentation.ui.splash.SplashScreen
 import com.depromeet.team6.ui.theme.Team6Theme
+import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -54,10 +61,17 @@ class MainActivity : ComponentActivity() {
             PermissionUtil.onObtainingPermissionOverlayWindow(this)
         }
 
+        // LockActivity에서 전달된 데이터 확인 및 유효성 검사
+        val navigateToCourseSearch = intent.getBooleanExtra(LockScreenNavigator.EXTRA_NAVIGATE_TO_COURSE_SEARCH, false)
+        val departurePoint = intent.getStringExtra(LockScreenNavigator.EXTRA_DEPARTURE_POINT) ?: ""
+        val destinationPoint = intent.getStringExtra(LockScreenNavigator.EXTRA_DESTINATION_POINT) ?: ""
+
         setContent {
             val viewModel: MainViewModel = hiltViewModel()
             val navigator: MainNavigator = rememberMainNavigator()
             val showSplash by viewModel.showSplash.observeAsState(true)
+
+            var shouldNavigateToCourseSearch by remember { mutableStateOf(navigateToCourseSearch) }
 
             SideEffect {
                 WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = false
@@ -83,6 +97,16 @@ class MainActivity : ComponentActivity() {
                             navigator = navigator,
                             padding = innerPadding
                         )
+
+                        if (shouldNavigateToCourseSearch) {
+                            LaunchedEffect(Unit) {
+                                navigator.navigateToCourseSearch(
+                                    departure = departurePoint,
+                                    destination = destinationPoint
+                                )
+                                shouldNavigateToCourseSearch = false
+                            }
+                        }
                     }
                 }
             }

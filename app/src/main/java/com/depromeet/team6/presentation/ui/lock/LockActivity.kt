@@ -3,15 +3,20 @@ package com.depromeet.team6.presentation.ui.lock
 import LockRoute
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.PaddingValues
 import com.depromeet.team6.data.datalocal.service.LockService
+import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.ui.theme.Team6Theme
+import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -21,6 +26,7 @@ class LockActivity : ComponentActivity() {
     lateinit var lockScreenNavigator: LockScreenNavigator
 
     private val viewModel: LockViewModel by viewModels()
+    private lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,6 +37,9 @@ class LockActivity : ComponentActivity() {
 
         val taxiCost = intent.getIntExtra(LockScreenNavigator.EXTRA_TAXI_COST, 0)
         viewModel.setTaxiCost(taxiCost)
+
+        // SharedPreferences 초기화
+        sharedPreferences = getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
 
         setContent {
             Team6Theme {
@@ -47,7 +56,19 @@ class LockActivity : ComponentActivity() {
                     },
                     onLateClick = {
                         viewModel.setEvent(LockContract.LockEvent.OnLateClick)
-                        lockScreenNavigator.navigateToSpecificScreen(this)
+
+                        try {
+                            val departurePoint = sharedPreferences.getString("departurePoint", "") ?: ""
+                            val destinationPoint = sharedPreferences.getString("destinationPoint", "") ?: ""
+
+                            Timber.d("LockActivity onLateClick: departurePoint=$departurePoint, destinationPoint=$destinationPoint")
+
+                            lockScreenNavigator.navigateToCourseSearch(this, departurePoint, destinationPoint)
+                        } catch (e: Exception) {
+                            Timber.e(e, "Error in onLateClick, navigating to home")
+                            lockScreenNavigator.navigateToSpecificScreen(this)
+                        }
+
                         finish()
                     }
                 )

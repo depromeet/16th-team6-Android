@@ -10,6 +10,7 @@ import com.depromeet.team6.presentation.util.view.LoadState
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -67,10 +68,18 @@ class CourseSearchViewModel @Inject constructor(
     }
 
     fun setDepartureDestination(departure: String, destination: String) {
-        val departurePoint = Gson().fromJson(departure, Address::class.java)
-        val destinationPoint = Gson().fromJson(destination, Address::class.java)
+        try {
+            val departurePoint = Gson().fromJson(departure, Address::class.java)
+            val destinationPoint = Gson().fromJson(destination, Address::class.java)
 
-        setEvent(CourseSearchContract.CourseEvent.InitiateDepartureDestinationPoint(departurePoint, destinationPoint))
+            if (departurePoint != null && destinationPoint != null) {
+                setEvent(CourseSearchContract.CourseEvent.InitiateDepartureDestinationPoint(departurePoint, destinationPoint))
+            } else {
+                setState { copy(courseDataLoadState = LoadState.Error) }
+            }
+        } catch (e: Exception) {
+            setState { copy(courseDataLoadState = LoadState.Error) }
+        }
     }
 
     fun registerAlarm() {
