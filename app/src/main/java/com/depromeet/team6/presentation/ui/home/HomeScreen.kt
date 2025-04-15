@@ -51,6 +51,7 @@ import com.depromeet.team6.presentation.util.AmplitudeCommon.SCREEN_NAME
 import com.depromeet.team6.presentation.util.AmplitudeCommon.USER_ID
 import com.depromeet.team6.presentation.util.DefaultLntLng.DEFAULT_LNG
 import com.depromeet.team6.presentation.util.DefaultLntLng.DEFAULT_LNT
+import com.depromeet.team6.presentation.util.HomeAmplitude.HOME
 import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_COURSESEARCH_ENTERED_DIRECT
 import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
 import com.depromeet.team6.presentation.util.context.getUserLocation
@@ -208,7 +209,7 @@ fun HomeRoute(
                     eventName = HOME_COURSESEARCH_ENTERED_DIRECT,
                     mapOf(
                         USER_ID to viewModel.getUserId(),
-                        SCREEN_NAME to "온보딩",
+                        SCREEN_NAME to HOME,
                         HOME_COURSESEARCH_ENTERED_DIRECT to 1
                     )
                 )
