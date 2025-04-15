@@ -39,5 +39,8 @@ object AmplitudeCommon {
 }
 
 object HomeAmplitude {
+    const val HOME = "홈"
     const val HOME_COURSESEARCH_ENTERED_DIRECT = "home_coursesearch_entered_direct"
+    const val HOME_COURSESEARCH_ENTERED_WITH_MAP_DRAG = "home_coursesearch_entered_with_map_drag"
+    const val HOME_COURSESEARCH_ENTERED_WITH_CURRENT_LOCATION = "home_coursesearch_entered_with_current_location"
 }
