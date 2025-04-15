@@ -4,6 +4,7 @@ import com.depromeet.team6.data.dataremote.model.request.exeption.RequestExcepti
 import com.depromeet.team6.data.dataremote.model.response.base.ApiResponse
 import com.depromeet.team6.data.dataremote.model.response.base.toResult
 import com.depromeet.team6.data.dataremote.model.response.transits.ResponseBusArrivalsDto
+import com.depromeet.team6.data.dataremote.model.response.transits.ResponseBusOperationInfoDto
 import com.depromeet.team6.data.dataremote.model.response.transits.ResponseBusPositionsDto
 import com.depromeet.team6.data.dataremote.model.response.transits.ResponseCourseSearchDto
 import com.depromeet.team6.data.dataremote.service.TransitsService
@@ -57,6 +58,16 @@ class TransitsRemoteDataSource @Inject constructor(
         routeName: String,
         serviceRegion: String
     ): Result<ResponseBusPositionsDto> = transitsService.getBusPositions(
+        busRouteId = busRouteId,
+        routeName = routeName,
+        serviceRegion = serviceRegion
+    ).toResult()
+
+    suspend fun getBusOperationInfo(
+        busRouteId: String,
+        routeName: String,
+        serviceRegion: String
+    ): Result<ResponseBusOperationInfoDto> = transitsService.getBusOperationInfo(
         busRouteId = busRouteId,
         routeName = routeName,
         serviceRegion = serviceRegion

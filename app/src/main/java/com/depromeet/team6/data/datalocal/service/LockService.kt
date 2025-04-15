@@ -1,13 +1,18 @@
 package com.depromeet.team6.data.datalocal.service
 
 import android.app.Service
+import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.media.MediaPlayer
+import android.os.CountDownTimer
 import android.os.IBinder
+import android.os.VibrationEffect
+import android.os.Vibrator
 import android.util.Log
 import com.depromeet.team6.R
 import com.depromeet.team6.data.datalocal.manager.LockServiceManager
+import com.depromeet.team6.data.repositoryimpl.UserInfoRepositoryImpl
 import com.depromeet.team6.domain.usecase.GetTaxiCostUseCase
 import com.depromeet.team6.domain.usecase.GetTimeLeftUseCase
 import com.depromeet.team6.presentation.ui.lock.LockScreenNavigator
@@ -33,7 +38,23 @@ class LockService : Service() {
     @Inject
     lateinit var getTimeLeftUseCase: GetTimeLeftUseCase
 
+    @Inject
+    lateinit var userInfoRepositoryImpl: UserInfoRepositoryImpl
+
     private var mediaPlayer: MediaPlayer? = null
+    private var vibrator: Vibrator? = null
+
+    private var vibrationTimer: CountDownTimer? = null
+
+    private fun playAlarm() {
+        val isSound = userInfoRepositoryImpl.getAlarmSound()
+
+        if (isSound) {
+            playAlarmSound()
+        } else {
+            vibrate()
+        }
+    }
 
     private fun playAlarmSound() {
         try {
@@ -54,6 +75,38 @@ class LockService : Service() {
         }
     }
 
+    private fun vibrate() {
+        try {
+            vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+
+            val pattern = longArrayOf(0, 1000, 500)
+            val repeatIndex = 0
+
+            val vibrationEffect = VibrationEffect.createWaveform(
+                pattern,
+                repeatIndex
+            )
+            vibrator?.vibrate(vibrationEffect)
+
+            vibrationTimer?.cancel()
+            vibrationTimer = object : CountDownTimer(60000, 60000) {
+                override fun onTick(millisUntilFinished: Long) {
+                }
+
+                override fun onFinish() {
+                    stopVibration()
+                }
+            }.start()
+        } catch (e: Exception) {
+            Log.e("LockService", "진동 중 오류 발생: ${e.message}", e)
+        }
+    }
+
+    private fun stopAlarm() {
+        stopAlarmSound()
+        stopVibration()
+    }
+
     private fun stopAlarmSound() {
         mediaPlayer?.apply {
             if (isPlaying) {
@@ -63,6 +116,14 @@ class LockService : Service() {
         }
         mediaPlayer = null
         Log.d("LockService", "알림음 재생 중지")
+    }
+
+    private fun stopVibration() {
+        vibrationTimer?.cancel()
+        vibrationTimer = null
+        vibrator?.cancel()
+        vibrator = null
+        Log.d("LockService", "진동 중지")
     }
 
     override fun onCreate() {
@@ -79,7 +140,7 @@ class LockService : Service() {
         Log.d("LockService", "onStartCommand 호출됨")
 
         if (intent?.action == ACTION_STOP_ALARM_SOUND) {
-            stopAlarmSound()
+            stopAlarm()
             return START_STICKY
         }
 
@@ -92,7 +153,7 @@ class LockService : Service() {
                 val taxiCost = taxiCostUseCase.getLastSavedTaxiCost()
 
                 withContext(Dispatchers.Main) {
-                    playAlarmSound()
+                    playAlarm()
 
                     lockScreenNavigator.navigateToLockScreen(applicationContext, taxiCost)
                 }
@@ -106,7 +167,9 @@ class LockService : Service() {
         Log.d("LockService", "onDestroy 호출됨")
 
         stopLockReceiver()
-        stopAlarmSound()
+        stopAlarm()
+        vibrationTimer?.cancel()
+        vibrationTimer = null
         lockServiceManager.stop()
         super.onDestroy()
     }

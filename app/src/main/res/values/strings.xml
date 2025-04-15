@@ -132,9 +132,17 @@
     <string name="mypage_title_text">마이페이지</string>
     <string name="mypage_account_title_text">내 계정</string>
     <string name="mypage_change_home_title_text">우리집 변경</string>
-    <string name="mypage_alarm_title_text">푸시 알림 빈도 설정</string>
-    <string name="mypage_policy_text">개인정보처리방침</string>
-    <string name="mypage_version_title_text">현재 버전 1.0.0</string>
+    <string name="mypage_change_home_toast_text">집 주소가 변경되었습니다.</string>
+    <string name="mypage_change_home_button_text">다른 주소로 변경하기</string>
+    <string name="mypage_alarm_title_text">알림 설정</string>
+    <string name="mypage_alarm_sound_setting_text">진동/벨소리 설정</string>
+    <string name="mypage_alarm_time_setting_text">푸시 알림 빈도 설정</string>
+    <string name="mypage_alarm_info_text">출발지에서 막차 타는 곳까지 시간 내에 걸어갈 수 있게\n푸시 알림 받는 빈도를 설정해주세요.</string>
+    <string name="mypage_alarm_submit_text">저장</string>
+    <string name="mypage_change_alarm_time_toast_text">푸시 알림 빈도가 변경되었습니다.</string>
+    <string name="mypage_policy_text">약관</string>
+    <string name="mypage_version_title_text">현재 버전&#160;</string>
+    <string name="mypage_version_update_text">업데이트</string>
     <string name="mypage_account_logout_text">로그아웃</string>
     <string name="mypage_account_signout_text">계정 탈퇴</string>
     <string name="mypage_icon_description">마이페이지 아이콘</string>
@@ -151,6 +159,8 @@
     <string name="mypage_withdraw_dialog_confirm">탈퇴하기</string>
     <string name="mypage_dialog_cancle">취소</string>
     <string name="home_bubble_user_departure">출발~!</string>
+    <string name="mypage_alarm_vibration_text">진동</string>
+    <string name="mypage_alarm_sound_text">소리</string>
 
 
 </resources>

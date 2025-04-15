@@ -32,7 +32,19 @@ class UserInfoRepositoryImpl @Inject constructor(
 
     override fun getUserHome(): LatLng = userInfoLocalDataSource.userHome
 
+    override fun getUserID(): Int = userInfoLocalDataSource.userId
+
+    override fun setUserId(userId: Int) {
+        userInfoLocalDataSource.userId = userId
+    }
+
     override fun clear() {
         userInfoLocalDataSource.clear()
     }
+
+    override fun saveAlarmSound(isSound: Boolean) {
+        userInfoLocalDataSource.alarmSound = isSound
+    }
+
+    override fun getAlarmSound(): Boolean = userInfoLocalDataSource.alarmSound
 }

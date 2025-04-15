@@ -1,5 +1,6 @@
 package com.depromeet.team6.presentation.ui.bus
 
+import com.depromeet.team6.domain.model.BusOperationInfo
 import com.depromeet.team6.domain.model.BusPosition
 import com.depromeet.team6.domain.model.BusRouteStation
 import com.depromeet.team6.domain.model.BusStatus
@@ -31,8 +32,13 @@ class BusCourseContract {
             serviceRegion = ""
         ),
         val remainingTime: Pair<Int, Int> = Pair(0, 0),
-        val busStatus: Pair<BusStatus, BusStatus> = Pair(BusStatus.WAITING, BusStatus.WAITING)
-
+        val busStatus: Pair<BusStatus, BusStatus> = Pair(BusStatus.WAITING, BusStatus.WAITING),
+        val busOperationInfoVisible: Boolean = false,
+        val busOperationInfo: BusOperationInfo = BusOperationInfo(
+            startStationName = "",
+            endStationName = "",
+            serviceHours = emptyList()
+        )
     ) : UiState
 
     sealed interface BusCourseSideEffect : UiSideEffect {
@@ -42,5 +48,6 @@ class BusCourseContract {
     sealed class BusCourseEvent : UiEvent {
         data class SetScreenLoadState(val loadState: LoadState) : BusCourseEvent()
         data object RefreshButtonClicked : BusCourseEvent()
+        data object ChangeBusOperationInfoVisible : BusCourseEvent()
     }
 }

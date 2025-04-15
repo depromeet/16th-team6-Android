@@ -19,5 +19,13 @@ interface UserInfoRepository {
 
     fun getUserHome(): LatLng
 
+    fun getUserID(): Int
+
+    fun setUserId(userId: Int)
+
     fun clear()
+
+    fun saveAlarmSound(isSound: Boolean)
+
+    fun getAlarmSound(): Boolean
 }
