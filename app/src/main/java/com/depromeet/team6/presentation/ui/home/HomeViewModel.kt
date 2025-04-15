@@ -272,6 +272,7 @@ class HomeViewModel @Inject constructor(
                             }
                         )
                     }
+                    getTaxiCost()
                 }.onFailure {
                     setState {
                         // 위치 찾을 수 없는 경우 서울시청으로 임의 초기화
