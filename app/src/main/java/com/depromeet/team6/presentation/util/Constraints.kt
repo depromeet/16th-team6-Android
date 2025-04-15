@@ -56,6 +56,6 @@ object HomeAmplitude {
 object LockAmplitude {
     const val LOCK = "잠금화면"
     const val LOCK_BUTTON = "lock_button"
-    const val LOCK_BUTTON_START = "home_departure_time_suggestion_clicked"
+    const val LOCK_BUTTON_START = "lock_button_start"
     const val LOCK_BUTTON_LATER_ROUTE = "lock_button_later_route"
 }

@@ -94,25 +94,9 @@ fun LockRoute(
         padding = padding,
         onTimerFinish = onTimerFinish,
         onDepartureClick = {
-            onDepartureClick()
-            AmplitudeUtils.trackEventWithProperties(
-                LOCK_BUTTON,
-                mapOf(
-                    SCREEN_NAME to LOCK,
-                    USER_ID to viewModel.getUserId(),
-                    LOCK_BUTTON_START to 1
-                )
-            ) },
+            onDepartureClick() },
         onLateClick = {
             onLateClick()
-            AmplitudeUtils.trackEventWithProperties(
-                LOCK_BUTTON,
-                mapOf(
-                    SCREEN_NAME to LOCK,
-                    USER_ID to viewModel.getUserId(),
-                    LOCK_BUTTON_LATER_ROUTE to 1
-                )
-            )
         }
     )
 }

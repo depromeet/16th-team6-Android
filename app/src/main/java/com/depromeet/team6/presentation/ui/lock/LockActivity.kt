@@ -13,6 +13,13 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.layout.PaddingValues
 import com.depromeet.team6.data.datalocal.service.LockService
 import com.depromeet.team6.domain.model.Address
+import com.depromeet.team6.presentation.util.AmplitudeCommon.SCREEN_NAME
+import com.depromeet.team6.presentation.util.AmplitudeCommon.USER_ID
+import com.depromeet.team6.presentation.util.LockAmplitude.LOCK
+import com.depromeet.team6.presentation.util.LockAmplitude.LOCK_BUTTON
+import com.depromeet.team6.presentation.util.LockAmplitude.LOCK_BUTTON_LATER_ROUTE
+import com.depromeet.team6.presentation.util.LockAmplitude.LOCK_BUTTON_START
+import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
 import com.depromeet.team6.ui.theme.Team6Theme
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
@@ -48,14 +55,32 @@ class LockActivity : ComponentActivity() {
                     viewModel = viewModel,
                     onTimerFinish = {
                         stopLockServiceAndExit(this)
+
                     },
                     onDepartureClick = {
                         viewModel.setEvent(LockContract.LockEvent.OnDepartureClick)
+                        AmplitudeUtils.trackEventWithProperties(
+                            LOCK_BUTTON,
+                            mapOf(
+                                SCREEN_NAME to LOCK,
+                                USER_ID to viewModel.getUserId(),
+                                LOCK_BUTTON_START to 1
+                            )
+                        )
                         lockScreenNavigator.navigateToSpecificScreen(this)
                         finish()
                     },
                     onLateClick = {
                         viewModel.setEvent(LockContract.LockEvent.OnLateClick)
+
+                        AmplitudeUtils.trackEventWithProperties(
+                            LOCK_BUTTON,
+                            mapOf(
+                                SCREEN_NAME to LOCK,
+                                USER_ID to viewModel.getUserId(),
+                                LOCK_BUTTON_LATER_ROUTE to 1
+                            )
+                        )
 
                         try {
                             val departurePoint = sharedPreferences.getString("departurePoint", "") ?: ""

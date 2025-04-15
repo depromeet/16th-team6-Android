@@ -36,6 +36,7 @@ import com.depromeet.team6.presentation.util.toast.atChaToastMessage
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.google.gson.Gson
+import timber.log.Timber
 
 @Composable
 fun CourseSearchRoute(
@@ -152,6 +153,7 @@ fun CourseSearchRoute(
                                 viewModel.dismissDeleteAlarmDialog()
                             },
                             onSuccess = {
+                                Timber.e("여기 앰플 왜안됨요 ??????????????")
                                 AmplitudeUtils.trackEventWithProperties(
                                     ALERT_END_POPUP_2,
                                     mapOf(
