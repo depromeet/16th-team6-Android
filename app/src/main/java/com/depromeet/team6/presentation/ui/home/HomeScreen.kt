@@ -47,8 +47,15 @@ import com.depromeet.team6.presentation.ui.home.component.CharacterLottieSpeechB
 import com.depromeet.team6.presentation.ui.home.component.CurrentLocationSheet
 import com.depromeet.team6.presentation.ui.home.component.DeleteAlarmDialog
 import com.depromeet.team6.presentation.ui.home.component.TMapViewCompose
+import com.depromeet.team6.presentation.util.AmplitudeCommon.SCREEN_NAME
+import com.depromeet.team6.presentation.util.AmplitudeCommon.USER_ID
 import com.depromeet.team6.presentation.util.DefaultLatLng.DEFAULT_LAT
 import com.depromeet.team6.presentation.util.DefaultLatLng.DEFAULT_LNG
+import com.depromeet.team6.presentation.util.HomeAmplitude.HOME
+import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_COURSESEARCH_ENTERED_DIRECT
+import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_COURSESEARCH_ENTERED_WITH_INPUT
+import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_DESTINATION_CLICKED
+import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
 import com.depromeet.team6.presentation.util.context.getUserLocation
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.presentation.util.permission.PermissionUtil
@@ -199,6 +206,25 @@ fun HomeRoute(
                     currentLocationJSON,
                     destinationPointJSON
                 )
+
+                AmplitudeUtils.trackEventWithProperties(
+                    eventName = HOME_COURSESEARCH_ENTERED_DIRECT,
+                    mapOf(
+                        USER_ID to viewModel.getUserId(),
+                        SCREEN_NAME to HOME,
+                        HOME_COURSESEARCH_ENTERED_DIRECT to 1
+                    )
+                )
+            },
+            onDestinationClick = {
+                AmplitudeUtils.trackEventWithProperties(
+                    eventName = HOME_DESTINATION_CLICKED,
+                    mapOf(
+                        USER_ID to viewModel.getUserId(),
+                        SCREEN_NAME to HOME,
+                        HOME_DESTINATION_CLICKED to 1
+                    )
+                )
             },
             onFinishClick = {
                 viewModel.setEvent(HomeContract.HomeEvent.FinishAlarmClicked)
@@ -217,8 +243,18 @@ fun HomeRoute(
                 navigateToSearchLocation(
                     uiState.destinationPoint
                 )
+
+                AmplitudeUtils.trackEventWithProperties(
+                    eventName = HOME_COURSESEARCH_ENTERED_WITH_INPUT,
+                    mapOf(
+                        USER_ID to viewModel.getUserId(),
+                        SCREEN_NAME to HOME,
+                        HOME_COURSESEARCH_ENTERED_WITH_INPUT to 1
+                    )
+                )
             }
         )
+
         LoadState.Error -> navigateToLogin()
 
         else -> Unit
@@ -233,6 +269,7 @@ fun HomeScreen(
     homeUiState: HomeContract.HomeUiState = HomeContract.HomeUiState(),
     onCharacterClick: () -> Unit = {},
     onSearchClick: () -> Unit = {},
+    onDestinationClick: () -> Unit = {},
     onFinishClick: () -> Unit = {},
     onRefreshClick: () -> Unit = {},
     navigateToMypage: () -> Unit = {},
@@ -361,6 +398,7 @@ fun HomeScreen(
                 onSearchClick = {
                     onSearchClick()
                 },
+                onDestinationClick = { onDestinationClick() },
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .fillMaxWidth()
@@ -372,7 +410,8 @@ fun HomeScreen(
             !homeUiState.isAlarmRegistered ->
                 SpeechBubbleText(
                     stringResource(R.string.home_bubble_basic_text),
-                    "약 " + NumberFormat.getNumberInstance(Locale.US).format(homeUiState.taxiCost) + stringResource(R.string.home_bubble_won_text),
+                    "약 " + NumberFormat.getNumberInstance(Locale.US)
+                        .format(homeUiState.taxiCost) + stringResource(R.string.home_bubble_won_text),
                     null,
                     194.dp
                 )
@@ -404,7 +443,8 @@ fun HomeScreen(
             else ->
                 SpeechBubbleText(
                     stringResource(R.string.home_bubble_basic_text),
-                    "약 " + NumberFormat.getNumberInstance(Locale.US).format(homeUiState.taxiCost) + stringResource(R.string.home_bubble_won_text),
+                    "약 " + NumberFormat.getNumberInstance(Locale.US)
+                        .format(homeUiState.taxiCost) + stringResource(R.string.home_bubble_won_text),
                     null,
                     209.dp
                 )

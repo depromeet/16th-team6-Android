@@ -478,6 +478,10 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    fun getUserId(): Int {
+        return userInfoRepository.getUserID()
+    }
+
     companion object {
         private const val MY_PREFERENCES_NAME = "MyPreferences"
     }

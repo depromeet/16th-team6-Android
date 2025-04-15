@@ -32,3 +32,17 @@ object BusOperationInfo {
     const val HOLIDAY_KR = "공휴일"
     const val UNKNOWN_KR = "알 수 없음"
 }
+
+object AmplitudeCommon {
+    const val SCREEN_NAME = "screen_name"
+    const val USER_ID = "user_id"
+}
+
+object HomeAmplitude {
+    const val HOME = "홈"
+    const val HOME_COURSESEARCH_ENTERED_DIRECT = "home_coursesearch_entered_direct"
+    const val HOME_COURSESEARCH_ENTERED_WITH_MAP_DRAG = "home_coursesearch_entered_with_map_drag"
+    const val HOME_COURSESEARCH_ENTERED_WITH_CURRENT_LOCATION = "home_coursesearch_entered_with_current_location"
+    const val HOME_COURSESEARCH_ENTERED_WITH_INPUT = "home_coursesearch_entered_with_input"
+    const val HOME_DESTINATION_CLICKED = "home_destination_clicked"
+}
