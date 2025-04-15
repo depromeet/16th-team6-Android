@@ -10,8 +10,12 @@ import com.depromeet.team6.domain.usecase.GetLocationsUseCase
 import com.depromeet.team6.domain.usecase.PostSignUpUseCase
 import com.depromeet.team6.presentation.mapper.toPresentationList
 import com.depromeet.team6.presentation.type.OnboardingType
+import com.depromeet.team6.presentation.util.AmplitudeCommon.SCREEN_NAME
+import com.depromeet.team6.presentation.util.AmplitudeCommon.USER_ID
+import com.depromeet.team6.presentation.util.OnboardingAmplitude.USER_ALARM_FREQUENCIES
 import com.depromeet.team6.presentation.util.Provider.KAKAO
 import com.depromeet.team6.presentation.util.Token.BEARER
+import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
 import com.depromeet.team6.presentation.util.base.BaseViewModel
 import com.depromeet.team6.presentation.util.context.getUserLocation
 import com.depromeet.team6.presentation.util.permission.PermissionUtil
@@ -144,6 +148,14 @@ class OnboardingViewModel @Inject constructor(
                 userInfoRepository.setRefreshToken(auth.refreshToken)
                 userInfoRepository.setUserHome(auth.userHome)
                 userInfoRepository.setUserId(auth.id)
+                AmplitudeUtils.trackEventWithProperties(
+                    eventName = USER_ALARM_FREQUENCIES,
+                    mapOf(
+                        USER_ID to auth.id,
+                        SCREEN_NAME to "온보딩",
+                        USER_ALARM_FREQUENCIES to uiState.value.alertFrequencies
+                    )
+                )
             }.onFailure {
                 setEvent(OnboardingContract.OnboardingEvent.PostSignUp(loadState = LoadState.Error))
             }

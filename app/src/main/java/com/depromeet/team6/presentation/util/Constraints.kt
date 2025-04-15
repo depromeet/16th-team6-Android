@@ -32,3 +32,12 @@ object BusOperationInfo {
     const val HOLIDAY_KR = "공휴일"
     const val UNKNOWN_KR = "알 수 없음"
 }
+
+object AmplitudeCommon {
+    const val SCREEN_NAME = "screen_name"
+    const val USER_ID = "user_id"
+}
+
+object OnboardingAmplitude {
+    const val USER_ALARM_FREQUENCIES = "user_alarm_frequencies"
+}
