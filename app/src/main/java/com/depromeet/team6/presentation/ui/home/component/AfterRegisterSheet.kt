@@ -43,10 +43,12 @@ fun AfterRegisterSheet(
     transportationName: String,
     timeToLeave: String,
     boardingTime: String,
+    homeArrivedTime: String,
     startLocation: String,
     destination: String,
     deleteAlarmConfirmed: () -> Unit = {},
     dismissDialog: () -> Unit = {},
+    busStationLeft: Int,
     onCourseTextClick: () -> Unit,
     onFinishClick: () -> Unit,
     onCourseDetailClick: () -> Unit,
@@ -97,7 +99,7 @@ fun AfterRegisterSheet(
                             transportationType = transportType,
                             transportationNumber = transportationNumber,
                             transportationName = transportationName,
-                            stopLeft = 6
+                            stopLeft = busStationLeft
                         )
                     } else if (afterUserDeparted && timerFinish) {
                         Text(
@@ -157,7 +159,7 @@ fun AfterRegisterSheet(
                     )
                 } else {
                     TimeText(
-                        timeToLeave = timeToLeave,
+                        timeToLeave = homeArrivedTime,
                         textColor = colors.white,
                         modifier = Modifier.padding(top = 8.dp, bottom = 4.dp)
                     )
@@ -194,7 +196,7 @@ fun AfterRegisterSheet(
 @Composable
 fun AfterRegisterSheetPreview() {
     AfterRegisterSheet(
-        timerFinish = false, // 새로고침 버튼이 보이도록 false로 설정
+        timerFinish = true, // 새로고침 버튼이 보이도록 false로 설정
         afterUserDeparted = true, // 새로고침 버튼이 보이도록 true로 설정
         transportType = TransportType.BUS,
         transportationNumber = 0,
@@ -211,6 +213,9 @@ fun AfterRegisterSheetPreview() {
         boardingTime = "15:30:00",
         deleteAlarmConfirmed = {},
         dismissDialog = {},
-        onTimerFinished = {}
+        onTimerFinished = {},
+        homeArrivedTime = TODO(),
+        onIconClick = TODO(),
+        busStationLeft = TODO()
     )
 }
