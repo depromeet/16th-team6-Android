@@ -16,6 +16,7 @@ import com.depromeet.team6.domain.usecase.GetBusStartedUseCase
 import com.depromeet.team6.domain.usecase.GetCourseSearchResultsUseCase
 import com.depromeet.team6.domain.usecase.GetTaxiCostUseCase
 import com.depromeet.team6.domain.usecase.GetUserInfoUseCase
+import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
 import com.depromeet.team6.presentation.util.base.BaseViewModel
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.google.android.gms.maps.model.LatLng
@@ -461,6 +462,7 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             getUserInfoUseCase().onSuccess { userInfo ->
                 userInfoRepository.setUserId(userId = userInfo.id)
+                AmplitudeUtils.setUserId(userId = userInfo.id)
                 setState {
                     copy(
                         destinationPoint = Address(
