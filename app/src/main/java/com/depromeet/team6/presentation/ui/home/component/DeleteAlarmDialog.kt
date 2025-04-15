@@ -32,9 +32,9 @@ fun DeleteAlarmDialog(
 ) {
     val colors = LocalTeam6Colors.current
     val typography = LocalTeam6Typography.current
-    
+
     var titleText = stringResource(R.string.dialog_finish_alarm_title)
-    
+
     if (sortType == 2) {
         titleText = stringResource(R.string.dialog_change_alarm_title)
     }

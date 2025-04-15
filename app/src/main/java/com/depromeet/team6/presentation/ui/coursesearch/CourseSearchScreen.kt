@@ -62,7 +62,6 @@ fun CourseSearchRoute(
         }
     }
 
-
     // SideEffect 감지 및 Toast 띄우기
     LaunchedEffect(Unit) {
         viewModel.sideEffect.collect { sideEffect ->

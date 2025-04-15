@@ -6,13 +6,11 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.PaddingValues
 import com.depromeet.team6.data.datalocal.service.LockService
-import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.presentation.util.AmplitudeCommon.SCREEN_NAME
 import com.depromeet.team6.presentation.util.AmplitudeCommon.USER_ID
 import com.depromeet.team6.presentation.util.LockAmplitude.LOCK
@@ -21,7 +19,6 @@ import com.depromeet.team6.presentation.util.LockAmplitude.LOCK_BUTTON_LATER_ROU
 import com.depromeet.team6.presentation.util.LockAmplitude.LOCK_BUTTON_START
 import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
 import com.depromeet.team6.ui.theme.Team6Theme
-import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 import javax.inject.Inject
@@ -55,7 +52,6 @@ class LockActivity : ComponentActivity() {
                     viewModel = viewModel,
                     onTimerFinish = {
                         stopLockServiceAndExit(this)
-
                     },
                     onDepartureClick = {
                         viewModel.setEvent(LockContract.LockEvent.OnDepartureClick)

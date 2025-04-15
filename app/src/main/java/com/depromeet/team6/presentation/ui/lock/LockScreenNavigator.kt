@@ -2,9 +2,7 @@ package com.depromeet.team6.presentation.ui.lock
 
 import android.content.Context
 import android.content.Intent
-import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.presentation.ui.main.MainActivity
-import com.google.gson.Gson
 import timber.log.Timber
 import javax.inject.Inject
 

@@ -45,13 +45,6 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 import com.depromeet.team6.R
 import com.depromeet.team6.presentation.ui.lock.LockContract
 import com.depromeet.team6.presentation.ui.lock.LockViewModel
-import com.depromeet.team6.presentation.util.AmplitudeCommon.SCREEN_NAME
-import com.depromeet.team6.presentation.util.AmplitudeCommon.USER_ID
-import com.depromeet.team6.presentation.util.LockAmplitude.LOCK
-import com.depromeet.team6.presentation.util.LockAmplitude.LOCK_BUTTON
-import com.depromeet.team6.presentation.util.LockAmplitude.LOCK_BUTTON_LATER_ROUTE
-import com.depromeet.team6.presentation.util.LockAmplitude.LOCK_BUTTON_START
-import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
 import com.depromeet.team6.ui.theme.LocalTeam6Colors
 import com.depromeet.team6.ui.theme.LocalTeam6Typography
 import com.depromeet.team6.ui.theme.Team6Theme
@@ -94,7 +87,8 @@ fun LockRoute(
         padding = padding,
         onTimerFinish = onTimerFinish,
         onDepartureClick = {
-            onDepartureClick() },
+            onDepartureClick()
+        },
         onLateClick = {
             onLateClick()
         }

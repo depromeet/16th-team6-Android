@@ -24,7 +24,6 @@ import androidx.compose.ui.unit.dp
 import com.depromeet.team6.R
 import com.depromeet.team6.ui.theme.LocalTeam6Colors
 import com.depromeet.team6.ui.theme.LocalTeam6Typography
-import okhttp3.internal.cookieToString
 
 @Composable
 fun AlarmRegisterButton(
