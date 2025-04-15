@@ -21,3 +21,14 @@ object WebViewUrl {
     const val PRIVACY_POLICY_URL =
         "https://mammoth-cheese-88e.notion.site/1008a99e3bbe80e88468c11f09c5a2dc?pvs=4"
 }
+
+object BusOperationInfo {
+    const val WEEKDAY = "WEEKDAY"
+    const val SATURDAY = "SATURDAY"
+    const val HOLIDAY = "HOLIDAY"
+
+    const val WEEKDAY_KR = "평일"
+    const val SATURDAY_KR = "토요일"
+    const val HOLIDAY_KR = "공휴일"
+    const val UNKNOWN_KR = "알 수 없음"
+}

@@ -9,6 +9,7 @@ import com.depromeet.team6.domain.model.RouteLocation
 import com.depromeet.team6.domain.model.course.CourseInfo
 import com.depromeet.team6.domain.model.course.LegInfo
 import com.depromeet.team6.domain.model.course.TransportType
+import com.depromeet.team6.domain.repository.UserInfoRepository
 import com.depromeet.team6.domain.usecase.DeleteAlarmUseCase
 import com.depromeet.team6.domain.usecase.GetAddressFromCoordinatesUseCase
 import com.depromeet.team6.domain.usecase.GetBusStartedUseCase
@@ -34,7 +35,8 @@ class HomeViewModel @Inject constructor(
     private val getTaxiCostUseCase: GetTaxiCostUseCase,
     val getCourseSearchResultUseCase: GetCourseSearchResultsUseCase,
     private val getBusStartedUseCase: GetBusStartedUseCase,
-    private val deleteAlarmUseCase: DeleteAlarmUseCase
+    private val deleteAlarmUseCase: DeleteAlarmUseCase,
+    private val userInfoRepository: UserInfoRepository
 ) : BaseViewModel<HomeContract.HomeUiState, HomeContract.HomeSideEffect, HomeContract.HomeEvent>() {
     private var speechBubbleJob: Job? = null
     private var busStartedPollingJob: Job? = null
@@ -272,6 +274,7 @@ class HomeViewModel @Inject constructor(
                             }
                         )
                     }
+                    getTaxiCost()
                 }.onFailure {
                     setState {
                         // 위치 찾을 수 없는 경우 서울시청으로 임의 초기화
@@ -457,6 +460,7 @@ class HomeViewModel @Inject constructor(
         setState { copy(destinationState = LoadState.Loading) }
         viewModelScope.launch {
             getUserInfoUseCase().onSuccess { userInfo ->
+                userInfoRepository.setUserId(userId = userInfo.id)
                 setState {
                     copy(
                         destinationPoint = Address(

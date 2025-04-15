@@ -53,6 +53,7 @@ class LoginViewModel @Inject constructor(
                 userInfoRepository.setAccessToken(BEARER + auth.accessToken)
                 userInfoRepository.setRefreshToken(auth.refreshToken)
                 userInfoRepository.setUserHome(auth.userHome)
+                userInfoRepository.setUserId(userId = auth.id)
             }.onFailure {
                 setEvent(LoginContract.LoginEvent.GetLogin(loadState = LoadState.Error))
             }

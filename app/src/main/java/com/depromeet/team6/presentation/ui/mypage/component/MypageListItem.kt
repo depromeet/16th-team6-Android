@@ -24,6 +24,7 @@ import com.depromeet.team6.ui.theme.LocalTeam6Typography
 @Composable
 fun MypageListItem(
     title: String,
+    arrowVisible: Boolean = true,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -51,12 +52,14 @@ fun MypageListItem(
                 color = colors.white
             )
 
-            Icon(
-                imageVector = ImageVector.vectorResource(R.drawable.ic_all_arrow_right_grey),
-                contentDescription = stringResource(R.string.mypage_icon_arrow_text),
-                tint = colors.greyTertiaryLabel,
-                modifier = modifier
-            )
+            if (arrowVisible) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(R.drawable.ic_all_arrow_right_grey),
+                    contentDescription = stringResource(R.string.mypage_icon_arrow_text),
+                    tint = colors.greyTertiaryLabel,
+                    modifier = modifier
+                )
+            }
         }
     }
 }

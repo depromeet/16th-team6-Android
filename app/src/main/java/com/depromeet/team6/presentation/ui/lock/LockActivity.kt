@@ -12,9 +12,14 @@ import androidx.compose.foundation.layout.PaddingValues
 import com.depromeet.team6.data.datalocal.service.LockService
 import com.depromeet.team6.ui.theme.Team6Theme
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class LockActivity : ComponentActivity() {
+
+    @Inject
+    lateinit var lockScreenNavigator: LockScreenNavigator
+
     private val viewModel: LockViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,10 +42,12 @@ class LockActivity : ComponentActivity() {
                     },
                     onDepartureClick = {
                         viewModel.setEvent(LockContract.LockEvent.OnDepartureClick)
+                        lockScreenNavigator.navigateToSpecificScreen(this)
                         finish()
                     },
                     onLateClick = {
                         viewModel.setEvent(LockContract.LockEvent.OnLateClick)
+                        lockScreenNavigator.navigateToSpecificScreen(this)
                         finish()
                     }
                 )

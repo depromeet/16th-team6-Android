@@ -2,6 +2,7 @@ package com.depromeet.team6.presentation.ui.bus
 
 import androidx.lifecycle.viewModelScope
 import com.depromeet.team6.domain.usecase.GetBusArrivalUseCase
+import com.depromeet.team6.domain.usecase.GetBusOperationInfoUseCase
 import com.depromeet.team6.domain.usecase.GetBusPositionsUseCase
 import com.depromeet.team6.presentation.model.bus.BusArrivalParameter
 import com.depromeet.team6.presentation.model.bus.BusPositionParameter
@@ -14,7 +15,8 @@ import javax.inject.Inject
 @HiltViewModel
 class BusCourseViewModel @Inject constructor(
     private val getBusArrivalUseCase: GetBusArrivalUseCase,
-    private val getBusPositionsUseCase: GetBusPositionsUseCase
+    private val getBusPositionsUseCase: GetBusPositionsUseCase,
+    private val getBusOperationInfoUseCase: GetBusOperationInfoUseCase
 ) : BaseViewModel<BusCourseContract.BusCourseUiState, BusCourseContract.BusCourseSideEffect, BusCourseContract.BusCourseEvent>() {
     override fun createInitialState(): BusCourseContract.BusCourseUiState =
         BusCourseContract.BusCourseUiState()
@@ -22,9 +24,13 @@ class BusCourseViewModel @Inject constructor(
     override suspend fun handleEvent(event: BusCourseContract.BusCourseEvent) {
         when (event) {
             is BusCourseContract.BusCourseEvent.SetScreenLoadState -> setState { copy(loadState = event.loadState) }
-            BusCourseContract.BusCourseEvent.RefreshButtonClicked -> {
+            is BusCourseContract.BusCourseEvent.RefreshButtonClicked -> {
                 setEvent(BusCourseContract.BusCourseEvent.SetScreenLoadState(loadState = LoadState.Loading))
                 getBusArrival()
+            }
+
+            is BusCourseContract.BusCourseEvent.ChangeBusOperationInfoVisible -> {
+                setState { copy(busOperationInfoVisible = !currentState.busOperationInfoVisible) }
             }
         }
     }
@@ -47,6 +53,11 @@ class BusCourseViewModel @Inject constructor(
                 lon = busArrivalParameter.lon
             ).onSuccess { busArrival ->
                 getBusPositions(
+                    busRouteId = busArrival.busRouteId,
+                    routeName = busArrival.routeName,
+                    serviceRegion = busArrival.serviceRegion
+                )
+                getBusOperationInfo(
                     busRouteId = busArrival.busRouteId,
                     routeName = busArrival.routeName,
                     serviceRegion = busArrival.serviceRegion
@@ -99,6 +110,26 @@ class BusCourseViewModel @Inject constructor(
                 setEvent(BusCourseContract.BusCourseEvent.SetScreenLoadState(loadState = LoadState.Success))
             }.onFailure {
                 setEvent(BusCourseContract.BusCourseEvent.SetScreenLoadState(loadState = LoadState.Error))
+            }
+        }
+    }
+
+    private fun getBusOperationInfo(
+        busRouteId: String,
+        routeName: String,
+        serviceRegion: String
+    ) {
+        viewModelScope.launch {
+            getBusOperationInfoUseCase(
+                busRouteId = busRouteId,
+                routeName = routeName,
+                serviceRegion = serviceRegion
+            ).onSuccess { busOperationInfo ->
+                setState {
+                    copy(
+                        busOperationInfo = busOperationInfo
+                    )
+                }
             }
         }
     }

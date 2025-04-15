@@ -24,10 +24,18 @@ class LockViewModel @Inject constructor(
 
     init {
         startTimer()
+        loadTaxiCost()
     }
 
     fun setTaxiCost(taxiCost: Int) {
-        setState { copy(taxiCost = taxiCost) }
+        if (taxiCost > 0) {
+            setState { copy(taxiCost = taxiCost) }
+            viewModelScope.launch {
+                getTaxiCostUseCase.saveTaxiCost(taxiCost)
+            }
+        } else {
+            loadTaxiCost()
+        }
     }
 
     private fun startTimer() {
@@ -66,9 +74,11 @@ class LockViewModel @Inject constructor(
     fun loadTaxiCost() {
         viewModelScope.launch {
             try {
-                val cost = getTaxiCostUseCase.getLastSavedTaxiCost()
-                setState {
-                    copy(taxiCost = cost)
+                val cost = getTaxiCostUseCase.getPersistedTaxiCostForLockScreen()
+                if (cost > 0) {
+                    setState {
+                        copy(taxiCost = cost)
+                    }
                 }
             } catch (e: Exception) {
                 Log.e(TAG, "택시 비용 로드 중 오류 발생", e)
@@ -79,7 +89,6 @@ class LockViewModel @Inject constructor(
     private fun saveUserDepartureStatus(userDeparted: Boolean) {
         viewModelScope.launch {
             try {
-                // SharedPreferences에 userDeparture 상태 저장
                 val sharedPreferences = context.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
                 sharedPreferences.edit().apply {
                     putBoolean("userDeparture", userDeparted)
