@@ -30,28 +30,21 @@ object AmplitudeUtils {
     }
 
     fun trackEventWithProperties(eventName: String, properties: Map<String, Any>) {
-<<<<<<< HEAD
         if (::amplitude.isInitialized) {
             Timber.d("Amplitude EventName: $eventName, Properties: $properties")
             amplitude.track(eventType = eventName, eventProperties = properties).flush()
-        }else{
+        } else {
             Timber.w("TrackEventWithProperties Failed Amplitude not initialized")
         }
-=======
-        amplitude.track(eventType = eventName, eventProperties = properties).flush()
->>>>>>> origin/feat/onboarding-amplitude#120
     }
 
     fun setUserId(userId: String) {
         if (::amplitude.isInitialized) {
-<<<<<<< HEAD
-            Timber.w("Onboarding Amplitude initialized")
+            Timber.d("Amplitude setUserId: $userId")
             amplitude.setUserId(userId)
-        }else{
+        } else {
             Timber.w("SetUserId Failed Amplitude not initialized")
-=======
-            amplitude.setUserId(userId)
->>>>>>> origin/feat/onboarding-amplitude#120
+
         }
     }
 }
