@@ -25,14 +25,12 @@ import com.depromeet.team6.domain.model.course.LegInfo
 import com.depromeet.team6.presentation.ui.coursesearch.component.CourseAppBar
 import com.depromeet.team6.presentation.ui.coursesearch.component.DestinationSearchBar
 import com.depromeet.team6.presentation.ui.coursesearch.component.TransportTabMenu
-import com.depromeet.team6.presentation.ui.home.AmplitudeHomeAlarm.ALERT_END_POPUP_2
-import com.depromeet.team6.presentation.ui.home.AmplitudeHomeAlarm.HOME
-import com.depromeet.team6.presentation.ui.home.AmplitudeHomeAlarm.HOME_ROUTE_CLICKED
-import com.depromeet.team6.presentation.ui.home.AmplitudeHomeAlarm.POPUP
-import com.depromeet.team6.presentation.ui.home.AmplitudeHomeAlarm.SCREEN_NAME
-import com.depromeet.team6.presentation.ui.home.AmplitudeHomeAlarm.USER_ID
 import com.depromeet.team6.presentation.ui.home.component.DeleteAlarmDialog
 import com.depromeet.team6.presentation.ui.itinerary.LegInfoDummyProvider
+import com.depromeet.team6.presentation.util.AmplitudeCommon.SCREEN_NAME
+import com.depromeet.team6.presentation.util.AmplitudeCommon.USER_ID
+import com.depromeet.team6.presentation.util.HomeAmplitude.ALERT_END_POPUP_2
+import com.depromeet.team6.presentation.util.HomeAmplitude.POPUP
 import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
 import com.depromeet.team6.presentation.util.toast.atChaToastMessage
 import com.depromeet.team6.presentation.util.view.LoadState
@@ -157,7 +155,7 @@ fun CourseSearchRoute(
                                 AmplitudeUtils.trackEventWithProperties(
                                     ALERT_END_POPUP_2,
                                     mapOf(
-                                        POPUP to "팝업",
+                                        SCREEN_NAME to POPUP,
                                         USER_ID to viewModel.getUserId(),
                                         ALERT_END_POPUP_2 to 1
                                     )

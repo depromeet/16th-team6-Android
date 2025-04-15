@@ -42,8 +42,6 @@ class HomeViewModel @Inject constructor(
     private val getBusStartedUseCase: GetBusStartedUseCase,
     private val getBusArrivalUseCase: GetBusArrivalUseCase,
     private val deleteAlarmUseCase: DeleteAlarmUseCase
-    private val deleteAlarmUseCase: DeleteAlarmUseCase,
-    private val userInfoRepository: UserInfoRepository
 ) : BaseViewModel<HomeContract.HomeUiState, HomeContract.HomeSideEffect, HomeContract.HomeEvent>() {
     private var speechBubbleJob: Job? = null
     private var busStartedPollingJob: Job? = null
@@ -552,10 +550,6 @@ class HomeViewModel @Inject constructor(
                 )
             }
         }
-    }
-
-    fun getUserId(): Int {
-        return userInfoRepository.getUserID()
     }
 
     companion object {

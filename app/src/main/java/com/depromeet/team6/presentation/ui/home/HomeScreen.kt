@@ -41,14 +41,6 @@ import com.depromeet.team6.domain.model.course.TransportType
 import com.depromeet.team6.presentation.model.itinerary.FocusedMarkerParameter
 import com.depromeet.team6.presentation.ui.alarm.NotificationScheduler
 import com.depromeet.team6.presentation.ui.alarm.NotificationTimeConstants
-import com.depromeet.team6.presentation.ui.home.AmplitudeHomeAlarm.ALERT_END_POPUP_1
-import com.depromeet.team6.presentation.ui.home.AmplitudeHomeAlarm.ALERT_END_POPUP_2
-import com.depromeet.team6.presentation.ui.home.AmplitudeHomeAlarm.HOME
-import com.depromeet.team6.presentation.ui.home.AmplitudeHomeAlarm.HOME_DEPARTURE_TIME_CLICKED
-import com.depromeet.team6.presentation.ui.home.AmplitudeHomeAlarm.HOME_DEPARTURE_TIME_SUGGESTION_CLICKED
-import com.depromeet.team6.presentation.ui.home.AmplitudeHomeAlarm.HOME_ROUTE_CLICKED
-import com.depromeet.team6.presentation.ui.home.AmplitudeHomeAlarm.POPUP
-import com.depromeet.team6.presentation.ui.home.AmplitudeHomeAlarm.USER_ID
 import com.depromeet.team6.presentation.ui.home.component.AfterRegisterMap
 import com.depromeet.team6.presentation.ui.home.component.AfterRegisterSheet
 import com.depromeet.team6.presentation.ui.home.component.CharacterLottieSpeechBubble
@@ -59,10 +51,15 @@ import com.depromeet.team6.presentation.util.AmplitudeCommon.SCREEN_NAME
 import com.depromeet.team6.presentation.util.AmplitudeCommon.USER_ID
 import com.depromeet.team6.presentation.util.DefaultLntLng.DEFAULT_LNG
 import com.depromeet.team6.presentation.util.DefaultLntLng.DEFAULT_LNT
+import com.depromeet.team6.presentation.util.HomeAmplitude.ALERT_END_POPUP_1
 import com.depromeet.team6.presentation.util.HomeAmplitude.HOME
 import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_COURSESEARCH_ENTERED_DIRECT
 import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_COURSESEARCH_ENTERED_WITH_INPUT
+import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_DEPARTURE_TIME_CLICKED
+import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_DEPARTURE_TIME_SUGGESTION_CLICKED
 import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_DESTINATION_CLICKED
+import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_ROUTE_CLICKED
+import com.depromeet.team6.presentation.util.HomeAmplitude.POPUP
 import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
 import com.depromeet.team6.presentation.util.context.getUserLocation
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
@@ -373,7 +370,7 @@ fun HomeScreen(
                     AmplitudeUtils.trackEventWithProperties(
                         HOME_ROUTE_CLICKED,
                         mapOf(
-                            HOME to "홈",
+                            SCREEN_NAME to HOME,
                             USER_ID to viewModel.getUserId(),
                             HOME_ROUTE_CLICKED to 1
                         )
@@ -412,7 +409,7 @@ fun HomeScreen(
                     AmplitudeUtils.trackEventWithProperties(
                         HOME_DEPARTURE_TIME_CLICKED,
                         mapOf(
-                            HOME to "홈",
+                            SCREEN_NAME to HOME,
                             USER_ID to viewModel.getUserId(),
                             HOME_DEPARTURE_TIME_CLICKED to 1
                         )
@@ -422,7 +419,7 @@ fun HomeScreen(
                     AmplitudeUtils.trackEventWithProperties(
                         HOME_DEPARTURE_TIME_CLICKED,
                         mapOf(
-                            HOME to "홈",
+                            SCREEN_NAME to HOME,
                             USER_ID to viewModel.getUserId(),
                             HOME_DEPARTURE_TIME_SUGGESTION_CLICKED to 1
                         )
@@ -584,7 +581,7 @@ fun HomeScreen(
                         AmplitudeUtils.trackEventWithProperties(
                             ALERT_END_POPUP_1,
                             mapOf(
-                                POPUP to "팝업",
+                                SCREEN_NAME to POPUP,
                                 USER_ID to viewModel.getUserId(),
                                 ALERT_END_POPUP_1 to 1
                             )
@@ -635,18 +632,6 @@ private data class SpeechBubbleText(
     val suffix: String? = null,
     val bottomPadding: Dp
 )
-
-object AmplitudeHomeAlarm {
-    const val HOME_DEPARTURE_TIME_CLICKED = "home_departure_time_clicked"
-    const val SCREEN_NAME = "screen_name"
-    const val USER_ID = "user_id"
-    const val HOME_DEPARTURE_TIME_SUGGESTION_CLICKED = "home_departure_time_suggestion_clicked"
-    const val HOME = "Home"
-    const val HOME_ROUTE_CLICKED = "home_route_clicked"
-    const val POPUP = "popup"
-    const val ALERT_END_POPUP_1 = "alert_end_popup_1"
-    const val ALERT_END_POPUP_2 = "alert_end_popup_2"
-}
 
 @Preview
 @Composable

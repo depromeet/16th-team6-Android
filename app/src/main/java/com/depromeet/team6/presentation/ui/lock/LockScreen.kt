@@ -1,7 +1,3 @@
-import LockScreenEvent.LOCK
-import LockScreenEvent.LOCK_BUTTON
-import LockScreenEvent.LOCK_BUTTON_LATER_ROUTE
-import LockScreenEvent.LOCK_BUTTON_START
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -47,10 +43,14 @@ import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.depromeet.team6.R
-import com.depromeet.team6.presentation.ui.home.AmplitudeHomeAlarm.SCREEN_NAME
-import com.depromeet.team6.presentation.ui.home.AmplitudeHomeAlarm.USER_ID
 import com.depromeet.team6.presentation.ui.lock.LockContract
 import com.depromeet.team6.presentation.ui.lock.LockViewModel
+import com.depromeet.team6.presentation.util.AmplitudeCommon.SCREEN_NAME
+import com.depromeet.team6.presentation.util.AmplitudeCommon.USER_ID
+import com.depromeet.team6.presentation.util.LockAmplitude.LOCK
+import com.depromeet.team6.presentation.util.LockAmplitude.LOCK_BUTTON
+import com.depromeet.team6.presentation.util.LockAmplitude.LOCK_BUTTON_LATER_ROUTE
+import com.depromeet.team6.presentation.util.LockAmplitude.LOCK_BUTTON_START
 import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
 import com.depromeet.team6.ui.theme.LocalTeam6Colors
 import com.depromeet.team6.ui.theme.LocalTeam6Typography
@@ -98,7 +98,7 @@ fun LockRoute(
             AmplitudeUtils.trackEventWithProperties(
                 LOCK_BUTTON,
                 mapOf(
-                    LOCK to "잠금화면",
+                    SCREEN_NAME to LOCK,
                     USER_ID to viewModel.getUserId(),
                     LOCK_BUTTON_START to 1
                 )
@@ -108,7 +108,7 @@ fun LockRoute(
             AmplitudeUtils.trackEventWithProperties(
                 LOCK_BUTTON,
                 mapOf(
-                    LOCK to "잠금화면",
+                    SCREEN_NAME to LOCK,
                     USER_ID to viewModel.getUserId(),
                     LOCK_BUTTON_LATER_ROUTE to 1
                 )
@@ -270,14 +270,6 @@ fun LockScreen(
         }
     }
 }
-
-object LockScreenEvent {
-    const val LOCK_BUTTON = "lock_button"
-    const val LOCK_BUTTON_START = "home_departure_time_suggestion_clicked"
-    const val LOCK = "lock"
-    const val LOCK_BUTTON_LATER_ROUTE = "lock_button_later_route"
-}
-
 
 @Preview(showBackground = true)
 @Composable
