@@ -154,6 +154,7 @@ dependencies {
 
     // Amplitude
     implementation(libs.amplitude)
+    implementation(libs.play.services.appset)
 }
 java {
     toolchain {
