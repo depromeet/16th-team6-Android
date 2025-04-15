@@ -62,10 +62,15 @@ class UserInfoLocalDataSource @Inject constructor(
             setValue(USER_HOME, "${value.latitude},${value.longitude}")
         }
 
+    var userId: Int
+        get() = getIntValue(USER_ID)
+        set(value) = setIntValue(USER_ID, value)
+
     fun clear() {
         setValue(REFRESH_TOKEN, "")
         setValue(ACCESS_TOKEN, "")
         setValue(FCM_TOKEN, "")
+        setIntValue(USER_ID, INITIAL_INT)
     }
 
     private fun getValue(key: String): String =
@@ -74,10 +79,18 @@ class UserInfoLocalDataSource @Inject constructor(
     private fun setValue(key: String, value: String) =
         sharedPreferences.edit { putString(key, value) }
 
+    private fun getIntValue(key: String, default: Int = INITIAL_INT): Int =
+        sharedPreferences.getString(key, null)?.toIntOrNull() ?: default
+
+    private fun setIntValue(key: String, value: Int) =
+        sharedPreferences.edit { putString(key, value.toString()) }
+
     companion object {
         private const val FILE_NAME = "AtChaLocalDataSource"
         private const val INITIAL_VALUE = ""
         private const val FCM_TOKEN = "fcm_token"
         private const val USER_HOME = "user_home"
+        private const val USER_ID = "user_id"
+        private const val INITIAL_INT = -1
     }
 }

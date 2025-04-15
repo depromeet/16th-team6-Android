@@ -152,12 +152,11 @@ fun LoginScreen(
 ) {
     Column(
         modifier = modifier
-            .padding(padding)
             .fillMaxSize()
             .paint(
                 painter = BitmapPainter(ImageBitmap.imageResource(R.drawable.img_login_background)),
                 contentScale = ContentScale.Crop
-            )
+            ).padding(padding)
     ) {
         HorizontalPager(
             count = LoginViewPagerType.entries.size,

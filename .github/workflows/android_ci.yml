@@ -58,8 +58,10 @@ jobs:
       - name: Access local properties
         env:
           BASE_URL: ${{ secrets.BASE_URL }}
+          AMPLITUDE_API_KEY: ${{ secrets.AMPLITUDE_API_KEY }}
         run: |
           echo "dev.base.url=\"$BASE_URL\"" >> local.properties
+          echo "amplitude.dev.api.key=\"AMPLITUDE_API_KEY\"" >> local.properties
 
       # ✅ Lint Check
       - name: Lint Check
