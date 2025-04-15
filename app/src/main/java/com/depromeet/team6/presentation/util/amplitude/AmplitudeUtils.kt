@@ -4,7 +4,7 @@ import android.content.Context
 import com.amplitude.android.Amplitude
 import com.amplitude.android.Configuration
 import com.depromeet.team6.BuildConfig
-import timber.log.Timber
+import com.depromeet.team6.presentation.util.AmplitudeCommon.USER_ID
 
 object AmplitudeUtils {
     private lateinit var amplitude: Amplitude
@@ -19,32 +19,21 @@ object AmplitudeUtils {
     }
 
     fun trackEvent(eventName: String) {
-        amplitude.track(eventType = eventName).flush()
+        amplitude.track(eventType = eventName)
     }
 
     fun <T> trackEventWithProperty(eventName: String, propertyName: String, propertyValue: T) {
         amplitude.track(
             eventType = eventName,
             eventProperties = mapOf(propertyName to propertyValue)
-        ).flush()
+        )
     }
 
     fun trackEventWithProperties(eventName: String, properties: Map<String, Any>) {
-        if (::amplitude.isInitialized) {
-            Timber.d("Amplitude EventName: $eventName, Properties: $properties")
-            amplitude.track(eventType = eventName, eventProperties = properties).flush()
-        } else {
-            Timber.w("TrackEventWithProperties Failed Amplitude not initialized")
-        }
+        amplitude.track(eventType = eventName, eventProperties = properties)
     }
 
-    fun setUserId(userId: String) {
-        if (::amplitude.isInitialized) {
-            Timber.d("Amplitude setUserId: $userId")
-            amplitude.setUserId(userId)
-        } else {
-            Timber.w("SetUserId Failed Amplitude not initialized")
-
-        }
+    fun setUserId(userId: Int) {
+        amplitude.setUserId("$USER_ID: $userId")
     }
 }

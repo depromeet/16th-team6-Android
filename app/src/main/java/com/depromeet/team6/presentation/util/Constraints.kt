@@ -35,9 +35,14 @@ object BusOperationInfo {
 
 object AmplitudeCommon {
     const val SCREEN_NAME = "screen_name"
-    const val USER_ID = "user_id"
+    const val USER_ID = "USER_ID"
 }
 
 object OnboardingAmplitude {
     const val USER_ALARM_FREQUENCIES = "user_alarm_frequencies"
+    const val HOME_REGISTER_LOCATION_PERMISSION_CHECK = "home_register_location_permission_clicked"
+    const val HOME_REGISTER_COMPLETE_CLICKED = "home_register_complete_clicked"
+    const val ALARM_SETTING_ALARM_PERMISSION_CLICKED = "alarm_setting_alarm_permission_clicked"
+    const val HOME_REGISTER = "집 등록(온보딩)"
+    const val ALARM_REGISTER = "알림 등록(온보딩)"
 }
