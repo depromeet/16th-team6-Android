@@ -41,4 +41,10 @@ class UserInfoRepositoryImpl @Inject constructor(
     override fun clear() {
         userInfoLocalDataSource.clear()
     }
+
+    override fun saveAlarmSound(isSound: Boolean) {
+        userInfoLocalDataSource.alarmSound = isSound
+    }
+
+    override fun getAlarmSound(): Boolean = userInfoLocalDataSource.alarmSound
 }

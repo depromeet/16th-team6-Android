@@ -1,6 +1,7 @@
 package com.depromeet.team6.data.dataremote.service
 
 import com.depromeet.team6.data.dataremote.model.request.signup.RequestSignUpDto
+import com.depromeet.team6.data.dataremote.model.request.user.RequestModifyUserInfoDto
 import com.depromeet.team6.data.dataremote.model.response.base.ApiResponse
 import com.depromeet.team6.data.dataremote.model.response.user.ResponseAuthDto
 import com.depromeet.team6.data.dataremote.model.response.user.ResponseCheckDto
@@ -20,6 +21,7 @@ import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Query
 
 interface AuthService {
@@ -47,4 +49,9 @@ interface AuthService {
 
     @GET("$API/$MEMBERS/$ME")
     suspend fun getUserInfo(): ApiResponse<ResponseUserInfoDto>
+
+    @PUT("$API/$MEMBERS/$ME")
+    suspend fun modifyUserInfo(
+        @Body requestModifyUserInfoDto: RequestModifyUserInfoDto
+    ): ApiResponse<ResponseUserInfoDto>
 }

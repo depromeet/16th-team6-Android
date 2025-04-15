@@ -1,6 +1,7 @@
 package com.depromeet.team6.data.repositoryimpl
 
 import com.depromeet.team6.data.dataremote.datasource.AuthRemoteDataSource
+import com.depromeet.team6.data.dataremote.model.request.user.RequestModifyUserInfoDto
 import com.depromeet.team6.data.mapper.todata.toData
 import com.depromeet.team6.data.mapper.todomain.toDomain
 import com.depromeet.team6.domain.model.Auth
@@ -33,5 +34,9 @@ class AuthRepositoryImpl @Inject constructor(
 
     override suspend fun getUserInfo(): Result<UserInfo> =
         authRemoteDataSource.getUserInfo()
+            .mapCatching { it.toDomain() }
+
+    override suspend fun modifyUserInfo(modifyUserInfoDto: RequestModifyUserInfoDto): Result<UserInfo> =
+        authRemoteDataSource.modifyUserInfo(requestModifyUserInfoDto = modifyUserInfoDto)
             .mapCatching { it.toDomain() }
 }
