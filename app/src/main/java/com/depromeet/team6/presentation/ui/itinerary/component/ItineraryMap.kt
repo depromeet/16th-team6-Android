@@ -58,7 +58,8 @@ fun ItineraryMap(
     focusedMarkerParameter: FocusedMarkerParameter?,
     marginTop: Dp,
     modifier: Modifier = Modifier,
-    onBackPressed: () -> Unit
+    onBackPressed: () -> Unit,
+    currentLocationBtnClick : () -> Unit
 ) {
     val context = LocalContext.current
     val tMapView = remember { TMapView(context) }
@@ -216,7 +217,13 @@ fun ItineraryMap(
                 .size(36.dp)
                 .align(Alignment.BottomEnd)
                 .offset(x = (-16).dp, y = (-36).dp)
-                .noRippleClickable { },
+                .noRippleClickable {
+                    currentLocationBtnClick()
+                    tMapView.setCenterPoint(
+                        currentLocation.latitude,
+                        currentLocation.longitude
+                    )
+                },
             imageVector = ImageVector.vectorResource(R.drawable.ic_all_current_location),
             contentDescription = "ItineraryCircleBtnBack"
         )
@@ -286,6 +293,7 @@ fun ItineraryMapPreview(
             address = ""
         ),
         onBackPressed = { },
-        focusedMarkerParameter = null
+        focusedMarkerParameter = null,
+        currentLocationBtnClick = {}
     )
 }

@@ -12,8 +12,8 @@ object Provider {
     const val KAKAO = 0
 }
 
-object DefaultLntLng {
-    const val DEFAULT_LNT = 37.5665
+object DefaultLatLng {
+    const val DEFAULT_LAT = 37.5665
     const val DEFAULT_LNG = 126.9780
 }
 

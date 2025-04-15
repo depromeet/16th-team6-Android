@@ -63,8 +63,9 @@ fun CourseSearchRoute(
         }
     }
 
+    // UI state 초기화
     LaunchedEffect(Unit) {
-        viewModel.setDepartureDestination(departurePoint, destinationPoint)
+        viewModel.setEvent(CourseSearchContract.CourseEvent.InitUiState(departurePoint, destinationPoint))
     }
 
     when (uiState.courseDataLoadState) {
@@ -107,7 +108,9 @@ fun CourseSearchRoute(
                     atChaToastMessage(context, R.string.course_set_notification_failed_snackbar)
                 }
             },
-            backButtonClicked = { navigateToHome() }
+            backButtonClicked = { navigateToHome() },
+            courseInfoToggleClick = { viewModel.setEvent(CourseSearchContract.CourseEvent.ItemCourseDetailToggleClick) },
+            itemCardClick = { viewModel.setEvent(CourseSearchContract.CourseEvent.ItemCardClick) }
         )
         LoadState.Error -> {
             navigateToHome()
@@ -124,7 +127,9 @@ fun CourseSearchScreen(
     uiState: CourseSearchContract.CourseUiState = CourseSearchContract.CourseUiState(),
     navigateToItinerary: (String, String, String) -> Unit = { s: String, s1: String, s2: String -> },
     setNotification: (String) -> Unit = {},
-    backButtonClicked: () -> Unit = {}
+    backButtonClicked: () -> Unit = {},
+    courseInfoToggleClick: () -> Unit = {},
+    itemCardClick: () -> Unit = {}
 ) {
     Column(
         modifier = modifier
@@ -141,12 +146,14 @@ fun CourseSearchScreen(
         TransportTabMenu(
             availableCourses = uiState.courseData,
             onItemClick = { courseInfoJson ->
+                itemCardClick()
                 navigateToItinerary(
                     courseInfoJson,
                     Gson().toJson(uiState.startingPoint!!),
                     Gson().toJson(uiState.destinationPoint!!)
                 )
             },
+            courseInfoToggleClick = courseInfoToggleClick,
             onRegisterAlarmBtnClick = { routeId ->
                 setNotification(routeId)
             }

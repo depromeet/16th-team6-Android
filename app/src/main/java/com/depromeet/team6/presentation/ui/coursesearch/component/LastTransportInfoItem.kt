@@ -37,7 +37,8 @@ import java.time.LocalDateTime
 fun LastTransportInfoItem(
     courseSearchResult: CourseInfo,
     modifier: Modifier = Modifier,
-    onRegisterAlarmBtnClick: (lastRouteId: String) -> Unit = {}
+    onRegisterAlarmBtnClick: (lastRouteId: String) -> Unit = {},
+    courseInfoToggleClick: () -> Unit = {}
 ) {
     Column(
         modifier = modifier
@@ -144,7 +145,8 @@ fun LastTransportInfoItem(
 
         // 막차 경로 상세 정보
         TransportCourseInfoExpandable(
-            legsInfo = courseSearchResult.legs
+            legsInfo = courseSearchResult.legs,
+            onToggleDismissClick = courseInfoToggleClick
         )
 
         Spacer(

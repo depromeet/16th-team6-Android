@@ -18,6 +18,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -36,9 +37,14 @@ import com.depromeet.team6.presentation.ui.home.component.RefreshLottieButton
 import com.depromeet.team6.presentation.ui.itinerary.component.ItineraryDetail
 import com.depromeet.team6.presentation.ui.itinerary.component.ItineraryMap
 import com.depromeet.team6.presentation.ui.itinerary.component.ItinerarySummary
+import com.depromeet.team6.presentation.util.DefaultLatLng.DEFAULT_LAT
+import com.depromeet.team6.presentation.util.DefaultLatLng.DEFAULT_LNG
+import com.depromeet.team6.presentation.util.context.getUserLocation
+import com.depromeet.team6.presentation.util.permission.PermissionUtil
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.google.android.gms.maps.model.LatLng
+import kotlinx.coroutines.launch
 
 @Composable
 fun ItineraryRoute(
@@ -53,13 +59,31 @@ fun ItineraryRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
 
+    val getCurrentLocation : () -> Unit = {
+        coroutineScope.launch {
+            if (PermissionUtil.hasLocationPermissions(context)) { // 위치 권한이 있으면
+                val location = context.getUserLocation()
+                viewModel.setEvent(ItineraryContract.ItineraryEvent.CurrentLocationClicked(location))
+            }
+        }
+    }
     // SideEffect 감지
     LaunchedEffect(Unit) {
+        val location = if (PermissionUtil.hasLocationPermissions(context)) {
+            context.getUserLocation()
+        } else {
+            LatLng(
+                DEFAULT_LAT,
+                DEFAULT_LNG
+            )
+        }
         viewModel.initItineraryInfo(
             courseInfoJSON,
             departurePointJSON,
-            destinationPointJSON
+            destinationPointJSON,
+            location
         )
         viewModel.sideEffect.collect { sideEffect ->
             when (sideEffect) {
@@ -81,7 +105,8 @@ fun ItineraryRoute(
                 .fillMaxSize()
                 .padding(paddingValues = padding)
                 .background(defaultTeam6Colors.greyWashBackground),
-            navigateToBusCourse = navigateToBusCourse
+            navigateToBusCourse = navigateToBusCourse,
+            currentLocationBtnClick = getCurrentLocation
         )
         else -> Unit
     }
@@ -96,7 +121,8 @@ fun ItineraryScreen(
     focusedMarkerParam: FocusedMarkerParameter? = null,
     navigateToBusCourse: (BusArrivalParameter) -> Unit = {},
     onRefreshButtonClick: () -> Unit = {},
-    onBackPressed: () -> Unit = {}
+    onBackPressed: () -> Unit = {},
+    currentLocationBtnClick : () -> Unit = {}
 ) {
     val sheetScrollState = rememberScrollState()
     val itineraryInfo = uiState.itineraryInfo!!
@@ -108,11 +134,12 @@ fun ItineraryScreen(
                 ItineraryMap(
                     marginTop = marginTop,
                     legs = itineraryInfo.legs,
-                    currentLocation = LatLng(37.5665, 126.9780),
+                    currentLocation = uiState.currentLocation,
                     departurePoint = uiState.departurePoint!!,
                     destinationPoint = uiState.destinationPoint!!,
                     onBackPressed = onBackPressed,
-                    focusedMarkerParameter = focusedMarkerParam
+                    focusedMarkerParameter = focusedMarkerParam,
+                    currentLocationBtnClick = currentLocationBtnClick
                 )
             },
             sheetContent = {

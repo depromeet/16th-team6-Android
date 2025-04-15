@@ -47,8 +47,8 @@ import com.depromeet.team6.presentation.ui.home.component.CharacterLottieSpeechB
 import com.depromeet.team6.presentation.ui.home.component.CurrentLocationSheet
 import com.depromeet.team6.presentation.ui.home.component.DeleteAlarmDialog
 import com.depromeet.team6.presentation.ui.home.component.TMapViewCompose
-import com.depromeet.team6.presentation.util.DefaultLntLng.DEFAULT_LNG
-import com.depromeet.team6.presentation.util.DefaultLntLng.DEFAULT_LNT
+import com.depromeet.team6.presentation.util.DefaultLatLng.DEFAULT_LAT
+import com.depromeet.team6.presentation.util.DefaultLatLng.DEFAULT_LNG
 import com.depromeet.team6.presentation.util.context.getUserLocation
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.presentation.util.permission.PermissionUtil
@@ -82,7 +82,7 @@ fun HomeRoute(
     val context = LocalContext.current
 
     var permissionGranted by remember { mutableStateOf(PermissionUtil.hasLocationPermissions(context)) }
-    var userLocation by remember { mutableStateOf(LatLng(DEFAULT_LNT, DEFAULT_LNG)) } // 서울시 기본 위치
+    var userLocation by remember { mutableStateOf(LatLng(DEFAULT_LAT, DEFAULT_LNG)) } // 서울시 기본 위치
 
     val locationPermissionsLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestMultiplePermissions(),

@@ -25,6 +25,7 @@ fun LastTransportInfoList(
     listData: List<CourseInfo>,
     modifier: Modifier = Modifier,
     onRegisterAlarmBtnClick: (String) -> Unit = {},
+    courseInfoToggleClick: () -> Unit = {},
     onItemClick: (String) -> Unit = {}
 ) {
     LazyColumn(
@@ -46,7 +47,8 @@ fun LastTransportInfoList(
                 courseSearchResult = listData[index],
                 onRegisterAlarmBtnClick = { routeId ->
                     onRegisterAlarmBtnClick(routeId)
-                }
+                },
+                courseInfoToggleClick = courseInfoToggleClick
             )
 
             if (index == listData.size - 1) {

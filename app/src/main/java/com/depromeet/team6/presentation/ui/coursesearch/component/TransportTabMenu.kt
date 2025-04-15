@@ -27,6 +27,7 @@ fun TransportTabMenu(
     availableCourses: List<CourseInfo>,
     modifier: Modifier = Modifier,
     onRegisterAlarmBtnClick: (String) -> Unit = {},
+    courseInfoToggleClick: () -> Unit = {},
     onItemClick: (String) -> Unit = {}
 ) {
     val context = LocalContext.current
@@ -77,6 +78,7 @@ fun TransportTabMenu(
                 LastTransportInfoList(
                     listData = resultItems,
                     onItemClick = onItemClick,
+                    courseInfoToggleClick = courseInfoToggleClick,
                     onRegisterAlarmBtnClick = { routeId ->
                         onRegisterAlarmBtnClick(routeId)
                     }

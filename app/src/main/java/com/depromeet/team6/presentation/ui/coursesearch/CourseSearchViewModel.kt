@@ -22,7 +22,9 @@ class CourseSearchViewModel @Inject constructor(
 
     override suspend fun handleEvent(event: CourseSearchContract.CourseEvent) {
         when (event) {
-            is CourseSearchContract.CourseEvent.RegisterAlarm -> CourseSearchContract.CourseSideEffect.ShowNotificationToast
+            is CourseSearchContract.CourseEvent.RegisterAlarm -> {
+                setSideEffect(CourseSearchContract.CourseSideEffect.ShowNotificationToast)
+            }
             is CourseSearchContract.CourseEvent.LoadCourseSearchResult -> setState {
                 copy(
                     courseDataLoadState = LoadState.Success,
@@ -38,6 +40,10 @@ class CourseSearchViewModel @Inject constructor(
                 }
                 getSearchResults()
             }
+
+            is CourseSearchContract.CourseEvent.InitUiState -> setDepartureDestination(event.departure, event.destination)
+            is CourseSearchContract.CourseEvent.ItemCourseDetailToggleClick -> TODO()
+            is CourseSearchContract.CourseEvent.ItemCardClick -> TODO()
         }
     }
 
@@ -66,17 +72,16 @@ class CourseSearchViewModel @Inject constructor(
         }
     }
 
-    fun setDepartureDestination(departure: String, destination: String) {
+    private fun setDepartureDestination(departure: String, destination: String) {
         val departurePoint = Gson().fromJson(departure, Address::class.java)
         val destinationPoint = Gson().fromJson(destination, Address::class.java)
-
-        setEvent(CourseSearchContract.CourseEvent.InitiateDepartureDestinationPoint(departurePoint, destinationPoint))
-    }
-
-    fun registerAlarm() {
-        viewModelScope.launch {
-            setEvent(CourseSearchContract.CourseEvent.RegisterAlarm)
+        setState {
+            copy(
+                startingPoint = departurePoint,
+                destinationPoint = destinationPoint
+            )
         }
+        getSearchResults()
     }
 
     fun postAlarm(lastRouteId: String) {
