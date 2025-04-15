@@ -1,7 +1,6 @@
 package com.depromeet.team6.presentation.ui.coursesearch.component
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -18,7 +17,6 @@ import com.depromeet.team6.domain.model.course.CourseInfo
 import com.depromeet.team6.domain.model.course.LegInfo
 import com.depromeet.team6.presentation.ui.itinerary.LegInfoDummyProvider
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
-import com.google.gson.Gson
 
 @Composable
 fun LastTransportInfoList(
@@ -26,7 +24,7 @@ fun LastTransportInfoList(
     modifier: Modifier = Modifier,
     onRegisterAlarmBtnClick: (String) -> Unit = {},
     courseInfoToggleClick: () -> Unit = {},
-    onItemClick: (String) -> Unit = {}
+    onItemClick: (String, Boolean) -> Unit = { _, _ -> }
 ) {
     LazyColumn(
         modifier = modifier
@@ -38,12 +36,8 @@ fun LastTransportInfoList(
     ) {
         items(listData.size) { index ->
             LastTransportInfoItem(
-                modifier = Modifier
-                    .clickable {
-                        onItemClick(
-                            Gson().toJson(listData[index])
-                        )
-                    },
+                modifier = Modifier,
+                onItemClick = onItemClick,
                 courseSearchResult = listData[index],
                 onRegisterAlarmBtnClick = { routeId ->
                     onRegisterAlarmBtnClick(routeId)

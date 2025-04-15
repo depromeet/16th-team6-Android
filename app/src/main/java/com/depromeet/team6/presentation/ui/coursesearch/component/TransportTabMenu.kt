@@ -28,7 +28,7 @@ fun TransportTabMenu(
     modifier: Modifier = Modifier,
     onRegisterAlarmBtnClick: (String) -> Unit = {},
     courseInfoToggleClick: () -> Unit = {},
-    onItemClick: (String) -> Unit = {}
+    onItemClick: (String, Boolean) -> Unit = { _, _ -> }
 ) {
     val context = LocalContext.current
     val tabItems = context.resources.getStringArray(R.array.course_search_tab_items).toList()

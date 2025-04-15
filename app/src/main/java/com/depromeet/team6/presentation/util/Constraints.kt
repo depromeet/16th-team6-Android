@@ -46,3 +46,20 @@ object HomeAmplitude {
     const val HOME_COURSESEARCH_ENTERED_WITH_INPUT = "home_coursesearch_entered_with_input"
     const val HOME_DESTINATION_CLICKED = "home_destination_clicked"
 }
+
+object CourseSearchAmplitude {
+    const val COURSE_SEARCH = "경로 탐색"
+    const val COURSE_SEARCH_EVENT_CARD_CLICKED = "courssesearch_card"
+    const val COURSE_SEARCH_EVENT_ITEM_TOGGLED = "coursesearch_toggle"
+    const val COURSE_SEARCH_EVENT_DURATION = "coursesearch_view_duration"
+    const val COURSE_SEARCH_EVENT_ALARM_REGISTERED = "alert_button"
+    const val COURSE_SEARCH_TOGGLE_DISABLED = "coursesearch_toggle"
+    const val COURSE_SEARCH_ITEM_CARD_CLICKED = "courssesearch_card_expand"
+    const val COURSE_SEARCH_ITEM_DETAIL_TEXT_CLICKED = "courssesearch_card_viewdetails"
+    const val COURSE_SEARCH_STAY_TIME = "coursesearch_view_duration"
+    const val COURSE_SEARCH_ALARM_REGISTERED = "alert_button"
+}
+
+object ItineraryAmplitude {
+    const val ITINERARY = "상세경로"
+}

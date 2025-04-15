@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -19,6 +20,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.depromeet.team6.R
 import com.depromeet.team6.domain.model.course.LegInfo
@@ -42,6 +46,22 @@ fun CourseSearchRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            when (event) {
+                Lifecycle.Event.ON_RESUME -> viewModel.setEvent(CourseSearchContract.CourseEvent.OnEnter)
+                Lifecycle.Event.ON_PAUSE -> viewModel.setEvent(CourseSearchContract.CourseEvent.OnExit)
+                else -> {}
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
 
     // SideEffect 감지 및 Toast 띄우기
     LaunchedEffect(Unit) {
@@ -110,7 +130,7 @@ fun CourseSearchRoute(
             },
             backButtonClicked = { navigateToHome() },
             courseInfoToggleClick = { viewModel.setEvent(CourseSearchContract.CourseEvent.ItemCourseDetailToggleClick) },
-            itemCardClick = { viewModel.setEvent(CourseSearchContract.CourseEvent.ItemCardClick) }
+            itemCardClick = { viewModel.setEvent(CourseSearchContract.CourseEvent.ItemCardClick(isTextClicked = it)) }
         )
         LoadState.Error -> {
             navigateToHome()
@@ -129,7 +149,7 @@ fun CourseSearchScreen(
     setNotification: (String) -> Unit = {},
     backButtonClicked: () -> Unit = {},
     courseInfoToggleClick: () -> Unit = {},
-    itemCardClick: () -> Unit = {}
+    itemCardClick: (Boolean) -> Unit = {}
 ) {
     Column(
         modifier = modifier
@@ -145,8 +165,8 @@ fun CourseSearchScreen(
 
         TransportTabMenu(
             availableCourses = uiState.courseData,
-            onItemClick = { courseInfoJson ->
-                itemCardClick()
+            onItemClick = { courseInfoJson, isTextClicked ->
+                itemCardClick(isTextClicked)
                 navigateToItinerary(
                     courseInfoJson,
                     Gson().toJson(uiState.startingPoint!!),

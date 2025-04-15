@@ -23,10 +23,12 @@ class CourseSearchContract {
 
     sealed class CourseEvent : UiEvent {
         data object RegisterAlarm : CourseEvent()
+        data object OnEnter : CourseEvent()
+        data object OnExit : CourseEvent()
         data class InitUiState(val departure: String, val destination: String) : CourseEvent()
         data class LoadCourseSearchResult(val searchResult: List<CourseInfo>) : CourseEvent()
         data class InitiateDepartureDestinationPoint(val departurePoint: Address, val destinationPoint: Address) : CourseEvent()
         data object ItemCourseDetailToggleClick : CourseEvent()
-        data object ItemCardClick : CourseEvent()
+        data class ItemCardClick(val isTextClicked : Boolean) : CourseEvent()
     }
 }
