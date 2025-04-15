@@ -13,7 +13,7 @@ class ItineraryContract {
     data class ItineraryUiState(
         val courseDataLoadState: LoadState = LoadState.Idle,
         val itineraryInfo: CourseInfo? = null,
-        val busArrivalStatus : SparseArray<RealTimeBusArrival> = SparseArray(),
+        val busArrivalStatus: SparseArray<RealTimeBusArrival> = SparseArray(),
         val departurePoint: Address? = null,
         val destinationPoint: Address? = null
     ) : UiState

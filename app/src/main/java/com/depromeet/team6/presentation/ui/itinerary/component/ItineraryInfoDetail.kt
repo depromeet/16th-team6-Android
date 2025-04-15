@@ -33,7 +33,7 @@ import com.depromeet.team6.ui.theme.defaultTeam6Typography
 @Composable
 fun ItineraryInfoDetail(
     legs: List<LegInfo>,
-    busArrivalStatus : SparseArray<RealTimeBusArrival>,
+    busArrivalStatus: SparseArray<RealTimeBusArrival>,
     departureTime: String,
     departureName: String,
     arrivalTime: String,
@@ -56,7 +56,7 @@ fun ItineraryInfoDetail(
         ItineraryInfoDetailLegs(
             legs = legs,
             onClickBusInfo = onClickBusInfo,
-            busArrivalStatus = busArrivalStatus,
+            busArrivalStatus = busArrivalStatus
         )
 
         // 도착
@@ -87,7 +87,7 @@ private fun ItineraryInfoSuffix(
 ) {
     val markerIconId = if (isDestination) R.drawable.map_marker_arrival else R.drawable.map_marker_departure
     Row(
-        modifier = Modifier,
+        modifier = Modifier
     ) {
         Column(
             modifier = Modifier.width(Dimens.LegDetailVerticalLineWidth),

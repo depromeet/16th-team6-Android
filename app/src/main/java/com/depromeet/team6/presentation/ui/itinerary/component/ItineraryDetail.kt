@@ -16,14 +16,14 @@ import java.time.LocalDateTime
 @Composable
 fun ItineraryDetail(
     courseInfo: CourseInfo,
-    busArrivalStatus : SparseArray<RealTimeBusArrival>,
+    busArrivalStatus: SparseArray<RealTimeBusArrival>,
     departurePoint: Address,
     destinationPoint: Address,
     modifier: Modifier = Modifier,
     onClickBusInfo: (BusArrivalParameter) -> Unit = {}
 ) {
     val arrivalDateTime = LocalDateTime.parse(courseInfo.departureTime).plusSeconds(courseInfo.totalTime.toLong())
-    Timber.d("busArrivalStatus : ${busArrivalStatus}")
+    Timber.d("busArrivalStatus : $busArrivalStatus")
     Column(
         modifier = modifier
             .padding(vertical = 12.dp)

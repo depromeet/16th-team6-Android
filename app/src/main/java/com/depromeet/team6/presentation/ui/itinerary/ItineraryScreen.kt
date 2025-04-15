@@ -95,13 +95,13 @@ fun ItineraryScreen(
     uiState: ItineraryContract.ItineraryUiState = ItineraryContract.ItineraryUiState(),
     focusedMarkerParam: FocusedMarkerParameter? = null,
     navigateToBusCourse: (BusArrivalParameter) -> Unit = {},
-    onRefreshButtonClick : () -> Unit = {},
+    onRefreshButtonClick: () -> Unit = {},
     onBackPressed: () -> Unit = {}
 ) {
     val sheetScrollState = rememberScrollState()
     val itineraryInfo = uiState.itineraryInfo!!
 
-    Box(){
+    Box() {
         AtchaCommonBottomSheet(
             modifier = Modifier,
             mainContent = {
@@ -164,7 +164,6 @@ fun ItineraryScreen(
             onClick = onRefreshButtonClick
         )
     }
-
 }
 
 @Preview

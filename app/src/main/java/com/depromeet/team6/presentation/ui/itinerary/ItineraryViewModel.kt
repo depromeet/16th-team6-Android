@@ -19,7 +19,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ItineraryViewModel @Inject constructor(
-    private val getBusArrivalUseCase: GetBusArrivalUseCase,
+    private val getBusArrivalUseCase: GetBusArrivalUseCase
 ) : BaseViewModel<ItineraryContract.ItineraryUiState, ItineraryContract.ItinerarySideEffect, ItineraryContract.ItineraryEvent>() {
     override fun createInitialState(): ItineraryContract.ItineraryUiState = ItineraryContract.ItineraryUiState()
 
@@ -53,7 +53,7 @@ class ItineraryViewModel @Inject constructor(
         getRemainingBusArrivalTimes()
     }
 
-    private fun getRemainingBusArrivalTimes(){
+    private fun getRemainingBusArrivalTimes() {
         val newBusArrivalStatus = SparseArray<RealTimeBusArrival>()
 
         viewModelScope.launch {
@@ -83,7 +83,6 @@ class ItineraryViewModel @Inject constructor(
                     busArrivalStatus = newBusArrivalStatus
                 )
             }
-
         }
         Timber.d("busArrivalStatus ViewModel : ${currentState.busArrivalStatus}")
     }

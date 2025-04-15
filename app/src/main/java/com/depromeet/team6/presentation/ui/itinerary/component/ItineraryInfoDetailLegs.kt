@@ -64,7 +64,7 @@ import java.time.LocalDateTime
 @Composable
 fun ItineraryInfoDetailLegs(
     legs: List<LegInfo>,
-    busArrivalStatus : SparseArray<RealTimeBusArrival>,
+    busArrivalStatus: SparseArray<RealTimeBusArrival>,
     modifier: Modifier = Modifier,
     onClickBusInfo: (BusArrivalParameter) -> Unit = {}
 ) {
@@ -72,7 +72,7 @@ fun ItineraryInfoDetailLegs(
         for ((idx, leg) in legs.withIndex()) {
             when (leg.transportType) {
                 TransportType.WALK -> {
-                    val verticalHeight = if (idx == 0 || idx == legs.size-1) 48.dp else 60.dp
+                    val verticalHeight = if (idx == 0 || idx == legs.size - 1) 48.dp else 60.dp
                     DetailLegsWalk(
                         boardingDateTime = leg.departureDateTime!!,
                         timeMinute = leg.sectionTime / 60,
@@ -130,7 +130,7 @@ private fun DetailLegsBus(
     boardingDateTime: String,
     timeMinute: Int,
     distanceMeter: Int,
-    busArrivalStatus : RealTimeBusArrival?,
+    busArrivalStatus: RealTimeBusArrival?,
     passStopList: List<Station>,
     modifier: Modifier = Modifier,
     onClickBusInfo: (String, String, Int) -> Unit = { routeName: String, stationName: String, subtypeIdx: Int -> }
@@ -239,7 +239,7 @@ private fun DetailLegsBus(
                         )
                     },
                 verticalAlignment = Alignment.CenterVertically
-            ){
+            ) {
                 BusNumberButton(
                     modifier = Modifier,
                     number = busName,
@@ -248,8 +248,7 @@ private fun DetailLegsBus(
                 Spacer(modifier = Modifier.width(8.dp))
                 if (busArrivalStatus == null) {
                     AtChaRemainTimeText(remainSecond = 0, busStatus = BusStatus.WAITING)
-                }
-                else {
+                } else {
                     AtChaRemainTimeText(remainSecond = busArrivalStatus.remainingTime, busStatus = busArrivalStatus.busStatus)
                     Text(
                         text = "(${busArrivalStatus.busCongestion.toInfo().label})",
@@ -288,7 +287,7 @@ private fun DetailLegsBus(
                 Column(
                     verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    for (stop in passStopList){
+                    for (stop in passStopList) {
                         Text(
                             text = stop.stationName,
                             style = defaultTeam6Typography.bodyMedium13,
@@ -438,7 +437,7 @@ private fun DetailLegsSubway(
                         isPassStopShow = !isPassStopShow
                     },
                 verticalAlignment = Alignment.CenterVertically
-            ){
+            ) {
                 Text(
                     text = stringResource(R.string.itinerary_info_legs_subway_stopovers, timeMinute, passStopList.size),
                     style = defaultTeam6Typography.bodyMedium13,
@@ -460,7 +459,7 @@ private fun DetailLegsSubway(
                 Column(
                     verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    for (stop in passStopList){
+                    for (stop in passStopList) {
                         Text(
                             text = stop.stationName,
                             style = defaultTeam6Typography.bodyMedium13,
@@ -497,7 +496,7 @@ private fun DetailLegsWalk(
     boardingDateTime: String,
     timeMinute: Int,
     distanceMeter: Int,
-    verticalHeight : Dp,
+    verticalHeight: Dp,
     modifier: Modifier = Modifier
 ) {
     Row(
