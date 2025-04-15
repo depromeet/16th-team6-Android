@@ -186,8 +186,8 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun getUserId() {
-        userInfoRepository.getUserID()
+    fun getUserId(): Int {
+        return userInfoRepository.getUserID()
     }
 
     fun onTimerFinished() {
