@@ -110,7 +110,10 @@ fun OnboardingMapView(
                                 val lat = currentLocation.lat - offsetLat
                                 val lon = currentLocation.lon
 
-                                tMapView.setCenterPoint(lat, lon, true)
+//                                tMapView.setCenterPoint(lat, lon, true)
+                                tMapView.fitBounds(
+                                    tMapView.getBoundsFromPoints(arrayListOf(TMapPoint(lat, lon)))
+                                )
                                 tMapView.zoomLevel = 18
                                 isFirstZoom = false
 

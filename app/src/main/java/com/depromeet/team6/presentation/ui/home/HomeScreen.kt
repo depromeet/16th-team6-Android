@@ -144,7 +144,7 @@ fun HomeRoute(
                 when (sideEffect) {
                     is HomeContract.HomeSideEffect.NavigateToMypage -> navigateToMypage()
                     is HomeContract.HomeSideEffect.NavigateToItinerary -> navigateToItinerary(
-                        Gson().toJson(uiState.courseInfo),
+                        Gson().toJson(uiState.itineraryInfo),
                         Gson().toJson(uiState.departurePoint),
                         Gson().toJson(uiState.destinationPoint),
                         sideEffect.markerParameter
@@ -204,7 +204,7 @@ fun HomeRoute(
             afterRegisterMapMarkerClick = { focusedMarkerParemeter ->
                 viewModel.setEvent(HomeContract.HomeEvent.AfterRegisterMapMarkerClick)
                 navigateToItinerary(
-                    Gson().toJson(uiState.courseInfo),
+                    Gson().toJson(uiState.itineraryInfo),
                     Gson().toJson(uiState.departurePoint),
                     Gson().toJson(uiState.destinationPoint),
                     focusedMarkerParemeter
@@ -212,7 +212,7 @@ fun HomeRoute(
             },
             courseDetailBtnClick = {
                 navigateToItinerary(
-                    Gson().toJson(uiState.courseInfo),
+                    Gson().toJson(uiState.itineraryInfo),
                     Gson().toJson(uiState.departurePoint),
                     Gson().toJson(uiState.destinationPoint),
                     null
@@ -394,7 +394,7 @@ fun HomeScreen(
                     onFinishClick()
                 },
                 onCourseDetailClick = {
-                    Timber.d("departurelocation 3 : ${homeUiState.departurePoint}")
+                    Timber.d("courseInfo 3 : ${homeUiState.itineraryInfo}")
                     courseDetailBtnClick()
                 },
                 onTimerFinished = {

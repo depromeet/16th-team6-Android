@@ -65,7 +65,6 @@ class HomeContract {
             address = ""
         ),
         val logoutState: Boolean = false,
-        val courseInfo: CourseInfo? = null,
         val taxiCost: Int = 0,
         val deleteAlarmDialogVisible: Boolean = false
     ) : UiState

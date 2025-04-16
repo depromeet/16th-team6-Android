@@ -40,6 +40,7 @@ import com.depromeet.team6.presentation.util.view.TransportTypeUiMapper
 import com.depromeet.team6.presentation.util.view.toPx
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.google.android.gms.maps.model.LatLng
+import com.skt.tmap.TMapInsets
 import com.skt.tmap.TMapPoint
 import com.skt.tmap.TMapView
 import com.skt.tmap.overlay.TMapMarkerItem
@@ -64,8 +65,6 @@ fun ItineraryMap(
     val context = LocalContext.current
     val tMapView = remember { TMapView(context) }
     var isMapReady by remember { mutableStateOf(false) }
-    // TMapTrafficLine 객체 생성
-    val tmapTrafficLine = TMapTrafficLine("tmapTrafficLine")
 
     Timber.d("departurelocation : $departurePoint")
     val departLocation = LatLng(departurePoint.lat, departurePoint.lon)
@@ -85,20 +84,25 @@ fun ItineraryMap(
         if (isMapReady) {
             val departTMapPoint = TMapPoint(departLocation.latitude, departLocation.longitude)
             val destinationTMapPoint = TMapPoint(destinationLocation.latitude, destinationLocation.longitude)
-
-            // 교통 정보 표출 여부 설정
-            tmapTrafficLine.isShowTraffic = false
-            // 방향 인디케이터(화살표) 표시 설정
-            tmapTrafficLine.isShowIndicator = true
-            // 경로 선의 두께 설정
-            tmapTrafficLine.lineWidth = 9
-            // 경로 외곽선의 두께 설정
-            tmapTrafficLine.outLineWidth = 0
+            val tMapPointList = arrayListOf(departTMapPoint, destinationTMapPoint)
 
             // 경로 그리기
             for (leg in legs) {
                 // 라인 그리기
                 val lineWayPoints = getWayPointList(leg.passShape)
+                for (point in lineWayPoints) {
+                    tMapPointList.add(point)
+                }
+                // TMapTrafficLine 객체 생성
+                val tmapTrafficLine = TMapTrafficLine("line_${leg.transportType}_${leg.sectionTime}")
+                // 교통 정보 표출 여부 설정
+                tmapTrafficLine.isShowTraffic = false
+                // 방향 인디케이터(화살표) 표시 설정
+                tmapTrafficLine.isShowIndicator = true
+                // 경로 선의 두께 설정
+                tmapTrafficLine.lineWidth = 9
+                // 경로 외곽선의 두께 설정
+                tmapTrafficLine.outLineWidth = 0
 
                 // TrafficLine 객체 생성 후 리스트에 추가
                 val trafficLine = TrafficLine(1, lineWayPoints)
@@ -108,9 +112,11 @@ fun ItineraryMap(
                 tMapView.addTrafficLine(tmapTrafficLine)
 
                 // 마커 그리기
+                val markerTmapPoint = TMapPoint(leg.startPoint.lat, leg.startPoint.lon)
+                tMapPointList.add(markerTmapPoint)
                 val marker = TMapMarkerItem()
                 marker.id = "marker_${leg.transportType}_${leg.sectionTime}"
-                marker.tMapPoint = TMapPoint(leg.startPoint.lat, leg.startPoint.lon)
+                marker.tMapPoint = markerTmapPoint
                 marker.icon = TransportVectorIconBitmap(
                     type = leg.transportType,
                     fillColor = TransportTypeUiMapper.getColor(leg.transportType, leg.subTypeIdx),
@@ -155,12 +161,13 @@ fun ItineraryMap(
 
             // 지도 위치 조정
             val midPoint = getMidPoint(leftTopLocation, rightBottomLocation)
-//            tMapView.fitBounds(tMapView.getBoundsFromTrafficLine(tmap))
-            tMapView.setCenterPoint(midPoint.latitude, midPoint.longitude)
+            tMapView.fitBounds(
+                tMapView.getBoundsFromPoints(tMapPointList),
+                TMapInsets.of(100, 100, 100, 100),
+            )
 
             // 지도 Scale 조정
-            tMapView.zoomToTMapPoint(leftTopLocation, rightBottomLocation)
-            tMapView.mapZoomOut()
+            tMapView.mapZoomIn()
         }
     }
 
