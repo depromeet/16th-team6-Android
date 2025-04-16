@@ -143,12 +143,12 @@ fun SearchLocationRoute(
                     },
                     onDeleteAllButtonClicked = { viewModel.deleteAllSearchHistory() },
                     onDeleteButtonClicked =
-                        { searchHistory -> // 검색 내역 삭제
-                            viewModel.deleteSearchHistory(
-                                searchHistory = searchHistory,
-                                location = userLocation
-                            )
-                        },
+                    { searchHistory -> // 검색 내역 삭제
+                        viewModel.deleteSearchHistory(
+                            searchHistory = searchHistory,
+                            location = userLocation
+                        )
+                    },
                     selectButtonClicked = { searchHistory -> // 장소 선택
                         // 장소 텍스트 검색
                         viewModel.setState {
