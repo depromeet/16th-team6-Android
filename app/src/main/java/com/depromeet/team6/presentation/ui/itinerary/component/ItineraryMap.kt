@@ -159,10 +159,23 @@ fun ItineraryMap(
                     )
                 }
 
+            val focusBound =
+                if (focusedMarkerParameter == null) {
+                    tMapView.getBoundsFromPoints(tMapPointList)
+                } else {
+                    val focusPointList = arrayListOf<TMapPoint>()
+                    val lineWayPoints = getWayPointList(legs[focusedMarkerParameter.legIndex].passShape)
+                    for (point in lineWayPoints){
+                        focusPointList.add(point)
+                    }
+                    tMapView.getBoundsFromPoints(focusPointList)
+
+                }
+
             // 지도 위치 조정
             val midPoint = getMidPoint(leftTopLocation, rightBottomLocation)
             tMapView.fitBounds(
-                tMapView.getBoundsFromPoints(tMapPointList),
+                focusBound,
                 TMapInsets.of(100, 100, 100, 100),
             )
 
