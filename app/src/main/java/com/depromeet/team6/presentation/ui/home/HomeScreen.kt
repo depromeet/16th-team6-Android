@@ -210,7 +210,8 @@ fun HomeRoute(
                     focusedMarkerParemeter
                 )
             },
-            courseDetailBtnClick = {
+            courseDetailBtnClick = { key ->
+                viewModel.setEvent(HomeContract.HomeEvent.CourseDetailButtonClick(key))
                 navigateToItinerary(
                     Gson().toJson(uiState.itineraryInfo),
                     Gson().toJson(uiState.departurePoint),
@@ -295,7 +296,7 @@ fun HomeScreen(
     onRefreshClick: () -> Unit = {},
     navigateToMypage: () -> Unit = {},
     afterRegisterMapMarkerClick: (FocusedMarkerParameter?) -> Unit = { },
-    courseDetailBtnClick: () -> Unit = {},
+    courseDetailBtnClick: (String) -> Unit = {},
     deleteAlarmConfirmed: () -> Unit = {},
     dismissDialog: () -> Unit = {},
     navigateToSearchLocation: () -> Unit = {},
@@ -393,10 +394,7 @@ fun HomeScreen(
                 onFinishClick = {
                     onFinishClick()
                 },
-                onCourseDetailClick = {
-                    Timber.d("courseInfo 3 : ${homeUiState.itineraryInfo}")
-                    courseDetailBtnClick()
-                },
+                onCourseDetailClick = courseDetailBtnClick,
                 onTimerFinished = {
                     viewModel.onTimerFinished()
                 },

@@ -21,6 +21,7 @@ import com.depromeet.team6.presentation.model.bus.BusArrivalParameter
 import com.depromeet.team6.presentation.util.AmplitudeCommon.SCREEN_NAME
 import com.depromeet.team6.presentation.util.AmplitudeCommon.USER_ID
 import com.depromeet.team6.presentation.util.HomeAmplitude.HOME
+import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_EVENT_ITINERARY_BTN_CLICK
 import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_EVENT_REGISTER_MAP_MARKER_CLICK
 import com.depromeet.team6.presentation.util.HomeAmplitude.REGISTER_MAP_MARKER_CLICKED
 import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
@@ -196,6 +197,16 @@ class HomeViewModel @Inject constructor(
                         SCREEN_NAME to HOME,
                         USER_ID to userInfoRepository.getUserID(),
                         REGISTER_MAP_MARKER_CLICKED to 1
+                    )
+                )
+            }
+            is HomeContract.HomeEvent.CourseDetailButtonClick -> {
+                AmplitudeUtils.trackEventWithProperties(
+                    eventName = HOME_EVENT_ITINERARY_BTN_CLICK,
+                    properties = mapOf(
+                        SCREEN_NAME to HOME,
+                        USER_ID to userInfoRepository.getUserID(),
+                        event.clickEventKey to 1
                     )
                 )
             }

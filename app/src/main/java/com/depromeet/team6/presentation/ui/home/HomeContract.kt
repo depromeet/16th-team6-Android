@@ -98,5 +98,6 @@ class HomeContract {
         data object DismissDialog : HomeEvent()
         data object SetDestination : HomeEvent()
         data object AfterRegisterMapMarkerClick : HomeEvent()
+        data class CourseDetailButtonClick(val clickEventKey : String) : HomeEvent()
     }
 }
