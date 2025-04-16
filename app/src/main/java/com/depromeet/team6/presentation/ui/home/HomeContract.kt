@@ -98,5 +98,6 @@ class HomeContract {
         data object DeleteAlarmConfirmed : HomeEvent()
         data object DismissDialog : HomeEvent()
         data object SetDestination : HomeEvent()
+        data object AfterRegisterMapMarkerClick : HomeEvent()
     }
 }

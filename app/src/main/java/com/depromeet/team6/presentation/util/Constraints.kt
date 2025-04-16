@@ -49,6 +49,7 @@ object OnboardingAmplitude {
 
 object HomeAmplitude {
     const val HOME = "홈"
+    const val HOME_EVENT_REGISTER_MAP_MARKER_CLICK = "home_transit_icon_clicked"
     const val HOME_COURSESEARCH_ENTERED_DIRECT = "home_coursesearch_entered_direct"
     const val HOME_COURSESEARCH_ENTERED_WITH_MAP_DRAG = "home_coursesearch_entered_with_map_drag"
     const val HOME_COURSESEARCH_ENTERED_WITH_CURRENT_LOCATION = "home_coursesearch_entered_with_current_location"
@@ -60,6 +61,7 @@ object HomeAmplitude {
     const val POPUP = "팝업"
     const val ALERT_END_POPUP_1 = "alert_end_popup_1"
     const val ALERT_END_POPUP_2 = "alert_end_popup_2"
+    const val REGISTER_MAP_MARKER_CLICKED = "home_transit_icon_clicked"
 }
 
 object LockAmplitude {

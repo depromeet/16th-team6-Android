@@ -201,7 +201,23 @@ fun HomeRoute(
             homeUiState = uiState,
             onCharacterClick = { viewModel.onCharacterClick() },
             navigateToMypage = navigateToMypage,
-            navigateToItinerary = navigateToItinerary,
+            afterRegisterMapMarkerClick = { focusedMarkerParemeter ->
+                viewModel.setEvent(HomeContract.HomeEvent.AfterRegisterMapMarkerClick)
+                navigateToItinerary(
+                    Gson().toJson(uiState.courseInfo),
+                    Gson().toJson(uiState.departurePoint),
+                    Gson().toJson(uiState.destinationPoint),
+                    focusedMarkerParemeter
+                )
+            },
+            courseDetailBtnClick = {
+                navigateToItinerary(
+                    Gson().toJson(uiState.courseInfo),
+                    Gson().toJson(uiState.departurePoint),
+                    Gson().toJson(uiState.destinationPoint),
+                    null
+                )
+            },
             modifier = modifier,
             padding = padding,
             onSearchClick = {
@@ -278,7 +294,8 @@ fun HomeScreen(
     onFinishClick: () -> Unit = {},
     onRefreshClick: () -> Unit = {},
     navigateToMypage: () -> Unit = {},
-    navigateToItinerary: (String, String, String, FocusedMarkerParameter?) -> Unit = { s: String, s1: String, s2: String, transportMarkerParameter: FocusedMarkerParameter? -> },
+    afterRegisterMapMarkerClick: (FocusedMarkerParameter?) -> Unit = { },
+    courseDetailBtnClick: () -> Unit = {},
     deleteAlarmConfirmed: () -> Unit = {},
     dismissDialog: () -> Unit = {},
     navigateToSearchLocation: () -> Unit = {},
@@ -319,12 +336,7 @@ fun HomeScreen(
                 legs = homeUiState.itineraryInfo!!.legs,
                 viewModel = viewModel,
                 onTransportMarkerClick = { markerParameter ->
-                    navigateToItinerary(
-                        Gson().toJson(homeUiState.itineraryInfo),
-                        Gson().toJson(homeUiState.departurePoint),
-                        Gson().toJson(homeUiState.destinationPoint),
-                        markerParameter
-                    )
+                    afterRegisterMapMarkerClick(markerParameter)
                 }
             )
         } else {
@@ -383,12 +395,7 @@ fun HomeScreen(
                 },
                 onCourseDetailClick = {
                     Timber.d("departurelocation 3 : ${homeUiState.departurePoint}")
-                    navigateToItinerary(
-                        Gson().toJson(homeUiState.itineraryInfo),
-                        Gson().toJson(homeUiState.departurePoint),
-                        Gson().toJson(homeUiState.destinationPoint),
-                        null
-                    )
+                    courseDetailBtnClick()
                 },
                 onTimerFinished = {
                     viewModel.onTimerFinished()

@@ -18,6 +18,11 @@ import com.depromeet.team6.domain.usecase.GetCourseSearchResultsUseCase
 import com.depromeet.team6.domain.usecase.GetTaxiCostUseCase
 import com.depromeet.team6.domain.usecase.GetUserInfoUseCase
 import com.depromeet.team6.presentation.model.bus.BusArrivalParameter
+import com.depromeet.team6.presentation.util.AmplitudeCommon.SCREEN_NAME
+import com.depromeet.team6.presentation.util.AmplitudeCommon.USER_ID
+import com.depromeet.team6.presentation.util.HomeAmplitude.HOME
+import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_EVENT_REGISTER_MAP_MARKER_CLICK
+import com.depromeet.team6.presentation.util.HomeAmplitude.REGISTER_MAP_MARKER_CLICKED
 import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
 import com.depromeet.team6.presentation.util.base.BaseViewModel
 import com.depromeet.team6.presentation.util.view.LoadState
@@ -183,6 +188,16 @@ class HomeViewModel @Inject constructor(
                         busArrivalParameter = event.busArrivalParameter
                     )
                 }
+            }
+            is HomeContract.HomeEvent.AfterRegisterMapMarkerClick -> {
+                AmplitudeUtils.trackEventWithProperties(
+                    eventName = HOME_EVENT_REGISTER_MAP_MARKER_CLICK,
+                    properties = mapOf(
+                        SCREEN_NAME to HOME,
+                        USER_ID to userInfoRepository.getUserID(),
+                        REGISTER_MAP_MARKER_CLICKED to 1
+                    )
+                )
             }
         }
     }
