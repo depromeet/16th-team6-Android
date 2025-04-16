@@ -223,8 +223,8 @@ fun AfterRegisterSheetPreview() {
         deleteAlarmConfirmed = {},
         dismissDialog = {},
         onTimerFinished = {},
-        homeArrivedTime = TODO(),
-        onIconClick = TODO(),
-        busStationLeft = TODO()
+        homeArrivedTime = "15:30:00",
+        onIconClick = {},
+        busStationLeft = 15
     )
 }
