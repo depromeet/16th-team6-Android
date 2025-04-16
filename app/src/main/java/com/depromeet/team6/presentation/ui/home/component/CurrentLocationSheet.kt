@@ -23,6 +23,7 @@ fun CurrentLocationSheet(
     currentLocation: String,
     destination: String,
     onSearchLocationClick: () -> Unit,
+    onDestinationClick: () -> Unit,
     onSearchClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -59,7 +60,7 @@ fun CurrentLocationSheet(
                 location = destination,
                 textColor = colors.greySecondaryLabel,
                 backgroundColor = colors.greyWashBackground,
-                onClick = {},
+                onClick = { onDestinationClick() },
                 modifier = Modifier
             )
 
@@ -81,6 +82,7 @@ fun CurrentLocationSheetPreview() {
         currentLocation = "중앙빌딩",
         destination = "우리집",
         onSearchLocationClick = {},
+        onDestinationClick = {},
         onSearchClick = { },
         modifier = Modifier
     )
