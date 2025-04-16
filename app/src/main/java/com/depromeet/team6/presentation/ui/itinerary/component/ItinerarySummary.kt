@@ -42,15 +42,28 @@ fun ItinerarySummary(
             .background(defaultTeam6Colors.greyWashBackground)
     ) {
         // 남은 시간
-        Text(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp),
-            text = stringResource(R.string.itinerary_summary_duration_time, durationHour, durationMinute),
-            style = defaultTeam6Typography.heading2Bold26,
-            fontSize = 28.sp,
-            color = defaultTeam6Colors.white
-        )
+        if (durationHour > 0){
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
+                text = stringResource(R.string.itinerary_summary_duration_time, durationHour, durationMinute),
+                style = defaultTeam6Typography.heading2Bold26,
+                fontSize = 28.sp,
+                color = defaultTeam6Colors.white
+            )
+        } else {
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
+                text = stringResource(R.string.itinerary_summary_duration_minute, durationMinute),
+                style = defaultTeam6Typography.heading2Bold26,
+                fontSize = 28.sp,
+                color = defaultTeam6Colors.white
+            )
+        }
+
 
         // 예상 도착, 출발 시간
         val (departHour, departMinute) = LocalDateTime

@@ -64,6 +64,8 @@ fun ItineraryMap(
     val context = LocalContext.current
     val tMapView = remember { TMapView(context) }
     var isMapReady by remember { mutableStateOf(false) }
+    // TMapTrafficLine 객체 생성
+    val tmapTrafficLine = TMapTrafficLine("tmapTrafficLine")
 
     Timber.d("departurelocation : $departurePoint")
     val departLocation = LatLng(departurePoint.lat, departurePoint.lon)
@@ -84,20 +86,19 @@ fun ItineraryMap(
             val departTMapPoint = TMapPoint(departLocation.latitude, departLocation.longitude)
             val destinationTMapPoint = TMapPoint(destinationLocation.latitude, destinationLocation.longitude)
 
+            // 교통 정보 표출 여부 설정
+            tmapTrafficLine.isShowTraffic = false
+            // 방향 인디케이터(화살표) 표시 설정
+            tmapTrafficLine.isShowIndicator = true
+            // 경로 선의 두께 설정
+            tmapTrafficLine.lineWidth = 9
+            // 경로 외곽선의 두께 설정
+            tmapTrafficLine.outLineWidth = 0
+
             // 경로 그리기
             for (leg in legs) {
                 // 라인 그리기
                 val lineWayPoints = getWayPointList(leg.passShape)
-                // TMapTrafficLine 객체 생성
-                val tmapTrafficLine = TMapTrafficLine("line_${leg.transportType}_${leg.sectionTime}")
-                // 교통 정보 표출 여부 설정
-                tmapTrafficLine.isShowTraffic = false
-                // 방향 인디케이터(화살표) 표시 설정
-                tmapTrafficLine.isShowIndicator = true
-                // 경로 선의 두께 설정
-                tmapTrafficLine.lineWidth = 9
-                // 경로 외곽선의 두께 설정
-                tmapTrafficLine.outLineWidth = 0
 
                 // TrafficLine 객체 생성 후 리스트에 추가
                 val trafficLine = TrafficLine(1, lineWayPoints)
@@ -154,6 +155,7 @@ fun ItineraryMap(
 
             // 지도 위치 조정
             val midPoint = getMidPoint(leftTopLocation, rightBottomLocation)
+//            tMapView.fitBounds(tMapView.getBoundsFromTrafficLine(tmap))
             tMapView.setCenterPoint(midPoint.latitude, midPoint.longitude)
 
             // 지도 Scale 조정

@@ -92,6 +92,7 @@ fun TMapViewCompose(
 
             withContext(Dispatchers.Main) {
                 tMapView.setCenterPoint(tMapPoint.latitude, tMapPoint.longitude)
+                tMapView.fitBounds(tMapView.bounds)
                 tMapView.zoomLevel = 18
 
                 val markerDrawable =

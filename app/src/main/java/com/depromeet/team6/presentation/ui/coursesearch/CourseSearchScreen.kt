@@ -253,6 +253,7 @@ fun CourseSearchScreen(
 
         TransportTabMenu(
             availableCourses = uiState.courseData,
+            isLoaded = uiState.courseDataLoadState == LoadState.Success,
             onItemClick = { courseInfoJson, isTextClicked ->
                 itemCardClick(isTextClicked)
                 navigateToItinerary(

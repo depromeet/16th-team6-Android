@@ -25,6 +25,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun TransportTabMenu(
     availableCourses: List<CourseInfo>,
+    isLoaded: Boolean,
     modifier: Modifier = Modifier,
     onRegisterAlarmBtnClick: (String) -> Unit = {},
     courseInfoToggleClick: () -> Unit = {},
@@ -70,7 +71,7 @@ fun TransportTabMenu(
                     availableCourses.filter { it.filterCategory == page }
                 }
 
-            if (resultItems.isEmpty()) {
+            if (resultItems.isEmpty() && isLoaded) {
                 SearchResultEmpty(
                     modifier = Modifier.padding(top = 10.dp)
                 )
@@ -108,7 +109,8 @@ fun PreviewTabMenu(
         mockData
     )
     TransportTabMenu(
-        availableCourses = mockDataList
+        availableCourses = mockDataList,
+        isLoaded = true
     )
 }
 
@@ -116,6 +118,7 @@ fun PreviewTabMenu(
 @Composable
 fun PreviewTabMenuEmpty() {
     TransportTabMenu(
-        availableCourses = emptyList()
+        availableCourses = emptyList(),
+        isLoaded = false
     )
 }
