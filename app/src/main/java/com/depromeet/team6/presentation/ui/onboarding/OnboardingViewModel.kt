@@ -17,12 +17,15 @@ import com.depromeet.team6.presentation.util.context.getUserLocation
 import com.depromeet.team6.presentation.util.permission.PermissionUtil
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.google.android.gms.maps.model.LatLng
+import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 @HiltViewModel
 class OnboardingViewModel @Inject constructor(
@@ -129,6 +132,7 @@ class OnboardingViewModel @Inject constructor(
     fun postSignUp() {
         setEvent(OnboardingContract.OnboardingEvent.PostSignUp(loadState = LoadState.Loading))
         viewModelScope.launch {
+            val token = getFcmTokenSafely()
             postSignUpUseCase(
                 signUp = SignUp(
                     provider = KAKAO,
@@ -136,7 +140,7 @@ class OnboardingViewModel @Inject constructor(
                     lat = uiState.value.myAddress.lat,
                     lon = uiState.value.myAddress.lon,
                     alertFrequencies = uiState.value.alertFrequencies,
-                    fcmToken = userInfoRepository.getFcmToken()
+                    fcmToken = token
                 )
             ).onSuccess { auth ->
                 setEvent(OnboardingContract.OnboardingEvent.PostSignUp(loadState = LoadState.Success))
@@ -190,6 +194,25 @@ class OnboardingViewModel @Inject constructor(
                 }.onFailure {
                     Timber.e("주소 변환 실패: ${it.message}")
                 }
+        }
+    }
+
+    private suspend fun getFcmTokenSafely(): String {
+        val cached = userInfoRepository.getFcmToken()
+        if (cached.isNotEmpty()) return cached
+
+        return suspendCoroutine { continuation ->
+            FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val token = task.result
+                    userInfoRepository.setFcmToken(token)
+                    Timber.d("FCM Token: $token")
+                    continuation.resume(token)
+                } else {
+                    Timber.e("FCM Token fetch failed: ${task.exception}")
+                    continuation.resume("")
+                }
+            }
         }
     }
 }
