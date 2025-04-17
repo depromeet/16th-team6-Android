@@ -35,6 +35,6 @@ class ItineraryContract {
         data class LoadLegsResult(val result: CourseInfo) : ItineraryEvent()
         data object RefreshButtonClicked : ItineraryEvent()
         data class CurrentLocationClicked(val location: LatLng) : ItineraryEvent()
-        data class RegisterAlarm(val routeId : String) : ItineraryEvent()
+        data class RegisterAlarm(val routeId: String) : ItineraryEvent()
     }
 }

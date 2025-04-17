@@ -205,7 +205,7 @@ fun AfterRegisterMap(
 
                     // leg에 해당하는 마커 필터링
                     var markerId = ""
-                    for (marker in markerItems){
+                    for (marker in markerItems) {
                         if (marker.id.contains("marker_")) {
                             markerId = marker.id
                             break

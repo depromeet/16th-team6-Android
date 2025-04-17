@@ -31,7 +31,7 @@ class ItineraryViewModel @Inject constructor(
     private val getBusArrivalUseCase: GetBusArrivalUseCase,
     private val postAlarmUseCase: PostAlarmUseCase,
     private val userInfoRepository: UserInfoRepository
-    ) : BaseViewModel<ItineraryContract.ItineraryUiState, ItineraryContract.ItinerarySideEffect, ItineraryContract.ItineraryEvent>() {
+) : BaseViewModel<ItineraryContract.ItineraryUiState, ItineraryContract.ItinerarySideEffect, ItineraryContract.ItineraryEvent>() {
     override fun createInitialState(): ItineraryContract.ItineraryUiState = ItineraryContract.ItineraryUiState()
 
     override suspend fun handleEvent(event: ItineraryContract.ItineraryEvent) {

@@ -261,7 +261,7 @@ fun ItineraryScreen(
                     },
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
-            ){
+            ) {
                 Image(
                     modifier = Modifier
                         .size(16.dp),
@@ -277,7 +277,6 @@ fun ItineraryScreen(
                 )
             }
         }
-
     }
 }
 

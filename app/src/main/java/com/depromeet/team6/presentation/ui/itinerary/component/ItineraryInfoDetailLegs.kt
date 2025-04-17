@@ -251,14 +251,13 @@ private fun DetailLegsBus(
                     AtChaRemainTimeText(remainSecond = 0, busStatus = BusStatus.WAITING)
                 } else {
                     AtChaRemainTimeText(remainSecond = busArrivalStatus.remainingTime, busStatus = busArrivalStatus.busStatus)
-                    if (busArrivalStatus.busCongestion != BusCongestion.UNKNOWN){
+                    if (busArrivalStatus.busCongestion != BusCongestion.UNKNOWN) {
                         Text(
                             text = "(${busArrivalStatus.busCongestion.toInfo().label})",
                             style = defaultTeam6Typography.bodyRegular13,
                             color = defaultTeam6Colors.systemRed
                         )
                     }
-
                 }
             }
 

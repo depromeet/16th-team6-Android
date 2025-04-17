@@ -42,7 +42,7 @@ fun ItinerarySummary(
             .background(defaultTeam6Colors.greyWashBackground)
     ) {
         // 남은 시간
-        if (durationHour > 0){
+        if (durationHour > 0) {
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -63,7 +63,6 @@ fun ItinerarySummary(
                 color = defaultTeam6Colors.white
             )
         }
-
 
         // 예상 도착, 출발 시간
         val (departHour, departMinute) = LocalDateTime

@@ -204,13 +204,10 @@ fun AfterRegisterSheet(
                         onCourseDetailClick(HOME_ITINERARY_CLICKED_AFTER_DEPARTURE)
                     } else if (afterUserDeparted && timerFinish) {
                         onCourseDetailClick(HOME_ITINERARY_CLICKED_ARRIVAL)
-
                     } else if (isConfirmed) {
                         onCourseDetailClick(HOME_ITINERARY_CLICKED_SET_TIME)
-
                     } else {
                         onCourseDetailClick(HOME_ITINERARY_CLICKED_SUGGESTED)
-
                     }
                 },
                 modifier = modifier
