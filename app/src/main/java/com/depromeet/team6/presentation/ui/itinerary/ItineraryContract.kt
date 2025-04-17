@@ -25,11 +25,16 @@ class ItineraryContract {
         )
     ) : UiState
 
-    sealed interface ItinerarySideEffect : UiSideEffect
+    sealed interface ItinerarySideEffect : UiSideEffect {
+        data object NavigateHomeWithToast : ItinerarySideEffect
+        data object ShowNotificationToastSetAlarm : ItinerarySideEffect
+        data object ShowNotificationToastSetAlarmFailed : ItinerarySideEffect
+    }
 
     sealed class ItineraryEvent : UiEvent {
         data class LoadLegsResult(val result: CourseInfo) : ItineraryEvent()
         data object RefreshButtonClicked : ItineraryEvent()
         data class CurrentLocationClicked(val location: LatLng) : ItineraryEvent()
+        data class RegisterAlarm(val routeId : String) : ItineraryEvent()
     }
 }

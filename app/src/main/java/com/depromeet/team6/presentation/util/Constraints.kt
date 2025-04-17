@@ -91,4 +91,6 @@ object CourseSearchAmplitude {
 
 object ItineraryAmplitude {
     const val ITINERARY = "상세경로"
+    const val ITINERARY_EVENT_ALARM_REGISTERED = "alert_button"
+    const val ITINERARY_ALARM_REGISTER_BTN_CLICKED = "alert_button"
 }
