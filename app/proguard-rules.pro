@@ -28,6 +28,7 @@
 -keep class com.depromeet.team6.data.datalocal.model.** { *; }
 -keep class com.depromeet.team6.domain.model.** { *; }
 -keep class com.depromeet.team6.presentation.model.** { *; }
+-keep class com.depromeet.team6.data.dataremote.** { *; }
 
 -keepattributes Signature, InnerClasses, EnclosingMethod
 -keepattributes RuntimeVisibleAnnotations, RuntimeVisibleParameterAnnotations
@@ -64,15 +65,3 @@
 -keep class retrofit2.** { *; }
 -keep class com.google.gson.** { *; }
 -keep class okhttp3.** { *; }
-
-# TimeLeftService 관련 클래스 보존
--keep class com.depromeet.team6.**.TimeLeftService { *; }
-
-# Hilt 모듈에 정의된 provides 메서드 클래스 보존
--keep class com.depromeet.team6.di.ServiceModule { *; }
-
-# 모든 @Provides, @Inject 대상 보존
--keepclasseswithmembers class * {
-    @dagger.** *;
-    @javax.inject.** *;
-}

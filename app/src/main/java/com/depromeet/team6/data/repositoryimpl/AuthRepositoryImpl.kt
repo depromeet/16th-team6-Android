@@ -25,7 +25,8 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun getLogin(provider: Int, fcmToken: String): Result<Auth> =
         authRemoteDataSource.getLogin(provider = provider, fcmToken = fcmToken)
             .mapCatching {
-                it.toDomain() }
+                it.toDomain()
+            }
 
     override suspend fun postLogout(): Response<Unit> =
         authRemoteDataSource.postLogout()
