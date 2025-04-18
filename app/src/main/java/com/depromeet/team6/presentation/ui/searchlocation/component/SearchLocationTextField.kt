@@ -53,7 +53,7 @@ fun SearchLocationTextField(
                 .weight(1f)
                 .roundedBackgroundWithPadding(
                     backgroundColor = defaultTeam6Colors.greyQuaternaryLabel,
-                    cornerRadius = 8.dp
+                    cornerRadius = 10.dp
                 )
                 .padding(horizontal = 16.dp),
             verticalAlignment = Alignment.CenterVertically
