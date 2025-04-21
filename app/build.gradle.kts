@@ -16,16 +16,29 @@ val properties = Properties().apply {
 }
 
 android {
+    val keystorePath = properties["keystore.path"] as? String
+    val isSigningAvailable = !keystorePath.isNullOrBlank()
+
+    signingConfigs {
+        create("release") {
+            if (isSigningAvailable) {
+                storeFile = if (!keystorePath.isNullOrBlank()) file(keystorePath) else null
+                storePassword = properties["keystore.password"] as? String ?: ""
+                keyAlias = properties["keystore.alias"] as? String ?: ""
+                keyPassword = properties["key.password"] as? String ?: ""
+            }
+        }
+    }
+
     namespace = "com.depromeet.team6"
     compileSdk = 35
 
     defaultConfig {
-        manifestPlaceholders += mapOf()
         applicationId = "com.depromeet.team6"
         minSdk = 26
         targetSdk = 34
-        versionCode = 2
-        versionName = "1.0"
+        versionCode = 13
+        versionName = "1.2.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "KAKAO_NATIVE_APP_KEY", properties["kakao.native.app.key"].toString())
@@ -38,15 +51,18 @@ android {
             isMinifyEnabled = true
             isShrinkResources = true
             buildConfigField("String", "BASE_URL", properties["release.base.url"].toString())
+            buildConfigField("String", "AMPLITUDE_API_KEY", properties["amplitude.prod.api.key"].toString())
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            if (isSigningAvailable) signingConfig = signingConfigs.getByName("release")
         }
         debug {
             isMinifyEnabled = false
             isDebuggable = true
             buildConfigField("String", "BASE_URL", properties["dev.base.url"].toString())
+            buildConfigField("String", "AMPLITUDE_API_KEY", properties["amplitude.dev.api.key"].toString())
         }
     }
     compileOptions {
@@ -78,6 +94,7 @@ dependencies {
     implementation(libs.play.services.maps)
     implementation(libs.play.services.location)
     implementation(libs.play.services.auth)
+    implementation(libs.androidx.runtime.livedata)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -109,8 +126,9 @@ dependencies {
     implementation(libs.androidx.security.crypto)
 
     // Tmap
-    implementation(files("libs/tmap-sdk-1.8.aar"))
+    implementation(files("libs/tmap-sdk-1.9.aar"))
     implementation(files("libs/vsm-tmap-sdk-v2-android-1.7.23.aar"))
+    implementation(libs.flatbuffers.java)
 
     // Firebase
     implementation(platform(libs.firebase.bom))
@@ -118,6 +136,25 @@ dependencies {
 
     // WebView
     implementation(libs.accompanist.webview)
+
+    // SplashScreen
+    implementation(libs.androidx.core.splashscreen)
+
+    // View Pager
+    implementation(libs.bundles.pager)
+
+    // Timber
+    implementation(libs.timber)
+
+    // Lottie
+    implementation(libs.lottie.compose)
+
+    // SystemUiController
+    implementation(libs.accompanist.systemuicontroller)
+
+    // Amplitude
+    implementation(libs.amplitude)
+    implementation(libs.play.services.appset)
 }
 java {
     toolchain {

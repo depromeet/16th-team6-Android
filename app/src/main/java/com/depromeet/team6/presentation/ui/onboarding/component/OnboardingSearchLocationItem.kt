@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,9 +19,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.depromeet.team6.R
-import com.depromeet.team6.domain.model.Location
-import com.depromeet.team6.presentation.util.modifier.noRippleClickable
-import com.depromeet.team6.presentation.util.modifier.roundedBackgroundWithPadding
+import com.depromeet.team6.presentation.model.location.Location
+import com.depromeet.team6.presentation.util.modifier.pressedEffectClickable
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.depromeet.team6.ui.theme.defaultTeam6Typography
 
@@ -32,19 +30,24 @@ fun OnboardingSearchLocationItem(
     modifier: Modifier = Modifier,
     selectButtonClicked: () -> Unit = {}
 ) {
-    Row(
+    val padding = if (onboardingSearchLocation.businessCategory.startsWith("지역")) {
+        PaddingValues(vertical = 16.dp, horizontal = 16.dp)
+    } else {
+        PaddingValues(vertical = 19.dp, horizontal = 16.dp)
+    }
+    Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = 19.dp, horizontal = 16.dp),
-        verticalAlignment = Alignment.CenterVertically
+            .pressedEffectClickable { selectButtonClicked() }
+            .padding(padding)
     ) {
-        Column(modifier = modifier.weight(1f)) {
-            Text(
-                text = onboardingSearchLocation.name,
-                color = defaultTeam6Colors.white,
-                style = defaultTeam6Typography.bodyRegular15,
-                overflow = TextOverflow.Ellipsis
-            )
+        Text(
+            text = onboardingSearchLocation.name,
+            color = defaultTeam6Colors.white,
+            style = defaultTeam6Typography.bodyRegular15,
+            overflow = TextOverflow.Ellipsis
+        )
+        if (!onboardingSearchLocation.businessCategory.startsWith("지역")) {
             Spacer(modifier = Modifier.height(4.dp))
 
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -67,21 +70,6 @@ fun OnboardingSearchLocationItem(
                 )
             }
         }
-        Spacer(modifier = Modifier.width(12.dp))
-        Text(
-            text = "선택",
-            color = defaultTeam6Colors.white,
-            style = defaultTeam6Typography.bodyMedium13,
-            modifier = Modifier
-                .roundedBackgroundWithPadding(
-                    backgroundColor = defaultTeam6Colors.greyDefaultButton,
-                    cornerRadius = 8.dp,
-                    padding = PaddingValues(vertical = 8.dp, horizontal = 12.5.dp)
-                )
-                .noRippleClickable {
-                    selectButtonClicked()
-                }
-        )
     }
 }
 

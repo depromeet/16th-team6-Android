@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
@@ -25,13 +26,15 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.depromeet.team6.R
-import com.depromeet.team6.presentation.model.course.TransportType
+import com.depromeet.team6.domain.model.course.TransportType
+import com.depromeet.team6.presentation.util.view.TransportTypeUiMapper
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.depromeet.team6.ui.theme.defaultTeam6Typography
 
 @Composable
 fun CourseInfoDetailItem(
     transportType: TransportType,
+    subtypeIndex: Int,
     duration: Int,
     modifier: Modifier = Modifier,
     boardingPoint: String = "",
@@ -46,9 +49,9 @@ fun CourseInfoDetailItem(
         ) {
             Image(
                 modifier = Modifier
-                    .size(20.dp),
-                imageVector = ImageVector.vectorResource(R.drawable.ic_all_walk_grey),
-                contentDescription = "courseInfo Detail WalkIcon"
+                    .size(26.dp),
+                imageVector = ImageVector.vectorResource(TransportTypeUiMapper.getIconResId(transportType, subtypeIndex)),
+                contentDescription = "transport course icon"
             )
             Text(
                 text = context.resources.getString(R.string.course_detail_info_walk),
@@ -63,24 +66,24 @@ fun CourseInfoDetailItem(
         }
     } else {
         Row(
+            modifier = Modifier.padding(bottom = 2.dp),
             horizontalArrangement = Arrangement.spacedBy(5.dp)
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(7.dp)
+                verticalArrangement = Arrangement.spacedBy(5.dp)
             ) {
                 Image(
                     modifier = Modifier
-                        .size(20.dp),
-                    imageVector = ImageVector.vectorResource(R.drawable.ic_all_walk_grey),
-                    contentDescription = "courseInfo Detail WalkIcon"
+                        .size(26.dp),
+                    imageVector = ImageVector.vectorResource(TransportTypeUiMapper.getIconResId(transportType, subtypeIndex)),
+                    contentDescription = "transport course icon"
                 )
                 VerticalLine()
-                // TODO : 적절한 색상 넣어줘야함
                 GetOffMark(
                     modifier = Modifier
                         .size(14.dp),
-                    color = defaultTeam6Colors.primaryMain
+                    color = TransportTypeUiMapper.getColor(transportType, subtypeIndex)
                 )
             }
             Column(
@@ -122,7 +125,8 @@ fun VerticalLine(
                 drawLine(
                     color = defaultTeam6Colors.greyQuaternaryLabel,
                     start = Offset(x = size.width / 2, y = y),
-                    end = Offset(x = size.width / 2, y = y + size.height)
+                    end = Offset(x = size.width / 2, y = y + size.height),
+                    strokeWidth = 1.dp.toPx()
                 )
             }
     )
@@ -134,12 +138,19 @@ fun GetOffMark(
     modifier: Modifier = Modifier
 ) {
     Canvas(modifier = modifier) {
-        // 원 그리기
+        // 내부 흰색 채우기
         drawCircle(
-            color = color, // 원 내부 색상
-            radius = 5.5.dp.toPx(), // 원 반지름
-            center = center, // 원의 중심
-            style = Stroke(width = 3.dp.toPx()) // 테두리 스타일 설정
+            color = Color.White,
+            radius = 5.5.dp.toPx(), // 동일한 반지름 사용
+            center = center,
+            style = Fill
+        )
+        // 테두리 그리기
+        drawCircle(
+            color = color,
+            radius = 5.5.dp.toPx(),
+            center = center,
+            style = Stroke(width = 3.dp.toPx())
         )
     }
 }
@@ -149,6 +160,7 @@ fun GetOffMark(
 fun CourseInfoDetailWalk() {
     CourseInfoDetailItem(
         transportType = TransportType.WALK,
+        subtypeIndex = 0,
         duration = 5
     )
 }
@@ -158,6 +170,7 @@ fun CourseInfoDetailWalk() {
 fun CourseInfoDetailNonWalk() {
     CourseInfoDetailItem(
         transportType = TransportType.BUS,
+        subtypeIndex = 4,
         duration = 23,
         boardingPoint = "총지사",
         destinationPoint = "지하철2호선방배역"

@@ -4,6 +4,8 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import com.depromeet.team6.domain.model.Address
+import com.depromeet.team6.presentation.model.itinerary.FocusedMarkerParameter
 import com.depromeet.team6.presentation.ui.home.HomeRoute
 
 fun NavController.navigationHome() {
@@ -20,7 +22,8 @@ fun NavGraphBuilder.homeNavGraph(
     navigateToLogin: () -> Unit,
     navigateToCourseSearch: (String, String) -> Unit,
     navigateToMypage: () -> Unit,
-    navigateToItinerary: () -> Unit
+    navigateToItinerary: (String, String, String, FocusedMarkerParameter?) -> Unit,
+    navigateToSearchLocation: (Address) -> Unit
 ) {
     composable(route = HomeRoute.ROUTE) {
         HomeRoute(
@@ -28,7 +31,8 @@ fun NavGraphBuilder.homeNavGraph(
             navigateToMypage = navigateToMypage,
             navigateToLogin = navigateToLogin,
             navigateToCourseSearch = navigateToCourseSearch,
-            navigateToItinerary = navigateToItinerary
+            navigateToItinerary = navigateToItinerary,
+            navigateToSearchLocation = navigateToSearchLocation
         )
     }
 }

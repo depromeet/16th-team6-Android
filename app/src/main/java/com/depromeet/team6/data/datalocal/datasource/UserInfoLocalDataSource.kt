@@ -6,6 +6,8 @@ import androidx.core.content.edit
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 import com.depromeet.team6.BuildConfig
+import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
+import com.google.android.gms.maps.model.LatLng
 import com.kakao.sdk.auth.Constants.ACCESS_TOKEN
 import com.kakao.sdk.auth.Constants.REFRESH_TOKEN
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -40,10 +42,41 @@ class UserInfoLocalDataSource @Inject constructor(
         get() = getValue(REFRESH_TOKEN)
         set(value) = setValue(REFRESH_TOKEN, value)
 
-    //    fun clear() = sharedPreferences.edit { clear() }
+    var fcmToken: String
+        get() = getValue(FCM_TOKEN)
+        set(value) = setValue(FCM_TOKEN, value)
+
+    var alarmSound: Boolean
+        get() = getBooleanValue(ALARM_SOUND_SETTING, true)
+        set(value) = setBooleanValue(ALARM_SOUND_SETTING, value)
+
+    var userHome: LatLng
+        get() {
+            val latLngStr = getValue(USER_HOME)
+            val parts = latLngStr.split(",")
+            return if (parts.size == 2) {
+                LatLng(
+                    parts[0].toDoubleOrNull() ?: 0.0,
+                    parts[1].toDoubleOrNull() ?: 0.0
+                )
+            } else {
+                LatLng(0.0, 0.0)
+            }
+        }
+        set(value) {
+            setValue(USER_HOME, "${value.latitude},${value.longitude}")
+        }
+
+    var userId: Int
+        get() = getIntValue(USER_ID)
+        set(value) = setIntValue(USER_ID, value)
+
     fun clear() {
         setValue(REFRESH_TOKEN, "")
         setValue(ACCESS_TOKEN, "")
+        setValue(FCM_TOKEN, "")
+        setIntValue(USER_ID, INITIAL_INT)
+        AmplitudeUtils.resetUserId()
     }
 
     private fun getValue(key: String): String =
@@ -52,8 +85,25 @@ class UserInfoLocalDataSource @Inject constructor(
     private fun setValue(key: String, value: String) =
         sharedPreferences.edit { putString(key, value) }
 
+    private fun getBooleanValue(key: String, defaultValue: Boolean = true): Boolean =
+        sharedPreferences.getBoolean(key, defaultValue)
+
+    private fun setBooleanValue(key: String, value: Boolean) =
+        sharedPreferences.edit { putBoolean(key, value) }
+
+    private fun getIntValue(key: String, default: Int = INITIAL_INT): Int =
+        sharedPreferences.getString(key, null)?.toIntOrNull() ?: default
+
+    private fun setIntValue(key: String, value: Int) =
+        sharedPreferences.edit { putString(key, value.toString()) }
+
     companion object {
         private const val FILE_NAME = "AtChaLocalDataSource"
         private const val INITIAL_VALUE = ""
+        private const val FCM_TOKEN = "fcm_token"
+        private const val USER_HOME = "user_home"
+        private const val ALARM_SOUND_SETTING = "alarm_sound_setting"
+        private const val USER_ID = "user_id"
+        private const val INITIAL_INT = -1
     }
 }

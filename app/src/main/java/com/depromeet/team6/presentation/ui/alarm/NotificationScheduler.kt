@@ -6,11 +6,13 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import androidx.annotation.Keep
 import androidx.core.app.NotificationCompat
 import com.depromeet.team6.R
 import java.text.SimpleDateFormat
 import java.util.Locale
 
+@Keep
 class NotificationScheduler(private val context: Context) {
 
     companion object {
@@ -65,7 +67,7 @@ class NotificationScheduler(private val context: Context) {
     // 특정 시간에 알림 예약 및 표시
     fun scheduleNotificationForTime(title: String, message: String, dateTimeString: String) {
         try {
-            val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+            val dateFormat = SimpleDateFormat("yyyy-MM-ddHH:mm:ss", Locale.getDefault())
             val date = dateFormat.parse(dateTimeString)
 
             date?.let {

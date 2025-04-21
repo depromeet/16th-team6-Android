@@ -27,13 +27,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.platform.debugInspectorInfo
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
+import com.depromeet.team6.ui.theme.defaultTeam6Typography
 
 @Composable
 fun TransportTabRow(
@@ -57,7 +56,7 @@ fun TransportTabRow(
     TabRow(
         selectedTabIndex = selectedTabIndex,
         contentColor = defaultTeam6Colors.white,
-        containerColor = defaultTeam6Colors.greyElevatedBackground,
+        containerColor = defaultTeam6Colors.greyWashBackground,
         divider = {}, // 기본 밑줄 제거
         indicator = { tabPositions ->
             Box(
@@ -91,8 +90,7 @@ fun TransportTabRow(
                             .padding(vertical = 6.dp, horizontal = 14.dp),
                         text = tabName,
                         color = defaultTeam6Colors.white,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 12.sp,
+                        style = defaultTeam6Typography.bodySemiBold14,
                         textAlign = TextAlign.Center,
                         onTextLayout = { textLayoutResult ->
                             /**

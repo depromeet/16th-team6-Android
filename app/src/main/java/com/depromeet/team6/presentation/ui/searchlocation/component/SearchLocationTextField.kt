@@ -13,7 +13,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
@@ -39,14 +38,14 @@ fun SearchLocationTextField(
     value: String = "",
     visualTransformation: VisualTransformation = VisualTransformation.None,
     onValueChange: (String) -> Unit = { _ -> },
-    onCloseButtonClicked: () -> Unit = {},
+    onTextClearButtonClicked: () -> Unit = {},
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Default),
     keyboardActions: KeyboardActions = KeyboardActions.Default
 ) {
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(start = 16.dp),
+            .padding(horizontal = 16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Row(
@@ -56,7 +55,7 @@ fun SearchLocationTextField(
                     backgroundColor = defaultTeam6Colors.greyQuaternaryLabel,
                     cornerRadius = 8.dp
                 )
-                .padding(horizontal = 12.dp),
+                .padding(horizontal = 16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
@@ -94,16 +93,26 @@ fun SearchLocationTextField(
                     }
                 }
             )
+
+            Spacer(Modifier.width(12.dp))
+
+            Icon(
+                modifier = Modifier.noRippleClickable { onTextClearButtonClicked() },
+                imageVector = ImageVector.vectorResource(R.drawable.ic_search_circle_close),
+                tint = defaultTeam6Colors.greySecondaryLabel,
+                contentDescription = null
+            )
         }
 
-        Icon(
-            modifier = Modifier
-                .padding(start = 12.dp, top = 18.dp, end = 16.dp, bottom = 18.dp)
-                .noRippleClickable { onCloseButtonClicked() },
-            imageVector = ImageVector.vectorResource(R.drawable.ic_all_close_white),
-            tint = Color.Unspecified,
-            contentDescription = null
-        )
+        Spacer(Modifier.width(6.dp))
+
+//        Icon(
+//            modifier = Modifier
+//                .noRippleClickable { },
+//            imageVector = ImageVector.vectorResource(R.drawable.ic_search_list_map_28dp),
+//            tint = defaultTeam6Colors.greySecondaryLabel,
+//            contentDescription = stringResource(R.string.home_search_map_icon)
+//        )
     }
 }
 

@@ -6,5 +6,6 @@ import com.depromeet.team6.domain.model.Address
 fun ResponseAddressDto.toDomain(): Address = Address(
     name = this.name,
     lat = this.lat,
-    lon = this.lon
+    lon = this.lon,
+    address = this.address
 )

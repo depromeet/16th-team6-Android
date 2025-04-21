@@ -1,50 +1,99 @@
 <resources>
+    <!-- common -->
     <string name="app_name">앗차!</string>
 
+    <!-- vector node -->
+    <string name="vector_builder_node_transport_marker_outline">M14.194,14m-11.444,0a11.444,11.444 0,1 1,22.889 0a11.444,11.444 0,1 1,-22.889 0</string>
+    <string name="vector_builder_node_transport_bus_marker">M16.67,18.667H11.337C11.337,19.02 11.196,19.359 10.946,19.61C10.696,19.86 10.357,20 10.003,20C9.65,20 9.31,19.86 9.06,19.61C8.81,19.359 8.67,19.02 8.67,18.667V9.333C8.67,8.98 8.81,8.641 9.06,8.391C9.31,8.14 9.65,8 10.003,8H18.003C18.357,8 18.696,8.14 18.946,8.391C19.196,8.641 19.337,8.98 19.337,9.333V18.667C19.337,19.02 19.196,19.359 18.946,19.61C18.696,19.86 18.357,20 18.003,20C17.65,20 17.31,19.86 17.06,19.61C16.81,19.359 16.67,19.02 16.67,18.667ZM17.337,16C17.513,16 17.683,15.93 17.808,15.805C17.933,15.68 18.003,15.51 18.003,15.333C18.003,15.156 17.933,14.987 17.808,14.862C17.683,14.737 17.513,14.667 17.337,14.667C17.16,14.667 16.99,14.737 16.865,14.862C16.74,14.987 16.67,15.156 16.67,15.333C16.67,15.51 16.74,15.68 16.865,15.805C16.99,15.93 17.16,16 17.337,16ZM10.67,16C10.847,16 11.016,15.93 11.141,15.805C11.266,15.68 11.337,15.51 11.337,15.333C11.337,15.156 11.266,14.987 11.141,14.862C11.016,14.737 10.847,14.667 10.67,14.667C10.493,14.667 10.323,14.737 10.198,14.862C10.073,14.987 10.003,15.156 10.003,15.333C10.003,15.51 10.073,15.68 10.198,15.805C10.323,15.93 10.493,16 10.67,16ZM10.003,9.333V13.333H18.003V9.333H10.003Z</string>
+    <string name="vector_builder_node_transport_bus">M10.67,12.667H5.337C5.337,13.02 5.196,13.359 4.946,13.609C4.696,13.859 4.357,14 4.003,14C3.65,14 3.31,13.859 3.06,13.609C2.81,13.359 2.67,13.02 2.67,12.667V3.333C2.67,2.98 2.81,2.641 3.06,2.391C3.31,2.14 3.65,2 4.003,2H12.003C12.357,2 12.696,2.14 12.946,2.391C13.196,2.641 13.337,2.98 13.337,3.333V12.667C13.337,13.02 13.196,13.359 12.946,13.609C12.696,13.859 12.357,14 12.003,14C11.65,14 11.311,13.859 11.06,13.609C10.81,13.359 10.67,13.02 10.67,12.667ZM11.337,10C11.513,10 11.683,9.93 11.808,9.805C11.933,9.68 12.003,9.51 12.003,9.333C12.003,9.157 11.933,8.987 11.808,8.862C11.683,8.737 11.513,8.667 11.337,8.667C11.16,8.667 10.99,8.737 10.865,8.862C10.74,8.987 10.67,9.157 10.67,9.333C10.67,9.51 10.74,9.68 10.865,9.805C10.99,9.93 11.16,10 11.337,10ZM4.67,10C4.847,10 5.016,9.93 5.141,9.805C5.266,9.68 5.337,9.51 5.337,9.333C5.337,9.157 5.266,8.987 5.141,8.862C5.016,8.737 4.847,8.667 4.67,8.667C4.493,8.667 4.324,8.737 4.199,8.862C4.073,8.987 4.003,9.157 4.003,9.333C4.003,9.51 4.073,9.68 4.199,9.805C4.324,9.93 4.493,10 4.67,10ZM4.003,3.333V7.333H12.003V3.333H4.003Z</string>
+    <string name="vector_builder_node_transport_subway_marker">M8.699,17V9.5C8.699,8.672 9.371,8 10.199,8H17.893C18.721,8 19.393,8.672 19.393,9.5V17C19.393,17.828 18.721,18.5 17.893,18.5H17.199L17.681,19.223C17.903,19.555 17.664,20 17.265,20H11.082C10.693,20 10.453,19.576 10.653,19.243L11.098,18.5H10.199C9.371,18.5 8.699,17.828 8.699,17ZM10,9.3V13.458H13.294V9.3H10ZM14.798,13.458V9.3H18.092V13.458H14.798ZM11.397,15.325C11.397,15.698 11.095,16 10.722,16C10.349,16 10.047,15.698 10.047,15.325C10.047,14.952 10.349,14.65 10.722,14.65C11.095,14.65 11.397,14.952 11.397,15.325ZM17.372,16C17.745,16 18.047,15.698 18.047,15.325C18.047,14.952 17.745,14.65 17.372,14.65C16.999,14.65 16.697,14.952 16.697,15.325C16.697,15.698 16.999,16 17.372,16Z</string>
+    <string name="vector_builder_node_transport_subway">M2.699,11V3.5C2.699,2.672 3.371,2 4.199,2H11.893C12.721,2 13.393,2.672 13.393,3.5V11C13.393,11.828 12.721,12.5 11.893,12.5H11.199L11.681,13.223C11.903,13.555 11.664,14 11.265,14H5.082C4.693,14 4.453,13.576 4.653,13.243L5.098,12.5H4.199C3.371,12.5 2.699,11.828 2.699,11ZM4,3.3V7.458H7.294V3.3H4ZM8.798,7.458V3.3H12.092V7.458H8.798ZM5.397,9.325C5.397,9.698 5.095,10 4.722,10C4.349,10 4.047,9.698 4.047,9.325C4.047,8.952 4.349,8.65 4.722,8.65C5.095,8.65 5.397,8.952 5.397,9.325ZM11.372,10C11.745,10 12.047,9.698 12.047,9.325C12.047,8.952 11.745,8.65 11.372,8.65C10.999,8.65 10.697,8.952 10.697,9.325C10.697,9.698 10.999,10 11.372,10Z</string>
+    <string name="vector_builder_node_transport_walk_marker">M15.543,9.194C16.287,9.194 16.89,8.591 16.89,7.847C16.89,7.103 16.287,6.5 15.543,6.5C14.8,6.5 14.196,7.103 14.196,7.847C14.196,8.591 14.8,9.194 15.543,9.194ZM10.249,13.113C10.41,12.344 11.189,10.678 13.025,10.16C15.32,9.513 16.579,10.929 16.875,11.576C17.052,11.964 17.245,12.398 17.319,12.587C17.393,12.776 17.662,13.133 18.022,13.315C18.503,13.558 18.688,14.165 18.466,14.569C18.281,14.906 18.069,15.011 17.874,15.054C17.726,15.087 17.59,15.071 17.467,15.054C17.344,15.038 16.542,14.65 16.208,14.326C16.057,14.179 16.005,14.056 15.95,13.928C15.938,13.899 15.926,13.87 15.912,13.841C15.838,13.679 15.536,13.699 15.468,13.922C15.32,14.407 15.283,14.569 15.246,14.731C15.209,14.893 15.18,15.184 15.357,15.378C15.535,15.572 16.196,16.322 16.505,16.672C16.591,16.78 16.786,17.125 16.875,17.643C16.964,18.161 17.282,19.396 17.43,19.949C17.455,20.245 17.371,20.879 16.838,21.041C16.171,21.243 15.875,20.758 15.727,20.313C15.721,20.294 15.714,20.272 15.706,20.248C15.529,19.713 14.966,18.018 14.506,17.36C14.184,16.9 14.081,16.7 14.042,16.623C14.034,16.608 14.029,16.598 14.025,16.591C13.943,16.511 13.868,16.659 13.84,16.753C13.655,17.36 13.27,18.598 13.21,18.695C13.136,18.816 13.062,18.938 12.988,19.018C12.929,19.083 11.779,20.286 11.212,20.879C10.977,21.054 10.42,21.292 10.064,20.839C9.62,20.272 9.916,19.666 10.138,19.382C10.316,19.156 11.175,18.29 11.582,17.886C11.619,17.845 11.708,17.724 11.767,17.562C11.826,17.4 12.186,16.443 12.359,15.985C12.495,15.27 12.788,13.768 12.877,13.477C12.966,13.186 13.161,12.493 13.247,12.183C13.272,12.129 13.27,12.045 13.062,12.142C12.803,12.264 12.1,12.749 11.952,13.436C11.804,14.124 10.99,14.245 10.731,14.084C10.472,13.922 10.138,13.598 10.249,13.113Z</string>
+    <string name="vector_builder_node_transport_walk">M9.234,4.155C9.829,4.155 10.312,3.673 10.312,3.078C10.312,2.482 9.829,2 9.234,2C8.639,2 8.157,2.482 8.157,3.078C8.157,3.673 8.639,4.155 9.234,4.155ZM4.999,7.29C5.127,6.676 5.751,5.342 7.22,4.928C9.056,4.41 10.063,5.543 10.299,6.061C10.441,6.371 10.595,6.719 10.655,6.87C10.714,7.021 10.929,7.307 11.217,7.452C11.602,7.646 11.75,8.132 11.573,8.455C11.425,8.725 11.255,8.809 11.099,8.844C10.98,8.87 10.871,8.856 10.773,8.844C10.675,8.831 10.033,8.52 9.766,8.261C9.645,8.143 9.603,8.045 9.56,7.942C9.55,7.919 9.54,7.896 9.53,7.873C9.47,7.743 9.229,7.759 9.174,7.938C9.056,8.326 9.026,8.455 8.996,8.585C8.967,8.714 8.943,8.947 9.085,9.102C9.227,9.258 9.757,9.857 10.003,10.138C10.072,10.224 10.228,10.5 10.299,10.915C10.37,11.329 10.625,12.317 10.743,12.759C10.763,12.996 10.696,13.503 10.27,13.633C9.737,13.795 9.5,13.406 9.381,13.05C9.376,13.035 9.371,13.018 9.364,12.998C9.222,12.571 8.773,11.215 8.404,10.688C8.147,10.32 8.064,10.16 8.033,10.099C8.027,10.087 8.023,10.078 8.019,10.073C7.954,10.009 7.894,10.127 7.871,10.203C7.723,10.688 7.415,11.678 7.368,11.756C7.309,11.853 7.249,11.95 7.19,12.015C7.143,12.066 6.223,13.029 5.769,13.503C5.581,13.644 5.135,13.833 4.851,13.471C4.496,13.018 4.733,12.533 4.91,12.306C5.052,12.125 5.739,11.432 6.065,11.109C6.095,11.076 6.166,10.979 6.213,10.85C6.26,10.72 6.549,9.955 6.687,9.588C6.795,9.016 7.03,7.815 7.101,7.582C7.172,7.349 7.328,6.794 7.398,6.546C7.417,6.503 7.415,6.436 7.249,6.514C7.042,6.611 6.48,6.999 6.361,7.549C6.243,8.099 5.591,8.196 5.384,8.067C5.177,7.938 4.91,7.679 4.999,7.29Z</string>
+
     <!-- Onboarding -->
-    <string name="onboarding_home_enroll_title">우리 집을 등록해 보세요</string>
-    <string name="onboarding_home_enroll_sub_title">출발지에서 우리집까지 빠르게\n막차 찾을 수 있어요.</string>
+    <string name="onboarding_home_enroll_title">우리집을 등록해 보세요</string>
+    <string name="onboarding_home_enroll_sub_title">출발지에서 우리집까지 빠르게 막차 찾을 수 있어요.</string>
     <string name="onboarding_alarm_enroll_title">막차 알림을 설정해요</string>
     <string name="onboarding_alarm_enroll_sub_title">출발지에서 막차 타는 곳까지\n시간 내에 걸어갈 수 있게 알람 드려요.</string>
     <string name="onboarding_select_location_button_current_region">현 위치 찾기</string>
-    <string name="onboarding_edit_location_button_current_region">다른 위치로 변경</string>
+    <string name="onboarding_edit_location_button_current_region">수정하기</string>
     <string name="onboarding_search_text_field_placeholder">지번, 도로명, 건물명으로 검색</string>
     <string name="onboarding_next_button">다음</string>
+    <string name="onboarding_location_permission_bottom_sheet_title">정확한 막차 경로 안내를 위해\n위치 접근을 허용해주세요</string>
+    <string name="onboarding_location_permission_bottom_sheet_sub_title">정확한 위치 설정으로 현 위치 표시, 경로 안내</string>
+    <string name="onboarding_location_permission_bottom_sheet_type">위치</string>
+    <string name="onboarding_notification_permission_bottom_sheet_title">제때 막차 알림을 드리기 위해\n알림을 허용해주세요</string>
+    <string name="onboarding_notification_permission_bottom_sheet_sub_title">본인 출발 알림, 막차 출발 알림, 목적지 도착</string>
+    <string name="onboarding_notification_permission_bottom_sheet_type">알림</string>
+    <string name="onboarding_location_no_permission_toast">설정에서 앗차 위치 접근 허용을 항상으로 설정해주세요.</string>
+    <string name="onboarding_location_permission_denied_bottom_sheet_title">원활한 앗차 사용을 위해서는\n위치 정보에 대한 접근 허가가 필요해요</string>
+    <string name="onboarding_location_permission_denied_bottom_sheet_description">1. 설정에서 앗차 선택\n2. 위치를 선택\n3. 위치 접근 허용을 항상으로 설정\n4. 정확한 위치 정보를 사용</string>
+
 
     <!-- LockScreen -->
     <string name="lock_screen_description">알림 잠금화면</string>
     <string name="lock_screen_start_btn">출발하기</string>
+    <string name="lock_screen_late_btn">더 늦은 경로 확인하기</string>
+    <string name="lock_screen_taxi_text">지금 안 일어나면\n 택시비</string>
 
     <string name="lock_service_start_text">잠금화면 서비스 시작됨</string>
     <string name="lock_screen_start_text">잠금화면 실행</string>
     <string name="lock_screen_start_alarm_text">출발 알림</string>
 
     <string name="notification_content_text">"지금 바로 출발하셔야 해요!"</string>
+    <string name="notification_title_text">"앗차!"</string>
+    <string name="notification_body_text">"막차 출발 시간을 확인해보세요!"</string>
+    <string name="notification_head_up_channel_name">앗차 중요 알림</string>
+
+    <string name="dialog_finish_alarm_title">막차 알림을 종료할까요?</string>
+    <string name="dialog_finish_alarm_back_text">돌아가기</string>
+    <string name="dialog_finish_alarm_finish_text">종료하기</string>
+
+    <string name="dialog_change_alarm_title">기존 막차 알림을 종료하고\n선택한 알림으로 변경할까요?</string>
+
+    <!-- LoginScreen -->
+    <string name="login_pager_main_text_first">오후 10시에 미리\n막차알림 등록하세요</string>
+    <string name="login_pager_main_text_second">자리에서 떠나기 전에\n여러번 막차 알림 드려요</string>
+    <string name="login_pager_main_text_third">탑승 하는 곳까지\n시간 확인하며 걸어가요</string>
+    <string name="login_pager_sub_text_first">막차를 미리 찾고 알림 설정할 수 있도록 노티드려요</string>
+    <string name="login_pager_sub_text_second">막차 까먹지 않게 푸시알림과 타이머를 제공해요</string>
+    <string name="login_pager_sub_text_third">탑승하는 곳까지 타이머 보면서 시간맞춰 걸어가요</string>
+
 
     <!-- HomeScreen -->
-    <string name="home_icon_search_text">검색 아이콘</string>
+    <string name="home_icon_search_text">경로 상세 아이콘</string>
     <string name="home_search_button_text">검색하기</string>
     <string name="home_current_location_btn">현위치 버튼</string>
     <string name="home_current_location_text">현위치:</string>
-    <string name="home_destination_text">목적지:</string>
+    <string name="home_destination_text">도착지:</string>
 
     <string name="home_search_location_search_text">출발지 검색</string>
     <string name="home_search_departure_home_text">도착지: 우리집</string>
+    <string name="home_my_home_text">우리집</string>
     <string name="home_search_back_text">뒤로 가기</string>
     <string name="home_search_empty_history">최근 내역이 없습니다.</string>
+    <string name="home_search_dot_icon">및</string>
+    <string name="home_search_map_icon">지도 아이콘</string>
+    <string name="home_search_recent_history_text">최근 내역</string>
+    <string name="home_search_delete_all_text">전체 삭제</string>
 
     <string name="home_icon_location_text">위치 아이콘</string>
     <string name="home_icon_arrow_right_text">화살표 아이콘</string>
     <string name="home_icon_bell_text">알림 종 아이콘</string>
 
-    <string name="home_bubble_basic_text">여기서 놓치면 택시비 약</string>
+    <string name="home_bubble_basic_text">여기서 막차 놓치면 택시비</string>
+    <string name="home_bubble_least_text">약 </string>
+    <string name="home_bubble_won_text">원</string>
     <string name="home_bubble_alarm_prefix_text">차고지에서 출발하면</string>
-    <string name="home_bubble_alarm_emphasis_text">더 정확하게</string>
+    <string name="home_bubble_alarm_emphasis_text">이때쯤 자리에서 출발하면 돼요</string>
+    <string name="home_move_set_destination">"지도를 움직여 출발지를 설정해 봐요"</string>
     <string name="home_bubble_alarm_suffix_text">알려드려요</string>
     <string name="home_bubble_alarm_departed_text">이때 출발해야 막차를 탈 수 있어요</string>
 
     <string name="home_start_time_text">출발 시간</string>
     <string name="home_expect_start_time_text">예상 출발 시간</string>
+    <string name="home_arrive_station_toast_text">목적지 부근에 도착했습니다</string>
 
     <!-- All -->
     <string name="all_acha_character">앗차 캐릭터</string>
@@ -52,7 +101,7 @@
     <!-- Course -->
     <string name="last_transport_info_remaining_hour">%1d시간</string>
     <string name="last_transport_info_remaining_minute">%1d분</string>
-    <string name="last_transport_info_remaining_time">%01d:%02d</string>
+    <string name="last_transport_info_remaining_time">%02d:%02d</string>
     <string name="last_transport_info_departure_time">출발</string>
     <string name="last_transport_info_boarding_time">탑승</string>
     <string name="last_transport_info_set_notification">막차 알림 받기</string>
@@ -60,26 +109,69 @@
     <string name="course_detail_info_duration">%1d분</string>
     <string name="course_detail_info_boarding_point">%1s 승차</string>
     <string name="course_detail_info_destination_point">%1s 하차</string>
-    <string name="course_set_notification_snackbar">알림이 등록되었어요</string>
+    <string name="course_set_notification_snackbar">알림이 등록되었습니다</string>
+    <string name="course_set_notification_failed_snackbar">알림을 등록하는데 실패했어요</string>
     <string name="notification_channel_name">앱 알림</string>
     <string name="notification_channel_description_text">앱 내부 알림 채널</string>
     <string name="course_search_failed_snackbar">경로를 조회하는데 실패했어요</string>
+    <string name="course_detail_description">상세경로</string>
+    <string name="course_search_result_empty">검색 가능한 막차 정보가 없습니다.</string>
+
+    <!-- Bus Course -->
+    <string name="bus_course_info">운행정보</string>
+    <string name="bus_course_running_bus_count">%1d대 운행 중</string>
+
 
     <!--    itinerary   -->
-    <string name="itinerary_summary_remaining_hour">%1d시간</string>
-    <string name="itinerary_summary_remaining_minute">%1d분</string>
-    <string name="itinerary_summary_total_time">%02d:%02d 출발 ~ %02d:%02d 도착 예정</string>
+    <string name="itinerary_summary_duration_hour">%1d시간</string>
+    <string name="itinerary_summary_duration_minute">%1d분</string>
+    <string name="itinerary_summary_duration_time">%1d시간 %1d분</string>
+    <string name="itinerary_summary_total_time">%02d:%02d ~ %02d:%02d</string>
+    <string name="itinerary_info_legs_walk_time">%d분 걷기</string>
+    <string name="itinerary_info_legs_walk_distance">%dm</string>
+    <string name="itinerary_info_legs_boarding_HHmm">%02d:%02d</string>
+    <string name="itinerary_info_legs_boarding">승차</string>
+    <string name="itinerary_info_legs_disembarking">하차</string>
+    <string name="itinerary_info_legs_bus_remaining_time">%d분 %d초(%s)</string>
+    <string name="itinerary_info_legs_bus_remaining_second">%d초(%s)</string>
+    <string name="itinerary_info_legs_data_source">티맵 API와 공공데이터로 막차 정보를 제공합니다.</string>
+    <string name="itinerary_info_legs_bus_stopovers">%d분, %d개 정류장 이동</string>
+    <string name="itinerary_info_legs_subway_stopovers">%d분, %d개 역 이동</string>
 
     <!--    mypage      -->
     <string name="mypage_icon_arrow_text">마이페이지 화살표</string>
     <string name="mypage_title_text">마이페이지</string>
     <string name="mypage_account_title_text">내 계정</string>
     <string name="mypage_change_home_title_text">우리집 변경</string>
-    <string name="mypage_alarm_title_text">푸시 알림 빈도 설정</string>
-    <string name="mypage_policy_text">개인정보처리방침</string>
-    <string name="mypage_version_title_text">현재 버전 1.0.0</string>
+    <string name="mypage_change_home_toast_text">집 주소가 변경되었습니다.</string>
+    <string name="mypage_change_home_button_text">다른 주소로 변경하기</string>
+    <string name="mypage_alarm_title_text">알림 설정</string>
+    <string name="mypage_alarm_sound_setting_text">진동/벨소리 설정</string>
+    <string name="mypage_alarm_time_setting_text">푸시 알림 빈도 설정</string>
+    <string name="mypage_alarm_info_text">출발지에서 막차 타는 곳까지 시간 내에 걸어갈 수 있게\n푸시 알림 받는 빈도를 설정해주세요.</string>
+    <string name="mypage_alarm_submit_text">저장</string>
+    <string name="mypage_change_alarm_time_toast_text">푸시 알림 빈도가 변경되었습니다.</string>
+    <string name="mypage_policy_text">약관</string>
+    <string name="mypage_version_title_text">현재 버전&#160;</string>
+    <string name="mypage_version_update_text">업데이트</string>
     <string name="mypage_account_logout_text">로그아웃</string>
     <string name="mypage_account_signout_text">계정 탈퇴</string>
     <string name="mypage_icon_description">마이페이지 아이콘</string>
+    <string name="home_icon_info">홈 안내 아이콘</string>
+    <string name="home_icon_refresh">홈 새로고침 아이콘</string>
+    <string name="home_finish_button_text">종료</string>
+    <string name="home_course_detail_button_text">상세 경로</string>
+    <string name="home_icon_transportation">홈 대중교통 아이콘</string>
+    <string name="home_icon_dot">홈 점 아이콘</string>
+    <string name="home_final_departure_time_text">우리집 도착시간</string>
+    <string name="mypage_logout_dialog_title">로그아웃하시겠어요?</string>
+    <string name="mypage_withdraw_dialog_title">탈퇴하시겠어요?</string>
+    <string name="mypage_logout_dialog_confirm">로그아웃</string>
+    <string name="mypage_withdraw_dialog_confirm">탈퇴하기</string>
+    <string name="mypage_dialog_cancle">취소</string>
+    <string name="home_bubble_user_departure">출발~!</string>
+    <string name="mypage_alarm_vibration_text">진동</string>
+    <string name="mypage_alarm_sound_text">소리</string>
+
 
 </resources>

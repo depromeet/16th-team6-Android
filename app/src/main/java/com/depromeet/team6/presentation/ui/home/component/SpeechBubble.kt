@@ -24,7 +24,10 @@ import androidx.compose.ui.unit.dp
 import com.depromeet.team6.ui.theme.LocalTeam6Colors
 import com.depromeet.team6.ui.theme.LocalTeam6Typography
 
-class SpeechBubbleShape(private val cornerRadius: Dp = 16.dp) : Shape {
+class SpeechBubbleShape(
+    private val cornerRadius: Dp = 16.dp,
+    private val tailExist: Boolean
+) : Shape {
     override fun createOutline(
         size: Size,
         layoutDirection: LayoutDirection,
@@ -34,6 +37,8 @@ class SpeechBubbleShape(private val cornerRadius: Dp = 16.dp) : Shape {
             Path().apply {
                 val radius = with(density) { cornerRadius.toPx() }
                 val tailHeight = size.height * 0.2f
+                val tailWidth = size.width * 0.06f
+                val tailCenterX = size.width * 0.11f
 
                 reset()
                 moveTo(radius, 0f)
@@ -58,9 +63,21 @@ class SpeechBubbleShape(private val cornerRadius: Dp = 16.dp) : Shape {
                     false
                 )
 
-                lineTo(size.width * 0.12f, size.height - tailHeight)
-                lineTo(size.width * 0.15f, size.height)
-                lineTo(size.width * 0.18f, size.height - tailHeight)
+                if (tailExist) {
+                    lineTo(tailCenterX + tailWidth / 2.2f, size.height - tailHeight)
+
+                    val tailTipY = size.height + (tailHeight * 0.45f) // 높이는 유지
+                    val controlX = tailCenterX // 중간 제어점은 중앙
+                    val tipEndX = tailCenterX - tailWidth / 2.3f // 좌우 폭을 좁힘 (더 날카롭게)
+
+                    // 꼭짓점 둥글게
+                    quadraticTo(
+                        controlX,
+                        tailTipY,
+                        tipEndX,
+                        size.height - tailHeight
+                    )
+                }
 
                 arcTo(
                     Rect(
@@ -93,7 +110,8 @@ fun SpeechBubble(
     prefix: String,
     modifier: Modifier = Modifier,
     emphasisText: String? = null,
-    suffix: String? = null
+    suffix: String? = null,
+    tailExist: Boolean
 ) {
     val colors = LocalTeam6Colors.current
     val typography = LocalTeam6Typography.current
@@ -102,17 +120,17 @@ fun SpeechBubble(
         modifier = modifier
             .background(
                 color = colors.greyElevatedBackground,
-                shape = SpeechBubbleShape()
+                shape = SpeechBubbleShape(tailExist = tailExist)
             ),
         contentAlignment = Alignment.Center
     ) {
         Row(
             modifier = Modifier
-                .padding(top = 10.dp, bottom = 16.dp, start = 10.dp, end = 10.dp)
+                .padding(top = 10.dp, bottom = 16.dp, start = 12.dp, end = 12.dp)
         ) {
             Text(
                 text = prefix,
-                color = colors.greySecondaryLabel,
+                color = colors.greyOneLabel,
                 style = typography.bodyMedium12
             )
 
@@ -129,7 +147,7 @@ fun SpeechBubble(
                 Spacer(modifier = Modifier.width(2.dp))
                 Text(
                     text = suffix,
-                    color = colors.greySecondaryLabel,
+                    color = colors.greyOneLabel,
                     style = typography.bodyMedium12
                 )
             }
@@ -143,6 +161,7 @@ fun SpeechBubblePreview() {
     SpeechBubble(
         prefix = "여기서 놓치면 택시비",
         emphasisText = "34,000원",
-        modifier = Modifier
+        modifier = Modifier,
+        tailExist = true
     )
 }

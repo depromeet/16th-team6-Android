@@ -4,16 +4,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.depromeet.team6.presentation.ui.coursesearch.navigation.CourseSearchRoute
+import com.depromeet.team6.domain.model.Address
+import com.depromeet.team6.presentation.model.bus.BusArrivalParameter
+import com.depromeet.team6.presentation.model.itinerary.FocusedMarkerParameter
+import com.depromeet.team6.presentation.ui.bus.navigation.navigationToBusCourse
 import com.depromeet.team6.presentation.ui.coursesearch.navigation.navigateCourseSearch
 import com.depromeet.team6.presentation.ui.home.navigation.HomeRoute
 import com.depromeet.team6.presentation.ui.home.navigation.navigationHome
-import com.depromeet.team6.presentation.ui.itinerary.navigation.ItineraryRoute
 import com.depromeet.team6.presentation.ui.itinerary.navigation.navigateToItinerary
 import com.depromeet.team6.presentation.ui.login.navigation.LoginRoute
 import com.depromeet.team6.presentation.ui.login.navigation.navigationLogin
 import com.depromeet.team6.presentation.ui.mypage.navigation.navigationMypage
+import com.depromeet.team6.presentation.ui.onboarding.navigation.OnboardingRoute
 import com.depromeet.team6.presentation.ui.onboarding.navigation.navigationOnboarding
+import com.depromeet.team6.presentation.ui.searchlocation.navigation.navigationSearchLocation
 
 class MainNavigator(
     val navHostController: NavHostController
@@ -22,6 +26,7 @@ class MainNavigator(
     val startDestination = LoginRoute.ROUTE
 
     fun navigateToOnboarding() {
+        clearBackStackTo(OnboardingRoute.ROUTE)
         navHostController.navigationOnboarding()
     }
 
@@ -37,22 +42,40 @@ class MainNavigator(
 
     fun navigateToCourseSearch(
         departure: String,
-        destination: String
+        destination: String,
+        fromLockScreen: Boolean = false
     ) {
-        clearBackStackTo(CourseSearchRoute.ROUTE)
         navHostController.navigateCourseSearch(
-            departure = departure,
-            destination = destination
+            departurePoint = departure,
+            destinationPoint = destination,
+            fromLockScreen = fromLockScreen
         )
     }
 
-    fun navigateToItinerary() {
-        clearBackStackTo(ItineraryRoute.ROUTE)
-        navHostController.navigateToItinerary()
+    fun navigateToItinerary(
+        courseInfoJSON: String,
+        departurePointJSON: String,
+        destinationPointJSON: String,
+        focusedMarkerParameter: FocusedMarkerParameter? = null
+    ) {
+        navHostController.navigateToItinerary(
+            courseInfoJSON,
+            departurePointJSON,
+            destinationPointJSON,
+            focusedMarkerParameter
+        )
     }
 
     fun navigateToMypage() {
         navHostController.navigationMypage()
+    }
+
+    fun navigateToSearchLocation(destinationLocation: Address) {
+        navHostController.navigationSearchLocation(destinationLocation = destinationLocation)
+    }
+
+    fun navigateToBusCourse(busArrivalParameter: BusArrivalParameter) {
+        navHostController.navigationToBusCourse(busArrivalParameter = busArrivalParameter)
     }
 
     fun popBackStack() {

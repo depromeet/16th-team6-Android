@@ -9,6 +9,6 @@ import javax.inject.Singleton
 class GetLoginUseCase @Inject constructor(
     private val authRepository: AuthRepository
 ) {
-    suspend operator fun invoke(provider: Int): Result<Auth> =
-        authRepository.getLogin(provider = provider)
+    suspend operator fun invoke(provider: Int, fcmToken: String): Result<Auth> =
+        authRepository.getLogin(provider = provider, fcmToken = fcmToken)
 }
