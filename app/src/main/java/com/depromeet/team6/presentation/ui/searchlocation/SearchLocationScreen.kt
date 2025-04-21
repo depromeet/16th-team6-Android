@@ -40,8 +40,8 @@ import com.depromeet.team6.presentation.ui.searchlocation.component.SearchHistor
 import com.depromeet.team6.presentation.ui.searchlocation.component.SearchLocationItem
 import com.depromeet.team6.presentation.ui.searchlocation.component.SearchLocationMapView
 import com.depromeet.team6.presentation.ui.searchlocation.component.SearchLocationTextField
-import com.depromeet.team6.presentation.util.DefaultLntLng.DEFAULT_LNG
-import com.depromeet.team6.presentation.util.DefaultLntLng.DEFAULT_LNT
+import com.depromeet.team6.presentation.util.DefaultLatLng.DEFAULT_LAT
+import com.depromeet.team6.presentation.util.DefaultLatLng.DEFAULT_LNG
 import com.depromeet.team6.presentation.util.context.getUserLocation
 import com.depromeet.team6.presentation.util.permission.PermissionUtil
 import com.depromeet.team6.presentation.util.view.LoadState
@@ -66,13 +66,13 @@ fun SearchLocationRoute(
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
 
-    var userLocation by remember { mutableStateOf(LatLng(DEFAULT_LNT, DEFAULT_LNG)) }
+    var userLocation by remember { mutableStateOf(LatLng(DEFAULT_LAT, DEFAULT_LNG)) }
 
     LaunchedEffect(Unit) {
         Timber.tag("Location Permission").d("${PermissionUtil.hasLocationPermissions(context)}")
         if (PermissionUtil.hasLocationPermissions(context)) {
             val location = context.getUserLocation()
-            userLocation = LatLng(DEFAULT_LNT, DEFAULT_LNG)
+            userLocation = LatLng(DEFAULT_LAT, DEFAULT_LNG)
 
 //            homeViewModel.getCenterLocation(userLocation)
 //            viewModel.setState {

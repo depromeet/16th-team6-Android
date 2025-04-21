@@ -7,7 +7,7 @@ import com.depromeet.team6.domain.model.BusPositions
 import com.depromeet.team6.domain.model.course.CourseInfo
 
 interface TransitsRepository {
-    suspend fun getAvailableCourses(startPosition: Address, endPosition: Address): Result<List<CourseInfo>>
+    suspend fun getAvailableCourses(startPosition: Address, endPosition: Address, sortType: Int): Result<List<CourseInfo>>
 
     suspend fun getBusArrival(routeName: String, stationName: String, lat: Double, lon: Double): Result<BusArrival>
 

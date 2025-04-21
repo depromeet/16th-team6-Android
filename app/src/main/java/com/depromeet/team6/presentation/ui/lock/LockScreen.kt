@@ -86,8 +86,12 @@ fun LockRoute(
         uiState = uiState,
         padding = padding,
         onTimerFinish = onTimerFinish,
-        onDepartureClick = { onDepartureClick() },
-        onLateClick = { onLateClick() }
+        onDepartureClick = {
+            onDepartureClick()
+        },
+        onLateClick = {
+            onLateClick()
+        }
     )
 }
 

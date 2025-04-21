@@ -18,7 +18,8 @@ interface TransitsService {
         @Query("startLat") startLat: String,
         @Query("startLon") startLon: String,
         @Query("endLat") endLat: String,
-        @Query("endLon") endLon: String
+        @Query("endLon") endLon: String,
+        @Query("sortType") sortType: Int
     ): Response<ApiResponse<List<ResponseCourseSearchDto>>>
 
     @GET("$API/$TRANSITS/bus-arrival")

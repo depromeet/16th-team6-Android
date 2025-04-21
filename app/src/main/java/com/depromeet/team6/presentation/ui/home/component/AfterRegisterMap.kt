@@ -2,7 +2,10 @@ package com.depromeet.team6.presentation.ui.home.component
 
 import TransportVectorIconWithTextBitmap
 import android.graphics.PointF
+import android.location.Location
+import android.os.Looper
 import android.widget.FrameLayout
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -11,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -41,9 +45,17 @@ import com.depromeet.team6.presentation.ui.common.TransportVectorIconBitmap
 import com.depromeet.team6.presentation.ui.home.HomeViewModel
 import com.depromeet.team6.presentation.ui.itinerary.LegInfoDummyProvider
 import com.depromeet.team6.presentation.ui.itinerary.component.getWayPointList
+import com.depromeet.team6.presentation.util.permission.PermissionUtil
+import com.depromeet.team6.presentation.util.toast.atChaToastMessage
 import com.depromeet.team6.presentation.util.view.TransportTypeUiMapper
 import com.depromeet.team6.presentation.util.view.toPx
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
 import com.google.android.gms.maps.model.LatLng
+import com.skt.tmap.TMapInsets
 import com.skt.tmap.TMapPoint
 import com.skt.tmap.TMapView
 import com.skt.tmap.TMapView.OnClickListenerCallback
@@ -69,12 +81,17 @@ fun AfterRegisterMap(
     val tMapView = remember { TMapView(context) }
     var isMapReady by remember { mutableStateOf(false) }
 
+    var userLocation by remember { mutableStateOf(currentLocation) }
+    var locationUpdateTrigger by remember { mutableStateOf(0) }
+
     val departLocation = LatLng(legs[0].startPoint.lat, legs[0].startPoint.lon)
     val destinationLocation = LatLng(legs[legs.size - 1].endPoint.lat, legs[legs.size - 1].endPoint.lon)
     val markerSizePx = 28.dp.toPx().toInt()
 
     var firstTransportationPoint = LatLng(legs[0].startPoint.lat, legs[0].startPoint.lon)
     var markBusStationName = ""
+
+    var hasShownToast by remember { mutableStateOf(false) }
 
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
 
@@ -91,7 +108,7 @@ fun AfterRegisterMap(
         if (isMapReady) {
             val departTMapPoint = TMapPoint(departLocation.latitude, departLocation.longitude)
             val destinationTMapPoint = TMapPoint(destinationLocation.latitude, destinationLocation.longitude)
-
+            val tMapPointList = arrayListOf(departTMapPoint, destinationTMapPoint)
             for (leg in legs) {
                 if (leg.transportType != TransportType.WALK) {
                     firstTransportationPoint = LatLng(leg.startPoint.lat, leg.startPoint.lon)
@@ -107,6 +124,9 @@ fun AfterRegisterMap(
                 // 라인 그리기
                 val lineWayPoints =
                     getWayPointList(leg.passShape)
+                for (point in lineWayPoints) {
+                    tMapPointList.add(point)
+                }
                 // TMapTrafficLine 객체 생성
                 val tmapTrafficLine = TMapTrafficLine("line_${leg.transportType}_${leg.sectionTime}")
                 // 교통 정보 표출 여부 설정
@@ -180,10 +200,20 @@ fun AfterRegisterMap(
                     latLng: TMapPoint?,
                     p3: PointF?
                 ) {
-                    if (markerItems?.isEmpty() == true) return
+                    if (markerItems == null) return
+                    if (markerItems.isEmpty()) return
 
-                    val marker = markerItems!![0]
-                    val parts = marker.id.split("_")
+                    // leg에 해당하는 마커 필터링
+                    var markerId = ""
+                    for (marker in markerItems) {
+                        if (marker.id.contains("marker_")) {
+                            markerId = marker.id
+                            break
+                        }
+                    }
+                    if (markerId.isEmpty()) return
+
+                    val parts = markerId.split("_")
                     val transportTypeStr = parts[1]
                     val subTypeIdx = parts[2].toInt()
                     val transportType = enumValueOf<TransportType>(transportTypeStr)
@@ -216,7 +246,10 @@ fun AfterRegisterMap(
 
             // 지도 위치 설정 - 출발지와 첫 대중교통의 중간 지점
             val midPoint = getMidPoint(firstTransportationPoint, departLocation)
-            tMapView.setCenterPoint(midPoint.latitude, midPoint.longitude)
+            tMapView.fitBounds(
+                tMapView.getBoundsFromPoints(tMapPointList),
+                TMapInsets.of(100, 100, 100, 100)
+            )
 
             // 지도 Scale 조정 - 출발지와 첫 대중교통의 중간 지점 + 일정 값
             val latSpan = abs(firstTransportationPoint.latitude - departLocation.latitude) + 0.01 // 0.01 or 0.001
@@ -225,12 +258,71 @@ fun AfterRegisterMap(
         }
     }
 
-    // 현재 위치 변경될 때만 마커 갱신
-    LaunchedEffect(currentLocation, isMapReady) {
+    val fusedLocationClient = remember {
+        LocationServices.getFusedLocationProviderClient(context)
+    }
+
+    val locationCallback = remember {
+        object : LocationCallback() {
+            override fun onLocationResult(locationResult: LocationResult) {
+                locationResult.lastLocation?.let { location ->
+                    val newLocation = LatLng(location.latitude, location.longitude)
+                    userLocation = newLocation
+                    locationUpdateTrigger++
+
+                    val distance = calculateDistance(
+                        newLocation.latitude,
+                        newLocation.longitude,
+                        firstTransportationPoint.latitude,
+                        firstTransportationPoint.longitude
+                    )
+
+                    if (distance <= 50f && !hasShownToast) {
+                        atChaToastMessage(context, R.string.home_arrive_station_toast_text, Toast.LENGTH_LONG)
+                        hasShownToast = true
+                    }
+                }
+            }
+        }
+    }
+
+    // 위치 업데이트 시작
+    LaunchedEffect(Unit) {
+        if (PermissionUtil.hasLocationPermissions(context)) {
+            val locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 3000)
+                .setMinUpdateIntervalMillis(1000)
+                .setMinUpdateDistanceMeters(1f)
+                .build()
+
+            try {
+                fusedLocationClient.requestLocationUpdates(
+                    locationRequest,
+                    locationCallback,
+                    Looper.getMainLooper()
+                )
+            } catch (e: SecurityException) {
+                Timber.e("위치 권한 오류: ${e.message}")
+            }
+        }
+    }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            fusedLocationClient.removeLocationUpdates(locationCallback)
+        }
+    }
+
+    // userLocation 또는 locationUpdateTrigger가 변경될 때마다 현재 위치 마커 업데이트
+    LaunchedEffect(userLocation, locationUpdateTrigger, isMapReady) {
         if (isMapReady) {
-            val tMapPoint = TMapPoint(currentLocation.latitude, currentLocation.longitude)
+            val tMapPoint = TMapPoint(userLocation.latitude, userLocation.longitude)
 
             withContext(Dispatchers.Main) {
+                try {
+                    tMapView.removeTMapMarkerItem("CurrentMarker")
+                } catch (e: Exception) {
+                }
+
                 val markerDrawable =
                     ContextCompat.getDrawable(context, R.drawable.ic_home_current_location)
                 val markerBitmap = markerDrawable?.toBitmap()
@@ -243,6 +335,8 @@ fun AfterRegisterMap(
                 }
 
                 tMapView.addTMapMarkerItem(markerItem)
+
+                viewModel.updateCurrentLocation(userLocation)
             }
         }
     }
@@ -283,7 +377,7 @@ fun AfterRegisterMap(
                     }
                 )
                 .clickable(enabled = isMapReady) {
-                    val tMapPoint = TMapPoint(currentLocation.latitude, currentLocation.longitude)
+                    val tMapPoint = TMapPoint(userLocation.latitude, userLocation.longitude)
                     tMapView.setCenterPoint(tMapPoint.latitude, tMapPoint.longitude)
 
                     viewModel.getCenterLocation(LatLng(tMapPoint.latitude, tMapPoint.longitude))
@@ -291,6 +385,12 @@ fun AfterRegisterMap(
                 .graphicsLayer { alpha = if (isMapReady) 1f else 0.5f } // 비활성화 시 투명도 조정
         )
     }
+}
+
+private fun calculateDistance(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Float {
+    val results = FloatArray(1)
+    Location.distanceBetween(lat1, lon1, lat2, lon2, results)
+    return results[0]
 }
 
 private fun getMidPoint(point1: LatLng, point2: LatLng): LatLng {
