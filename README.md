@@ -49,7 +49,7 @@
   - Flow
   - ViewModel
   - Coroutine
-- KaKao Login
+- Kakao Login
 - TMap SDK
 - Hilt
 - FirebaseMessagingService
