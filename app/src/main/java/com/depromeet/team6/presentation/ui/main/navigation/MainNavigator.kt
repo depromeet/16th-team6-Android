@@ -1,5 +1,6 @@
 package com.depromeet.team6.presentation.ui.main.navigation
 
+import android.os.Bundle
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
@@ -18,6 +19,7 @@ import com.depromeet.team6.presentation.ui.mypage.navigation.navigationMypage
 import com.depromeet.team6.presentation.ui.onboarding.navigation.OnboardingRoute
 import com.depromeet.team6.presentation.ui.onboarding.navigation.navigationOnboarding
 import com.depromeet.team6.presentation.ui.searchlocation.navigation.navigationSearchLocation
+import com.google.firebase.analytics.FirebaseAnalytics
 
 class MainNavigator(
     val navHostController: NavHostController
@@ -94,7 +96,14 @@ class MainNavigator(
 
 @Composable
 fun rememberMainNavigator(
-    navHostController: NavHostController = rememberNavController()
+    navHostController: NavHostController = rememberNavController(),
+    firebaseAnalytics: FirebaseAnalytics
 ): MainNavigator = remember(navHostController) {
+    // Firebase Analytics 에 화면 이동 정보 로깅
+    navHostController.addOnDestinationChangedListener { _, destination, _ ->
+        val params = Bundle()
+        params.putString(FirebaseAnalytics.Param.SCREEN_NAME, destination.route)
+        firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW, params)
+    }
     MainNavigator(navHostController = navHostController)
 }
