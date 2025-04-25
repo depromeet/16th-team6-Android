@@ -9,6 +9,8 @@ plugins {
     alias(libs.plugins.dagger.hilt)
     alias(libs.plugins.kotlin.kapt)
     id("com.google.gms.google-services")
+    // Firebase Crashlytics
+    id("com.google.firebase.crashlytics")
 }
 
 val properties = Properties().apply {
@@ -133,6 +135,9 @@ dependencies {
     // Firebase
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
+    // Firebase Crashlytics
+    implementation(libs.firebase.crashlytics)
+    implementation(libs.google.firebase.analytics)
 
     // WebView
     implementation(libs.accompanist.webview)
