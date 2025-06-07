@@ -2,6 +2,7 @@ package com.depromeet.team6.presentation.ui.coursesearch.component
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -31,19 +32,28 @@ import com.depromeet.team6.presentation.ui.itinerary.LegInfoDummyProvider
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.depromeet.team6.ui.theme.defaultTeam6Typography
+import com.google.gson.Gson
 import java.time.LocalDateTime
 
 @Composable
 fun LastTransportInfoItem(
     courseSearchResult: CourseInfo,
     modifier: Modifier = Modifier,
-    onRegisterAlarmBtnClick: (lastRouteId: String) -> Unit = {}
+    onRegisterAlarmBtnClick: (lastRouteId: String) -> Unit = {},
+    courseInfoToggleClick: () -> Unit = {},
+    onItemClick: (String, Boolean) -> Unit = { _, _ -> }
 ) {
     Column(
         modifier = modifier
             .clip(RoundedCornerShape(12.dp))
             .background(defaultTeam6Colors.greyCard)
             .padding(vertical = 20.dp, horizontal = 16.dp)
+            .clickable {
+                onItemClick(
+                    Gson().toJson(courseSearchResult),
+                    false
+                )
+            }
     ) {
         // 남은 시간
         val remainingHour = courseSearchResult.totalTime / 60 / 60
@@ -79,7 +89,14 @@ fun LastTransportInfoItem(
             )
 
             Text(
-                modifier = Modifier.align(Alignment.CenterVertically),
+                modifier = Modifier
+                    .align(Alignment.CenterVertically)
+                    .clickable {
+                        onItemClick(
+                            Gson().toJson(courseSearchResult),
+                            true
+                        )
+                    },
                 text = stringResource(
                     id = R.string.course_detail_description
                 ),
@@ -144,7 +161,8 @@ fun LastTransportInfoItem(
 
         // 막차 경로 상세 정보
         TransportCourseInfoExpandable(
-            legsInfo = courseSearchResult.legs
+            legsInfo = courseSearchResult.legs,
+            onToggleDismissClick = courseInfoToggleClick
         )
 
         Spacer(

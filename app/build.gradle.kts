@@ -37,8 +37,8 @@ android {
         applicationId = "com.depromeet.team6"
         minSdk = 26
         targetSdk = 34
-        versionCode = 10
-        versionName = "1.1.0"
+        versionCode = 13
+        versionName = "1.2.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "KAKAO_NATIVE_APP_KEY", properties["kakao.native.app.key"].toString())
@@ -154,6 +154,7 @@ dependencies {
 
     // Amplitude
     implementation(libs.amplitude)
+    implementation(libs.play.services.appset)
 }
 java {
     toolchain {

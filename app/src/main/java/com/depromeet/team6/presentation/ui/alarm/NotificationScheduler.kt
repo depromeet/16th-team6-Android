@@ -6,11 +6,13 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import androidx.annotation.Keep
 import androidx.core.app.NotificationCompat
 import com.depromeet.team6.R
 import java.text.SimpleDateFormat
 import java.util.Locale
 
+@Keep
 class NotificationScheduler(private val context: Context) {
 
     companion object {

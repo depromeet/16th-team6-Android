@@ -50,12 +50,17 @@ import com.depromeet.team6.presentation.ui.home.component.DeleteAlarmDialog
 import com.depromeet.team6.presentation.ui.home.component.TMapViewCompose
 import com.depromeet.team6.presentation.util.AmplitudeCommon.SCREEN_NAME
 import com.depromeet.team6.presentation.util.AmplitudeCommon.USER_ID
-import com.depromeet.team6.presentation.util.DefaultLntLng.DEFAULT_LNG
-import com.depromeet.team6.presentation.util.DefaultLntLng.DEFAULT_LNT
+import com.depromeet.team6.presentation.util.DefaultLatLng.DEFAULT_LAT
+import com.depromeet.team6.presentation.util.DefaultLatLng.DEFAULT_LNG
+import com.depromeet.team6.presentation.util.HomeAmplitude.ALERT_END_POPUP_1
 import com.depromeet.team6.presentation.util.HomeAmplitude.HOME
 import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_COURSESEARCH_ENTERED_DIRECT
 import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_COURSESEARCH_ENTERED_WITH_INPUT
+import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_DEPARTURE_TIME_CLICKED
+import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_DEPARTURE_TIME_SUGGESTION_CLICKED
 import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_DESTINATION_CLICKED
+import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_ROUTE_CLICKED
+import com.depromeet.team6.presentation.util.HomeAmplitude.POPUP
 import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
 import com.depromeet.team6.presentation.util.context.getUserLocation
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
@@ -90,7 +95,7 @@ fun HomeRoute(
     val context = LocalContext.current
 
     var permissionGranted by remember { mutableStateOf(PermissionUtil.hasLocationPermissions(context)) }
-    var userLocation by remember { mutableStateOf(LatLng(DEFAULT_LNT, DEFAULT_LNG)) } // 서울시 기본 위치
+    var userLocation by remember { mutableStateOf(LatLng(DEFAULT_LAT, DEFAULT_LNG)) } // 서울시 기본 위치
 
     val locationPermissionsLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestMultiplePermissions(),
@@ -140,7 +145,7 @@ fun HomeRoute(
                 when (sideEffect) {
                     is HomeContract.HomeSideEffect.NavigateToMypage -> navigateToMypage()
                     is HomeContract.HomeSideEffect.NavigateToItinerary -> navigateToItinerary(
-                        Gson().toJson(uiState.courseInfo),
+                        Gson().toJson(uiState.itineraryInfo),
                         Gson().toJson(uiState.departurePoint),
                         Gson().toJson(uiState.destinationPoint),
                         sideEffect.markerParameter
@@ -280,7 +285,8 @@ fun HomeScreen(
     onFinishClick: () -> Unit = {},
     onRefreshClick: () -> Unit = {},
     navigateToMypage: () -> Unit = {},
-    navigateToItinerary: (String, String, String, FocusedMarkerParameter?) -> Unit = { s: String, s1: String, s2: String, transportMarkerParameter: FocusedMarkerParameter? -> },
+    afterRegisterMapMarkerClick: (FocusedMarkerParameter?) -> Unit = { },
+    courseDetailBtnClick: (String) -> Unit = {},
     deleteAlarmConfirmed: () -> Unit = {},
     dismissDialog: () -> Unit = {},
     navigateToSearchLocation: () -> Unit = {},
@@ -321,12 +327,7 @@ fun HomeScreen(
                 legs = homeUiState.itineraryInfo!!.legs,
                 viewModel = viewModel,
                 onTransportMarkerClick = { markerParameter ->
-                    navigateToItinerary(
-                        Gson().toJson(homeUiState.itineraryInfo),
-                        Gson().toJson(homeUiState.departurePoint),
-                        Gson().toJson(homeUiState.destinationPoint),
-                        markerParameter
-                    )
+                    afterRegisterMapMarkerClick(markerParameter)
                 }
             )
         } else {
@@ -365,23 +366,25 @@ fun HomeScreen(
                 transportationNumber = homeUiState.firstTransportationNumber,
                 transportationName = homeUiState.firstTransportationName,
                 timeToLeave = formatTimeString(homeUiState.departureTime),
-                boardingTime = formatTimeString(homeUiState.boardingTime),
+                boardingTime = homeUiState.boardingTime,
+                homeArrivedTime = homeUiState.homeArrivedTime,
                 destination = stringResource(R.string.home_my_home_text),
-                onCourseTextClick = {},
+                onCourseTextClick = {
+                    AmplitudeUtils.trackEventWithProperties(
+                        HOME_ROUTE_CLICKED,
+                        mapOf(
+                            SCREEN_NAME to HOME,
+                            USER_ID to viewModel.getUserId(),
+                            HOME_ROUTE_CLICKED to 1
+                        )
+                    )
+                },
                 deleteAlarmConfirmed = deleteAlarmConfirmed,
                 dismissDialog = dismissDialog,
                 onFinishClick = {
                     onFinishClick()
                 },
-                onCourseDetailClick = {
-                    Timber.d("departurelocation 3 : ${homeUiState.departurePoint}")
-                    navigateToItinerary(
-                        Gson().toJson(homeUiState.itineraryInfo),
-                        Gson().toJson(homeUiState.departurePoint),
-                        Gson().toJson(homeUiState.destinationPoint),
-                        null
-                    )
-                },
+                onCourseDetailClick = courseDetailBtnClick,
                 onTimerFinished = {
                     viewModel.onTimerFinished()
                 },
@@ -390,10 +393,34 @@ fun HomeScreen(
                     .zIndex(1f),
                 onRefreshClick = {
                     onRefreshClick()
+                    if (homeUiState.firtTransportTation == TransportType.BUS) {
+                        viewModel.getBusArrival()
+                    }
                 },
                 onIconClick = {
                     characterAnimationTrigger++
-                }
+                },
+                onHomeDepartureTimeClick = {
+                    AmplitudeUtils.trackEventWithProperties(
+                        HOME_DEPARTURE_TIME_CLICKED,
+                        mapOf(
+                            SCREEN_NAME to HOME,
+                            USER_ID to viewModel.getUserId(),
+                            HOME_DEPARTURE_TIME_CLICKED to 1
+                        )
+                    )
+                },
+                onHomeExpectDepartureTimeClick = {
+                    AmplitudeUtils.trackEventWithProperties(
+                        HOME_DEPARTURE_TIME_CLICKED,
+                        mapOf(
+                            SCREEN_NAME to HOME,
+                            USER_ID to viewModel.getUserId(),
+                            HOME_DEPARTURE_TIME_SUGGESTION_CLICKED to 1
+                        )
+                    )
+                },
+                busStationLeft = homeUiState.busRemainingStations
             )
         } else {
             notificationScheduler.cancelAllNotifications()
@@ -546,7 +573,16 @@ fun HomeScreen(
                     },
                     onSuccess = {
                         deleteAlarmConfirmed()
-                    }
+                        AmplitudeUtils.trackEventWithProperties(
+                            ALERT_END_POPUP_1,
+                            mapOf(
+                                SCREEN_NAME to POPUP,
+                                USER_ID to viewModel.getUserId(),
+                                ALERT_END_POPUP_1 to 1
+                            )
+                        )
+                    },
+                    sortType = 1
                 )
             }
         }
@@ -556,16 +592,31 @@ fun HomeScreen(
 private fun formatTimeString(timeString: String): String {
     return try {
         if (timeString.contains("T")) {
+            // ISO 날짜 형식 (2023-01-01T12:30:00) 처리
             val dateTime = LocalDateTime.parse(timeString)
-            val formatter = DateTimeFormatter.ofPattern("HH:mm")
+            val formatter = DateTimeFormatter.ofPattern("HH:mm:ss")
             dateTime.format(formatter)
-        } else if (timeString.contains(":") && timeString.split(":").size == 3) {
-            val timeParts = timeString.split(":")
-            "${timeParts[0]}:${timeParts[1]}"
+        } else if (timeString.contains(":") && timeString.split(":").size >= 2) {
+            // 이미 시간 형식이면 그대로 반환 (HH:mm:ss 또는 HH:mm)
+            if (timeString.split(":").size == 2) {
+                // HH:mm 형식인 경우 HH:mm:00으로 변환
+                "$timeString:00"
+            } else {
+                timeString
+            }
+        } else if (timeString.matches(Regex("\\d+"))) {
+            // 초 단위 값을 HH:mm:ss 형식으로 변환
+            val totalSeconds = timeString.toLong()
+            val hours = totalSeconds / 3600
+            val minutes = (totalSeconds % 3600) / 60
+            val seconds = totalSeconds % 60
+
+            String.format("%02d:%02d:%02d", hours, minutes, seconds)
         } else {
             timeString
         }
     } catch (e: Exception) {
+        Timber.e("formatTimeString 오류: ${e.message}")
         timeString
     }
 }

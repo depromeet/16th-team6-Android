@@ -12,10 +12,19 @@ import com.depromeet.team6.domain.model.course.TransportType
 import com.depromeet.team6.domain.repository.UserInfoRepository
 import com.depromeet.team6.domain.usecase.DeleteAlarmUseCase
 import com.depromeet.team6.domain.usecase.GetAddressFromCoordinatesUseCase
+import com.depromeet.team6.domain.usecase.GetBusArrivalUseCase
 import com.depromeet.team6.domain.usecase.GetBusStartedUseCase
 import com.depromeet.team6.domain.usecase.GetCourseSearchResultsUseCase
 import com.depromeet.team6.domain.usecase.GetTaxiCostUseCase
 import com.depromeet.team6.domain.usecase.GetUserInfoUseCase
+import com.depromeet.team6.presentation.model.bus.BusArrivalParameter
+import com.depromeet.team6.presentation.util.AmplitudeCommon.SCREEN_NAME
+import com.depromeet.team6.presentation.util.AmplitudeCommon.USER_ID
+import com.depromeet.team6.presentation.util.HomeAmplitude.HOME
+import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_EVENT_ITINERARY_BTN_CLICK
+import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_EVENT_REGISTER_MAP_MARKER_CLICK
+import com.depromeet.team6.presentation.util.HomeAmplitude.REGISTER_MAP_MARKER_CLICKED
+import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
 import com.depromeet.team6.presentation.util.base.BaseViewModel
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.google.android.gms.maps.model.LatLng
@@ -26,17 +35,20 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
+    private val userInfoRepository: UserInfoRepository,
     private val getAddressFromCoordinatesUseCase: GetAddressFromCoordinatesUseCase,
     private val getUserInfoUseCase: GetUserInfoUseCase,
     private val getTaxiCostUseCase: GetTaxiCostUseCase,
     val getCourseSearchResultUseCase: GetCourseSearchResultsUseCase,
     private val getBusStartedUseCase: GetBusStartedUseCase,
-    private val deleteAlarmUseCase: DeleteAlarmUseCase,
-    private val userInfoRepository: UserInfoRepository
+    private val getBusArrivalUseCase: GetBusArrivalUseCase,
+    private val deleteAlarmUseCase: DeleteAlarmUseCase
 ) : BaseViewModel<HomeContract.HomeUiState, HomeContract.HomeSideEffect, HomeContract.HomeEvent>() {
     private var speechBubbleJob: Job? = null
     private var busStartedPollingJob: Job? = null
@@ -162,7 +174,47 @@ class HomeViewModel @Inject constructor(
                     departurePoint = event.departurePoint
                 )
             }
+
+            is HomeContract.HomeEvent.LoadHomeArrivedTime -> {
+                setState {
+                    copy(
+                        homeArrivedTime = event.homeArrivedTime
+                    )
+                }
+            }
+
+            is HomeContract.HomeEvent.LoadBusArrivalParameter -> {
+                setState {
+                    copy(
+                        busArrivalParameter = event.busArrivalParameter
+                    )
+                }
+            }
+            is HomeContract.HomeEvent.AfterRegisterMapMarkerClick -> {
+                AmplitudeUtils.trackEventWithProperties(
+                    eventName = HOME_EVENT_REGISTER_MAP_MARKER_CLICK,
+                    properties = mapOf(
+                        SCREEN_NAME to HOME,
+                        USER_ID to userInfoRepository.getUserID(),
+                        REGISTER_MAP_MARKER_CLICKED to 1
+                    )
+                )
+            }
+            is HomeContract.HomeEvent.CourseDetailButtonClick -> {
+                AmplitudeUtils.trackEventWithProperties(
+                    eventName = HOME_EVENT_ITINERARY_BTN_CLICK,
+                    properties = mapOf(
+                        SCREEN_NAME to HOME,
+                        USER_ID to userInfoRepository.getUserID(),
+                        event.clickEventKey to 1
+                    )
+                )
+            }
         }
+    }
+
+    fun getUserId(): Int {
+        return userInfoRepository.getUserID()
     }
 
     fun onTimerFinished() {
@@ -312,32 +364,16 @@ class HomeViewModel @Inject constructor(
         busStartedPollingJob = null
     }
 
-    // TODO : 상세 경로 조회 API로 교체
-    fun getLegs() {
-        viewModelScope.launch {
-            getCourseSearchResultUseCase(
-                startPoint = currentState.departurePoint,
-                endPoint = currentState.destinationPoint
-            ).onSuccess { courseInfo ->
-                setEvent(HomeContract.HomeEvent.LoadLegsResult(courseInfo[0]))
-                setEvent(HomeContract.HomeEvent.LoadDepartureDateTime(courseInfo[0].departureTime))
-                setEvent(
-                    HomeContract.HomeEvent.LoadFirstTransportation(
-                        getFirstTransportation(
-                            courseInfo[0].legs
-                        )
-                    )
-                )
-            }
-        }
-    }
-
     // SharedPreferences에서 사용자 출발 상태를 로드
     fun loadUserDepartureState(context: Context) {
         viewModelScope.launch {
             val sharedPreferences = context.getSharedPreferences(MY_PREFERENCES_NAME, Context.MODE_PRIVATE)
             val userDeparture = sharedPreferences.getBoolean("userDeparture", false)
             setEvent(HomeContract.HomeEvent.LoadUserDeparture(userDeparture))
+            if (currentState.userDeparture && currentState.firtTransportTation == TransportType.BUS) {
+                getBusArrival()
+                Timber.e("busArrivalParameter", currentState.busArrivalParameter.toString())
+            }
         }
     }
 
@@ -368,6 +404,7 @@ class HomeViewModel @Inject constructor(
                     setEvent(HomeContract.HomeEvent.LoadLegsResult(courseInfo))
                     setEvent(HomeContract.HomeEvent.LoadDepartureDateTime(courseInfo.departureTime))
                     setEvent(HomeContract.HomeEvent.LoadBoardingDateTime(courseInfo.boardingTime))
+                    setEvent(HomeContract.HomeEvent.LoadHomeArrivedTime(calculateArrivalTime(courseInfo.departureTime, courseInfo.totalTime)))
                     setEvent(HomeContract.HomeEvent.LoadFirstTransportation(getFirstTransportation(courseInfo.legs)))
                     setEvent(HomeContract.HomeEvent.LoadFirstTransportationNumber(getFirstTransportationNumber(courseInfo.legs)))
                     setEvent(HomeContract.HomeEvent.LoadFirstTransportationName(getFirstTransportationName(courseInfo.legs)))
@@ -396,6 +433,20 @@ class HomeViewModel @Inject constructor(
         return firstTransportation
     }
 
+    private fun getBusArrivalParameter(leg: LegInfo) {
+        setEvent(
+            HomeContract.HomeEvent.LoadBusArrivalParameter(
+                BusArrivalParameter(
+                    routeName = leg.routeName!!,
+                    stationName = leg.startPoint.name,
+                    lat = leg.startPoint.lat,
+                    lon = leg.startPoint.lon,
+                    subtypeIdx = 0
+                )
+            )
+        )
+    }
+
     private fun getFirstTransportationNumber(legs: List<LegInfo>): Int {
         var firstTransportationNumber = 0
 
@@ -415,6 +466,7 @@ class HomeViewModel @Inject constructor(
             if (leg.transportType != TransportType.WALK) {
                 if (leg.transportType == TransportType.BUS) {
                     firstTransportationName = leg.routeName.toString().split(":")[1]
+                    getBusArrivalParameter(leg)
                 } else if (leg.transportType == TransportType.SUBWAY) {
                     firstTransportationName = leg.startPoint.name + "역"
                 }
@@ -461,6 +513,7 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             getUserInfoUseCase().onSuccess { userInfo ->
                 userInfoRepository.setUserId(userId = userInfo.id)
+                AmplitudeUtils.setUserId(userId = userInfo.id)
                 setState {
                     copy(
                         destinationPoint = Address(
@@ -478,8 +531,53 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun getUserId(): Int {
-        return userInfoRepository.getUserID()
+    private fun calculateArrivalTime(departureDateTime: String, totalTimeInSeconds: Int): String {
+        try {
+            val formatter = DateTimeFormatter.ISO_DATE_TIME
+            val departure = LocalDateTime.parse(departureDateTime, formatter)
+
+            val arrival = departure.plusSeconds(totalTimeInSeconds.toLong())
+
+            val outputFormatter = DateTimeFormatter.ofPattern("HH:mm")
+            return arrival.format(outputFormatter)
+        } catch (e: Exception) {
+            return "날짜 변환 중 오류 발생: ${e.message}"
+        }
+    }
+
+    fun getBusArrival() {
+        viewModelScope.launch {
+            getBusArrivalUseCase(
+                routeName = currentState.busArrivalParameter.routeName,
+                stationName = currentState.busArrivalParameter.stationName,
+                lat = currentState.busArrivalParameter.lat,
+                lon = currentState.busArrivalParameter.lon
+            ).onSuccess { busArrival ->
+                setState {
+                    copy(
+                        busRemainingStations = busArrival.realTimeBusArrival[0].remainingStations
+                    )
+                }
+                setState {
+                    copy(
+                        boardingTime = busArrival.realTimeBusArrival[0].remainingTime.toString()
+                    )
+                }
+                Timber.e("버스 남은 시간: ${currentState.boardingTime}")
+            }.onFailure {
+                Timber.e("버스 도착 정보 조회 실패: ${it.message}")
+            }
+        }
+    }
+
+    fun updateCurrentLocation(newLocation: LatLng) {
+        viewModelScope.launch {
+            setState {
+                copy(
+                    currentLocation = newLocation
+                )
+            }
+        }
     }
 
     companion object {

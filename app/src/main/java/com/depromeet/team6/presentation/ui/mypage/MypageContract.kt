@@ -3,7 +3,8 @@ package com.depromeet.team6.presentation.ui.mypage
 import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.MypageUserInfo
 import com.depromeet.team6.presentation.model.location.Location
-import com.depromeet.team6.presentation.util.DefaultLntLng
+import com.depromeet.team6.presentation.util.DefaultLatLng.DEFAULT_LAT
+import com.depromeet.team6.presentation.util.DefaultLatLng.DEFAULT_LNG
 import com.depromeet.team6.presentation.util.base.UiEvent
 import com.depromeet.team6.presentation.util.base.UiSideEffect
 import com.depromeet.team6.presentation.util.base.UiState
@@ -32,7 +33,7 @@ class MypageContract {
         val searchText: String = "",
         val searchLocations: List<Location> = emptyList(),
         val searchPopupVisible: Boolean = false,
-        val userCurrentLocation: LatLng = LatLng(DefaultLntLng.DEFAULT_LNT, DefaultLntLng.DEFAULT_LNG),
+        val userCurrentLocation: LatLng = LatLng(DEFAULT_LAT, DEFAULT_LNG),
         val myAdress: Address = Address(
             name = "",
             lat = 0.0,

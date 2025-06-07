@@ -44,6 +44,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.depromeet.team6.R
+import com.depromeet.team6.domain.model.BusCongestion
 import com.depromeet.team6.domain.model.BusStatus
 import com.depromeet.team6.domain.model.RealTimeBusArrival
 import com.depromeet.team6.domain.model.course.LegInfo
@@ -242,7 +243,7 @@ private fun DetailLegsBus(
             ) {
                 BusNumberButton(
                     modifier = Modifier,
-                    number = busName,
+                    busName = busName,
                     busColor = busColor
                 )
                 Spacer(modifier = Modifier.width(8.dp))
@@ -250,11 +251,13 @@ private fun DetailLegsBus(
                     AtChaRemainTimeText(remainSecond = 0, busStatus = BusStatus.WAITING)
                 } else {
                     AtChaRemainTimeText(remainSecond = busArrivalStatus.remainingTime, busStatus = busArrivalStatus.busStatus)
-                    Text(
-                        text = "(${busArrivalStatus.busCongestion.toInfo().label})",
-                        style = defaultTeam6Typography.bodyRegular13,
-                        color = defaultTeam6Colors.systemRed
-                    )
+                    if (busArrivalStatus.busCongestion != BusCongestion.UNKNOWN) {
+                        Text(
+                            text = "(${busArrivalStatus.busCongestion.toInfo().label})",
+                            style = defaultTeam6Typography.bodyRegular13,
+                            color = defaultTeam6Colors.systemRed
+                        )
+                    }
                 }
             }
 
@@ -614,10 +617,11 @@ private fun DottedLineWithCircles(
 
 @Composable
 private fun BusNumberButton(
-    number: String,
+    busName: String,
     busColor: Color,
     modifier: Modifier = Modifier
 ) {
+    val busNumber = busName.split(":")[1]
     Box(
         modifier = modifier
             .clip(RoundedCornerShape(4.dp)) // 둥근 모서리
@@ -629,7 +633,7 @@ private fun BusNumberButton(
             horizontalArrangement = Arrangement.spacedBy(2.dp)
         ) {
             Text(
-                text = number,
+                text = busNumber,
                 color = defaultTeam6Colors.white,
                 style = defaultTeam6Typography.bodySemiBold12
             )

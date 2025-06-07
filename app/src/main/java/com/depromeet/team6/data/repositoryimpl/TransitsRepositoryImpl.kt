@@ -14,12 +14,13 @@ class TransitsRepositoryImpl @Inject constructor(
     private val transitsRemoteDataSource: TransitsRemoteDataSource
 ) : TransitsRepository {
 
-    override suspend fun getAvailableCourses(startPosition: Address, endPosition: Address): Result<List<CourseInfo>> =
+    override suspend fun getAvailableCourses(startPosition: Address, endPosition: Address, sortType: Int): Result<List<CourseInfo>> =
         transitsRemoteDataSource.getAvailableCourses(
             startLat = startPosition.lat.toString(),
             startLon = startPosition.lon.toString(),
             endLat = endPosition.lat.toString(),
-            endLon = endPosition.lon.toString()
+            endLon = endPosition.lon.toString(),
+            sortType = sortType
         ).map {
             it.toDomain()
         }

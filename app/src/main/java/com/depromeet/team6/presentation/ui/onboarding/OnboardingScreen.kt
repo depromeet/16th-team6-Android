@@ -46,6 +46,13 @@ import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingSearch
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingSelectLocationButton
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingSelectedHome
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingTitle
+import com.depromeet.team6.presentation.util.AmplitudeCommon.SCREEN_NAME
+import com.depromeet.team6.presentation.util.OnboardingAmplitude.ALARM_REGISTER
+import com.depromeet.team6.presentation.util.OnboardingAmplitude.ALARM_SETTING_ALARM_PERMISSION_CLICKED
+import com.depromeet.team6.presentation.util.OnboardingAmplitude.HOME_REGISTER
+import com.depromeet.team6.presentation.util.OnboardingAmplitude.HOME_REGISTER_COMPLETE_CLICKED
+import com.depromeet.team6.presentation.util.OnboardingAmplitude.HOME_REGISTER_LOCATION_PERMISSION_CHECK
+import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.presentation.util.permission.PermissionUtil
 import com.depromeet.team6.presentation.util.toast.atChaToastMessage
@@ -110,23 +117,19 @@ fun OnboardingRoute(
                     PermissionUtil.hasLocationPermissions(context)
                     }"
                 )
-                if (!PermissionUtil.isLocationPermissionRequested(context)) {
-                    viewModel.setEvent(
-                        OnboardingContract.OnboardingEvent.ChangePermissionBottomSheetVisible(
-                            permissionBottomSheetVisible = true
-                        )
+                viewModel.setEvent(
+                    OnboardingContract.OnboardingEvent.ChangePermissionBottomSheetVisible(
+                        permissionBottomSheetVisible = true
                     )
-                }
+                )
             }
 
             OnboardingType.ALARM -> {
-                if (!PermissionUtil.isNotificationPermissionRequested(context)) {
-                    viewModel.setEvent(
-                        OnboardingContract.OnboardingEvent.ChangePermissionBottomSheetVisible(
-                            permissionBottomSheetVisible = true
-                        )
+                viewModel.setEvent(
+                    OnboardingContract.OnboardingEvent.ChangePermissionBottomSheetVisible(
+                        permissionBottomSheetVisible = true
                     )
-                }
+                )
             }
         }
     }
@@ -177,6 +180,11 @@ fun OnboardingRoute(
                     onNextButtonClicked = {
                         if (uiState.onboardingType == OnboardingType.HOME) {
                             viewModel.setEvent(OnboardingContract.OnboardingEvent.ChangeOnboardingType)
+                            AmplitudeUtils.trackEventWithProperty(
+                                eventName = HOME_REGISTER_COMPLETE_CLICKED,
+                                propertyName = SCREEN_NAME,
+                                propertyValue = HOME_REGISTER
+                            )
                         } else {
                             viewModel.postSignUp()
                         }
@@ -214,6 +222,11 @@ fun OnboardingRoute(
                                         locationPermissionLauncher = locationPermissionsLauncher
                                     )
                                 }
+                                AmplitudeUtils.trackEventWithProperty(
+                                    eventName = HOME_REGISTER_LOCATION_PERMISSION_CHECK,
+                                    propertyName = SCREEN_NAME,
+                                    propertyValue = HOME_REGISTER
+                                )
                             }
 
                             OnboardingType.ALARM -> {
@@ -225,6 +238,11 @@ fun OnboardingRoute(
                                         notificationPermissionLauncher = notificationPermissionLauncher
                                     )
                                 }
+                                AmplitudeUtils.trackEventWithProperty(
+                                    eventName = ALARM_SETTING_ALARM_PERMISSION_CLICKED,
+                                    propertyName = SCREEN_NAME,
+                                    propertyValue = ALARM_REGISTER
+                                )
                             }
                         }
                     },
@@ -379,7 +397,7 @@ fun OnboardingScreen(
             modifier = Modifier.align(Alignment.BottomCenter),
             onboardingPermissionType = uiState.onboardingType.toPermissionType(),
             bottomSheetVisible = uiState.permissionBottomSheetVisible,
-            buttonClicked = { bottomSheetButtonClicked() }
+            buttonClicked = bottomSheetButtonClicked
         )
         OnboardingPermissionDeniedBottomSheet(
             modifier = Modifier.align(Alignment.BottomCenter),
