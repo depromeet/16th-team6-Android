@@ -7,7 +7,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Scaffold
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
@@ -20,9 +19,6 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.compose.LocalLifecycleOwner
-import androidx.lifecycle.repeatOnLifecycle
 import com.depromeet.team6.data.datalocal.manager.LockServiceManager
 import com.depromeet.team6.data.datalocal.permission.PermissionUtil
 import com.depromeet.team6.presentation.ui.lock.LockScreenNavigator
@@ -32,9 +28,6 @@ import com.depromeet.team6.presentation.ui.main.navigation.rememberMainNavigator
 import com.depromeet.team6.presentation.ui.splash.SplashScreen
 import com.depromeet.team6.ui.theme.Team6Theme
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -108,23 +101,6 @@ class MainActivity : ComponentActivity() {
                             }
                         }
                     }
-                }
-            }
-        }
-    }
-
-    @Composable
-    private fun <T> ObserveEvents(
-        flow: Flow<T>,
-        key1: Any? = null,
-        key2: Any? = null,
-        onEvent: (T) -> Unit
-    ) {
-        val lifecycleOwner = LocalLifecycleOwner.current
-        LaunchedEffect(lifecycleOwner.lifecycle, key1, key2, flow) {
-            lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                withContext(Dispatchers.Main.immediate) {
-                    flow.collect(onEvent)
                 }
             }
         }
