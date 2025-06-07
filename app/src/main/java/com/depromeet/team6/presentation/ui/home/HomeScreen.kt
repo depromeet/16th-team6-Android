@@ -182,7 +182,7 @@ fun HomeRoute(
     }
 
     SideEffect {
-        Timber.d("Location Permission Requested: ${PermissionUtil.isLocationPermissionRequested(context)}")
+        Timber.d("Location Permission Requested: ${PermissionUtil.isLocationPermissionRequested(context)}, Notification Permission: ${PermissionUtil.hasLocationPermissions(context)}")
         if (!PermissionUtil.isLocationPermissionRequested(context) &&
             !PermissionUtil.hasLocationPermissions(context)
         ) {
