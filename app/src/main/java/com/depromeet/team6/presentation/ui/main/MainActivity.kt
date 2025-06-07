@@ -6,7 +6,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -36,6 +35,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -46,6 +46,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        com.depromeet.team6.presentation.util.permission.PermissionUtil.clearLocationPermissionRequested(this)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             installSplashScreen()
@@ -127,5 +128,11 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Timber.d("OnDestroy Clear Permission Preference")
+        com.depromeet.team6.presentation.util.permission.PermissionUtil.clearLocationPermissionRequested(this)
     }
 }

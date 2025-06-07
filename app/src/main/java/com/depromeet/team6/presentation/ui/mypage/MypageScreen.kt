@@ -27,9 +27,9 @@ import com.depromeet.team6.presentation.ui.mypage.component.MypageListItem
 import com.depromeet.team6.presentation.ui.mypage.component.MypageVersionItem
 import com.depromeet.team6.presentation.ui.mypage.component.TitleBar
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingSearchPopup
-import com.depromeet.team6.presentation.util.WebViewUrl
 import com.depromeet.team6.presentation.util.WebViewUrl.PRIVACY_POLICY_URL
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
+import com.depromeet.team6.presentation.util.permission.PermissionUtil
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.depromeet.team6.ui.theme.LocalTeam6Colors
 import com.depromeet.team6.ui.theme.LocalTeam6Typography
@@ -101,7 +101,7 @@ fun MypageRoute(
             LoadState.Idle -> {
                 if (uiState.isWebViewOpened) {
                     AtChaWebView(
-                        url = WebViewUrl.PRIVACY_POLICY_URL,
+                        url = PRIVACY_POLICY_URL,
                         onClose = { mypageViewModel.setEvent(MypageContract.MypageEvent.PolicyClosed) },
                         modifier = modifier
                     )
@@ -130,7 +130,10 @@ fun MypageRoute(
                                 modifier = modifier,
                                 mypageUiState = uiState,
                                 logoutClicked = { mypageViewModel.setEvent(MypageContract.MypageEvent.LogoutClicked) },
-                                withDrawClicked = { mypageViewModel.setEvent(MypageContract.MypageEvent.WithDrawClicked) },
+                                withDrawClicked = {
+                                    mypageViewModel.setEvent(MypageContract.MypageEvent.WithDrawClicked)
+                                    PermissionUtil.clearAllPermissionRequestedPreferences(context = context)
+                                },
                                 onBackClick = { mypageViewModel.setEvent(MypageContract.MypageEvent.BackPressed) },
                                 logoutConfirmed = { mypageViewModel.setEvent(MypageContract.MypageEvent.LogoutConfirmed) },
                                 withDrawConfirmed = { mypageViewModel.setEvent(MypageContract.MypageEvent.WithDrawConfirmed) },
@@ -215,8 +218,6 @@ fun MypageScreen(
     modifier: Modifier = Modifier,
     padding: PaddingValues = PaddingValues(0.dp),
     mypageUiState: MypageContract.MypageUiState = MypageContract.MypageUiState(),
-    logoutClicked: () -> Unit = {},
-    withDrawClicked: () -> Unit = {},
     onAccountClick: () -> Unit = {},
     onChangeHomeClick: () -> Unit = {},
     onAlarmSettingClick: () -> Unit = {},
@@ -299,7 +300,8 @@ fun MypageScreen(
                 text = stringResource(R.string.itinerary_info_legs_data_source),
                 style = typography.bodyRegular12,
                 color = colors.systemGrey1,
-                modifier = Modifier.align(Alignment.BottomCenter)
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
                     .padding(bottom = 32.dp)
             )
         }

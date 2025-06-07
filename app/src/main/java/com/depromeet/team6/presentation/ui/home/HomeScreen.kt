@@ -15,6 +15,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -181,6 +182,7 @@ fun HomeRoute(
     }
 
     SideEffect {
+        Timber.d("Location Permission Requested: ${PermissionUtil.isLocationPermissionRequested(context)}")
         if (!PermissionUtil.isLocationPermissionRequested(context) &&
             !PermissionUtil.hasLocationPermissions(context)
         ) {
@@ -307,7 +309,7 @@ fun HomeScreen(
 
     val notificationScheduler = NotificationScheduler(context)
 
-    var characterAnimationTrigger by remember { mutableStateOf(0) }
+    var characterAnimationTrigger by remember { mutableIntStateOf(0) }
 
     Box(
         modifier = modifier

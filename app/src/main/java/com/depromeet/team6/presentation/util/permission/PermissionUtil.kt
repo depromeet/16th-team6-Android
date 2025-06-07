@@ -78,4 +78,12 @@ object PermissionUtil {
             notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
         }
     }
+
+    fun clearLocationPermissionRequested(context: Context) {
+        getPreferences(context).edit().remove(KEY_LOCATION_PERMISSION_REQUESTED).apply()
+    }
+
+    fun clearAllPermissionRequestedPreferences(context: Context) {
+        getPreferences(context).edit().clear().apply()
+    }
 }
