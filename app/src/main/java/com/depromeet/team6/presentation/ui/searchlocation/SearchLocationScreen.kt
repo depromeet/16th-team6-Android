@@ -32,6 +32,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.Location
+import com.depromeet.team6.presentation.ui.common.view.AtChaLoadingView
 import com.depromeet.team6.presentation.ui.home.HomeViewModel
 import com.depromeet.team6.presentation.ui.searchlocation.component.BackTopBar
 import com.depromeet.team6.presentation.ui.searchlocation.component.SearchDepartureTextField
@@ -107,100 +108,108 @@ fun SearchLocationRoute(
     }
 
     when (uiState.loadState) {
-        LoadState.Idle -> SearchLocationScreen(
-            context = context,
-            modifier = Modifier
-                .fillMaxSize()
-                .background(defaultTeam6Colors.greyWashBackground)
-                .padding(
-                    paddingValues = PaddingValues(
-                        start = padding.calculateStartPadding(LocalLayoutDirection.current),
-                        end = padding.calculateEndPadding(LocalLayoutDirection.current),
-                        top = 0.dp,
-                        bottom = padding.calculateBottomPadding()
-                    )
-                ),
-            marginTop = padding.calculateTopPadding(),
-            viewModel = viewModel,
-            backButtonClick = navigateToBack,
-            location = userLocation,
-            uiState = uiState,
-            searchText = uiState.searchQuery,
-            onSearchTextChange = { newText ->
-                viewModel.setState {
-                    copy(searchQuery = newText)
-                }
-                viewModel.setEvent(
-                    SearchLocationContract.SearchLocationEvent.UpdateSearchQuery(
-                        text = newText,
-                        lat = userLocation.latitude,
-                        lon = userLocation.longitude
-                    )
-                )
-            },
-            onDeleteAllButtonClicked = { viewModel.deleteAllSearchHistory() },
-            onDeleteButtonClicked =
-            { searchHistory -> // 검색 내역 삭제
-                viewModel.deleteSearchHistory(
-                    searchHistory = searchHistory,
-                    location = userLocation
-                )
-            },
-            selectButtonClicked = { searchHistory -> // 장소 선택
-                // 장소 텍스트 검색
-                viewModel.setState {
-                    copy(searchQuery = searchHistory.name)
-                }
-                viewModel.setState {
-                    copy(
-                        selectLocation = Address(
-                            searchHistory.name,
-                            searchHistory.lat,
-                            searchHistory.lon,
-                            searchHistory.address
+        LoadState.Idle, LoadState.Loading, LoadState.Success -> {
+            Box {
+                SearchLocationScreen(
+                    context = context,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(defaultTeam6Colors.greyWashBackground)
+                        .padding(
+                            paddingValues = PaddingValues(
+                                start = padding.calculateStartPadding(LocalLayoutDirection.current),
+                                end = padding.calculateEndPadding(LocalLayoutDirection.current),
+                                top = 0.dp,
+                                bottom = padding.calculateBottomPadding()
+                            )
+                        ),
+                    marginTop = padding.calculateTopPadding(),
+                    viewModel = viewModel,
+                    backButtonClick = navigateToBack,
+                    location = userLocation,
+                    uiState = uiState,
+                    searchText = uiState.searchQuery,
+                    onSearchTextChange = { newText ->
+                        viewModel.setState {
+                            copy(searchQuery = newText)
+                        }
+                        viewModel.setEvent(
+                            SearchLocationContract.SearchLocationEvent.UpdateSearchQuery(
+                                text = newText,
+                                lat = userLocation.latitude,
+                                lon = userLocation.longitude
+                            )
                         )
-                    )
-                }
-                viewModel.setEvent(
-                    SearchLocationContract.SearchLocationEvent.UpdateSearchQuery(
-                        text = searchHistory.name,
-                        lat = userLocation.latitude,
-                        lon = userLocation.longitude
-                    )
-                )
-                viewModel.setEvent(
-                    SearchLocationContract.SearchLocationEvent.ChangeSearchSelectMapViewVisible(true)
-                )
-                // 최근 검색 내역 추가
-                viewModel.postSearchHistory(searchHistory)
-            },
-            navigateToCourseSearch = {
-                viewModel.setEvent(
-                    SearchLocationContract.SearchLocationEvent.ChangeSearchSelectMapViewVisible(
-                        false
-                    )
-                )
+                    },
+                    onDeleteAllButtonClicked = { viewModel.deleteAllSearchHistory() },
+                    onDeleteButtonClicked =
+                    { searchHistory -> // 검색 내역 삭제
+                        viewModel.deleteSearchHistory(
+                            searchHistory = searchHistory,
+                            location = userLocation
+                        )
+                    },
+                    selectButtonClicked = { searchHistory -> // 장소 선택
+                        // 장소 텍스트 검색
+                        viewModel.setState {
+                            copy(searchQuery = searchHistory.name)
+                        }
+                        viewModel.setState {
+                            copy(
+                                selectLocation = Address(
+                                    searchHistory.name,
+                                    searchHistory.lat,
+                                    searchHistory.lon,
+                                    searchHistory.address
+                                )
+                            )
+                        }
+                        viewModel.setEvent(
+                            SearchLocationContract.SearchLocationEvent.UpdateSearchQuery(
+                                text = searchHistory.name,
+                                lat = userLocation.latitude,
+                                lon = userLocation.longitude
+                            )
+                        )
+                        viewModel.setEvent(
+                            SearchLocationContract.SearchLocationEvent.ChangeSearchSelectMapViewVisible(
+                                true
+                            )
+                        )
+                        // 최근 검색 내역 추가
+                        viewModel.postSearchHistory(searchHistory)
+                    },
+                    navigateToCourseSearch = {
+                        viewModel.setEvent(
+                            SearchLocationContract.SearchLocationEvent.ChangeSearchSelectMapViewVisible(
+                                false
+                            )
+                        )
 
-                val currentLocationJSON = Gson().toJson(uiState.selectLocation)
-                val destinationPointJSON = Gson().toJson(destinationLocation)
-                navigateToCourseSearch(
-                    currentLocationJSON,
-                    destinationPointJSON
+                        val currentLocationJSON = Gson().toJson(uiState.selectLocation)
+                        val destinationPointJSON = Gson().toJson(destinationLocation)
+                        navigateToCourseSearch(
+                            currentLocationJSON,
+                            destinationPointJSON
+                        )
+                    },
+                    clearAddress = {
+                        viewModel.setEvent(SearchLocationContract.SearchLocationEvent.ClearText)
+                        viewModel.setEvent(
+                            SearchLocationContract.SearchLocationEvent.ChangeSearchSelectMapViewVisible(
+                                searchSelectMapView = false
+                            )
+                        )
+                    },
+                    getCenterLocation = { viewModel.getCenterLocation(it) }
                 )
-            },
-            clearAddress = {
-                viewModel.setEvent(SearchLocationContract.SearchLocationEvent.ClearText)
-                viewModel.setEvent(
-                    SearchLocationContract.SearchLocationEvent.ChangeSearchSelectMapViewVisible(
-                        searchSelectMapView = false
-                    )
-                )
-            },
-            getCenterLocation = { viewModel.getCenterLocation(it) }
-        )
+                if (uiState.loadState == LoadState.Loading) {
+                    AtChaLoadingView()
+                }
+            }
+        }
 
         LoadState.Error -> navigateToLogin()
-        else -> Unit
     }
 }
 
