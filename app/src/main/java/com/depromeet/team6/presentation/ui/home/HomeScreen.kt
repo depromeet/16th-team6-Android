@@ -204,7 +204,7 @@ fun HomeRoute(
                     homeUiState = uiState,
                     onCharacterClick = { viewModel.onCharacterClick() },
                     navigateToMypage = navigateToMypage,
-                    navigateToItinerary = navigateToItinerary,
+                    // navigateToItinerary = navigateToItinerary,
                     modifier = modifier,
                     padding = padding,
                     onSearchClick = {
