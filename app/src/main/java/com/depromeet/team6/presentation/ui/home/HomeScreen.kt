@@ -204,9 +204,27 @@ fun HomeRoute(
                     homeUiState = uiState,
                     onCharacterClick = { viewModel.onCharacterClick() },
                     navigateToMypage = navigateToMypage,
-                    navigateToItinerary = navigateToItinerary,
+//                    navigateToItinerary = navigateToItinerary,
                     modifier = modifier,
                     padding = padding,
+                    afterRegisterMapMarkerClick = { focusedMarkerParemeter ->
+                        viewModel.setEvent(HomeContract.HomeEvent.AfterRegisterMapMarkerClick)
+                        navigateToItinerary(
+                            Gson().toJson(uiState.itineraryInfo),
+                            Gson().toJson(uiState.departurePoint),
+                            Gson().toJson(uiState.destinationPoint),
+                            focusedMarkerParemeter
+                        )
+                    },
+                    courseDetailBtnClick = { key ->
+                        viewModel.setEvent(HomeContract.HomeEvent.CourseDetailButtonClick(key))
+                        navigateToItinerary(
+                            Gson().toJson(uiState.itineraryInfo),
+                            Gson().toJson(uiState.departurePoint),
+                            Gson().toJson(uiState.destinationPoint),
+                            null
+                        )
+                    },
                     onSearchClick = {
                         val currentLocationJSON = Gson().toJson(uiState.markerPoint)
                         val destinationPointJSON = Gson().toJson(uiState.destinationPoint)

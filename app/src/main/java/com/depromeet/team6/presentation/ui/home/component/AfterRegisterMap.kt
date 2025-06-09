@@ -55,7 +55,6 @@ import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.android.gms.maps.model.LatLng
-import com.skt.tmap.TMapInsets
 import com.skt.tmap.TMapPoint
 import com.skt.tmap.TMapView
 import com.skt.tmap.TMapView.OnClickListenerCallback
@@ -108,7 +107,7 @@ fun AfterRegisterMap(
         if (isMapReady) {
             val departTMapPoint = TMapPoint(departLocation.latitude, departLocation.longitude)
             val destinationTMapPoint = TMapPoint(destinationLocation.latitude, destinationLocation.longitude)
-            val tMapPointList = arrayListOf(departTMapPoint, destinationTMapPoint)
+
             for (leg in legs) {
                 if (leg.transportType != TransportType.WALK) {
                     firstTransportationPoint = LatLng(leg.startPoint.lat, leg.startPoint.lon)
@@ -124,9 +123,6 @@ fun AfterRegisterMap(
                 // 라인 그리기
                 val lineWayPoints =
                     getWayPointList(leg.passShape)
-                for (point in lineWayPoints) {
-                    tMapPointList.add(point)
-                }
                 // TMapTrafficLine 객체 생성
                 val tmapTrafficLine = TMapTrafficLine("line_${leg.transportType}_${leg.sectionTime}")
                 // 교통 정보 표출 여부 설정
@@ -200,20 +196,10 @@ fun AfterRegisterMap(
                     latLng: TMapPoint?,
                     p3: PointF?
                 ) {
-                    if (markerItems == null) return
-                    if (markerItems.isEmpty()) return
+                    if (markerItems?.isEmpty() == true) return
 
-                    // leg에 해당하는 마커 필터링
-                    var markerId = ""
-                    for (marker in markerItems) {
-                        if (marker.id.contains("marker_")) {
-                            markerId = marker.id
-                            break
-                        }
-                    }
-                    if (markerId.isEmpty()) return
-
-                    val parts = markerId.split("_")
+                    val marker = markerItems!![0]
+                    val parts = marker.id.split("_")
                     val transportTypeStr = parts[1]
                     val subTypeIdx = parts[2].toInt()
                     val transportType = enumValueOf<TransportType>(transportTypeStr)
@@ -246,10 +232,7 @@ fun AfterRegisterMap(
 
             // 지도 위치 설정 - 출발지와 첫 대중교통의 중간 지점
             val midPoint = getMidPoint(firstTransportationPoint, departLocation)
-            tMapView.fitBounds(
-                tMapView.getBoundsFromPoints(tMapPointList),
-                TMapInsets.of(100, 100, 100, 100)
-            )
+            tMapView.setCenterPoint(midPoint.latitude, midPoint.longitude)
 
             // 지도 Scale 조정 - 출발지와 첫 대중교통의 중간 지점 + 일정 값
             val latSpan = abs(firstTransportationPoint.latitude - departLocation.latitude) + 0.01 // 0.01 or 0.001
