@@ -1,5 +1,6 @@
 package com.depromeet.team6.presentation.ui.itinerary.component
 
+import android.util.SparseArray
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -42,9 +44,15 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.depromeet.team6.R
+import com.depromeet.team6.domain.model.BusCongestion
+import com.depromeet.team6.domain.model.BusStatus
+import com.depromeet.team6.domain.model.RealTimeBusArrival
 import com.depromeet.team6.domain.model.course.LegInfo
+import com.depromeet.team6.domain.model.course.Station
 import com.depromeet.team6.domain.model.course.TransportType
+import com.depromeet.team6.domain.model.toInfo
 import com.depromeet.team6.presentation.model.bus.BusArrivalParameter
+import com.depromeet.team6.presentation.ui.common.text.AtChaRemainTimeText
 import com.depromeet.team6.presentation.ui.itinerary.LegInfoDummyProvider
 import com.depromeet.team6.presentation.util.Dimens
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
@@ -57,17 +65,20 @@ import java.time.LocalDateTime
 @Composable
 fun ItineraryInfoDetailLegs(
     legs: List<LegInfo>,
+    busArrivalStatus: SparseArray<RealTimeBusArrival>,
     modifier: Modifier = Modifier,
     onClickBusInfo: (BusArrivalParameter) -> Unit = {}
 ) {
     Column {
-        for (leg in legs) {
+        for ((idx, leg) in legs.withIndex()) {
             when (leg.transportType) {
                 TransportType.WALK -> {
+                    val verticalHeight = if (idx == 0 || idx == legs.size - 1) 48.dp else 60.dp
                     DetailLegsWalk(
                         boardingDateTime = leg.departureDateTime!!,
                         timeMinute = leg.sectionTime / 60,
-                        distanceMeter = leg.distance
+                        distanceMeter = leg.distance,
+                        verticalHeight = verticalHeight
                     )
                 }
                 TransportType.BUS -> {
@@ -79,6 +90,8 @@ fun ItineraryInfoDetailLegs(
                         boardingDateTime = leg.departureDateTime!!,
                         timeMinute = leg.sectionTime / 60,
                         distanceMeter = leg.distance,
+                        busArrivalStatus = busArrivalStatus.get(idx),
+                        passStopList = leg.passStopList,
                         onClickBusInfo = { routeName, stationName, subtypeIdx ->
                             onClickBusInfo(
                                 BusArrivalParameter(
@@ -100,6 +113,7 @@ fun ItineraryInfoDetailLegs(
                         disembarkingStation = leg.endPoint.name,
                         boardingDateTime = leg.departureDateTime!!,
                         timeMinute = leg.sectionTime / 60,
+                        passStopList = leg.passStopList,
                         distanceMeter = leg.distance
                     )
                 }
@@ -117,10 +131,13 @@ private fun DetailLegsBus(
     boardingDateTime: String,
     timeMinute: Int,
     distanceMeter: Int,
+    busArrivalStatus: RealTimeBusArrival?,
+    passStopList: List<Station>,
     modifier: Modifier = Modifier,
     onClickBusInfo: (String, String, Int) -> Unit = { routeName: String, stationName: String, subtypeIdx: Int -> }
 ) {
     var rowHeight by remember { mutableStateOf(0) }
+    var isPassStopShow by remember { mutableStateOf(false) }
 
     Row(
         modifier = modifier
@@ -212,8 +229,8 @@ private fun DetailLegsBus(
                     color = defaultTeam6Colors.greySecondaryLabel
                 )
             }
-            Spacer(Modifier.height(19.dp))
-            BusNumberButton(
+            Spacer(Modifier.height(16.dp))
+            Row(
                 modifier = Modifier
                     .noRippleClickable {
                         onClickBusInfo(
@@ -222,15 +239,67 @@ private fun DetailLegsBus(
                             subtypeIdx
                         )
                     },
-                number = busName,
-                busColor = busColor
-            )
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                BusNumberButton(
+                    modifier = Modifier,
+                    busName = busName,
+                    busColor = busColor
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                if (busArrivalStatus == null) {
+                    AtChaRemainTimeText(remainSecond = 0, busStatus = BusStatus.WAITING)
+                } else {
+                    AtChaRemainTimeText(remainSecond = busArrivalStatus.remainingTime, busStatus = busArrivalStatus.busStatus)
+                    if (busArrivalStatus.busCongestion != BusCongestion.UNKNOWN) {
+                        Text(
+                            text = "(${busArrivalStatus.busCongestion.toInfo().label})",
+                            style = defaultTeam6Typography.bodyRegular13,
+                            color = defaultTeam6Colors.systemRed
+                        )
+                    }
+                }
+            }
+
             Spacer(Modifier.height(16.dp))
-            Text(
-                text = stringResource(R.string.itinerary_summary_remaining_minute, timeMinute),
-                style = defaultTeam6Typography.bodyMedium13,
-                color = defaultTeam6Colors.white
-            )
+            // 정류장 이동정보 & 토글버튼
+            Row(
+                modifier = Modifier
+                    .noRippleClickable {
+                        isPassStopShow = !isPassStopShow
+                    },
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = stringResource(R.string.itinerary_info_legs_bus_stopovers, timeMinute, passStopList.size),
+                    style = defaultTeam6Typography.bodyMedium13,
+                    color = defaultTeam6Colors.white
+                )
+                Spacer(
+                    modifier = Modifier.width(4.dp)
+                )
+                Image(
+                    imageVector = ImageVector.vectorResource(R.drawable.ic_arrow_down_big),
+                    contentDescription = "arrow_down",
+                    modifier = Modifier.size(12.dp)
+                )
+            }
+
+            if (isPassStopShow) {
+                Spacer(modifier = Modifier.height(24.dp))
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    for (stop in passStopList) {
+                        Text(
+                            text = stop.stationName,
+                            style = defaultTeam6Typography.bodyMedium13,
+                            color = defaultTeam6Colors.greySecondaryLabel
+                        )
+                    }
+                }
+            }
+
             Spacer(Modifier.height(36.dp))
             // 하차
             Row(
@@ -262,9 +331,11 @@ private fun DetailLegsSubway(
     boardingDateTime: String,
     timeMinute: Int,
     distanceMeter: Int,
+    passStopList: List<Station>,
     modifier: Modifier = Modifier
 ) {
     var rowHeight by remember { mutableStateOf(0) }
+    var isPassStopShow by remember { mutableStateOf(false) }
 
     Row(
         modifier = modifier
@@ -356,18 +427,51 @@ private fun DetailLegsSubway(
                     color = defaultTeam6Colors.greySecondaryLabel
                 )
             }
-            Spacer(Modifier.height(19.dp))
+            Spacer(Modifier.height(16.dp))
             Text(
                 text = subwayName,
                 style = defaultTeam6Typography.bodyMedium13,
                 color = defaultTeam6Colors.greySecondaryLabel
             )
             Spacer(Modifier.height(16.dp))
-            Text(
-                text = stringResource(R.string.itinerary_summary_remaining_minute, timeMinute),
-                style = defaultTeam6Typography.bodyMedium13,
-                color = defaultTeam6Colors.white
-            )
+            Row(
+                modifier = Modifier
+                    .noRippleClickable {
+                        isPassStopShow = !isPassStopShow
+                    },
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = stringResource(R.string.itinerary_info_legs_subway_stopovers, timeMinute, passStopList.size),
+                    style = defaultTeam6Typography.bodyMedium13,
+                    color = defaultTeam6Colors.white
+                )
+                Spacer(
+                    modifier = Modifier.width(4.dp)
+                )
+                Image(
+                    imageVector = ImageVector.vectorResource(R.drawable.ic_arrow_down_big),
+                    contentDescription = "arrow_down",
+                    modifier = Modifier.size(12.dp)
+                )
+            }
+
+            // 경유 역 정보
+            if (isPassStopShow) {
+                Spacer(modifier = Modifier.height(24.dp))
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    for (stop in passStopList) {
+                        Text(
+                            text = stop.stationName,
+                            style = defaultTeam6Typography.bodyMedium13,
+                            color = defaultTeam6Colors.greySecondaryLabel
+                        )
+                    }
+                }
+            }
+
             Spacer(Modifier.height(36.dp))
             // 하차
             Row(
@@ -395,6 +499,7 @@ private fun DetailLegsWalk(
     boardingDateTime: String,
     timeMinute: Int,
     distanceMeter: Int,
+    verticalHeight: Dp,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -411,7 +516,7 @@ private fun DetailLegsWalk(
                 modifier = Modifier.height(5.dp)
             )
             DottedLineWithCircles(
-                height = 50.dp
+                height = verticalHeight
             )
         }
         Spacer(
@@ -420,6 +525,8 @@ private fun DetailLegsWalk(
 
         // 우측 도보 경로정보 텍스트
         Text(
+            modifier = Modifier
+                .offset(y = (-8).dp),
             text = stringResource(R.string.itinerary_info_legs_walk_time, timeMinute),
             style = defaultTeam6Typography.bodyMedium13,
             color = defaultTeam6Colors.greySecondaryLabel
@@ -428,6 +535,8 @@ private fun DetailLegsWalk(
             modifier = Modifier.width(4.dp)
         )
         Text(
+            modifier = Modifier
+                .offset(y = (-8).dp),
             text = stringResource(R.string.itinerary_info_legs_walk_distance, distanceMeter),
             style = defaultTeam6Typography.bodyMedium13,
             color = defaultTeam6Colors.systemGrey2
@@ -508,10 +617,11 @@ private fun DottedLineWithCircles(
 
 @Composable
 private fun BusNumberButton(
-    number: String,
+    busName: String,
     busColor: Color,
     modifier: Modifier = Modifier
 ) {
+    val busNumber = busName.split(":")[1]
     Box(
         modifier = modifier
             .clip(RoundedCornerShape(4.dp)) // 둥근 모서리
@@ -523,7 +633,7 @@ private fun BusNumberButton(
             horizontalArrangement = Arrangement.spacedBy(2.dp)
         ) {
             Text(
-                text = number,
+                text = busNumber,
                 color = defaultTeam6Colors.white,
                 style = defaultTeam6Typography.bodySemiBold12
             )
@@ -545,7 +655,8 @@ fun ItineraryInfoDetailLegsPreview(
     @PreviewParameter(LegInfoDummyProvider::class) legs: List<LegInfo>
 ) {
     ItineraryInfoDetailLegs(
-        legs = legs
+        legs = legs,
+        busArrivalStatus = SparseArray<RealTimeBusArrival>()
     )
 
 //    Column(){

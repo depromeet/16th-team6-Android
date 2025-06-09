@@ -1,8 +1,8 @@
 package com.depromeet.team6.presentation.util.context
 
 import android.content.Context
-import com.depromeet.team6.presentation.util.DefaultLntLng.DEFAULT_LNG
-import com.depromeet.team6.presentation.util.DefaultLntLng.DEFAULT_LNT
+import com.depromeet.team6.presentation.util.DefaultLatLng.DEFAULT_LAT
+import com.depromeet.team6.presentation.util.DefaultLatLng.DEFAULT_LNG
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -24,7 +24,7 @@ suspend fun Context.getUserLocation(): LatLng {
                         continuation.resume(LatLng(location.latitude, location.longitude))
                     } else {
                         Timber.d("User_Location Failed to get location")
-                        continuation.resume(LatLng(DEFAULT_LNT, DEFAULT_LNG)) // 위치 정보를 가져오지 못한 경우
+                        continuation.resume(LatLng(DEFAULT_LAT, DEFAULT_LNG)) // 위치 정보를 가져오지 못한 경우
                     }
                 }
                 .addOnFailureListener { exception ->
@@ -34,6 +34,6 @@ suspend fun Context.getUserLocation(): LatLng {
         }
     } catch (e: SecurityException) {
         Timber.e("User_Location Location permission not granted", e)
-        LatLng(DEFAULT_LNT, DEFAULT_LNG)
+        LatLng(DEFAULT_LAT, DEFAULT_LNG)
     }
 }

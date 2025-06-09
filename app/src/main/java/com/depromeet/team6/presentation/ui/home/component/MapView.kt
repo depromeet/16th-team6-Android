@@ -31,6 +31,12 @@ import androidx.core.graphics.drawable.toBitmap
 import com.depromeet.team6.BuildConfig
 import com.depromeet.team6.R
 import com.depromeet.team6.presentation.ui.home.HomeViewModel
+import com.depromeet.team6.presentation.util.AmplitudeCommon.SCREEN_NAME
+import com.depromeet.team6.presentation.util.AmplitudeCommon.USER_ID
+import com.depromeet.team6.presentation.util.HomeAmplitude.HOME
+import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_COURSESEARCH_ENTERED_WITH_CURRENT_LOCATION
+import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_COURSESEARCH_ENTERED_WITH_MAP_DRAG
+import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
 import com.google.android.gms.maps.model.LatLng
 import com.skt.tmap.TMapPoint
 import com.skt.tmap.TMapView
@@ -66,6 +72,15 @@ fun TMapViewCompose(
                 val centerLon = tMapView.centerPoint.longitude
 
                 viewModel.getCenterLocation(LatLng(centerLat, centerLon))
+
+                AmplitudeUtils.trackEventWithProperties(
+                    eventName = HOME_COURSESEARCH_ENTERED_WITH_MAP_DRAG,
+                    mapOf(
+                        USER_ID to viewModel.getUserId(),
+                        SCREEN_NAME to HOME,
+                        HOME_COURSESEARCH_ENTERED_WITH_MAP_DRAG to true
+                    )
+                )
             }
         }
     }
@@ -76,8 +91,14 @@ fun TMapViewCompose(
             val tMapPoint = TMapPoint(currentLocation.latitude, currentLocation.longitude)
 
             withContext(Dispatchers.Main) {
-                tMapView.setCenterPoint(tMapPoint.latitude, tMapPoint.longitude)
-                tMapView.zoomLevel = 18
+                tMapView.fitBounds(
+                    tMapView.getBoundsFromPoints(
+                        arrayListOf(tMapPoint)
+                    )
+                )
+//                tMapView.setCenterPoint(tMapPoint.latitude, tMapPoint.longitude)
+//                tMapView.fitBounds(tMapView.bounds)
+//                tMapView.zoomLevel = 18
 
                 val markerDrawable =
                     ContextCompat.getDrawable(context, R.drawable.ic_home_current_location)
@@ -141,6 +162,15 @@ fun TMapViewCompose(
                     tMapView.setCenterPoint(tMapPoint.latitude, tMapPoint.longitude)
 
                     viewModel.getCenterLocation(LatLng(tMapPoint.latitude, tMapPoint.longitude))
+
+                    AmplitudeUtils.trackEventWithProperties(
+                        eventName = HOME_COURSESEARCH_ENTERED_WITH_CURRENT_LOCATION,
+                        mapOf(
+                            USER_ID to viewModel.getUserId(),
+                            SCREEN_NAME to HOME,
+                            HOME_COURSESEARCH_ENTERED_WITH_CURRENT_LOCATION to true
+                        )
+                    )
                 }
                 .graphicsLayer { alpha = if (isMapReady) 1f else 0.5f } // 비활성화 시 투명도 조정
         )

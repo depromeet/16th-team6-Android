@@ -5,8 +5,8 @@ import com.depromeet.team6.domain.model.course.CourseInfo
 import com.depromeet.team6.domain.model.course.TransportType
 import com.depromeet.team6.presentation.model.bus.BusArrivalParameter
 import com.depromeet.team6.presentation.model.itinerary.FocusedMarkerParameter
-import com.depromeet.team6.presentation.util.DefaultLntLng.DEFAULT_LNG
-import com.depromeet.team6.presentation.util.DefaultLntLng.DEFAULT_LNT
+import com.depromeet.team6.presentation.util.DefaultLatLng.DEFAULT_LAT
+import com.depromeet.team6.presentation.util.DefaultLatLng.DEFAULT_LNG
 import com.depromeet.team6.presentation.util.base.UiEvent
 import com.depromeet.team6.presentation.util.base.UiSideEffect
 import com.depromeet.team6.presentation.util.base.UiState
@@ -21,7 +21,7 @@ class HomeContract {
         val isBusDeparted: Boolean = false,
         val showSpeechBubble: Boolean = true,
         val locationAddress: String = "",
-        val currentLocation: LatLng = LatLng(DEFAULT_LNT, DEFAULT_LNG),
+        val currentLocation: LatLng = LatLng(DEFAULT_LAT, DEFAULT_LNG),
         // 알림 등록 후 경로 표시
         val itineraryInfo: CourseInfo? = null,
         val courseDataLoadState: LoadState = LoadState.Idle,
@@ -65,7 +65,6 @@ class HomeContract {
             address = ""
         ),
         val logoutState: Boolean = false,
-        val courseInfo: CourseInfo? = null,
         val taxiCost: Int = 0,
         val deleteAlarmDialogVisible: Boolean = false
     ) : UiState
@@ -98,5 +97,7 @@ class HomeContract {
         data object DeleteAlarmConfirmed : HomeEvent()
         data object DismissDialog : HomeEvent()
         data object SetDestination : HomeEvent()
+        data object AfterRegisterMapMarkerClick : HomeEvent()
+        data class CourseDetailButtonClick(val clickEventKey: String) : HomeEvent()
     }
 }

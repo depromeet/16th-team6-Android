@@ -1,13 +1,16 @@
 package com.depromeet.team6.presentation.ui.itinerary.component
 
+import android.util.SparseArray
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -19,6 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import com.depromeet.team6.R
+import com.depromeet.team6.domain.model.RealTimeBusArrival
 import com.depromeet.team6.domain.model.course.LegInfo
 import com.depromeet.team6.presentation.model.bus.BusArrivalParameter
 import com.depromeet.team6.presentation.ui.itinerary.LegInfoDummyProvider
@@ -29,6 +33,7 @@ import com.depromeet.team6.ui.theme.defaultTeam6Typography
 @Composable
 fun ItineraryInfoDetail(
     legs: List<LegInfo>,
+    busArrivalStatus: SparseArray<RealTimeBusArrival>,
     departureTime: String,
     departureName: String,
     arrivalTime: String,
@@ -50,7 +55,8 @@ fun ItineraryInfoDetail(
 
         ItineraryInfoDetailLegs(
             legs = legs,
-            onClickBusInfo = onClickBusInfo
+            onClickBusInfo = onClickBusInfo,
+            busArrivalStatus = busArrivalStatus
         )
 
         // 도착
@@ -81,8 +87,7 @@ private fun ItineraryInfoSuffix(
 ) {
     val markerIconId = if (isDestination) R.drawable.map_marker_arrival else R.drawable.map_marker_departure
     Row(
-        modifier = Modifier,
-        verticalAlignment = Alignment.CenterVertically
+        modifier = Modifier
     ) {
         Column(
             modifier = Modifier.width(Dimens.LegDetailVerticalLineWidth),
@@ -102,7 +107,9 @@ private fun ItineraryInfoSuffix(
             modifier = Modifier.width(6.dp)
         )
         Text(
-            modifier = Modifier,
+            modifier = Modifier
+                .height(36.dp)
+                .wrapContentSize(Alignment.Center),
             text = name,
             style = defaultTeam6Typography.bodySemiBold14,
             color = defaultTeam6Colors.white
@@ -120,6 +127,7 @@ fun ItineraryInfoDetailPreview(
         departureTime = "2025-03-11T22:12:00",
         departureName = "중앙빌딩",
         arrivalTime = "2025-03-11T00:21:00",
-        arrivalName = "우리집"
+        arrivalName = "우리집",
+        busArrivalStatus = SparseArray()
     )
 }

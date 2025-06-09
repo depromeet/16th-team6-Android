@@ -30,6 +30,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.depromeet.team6.R
 import com.depromeet.team6.domain.model.course.TransportType
+import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_ITINERARY_CLICKED_AFTER_DEPARTURE
+import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_ITINERARY_CLICKED_ARRIVAL
+import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_ITINERARY_CLICKED_SET_TIME
+import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_ITINERARY_CLICKED_SUGGESTED
+import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.ui.theme.LocalTeam6Colors
 import com.depromeet.team6.ui.theme.LocalTeam6Typography
 
@@ -51,10 +56,12 @@ fun AfterRegisterSheet(
     busStationLeft: Int,
     onCourseTextClick: () -> Unit,
     onFinishClick: () -> Unit,
-    onCourseDetailClick: () -> Unit,
+    onCourseDetailClick: (String) -> Unit,
     onRefreshClick: () -> Unit,
     onTimerFinished: () -> Unit = {},
     onIconClick: () -> Unit = {},
+    onHomeDepartureTimeClick: () -> Unit = {},
+    onHomeExpectDepartureTimeClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val colors = LocalTeam6Colors.current
@@ -92,7 +99,14 @@ fun AfterRegisterSheet(
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Start,
-                    modifier = Modifier.align(Alignment.CenterStart)
+                    modifier = Modifier
+                        .align(Alignment.CenterStart)
+                        .noRippleClickable {
+                            when {
+                                isConfirmed && !afterUserDeparted -> onHomeDepartureTimeClick()
+                                !isConfirmed && !afterUserDeparted -> onHomeExpectDepartureTimeClick()
+                            }
+                        }
                 ) {
                     if (afterUserDeparted && !timerFinish) { // 사용자 출발 후
                         TransportStatus(
@@ -185,7 +199,17 @@ fun AfterRegisterSheet(
                 onFinishClick = {
                     onFinishClick()
                 },
-                onCourseDetailClick = onCourseDetailClick,
+                onCourseDetailClick = {
+                    if (afterUserDeparted && !timerFinish) { // 사용자 출발 후
+                        onCourseDetailClick(HOME_ITINERARY_CLICKED_AFTER_DEPARTURE)
+                    } else if (afterUserDeparted && timerFinish) {
+                        onCourseDetailClick(HOME_ITINERARY_CLICKED_ARRIVAL)
+                    } else if (isConfirmed) {
+                        onCourseDetailClick(HOME_ITINERARY_CLICKED_SET_TIME)
+                    } else {
+                        onCourseDetailClick(HOME_ITINERARY_CLICKED_SUGGESTED)
+                    }
+                },
                 modifier = modifier
             )
         }
@@ -214,8 +238,8 @@ fun AfterRegisterSheetPreview() {
         deleteAlarmConfirmed = {},
         dismissDialog = {},
         onTimerFinished = {},
-        homeArrivedTime = TODO(),
-        onIconClick = TODO(),
-        busStationLeft = TODO()
+        homeArrivedTime = "15:30:00",
+        onIconClick = {},
+        busStationLeft = 14
     )
 }

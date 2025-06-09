@@ -40,6 +40,7 @@ import com.depromeet.team6.presentation.util.view.TransportTypeUiMapper
 import com.depromeet.team6.presentation.util.view.toPx
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.google.android.gms.maps.model.LatLng
+import com.skt.tmap.TMapInsets
 import com.skt.tmap.TMapPoint
 import com.skt.tmap.TMapView
 import com.skt.tmap.overlay.TMapMarkerItem
@@ -58,7 +59,8 @@ fun ItineraryMap(
     focusedMarkerParameter: FocusedMarkerParameter?,
     marginTop: Dp,
     modifier: Modifier = Modifier,
-    onBackPressed: () -> Unit
+    onBackPressed: () -> Unit,
+    currentLocationBtnClick: () -> Unit
 ) {
     val context = LocalContext.current
     val tMapView = remember { TMapView(context) }
@@ -82,11 +84,15 @@ fun ItineraryMap(
         if (isMapReady) {
             val departTMapPoint = TMapPoint(departLocation.latitude, departLocation.longitude)
             val destinationTMapPoint = TMapPoint(destinationLocation.latitude, destinationLocation.longitude)
+            val tMapPointList = arrayListOf(departTMapPoint, destinationTMapPoint)
 
             // 경로 그리기
             for (leg in legs) {
                 // 라인 그리기
                 val lineWayPoints = getWayPointList(leg.passShape)
+                for (point in lineWayPoints) {
+                    tMapPointList.add(point)
+                }
                 // TMapTrafficLine 객체 생성
                 val tmapTrafficLine = TMapTrafficLine("line_${leg.transportType}_${leg.sectionTime}")
                 // 교통 정보 표출 여부 설정
@@ -106,9 +112,11 @@ fun ItineraryMap(
                 tMapView.addTrafficLine(tmapTrafficLine)
 
                 // 마커 그리기
+                val markerTmapPoint = TMapPoint(leg.startPoint.lat, leg.startPoint.lon)
+                tMapPointList.add(markerTmapPoint)
                 val marker = TMapMarkerItem()
                 marker.id = "marker_${leg.transportType}_${leg.sectionTime}"
-                marker.tMapPoint = TMapPoint(leg.startPoint.lat, leg.startPoint.lon)
+                marker.tMapPoint = markerTmapPoint
                 marker.icon = TransportVectorIconBitmap(
                     type = leg.transportType,
                     fillColor = TransportTypeUiMapper.getColor(leg.transportType, leg.subTypeIdx),
@@ -151,13 +159,27 @@ fun ItineraryMap(
                     )
                 }
 
+            val focusBound =
+                if (focusedMarkerParameter == null) {
+                    tMapView.getBoundsFromPoints(tMapPointList)
+                } else {
+                    val focusPointList = arrayListOf<TMapPoint>()
+                    val lineWayPoints = getWayPointList(legs[focusedMarkerParameter.legIndex].passShape)
+                    for (point in lineWayPoints) {
+                        focusPointList.add(point)
+                    }
+                    tMapView.getBoundsFromPoints(focusPointList)
+                }
+
             // 지도 위치 조정
             val midPoint = getMidPoint(leftTopLocation, rightBottomLocation)
-            tMapView.setCenterPoint(midPoint.latitude, midPoint.longitude)
+            tMapView.fitBounds(
+                focusBound,
+                TMapInsets.of(100, 100, 100, 100)
+            )
 
             // 지도 Scale 조정
-            tMapView.zoomToTMapPoint(leftTopLocation, rightBottomLocation)
-            tMapView.mapZoomOut()
+            tMapView.mapZoomIn()
         }
     }
 
@@ -216,7 +238,13 @@ fun ItineraryMap(
                 .size(36.dp)
                 .align(Alignment.BottomEnd)
                 .offset(x = (-16).dp, y = (-36).dp)
-                .noRippleClickable { },
+                .noRippleClickable {
+                    currentLocationBtnClick()
+                    tMapView.setCenterPoint(
+                        currentLocation.latitude,
+                        currentLocation.longitude
+                    )
+                },
             imageVector = ImageVector.vectorResource(R.drawable.ic_all_current_location),
             contentDescription = "ItineraryCircleBtnBack"
         )
@@ -286,6 +314,7 @@ fun ItineraryMapPreview(
             address = ""
         ),
         onBackPressed = { },
-        focusedMarkerParameter = null
+        focusedMarkerParameter = null,
+        currentLocationBtnClick = {}
     )
 }

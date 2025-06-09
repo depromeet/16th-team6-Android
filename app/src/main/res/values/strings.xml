@@ -46,6 +46,12 @@
     <string name="notification_body_text">"막차 출발 시간을 확인해보세요!"</string>
     <string name="notification_head_up_channel_name">앗차 중요 알림</string>
 
+    <string name="dialog_finish_alarm_title">막차 알림을 종료할까요?</string>
+    <string name="dialog_finish_alarm_back_text">돌아가기</string>
+    <string name="dialog_finish_alarm_finish_text">종료하기</string>
+
+    <string name="dialog_change_alarm_title">기존 막차 알림을 종료하고\n선택한 알림으로 변경할까요?</string>
+
     <!-- LoginScreen -->
     <string name="login_pager_main_text_first">오후 10시에 미리\n막차알림 등록하세요</string>
     <string name="login_pager_main_text_second">자리에서 떠나기 전에\n여러번 막차 알림 드려요</string>
@@ -108,7 +114,7 @@
     <string name="notification_channel_name">앱 알림</string>
     <string name="notification_channel_description_text">앱 내부 알림 채널</string>
     <string name="course_search_failed_snackbar">경로를 조회하는데 실패했어요</string>
-    <string name="course_detail_description">상세보기</string>
+    <string name="course_detail_description">상세경로</string>
     <string name="course_search_result_empty">검색 가능한 막차 정보가 없습니다.</string>
 
     <!-- Bus Course -->
@@ -117,15 +123,20 @@
 
 
     <!--    itinerary   -->
-    <string name="itinerary_summary_remaining_hour">%1d시간</string>
-    <string name="itinerary_summary_remaining_minute">%1d분</string>
+    <string name="itinerary_summary_duration_hour">%1d시간</string>
+    <string name="itinerary_summary_duration_minute">%1d분</string>
+    <string name="itinerary_summary_duration_time">%1d시간 %1d분</string>
     <string name="itinerary_summary_total_time">%02d:%02d ~ %02d:%02d</string>
     <string name="itinerary_info_legs_walk_time">%d분 걷기</string>
     <string name="itinerary_info_legs_walk_distance">%dm</string>
     <string name="itinerary_info_legs_boarding_HHmm">%02d:%02d</string>
     <string name="itinerary_info_legs_boarding">승차</string>
     <string name="itinerary_info_legs_disembarking">하차</string>
+    <string name="itinerary_info_legs_bus_remaining_time">%d분 %d초(%s)</string>
+    <string name="itinerary_info_legs_bus_remaining_second">%d초(%s)</string>
     <string name="itinerary_info_legs_data_source">티맵 API와 공공데이터로 막차 정보를 제공합니다.</string>
+    <string name="itinerary_info_legs_bus_stopovers">%d분, %d개 정류장 이동</string>
+    <string name="itinerary_info_legs_subway_stopovers">%d분, %d개 역 이동</string>
 
     <!--    mypage      -->
     <string name="mypage_icon_arrow_text">마이페이지 화살표</string>
