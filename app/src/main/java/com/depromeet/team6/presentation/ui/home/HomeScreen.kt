@@ -208,7 +208,7 @@ fun HomeRoute(
                     modifier = modifier,
                     padding = padding,
                     afterRegisterMapMarkerClick = { focusedMarkerParemeter ->
-                            viewModel.setEvent(HomeContract.HomeEvent.AfterRegisterMapMarkerClick)
+                        viewModel.setEvent(HomeContract.HomeEvent.AfterRegisterMapMarkerClick)
                         navigateToItinerary(
                             Gson().toJson(uiState.itineraryInfo),
                             Gson().toJson(uiState.departurePoint),
