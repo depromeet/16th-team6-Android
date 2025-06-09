@@ -191,21 +191,6 @@ class HomeViewModel @Inject constructor(
                 }
             }
 
-            is HomeContract.HomeEvent.LoadHomeArrivedTime -> {
-                setState {
-                    copy(
-                        homeArrivedTime = event.homeArrivedTime
-                    )
-                }
-            }
-
-            is HomeContract.HomeEvent.LoadBusArrivalParameter -> {
-                setState {
-                    copy(
-                        busArrivalParameter = event.busArrivalParameter
-                    )
-                }
-            }
             is HomeContract.HomeEvent.AfterRegisterMapMarkerClick -> {
                 AmplitudeUtils.trackEventWithProperties(
                     eventName = HOME_EVENT_REGISTER_MAP_MARKER_CLICK,
