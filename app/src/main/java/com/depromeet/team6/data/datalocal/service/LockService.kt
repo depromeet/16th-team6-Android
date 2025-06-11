@@ -246,10 +246,8 @@ class LockService : Service() {
                     return@launch
                 }
 
-                // TODO : 사용자 집 위치 받아오기
-                // 간단한 집 위치 (하드코딩 - 실제로는 사용자 설정값 사용)
-                val homeLatitude = 37.5665  // 서울시청 좌표 (예시)
-                val homeLongitude = 126.9780
+                val homeLatitude = userInfoRepositoryImpl.getUserHome().latitude
+                val homeLongitude = userInfoRepositoryImpl.getUserHome().longitude
 
                 val distance = calculateDistance(
                     currentLocation.latitude, currentLocation.longitude,
