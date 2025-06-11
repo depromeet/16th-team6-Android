@@ -40,6 +40,7 @@ import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.course.TransportType
 import com.depromeet.team6.presentation.model.itinerary.FocusedMarkerParameter
 import com.depromeet.team6.presentation.ui.alarm.NotificationScheduler
+import com.depromeet.team6.presentation.ui.common.view.AtChaLoadingView
 import com.depromeet.team6.presentation.ui.home.component.AfterRegisterMap
 import com.depromeet.team6.presentation.ui.home.component.AfterRegisterSheet
 import com.depromeet.team6.presentation.ui.home.component.CharacterLottieSpeechBubble
@@ -195,90 +196,97 @@ fun HomeRoute(
     }
 
     when (uiState.loadState) {
-        LoadState.Idle -> HomeScreen(
-            userLocation = LatLng(userLocation.latitude, userLocation.longitude),
-            homeUiState = uiState,
-            onCharacterClick = { viewModel.onCharacterClick() },
-            navigateToMypage = navigateToMypage,
-            afterRegisterMapMarkerClick = { focusedMarkerParemeter ->
-                viewModel.setEvent(HomeContract.HomeEvent.AfterRegisterMapMarkerClick)
-                navigateToItinerary(
-                    Gson().toJson(uiState.itineraryInfo),
-                    Gson().toJson(uiState.departurePoint),
-                    Gson().toJson(uiState.destinationPoint),
-                    focusedMarkerParemeter
-                )
-            },
-            courseDetailBtnClick = { key ->
-                viewModel.setEvent(HomeContract.HomeEvent.CourseDetailButtonClick(key))
-                navigateToItinerary(
-                    Gson().toJson(uiState.itineraryInfo),
-                    Gson().toJson(uiState.departurePoint),
-                    Gson().toJson(uiState.destinationPoint),
-                    null
-                )
-            },
-            modifier = modifier,
-            padding = padding,
-            onSearchClick = {
-                val currentLocationJSON = Gson().toJson(uiState.markerPoint)
-                val destinationPointJSON = Gson().toJson(uiState.destinationPoint)
-                navigateToCourseSearch(
-                    currentLocationJSON,
-                    destinationPointJSON
-                )
+        LoadState.Idle, LoadState.Loading, LoadState.Success -> {
+            Box {
+                HomeScreen(
+                    userLocation = LatLng(userLocation.latitude, userLocation.longitude),
+                    homeUiState = uiState,
+                    onCharacterClick = { viewModel.onCharacterClick() },
+                    navigateToMypage = navigateToMypage,
+//                    navigateToItinerary = navigateToItinerary,
+                    modifier = modifier,
+                    padding = padding,
+                    afterRegisterMapMarkerClick = { focusedMarkerParemeter ->
+                        viewModel.setEvent(HomeContract.HomeEvent.AfterRegisterMapMarkerClick)
+                        navigateToItinerary(
+                            Gson().toJson(uiState.itineraryInfo),
+                            Gson().toJson(uiState.departurePoint),
+                            Gson().toJson(uiState.destinationPoint),
+                            focusedMarkerParemeter
+                        )
+                    },
+                    courseDetailBtnClick = { key ->
+                        viewModel.setEvent(HomeContract.HomeEvent.CourseDetailButtonClick(key))
+                        navigateToItinerary(
+                            Gson().toJson(uiState.itineraryInfo),
+                            Gson().toJson(uiState.departurePoint),
+                            Gson().toJson(uiState.destinationPoint),
+                            null
+                        )
+                    },
+                    onSearchClick = {
+                        val currentLocationJSON = Gson().toJson(uiState.markerPoint)
+                        val destinationPointJSON = Gson().toJson(uiState.destinationPoint)
+                        navigateToCourseSearch(
+                            currentLocationJSON,
+                            destinationPointJSON
+                        )
 
-                AmplitudeUtils.trackEventWithProperties(
-                    eventName = HOME_COURSESEARCH_ENTERED_DIRECT,
-                    mapOf(
-                        USER_ID to viewModel.getUserId(),
-                        SCREEN_NAME to HOME,
-                        HOME_COURSESEARCH_ENTERED_DIRECT to 1
-                    )
-                )
-            },
-            onDestinationClick = {
-                AmplitudeUtils.trackEventWithProperties(
-                    eventName = HOME_DESTINATION_CLICKED,
-                    mapOf(
-                        USER_ID to viewModel.getUserId(),
-                        SCREEN_NAME to HOME,
-                        HOME_DESTINATION_CLICKED to 1
-                    )
-                )
-            },
-            onFinishClick = {
-                viewModel.setEvent(HomeContract.HomeEvent.FinishAlarmClicked)
+                        AmplitudeUtils.trackEventWithProperties(
+                            eventName = HOME_COURSESEARCH_ENTERED_DIRECT,
+                            mapOf(
+                                USER_ID to viewModel.getUserId(),
+                                SCREEN_NAME to HOME,
+                                HOME_COURSESEARCH_ENTERED_DIRECT to 1
+                            )
+                        )
+                    },
+                    onDestinationClick = {
+                        AmplitudeUtils.trackEventWithProperties(
+                            eventName = HOME_DESTINATION_CLICKED,
+                            mapOf(
+                                USER_ID to viewModel.getUserId(),
+                                SCREEN_NAME to HOME,
+                                HOME_DESTINATION_CLICKED to 1
+                            )
+                        )
+                    },
+                    onFinishClick = {
+                        viewModel.setEvent(HomeContract.HomeEvent.FinishAlarmClicked)
 //                viewModel.finishAlarm(context)
-            },
-            deleteAlarmConfirmed = {
-                viewModel.setEvent(HomeContract.HomeEvent.DeleteAlarmConfirmed)
-                viewModel.deleteAlarm(uiState.lastRouteId, context)
-            },
-            dismissDialog = {
-                viewModel.setEvent(HomeContract.HomeEvent.DismissDialog)
-            },
-            onRefreshClick = {
-            },
-            navigateToSearchLocation = {
-                navigateToSearchLocation(
-                    uiState.destinationPoint
+                    },
+                    deleteAlarmConfirmed = {
+                        viewModel.setEvent(HomeContract.HomeEvent.DeleteAlarmConfirmed)
+                        viewModel.deleteAlarm(uiState.lastRouteId, context)
+                    },
+                    dismissDialog = {
+                        viewModel.setEvent(HomeContract.HomeEvent.DismissDialog)
+                    },
+                    onRefreshClick = {
+                    },
+                    navigateToSearchLocation = {
+                        navigateToSearchLocation(
+                            uiState.destinationPoint
+                        )
+
+                        AmplitudeUtils.trackEventWithProperties(
+                            eventName = HOME_COURSESEARCH_ENTERED_WITH_INPUT,
+                            mapOf(
+                                USER_ID to viewModel.getUserId(),
+                                SCREEN_NAME to HOME,
+                                HOME_COURSESEARCH_ENTERED_WITH_INPUT to 1
+                            )
+                        )
+                    }
                 )
 
-                AmplitudeUtils.trackEventWithProperties(
-                    eventName = HOME_COURSESEARCH_ENTERED_WITH_INPUT,
-                    mapOf(
-                        USER_ID to viewModel.getUserId(),
-                        SCREEN_NAME to HOME,
-                        HOME_COURSESEARCH_ENTERED_WITH_INPUT to 1
-                    )
-                )
+                if (uiState.loadState == LoadState.Loading) {
+                    AtChaLoadingView()
+                }
             }
-        )
+        }
 
         LoadState.Error -> navigateToLogin()
-
-        else -> Unit
     }
 }
 
@@ -360,11 +368,6 @@ fun HomeScreen(
 
         // 알람 등록 시 Home UI
         if (homeUiState.isAlarmRegistered) {
-//            notificationScheduler.scheduleNotificationForTime(
-//                stringResource(R.string.app_name),
-//                stringResource(R.string.notification_content_text),
-//                NotificationTimeConstants.getDepartureTimeWithTodayDate()
-//            )
 
             AfterRegisterSheet(
                 timerFinish = homeUiState.timerFinish,

@@ -190,6 +190,7 @@ class HomeViewModel @Inject constructor(
                     )
                 }
             }
+
             is HomeContract.HomeEvent.AfterRegisterMapMarkerClick -> {
                 AmplitudeUtils.trackEventWithProperties(
                     eventName = HOME_EVENT_REGISTER_MAP_MARKER_CLICK,
