@@ -10,7 +10,7 @@ class LegInfoDummyProvider : PreviewParameterProvider<List<LegInfo>> {
         listOf(
             LegInfo(
                 transportType = TransportType.WALK,
-                routeName = "",
+                routeName = "경기 : 302",
                 sectionTime = 7,
                 departureDateTime = "2023-06-06T23:17:00",
                 startPoint = Address(
@@ -30,7 +30,7 @@ class LegInfoDummyProvider : PreviewParameterProvider<List<LegInfo>> {
             ),
             LegInfo(
                 transportType = TransportType.BUS,
-                routeName = "152",
+                routeName = "경기 : 152",
                 subTypeIdx = 2,
                 departureDateTime = "2023-06-06T23:54:00",
                 sectionTime = 27,

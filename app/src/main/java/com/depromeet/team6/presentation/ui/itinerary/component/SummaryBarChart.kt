@@ -36,7 +36,6 @@ import com.depromeet.team6.domain.model.course.TransportType
 import com.depromeet.team6.presentation.ui.itinerary.LegInfoDummyProvider
 import com.depromeet.team6.presentation.util.modifier.roundedBackgroundWithPadding
 import com.depromeet.team6.presentation.util.view.TransportTypeUiMapper
-import com.depromeet.team6.presentation.util.view.toDp
 import com.depromeet.team6.ui.theme.Team6Theme
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.depromeet.team6.ui.theme.defaultTeam6Typography
@@ -74,9 +73,7 @@ fun SummaryBarChart(
             }
     ) {
         legs.forEachIndexed { index, leg ->
-            val fraction = leg.sectionTime / total // 비율 계산
-            val barWidth = rowWidthPx.toDp() * fraction // Row의 너비에 비례하여 바의 너비 계산
-//            val barWidth = finalWidths.getOrElse(index) { 0.dp }
+            val barWidth = finalWidths.getOrElse(index) { 0.dp }
 
             if (leg.transportType == TransportType.WALK) {
                 Box(
@@ -160,38 +157,16 @@ private fun calculateFinalWidths(
     val remainingLegs = legs.mapIndexed { index, leg ->
         index to leg.sectionTime
     }.toMutableList()
-    val finalWidths = MutableList(legs.size) { 0.dp }
-    var remainingWidth = totalWidth.value // dp 단위의 Float 값으로 사용
 
-    // 남은 leg들에 대해 이론상 너비를 계산하고, 최소 너비보다 작은 경우 고정 처리 후 다시 분배
-    var shouldRecalculate = true
-    while (shouldRecalculate && remainingLegs.isNotEmpty()) {
-        shouldRecalculate = false
-        val sumTime = remainingLegs.sumOf { it.second }
-        // 남은 너비를 기준으로 이론상 너비 계산
-        val theoreticalWidths = remainingLegs.map { (_, time) ->
-            remainingWidth * (time / sumTime)
-        }
-        // 최소 너비보다 작은 아이템이 있는지 확인
-        for ((i, pair) in remainingLegs.withIndex()) {
-            val (index, _) = pair
-            val theoryWidth = theoreticalWidths[i]
-            if (theoryWidth < minBarWidth.value) {
-                finalWidths[index] = minBarWidth
-                remainingWidth -= minBarWidth.value
-                // 현재 아이템은 고정했으므로 리스트에서 제거
-                remainingLegs.removeAt(i)
-                shouldRecalculate = true
-                break // 리스트가 변경되었으므로 for문 중단 후 while문 재실행
-            }
-        }
-    }
+    // 최소너비 미리 세팅해두고, 그만큼을 전체너비에서 제외
+    val finalWidths = MutableList(legs.size) { minBarWidth }
+    var remainingWidth = totalWidth.value - (minBarWidth.value * finalWidths.size)// dp 단위의 Float 값으로 사용
 
     // 남은 아이템에 대해 남은 너비를 비율로 분배
     val remainingTimeSum = remainingLegs.sumOf { it.second }
     remainingLegs.forEach { (index, time) ->
-        val allocated = if (remainingTimeSum > 0) remainingWidth * (time / remainingTimeSum) else 0f
-        finalWidths[index] = allocated.dp
+        val allocated = if (remainingTimeSum > 0) remainingWidth * (time / remainingTimeSum.toFloat()) else 0f
+        finalWidths[index] += allocated.dp
     }
 
     return finalWidths
