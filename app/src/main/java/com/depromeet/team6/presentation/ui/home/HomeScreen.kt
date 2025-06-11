@@ -40,7 +40,6 @@ import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.course.TransportType
 import com.depromeet.team6.presentation.model.itinerary.FocusedMarkerParameter
 import com.depromeet.team6.presentation.ui.alarm.NotificationScheduler
-import com.depromeet.team6.presentation.ui.alarm.NotificationTimeConstants
 import com.depromeet.team6.presentation.ui.common.view.AtChaLoadingView
 import com.depromeet.team6.presentation.ui.home.component.AfterRegisterMap
 import com.depromeet.team6.presentation.ui.home.component.AfterRegisterSheet
@@ -369,12 +368,6 @@ fun HomeScreen(
 
         // 알람 등록 시 Home UI
         if (homeUiState.isAlarmRegistered) {
-            notificationScheduler.scheduleNotificationForTime(
-                stringResource(R.string.app_name),
-                stringResource(R.string.notification_content_text),
-                NotificationTimeConstants.getDepartureTimeWithTodayDate()
-            )
-
             AfterRegisterSheet(
                 timerFinish = homeUiState.timerFinish,
                 startLocation = homeUiState.departurePointName,

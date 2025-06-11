@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.core.content.ContextCompat
+import timber.log.Timber
 
 object PermissionUtil {
     private const val PREFS_NAME = "PermissionPrefs"
@@ -18,6 +19,7 @@ object PermissionUtil {
     }
 
     private fun savePermissionRequested(context: Context, key: String) {
+        Timber.d("king : $key")
         getPreferences(context).edit().putBoolean(key, true).apply()
     }
 
