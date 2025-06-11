@@ -51,8 +51,8 @@ class LockServiceManager @Inject constructor(
         )
 
         val calendar = Calendar.getInstance()
-        calendar.set(Calendar.HOUR_OF_DAY, 11) // TODO 테스트 이후 22:00로 변경
-        calendar.set(Calendar.MINUTE, 2)
+        calendar.set(Calendar.HOUR_OF_DAY, 22)
+        calendar.set(Calendar.MINUTE, 0)
         calendar.set(Calendar.SECOND, 0)
 
         if (calendar.timeInMillis <= System.currentTimeMillis()) {
