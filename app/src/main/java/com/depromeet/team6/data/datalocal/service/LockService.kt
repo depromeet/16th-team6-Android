@@ -33,7 +33,6 @@ import android.location.Location
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
-import com.depromeet.team6.presentation.ui.alarm.NotificationScheduler.Companion.NOTIFICATION_ID
 import com.depromeet.team6.presentation.ui.main.MainActivity
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -381,5 +380,7 @@ class LockService : Service() {
         private const val LOCATION_CHANNEL_ID = "ATCHA_LOCATION_CHANNEL"
         private const val ATCHA_SERVICE_CHANNEL = "ATCHA_SERVICE_CHANNEL"
         private const val ATCHA_SERVICE_NAME = "ATCHA_SERVICE"
+
+        const val NOTIFICATION_ID = 1
     }
 }
