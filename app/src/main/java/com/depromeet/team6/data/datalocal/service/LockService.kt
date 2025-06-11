@@ -227,20 +227,16 @@ class LockService : Service() {
     }
 
     private fun handleLocationCheckRequest() {
-        // 위치 권한 체크
         if (!hasLocationPermission()) {
-            Log.e("LockService", "위치 권한이 없음")
             scheduleNextLocationCheckAndStop()
             return
         }
 
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                Log.d("LockService", "위치 확인 시작")
 
                 val currentLocation = getCurrentLocation()
                 if (currentLocation == null) {
-                    Log.e("LockService", "현재 위치를 가져올 수 없음")
                     scheduleNextLocationCheckAndStop()
                     return@launch
                 }
@@ -253,16 +249,13 @@ class LockService : Service() {
                     homeLatitude, homeLongitude
                 )
 
-                Log.d("LockService", "집으로부터 거리: ${distance}km")
-
-                if (distance > 1.0) { // 1km 이상 떨어져 있으면
+                if (distance > 1.0) {
                     showLocationNotification()
                 }
 
                 scheduleNextLocationCheckAndStop()
 
             } catch (e: Exception) {
-                Log.e("LockService", "위치 확인 중 오류: ${e.message}", e)
                 scheduleNextLocationCheckAndStop()
             }
         }
@@ -279,20 +272,14 @@ class LockService : Service() {
             Manifest.permission.ACCESS_COARSE_LOCATION
         ) == PackageManager.PERMISSION_GRANTED
 
-        // Android 10 이상에서 백그라운드 위치 권한 확인
         val backgroundLocationGranted = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             ContextCompat.checkSelfPermission(
                 this,
                 Manifest.permission.ACCESS_BACKGROUND_LOCATION
             ) == PackageManager.PERMISSION_GRANTED
         } else {
-            true  // Android 10 미만에서는 필요 없음
+            true
         }
-
-        Log.d("LockService", "FINE_LOCATION: $fineLocationGranted")
-        Log.d("LockService", "COARSE_LOCATION: $coarseLocationGranted")
-        Log.d("LockService", "BACKGROUND_LOCATION: $backgroundLocationGranted")
-
         return (fineLocationGranted || coarseLocationGranted) && backgroundLocationGranted
     }
 
@@ -304,19 +291,15 @@ class LockService : Service() {
                     if (task.isSuccessful && task.result != null) {
                         continuation.resume(task.result)
                     } else {
-                        Log.w("LockService", "위치를 가져올 수 없음")
                         continuation.resume(null)
                     }
                 }?.addOnFailureListener { exception ->
-                    Log.e("LockService", "위치 요청 실패: ${exception.message}")
                     continuation.resume(null)
                 }
             }
         } catch (e: SecurityException) {
-            Log.e("LockService", "위치 권한 없음: ${e.message}")
             null
         } catch (e: Exception) {
-            Log.e("LockService", "위치 가져오기 실패: ${e.message}")
             null
         }
     }
@@ -332,7 +315,7 @@ class LockService : Service() {
 
         val channel = NotificationChannel(
             LOCATION_CHANNEL_ID,
-            "위치 알림",
+            LOCATION_CHANNEL_NAME,
             NotificationManager.IMPORTANCE_DEFAULT
         )
         notificationManager.createNotificationChannel(channel)
@@ -378,6 +361,8 @@ class LockService : Service() {
         private const val LOCATION_NOTIFICATION_ID = 1001
 
         private const val LOCATION_CHANNEL_ID = "ATCHA_LOCATION_CHANNEL"
+        private const val LOCATION_CHANNEL_NAME = "ATCHA_LOCATION"
+
         private const val ATCHA_SERVICE_CHANNEL = "ATCHA_SERVICE_CHANNEL"
         private const val ATCHA_SERVICE_NAME = "ATCHA_SERVICE"
 
