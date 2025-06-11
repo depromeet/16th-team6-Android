@@ -368,7 +368,6 @@ fun HomeScreen(
 
         // 알람 등록 시 Home UI
         if (homeUiState.isAlarmRegistered) {
-
             AfterRegisterSheet(
                 timerFinish = homeUiState.timerFinish,
                 startLocation = homeUiState.departurePointName,

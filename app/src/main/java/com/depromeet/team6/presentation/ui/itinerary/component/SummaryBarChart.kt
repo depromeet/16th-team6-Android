@@ -160,7 +160,7 @@ private fun calculateFinalWidths(
 
     // 최소너비 미리 세팅해두고, 그만큼을 전체너비에서 제외
     val finalWidths = MutableList(legs.size) { minBarWidth }
-    var remainingWidth = totalWidth.value - (minBarWidth.value * finalWidths.size)// dp 단위의 Float 값으로 사용
+    var remainingWidth = totalWidth.value - (minBarWidth.value * finalWidths.size) // dp 단위의 Float 값으로 사용
 
     // 남은 아이템에 대해 남은 너비를 비율로 분배
     val remainingTimeSum = remainingLegs.sumOf { it.second }
