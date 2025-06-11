@@ -155,11 +155,11 @@ class LockService : Service() {
     }
 
     private fun createForegroundNotification(): Notification {
-        val channelId = "ATCHA_SERVICE_CHANNEL"
+        val channelId = ATCHA_SERVICE_CHANNEL
 
         val channel = NotificationChannel(
             channelId,
-            "앗차 서비스",
+            ATCHA_SERVICE_NAME,
             NotificationManager.IMPORTANCE_LOW
         )
         val notificationManager = getSystemService(NotificationManager::class.java)
@@ -173,8 +173,6 @@ class LockService : Service() {
         )
 
         return NotificationCompat.Builder(this, channelId)
-            .setContentTitle("앗차 서비스")
-            .setContentText("막차 알림 서비스가 실행 중입니다.")
             .setSmallIcon(R.drawable.ic_app_logo_foreground)
             .setContentIntent(pendingIntent)
             .setPriority(NotificationCompat.PRIORITY_LOW)
@@ -248,6 +246,7 @@ class LockService : Service() {
                     return@launch
                 }
 
+                // TODO : 사용자 집 위치 받아오기
                 // 간단한 집 위치 (하드코딩 - 실제로는 사용자 설정값 사용)
                 val homeLatitude = 37.5665  // 서울시청 좌표 (예시)
                 val homeLongitude = 126.9780
@@ -349,8 +348,7 @@ class LockService : Service() {
         )
 
         val notification = NotificationCompat.Builder(this, LOCATION_CHANNEL_ID)
-            .setContentTitle("🏠 집에서 멀리 떨어져 있어요") // TODO 알림 내용 바꾸기
-            .setContentText("막차 시간을 확인해보세요!")
+            .setContentText(getString(R.string.notification_ten_text))
             .setSmallIcon(R.drawable.ic_app_logo_foreground)
             .setContentIntent(pendingIntent)
             .setAutoCancel(true)
@@ -383,5 +381,7 @@ class LockService : Service() {
         private const val LOCATION_NOTIFICATION_ID = 1001
 
         private const val LOCATION_CHANNEL_ID = "ATCHA_LOCATION_CHANNEL"
+        private const val ATCHA_SERVICE_CHANNEL = "ATCHA_SERVICE_CHANNEL"
+        private const val ATCHA_SERVICE_NAME = "ATCHA_SERVICE"
     }
 }
