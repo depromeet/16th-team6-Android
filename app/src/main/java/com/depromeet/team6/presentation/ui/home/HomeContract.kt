@@ -4,6 +4,8 @@ import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.course.CourseInfo
 import com.depromeet.team6.domain.model.course.TransportType
 import com.depromeet.team6.presentation.model.bus.BusArrivalParameter
+import com.depromeet.team6.presentation.model.home.CharacterState
+import com.depromeet.team6.presentation.model.home.ComponentType
 import com.depromeet.team6.presentation.model.itinerary.FocusedMarkerParameter
 import com.depromeet.team6.presentation.util.DefaultLatLng.DEFAULT_LAT
 import com.depromeet.team6.presentation.util.DefaultLatLng.DEFAULT_LNG
@@ -66,8 +68,10 @@ class HomeContract {
         ),
         val logoutState: Boolean = false,
         val taxiCost: Int = 0,
-        val deleteAlarmDialogVisible: Boolean = false
-    ) : UiState
+        val deleteAlarmDialogVisible: Boolean = false,
+        //애니메이션
+        val characterState: CharacterState = CharacterState()
+        ) : UiState
 
     sealed interface HomeSideEffect : UiSideEffect {
         data object NavigateToMypage : HomeSideEffect
@@ -99,5 +103,8 @@ class HomeContract {
         data object SetDestination : HomeEvent()
         data object AfterRegisterMapMarkerClick : HomeEvent()
         data class CourseDetailButtonClick(val clickEventKey: String) : HomeEvent()
+        // 애니메이션
+        data object CharacterClicked: HomeEvent()
+        data class ComponentClicked(val componentType: ComponentType, val data: Any? = null) : HomeEvent()
     }
 }

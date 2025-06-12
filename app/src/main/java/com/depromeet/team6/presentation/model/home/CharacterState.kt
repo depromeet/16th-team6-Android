@@ -9,7 +9,8 @@ data class CharacterState(
     val currentSpeechIndex: Int = 0,
     val lottieResId: Int = R.raw.atcha_character_1,
     val isAnimating: Boolean = false,
-    val bottomPadding: Dp = 194.dp
+    val bottomPadding: Dp = 194.dp,
+    val animationTrigger: Int = 0
 )
 
 data class SpeechBubbleData(

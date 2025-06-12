@@ -2,7 +2,10 @@ package com.depromeet.team6.presentation.ui.home
 
 import android.content.Context
 import android.util.Log
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewModelScope
+import com.depromeet.team6.R
 import com.depromeet.team6.data.datalocal.manager.LockServiceManager
 import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.RouteLocation
@@ -18,6 +21,9 @@ import com.depromeet.team6.domain.usecase.GetCourseSearchResultsUseCase
 import com.depromeet.team6.domain.usecase.GetTaxiCostUseCase
 import com.depromeet.team6.domain.usecase.GetUserInfoUseCase
 import com.depromeet.team6.presentation.model.bus.BusArrivalParameter
+import com.depromeet.team6.presentation.model.home.CharacterState
+import com.depromeet.team6.presentation.model.home.ComponentType
+import com.depromeet.team6.presentation.model.home.SpeechBubbleData
 import com.depromeet.team6.presentation.util.AmplitudeCommon.SCREEN_NAME
 import com.depromeet.team6.presentation.util.AmplitudeCommon.USER_ID
 import com.depromeet.team6.presentation.util.HomeAmplitude.HOME
@@ -35,8 +41,10 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.text.NumberFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
@@ -211,6 +219,9 @@ class HomeViewModel @Inject constructor(
                     )
                 )
             }
+
+            HomeContract.HomeEvent.CharacterClicked -> handleCharacterClick()
+            is HomeContract.HomeEvent.ComponentClicked -> handleComponentClick(event.componentType, event.data)
         }
     }
 
@@ -580,6 +591,79 @@ class HomeViewModel @Inject constructor(
             }
         }
     }
+
+
+    private fun handleCharacterClick() {
+        val currentState = uiState.value.characterState
+        val speechTexts = currentState.speechTexts
+
+        if (speechTexts.size > 1) {
+            val nextIndex = (currentState.currentSpeechIndex + 1) % speechTexts.size
+            setState {
+                copy(
+                    characterState = currentState.copy(
+                        currentSpeechIndex = nextIndex,
+                        isAnimating = true,
+                        animationTrigger = currentState.animationTrigger + 1
+                    )
+                )
+            }
+        } else {
+            setState {
+                copy(
+                    characterState = currentState.copy(isAnimating = true
+                    ,animationTrigger = currentState.animationTrigger + 1)
+                )
+            }
+        }
+    }
+
+    private fun handleComponentClick(componentType: ComponentType, data: Any?) {
+        // 컴포넌트 클릭에 따른 임시 말풍선 표시
+        val tempSpeechData = when (componentType) {
+            // TODO : 조건별 데이터 추가
+            ComponentType.DEPARTURE_TIME_NOT_CONFIRMED_CLICKED -> SpeechBubbleData(
+                prefixText = "아이콘을 클릭했어요",
+                lineCount = 1
+            )
+            ComponentType.DEPARTURE_TIME_CONFIRMED_CLICKED -> SpeechBubbleData(
+                prefixText = "아이콘을 클릭했어요",
+                lineCount = 1
+            )
+            ComponentType.ROUTE_TEXT_CLICKED -> SpeechBubbleData(
+                prefixText = "아이콘을 클릭했어요",
+                lineCount = 1
+            )
+        }
+
+        // 임시 말풍선을 현재 상태에 추가
+        val currentCharacterState = uiState.value.characterState
+        setState {
+            copy(
+                characterState = currentCharacterState.copy(
+                    speechTexts = listOf(tempSpeechData) + currentCharacterState.speechTexts,
+                    currentSpeechIndex = 0,
+                    isAnimating = true
+                )
+            )
+        }
+
+        // 3초 후 원래 상태로 복원
+        viewModelScope.launch {
+            delay(3000)
+            // updateCharacterState() 대신 아래로 변경
+            setState {
+                copy(
+                    characterState = currentCharacterState.copy(
+                        speechTexts = currentCharacterState.speechTexts.drop(1),
+                        currentSpeechIndex = 0,
+                        isAnimating = false
+                    )
+                )
+            }
+        }
+    }
+
 
     companion object {
         private const val MY_PREFERENCES_NAME = "MyPreferences"

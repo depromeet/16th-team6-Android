@@ -38,6 +38,8 @@ import androidx.lifecycle.flowWithLifecycle
 import com.depromeet.team6.R
 import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.course.TransportType
+import com.depromeet.team6.presentation.model.home.CharacterState
+import com.depromeet.team6.presentation.model.home.SpeechBubbleData
 import com.depromeet.team6.presentation.model.itinerary.FocusedMarkerParameter
 import com.depromeet.team6.presentation.ui.common.view.AtChaLoadingView
 import com.depromeet.team6.presentation.ui.home.component.AfterRegisterMap
@@ -46,6 +48,7 @@ import com.depromeet.team6.presentation.ui.home.component.CharacterLottieSpeechB
 import com.depromeet.team6.presentation.ui.home.component.CurrentLocationSheet
 import com.depromeet.team6.presentation.ui.home.component.DeleteAlarmDialog
 import com.depromeet.team6.presentation.ui.home.component.TMapViewCompose
+import com.depromeet.team6.presentation.ui.home.component.UnifiedCharacterBubble
 import com.depromeet.team6.presentation.util.AmplitudeCommon.SCREEN_NAME
 import com.depromeet.team6.presentation.util.AmplitudeCommon.USER_ID
 import com.depromeet.team6.presentation.util.DefaultLatLng.DEFAULT_LAT
@@ -194,6 +197,10 @@ fun HomeRoute(
         viewModel.setEvent(HomeContract.HomeEvent.SetDestination)
     }
 
+//    LaunchedEffect(Unit) {
+//        viewModel.updateCharacterState()
+//    }
+
     when (uiState.loadState) {
         LoadState.Idle, LoadState.Loading, LoadState.Success -> {
             Box {
@@ -276,7 +283,8 @@ fun HomeRoute(
                                 HOME_COURSESEARCH_ENTERED_WITH_INPUT to 1
                             )
                         )
-                    }
+                    },
+                    onEvent = viewModel::setEvent
                 )
 
                 if (uiState.loadState == LoadState.Loading) {
@@ -306,10 +314,49 @@ fun HomeScreen(
     deleteAlarmConfirmed: () -> Unit = {},
     dismissDialog: () -> Unit = {},
     navigateToSearchLocation: () -> Unit = {},
+    onEvent: (HomeContract.HomeEvent) -> Unit = {},
     viewModel: HomeViewModel = hiltViewModel() // TODO : TmapViewCompose 변경 후 제거
 ) {
     val context = LocalContext.current
     val colors = LocalTeam6Colors.current
+// 문자열들을 먼저 추출
+    val basicText = stringResource(R.string.home_bubble_basic_text)
+    val wonText = stringResource(R.string.home_bubble_won_text)
+    val userDepartureText = stringResource(R.string.home_bubble_user_departure)
+    val alarmEmphasisText = stringResource(R.string.home_bubble_alarm_emphasis_text)
+
+    // UI 기반 캐릭터 상태 계산
+    val baseCharacterState = remember(
+        homeUiState.isAlarmRegistered,
+        homeUiState.userDeparture,
+        homeUiState.isBusDeparted,
+        homeUiState.taxiCost,
+        basicText,
+        wonText,
+        userDepartureText,
+        alarmEmphasisText
+    ) {
+        generateCharacterState(
+            homeUiState = homeUiState,
+            basicText = basicText,
+            wonText = wonText,
+            userDepartureText = userDepartureText,
+            alarmEmphasisText = alarmEmphasisText
+        )
+    }
+
+    // ViewModel 상태와 병합
+    val finalCharacterState = baseCharacterState.copy(
+        animationTrigger = homeUiState.characterState.animationTrigger,
+        isAnimating = homeUiState.characterState.isAnimating,
+        currentSpeechIndex = homeUiState.characterState.currentSpeechIndex,
+        // speechTexts는 임시 메시지가 있으면 ViewModel 것을 사용, 없으면 UI 계산 것을 사용
+        speechTexts = if (homeUiState.characterState.speechTexts.isNotEmpty()) {
+            homeUiState.characterState.speechTexts
+        } else {
+            baseCharacterState.speechTexts
+        }
+    )
 
     var characterAnimationTrigger by remember { mutableStateOf(0) }
 
@@ -446,118 +493,131 @@ fun HomeScreen(
             )
         }
 
-        val (prefixText, emphasisText, suffixText, bottomPadding) = when {
-            !homeUiState.isAlarmRegistered ->
-                SpeechBubbleText(
-                    stringResource(R.string.home_bubble_basic_text),
-                    "약 " + NumberFormat.getNumberInstance(Locale.US)
-                        .format(homeUiState.taxiCost) + stringResource(R.string.home_bubble_won_text),
-                    null,
-                    194.dp
+        UnifiedCharacterBubble(
+            characterState = finalCharacterState,
+            onCharacterClick = {
+                onEvent(HomeContract.HomeEvent.CharacterClicked)
+            },
+            modifier = Modifier
+                .align(Alignment.BottomStart)
+                .padding(
+                    start = 8.dp,
+                    bottom = finalCharacterState.bottomPadding
                 )
+        )
 
-            homeUiState.userDeparture ->
-                SpeechBubbleText(
-                    "",
-                    stringResource(R.string.home_bubble_user_departure),
-                    "",
-                    218.dp
-                )
-
-            homeUiState.isAlarmRegistered && homeUiState.isBusDeparted ->
-                SpeechBubbleText(
-                    "",
-                    stringResource(R.string.home_bubble_alarm_emphasis_text),
-                    "",
-                    218.dp
-                )
-
-            homeUiState.isAlarmRegistered ->
-                SpeechBubbleText(
-                    "",
-                    stringResource(R.string.home_bubble_alarm_emphasis_text),
-                    "",
-                    218.dp
-                )
-
-            else ->
-                SpeechBubbleText(
-                    stringResource(R.string.home_bubble_basic_text),
-                    "약 " + NumberFormat.getNumberInstance(Locale.US)
-                        .format(homeUiState.taxiCost) + stringResource(R.string.home_bubble_won_text),
-                    null,
-                    209.dp
-                )
-        }
-
-        var speechBubbleFlag by remember { mutableStateOf(true) }
-
-        val handleCharacterClick = {
-            speechBubbleFlag = !speechBubbleFlag
-            onCharacterClick()
-        }
-
-        if (!homeUiState.isAlarmRegistered) { // 첫 화면
-            CharacterLottieSpeechBubble(
-                prefixText = prefixText,
-                emphasisText = emphasisText,
-                suffixText = suffixText,
-                modifier = Modifier
-                    .align(Alignment.BottomStart)
-                    .padding(start = 8.dp, bottom = bottomPadding)
-                    .noRippleClickable(onClick = onCharacterClick),
-                onClick = handleCharacterClick,
-                lottieResId = R.raw.atcha_character_2,
-                lineCount = 1,
-                externalTrigger = characterAnimationTrigger
-            )
-        }
-        if (homeUiState.userDeparture) { // 사용자 출발 후
-            CharacterLottieSpeechBubble(
-                prefixText = prefixText,
-                emphasisText = emphasisText,
-                suffixText = suffixText,
-                modifier = Modifier
-                    .align(Alignment.BottomStart)
-                    .padding(start = 8.dp, bottom = bottomPadding)
-                    .noRippleClickable(onClick = onCharacterClick),
-                onClick = {},
-                lottieResId = R.raw.atcha_character_4,
-                lineCount = 1,
-                externalTrigger = characterAnimationTrigger
-            )
-        } else {
-            if (homeUiState.isAlarmRegistered && !homeUiState.isBusDeparted) { // 알림 등록 후 예상 출발 시간 화면
-                CharacterLottieSpeechBubble(
-                    prefixText = prefixText,
-                    emphasisText = emphasisText,
-                    suffixText = suffixText,
-                    modifier = Modifier
-                        .align(Alignment.BottomStart)
-                        .padding(start = 8.dp, bottom = bottomPadding)
-                        .noRippleClickable(onClick = onCharacterClick),
-                    onClick = {},
-                    lottieResId = R.raw.atcha_chararcter_3,
-                    lineCount = 1,
-                    externalTrigger = characterAnimationTrigger
-                )
-            }
-            if (homeUiState.isAlarmRegistered && homeUiState.isBusDeparted) { // 알림 등록 후 예상 출발 시간 화면
-                CharacterLottieSpeechBubble(
-                    prefixText = prefixText,
-                    emphasisText = emphasisText,
-                    suffixText = suffixText,
-                    modifier = Modifier
-                        .align(Alignment.BottomStart)
-                        .padding(start = 8.dp, bottom = bottomPadding)
-                        .noRippleClickable(onClick = onCharacterClick),
-                    onClick = {},
-                    lottieResId = R.raw.atcha_chararcter_3,
-                    lineCount = 1,
-                    externalTrigger = characterAnimationTrigger
-                )
-            }
-        }
+//        val (prefixText, emphasisText, suffixText, bottomPadding) = when {
+//            !homeUiState.isAlarmRegistered ->
+//                SpeechBubbleText(
+//                    stringResource(R.string.home_bubble_basic_text),
+//                    "약 " + NumberFormat.getNumberInstance(Locale.US)
+//                        .format(homeUiState.taxiCost) + stringResource(R.string.home_bubble_won_text),
+//                    null,
+//                    194.dp
+//                )
+//
+//            homeUiState.userDeparture ->
+//                SpeechBubbleText(
+//                    "",
+//                    stringResource(R.string.home_bubble_user_departure),
+//                    "",
+//                    218.dp
+//                )
+//
+//            homeUiState.isAlarmRegistered && homeUiState.isBusDeparted ->
+//                SpeechBubbleText(
+//                    "",
+//                    stringResource(R.string.home_bubble_alarm_emphasis_text),
+//                    "",
+//                    218.dp
+//                )
+//
+//            homeUiState.isAlarmRegistered ->
+//                SpeechBubbleText(
+//                    "",
+//                    stringResource(R.string.home_bubble_alarm_emphasis_text),
+//                    "",
+//                    218.dp
+//                )
+//
+//            else ->
+//                SpeechBubbleText(
+//                    stringResource(R.string.home_bubble_basic_text),
+//                    "약 " + NumberFormat.getNumberInstance(Locale.US)
+//                        .format(homeUiState.taxiCost) + stringResource(R.string.home_bubble_won_text),
+//                    null,
+//                    209.dp
+//                )
+//        }
+//
+//        var speechBubbleFlag by remember { mutableStateOf(true) }
+//
+//        val handleCharacterClick = {
+//            speechBubbleFlag = !speechBubbleFlag
+//            onCharacterClick()
+//        }
+//
+//        if (!homeUiState.isAlarmRegistered) { // 첫 화면
+//            CharacterLottieSpeechBubble(
+//                prefixText = prefixText,
+//                emphasisText = emphasisText,
+//                suffixText = suffixText,
+//                modifier = Modifier
+//                    .align(Alignment.BottomStart)
+//                    .padding(start = 8.dp, bottom = bottomPadding)
+//                    .noRippleClickable(onClick = onCharacterClick),
+//                onClick = handleCharacterClick,
+//                lottieResId = R.raw.atcha_character_2,
+//                lineCount = 1,
+//                externalTrigger = characterAnimationTrigger
+//            )
+//        }
+//        if (homeUiState.userDeparture) { // 사용자 출발 후
+//            CharacterLottieSpeechBubble(
+//                prefixText = prefixText,
+//                emphasisText = emphasisText,
+//                suffixText = suffixText,
+//                modifier = Modifier
+//                    .align(Alignment.BottomStart)
+//                    .padding(start = 8.dp, bottom = bottomPadding)
+//                    .noRippleClickable(onClick = onCharacterClick),
+//                onClick = {},
+//                lottieResId = R.raw.atcha_character_4,
+//                lineCount = 1,
+//                externalTrigger = characterAnimationTrigger
+//            )
+//        } else {
+//            if (homeUiState.isAlarmRegistered && !homeUiState.isBusDeparted) { // 알림 등록 후 예상 출발 시간 화면
+//                CharacterLottieSpeechBubble(
+//                    prefixText = prefixText,
+//                    emphasisText = emphasisText,
+//                    suffixText = suffixText,
+//                    modifier = Modifier
+//                        .align(Alignment.BottomStart)
+//                        .padding(start = 8.dp, bottom = bottomPadding)
+//                        .noRippleClickable(onClick = onCharacterClick),
+//                    onClick = {},
+//                    lottieResId = R.raw.atcha_chararcter_3,
+//                    lineCount = 1,
+//                    externalTrigger = characterAnimationTrigger
+//                )
+//            }
+//            if (homeUiState.isAlarmRegistered && homeUiState.isBusDeparted) { // 알림 등록 후 예상 출발 시간 화면
+//                CharacterLottieSpeechBubble(
+//                    prefixText = prefixText,
+//                    emphasisText = emphasisText,
+//                    suffixText = suffixText,
+//                    modifier = Modifier
+//                        .align(Alignment.BottomStart)
+//                        .padding(start = 8.dp, bottom = bottomPadding)
+//                        .noRippleClickable(onClick = onCharacterClick),
+//                    onClick = {},
+//                    lottieResId = R.raw.atcha_chararcter_3,
+//                    lineCount = 1,
+//                    externalTrigger = characterAnimationTrigger
+//                )
+//            }
+//        }
 
         if (homeUiState.deleteAlarmDialogVisible) {
             Box(
@@ -624,6 +684,93 @@ private fun formatTimeString(timeString: String): String {
     } catch (e: Exception) {
         Timber.e("formatTimeString 오류: ${e.message}")
         timeString
+    }
+}
+
+private fun generateCharacterState(
+    homeUiState: HomeContract.HomeUiState,
+    basicText: String,
+    wonText: String,
+    userDepartureText: String,
+    alarmEmphasisText: String
+): CharacterState {
+    return when {
+        !homeUiState.isAlarmRegistered -> {
+            CharacterState(
+                speechTexts = listOf(
+                    SpeechBubbleData(
+                        prefixText = basicText,
+                        emphasisText = "약 " + NumberFormat.getNumberInstance(Locale.US)
+                            .format(homeUiState.taxiCost) + wonText,
+                        suffixText = null,
+                        lineCount = 1
+                    )
+                ),
+                lottieResId = R.raw.atcha_character_2,
+                bottomPadding = 194.dp
+            )
+        }
+
+        homeUiState.userDeparture -> {
+            CharacterState(
+                speechTexts = listOf(
+                    SpeechBubbleData(
+                        prefixText = "",
+                        emphasisText = userDepartureText,
+                        suffixText = "",
+                        lineCount = 1
+                    )
+                ),
+                lottieResId = R.raw.atcha_character_4,
+                bottomPadding = 218.dp
+            )
+        }
+
+        homeUiState.isAlarmRegistered && homeUiState.isBusDeparted -> {
+            CharacterState(
+                speechTexts = listOf(
+                    SpeechBubbleData(
+                        prefixText = "",
+                        emphasisText = alarmEmphasisText,
+                        suffixText = "",
+                        lineCount = 1
+                    )
+                ),
+                lottieResId = R.raw.atcha_chararcter_3,
+                bottomPadding = 218.dp
+            )
+        }
+
+        homeUiState.isAlarmRegistered -> {
+            CharacterState(
+                speechTexts = listOf(
+                    SpeechBubbleData(
+                        prefixText = "",
+                        emphasisText = alarmEmphasisText,
+                        suffixText = "",
+                        lineCount = 1
+                    )
+                ),
+                lottieResId = R.raw.atcha_chararcter_3,
+                bottomPadding = 218.dp
+            )
+        }
+
+        else -> {
+            CharacterState(
+                speechTexts = listOf(
+                    SpeechBubbleData(
+                        prefixText = basicText,
+                        emphasisText = "약 " + NumberFormat.getNumberInstance(Locale.US)
+                            .format(homeUiState.taxiCost) + wonText,
+                        suffixText = null,
+                        lineCount = 1
+                    )
+                ),
+                lottieResId = R.raw.atcha_character_2,
+                bottomPadding = 209.dp
+            )
+        }
     }
 }
 
