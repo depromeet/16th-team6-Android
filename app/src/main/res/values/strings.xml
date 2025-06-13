@@ -83,10 +83,35 @@
     <string name="home_icon_arrow_right_text">화살표 아이콘</string>
     <string name="home_icon_bell_text">알림 종 아이콘</string>
 
+    <string name="home_bubble_map_text">지도를 움직여 출발지를 설정해 봐요</string>
     <string name="home_bubble_basic_text">여기서 막차 놓치면 택시비</string>
+    <string name="home_bubble_user_departure_taxi_cost_text">막차 놓치면 택시비</string>
     <string name="home_bubble_least_text">약 </string>
     <string name="home_bubble_won_text">원</string>
     <string name="home_bubble_alarm_prefix_text">차고지에서 출발하면</string>
+    <string name="home_bubble_before_bus_departure_text">버스가 출발하면 더 정확하게 알려드릴게요</string>
+    <string name="home_bubble_expect_departure_time_clicked_text_1">타야될 버스가 아직 운행하지 않아 예상 시간으로 알려드려요</string>
+    <string name="home_bubble_expect_departure_time_clicked_text_2">운행하면 더 정확하게 알려드릴게요</string>
+    <string name="home_bubble_location_clicked_text">위치를 변경하려면 알림을 종료하고 새로 등록해야 해요</string>
+
+    <string name="home_bubble_bus_departure_text_1">버스가 오고 있어요!</string>
+    <string name="home_bubble_bus_departure_text_2">출발해야 할 시간에 알림을 드릴게요</string>
+    <string name="home_bubble_subway_departure_text_1">이때쯤 자리에서 출발하면 돼요</string>
+    <string name="home_bubble_subway_departure_text_2">시간에 맞춰 알림을 드릴게요</string>
+
+    <string name="home_bubble_time_info_text_1">이때 출발하면 막차를 탈 수 있어요</string>
+    <string name="home_bubble_time_info_text_2">시간에 맞춰 알림을 드릴게요</string>
+    <string name="home_bubble_departed_taxi_cost_text">출발지에서 막차 놓치면 택시비</string>
+    <string name="home_bubble_trust_text_1">믿을 수 있는</string>
+    <string name="home_bubble_trust_text_2">티맵 API와 공공 데이터를 활용해요</string>
+
+    <string name="home_bubble_user_departure_bus_text">버스타러 출발!</string>
+    <string name="home_bubble_user_departure_subway_text">지하철타러 출발!</string>
+    <string name="home_bubble_user_departure_down_text">아래</string>
+    <string name="home_bubble_user_departure_detail_btn_text">상세 경로 버튼을</string>
+    <string name="home_bubble_user_departure_check_detail_text">눌러 자세한 정보를 확인해 보세요</string>
+
+
     <string name="home_bubble_alarm_emphasis_text">이때쯤 자리에서 출발하면 돼요</string>
     <string name="home_move_set_destination">"지도를 움직여 출발지를 설정해 봐요"</string>
     <string name="home_bubble_alarm_suffix_text">알려드려요</string>
