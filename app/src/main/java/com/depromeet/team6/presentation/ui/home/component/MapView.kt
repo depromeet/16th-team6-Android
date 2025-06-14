@@ -30,6 +30,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
 import com.depromeet.team6.BuildConfig
 import com.depromeet.team6.R
+import com.depromeet.team6.presentation.ui.common.view.AtChaLoadingView
 import com.depromeet.team6.presentation.ui.home.HomeViewModel
 import com.depromeet.team6.presentation.util.AmplitudeCommon.SCREEN_NAME
 import com.depromeet.team6.presentation.util.AmplitudeCommon.USER_ID
@@ -59,31 +60,6 @@ fun TMapViewCompose(
     var isMapReady by remember { mutableStateOf(false) }
 
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
-
-    LaunchedEffect(Unit) {
-        tMapView.setSKTMapApiKey(BuildConfig.TMAP_API_KEY)
-        tMapView.setOnMapReadyListener {
-            tMapView.mapType = TMapView.MapType.NIGHT
-            isMapReady = true
-
-            // 드래그 종료 시 지도 중심 좌표 업데이트
-            tMapView.setOnDisableScrollWithZoomLevelListener { _, _ ->
-                val centerLat = tMapView.centerPoint.latitude
-                val centerLon = tMapView.centerPoint.longitude
-
-                viewModel.getCenterLocation(LatLng(centerLat, centerLon))
-
-                AmplitudeUtils.trackEventWithProperties(
-                    eventName = HOME_COURSESEARCH_ENTERED_WITH_MAP_DRAG,
-                    mapOf(
-                        USER_ID to viewModel.getUserId(),
-                        SCREEN_NAME to HOME,
-                        HOME_COURSESEARCH_ENTERED_WITH_MAP_DRAG to true
-                    )
-                )
-            }
-        }
-    }
 
     // 현재 위치 변경될 때만 현위치 마커 갱신
     LaunchedEffect(currentLocation, isMapReady) {
@@ -120,10 +96,35 @@ fun TMapViewCompose(
         modifier = modifier
     ) {
         AndroidView(
-            modifier = modifier.fillMaxWidth()
+            modifier = modifier
+                .fillMaxWidth()
                 .height(screenHeight - 200.dp + padding.calculateTopPadding())
                 .align(Alignment.TopCenter),
             factory = { context ->
+
+                tMapView.setSKTMapApiKey(BuildConfig.TMAP_API_KEY)
+                tMapView.setOnMapReadyListener {
+                    tMapView.mapType = TMapView.MapType.NIGHT
+                    isMapReady = true
+
+                    // 드래그 종료 시 지도 중심 좌표 업데이트
+                    tMapView.setOnDisableScrollWithZoomLevelListener { _, _ ->
+                        val centerLat = tMapView.centerPoint.latitude
+                        val centerLon = tMapView.centerPoint.longitude
+
+                        viewModel.getCenterLocation(LatLng(centerLat, centerLon))
+
+                        AmplitudeUtils.trackEventWithProperties(
+                            eventName = HOME_COURSESEARCH_ENTERED_WITH_MAP_DRAG,
+                            mapOf(
+                                USER_ID to viewModel.getUserId(),
+                                SCREEN_NAME to HOME,
+                                HOME_COURSESEARCH_ENTERED_WITH_MAP_DRAG to true
+                            )
+                        )
+                    }
+                }
+
                 // FrameLayout을 직접 생성
                 FrameLayout(context).apply {
                     // TMapView를 FrameLayout에 추가
@@ -135,45 +136,50 @@ fun TMapViewCompose(
             }
         )
 
-        // 출발 마커
-        Image(
-            imageVector = ImageVector.vectorResource(id = R.drawable.ic_home_dearture_marker),
-            contentDescription = "Start Marker",
-            modifier = Modifier
-                .align(Alignment.Center)
-                .padding(bottom = 118.dp)
-        )
+        if (isMapReady) {
+            // 출발 마커
+            Image(
+                imageVector = ImageVector.vectorResource(id = R.drawable.ic_home_dearture_marker),
+                contentDescription = "Start Marker",
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .padding(bottom = 118.dp)
+            )
 
-        // 현위치 버튼
-        Image(
-            imageVector = ImageVector.vectorResource(id = R.drawable.ic_all_current_location),
-            contentDescription = stringResource(R.string.home_current_location_btn),
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .then(
-                    if (uiState.isAlarmRegistered) {
-                        Modifier.padding(bottom = 35.dp, end = 16.dp)
-                    } else {
-                        Modifier.padding(bottom = 35.dp, end = 16.dp)
-                    }
-                )
-                .clickable(enabled = isMapReady) {
-                    val tMapPoint = TMapPoint(currentLocation.latitude, currentLocation.longitude)
-                    tMapView.setCenterPoint(tMapPoint.latitude, tMapPoint.longitude)
-
-                    viewModel.getCenterLocation(LatLng(tMapPoint.latitude, tMapPoint.longitude))
-
-                    AmplitudeUtils.trackEventWithProperties(
-                        eventName = HOME_COURSESEARCH_ENTERED_WITH_CURRENT_LOCATION,
-                        mapOf(
-                            USER_ID to viewModel.getUserId(),
-                            SCREEN_NAME to HOME,
-                            HOME_COURSESEARCH_ENTERED_WITH_CURRENT_LOCATION to true
-                        )
+            // 현위치 버튼
+            Image(
+                imageVector = ImageVector.vectorResource(id = R.drawable.ic_all_current_location),
+                contentDescription = stringResource(R.string.home_current_location_btn),
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .then(
+                        if (uiState.isAlarmRegistered) {
+                            Modifier.padding(bottom = 35.dp, end = 16.dp)
+                        } else {
+                            Modifier.padding(bottom = 35.dp, end = 16.dp)
+                        }
                     )
-                }
-                .graphicsLayer { alpha = if (isMapReady) 1f else 0.5f } // 비활성화 시 투명도 조정
-        )
+                    .clickable(enabled = isMapReady) {
+                        val tMapPoint =
+                            TMapPoint(currentLocation.latitude, currentLocation.longitude)
+                        tMapView.setCenterPoint(tMapPoint.latitude, tMapPoint.longitude)
+
+                        viewModel.getCenterLocation(LatLng(tMapPoint.latitude, tMapPoint.longitude))
+
+                        AmplitudeUtils.trackEventWithProperties(
+                            eventName = HOME_COURSESEARCH_ENTERED_WITH_CURRENT_LOCATION,
+                            mapOf(
+                                USER_ID to viewModel.getUserId(),
+                                SCREEN_NAME to HOME,
+                                HOME_COURSESEARCH_ENTERED_WITH_CURRENT_LOCATION to true
+                            )
+                        )
+                    }
+                    .graphicsLayer { alpha = if (isMapReady) 1f else 0.5f } // 비활성화 시 투명도 조정
+            )
+        } else {
+            AtChaLoadingView()
+        }
     }
 
     DisposableEffect(Unit) {
