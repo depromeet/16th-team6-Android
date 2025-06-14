@@ -45,4 +45,3 @@ suspend fun Context.getUserLocation(): LatLng {
         LatLng(DEFAULT_LAT, DEFAULT_LNG)
     }
 }
-
