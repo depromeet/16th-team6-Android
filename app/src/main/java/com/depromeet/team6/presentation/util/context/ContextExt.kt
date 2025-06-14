@@ -18,10 +18,18 @@ suspend fun Context.getUserLocation(): LatLng {
             fusedLocationClient.lastLocation
                 .addOnSuccessListener { location ->
                     if (location != null) {
-                        Timber.d(
-                            "User_Location Lat: ${location.latitude}, Lon: ${location.longitude}"
-                        )
-                        continuation.resume(LatLng(location.latitude, location.longitude))
+                        val latitude = location.latitude
+                        val longitude = location.longitude
+
+                        Timber.d("User_Location Lat: $latitude, Lon: $longitude")
+
+                        // 위도 또는 경도가 비정상일 경우 기본 위치로 설정
+                        if (latitude <= 0 || longitude <= 0) {
+                            Timber.d("위도, 경도가 0보다 작음")
+                            continuation.resume(LatLng(DEFAULT_LAT, DEFAULT_LNG))
+                        } else {
+                            continuation.resume(LatLng(latitude, longitude))
+                        }
                     } else {
                         Timber.d("User_Location Failed to get location")
                         continuation.resume(LatLng(DEFAULT_LAT, DEFAULT_LNG)) // 위치 정보를 가져오지 못한 경우
@@ -37,3 +45,4 @@ suspend fun Context.getUserLocation(): LatLng {
         LatLng(DEFAULT_LAT, DEFAULT_LNG)
     }
 }
+
