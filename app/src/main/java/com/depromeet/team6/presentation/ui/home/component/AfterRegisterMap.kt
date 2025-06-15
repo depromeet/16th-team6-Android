@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,7 +41,6 @@ import com.depromeet.team6.domain.model.course.LegInfo
 import com.depromeet.team6.domain.model.course.TransportType
 import com.depromeet.team6.presentation.model.itinerary.FocusedMarkerParameter
 import com.depromeet.team6.presentation.ui.common.TransportVectorIconBitmap
-import com.depromeet.team6.presentation.ui.home.HomeViewModel
 import com.depromeet.team6.presentation.ui.itinerary.LegInfoDummyProvider
 import com.depromeet.team6.presentation.ui.itinerary.component.getWayPointList
 import com.depromeet.team6.presentation.util.permission.PermissionUtil
@@ -71,12 +69,13 @@ fun AfterRegisterMap(
     padding: PaddingValues,
     currentLocation: LatLng,
     legs: List<LegInfo>,
+    isAlarmRegistered: Boolean,
     modifier: Modifier = Modifier,
-    viewModel: HomeViewModel,
+    updateCurrentLocation: (LatLng) -> Unit,
+    getCenterLocation: (LatLng) -> Unit,
     onTransportMarkerClick: (FocusedMarkerParameter) -> Unit = {}
 ) {
     val context = LocalContext.current
-    val uiState = viewModel.uiState.collectAsState().value
     val tMapView = remember { TMapView(context) }
     var isMapReady by remember { mutableStateOf(false) }
 
@@ -319,7 +318,7 @@ fun AfterRegisterMap(
 
                 tMapView.addTMapMarkerItem(markerItem)
 
-                viewModel.updateCurrentLocation(userLocation)
+                updateCurrentLocation(userLocation)
             }
         }
     }
@@ -353,7 +352,7 @@ fun AfterRegisterMap(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .then(
-                    if (uiState.isAlarmRegistered) {
+                    if (isAlarmRegistered) {
                         Modifier.padding(bottom = 25.dp, end = 16.dp)
                     } else {
                         Modifier.padding(bottom = 25.dp, end = 16.dp)
@@ -363,7 +362,7 @@ fun AfterRegisterMap(
                     val tMapPoint = TMapPoint(userLocation.latitude, userLocation.longitude)
                     tMapView.setCenterPoint(tMapPoint.latitude, tMapPoint.longitude)
 
-                    viewModel.getCenterLocation(LatLng(tMapPoint.latitude, tMapPoint.longitude))
+                    getCenterLocation(LatLng(tMapPoint.latitude, tMapPoint.longitude))
                 }
                 .graphicsLayer { alpha = if (isMapReady) 1f else 0.5f } // 비활성화 시 투명도 조정
         )
@@ -391,7 +390,8 @@ fun AfterRegisterMapPreview(
         padding = PaddingValues(),
         legs = legs,
         currentLocation = LatLng(37.5665, 126.9780),
-        modifier = TODO(),
-        viewModel = TODO()
+        isAlarmRegistered = false,
+        getCenterLocation = {},
+        updateCurrentLocation = {}
     )
 }

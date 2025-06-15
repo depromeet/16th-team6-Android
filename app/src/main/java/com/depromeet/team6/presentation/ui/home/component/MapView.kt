@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,7 +29,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
 import com.depromeet.team6.BuildConfig
 import com.depromeet.team6.R
-import com.depromeet.team6.presentation.ui.home.HomeViewModel
 import com.depromeet.team6.presentation.util.AmplitudeCommon.SCREEN_NAME
 import com.depromeet.team6.presentation.util.AmplitudeCommon.USER_ID
 import com.depromeet.team6.presentation.util.HomeAmplitude.HOME
@@ -50,10 +48,10 @@ fun TMapViewCompose(
     padding: PaddingValues,
     currentLocation: LatLng,
     modifier: Modifier = Modifier,
-    viewModel: HomeViewModel
+    isAlarmRegistered: Boolean,
+    userId: Int,
+    getCenterLocation: (LatLng) -> Unit
 ) {
-    val uiState = viewModel.uiState.collectAsState().value
-
     val context = LocalContext.current
     val tMapView = remember { TMapView(context) }
     var isMapReady by remember { mutableStateOf(false) }
@@ -71,12 +69,12 @@ fun TMapViewCompose(
                 val centerLat = tMapView.centerPoint.latitude
                 val centerLon = tMapView.centerPoint.longitude
 
-                viewModel.getCenterLocation(LatLng(centerLat, centerLon))
+                getCenterLocation(LatLng(centerLat, centerLon))
 
                 AmplitudeUtils.trackEventWithProperties(
                     eventName = HOME_COURSESEARCH_ENTERED_WITH_MAP_DRAG,
                     mapOf(
-                        USER_ID to viewModel.getUserId(),
+                        USER_ID to userId,
                         SCREEN_NAME to HOME,
                         HOME_COURSESEARCH_ENTERED_WITH_MAP_DRAG to true
                     )
@@ -151,7 +149,7 @@ fun TMapViewCompose(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .then(
-                    if (uiState.isAlarmRegistered) {
+                    if (isAlarmRegistered) {
                         Modifier.padding(bottom = 35.dp, end = 16.dp)
                     } else {
                         Modifier.padding(bottom = 35.dp, end = 16.dp)
@@ -161,12 +159,12 @@ fun TMapViewCompose(
                     val tMapPoint = TMapPoint(currentLocation.latitude, currentLocation.longitude)
                     tMapView.setCenterPoint(tMapPoint.latitude, tMapPoint.longitude)
 
-                    viewModel.getCenterLocation(LatLng(tMapPoint.latitude, tMapPoint.longitude))
+                    getCenterLocation(LatLng(tMapPoint.latitude, tMapPoint.longitude))
 
                     AmplitudeUtils.trackEventWithProperties(
                         eventName = HOME_COURSESEARCH_ENTERED_WITH_CURRENT_LOCATION,
                         mapOf(
-                            USER_ID to viewModel.getUserId(),
+                            USER_ID to userId,
                             SCREEN_NAME to HOME,
                             HOME_COURSESEARCH_ENTERED_WITH_CURRENT_LOCATION to true
                         )
