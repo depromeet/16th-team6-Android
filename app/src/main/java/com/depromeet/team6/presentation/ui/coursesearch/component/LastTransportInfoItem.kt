@@ -46,7 +46,7 @@ fun LastTransportInfoItem(
     Column(
         modifier = modifier
             .clip(RoundedCornerShape(12.dp))
-            .background(defaultTeam6Colors.greyCard)
+            .background(defaultTeam6Colors.gray940)
             .padding(vertical = 20.dp, horizontal = 16.dp)
             .clickable {
                 onItemClick(
@@ -101,7 +101,7 @@ fun LastTransportInfoItem(
                     id = R.string.course_detail_description
                 ),
                 style = defaultTeam6Typography.bodyRegular12,
-                color = defaultTeam6Colors.greySecondaryLabel
+                color = defaultTeam6Colors.gray200
             )
             Image(
                 modifier = Modifier
@@ -138,7 +138,7 @@ fun LastTransportInfoItem(
             )
             Text(
                 style = defaultTeam6Typography.bodyRegular13,
-                color = defaultTeam6Colors.greySecondaryLabel,
+                color = defaultTeam6Colors.gray200,
                 text = stringResource(R.string.last_transport_info_departure_time)
             )
             RemainingTimeHHmm(
@@ -148,7 +148,7 @@ fun LastTransportInfoItem(
             )
             Text(
                 style = defaultTeam6Typography.bodyRegular13,
-                color = defaultTeam6Colors.greySecondaryLabel,
+                color = defaultTeam6Colors.gray200,
                 text = stringResource(R.string.last_transport_info_boarding_time)
             )
         }
@@ -188,7 +188,7 @@ fun SetNotificationButton(
     Row(
         modifier = Modifier
             .clip(RoundedCornerShape(8.dp))
-            .background(color = defaultTeam6Colors.greyDefaultButton)
+            .background(color = defaultTeam6Colors.gray910)
             .padding(vertical = 13.dp, horizontal = 28.dp)
             .fillMaxWidth()
             .noRippleClickable {
@@ -231,7 +231,7 @@ fun RemainingTimeHHmm(
     Text(
         modifier = Modifier
             .clip(RoundedCornerShape(20.dp))
-            .background(defaultTeam6Colors.greyDefaultButton)
+            .background(defaultTeam6Colors.gray910)
             .padding(vertical = 4.dp, horizontal = 8.dp),
         color = color,
         text = stringResource(R.string.last_transport_info_remaining_time, hour, minute),

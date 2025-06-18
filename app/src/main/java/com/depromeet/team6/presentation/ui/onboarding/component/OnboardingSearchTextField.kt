@@ -71,7 +71,7 @@ fun OnboardingSearchTextField(
             modifier = modifier
                 .weight(1f)
                 .roundedBackgroundWithPadding(
-                    backgroundColor = defaultTeam6Colors.systemGrey6,
+                    backgroundColor = defaultTeam6Colors.gray930,
                     cornerRadius = 8.dp,
                     padding = PaddingValues(horizontal = 12.dp)
                 ),
@@ -99,7 +99,7 @@ fun OnboardingSearchTextField(
                     if (value.isEmpty()) {
                         Text(
                             text = stringResource(R.string.onboarding_search_text_field_placeholder),
-                            color = defaultTeam6Colors.greyTertiaryLabel,
+                            color = defaultTeam6Colors.gray400,
                             style = defaultTeam6Typography.bodyMedium15
                         )
                     }

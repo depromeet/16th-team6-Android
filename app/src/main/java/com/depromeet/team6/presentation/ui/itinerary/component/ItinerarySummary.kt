@@ -39,7 +39,7 @@ fun ItinerarySummary(
 //    )
     Column(
         modifier = modifier
-            .background(defaultTeam6Colors.greyWashBackground)
+            .background(defaultTeam6Colors.gray950)
     ) {
         // 남은 시간
         if (durationHour > 0) {
@@ -77,7 +77,7 @@ fun ItinerarySummary(
                 (departMinute + durationMinute) % 60
             ),
             style = defaultTeam6Typography.bodyRegular12,
-            color = defaultTeam6Colors.greyTertiaryLabel
+            color = defaultTeam6Colors.gray400
         )
 
         // 대중교통 정보 요약

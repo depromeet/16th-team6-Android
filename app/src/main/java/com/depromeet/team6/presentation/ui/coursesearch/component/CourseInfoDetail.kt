@@ -40,7 +40,7 @@ fun CourseInfoDetail(
     Row(
         modifier = Modifier
             .clip(RoundedCornerShape(12.dp))
-            .background(defaultTeam6Colors.systemGrey5)
+            .background(defaultTeam6Colors.gray920)
             .padding(top = 8.dp, bottom = 16.dp, start = 6.dp, end = 10.dp)
             .fillMaxWidth()
             .wrapContentHeight()
@@ -102,7 +102,7 @@ fun VerticalDashedLine(
                 var y = -(dashHeight / 2)
                 while (y < size.height) {
                     drawLine(
-                        color = defaultTeam6Colors.greyQuaternaryLabel,
+                        color = defaultTeam6Colors.gray700,
                         start = Offset(x = size.width / 2, y = y),
                         end = Offset(x = size.width / 2, y = y + dashHeight),
                         strokeWidth = 1.dp.toPx()

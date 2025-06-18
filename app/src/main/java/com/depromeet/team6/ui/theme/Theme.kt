@@ -10,14 +10,14 @@ import androidx.compose.runtime.ReadOnlyComposable
 
 private val DarkColorScheme = darkColorScheme(
     primary = defaultTeam6Colors.white,
-    secondary = defaultTeam6Colors.greySecondaryLabel,
-    tertiary = defaultTeam6Colors.greyTertiaryLabel
+    secondary = defaultTeam6Colors.gray200,
+    tertiary = defaultTeam6Colors.gray400
 )
 
 private val LightColorScheme = lightColorScheme(
     primary = defaultTeam6Colors.white,
-    secondary = defaultTeam6Colors.greySecondaryLabel,
-    tertiary = defaultTeam6Colors.greyTertiaryLabel
+    secondary = defaultTeam6Colors.gray200,
+    tertiary = defaultTeam6Colors.gray400
 
     /* Other default colors to override
     background = Color(0xFFFFFBFE),
