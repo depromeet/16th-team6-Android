@@ -34,7 +34,7 @@ fun SearchHistoryContainer(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(color = defaultTeam6Colors.greyWashBackground)
+            .background(color = defaultTeam6Colors.gray950)
     ) {
         Row(
             modifier = Modifier
@@ -46,13 +46,13 @@ fun SearchHistoryContainer(
             Text(
                 text = stringResource(R.string.home_search_recent_history_text),
                 style = defaultTeam6Typography.bodyRegular14,
-                color = defaultTeam6Colors.greyTertiaryLabel
+                color = defaultTeam6Colors.gray400
             )
 
             Text(
                 text = stringResource(R.string.home_search_delete_all_text),
                 style = defaultTeam6Typography.bodyRegular13,
-                color = defaultTeam6Colors.greyTertiaryLabel,
+                color = defaultTeam6Colors.gray400,
                 modifier = Modifier.noRippleClickable {
                     // 검색 내역 전체 삭제
                     onDeleteAllButtonClicked()

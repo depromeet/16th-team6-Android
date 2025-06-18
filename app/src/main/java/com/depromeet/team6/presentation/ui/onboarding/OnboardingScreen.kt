@@ -325,7 +325,7 @@ fun OnboardingScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = defaultTeam6Colors.greyWashBackground)
+            .background(color = defaultTeam6Colors.gray950)
             .padding(padding)
     ) {
         Column(

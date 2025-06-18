@@ -56,7 +56,7 @@ fun TransportTabRow(
     TabRow(
         selectedTabIndex = selectedTabIndex,
         contentColor = defaultTeam6Colors.white,
-        containerColor = defaultTeam6Colors.greyWashBackground,
+        containerColor = defaultTeam6Colors.gray950,
         divider = {}, // 기본 밑줄 제거
         indicator = { tabPositions ->
             Box(

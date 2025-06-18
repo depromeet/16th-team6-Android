@@ -32,7 +32,7 @@ fun OnboardingTitle(onboardingType: OnboardingType, modifier: Modifier = Modifie
         Text(
             text = stringResource(id = onboardingType.subTitleStringRes),
             style = defaultTeam6Typography.bodyRegular15,
-            color = defaultTeam6Colors.greySecondaryLabel
+            color = defaultTeam6Colors.gray200
         )
     }
 }

@@ -36,7 +36,7 @@ fun OnboardingSelectedHome(
                 Text(
                     text = onboardingSearchLocation.address,
                     style = defaultTeam6Typography.bodySemiBold13,
-                    color = defaultTeam6Colors.greyTertiaryLabel
+                    color = defaultTeam6Colors.gray400
                 )
             } else {
                 Text(

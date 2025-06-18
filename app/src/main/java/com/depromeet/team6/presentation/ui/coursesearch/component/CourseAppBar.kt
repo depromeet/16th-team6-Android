@@ -32,7 +32,7 @@ fun CourseAppBar(
         Icon(
             imageVector = ImageVector.vectorResource(R.drawable.ic_all_arrow_left_grey),
             contentDescription = "appbar back",
-            tint = defaultTeam6Colors.systemGrey1,
+            tint = defaultTeam6Colors.gray300,
             modifier = Modifier
                 .size(24.dp)
                 .noRippleClickable {
@@ -43,7 +43,7 @@ fun CourseAppBar(
         Icon(
             imageVector = ImageVector.vectorResource(R.drawable.ic_onboarding_close_24),
             contentDescription = "appbar home",
-            tint = defaultTeam6Colors.systemGrey1,
+            tint = defaultTeam6Colors.gray300,
             modifier = Modifier
                 .size(24.dp)
                 .noRippleClickable {

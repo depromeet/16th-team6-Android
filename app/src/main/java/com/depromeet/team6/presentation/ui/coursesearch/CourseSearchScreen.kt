@@ -113,7 +113,7 @@ fun CourseSearchRoute(
                 uiState = uiState,
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(defaultTeam6Colors.greyWashBackground)
+                    .background(defaultTeam6Colors.gray950)
                     .padding(padding)
             )
             Box(modifier = Modifier.fillMaxSize()) {
@@ -125,7 +125,7 @@ fun CourseSearchRoute(
                 uiState = uiState,
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(defaultTeam6Colors.greyWashBackground)
+                    .background(defaultTeam6Colors.gray950)
                     .padding(padding),
                 navigateToItinerary = navigateToItinerary,
                 setNotification = { routeId ->
@@ -241,7 +241,7 @@ fun CourseSearchScreen(
 ) {
     Column(
         modifier = modifier
-            .background(defaultTeam6Colors.greyWashBackground)
+            .background(defaultTeam6Colors.gray950)
     ) {
         CourseAppBar(backButtonClicked = backButtonClicked)
         DestinationSearchBar(

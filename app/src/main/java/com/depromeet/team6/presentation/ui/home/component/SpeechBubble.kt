@@ -119,7 +119,7 @@ fun SpeechBubble(
     Box(
         modifier = modifier
             .background(
-                color = colors.greyElevatedBackground,
+                color = colors.gray940,
                 shape = SpeechBubbleShape(tailExist = tailExist)
             ),
         contentAlignment = Alignment.Center
@@ -130,7 +130,7 @@ fun SpeechBubble(
         ) {
             Text(
                 text = prefix,
-                color = colors.greyOneLabel,
+                color = colors.gray100,
                 style = typography.bodyMedium12
             )
 
@@ -147,7 +147,7 @@ fun SpeechBubble(
                 Spacer(modifier = Modifier.width(2.dp))
                 Text(
                     text = suffix,
-                    color = colors.greyOneLabel,
+                    color = colors.gray100,
                     style = typography.bodyMedium12
                 )
             }

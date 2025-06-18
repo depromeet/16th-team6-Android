@@ -37,7 +37,7 @@ fun OnboardingPermissionDeniedBottomSheet(
                 .fillMaxWidth()
                 .background(
                     shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
-                    color = defaultTeam6Colors.greyElevatedBackground
+                    color = defaultTeam6Colors.gray940
                 )
                 .padding(horizontal = 24.dp),
             verticalArrangement = Arrangement.Bottom

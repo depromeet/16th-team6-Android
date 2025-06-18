@@ -56,7 +56,7 @@ fun SearchHistoryItem(
                 Text(
                     text = homeSearchLocation.radius,
                     style = defaultTeam6Typography.bodyRegular14,
-                    color = defaultTeam6Colors.greySecondaryLabel,
+                    color = defaultTeam6Colors.gray200,
                     overflow = TextOverflow.Ellipsis
                 )
 
@@ -73,7 +73,7 @@ fun SearchHistoryItem(
                 Text(
                     text = homeSearchLocation.address,
                     style = defaultTeam6Typography.bodyRegular14,
-                    color = defaultTeam6Colors.greySecondaryLabel,
+                    color = defaultTeam6Colors.gray200,
                     overflow = TextOverflow.Ellipsis
                 )
             }
@@ -84,7 +84,7 @@ fun SearchHistoryItem(
         Icon(
             imageVector = ImageVector.vectorResource(R.drawable.ic_search_list_close_grey),
             contentDescription = stringResource(R.string.home_icon_search_text),
-            tint = defaultTeam6Colors.greyTertiaryLabel,
+            tint = defaultTeam6Colors.gray400,
             modifier = Modifier.noRippleClickable {
                 deleteButtonClicked(homeSearchLocation)
             }

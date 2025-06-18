@@ -38,7 +38,7 @@ fun MypageVersionItem(
         modifier = modifier
             .fillMaxWidth()
             .background(
-                colors.greyWashBackground
+                colors.gray950
             )
     ) {
         Row(
@@ -57,7 +57,7 @@ fun MypageVersionItem(
             Row(
                 modifier = modifier
                     .roundedBackgroundWithPadding(
-                        backgroundColor = colors.greyDefaultButton,
+                        backgroundColor = colors.gray910,
                         cornerRadius = 8.dp,
                         padding = PaddingValues(vertical = 8.dp, horizontal = 12.dp)
                     )

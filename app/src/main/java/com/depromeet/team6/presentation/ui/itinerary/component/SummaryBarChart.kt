@@ -65,7 +65,7 @@ fun SummaryBarChart(
             .height(16.dp)
             .clip(RoundedCornerShape(20.dp))
             .roundedBackgroundWithPadding(
-                backgroundColor = defaultTeam6Colors.greyButtonOutline,
+                backgroundColor = defaultTeam6Colors.gray800,
                 padding = PaddingValues(horizontal = 4.dp)
             )
             .onGloballyPositioned { layoutCoordinates ->
@@ -80,7 +80,7 @@ fun SummaryBarChart(
                     modifier = Modifier
                         .width(barWidth) // 바의 너비 설정
                         .fillMaxHeight()
-                        .background(defaultTeam6Colors.greyButtonOutline)
+                        .background(defaultTeam6Colors.gray800)
                         .align(Alignment.CenterVertically)
                 ) {
                     Row(
@@ -90,12 +90,12 @@ fun SummaryBarChart(
                     ) {
                         Text(
                             text = "${leg.sectionTime / 60}",
-                            color = defaultTeam6Colors.greySecondaryLabel,
+                            color = defaultTeam6Colors.gray200,
                             style = defaultTeam6Typography.bodySemiBold10
                         )
                         Text(
                             text = "분",
-                            color = defaultTeam6Colors.greySecondaryLabel,
+                            color = defaultTeam6Colors.gray200,
                             style = defaultTeam6Typography.bodyMedium10,
                             fontSize = 9.sp
                         )
