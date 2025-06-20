@@ -12,13 +12,15 @@ fun UnifiedCharacterBubble(
     modifier: Modifier = Modifier
 ) {
     val currentSpeech = if (characterState.speechTexts.isNotEmpty()) {
-        characterState.speechTexts[characterState.currentSpeechIndex]
+        characterState.speechTexts[characterState.currentSpeechIndex.coerceIn(0, characterState.speechTexts.size - 1)]
     } else {
         SpeechBubbleData()
     }
 
+    val shouldShowSpeechBubble = characterState.speechTexts.isNotEmpty()
+
     CharacterLottieSpeechBubble(
-        prefixText = currentSpeech.prefixText,
+        prefixText = currentSpeech.prefixText ?: "",
         emphasisText = currentSpeech.emphasisText,
         suffixText = currentSpeech.suffixText,
         topPrefixText = currentSpeech.topPrefixText,
@@ -27,7 +29,8 @@ fun UnifiedCharacterBubble(
         lineCount = currentSpeech.lineCount,
         onClick = onCharacterClick,
         lottieResId = characterState.lottieResId,
-        externalTrigger = characterState.animationTrigger, // 변경
+        externalTrigger = characterState.animationTrigger,
+        showSpeechBubble = shouldShowSpeechBubble,
         modifier = modifier
     )
 }

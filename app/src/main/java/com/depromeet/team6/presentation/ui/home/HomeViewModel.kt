@@ -221,7 +221,8 @@ class HomeViewModel @Inject constructor(
             }
 
             HomeContract.HomeEvent.CharacterClicked -> handleCharacterClick()
-            is HomeContract.HomeEvent.ComponentClicked -> handleComponentClick(event.componentType, event.data)
+           // is HomeContract.HomeEvent.ComponentClicked -> handleComponentClick(event.componentType, event.data)
+            is HomeContract.HomeEvent.ComponentClicked -> TODO()
         }
     }
 
@@ -613,52 +614,6 @@ class HomeViewModel @Inject constructor(
                 copy(
                     characterState = currentState.copy(isAnimating = true
                     ,animationTrigger = currentState.animationTrigger + 1)
-                )
-            }
-        }
-    }
-
-    private fun handleComponentClick(componentType: ComponentType, data: Any?) {
-        // 컴포넌트 클릭에 따른 임시 말풍선 표시
-        val tempSpeechData = when (componentType) {
-            // TODO : 조건별 데이터 추가
-            ComponentType.DEPARTURE_TIME_NOT_CONFIRMED_CLICKED -> SpeechBubbleData(
-                prefixText = "아이콘을 클릭했어요",
-                lineCount = 1
-            )
-            ComponentType.DEPARTURE_TIME_CONFIRMED_CLICKED -> SpeechBubbleData(
-                prefixText = "아이콘을 클릭했어요",
-                lineCount = 1
-            )
-            ComponentType.ROUTE_TEXT_CLICKED -> SpeechBubbleData(
-                prefixText = "아이콘을 클릭했어요",
-                lineCount = 1
-            )
-        }
-
-        // 임시 말풍선을 현재 상태에 추가
-        val currentCharacterState = uiState.value.characterState
-        setState {
-            copy(
-                characterState = currentCharacterState.copy(
-                    speechTexts = listOf(tempSpeechData) + currentCharacterState.speechTexts,
-                    currentSpeechIndex = 0,
-                    isAnimating = true
-                )
-            )
-        }
-
-        // 3초 후 원래 상태로 복원
-        viewModelScope.launch {
-            delay(3000)
-            // updateCharacterState() 대신 아래로 변경
-            setState {
-                copy(
-                    characterState = currentCharacterState.copy(
-                        speechTexts = currentCharacterState.speechTexts.drop(1),
-                        currentSpeechIndex = 0,
-                        isAnimating = false
-                    )
                 )
             }
         }

@@ -1,5 +1,6 @@
 package com.depromeet.team6.presentation.ui.home
 
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -39,6 +40,7 @@ import com.depromeet.team6.R
 import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.course.TransportType
 import com.depromeet.team6.presentation.model.home.CharacterState
+import com.depromeet.team6.presentation.model.home.ComponentType
 import com.depromeet.team6.presentation.model.home.SpeechBubbleData
 import com.depromeet.team6.presentation.model.itinerary.FocusedMarkerParameter
 import com.depromeet.team6.presentation.ui.common.view.AtChaLoadingView
@@ -72,6 +74,10 @@ import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.android.gms.maps.model.LatLng
 import com.google.gson.Gson
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.text.NumberFormat
 import java.time.LocalDateTime
@@ -351,6 +357,7 @@ fun HomeScreen(
         userDepartureCheckDetailText = stringResource(R.string.home_bubble_user_departure_check_detail_text),
     )
 
+
     val baseCharacterData = remember(
         homeUiState.isAlarmRegistered,
         homeUiState.userDeparture,
@@ -378,11 +385,61 @@ fun HomeScreen(
         0
     }
 
+
+    var tempSpeechBubble by remember { mutableStateOf<SpeechBubbleData?>(null) }
+    var isShowingTempMessage by remember { mutableStateOf(false) }
+    var hideBubbleAfterComponentClick by remember { mutableStateOf(false) }
+
+    fun showTempMessage(componentType: ComponentType) {
+        val speechBubble = when (componentType) {
+            ComponentType.DEPARTURE_TIME_NOT_CONFIRMED_CLICKED -> SpeechBubbleData(
+                prefixText = "",
+                emphasisText = characterTexts.expectTimeClickedText2,
+                suffixText = "",
+                topEmphasisText = characterTexts.expectTimeClickedText1,
+                lineCount = 2
+            )
+
+            ComponentType.DEPARTURE_TIME_CONFIRMED_CLICKED -> SpeechBubbleData(
+                prefixText = "",
+                emphasisText = characterTexts.timeInfoText2,
+                suffixText = "",
+                topEmphasisText = characterTexts.timeInfoText1,
+                lineCount = 2
+            )
+
+            ComponentType.ROUTE_TEXT_CLICKED -> SpeechBubbleData(
+                prefixText = "",
+                emphasisText = characterTexts.changeLocationClickedText,
+                suffixText = "",
+                lineCount = 1
+            )
+        }
+
+        isShowingTempMessage = true
+        tempSpeechBubble = speechBubble
+        animationTrigger++
+
+        CoroutineScope(Dispatchers.Main).launch {
+            delay(3000)
+            tempSpeechBubble = null
+            isShowingTempMessage = false
+            hideBubbleAfterComponentClick = true
+        }
+    }
+
+    val finalSpeechTexts = when {
+        tempSpeechBubble != null -> listOf(tempSpeechBubble!!)
+        hideBubbleAfterComponentClick -> emptyList()
+        else -> baseCharacterData.speechTexts
+    }
+
+
     val characterState = CharacterState(
-        speechTexts = baseCharacterData.speechTexts,
+        speechTexts = finalSpeechTexts,
         lottieResId = baseCharacterData.lottieResId,
         bottomPadding = baseCharacterData.bottomPadding,
-        currentSpeechIndex = safeCurrentIndex,
+        currentSpeechIndex = if (tempSpeechBubble != null) 0 else safeCurrentIndex,
         animationTrigger = animationTrigger,
         isAnimating = true
     )
@@ -454,6 +511,7 @@ fun HomeScreen(
                 homeArrivedTime = homeUiState.homeArrivedTime,
                 destination = stringResource(R.string.home_my_home_text),
                 onCourseTextClick = {
+                    showTempMessage(ComponentType.ROUTE_TEXT_CLICKED)
                     AmplitudeUtils.trackEventWithProperties(
                         HOME_ROUTE_CLICKED,
                         mapOf(
@@ -482,9 +540,10 @@ fun HomeScreen(
                     }
                 },
                 onIconClick = {
-                    characterAnimationTrigger++
+                    showTempMessage(ComponentType.DEPARTURE_TIME_CONFIRMED_CLICKED)
                 },
                 onHomeDepartureTimeClick = {
+                    showTempMessage(ComponentType.DEPARTURE_TIME_CONFIRMED_CLICKED)
                     AmplitudeUtils.trackEventWithProperties(
                         HOME_DEPARTURE_TIME_CLICKED,
                         mapOf(
@@ -495,6 +554,7 @@ fun HomeScreen(
                     )
                 },
                 onHomeExpectDepartureTimeClick = {
+                    showTempMessage(ComponentType.DEPARTURE_TIME_NOT_CONFIRMED_CLICKED)
                     AmplitudeUtils.trackEventWithProperties(
                         HOME_DEPARTURE_TIME_CLICKED,
                         mapOf(
@@ -525,10 +585,13 @@ fun HomeScreen(
         UnifiedCharacterBubble(
             characterState = characterState,
             onCharacterClick = {
-                if (characterState.speechTexts.size > 1) {
+                if (hideBubbleAfterComponentClick) {
+                    hideBubbleAfterComponentClick = false
+                    animationTrigger += 1
+                } else if (tempSpeechBubble == null && characterState.speechTexts.size > 1) {
                     currentSpeechIndex = (currentSpeechIndex + 1) % characterState.speechTexts.size
                     animationTrigger += 1
-                } else {
+                } else if (tempSpeechBubble == null) {
                     animationTrigger += 1
                 }
             },

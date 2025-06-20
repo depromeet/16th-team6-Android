@@ -36,7 +36,7 @@ fun CharacterLottieSpeechBubble(
     onClick: () -> Unit = {},
     showSpeechBubble: Boolean = true,
     lottieResId: Int = R.raw.character_alarm_not_registered,
-    externalTrigger: Int = 0 // 외부 트리거 값 추가
+    externalTrigger: Int = 0
 ) {
     val composition by rememberLottieComposition(
         spec = LottieCompositionSpec.RawRes(lottieResId)
@@ -50,7 +50,13 @@ fun CharacterLottieSpeechBubble(
 
     var speechBubbleTrigger by remember { mutableStateOf(0) }
 
-    // 외부 트리거 값이 변경될 때마다 애니메이션 재생 및 말풍선 표시 트리거
+    val hasAnyText = !prefixText.isBlank() ||
+            !emphasisText.isNullOrBlank() ||
+            !suffixText.isNullOrBlank() ||
+            !topPrefixText.isNullOrBlank() ||
+            !topEmphasisText.isNullOrBlank() ||
+            !topSuffixText.isNullOrBlank()
+
     LaunchedEffect(externalTrigger) {
         if (externalTrigger > 0) {
             iteration++
@@ -58,34 +64,32 @@ fun CharacterLottieSpeechBubble(
         }
     }
 
-    // 말풍선 표시 로직 (화면 진입 시 또는 탭할 때마다 실행)
-    LaunchedEffect(speechBubbleTrigger) {
-        if (showSpeechBubble) {
+    LaunchedEffect(speechBubbleTrigger, showSpeechBubble, hasAnyText) {
+        if (showSpeechBubble && hasAnyText) {
             isTopSpeechBubbleVisible = false
             isBottomSpeechBubbleVisible = false
 
             if (lineCount == 2) {
-                // 0.7초 후에 위쪽 말풍선 표시
                 delay(700)
-                isTopSpeechBubbleVisible = true
+                if (showSpeechBubble && hasAnyText) isTopSpeechBubbleVisible = true
 
-                // 1.5초 후에 아래쪽 말풍선 표시
                 delay(1500)
-                isBottomSpeechBubbleVisible = true
+                if (showSpeechBubble && hasAnyText) isBottomSpeechBubbleVisible = true
 
-                // 2.5초 후에 모든 말풍선 숨김
                 delay(1000)
                 isTopSpeechBubbleVisible = false
                 delay(1000)
                 isBottomSpeechBubbleVisible = false
             } else {
-                // 단일 말풍선인 경우 기존 로직
                 delay(700)
-                isBottomSpeechBubbleVisible = true
+                if (showSpeechBubble && hasAnyText) isBottomSpeechBubbleVisible = true
 
                 delay(2500)
                 isBottomSpeechBubbleVisible = false
             }
+        } else {
+            isTopSpeechBubbleVisible = false
+            isBottomSpeechBubbleVisible = false
         }
     }
 
@@ -94,9 +98,11 @@ fun CharacterLottieSpeechBubble(
     }
 
     LaunchedEffect(iteration) {
-        playAnimation = false
-        delay(10) // 짧은 지연 후 재시작
-        playAnimation = true
+        if (iteration > 0) {
+            playAnimation = false
+            delay(100)
+            playAnimation = true
+        }
     }
 
     val handleClick = {
@@ -115,8 +121,7 @@ fun CharacterLottieSpeechBubble(
     Column(
         modifier = modifier.noRippleClickable { handleClick() }
     ) {
-        if (lineCount == 2) {
-            // 위쪽 말풍선
+        if (lineCount == 2 && hasAnyText) {
             AnimatedVisibility(
                 visible = isTopSpeechBubbleVisible && showSpeechBubble,
                 enter = fadeIn(),
@@ -132,21 +137,22 @@ fun CharacterLottieSpeechBubble(
             }
         }
 
-        // 아래쪽 말풍선
-        AnimatedVisibility(
-            visible = isBottomSpeechBubbleVisible && showSpeechBubble,
-            enter = fadeIn(),
-            exit = fadeOut()
-        ) {
-            Spacer(modifier = Modifier.height(6.dp))
+        if (hasAnyText) {
+            AnimatedVisibility(
+                visible = isBottomSpeechBubbleVisible && showSpeechBubble,
+                enter = fadeIn(),
+                exit = fadeOut()
+            ) {
+                Spacer(modifier = Modifier.height(6.dp))
 
-            SpeechBubble(
-                prefix = prefixText,
-                modifier = Modifier,
-                emphasisText = emphasisText,
-                suffix = suffixText,
-                tailExist = true
-            )
+                SpeechBubble(
+                    prefix = prefixText,
+                    modifier = Modifier,
+                    emphasisText = emphasisText,
+                    suffix = suffixText,
+                    tailExist = true
+                )
+            }
         }
 
         LottieAnimation(
@@ -154,22 +160,4 @@ fun CharacterLottieSpeechBubble(
             progress = { progress }
         )
     }
-}
-
-@Preview
-@Composable
-fun CharacterLottieSpeechBubblePreview() {
-    CharacterLottieSpeechBubble(
-        prefixText = "여기서 놓치면 택시비",
-        modifier = Modifier,
-        emphasisText = "34,000",
-        suffixText = "원",
-        lineCount = 1,
-        onClick = {},
-        showSpeechBubble = true,
-        lottieResId = R.raw.atcha_character_2,
-        topPrefixText = "",
-        topEmphasisText = "",
-        topSuffixText = ""
-    )
 }
