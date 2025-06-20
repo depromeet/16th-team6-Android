@@ -76,17 +76,18 @@ fun CharacterLottieSpeechBubble(
                 delay(700)
                 if (showSpeechBubble && hasAnyText) isTopSpeechBubbleVisible = true
 
-                delay(1500)
+                delay(800)
                 if (showSpeechBubble && hasAnyText) isBottomSpeechBubbleVisible = true
 
-                delay(1000)
+                delay(1700)
                 isTopSpeechBubbleVisible = false
-                delay(1000)
+
+                delay(800)
                 isBottomSpeechBubbleVisible = false
             } else {
                 delay(700)
                 if (showSpeechBubble && hasAnyText) isBottomSpeechBubbleVisible = true
-
+                
                 delay(2500)
                 isBottomSpeechBubbleVisible = false
             }
