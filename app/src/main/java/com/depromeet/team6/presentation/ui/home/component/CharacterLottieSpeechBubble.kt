@@ -3,15 +3,18 @@ package com.depromeet.team6.presentation.ui.home.component
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -121,39 +124,46 @@ fun CharacterLottieSpeechBubble(
     Column(
         modifier = modifier.noRippleClickable { handleClick() }
     ) {
-        if (lineCount == 2 && hasAnyText) {
-            AnimatedVisibility(
-                visible = isTopSpeechBubbleVisible && showSpeechBubble,
-                enter = fadeIn(),
-                exit = fadeOut()
-            ) {
-                SpeechBubble(
-                    prefix = topPrefixText ?: "",
-                    modifier = Modifier,
-                    emphasisText = topEmphasisText,
-                    suffix = topSuffixText,
-                    tailExist = false
-                )
-            }
-        }
-
         if (hasAnyText) {
-            AnimatedVisibility(
-                visible = isBottomSpeechBubbleVisible && showSpeechBubble,
-                enter = fadeIn(),
-                exit = fadeOut()
-            ) {
-                Spacer(modifier = Modifier.height(6.dp))
+            Box {
+                androidx.compose.animation.AnimatedVisibility(
+                    visible = isBottomSpeechBubbleVisible && showSpeechBubble,
+                    enter = fadeIn(),
+                    exit = fadeOut(),
+                    modifier = Modifier
+                        .offset(y = 10.dp) // 캐릭터 상단 기준 아래로 10dp 간격
+                ) {
+                    SpeechBubble(
+                        prefix = prefixText,
+                        modifier = Modifier,
+                        emphasisText = emphasisText,
+                        suffix = suffixText,
+                        tailExist = true
+                    )
+                }
 
-                SpeechBubble(
-                    prefix = prefixText,
-                    modifier = Modifier,
-                    emphasisText = emphasisText,
-                    suffix = suffixText,
-                    tailExist = true
-                )
+                if (lineCount == 2) {
+                    androidx.compose.animation.AnimatedVisibility(
+                        visible = isTopSpeechBubbleVisible && showSpeechBubble,
+                        enter = fadeIn(),
+                        exit = fadeOut(),
+                        modifier = Modifier
+                            .align(Alignment.TopStart)
+                            .offset(y = (-26).dp) // 말풍선 높이 + 간격
+                    ) {
+                        SpeechBubble(
+                            prefix = topPrefixText ?: "",
+                            modifier = Modifier,
+                            emphasisText = topEmphasisText,
+                            suffix = topSuffixText,
+                            tailExist = false
+                        )
+                    }
+                }
             }
         }
+
+        Spacer(modifier = Modifier.height(6.dp))
 
         LottieAnimation(
             composition = composition,
