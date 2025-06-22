@@ -355,6 +355,13 @@ fun HomeScreen(
         userDepartureCheckDetailText = stringResource(R.string.home_bubble_user_departure_check_detail_text),
     )
 
+    LaunchedEffect(Unit) {
+        val prefs = context.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
+        val currentCount = prefs.getInt("app_launch_count", 0)
+        val newCount = currentCount + 1
+
+        prefs.edit().putInt("app_launch_count", newCount).apply()
+    }
 
     val baseCharacterData = remember(
         homeUiState.isAlarmRegistered,
@@ -363,7 +370,7 @@ fun HomeScreen(
         homeUiState.taxiCost,
         characterTexts
     ) {
-        generateCharacterState(homeUiState, characterTexts)
+        generateCharacterStateWithLaunchCount(homeUiState, characterTexts, context)
     }
 
     val conditionKey = remember(
@@ -794,34 +801,47 @@ private fun formatTimeString(timeString: String): String {
     }
 }
 
-private fun generateCharacterState(
+private fun generateCharacterStateWithLaunchCount(
     homeUiState: HomeContract.HomeUiState,
-    texts: CharacterTexts
+    texts: CharacterTexts,
+    context: Context
 ): CharacterState {
+    val prefs = context.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
+    val launchCount = prefs.getInt("app_launch_count", 0)
+
     return when {
         // 알림 등록 전
         !homeUiState.isAlarmRegistered -> {
-            CharacterState(
-                speechTexts = listOf(
-                    SpeechBubbleData(
-                        prefixText = texts.taxiCostText,
-                        emphasisText = texts.aboutText + NumberFormat.getNumberInstance(Locale.US)
-                            .format(homeUiState.taxiCost) + texts.wonText,
-                        suffixText = null,
-                        topPrefixText = texts.moveMapText,
-                        lineCount = 2
+            if (launchCount <= 2) {
+                CharacterState(
+                    speechTexts = listOf(
+                        SpeechBubbleData(
+                            prefixText = texts.taxiCostText,
+                            emphasisText = texts.aboutText + NumberFormat.getNumberInstance(Locale.US)
+                                .format(homeUiState.taxiCost) + texts.wonText,
+                            suffixText = null,
+                            topPrefixText = texts.moveMapText,
+                            lineCount = 2
+                        )
                     ),
-                    SpeechBubbleData(
-                        prefixText = texts.taxiCostText,
-                        emphasisText = texts.aboutText + NumberFormat.getNumberInstance(Locale.US)
-                            .format(homeUiState.taxiCost) + texts.wonText,
-                        suffixText = null,
-                        lineCount = 1
-                    )
-                ),
-                lottieResId = R.raw.atcha_character_1,
-                bottomPadding = 194.dp
-            )
+                    lottieResId = R.raw.atcha_character_1,
+                    bottomPadding = 194.dp
+                )
+            } else {
+                CharacterState(
+                    speechTexts = listOf(
+                        SpeechBubbleData(
+                            prefixText = texts.taxiCostText,
+                            emphasisText = texts.aboutText + NumberFormat.getNumberInstance(Locale.US)
+                                .format(homeUiState.taxiCost) + texts.wonText,
+                            suffixText = null,
+                            lineCount = 1
+                        )
+                    ),
+                    lottieResId = R.raw.atcha_character_1,
+                    bottomPadding = 194.dp
+                )
+            }
         }
 
         // 알림 등록 후 & 사용자 출발 전 & 차고지 출발 전
