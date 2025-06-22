@@ -100,6 +100,7 @@
     <string name="home_bubble_subway_departure_text_2">시간에 맞춰 알림을 드릴게요</string>
 
     <string name="home_bubble_time_info_text_1">이때 출발하면 막차를 탈 수 있어요</string>
+    <string name="home_bubble_departure_time_info_text_1">자리에서 출발해야 될 시간을 실시간으로 측정하고 있어요</string>
     <string name="home_bubble_time_info_text_2">시간에 맞춰 알림을 드릴게요</string>
     <string name="home_bubble_departed_taxi_cost_text">출발지에서 막차 놓치면 택시비</string>
     <string name="home_bubble_trust_text_1">믿을 수 있는</string>

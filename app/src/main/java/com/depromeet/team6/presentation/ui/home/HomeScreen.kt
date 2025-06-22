@@ -346,6 +346,7 @@ fun HomeScreen(
         subwayDepartureText2 = stringResource(R.string.home_bubble_subway_departure_text_2),
         timeInfoText1 = stringResource(R.string.home_bubble_time_info_text_1),
         timeInfoText2 = stringResource(R.string.home_bubble_time_info_text_2),
+        departureTimeText1 = stringResource(R.string.home_bubble_departure_time_info_text_1),
         busDepartureTaxiCostText = stringResource(R.string.home_bubble_departed_taxi_cost_text),
         trustText1 = stringResource(R.string.home_bubble_trust_text_1),
         trustText2 = stringResource(R.string.home_bubble_trust_text_2),
@@ -402,9 +403,9 @@ fun HomeScreen(
 
             ComponentType.DEPARTURE_TIME_CONFIRMED_CLICKED -> SpeechBubbleData(
                 prefixText = "",
-                emphasisText = characterTexts.timeInfoText2,
+                emphasisText = characterTexts.timeInfoText1,
                 suffixText = "",
-                topEmphasisText = characterTexts.timeInfoText1,
+                topEmphasisText = characterTexts.departureTimeText1,
                 lineCount = 2
             )
 
@@ -707,16 +708,16 @@ private fun generateCharacterState(
             CharacterState(
                 speechTexts = listOf(
                     SpeechBubbleData(
-                        prefixText = "",
-                        emphasisText = texts.expectDepartText,
-                        suffixText = "",
-                        lineCount = 1
-                    ),
-                    SpeechBubbleData(
                         prefixText = texts.expectTaxiCostText,
                         emphasisText = texts.aboutText + NumberFormat.getNumberInstance(Locale.US)
                             .format(homeUiState.taxiCost) + texts.wonText,
                         suffixText = null,
+                        lineCount = 1
+                    ),
+                    SpeechBubbleData(
+                        prefixText = "",
+                        emphasisText = texts.trustText1 ,
+                        suffixText = texts.trustText2,
                         lineCount = 1
                     ),
                     SpeechBubbleData(
@@ -767,12 +768,12 @@ private fun generateCharacterState(
         !homeUiState.timerFinish && homeUiState.firtTransportTation == TransportType.BUS -> {
             CharacterState(
                 speechTexts = listOf(
-                    SpeechBubbleData(
-                        prefixText = "",
-                        emphasisText = texts.userDepartureBusText,
-                        suffixText = "",
-                        lineCount = 1
-                    ),
+//                    SpeechBubbleData(
+//                        prefixText = "",
+//                        emphasisText = texts.userDepartureBusText,
+//                        suffixText = "",
+//                        lineCount = 1
+//                    ),
                     SpeechBubbleData(
                         prefixText = texts.userDepartureDownText,
                         emphasisText = texts.userDepartureDetailBtnText,
@@ -786,7 +787,7 @@ private fun generateCharacterState(
                         lineCount = 1
                     )
                 ),
-                lottieResId = R.raw.atcha_character_4, // TODO : atcha_character_5 로 변경
+                lottieResId = R.raw.atcha_character_5,
                 bottomPadding = 218.dp
             )
         }
@@ -795,12 +796,12 @@ private fun generateCharacterState(
         !homeUiState.timerFinish && homeUiState.firtTransportTation == TransportType.SUBWAY -> {
             CharacterState(
                 speechTexts = listOf(
-                    SpeechBubbleData(
-                        prefixText = "",
-                        emphasisText = texts.userDepartureSubwayText,
-                        suffixText = "",
-                        lineCount = 1
-                    ),
+//                    SpeechBubbleData(
+//                        prefixText = "",
+//                        emphasisText = texts.userDepartureSubwayText,
+//                        suffixText = "",
+//                        lineCount = 1
+//                    ),
                     SpeechBubbleData(
                         prefixText = texts.userDepartureDownText,
                         emphasisText = texts.userDepartureDetailBtnText,
@@ -814,7 +815,7 @@ private fun generateCharacterState(
                         lineCount = 1
                     )
                 ),
-                lottieResId = R.raw.atcha_character_4, // TODO : atcha_character_5 로 변경
+                lottieResId = R.raw.atcha_character_5,
                 bottomPadding = 218.dp
             )
         }
@@ -868,6 +869,7 @@ data class CharacterTexts(
     val subwayDepartureText2: String,
     val timeInfoText1: String,
     val timeInfoText2: String,
+    val departureTimeText1: String,
     val busDepartureTaxiCostText: String,
     val trustText1: String,
     val trustText2: String,
