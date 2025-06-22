@@ -1,5 +1,6 @@
 package com.depromeet.team6.presentation.ui.home
 
+import android.content.Context
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -203,10 +204,6 @@ fun HomeRoute(
         viewModel.setEvent(HomeContract.HomeEvent.SetDestination)
     }
 
-//    LaunchedEffect(Unit) {
-//        viewModel.updateCharacterState()
-//    }
-
     when (uiState.loadState) {
         LoadState.Idle, LoadState.Loading, LoadState.Success -> {
             Box {
@@ -391,6 +388,125 @@ fun HomeScreen(
     var isShowingTempMessage by remember { mutableStateOf(false) }
     var hideBubbleAfterComponentClick by remember { mutableStateOf(false) }
 
+    var hideDefaultBubbleAfterFirstMessage by remember { mutableStateOf(false) }
+    var isShowingFirstTimeMessage by remember { mutableStateOf(false) }
+
+    val currentConditionKey = remember(
+        homeUiState.isAlarmRegistered,
+        homeUiState.userDeparture,
+        homeUiState.isBusDeparted,
+        homeUiState.firtTransportTation
+    ) {
+        when {
+            homeUiState.isAlarmRegistered && !homeUiState.userDeparture && !homeUiState.isBusDeparted -> {
+                "before_bus_arrived"
+            }
+            homeUiState.isAlarmRegistered && !homeUiState.userDeparture -> {
+                if (homeUiState.firtTransportTation == TransportType.SUBWAY) {
+                    "after_subway_arrived"
+                }
+                else {
+                    "after_bus_arrived"
+                }
+            }
+            homeUiState.isAlarmRegistered && !homeUiState.timerFinish && homeUiState.firtTransportTation == TransportType.BUS ->
+                "after_user_departure_bus"
+            homeUiState.isAlarmRegistered && !homeUiState.timerFinish && homeUiState.firtTransportTation == TransportType.SUBWAY ->
+                "after_user_departure_subway"
+            else -> "none"
+        }
+    }
+
+    var previousConditionKey by remember { mutableStateOf("") }
+
+    LaunchedEffect(currentConditionKey) {
+        val prefs = context.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
+
+        if (previousConditionKey.isNotEmpty() &&
+            previousConditionKey != currentConditionKey &&
+            previousConditionKey != "none") {
+
+            val previousPrefsKey = "first_$previousConditionKey"
+            prefs.edit().remove(previousPrefsKey).apply()
+        }
+
+        previousConditionKey = currentConditionKey
+
+        if (currentConditionKey == "none") {
+            hideDefaultBubbleAfterFirstMessage = false
+            return@LaunchedEffect
+        }
+
+        val prefsKey = "first_$currentConditionKey"
+
+        if (!prefs.getBoolean(prefsKey, false)) {
+            hideDefaultBubbleAfterFirstMessage = true
+        }
+
+        if (prefs.getBoolean(prefsKey, false)) {
+            return@LaunchedEffect
+        }
+
+        val speechBubble = when (currentConditionKey) {
+            "before_bus_arrived" -> SpeechBubbleData(
+                prefixText = "",
+                emphasisText = characterTexts.subwayDepartureText1,
+                suffixText = "",
+                lineCount = 1
+            )
+
+            "after_bus_arrived" -> SpeechBubbleData(
+                prefixText = "",
+                emphasisText = characterTexts.busDepartureText2,
+                suffixText = "",
+                topEmphasisText = characterTexts.busDepartureText1,
+                lineCount = 2
+            )
+
+            "after_subway_arrived" -> SpeechBubbleData(
+                prefixText = "",
+                emphasisText = characterTexts.subwayDepartureText2,
+                suffixText = "",
+                topEmphasisText = characterTexts.subwayDepartureText1,
+                lineCount = 2
+            )
+
+            "after_user_departure_bus" -> SpeechBubbleData(
+                prefixText = "",
+                emphasisText = characterTexts.userDepartureBusText,
+                suffixText = "",
+                lineCount = 1
+            )
+
+            "after_user_departure_subway" -> SpeechBubbleData(
+                prefixText = "",
+                emphasisText = characterTexts.userDepartureSubwayText,
+                suffixText = "",
+                lineCount = 1
+            )
+
+            else -> return@LaunchedEffect
+        }
+
+        while (isShowingTempMessage) {
+            delay(100)
+        }
+
+        delay(100)
+
+        isShowingTempMessage = true
+        isShowingFirstTimeMessage = true
+        tempSpeechBubble = speechBubble
+
+        delay(if (speechBubble.lineCount == 2) 4000 else 3200)
+
+        tempSpeechBubble = null
+        isShowingTempMessage = false
+        isShowingFirstTimeMessage = false
+
+        prefs.edit().putBoolean(prefsKey, true).apply()
+    }
+
     fun showTempMessage(componentType: ComponentType) {
         val speechBubble = when (componentType) {
             ComponentType.DEPARTURE_TIME_NOT_CONFIRMED_CLICKED -> SpeechBubbleData(
@@ -436,9 +552,10 @@ fun HomeScreen(
     val finalSpeechTexts = when {
         tempSpeechBubble != null -> listOf(tempSpeechBubble!!)
         hideBubbleAfterComponentClick -> emptyList()
+        hideDefaultBubbleAfterFirstMessage -> emptyList()
+        isShowingFirstTimeMessage -> emptyList()
         else -> baseCharacterData.speechTexts
     }
-
 
     val characterState = CharacterState(
         speechTexts = finalSpeechTexts,
@@ -448,8 +565,6 @@ fun HomeScreen(
         animationTrigger = animationTrigger,
         isAnimating = true
     )
-
-    var characterAnimationTrigger by remember { mutableStateOf(0) }
 
     Box(
         modifier = modifier
@@ -590,8 +705,14 @@ fun HomeScreen(
         UnifiedCharacterBubble(
             characterState = characterState,
             onCharacterClick = {
+                if (isShowingFirstTimeMessage) {
+                    return@UnifiedCharacterBubble
+                }
                 if (hideBubbleAfterComponentClick) {
                     hideBubbleAfterComponentClick = false
+                    animationTrigger += 1
+                } else if (hideDefaultBubbleAfterFirstMessage) {
+                    hideDefaultBubbleAfterFirstMessage = false
                     animationTrigger += 1
                 } else if (tempSpeechBubble == null && characterState.speechTexts.size > 1) {
                     currentSpeechIndex = (currentSpeechIndex + 1) % characterState.speechTexts.size
@@ -768,12 +889,6 @@ private fun generateCharacterState(
         !homeUiState.timerFinish && homeUiState.firtTransportTation == TransportType.BUS -> {
             CharacterState(
                 speechTexts = listOf(
-//                    SpeechBubbleData(
-//                        prefixText = "",
-//                        emphasisText = texts.userDepartureBusText,
-//                        suffixText = "",
-//                        lineCount = 1
-//                    ),
                     SpeechBubbleData(
                         prefixText = texts.userDepartureDownText,
                         emphasisText = texts.userDepartureDetailBtnText,
@@ -796,12 +911,6 @@ private fun generateCharacterState(
         !homeUiState.timerFinish && homeUiState.firtTransportTation == TransportType.SUBWAY -> {
             CharacterState(
                 speechTexts = listOf(
-//                    SpeechBubbleData(
-//                        prefixText = "",
-//                        emphasisText = texts.userDepartureSubwayText,
-//                        suffixText = "",
-//                        lineCount = 1
-//                    ),
                     SpeechBubbleData(
                         prefixText = texts.userDepartureDownText,
                         emphasisText = texts.userDepartureDetailBtnText,

@@ -269,6 +269,16 @@ class HomeViewModel @Inject constructor(
 
                 editor.apply()
 
+                val prefs = context.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
+                val characterEditor = prefs.edit()
+
+                characterEditor.remove("first_alarm_before_bus")
+                characterEditor.remove("first_alarm_after_bus")
+                characterEditor.remove("first_alarm_after_subway")
+                characterEditor.remove("first_user_departed_bus")
+                characterEditor.remove("first_user_departed_subway")
+                characterEditor.apply()
+
                 setEvent(HomeContract.HomeEvent.DismissDialog)
             } else {
                 Log.d("알림 삭제 실패", "알림 삭제 실패")
