@@ -421,7 +421,11 @@ fun HomeScreen(
         animationTrigger++
 
         CoroutineScope(Dispatchers.Main).launch {
-            delay(3000)
+            if (speechBubble.lineCount == 2) {
+                delay(4000)
+            } else {
+                delay(3200)
+            }
             tempSpeechBubble = null
             isShowingTempMessage = false
             hideBubbleAfterComponentClick = true
