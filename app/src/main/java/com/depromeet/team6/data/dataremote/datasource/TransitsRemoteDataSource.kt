@@ -2,6 +2,7 @@ package com.depromeet.team6.data.dataremote.datasource
 
 import com.depromeet.team6.data.dataremote.model.request.exeption.RequestException
 import com.depromeet.team6.data.dataremote.model.response.base.ApiResponse
+import com.depromeet.team6.data.dataremote.model.response.base.handle
 import com.depromeet.team6.data.dataremote.model.response.base.toResult
 import com.depromeet.team6.data.dataremote.model.response.transits.ResponseBusArrivalsDto
 import com.depromeet.team6.data.dataremote.model.response.transits.ResponseBusOperationInfoDto
@@ -21,24 +22,8 @@ class TransitsRemoteDataSource @Inject constructor(
         endLon: String,
         sortType: Int
     ): Result<List<ResponseCourseSearchDto>> {
-        val response = transitsService.getAvailableCourses(startLat, startLon, endLat, endLon, sortType)
-        if (response.isSuccessful) {
-            return response.body()?.toResult()
-                ?: Result.failure(IllegalStateException("response is null"))
-        } else {
-            if (response.code() in 400..499) {
-                val errorBody = response.errorBody()?.string()
-                val errorResponse = Gson().fromJson(errorBody, ApiResponse::class.java)
-
-                return Result.failure(
-                    RequestException(
-                        errorResponse.responseCode,
-                        errorResponse.message!!
-                    )
-                )
-            } else {
-                return Result.failure(IllegalStateException("서버로부터 응답이 없습니다."))
-            }
+        return ApiResponse.handle {
+            transitsService.getAvailableCourses(startLat, startLon, endLat, endLon, sortType)
         }
     }
 
