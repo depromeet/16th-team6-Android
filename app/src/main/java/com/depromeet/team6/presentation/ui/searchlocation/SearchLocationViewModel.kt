@@ -10,6 +10,7 @@ import com.depromeet.team6.domain.usecase.GetAddressFromCoordinatesUseCase
 import com.depromeet.team6.domain.usecase.GetLocationsUseCase
 import com.depromeet.team6.domain.usecase.GetSearchHistoriesUseCase
 import com.depromeet.team6.domain.usecase.PostSearchHistoriesUseCase
+import com.depromeet.team6.presentation.model.exception.ErrorControlFailureException
 import com.depromeet.team6.presentation.util.base.BaseViewModel
 import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -184,13 +185,20 @@ class SearchLocationViewModel @Inject constructor(
 
     fun getCenterLocation(location: LatLng, onComplete: (Address) -> Unit = {}) {
         viewModelScope.launch {
-            getAddressFromCoordinatesUseCase(location.latitude, location.longitude)
-                .onSuccess { address ->
-                    setState { copy(selectLocation = address) }
-                    onComplete(address)
-                }
-                .onFailure {
-                }
+            try {
+                val address = getAddressFromCoordinatesUseCase(location.latitude, location.longitude)
+                setState { copy(selectLocation = address) }
+                onComplete(address)
+            } catch (e : ErrorControlFailureException) {
+
+            }
+//            getAddressFromCoordinatesUseCase(location.latitude, location.longitude)
+//                .onSuccess { address ->
+//                    setState { copy(selectLocation = address) }
+//                    onComplete(address)
+//                }
+//                .onFailure {
+//                }
         }
     }
 }

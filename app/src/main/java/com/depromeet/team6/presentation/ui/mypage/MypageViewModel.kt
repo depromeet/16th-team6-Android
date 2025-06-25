@@ -17,6 +17,7 @@ import com.depromeet.team6.domain.usecase.GetUserInfoUseCase
 import com.depromeet.team6.domain.usecase.ModifyUserInfoUseCase
 import com.depromeet.team6.domain.usecase.PostLogoutUseCase
 import com.depromeet.team6.presentation.mapper.toPresentationList
+import com.depromeet.team6.presentation.model.exception.ErrorControlFailureException
 import com.depromeet.team6.presentation.util.base.BaseViewModel
 import com.depromeet.team6.presentation.util.context.getUserLocation
 import com.depromeet.team6.presentation.util.permission.PermissionUtil
@@ -289,31 +290,50 @@ class MypageViewModel @Inject constructor(
         lon: Double
     ) {
         viewModelScope.launch {
-            getAddressFromCoordinatesUseCase.invoke(lat, lon)
-                .onSuccess { address ->
-                    setState {
-                        copy(
-                            myAdress = myAdress.copy(
-                                address = address.address
-                            )
+            try {
+                val address = getAddressFromCoordinatesUseCase(lat, lon)
+                setState {
+                    copy(
+                        myAdress = myAdress.copy(
+                            address = address.address
                         )
-                    }
-                }.onFailure {
-                    Timber.e("주소 변환 실패: ${it.message}")
+                    )
                 }
+            } catch (e : ErrorControlFailureException) {
+                Timber.e("주소 변환 실패: ${e.message}")
+            }
+//            getAddressFromCoordinatesUseCase.invoke(lat, lon)
+//                .onSuccess { address ->
+//                    setState {
+//                        copy(
+//                            myAdress = myAdress.copy(
+//                                address = address.address
+//                            )
+//                        )
+//                    }
+//                }.onFailure {
+//                    Timber.e("주소 변환 실패: ${it.message}")
+//                }
         }
     }
 
     fun getCenterLocation(location: LatLng, onComplete: (Address) -> Unit = {}) {
         viewModelScope.launch {
-            getAddressFromCoordinatesUseCase(location.latitude, location.longitude)
-                .onSuccess { address ->
-                    setState { copy(myAdress = address) }
-                    onComplete(address)
-                }
-                .onFailure {
-                    Timber.e("주소 변환 실패: ${it.message}")
-                }
+            try {
+                val address = getAddressFromCoordinatesUseCase(location.latitude, location.longitude)
+                setState { copy(myAdress = address) }
+                onComplete(address)
+            } catch (e : ErrorControlFailureException) {
+                Timber.e("주소 변환 실패: ${e.message}")
+            }
+//            getAddressFromCoordinatesUseCase(location.latitude, location.longitude)
+//                .onSuccess { address ->
+//                    setState { copy(myAdress = address) }
+//                    onComplete(address)
+//                }
+//                .onFailure {
+//                    Timber.e("주소 변환 실패: ${it.message}")
+//                }
         }
     }
 

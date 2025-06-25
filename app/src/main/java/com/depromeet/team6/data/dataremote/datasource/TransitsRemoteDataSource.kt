@@ -1,15 +1,12 @@
 package com.depromeet.team6.data.dataremote.datasource
 
-import com.depromeet.team6.data.dataremote.model.request.exeption.RequestException
-import com.depromeet.team6.data.dataremote.model.response.base.ApiResponse
-import com.depromeet.team6.data.dataremote.model.response.base.handle
+import com.depromeet.team6.data.dataremote.model.response.base.parse
 import com.depromeet.team6.data.dataremote.model.response.base.toResult
 import com.depromeet.team6.data.dataremote.model.response.transits.ResponseBusArrivalsDto
 import com.depromeet.team6.data.dataremote.model.response.transits.ResponseBusOperationInfoDto
 import com.depromeet.team6.data.dataremote.model.response.transits.ResponseBusPositionsDto
 import com.depromeet.team6.data.dataremote.model.response.transits.ResponseCourseSearchDto
 import com.depromeet.team6.data.dataremote.service.TransitsService
-import com.google.gson.Gson
 import javax.inject.Inject
 
 class TransitsRemoteDataSource @Inject constructor(
@@ -20,11 +17,10 @@ class TransitsRemoteDataSource @Inject constructor(
         startLon: String,
         endLat: String,
         endLon: String,
-        sortType: Int
+        sortType: Int,
     ): Result<List<ResponseCourseSearchDto>> {
-        return ApiResponse.handle {
-            transitsService.getAvailableCourses(startLat, startLon, endLat, endLon, sortType)
-        }
+        val response = transitsService.getAvailableCourses(startLat, startLon, endLat, endLon, sortType)
+        return response.parse()
     }
 
     suspend fun getBusArrival(

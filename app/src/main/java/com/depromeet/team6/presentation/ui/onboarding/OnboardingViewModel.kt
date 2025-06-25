@@ -9,6 +9,7 @@ import com.depromeet.team6.domain.usecase.GetAddressFromCoordinatesUseCase
 import com.depromeet.team6.domain.usecase.GetLocationsUseCase
 import com.depromeet.team6.domain.usecase.PostSignUpUseCase
 import com.depromeet.team6.presentation.mapper.toPresentationList
+import com.depromeet.team6.presentation.model.exception.ErrorControlFailureException
 import com.depromeet.team6.presentation.type.OnboardingType
 import com.depromeet.team6.presentation.util.AmplitudeCommon.SCREEN_NAME
 import com.depromeet.team6.presentation.util.AmplitudeCommon.USER_ID
@@ -183,13 +184,20 @@ class OnboardingViewModel @Inject constructor(
 
     fun getCenterLocation(location: LatLng, onComplete: (Address) -> Unit = {}) {
         viewModelScope.launch {
-            getAddressFromCoordinatesUseCase(location.latitude, location.longitude)
-                .onSuccess { address ->
-                    setState { copy(myAddress = address) }
-                    onComplete(address)
-                }
-                .onFailure {
-                }
+            try {
+                val address = getAddressFromCoordinatesUseCase(location.latitude, location.longitude)
+                setState { copy(myAddress = address) }
+                onComplete(address)
+            } catch (e : ErrorControlFailureException) {
+
+            }
+//            getAddressFromCoordinatesUseCase(location.latitude, location.longitude)
+//                .onSuccess { address ->
+//                    setState { copy(myAddress = address) }
+//                    onComplete(address)
+//                }
+//                .onFailure {
+//                }
         }
     }
 
@@ -201,13 +209,21 @@ class OnboardingViewModel @Inject constructor(
             val location = context.getUserLocation()
             setState { copy(userCurrentLocation = location) }
 
-            getAddressFromCoordinatesUseCase.invoke(location.latitude, location.longitude)
-                .onSuccess { address ->
-                    setState { copy(myAddress = address) }
-                    onSuccess.invoke(address)
-                }.onFailure {
-                    Timber.e("주소 변환 실패: ${it.message}")
-                }
+            try {
+                val address = getAddressFromCoordinatesUseCase(location.latitude, location.longitude)
+                setState { copy(myAddress = address) }
+                onSuccess.invoke(address)
+            } catch (e : ErrorControlFailureException) {
+                Timber.e("주소 변환 실패: ${e.message}")
+
+            }
+//            getAddressFromCoordinatesUseCase.invoke(location.latitude, location.longitude)
+//                .onSuccess { address ->
+//                    setState { copy(myAddress = address) }
+//                    onSuccess.invoke(address)
+//                }.onFailure {
+//                    Timber.e("주소 변환 실패: ${it.message}")
+//                }
         }
     }
 

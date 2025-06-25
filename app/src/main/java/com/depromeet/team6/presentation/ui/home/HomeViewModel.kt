@@ -18,6 +18,7 @@ import com.depromeet.team6.domain.usecase.GetCourseSearchResultsUseCase
 import com.depromeet.team6.domain.usecase.GetTaxiCostUseCase
 import com.depromeet.team6.domain.usecase.GetUserInfoUseCase
 import com.depromeet.team6.presentation.model.bus.BusArrivalParameter
+import com.depromeet.team6.presentation.model.exception.ErrorControlFailureException
 import com.depromeet.team6.presentation.util.AmplitudeCommon.SCREEN_NAME
 import com.depromeet.team6.presentation.util.AmplitudeCommon.USER_ID
 import com.depromeet.team6.presentation.util.HomeAmplitude.HOME
@@ -316,31 +317,58 @@ class HomeViewModel @Inject constructor(
 
     fun getCenterLocation(location: LatLng) {
         viewModelScope.launch {
-            getAddressFromCoordinatesUseCase.invoke(location.latitude, location.longitude)
-                .onSuccess { addressData ->
-                    setState {
-                        copy(
-                            markerPoint = if (addressData.name.isEmpty()) {
-                                addressData.copy(name = addressData.address)
-                            } else {
-                                addressData
-                            }
-                        )
-                    }
-                    getTaxiCost()
-                }.onFailure {
-                    setState {
-                        // 위치 찾을 수 없는 경우 서울시청으로 임의 초기화
-                        copy(
-                            markerPoint = Address(
-                                name = "서울특별시청",
-                                lat = 37.56681744674135,
-                                lon = 126.97866075004276,
-                                address = ""
-                            )
-                        )
-                    }
+            try {
+                val addressData = getAddressFromCoordinatesUseCase.invoke(location.latitude, location.longitude)
+                setState {
+                    copy(
+                        markerPoint = if (addressData.name.isEmpty()) {
+                            addressData.copy(name = addressData.address)
+                        } else {
+                            addressData
+                        }
+                    )
                 }
+                getTaxiCost()
+            } catch (e : ErrorControlFailureException) {
+                Timber.d("location error : ${e.message}")
+                setState {
+                    // 위치 찾을 수 없는 경우 서울시청으로 임의 초기화
+                    copy(
+                        markerPoint = Address(
+                            name = "서울특별시청",
+                            lat = 37.56681744674135,
+                            lon = 126.97866075004276,
+                            address = ""
+                        )
+                    )
+                }
+            }
+//            getAddressFromCoordinatesUseCase.invoke(location.latitude, location.longitude)
+//                .onSuccess { addressData ->
+//                    setState {
+//                        copy(
+//                            markerPoint = if (addressData.name.isEmpty()) {
+//                                addressData.copy(name = addressData.address)
+//                            } else {
+//                                addressData
+//                            }
+//                        )
+//                    }
+//                    getTaxiCost()
+//                }.onFailure {
+//                    Timber.d("location error : ${it.message}")
+//                    setState {
+//                        // 위치 찾을 수 없는 경우 서울시청으로 임의 초기화
+//                        copy(
+//                            markerPoint = Address(
+//                                name = "서울특별시청",
+//                                lat = 37.56681744674135,
+//                                lon = 126.97866075004276,
+//                                address = ""
+//                            )
+//                        )
+//                    }
+//                }
         }
     }
 

@@ -2,13 +2,27 @@ package com.depromeet.team6.domain.usecase
 
 import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.repository.LocationsRepository
+import com.depromeet.team6.domain.usecase.base.ApiRequestUseCase
+import com.depromeet.team6.presentation.model.exception.ErrorControlFailureException
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class GetAddressFromCoordinatesUseCase @Inject constructor(
     private val locationsRepository: LocationsRepository
-) {
-    suspend operator fun invoke(lat: Double, lon: Double): Result<Address> =
-        locationsRepository.getAddressFromCoordinates(lat = lat, lon = lon)
+) : ApiRequestUseCase<GetAddressFromCoordinatesUseCase.Params, Address>() {
+
+    data class Params(val lat: Double, val lon: Double)
+    suspend operator fun invoke(lat: Double, lon: Double): Address =
+        invoke(Params(lat, lon))
+
+    override suspend fun apiCall(params: Params): Result<Address> {
+        return locationsRepository.getAddressFromCoordinates(lat = params.lat, lon = params.lon)
+    }
+
+    override fun apiExceptionMapper(errorCode: String): ErrorControlFailureException {
+        throw when (errorCode) {
+            else -> ErrorControlFailureException.ShowToastException("알 수 없음")
+        }
+    }
 }
