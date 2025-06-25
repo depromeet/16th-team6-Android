@@ -189,8 +189,7 @@ class SearchLocationViewModel @Inject constructor(
                 val address = getAddressFromCoordinatesUseCase(location.latitude, location.longitude)
                 setState { copy(selectLocation = address) }
                 onComplete(address)
-            } catch (e : ErrorControlFailureException) {
-
+            } catch (e: ErrorControlFailureException) {
             }
 //            getAddressFromCoordinatesUseCase(location.latitude, location.longitude)
 //                .onSuccess { address ->

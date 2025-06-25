@@ -188,8 +188,7 @@ class OnboardingViewModel @Inject constructor(
                 val address = getAddressFromCoordinatesUseCase(location.latitude, location.longitude)
                 setState { copy(myAddress = address) }
                 onComplete(address)
-            } catch (e : ErrorControlFailureException) {
-
+            } catch (e: ErrorControlFailureException) {
             }
 //            getAddressFromCoordinatesUseCase(location.latitude, location.longitude)
 //                .onSuccess { address ->
@@ -213,9 +212,8 @@ class OnboardingViewModel @Inject constructor(
                 val address = getAddressFromCoordinatesUseCase(location.latitude, location.longitude)
                 setState { copy(myAddress = address) }
                 onSuccess.invoke(address)
-            } catch (e : ErrorControlFailureException) {
+            } catch (e: ErrorControlFailureException) {
                 Timber.e("주소 변환 실패: ${e.message}")
-
             }
 //            getAddressFromCoordinatesUseCase.invoke(location.latitude, location.longitude)
 //                .onSuccess { address ->

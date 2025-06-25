@@ -44,13 +44,13 @@ suspend fun <T : Any, Z : ApiResponse<T>> Response<Z>.parse(): Result<T> {
             withContext(Dispatchers.IO) {
                 val errorBodyString = reader.readText()
                 val errorBody = try {
-                        // errorBody를 ApiResponse로 파싱하는게 맞나? (성공 실패 body 형식 확인해봐야 함)
-                        Gson().fromJson(errorBodyString, ApiErrorResponse::class.java)
-                    } catch (e: Exception) {
-                        return@withContext Result.failure(ApiException.NetworkFailureException(errorMessage = e.message ?: "ErrorResponse Parsing Error"))
-                    }
+                    // errorBody를 ApiResponse로 파싱하는게 맞나? (성공 실패 body 형식 확인해봐야 함)
+                    Gson().fromJson(errorBodyString, ApiErrorResponse::class.java)
+                } catch (e: Exception) {
+                    return@withContext Result.failure(ApiException.NetworkFailureException(errorMessage = e.message ?: "ErrorResponse Parsing Error"))
+                }
                 val apiException = ApiException.ApiRequestFailureException(errorBody.responseCode, errorBody.message ?: "Unknown error")
-                Timber.d("test test ya ya ya : ${apiException}")
+                Timber.d("test test ya ya ya : $apiException")
                 return@withContext Result.failure(apiException)
             }
         }
@@ -58,9 +58,9 @@ suspend fun <T : Any, Z : ApiResponse<T>> Response<Z>.parse(): Result<T> {
     }
 }
 
-//suspend fun <T> ApiResponse.Companion.parse(
+// suspend fun <T> ApiResponse.Companion.parse(
 //    apiCall: suspend () -> Response<ApiResponse<T>>
-//): Result<T> {
+// ): Result<T> {
 //    return try {
 //        val response = apiCall()
 //
@@ -103,4 +103,4 @@ suspend fun <T : Any, Z : ApiResponse<T>> Response<Z>.parse(): Result<T> {
 //    } catch (e: Exception) {
 //        Result.failure(e)
 //    }
-//}
+// }

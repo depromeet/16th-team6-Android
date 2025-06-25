@@ -17,7 +17,7 @@ class TransitsRemoteDataSource @Inject constructor(
         startLon: String,
         endLat: String,
         endLon: String,
-        sortType: Int,
+        sortType: Int
     ): Result<List<ResponseCourseSearchDto>> {
         val response = transitsService.getAvailableCourses(startLat, startLon, endLat, endLon, sortType)
         return response.parse()

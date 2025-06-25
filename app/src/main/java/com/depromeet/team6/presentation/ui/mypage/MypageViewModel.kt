@@ -299,7 +299,7 @@ class MypageViewModel @Inject constructor(
                         )
                     )
                 }
-            } catch (e : ErrorControlFailureException) {
+            } catch (e: ErrorControlFailureException) {
                 Timber.e("주소 변환 실패: ${e.message}")
             }
 //            getAddressFromCoordinatesUseCase.invoke(lat, lon)
@@ -323,7 +323,7 @@ class MypageViewModel @Inject constructor(
                 val address = getAddressFromCoordinatesUseCase(location.latitude, location.longitude)
                 setState { copy(myAdress = address) }
                 onComplete(address)
-            } catch (e : ErrorControlFailureException) {
+            } catch (e: ErrorControlFailureException) {
                 Timber.e("주소 변환 실패: ${e.message}")
             }
 //            getAddressFromCoordinatesUseCase(location.latitude, location.longitude)

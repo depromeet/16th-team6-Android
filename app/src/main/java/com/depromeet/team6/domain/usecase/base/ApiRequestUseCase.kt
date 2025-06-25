@@ -7,10 +7,9 @@ abstract class ApiRequestUseCase<P, R> {
 
     // 템플릿 메서드 ― 흐름 고정 (final 처럼 사용)
     suspend operator fun invoke(params: P): R {
-        val apiResult = apiCall(params)          // 1단계 (추상)
+        val apiResult = apiCall(params) // 1단계 (추상)
         return apiResult.getOrElse { apiException ->
             throw when (apiException) {
-
                 is ApiException.NetworkFailureException -> {
                     // 여기서 errorCode, errorMessage 접근 가능
                     ErrorControlFailureException.ShowToastException("알 수 없는 서버에러입니다.")

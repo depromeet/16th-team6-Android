@@ -11,22 +11,21 @@ import java.io.IOException
  *
  */
 sealed class ApiException(
-    val errorCode : String,
-    val errorMessage : String
+    val errorCode: String,
+    val errorMessage: String
 ) : IOException() {
 
     companion object {
         const val NETWORK_ERROR_CODE = "NET_001"
     }
 
-     /** Network Failure
+    /** Network Failure
      * - 기기가 오프라인, 타임아웃, DNS 실패, SSL 오류,
      *   혹은 기타 이유로 정상적인 HTTP 요청을 하지 못한 상황
      */
     class NetworkFailureException(
-        errorMessage: String = "네트워크 연결을 확인해 주세요.",
+        errorMessage: String = "네트워크 연결을 확인해 주세요."
     ) : ApiException(NETWORK_ERROR_CODE, errorMessage)
-
 
     /** Business Logic Failure
      * - HTTP 통신은 성공했지만, 서버가

@@ -150,7 +150,7 @@ class CourseSearchViewModel @Inject constructor(
         }
         viewModelScope.launch {
             runCatching {
-                 loadSearchResult(
+                loadSearchResult(
                     startPoint = uiState.value.startingPoint!!,
                     endPoint = uiState.value.destinationPoint!!,
                     sortType = uiState.value.sortType
