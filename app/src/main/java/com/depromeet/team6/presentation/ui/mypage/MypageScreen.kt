@@ -1,19 +1,29 @@
 package com.depromeet.team6.presentation.ui.mypage
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -27,7 +37,7 @@ import com.depromeet.team6.presentation.ui.mypage.component.MypageListItem
 import com.depromeet.team6.presentation.ui.mypage.component.MypageVersionItem
 import com.depromeet.team6.presentation.ui.mypage.component.TitleBar
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingSearchPopup
-import com.depromeet.team6.presentation.util.WebViewUrl
+import com.depromeet.team6.presentation.util.WebViewUrl.FEEDBACK_FORM_URL
 import com.depromeet.team6.presentation.util.WebViewUrl.PRIVACY_POLICY_URL
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.presentation.util.view.LoadState
@@ -48,12 +58,17 @@ fun MypageRoute(
 
     val isInitialized = remember { mutableMapOf("initialized" to false) }
 
+    val feedbackIntent = Intent(Intent.ACTION_VIEW, Uri.parse(FEEDBACK_FORM_URL))
+
     LaunchedEffect(mypageViewModel.sideEffect, lifecycleOwner) {
         mypageViewModel.sideEffect.flowWithLifecycle(lifecycle = lifecycleOwner.lifecycle)
             .collect { sideEffect ->
                 when (sideEffect) {
                     is MypageContract.MypageSideEffect.NavigateBack -> navigateBack()
                     is MypageContract.MypageSideEffect.NavigateToLogin -> navigateToLogin()
+                    is MypageContract.MypageSideEffect.NavigateToFeedbackForm -> {
+                        context.startActivity(feedbackIntent)
+                    }
                 }
             }
     }
@@ -101,7 +116,7 @@ fun MypageRoute(
             LoadState.Idle -> {
                 if (uiState.isWebViewOpened) {
                     AtChaWebView(
-                        url = WebViewUrl.PRIVACY_POLICY_URL,
+                        url = PRIVACY_POLICY_URL,
                         onClose = { mypageViewModel.setEvent(MypageContract.MypageEvent.PolicyClosed) },
                         modifier = modifier
                     )
@@ -120,7 +135,8 @@ fun MypageRoute(
                                 dismissDialog = { mypageViewModel.setEvent(MypageContract.MypageEvent.DismissDialog) },
                                 onUpdateClicked = {
                                     mypageViewModel.navigateToPlayStore(context)
-                                }
+                                },
+                                onBannerClicked = {}
                             )
                         }
 
@@ -215,8 +231,6 @@ fun MypageScreen(
     modifier: Modifier = Modifier,
     padding: PaddingValues = PaddingValues(0.dp),
     mypageUiState: MypageContract.MypageUiState = MypageContract.MypageUiState(),
-    logoutClicked: () -> Unit = {},
-    withDrawClicked: () -> Unit = {},
     onAccountClick: () -> Unit = {},
     onChangeHomeClick: () -> Unit = {},
     onAlarmSettingClick: () -> Unit = {},
@@ -226,7 +240,8 @@ fun MypageScreen(
     onUpdateClicked: () -> Unit = {},
     logoutConfirmed: () -> Unit = {},
     withDrawConfirmed: () -> Unit = {},
-    dismissDialog: () -> Unit = {}
+    dismissDialog: () -> Unit = {},
+    onBannerClicked: () -> Unit = {}
 ) {
     val colors = LocalTeam6Colors.current
     val typography = LocalTeam6Typography.current
@@ -249,7 +264,17 @@ fun MypageScreen(
                     title = stringResource(R.string.mypage_title_text),
                     onBackClick = onBackClick
                 )
-
+                Spacer(modifier = Modifier.height(8.dp))
+                Icon(
+                    imageVector = ImageVector.vectorResource(R.drawable.ic_mypage_banner),
+                    contentDescription = null,
+                    tint = Color.Unspecified,
+                    modifier = Modifier.fillMaxWidth()
+                        .aspectRatio(328f / 88f)
+                        .noRippleClickable { }
+                        .padding(horizontal = 16.dp)
+                )
+                Spacer(modifier = Modifier.height(20.dp))
                 MypageListItem(
                     title = stringResource(R.string.mypage_account_title_text),
                     onClick = onAccountClick
