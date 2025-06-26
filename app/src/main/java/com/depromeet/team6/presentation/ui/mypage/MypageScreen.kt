@@ -136,7 +136,7 @@ fun MypageRoute(
                                 onUpdateClicked = {
                                     mypageViewModel.navigateToPlayStore(context)
                                 },
-                                onBannerClicked = {mypageViewModel.setSideEffect(MypageContract.MypageSideEffect.NavigateToFeedbackForm)}
+                                onBannerClicked = { mypageViewModel.setSideEffect(MypageContract.MypageSideEffect.NavigateToFeedbackForm) }
                             )
                         }
 
