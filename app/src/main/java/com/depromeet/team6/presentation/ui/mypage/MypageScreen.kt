@@ -136,7 +136,7 @@ fun MypageRoute(
                                 onUpdateClicked = {
                                     mypageViewModel.navigateToPlayStore(context)
                                 },
-                                onBannerClicked = {}
+                                onBannerClicked = {mypageViewModel.setSideEffect(MypageContract.MypageSideEffect.NavigateToFeedbackForm)}
                             )
                         }
 
@@ -247,7 +247,7 @@ fun MypageScreen(
     val typography = LocalTeam6Typography.current
 
     if (mypageUiState.isWebViewOpened) {
-        AtChaWebView(url = PRIVACY_POLICY_URL, onClose = webViewClose, modifier = modifier)
+        AtChaWebView(url = PRIVACY_POLICY_URL, onClose = webViewClose, modifier = modifier.padding(padding))
     } else {
         Box(
             modifier = modifier
@@ -271,7 +271,7 @@ fun MypageScreen(
                     tint = Color.Unspecified,
                     modifier = Modifier.fillMaxWidth()
                         .aspectRatio(328f / 88f)
-                        .noRippleClickable { }
+                        .noRippleClickable { onBannerClicked() }
                         .padding(horizontal = 16.dp)
                 )
                 Spacer(modifier = Modifier.height(20.dp))
