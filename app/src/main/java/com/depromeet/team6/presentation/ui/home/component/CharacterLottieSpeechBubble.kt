@@ -16,7 +16,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
@@ -54,11 +53,11 @@ fun CharacterLottieSpeechBubble(
     var speechBubbleTrigger by remember { mutableStateOf(0) }
 
     val hasAnyText = !prefixText.isBlank() ||
-            !emphasisText.isNullOrBlank() ||
-            !suffixText.isNullOrBlank() ||
-            !topPrefixText.isNullOrBlank() ||
-            !topEmphasisText.isNullOrBlank() ||
-            !topSuffixText.isNullOrBlank()
+        !emphasisText.isNullOrBlank() ||
+        !suffixText.isNullOrBlank() ||
+        !topPrefixText.isNullOrBlank() ||
+        !topEmphasisText.isNullOrBlank() ||
+        !topSuffixText.isNullOrBlank()
 
     LaunchedEffect(externalTrigger) {
         if (externalTrigger > 0) {
@@ -87,7 +86,7 @@ fun CharacterLottieSpeechBubble(
             } else {
                 delay(700)
                 if (showSpeechBubble && hasAnyText) isBottomSpeechBubbleVisible = true
-                
+
                 delay(2500)
                 isBottomSpeechBubbleVisible = false
             }

@@ -1,42 +1,42 @@
 package com.depromeet.team6.data.datalocal.service
 
-import android.app.Service
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
-import android.media.MediaPlayer
-import android.os.CountDownTimer
-import android.os.IBinder
-import android.os.VibrationEffect
-import android.os.Vibrator
-import android.util.Log
-import com.depromeet.team6.R
-import com.depromeet.team6.data.datalocal.manager.LockServiceManager
-import com.depromeet.team6.data.repositoryimpl.UserInfoRepositoryImpl
-import com.depromeet.team6.domain.usecase.GetTaxiCostUseCase
-import com.depromeet.team6.domain.usecase.GetTimeLeftUseCase
-import com.depromeet.team6.presentation.ui.lock.LockScreenNavigator
-import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import javax.inject.Inject
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
+import android.app.Service
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.location.Location
+import android.media.MediaPlayer
 import android.os.Build
+import android.os.CountDownTimer
+import android.os.IBinder
+import android.os.VibrationEffect
+import android.os.Vibrator
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
+import com.depromeet.team6.R
+import com.depromeet.team6.data.datalocal.manager.LockServiceManager
+import com.depromeet.team6.data.repositoryimpl.UserInfoRepositoryImpl
+import com.depromeet.team6.domain.usecase.GetTaxiCostUseCase
+import com.depromeet.team6.domain.usecase.GetTimeLeftUseCase
+import com.depromeet.team6.presentation.ui.lock.LockScreenNavigator
 import com.depromeet.team6.presentation.ui.main.MainActivity
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.withContext
+import javax.inject.Inject
 import kotlin.coroutines.resume
 
 @AndroidEntryPoint
@@ -166,9 +166,11 @@ class LockService : Service() {
 
         val intent = Intent(this, MainActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(
-            this, 0, intent,
+            this,
+            0,
+            intent,
             PendingIntent.FLAG_UPDATE_CURRENT or
-                    PendingIntent.FLAG_IMMUTABLE
+                PendingIntent.FLAG_IMMUTABLE
         )
 
         return NotificationCompat.Builder(this, channelId)
@@ -234,7 +236,6 @@ class LockService : Service() {
 
         CoroutineScope(Dispatchers.IO).launch {
             try {
-
                 val currentLocation = getCurrentLocation()
                 if (currentLocation == null) {
                     scheduleNextLocationCheckAndStop()
@@ -245,8 +246,10 @@ class LockService : Service() {
                 val homeLongitude = userInfoRepositoryImpl.getUserHome().longitude
 
                 val distance = calculateDistance(
-                    currentLocation.latitude, currentLocation.longitude,
-                    homeLatitude, homeLongitude
+                    currentLocation.latitude,
+                    currentLocation.longitude,
+                    homeLatitude,
+                    homeLongitude
                 )
 
                 if (distance > 1.0) {
@@ -254,7 +257,6 @@ class LockService : Service() {
                 }
 
                 scheduleNextLocationCheckAndStop()
-
             } catch (e: Exception) {
                 scheduleNextLocationCheckAndStop()
             }
@@ -322,9 +324,11 @@ class LockService : Service() {
 
         val intent = Intent(this, MainActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(
-            this, 0, intent,
+            this,
+            0,
+            intent,
             PendingIntent.FLAG_UPDATE_CURRENT or
-                    PendingIntent.FLAG_IMMUTABLE
+                PendingIntent.FLAG_IMMUTABLE
         )
 
         val notification = NotificationCompat.Builder(this, LOCATION_CHANNEL_ID)

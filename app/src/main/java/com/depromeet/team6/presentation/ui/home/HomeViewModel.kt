@@ -2,10 +2,7 @@ package com.depromeet.team6.presentation.ui.home
 
 import android.content.Context
 import android.util.Log
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewModelScope
-import com.depromeet.team6.R
 import com.depromeet.team6.data.datalocal.manager.LockServiceManager
 import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.RouteLocation
@@ -21,9 +18,6 @@ import com.depromeet.team6.domain.usecase.GetCourseSearchResultsUseCase
 import com.depromeet.team6.domain.usecase.GetTaxiCostUseCase
 import com.depromeet.team6.domain.usecase.GetUserInfoUseCase
 import com.depromeet.team6.presentation.model.bus.BusArrivalParameter
-import com.depromeet.team6.presentation.model.home.CharacterState
-import com.depromeet.team6.presentation.model.home.ComponentType
-import com.depromeet.team6.presentation.model.home.SpeechBubbleData
 import com.depromeet.team6.presentation.util.AmplitudeCommon.SCREEN_NAME
 import com.depromeet.team6.presentation.util.AmplitudeCommon.USER_ID
 import com.depromeet.team6.presentation.util.HomeAmplitude.HOME
@@ -41,10 +35,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.text.NumberFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
@@ -221,7 +213,7 @@ class HomeViewModel @Inject constructor(
             }
 
             HomeContract.HomeEvent.CharacterClicked -> handleCharacterClick()
-           // is HomeContract.HomeEvent.ComponentClicked -> handleComponentClick(event.componentType, event.data)
+            // is HomeContract.HomeEvent.ComponentClicked -> handleComponentClick(event.componentType, event.data)
             is HomeContract.HomeEvent.ComponentClicked -> TODO()
         }
     }
@@ -603,7 +595,6 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-
     private fun handleCharacterClick() {
         val currentState = uiState.value.characterState
         val speechTexts = currentState.speechTexts
@@ -622,13 +613,14 @@ class HomeViewModel @Inject constructor(
         } else {
             setState {
                 copy(
-                    characterState = currentState.copy(isAnimating = true
-                    ,animationTrigger = currentState.animationTrigger + 1)
+                    characterState = currentState.copy(
+                        isAnimating = true,
+                        animationTrigger = currentState.animationTrigger + 1
+                    )
                 )
             }
         }
     }
-
 
     companion object {
         private const val MY_PREFERENCES_NAME = "MyPreferences"

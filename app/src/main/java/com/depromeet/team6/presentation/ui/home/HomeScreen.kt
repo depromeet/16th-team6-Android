@@ -1,7 +1,6 @@
 package com.depromeet.team6.presentation.ui.home
 
 import android.content.Context
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -28,7 +27,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -47,7 +45,6 @@ import com.depromeet.team6.presentation.model.itinerary.FocusedMarkerParameter
 import com.depromeet.team6.presentation.ui.common.view.AtChaLoadingView
 import com.depromeet.team6.presentation.ui.home.component.AfterRegisterMap
 import com.depromeet.team6.presentation.ui.home.component.AfterRegisterSheet
-import com.depromeet.team6.presentation.ui.home.component.CharacterLottieSpeechBubble
 import com.depromeet.team6.presentation.ui.home.component.CurrentLocationSheet
 import com.depromeet.team6.presentation.ui.home.component.DeleteAlarmDialog
 import com.depromeet.team6.presentation.ui.home.component.TMapViewCompose
@@ -67,7 +64,6 @@ import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_ROUTE_CLICKED
 import com.depromeet.team6.presentation.util.HomeAmplitude.POPUP
 import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
 import com.depromeet.team6.presentation.util.context.getUserLocation
-import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.presentation.util.permission.PermissionUtil
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.depromeet.team6.ui.theme.LocalTeam6Colors
@@ -352,7 +348,7 @@ fun HomeScreen(
         userDepartureSubwayText = stringResource(R.string.home_bubble_user_departure_subway_text),
         userDepartureDownText = stringResource(R.string.home_bubble_user_departure_down_text),
         userDepartureDetailBtnText = stringResource(R.string.home_bubble_user_departure_detail_btn_text),
-        userDepartureCheckDetailText = stringResource(R.string.home_bubble_user_departure_check_detail_text),
+        userDepartureCheckDetailText = stringResource(R.string.home_bubble_user_departure_check_detail_text)
     )
 
     LaunchedEffect(Unit) {
@@ -390,7 +386,6 @@ fun HomeScreen(
         0
     }
 
-
     var tempSpeechBubble by remember { mutableStateOf<SpeechBubbleData?>(null) }
     var isShowingTempMessage by remember { mutableStateOf(false) }
     var hideBubbleAfterComponentClick by remember { mutableStateOf(false) }
@@ -411,8 +406,7 @@ fun HomeScreen(
             homeUiState.isAlarmRegistered && !homeUiState.userDeparture -> {
                 if (homeUiState.firtTransportTation == TransportType.SUBWAY) {
                     "after_subway_arrived"
-                }
-                else {
+                } else {
                     "after_bus_arrived"
                 }
             }
@@ -431,8 +425,8 @@ fun HomeScreen(
 
         if (previousConditionKey.isNotEmpty() &&
             previousConditionKey != currentConditionKey &&
-            previousConditionKey != "none") {
-
+            previousConditionKey != "none"
+        ) {
             val previousPrefsKey = "first_$previousConditionKey"
             prefs.edit().remove(previousPrefsKey).apply()
         }
@@ -857,7 +851,7 @@ private fun generateCharacterStateWithLaunchCount(
                     ),
                     SpeechBubbleData(
                         prefixText = "",
-                        emphasisText = texts.trustText1 ,
+                        emphasisText = texts.trustText1,
                         suffixText = texts.trustText2,
                         lineCount = 1
                     ),
@@ -866,7 +860,7 @@ private fun generateCharacterStateWithLaunchCount(
                         emphasisText = texts.expectBustDepartureText,
                         suffixText = "",
                         lineCount = 1
-                    ),
+                    )
                 ),
                 lottieResId = R.raw.atcha_chararcter_3,
                 bottomPadding = 218.dp
@@ -895,10 +889,10 @@ private fun generateCharacterStateWithLaunchCount(
                     ),
                     SpeechBubbleData(
                         prefixText = "",
-                        emphasisText = texts.trustText1 ,
+                        emphasisText = texts.trustText1,
                         suffixText = texts.trustText2,
                         lineCount = 1
-                    ),
+                    )
                 ),
                 lottieResId = R.raw.atcha_character_4,
                 bottomPadding = 218.dp
@@ -917,7 +911,7 @@ private fun generateCharacterStateWithLaunchCount(
                     ),
                     SpeechBubbleData(
                         prefixText = "",
-                        emphasisText = texts.trustText1 ,
+                        emphasisText = texts.trustText1,
                         suffixText = texts.trustText2,
                         lineCount = 1
                     )
@@ -939,7 +933,7 @@ private fun generateCharacterStateWithLaunchCount(
                     ),
                     SpeechBubbleData(
                         prefixText = "",
-                        emphasisText = texts.trustText1 ,
+                        emphasisText = texts.trustText1,
                         suffixText = texts.trustText2,
                         lineCount = 1
                     )
@@ -951,9 +945,7 @@ private fun generateCharacterStateWithLaunchCount(
 
         // 알림 등록 후 & 사용자 출발 후 & 타이머 종료
         homeUiState.timerFinish -> {
-         CharacterState(
-
-         )
+            CharacterState()
         }
 
         else -> {
@@ -1008,7 +1000,7 @@ data class CharacterTexts(
     val userDepartureSubwayText: String,
     val userDepartureDownText: String,
     val userDepartureDetailBtnText: String,
-    val userDepartureCheckDetailText: String,
+    val userDepartureCheckDetailText: String
 )
 
 @Preview
