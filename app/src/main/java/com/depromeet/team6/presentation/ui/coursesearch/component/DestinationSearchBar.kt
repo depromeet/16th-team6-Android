@@ -36,7 +36,7 @@ fun DestinationSearchBar(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(
-                    color = defaultTeam6Colors.greyElevatedCard,
+                    color = defaultTeam6Colors.gray910,
                     shape = RoundedCornerShape(12.dp)
                 )
                 .padding(16.dp),

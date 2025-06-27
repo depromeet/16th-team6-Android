@@ -39,7 +39,7 @@ fun CourseDetailButton(
             .fillMaxWidth(),
         contentPadding = PaddingValues(0.dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = colors.systemGrey5,
+            containerColor = colors.gray920,
             contentColor = colors.white
         ),
         shape = RoundedCornerShape(10.dp)

@@ -35,7 +35,7 @@ fun MypageListItem(
         modifier = modifier
             .fillMaxWidth()
             .background(
-                colors.greyWashBackground
+                colors.gray950
             )
             .noRippleClickable(onClick = onClick)
     ) {
@@ -56,7 +56,7 @@ fun MypageListItem(
                 Icon(
                     imageVector = ImageVector.vectorResource(R.drawable.ic_all_arrow_right_grey),
                     contentDescription = stringResource(R.string.mypage_icon_arrow_text),
-                    tint = colors.greyTertiaryLabel,
+                    tint = colors.gray400,
                     modifier = modifier
                 )
             }

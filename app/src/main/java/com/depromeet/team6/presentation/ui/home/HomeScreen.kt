@@ -39,6 +39,7 @@ import com.depromeet.team6.R
 import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.course.TransportType
 import com.depromeet.team6.presentation.model.itinerary.FocusedMarkerParameter
+import com.depromeet.team6.presentation.ui.alarm.NotificationScheduler
 import com.depromeet.team6.presentation.ui.common.view.AtChaLoadingView
 import com.depromeet.team6.presentation.ui.home.component.AfterRegisterMap
 import com.depromeet.team6.presentation.ui.home.component.AfterRegisterSheet
@@ -200,6 +201,15 @@ fun HomeRoute(
                 HomeScreen(
                     userLocation = LatLng(userLocation.latitude, userLocation.longitude),
                     homeUiState = uiState,
+                    getUserId = { viewModel.getUserId() },
+                    getCenterLocation = { position ->
+                        viewModel.getCenterLocation(position)
+                    },
+                    updateCurrentLocation = { newLocation ->
+                        viewModel.updateCurrentLocation(newLocation)
+                    },
+                    onTimerFinished = { viewModel.onTimerFinished() },
+                    getBusArrival = { viewModel.getBusArrival() },
                     onCharacterClick = { viewModel.onCharacterClick() },
                     navigateToMypage = navigateToMypage,
 //                    navigateToItinerary = navigateToItinerary,
@@ -295,6 +305,11 @@ fun HomeScreen(
     userLocation: LatLng,
     modifier: Modifier = Modifier,
     homeUiState: HomeContract.HomeUiState = HomeContract.HomeUiState(),
+    getUserId: () -> Int,
+    getCenterLocation: (LatLng) -> Unit = {},
+    updateCurrentLocation: (LatLng) -> Unit = {},
+    onTimerFinished: () -> Unit = {},
+    getBusArrival: () -> Unit = {},
     onCharacterClick: () -> Unit = {},
     onSearchClick: () -> Unit = {},
     onDestinationClick: () -> Unit = {},
@@ -305,8 +320,7 @@ fun HomeScreen(
     courseDetailBtnClick: (String) -> Unit = {},
     deleteAlarmConfirmed: () -> Unit = {},
     dismissDialog: () -> Unit = {},
-    navigateToSearchLocation: () -> Unit = {},
-    viewModel: HomeViewModel = hiltViewModel() // TODO : TmapViewCompose 변경 후 제거
+    navigateToSearchLocation: () -> Unit = {}
 ) {
     val context = LocalContext.current
     val colors = LocalTeam6Colors.current
@@ -339,7 +353,13 @@ fun HomeScreen(
                 padding,
                 currentLocation = userLocation,
                 legs = homeUiState.itineraryInfo!!.legs,
-                viewModel = viewModel,
+                isAlarmRegistered = homeUiState.isAlarmRegistered,
+                getCenterLocation = {
+                    getCenterLocation(it)
+                },
+                updateCurrentLocation = {
+                    updateCurrentLocation(it)
+                },
                 onTransportMarkerClick = { markerParameter ->
                     afterRegisterMapMarkerClick(markerParameter)
                 }
@@ -348,7 +368,11 @@ fun HomeScreen(
             TMapViewCompose(
                 padding,
                 userLocation,
-                viewModel = viewModel
+                isAlarmRegistered = homeUiState.isAlarmRegistered,
+                userId = getUserId(),
+                getCenterLocation = {
+                    getCenterLocation(it)
+                }
             ) // Replace with your actual API key
         }
 
@@ -382,7 +406,7 @@ fun HomeScreen(
                         HOME_ROUTE_CLICKED,
                         mapOf(
                             SCREEN_NAME to HOME,
-                            USER_ID to viewModel.getUserId(),
+                            USER_ID to getUserId(),
                             HOME_ROUTE_CLICKED to 1
                         )
                     )
@@ -394,7 +418,7 @@ fun HomeScreen(
                 },
                 onCourseDetailClick = courseDetailBtnClick,
                 onTimerFinished = {
-                    viewModel.onTimerFinished()
+                    onTimerFinished()
                 },
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
@@ -402,7 +426,7 @@ fun HomeScreen(
                 onRefreshClick = {
                     onRefreshClick()
                     if (homeUiState.firtTransportTation == TransportType.BUS) {
-                        viewModel.getBusArrival()
+                        getBusArrival()
                     }
                 },
                 onIconClick = {
@@ -413,7 +437,7 @@ fun HomeScreen(
                         HOME_DEPARTURE_TIME_CLICKED,
                         mapOf(
                             SCREEN_NAME to HOME,
-                            USER_ID to viewModel.getUserId(),
+                            USER_ID to getUserId(),
                             HOME_DEPARTURE_TIME_CLICKED to 1
                         )
                     )
@@ -423,7 +447,7 @@ fun HomeScreen(
                         HOME_DEPARTURE_TIME_CLICKED,
                         mapOf(
                             SCREEN_NAME to HOME,
-                            USER_ID to viewModel.getUserId(),
+                            USER_ID to getUserId(),
                             HOME_DEPARTURE_TIME_SUGGESTION_CLICKED to 1
                         )
                     )
@@ -583,7 +607,7 @@ fun HomeScreen(
                             ALERT_END_POPUP_1,
                             mapOf(
                                 SCREEN_NAME to POPUP,
-                                USER_ID to viewModel.getUserId(),
+                                USER_ID to getUserId(),
                                 ALERT_END_POPUP_1 to 1
                             )
                         )
@@ -639,6 +663,7 @@ private data class SpeechBubbleText(
 private fun HomeScreenPreview() {
     HomeScreen(
         padding = PaddingValues(0.dp),
-        userLocation = LatLng(37.5665, 126.9780)
+        userLocation = LatLng(37.5665, 126.9780),
+        getUserId = { 1 }
     )
 }

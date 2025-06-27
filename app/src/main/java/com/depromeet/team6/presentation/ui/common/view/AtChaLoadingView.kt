@@ -20,7 +20,7 @@ fun AtChaLoadingView() {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(defaultTeam6Colors.greyWashBackground.copy(alpha = 0.6f)),
+            .background(defaultTeam6Colors.gray950.copy(alpha = 0.6f)),
         contentAlignment = Alignment.Center
     ) {
         val composition by rememberLottieComposition(

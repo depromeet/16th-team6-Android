@@ -207,7 +207,7 @@ fun ItineraryMap(
 
     Box(
         modifier = modifier
-            .background(defaultTeam6Colors.greyWashBackground)
+            .background(defaultTeam6Colors.gray950)
     ) {
         // Tmap
         AndroidView(
@@ -259,7 +259,7 @@ fun CircleBtnBack(
         modifier = modifier
             .roundedBackgroundWithPadding(
                 cornerRadius = 100.dp,
-                backgroundColor = defaultTeam6Colors.greyElevatedBackground
+                backgroundColor = defaultTeam6Colors.gray940
             ),
         contentAlignment = Alignment.Center
     ) {
