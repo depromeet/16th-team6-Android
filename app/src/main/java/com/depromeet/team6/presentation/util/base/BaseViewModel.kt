@@ -80,7 +80,7 @@ abstract class BaseViewModel<State : UiState, SideEffect : UiSideEffect, Event :
         }
     }
 
-    private fun logException(exception : Throwable) {
+    private fun logException(exception: Throwable) {
         firebaseCrashlytics.recordException(exception)
     }
 

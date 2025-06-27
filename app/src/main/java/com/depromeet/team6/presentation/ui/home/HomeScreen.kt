@@ -121,7 +121,6 @@ fun HomeRoute(
         viewModel.loadUserDepartureState(context)
     }
 
-
     // 화면이 다시 활성화될 때마다 사용자 출발 상태를 새로 로드
     DisposableEffect(lifecycleOwner) {
         val observer = object : DefaultLifecycleObserver {

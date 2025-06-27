@@ -184,7 +184,7 @@ class OnboardingViewModel @Inject constructor(
     fun getCenterLocation(location: LatLng, onComplete: (Address) -> Unit = {}) {
         viewModelScope.launch {
             getAddressFromCoordinatesUseCase(location.latitude, location.longitude)
-                .onSuccess{ address ->
+                .onSuccess { address ->
                     setState { copy(myAddress = address) }
                     onComplete(address)
                 }
@@ -210,7 +210,7 @@ class OnboardingViewModel @Inject constructor(
             setState { copy(userCurrentLocation = location) }
 
             getAddressFromCoordinatesUseCase(location.latitude, location.longitude)
-                .onSuccess {address ->
+                .onSuccess { address ->
                     setState { copy(myAddress = address) }
                     onSuccess.invoke(address)
                 }
