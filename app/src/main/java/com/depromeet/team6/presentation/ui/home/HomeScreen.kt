@@ -1,5 +1,6 @@
 package com.depromeet.team6.presentation.ui.home
 
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -61,6 +62,7 @@ import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_DESTINATION_CLIC
 import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_ROUTE_CLICKED
 import com.depromeet.team6.presentation.util.HomeAmplitude.POPUP
 import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
+import com.depromeet.team6.presentation.util.base.ApiErrorSideEffect
 import com.depromeet.team6.presentation.util.context.getUserLocation
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.presentation.util.permission.PermissionUtil
@@ -116,11 +118,9 @@ fun HomeRoute(
 
     LaunchedEffect(Unit) {
         viewModel.loadAlarmAndCourseInfoFromPrefs(context)
-    }
-
-    LaunchedEffect(Unit) {
         viewModel.loadUserDepartureState(context)
     }
+
 
     // 화면이 다시 활성화될 때마다 사용자 출발 상태를 새로 로드
     DisposableEffect(lifecycleOwner) {
@@ -142,6 +142,9 @@ fun HomeRoute(
         viewModel.sideEffect.flowWithLifecycle(lifecycle = lifecycleOwner.lifecycle)
             .collect { sideEffect ->
                 when (sideEffect) {
+                    is ApiErrorSideEffect.ShowToastSideEffect -> {
+                        Toast.makeText(context, sideEffect.toastMessage, Toast.LENGTH_SHORT).show()
+                    }
                     is HomeContract.HomeSideEffect.NavigateToMypage -> navigateToMypage()
                     is HomeContract.HomeSideEffect.NavigateToItinerary -> navigateToItinerary(
                         Gson().toJson(uiState.itineraryInfo),

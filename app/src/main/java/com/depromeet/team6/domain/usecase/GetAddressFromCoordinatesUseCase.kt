@@ -21,7 +21,7 @@ class GetAddressFromCoordinatesUseCase @Inject constructor(
     }
 
     override fun apiExceptionMapper(errorCode: String): ErrorControlFailureException {
-        throw when (errorCode) {
+        return when (errorCode) {
             else -> ErrorControlFailureException.ShowToastException("알 수 없음")
         }
     }

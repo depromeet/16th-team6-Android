@@ -88,7 +88,7 @@ fun CourseSearchRoute(
         viewModel.sideEffect.collect { sideEffect ->
             when (sideEffect) {
                 is ApiErrorSideEffect.ShowToastSideEffect -> {
-                    Toast.makeText(context, sideEffect.message, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, sideEffect.toastMessage, Toast.LENGTH_SHORT).show()
                 }
 
                 is CourseSearchContract.CourseSideEffect.ShowNotificationToast -> {
