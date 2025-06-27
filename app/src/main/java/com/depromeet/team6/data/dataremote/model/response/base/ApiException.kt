@@ -16,7 +16,7 @@ sealed class ApiException(
 ) : IOException() {
 
     companion object {
-        const val NETWORK_ERROR_CODE = "NET_001"
+        const val NETWORK_ERROR_CODE = "NET_000"
     }
 
     /** Network Failure

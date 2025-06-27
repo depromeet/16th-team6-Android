@@ -149,18 +149,16 @@ class CourseSearchViewModel @Inject constructor(
             )
         }
         viewModelScope.launch {
-            runCatching {
-                loadSearchResult(
+            loadSearchResult(
                     startPoint = uiState.value.startingPoint!!,
                     endPoint = uiState.value.destinationPoint!!,
                     sortType = uiState.value.sortType
                 )
-            }
                 .onSuccess {
                     setEvent(CourseSearchContract.CourseEvent.LoadCourseSearchResult(it))
                 }
                 .onFailure { exception ->
-                    setSideEffect(CourseSearchContract.CourseSideEffect.ShowSearchFailedToast(exception.message!!))
+                    handleApiException(exception)
                 }
 //            val courseInfo = loadSearchResult(
 //                startPoint = uiState.value.startingPoint!!,

@@ -13,7 +13,7 @@ class GetAddressFromCoordinatesUseCase @Inject constructor(
 ) : ApiRequestUseCase<GetAddressFromCoordinatesUseCase.Params, Address>() {
 
     data class Params(val lat: Double, val lon: Double)
-    suspend operator fun invoke(lat: Double, lon: Double): Address =
+    suspend operator fun invoke(lat: Double, lon: Double): Result<Address> =
         invoke(Params(lat, lon))
 
     override suspend fun apiCall(params: Params): Result<Address> {

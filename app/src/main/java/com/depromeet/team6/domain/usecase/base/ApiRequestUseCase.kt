@@ -6,24 +6,30 @@ import com.depromeet.team6.presentation.model.exception.ErrorControlFailureExcep
 abstract class ApiRequestUseCase<P, R> {
 
     // 템플릿 메서드 ― 흐름 고정 (final 처럼 사용)
-    suspend operator fun invoke(params: P): R {
-        val apiResult = apiCall(params) // 1단계 (추상)
-        return apiResult.getOrElse { apiException ->
-            throw when (apiException) {
-                is ApiException.NetworkFailureException -> {
-                    // 여기서 errorCode, errorMessage 접근 가능
-                    ErrorControlFailureException.ShowToastException("알 수 없는 서버에러입니다.")
-                }
+    suspend operator fun invoke(params: P): Result<R> {
+        val apiResult = apiCall(params)
 
-                is ApiException.ApiRequestFailureException -> {
-                    apiExceptionMapper(apiException.errorCode)
-                }
+        return apiResult.fold(
+            onSuccess = {
+                Result.success(it)
+            },
+            onFailure = { apiException ->
+                return when (apiException) {
+                    is ApiException.NetworkFailureException -> {
+                        Result.failure(ErrorControlFailureException.ShowToastException("알 수 없는 서버에러입니다."))
+                    }
 
-                else -> {
-                    ErrorControlFailureException.ShowToastException("알 수 없는 서버에러입니다.")
+                    is ApiException.ApiRequestFailureException -> {
+                        val errorControlFailureException = apiExceptionMapper(apiException.errorCode)
+                        Result.failure(errorControlFailureException)
+                    }
+
+                    else -> {
+                        Result.failure(ErrorControlFailureException.ShowToastException("알 수 없는 서버에러입니다."))
+                    }
                 }
             }
-        }
+        )
     }
 
     /** API 호출로직 */

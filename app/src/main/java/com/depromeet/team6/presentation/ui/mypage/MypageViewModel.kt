@@ -17,7 +17,6 @@ import com.depromeet.team6.domain.usecase.GetUserInfoUseCase
 import com.depromeet.team6.domain.usecase.ModifyUserInfoUseCase
 import com.depromeet.team6.domain.usecase.PostLogoutUseCase
 import com.depromeet.team6.presentation.mapper.toPresentationList
-import com.depromeet.team6.presentation.model.exception.ErrorControlFailureException
 import com.depromeet.team6.presentation.util.base.BaseViewModel
 import com.depromeet.team6.presentation.util.context.getUserLocation
 import com.depromeet.team6.presentation.util.permission.PermissionUtil
@@ -290,18 +289,19 @@ class MypageViewModel @Inject constructor(
         lon: Double
     ) {
         viewModelScope.launch {
-            try {
-                val address = getAddressFromCoordinatesUseCase(lat, lon)
-                setState {
-                    copy(
-                        myAdress = myAdress.copy(
-                            address = address.address
+            getAddressFromCoordinatesUseCase(lat, lon)
+                .onSuccess { address ->
+                    setState {
+                        copy(
+                            myAdress = myAdress.copy(
+                                address = address.address
+                            )
                         )
-                    )
+                    }
                 }
-            } catch (e: ErrorControlFailureException) {
-                Timber.e("주소 변환 실패: ${e.message}")
-            }
+                .onFailure { exception ->
+                    handleApiException(exception)
+                }
 //            getAddressFromCoordinatesUseCase.invoke(lat, lon)
 //                .onSuccess { address ->
 //                    setState {
@@ -319,13 +319,15 @@ class MypageViewModel @Inject constructor(
 
     fun getCenterLocation(location: LatLng, onComplete: (Address) -> Unit = {}) {
         viewModelScope.launch {
-            try {
-                val address = getAddressFromCoordinatesUseCase(location.latitude, location.longitude)
-                setState { copy(myAdress = address) }
-                onComplete(address)
-            } catch (e: ErrorControlFailureException) {
-                Timber.e("주소 변환 실패: ${e.message}")
-            }
+            getAddressFromCoordinatesUseCase(location.latitude, location.longitude)
+                .onSuccess { address ->
+                    setState { copy(myAdress = address) }
+                    onComplete(address)
+                }
+                .onFailure { exception ->
+                    handleApiException(exception)
+                }
+
 //            getAddressFromCoordinatesUseCase(location.latitude, location.longitude)
 //                .onSuccess { address ->
 //                    setState { copy(myAdress = address) }

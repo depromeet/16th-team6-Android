@@ -16,8 +16,8 @@ class GetCourseSearchResultsUseCase @Inject constructor(
     suspend operator fun invoke(
         startPoint: Address,
         endPoint: Address,
-        sortType: Int
-    ): List<CourseInfo> = invoke(Params(startPoint, endPoint, sortType))
+        sortType: Int,
+    ): Result<List<CourseInfo>> = invoke(Params(startPoint, endPoint, sortType))
 
     override suspend fun apiCall(params: Params): Result<List<CourseInfo>> {
         return repository.getAvailableCourses(
