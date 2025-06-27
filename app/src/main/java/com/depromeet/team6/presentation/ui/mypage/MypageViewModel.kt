@@ -143,8 +143,6 @@ class MypageViewModel @Inject constructor(
                 setState {
                     copy(
                         userInfo = MypageUserInfo(
-                            nickname = userInfo.nickname,
-                            profileImageUrl = userInfo.profileImageUrl,
                             address = userInfo.address,
                             lat = userInfo.userHome.latitude,
                             lon = userInfo.userHome.longitude,
