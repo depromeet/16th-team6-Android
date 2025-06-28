@@ -37,11 +37,10 @@ class GetBusPositionsUseCase @Inject constructor(
         )
 
     override fun apiExceptionMapper(errorCode: String): ErrorControlFailureException = when (errorCode) {
-
         TRS_014 ->
             ErrorControlFailureException.ShowToastException(BUS_LOCATION)
 
-        TRS_015,TRS_019 ->
+        TRS_015, TRS_019 ->
             ErrorControlFailureException.ShowToastException(BUS_ROUTE)
 
         INTERNAL_SERVER_ERROR ->

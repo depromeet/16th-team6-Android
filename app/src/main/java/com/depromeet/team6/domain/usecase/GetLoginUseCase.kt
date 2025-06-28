@@ -7,9 +7,9 @@ import com.depromeet.team6.domain.RequestFormat.LOC_003
 import com.depromeet.team6.domain.RequestFormat.LOC_004
 import com.depromeet.team6.domain.RequestFormat.REQ_001
 import com.depromeet.team6.domain.RequestFormat.REQ_002
+import com.depromeet.team6.domain.ToastMessage
 import com.depromeet.team6.domain.model.Auth
 import com.depromeet.team6.domain.repository.AuthRepository
-import com.depromeet.team6.domain.ToastMessage
 import com.depromeet.team6.domain.usecase.base.ApiRequestUseCase
 import com.depromeet.team6.presentation.model.exception.ErrorControlFailureException
 import javax.inject.Inject
@@ -34,7 +34,7 @@ class GetLoginUseCase @Inject constructor(
         REQ_001, REQ_002 ->
             ErrorControlFailureException.ReportDiscordWithToast(ToastMessage.UNKNOWN)
 
-        ATH_001,ATH_003 ->
+        ATH_001, ATH_003 ->
             ErrorControlFailureException.ShowToastException(ToastMessage.EXIST_USER)
 
         LOC_003 ->

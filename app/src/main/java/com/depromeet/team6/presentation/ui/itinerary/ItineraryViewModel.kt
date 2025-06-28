@@ -111,7 +111,7 @@ class ItineraryViewModel @Inject constructor(
                         stationName = leg.startPoint.name,
                         lat = leg.startPoint.lat,
                         lon = leg.startPoint.lon
-                    ).onFailure { exception->
+                    ).onFailure { exception ->
                         handleApiException(exception = exception)
                     }
                     result.mapCatching {

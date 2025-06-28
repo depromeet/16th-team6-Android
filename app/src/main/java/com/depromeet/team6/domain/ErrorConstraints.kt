@@ -53,8 +53,8 @@ object ToastMessage {
     const val RANGE_LOCATION = "유효 범위를 벗어났습니다. 위치를 다시 설정해주세요"
     const val RANGE_CURRENT_LOCATION = "유효범위를 벗어났습니다. 현위치를 다시 확인해주세요."
 
-    const val SHORT_DISTANCE= "출발지와 도착지가 너무 가깝습니다. 출발지를 다시 선택해 주세요."
-    const val OUT_OF_RANGE="출발지가 수도권을 벗어났습니다. 출발지를 다시 선택해 주세요."
+    const val SHORT_DISTANCE = "출발지와 도착지가 너무 가깝습니다. 출발지를 다시 선택해 주세요."
+    const val OUT_OF_RANGE = "출발지가 수도권을 벗어났습니다. 출발지를 다시 선택해 주세요."
 
     const val BUS_LOCATION = "버스 위치정보를 가져올 수 없습니다."
     const val BUS_ROUTE = "버스 노선정보를 찾을 수 없습니다."

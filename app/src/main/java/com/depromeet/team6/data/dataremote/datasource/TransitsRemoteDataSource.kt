@@ -1,7 +1,6 @@
 package com.depromeet.team6.data.dataremote.datasource
 
 import com.depromeet.team6.data.dataremote.model.response.base.parse
-import com.depromeet.team6.data.dataremote.model.response.base.toResult
 import com.depromeet.team6.data.dataremote.model.response.transits.ResponseBusArrivalsDto
 import com.depromeet.team6.data.dataremote.model.response.transits.ResponseBusOperationInfoDto
 import com.depromeet.team6.data.dataremote.model.response.transits.ResponseBusPositionsDto

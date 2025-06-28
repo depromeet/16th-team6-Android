@@ -17,7 +17,6 @@ import com.depromeet.team6.data.dataremote.util.ApiConstraints.ME
 import com.depromeet.team6.data.dataremote.util.ApiConstraints.MEMBERS
 import com.depromeet.team6.data.dataremote.util.ApiConstraints.PROVIDER
 import com.depromeet.team6.data.dataremote.util.ApiConstraints.SIGNUP
-import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET

@@ -20,12 +20,12 @@ class GetCheckUseCase @Inject constructor(
     data class Params(val authorization: String, val provider: Int)
 
     suspend operator fun invoke(
-        authorization: String, provider: Int
+        authorization: String,
+        provider: Int
     ): Result<Boolean> = invoke(Params(authorization = authorization, provider = provider))
 
     override suspend fun apiCall(params: Params): Result<Boolean> =
         authRepository.getCheck(authorization = params.authorization, provider = params.provider)
-
 
     override fun apiExceptionMapper(errorCode: String): ErrorControlFailureException = when (errorCode) {
         REQ_001, REQ_002 -> ErrorControlFailureException.ReportDiscordWithToast(UNKNOWN)
@@ -33,6 +33,4 @@ class GetCheckUseCase @Inject constructor(
         INTERNAL_SERVER_ERROR -> ErrorControlFailureException.ShowToastException(NETWORK)
         else -> ErrorControlFailureException.ShowToastException(UNKNOWN)
     }
-
 }
-

@@ -9,7 +9,6 @@ import com.depromeet.team6.domain.RouteMap.TRS_017
 import com.depromeet.team6.domain.RouteMap.TRS_018
 import com.depromeet.team6.domain.RouteMap.TRS_019
 import com.depromeet.team6.domain.ToastMessage.BUS_ARRIVAL_INCORRECT
-import com.depromeet.team6.domain.ToastMessage.BUS_LOCATION
 import com.depromeet.team6.domain.ToastMessage.BUS_ROUTE
 import com.depromeet.team6.domain.ToastMessage.NETWORK
 import com.depromeet.team6.domain.ToastMessage.OUT_OF_RANGE

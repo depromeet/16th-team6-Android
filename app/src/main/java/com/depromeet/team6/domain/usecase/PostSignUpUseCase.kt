@@ -26,7 +26,6 @@ class PostSignUpUseCase @Inject constructor(
     private val authRepository: AuthRepository
 ) : ApiRequestUseCase<SignUp, Auth>() {
 
-
     override suspend fun apiCall(params: SignUp): Result<Auth> =
         authRepository.postSignUp(signUp = params)
 

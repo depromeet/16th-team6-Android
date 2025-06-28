@@ -580,7 +580,7 @@ class HomeViewModel @Inject constructor(
                         boardingTime = busArrival.realTimeBusArrival[0].remainingTime.toString()
                     )
                 }
-            }.onFailure {exception->
+            }.onFailure { exception ->
                 handleApiException(exception = exception)
             }
         }

@@ -198,7 +198,7 @@ class MypageViewModel @Inject constructor(
                             searchLocations = locations.toPresentationList()
                         )
                     }
-                }.onFailure {exception->
+                }.onFailure { exception ->
                     setState { copy(searchLocations = emptyList()) }
                     handleApiException(exception = exception)
                 }
