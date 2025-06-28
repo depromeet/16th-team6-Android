@@ -78,6 +78,7 @@ fun MainNavHost(
             padding = padding,
             popBackStack = navigator::popBackStack,
             navigateToBusCourse = navigator::navigateToBusCourse,
+            navigateToLogin = navigator::navigateToLogin,
             navigateToHome = navigator::navigateToHome
         )
 
