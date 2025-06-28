@@ -50,6 +50,7 @@ fun CourseSearchRoute(
     destinationPoint: String,
     navigateToItinerary: (String, String, String) -> Unit,
     navigateToHome: () -> Unit,
+    navigateToLogin: () -> Unit,
     fromLockScreen: Boolean = false,
     viewModel: CourseSearchViewModel = hiltViewModel()
 ) {
@@ -89,6 +90,14 @@ fun CourseSearchRoute(
             when (sideEffect) {
                 is ApiErrorSideEffect.ShowToastSideEffect -> {
                     Toast.makeText(context, sideEffect.toastMessage, Toast.LENGTH_SHORT).show()
+                }
+
+                is ApiErrorSideEffect.NavigateToHomeSideEffect -> {
+                    navigateToHome()
+                }
+
+                is ApiErrorSideEffect.NavigateToLoginSideEffect -> {
+                    navigateToLogin()
                 }
 
                 is CourseSearchContract.CourseSideEffect.ShowNotificationToast -> {

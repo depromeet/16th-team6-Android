@@ -1,6 +1,7 @@
 package com.depromeet.team6.data.dataremote.service
 
 import com.depromeet.team6.data.dataremote.model.request.alarm.RequestAlarmDto
+import com.depromeet.team6.data.dataremote.model.response.base.BaseResponse
 import com.depromeet.team6.data.dataremote.util.ApiConstraints.API
 import com.depromeet.team6.data.dataremote.util.ApiConstraints.LAST_ROUTE_ID
 import com.depromeet.team6.data.dataremote.util.ApiConstraints.NOTIFICATIONS
@@ -15,7 +16,7 @@ interface AlarmService {
     @POST("$API/$NOTIFICATIONS/$ROUTE")
     suspend fun postAlarm(
         @Body lastRouteId: RequestAlarmDto
-    ): Response<Unit>
+    ): BaseResponse<Unit>
 
     @DELETE("$API/$NOTIFICATIONS/$ROUTE")
     suspend fun deleteAlarm(
