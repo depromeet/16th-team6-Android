@@ -58,5 +58,5 @@ object ToastMessage {
 
     const val BUS_LOCATION = "버스 위치정보를 가져올 수 없습니다."
     const val BUS_ROUTE = "버스 노선정보를 찾을 수 없습니다."
-    const val BUS_ARRIVAL_INCORRECT = "버스 도착정보가 부정확해요. 다른 경로를 보여드릴까요?"
+    const val BUS_ARRIVAL_INCORRECT = "버스 도착정보를 알 수 없습니다."
 }

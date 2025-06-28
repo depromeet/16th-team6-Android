@@ -175,8 +175,9 @@ class SearchLocationViewModel @Inject constructor(
                             searchResults = locations
                         )
                     }
-                }.onFailure {
+                }.onFailure { exception ->
                     setState { copy(searchResults = emptyList()) }
+                    handleApiException(exception = exception)
                 }
             }
         }

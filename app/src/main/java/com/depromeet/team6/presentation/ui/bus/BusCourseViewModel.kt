@@ -83,8 +83,9 @@ class BusCourseViewModel @Inject constructor(
                         busRouteName = busArrival.routeName
                     )
                 }
-            }.onFailure {
+            }.onFailure { exception ->
                 setEvent(BusCourseContract.BusCourseEvent.SetScreenLoadState(loadState = LoadState.Error))
+                handleApiException(exception = exception)
             }
         }
     }
