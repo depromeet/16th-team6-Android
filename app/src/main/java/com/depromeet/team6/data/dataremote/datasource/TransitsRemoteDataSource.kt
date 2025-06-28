@@ -18,9 +18,10 @@ class TransitsRemoteDataSource @Inject constructor(
         startLat: String,
         startLon: String,
         endLat: String,
-        endLon: String
+        endLon: String,
+        sortType: Int
     ): Result<List<ResponseCourseSearchDto>> {
-        val response = transitsService.getAvailableCourses(startLat, startLon, endLat, endLon)
+        val response = transitsService.getAvailableCourses(startLat, startLon, endLat, endLon, sortType)
         if (response.isSuccessful) {
             return response.body()?.toResult()
                 ?: Result.failure(IllegalStateException("response is null"))

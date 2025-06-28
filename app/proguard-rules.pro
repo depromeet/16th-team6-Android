@@ -28,6 +28,7 @@
 -keep class com.depromeet.team6.data.datalocal.model.** { *; }
 -keep class com.depromeet.team6.domain.model.** { *; }
 -keep class com.depromeet.team6.presentation.model.** { *; }
+-keep class com.depromeet.team6.data.dataremote.** { *; }
 
 -keepattributes Signature, InnerClasses, EnclosingMethod
 -keepattributes RuntimeVisibleAnnotations, RuntimeVisibleParameterAnnotations

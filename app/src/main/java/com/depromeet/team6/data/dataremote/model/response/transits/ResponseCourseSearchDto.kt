@@ -13,7 +13,6 @@ data class ResponseCourseSearchDto(
     @SerialName("totalWalkTime") val totalWalkTime: Int,
     @SerialName("transferCount") val transferCount: Int,
     @SerialName("totalDistance") val totalDistance: Float,
-//    @SerialName("totalWalkDistance") val totalWalkDistance: Float,
     @SerialName("pathType") val pathType: Int,
     @SerialName("legs") val legs: List<Leg>
 )

@@ -10,19 +10,27 @@ import com.depromeet.team6.domain.usecase.GetLocationsUseCase
 import com.depromeet.team6.domain.usecase.PostSignUpUseCase
 import com.depromeet.team6.presentation.mapper.toPresentationList
 import com.depromeet.team6.presentation.type.OnboardingType
+import com.depromeet.team6.presentation.util.AmplitudeCommon.SCREEN_NAME
+import com.depromeet.team6.presentation.util.AmplitudeCommon.USER_ID
+import com.depromeet.team6.presentation.util.OnboardingAmplitude.ALARM_REGISTER
+import com.depromeet.team6.presentation.util.OnboardingAmplitude.USER_ALARM_FREQUENCIES
 import com.depromeet.team6.presentation.util.Provider.KAKAO
 import com.depromeet.team6.presentation.util.Token.BEARER
+import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
 import com.depromeet.team6.presentation.util.base.BaseViewModel
 import com.depromeet.team6.presentation.util.context.getUserLocation
 import com.depromeet.team6.presentation.util.permission.PermissionUtil
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.google.android.gms.maps.model.LatLng
+import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 @HiltViewModel
 class OnboardingViewModel @Inject constructor(
@@ -129,6 +137,7 @@ class OnboardingViewModel @Inject constructor(
     fun postSignUp() {
         setEvent(OnboardingContract.OnboardingEvent.PostSignUp(loadState = LoadState.Loading))
         viewModelScope.launch {
+            val token = getFcmTokenSafely()
             postSignUpUseCase(
                 signUp = SignUp(
                     provider = KAKAO,
@@ -136,7 +145,7 @@ class OnboardingViewModel @Inject constructor(
                     lat = uiState.value.myAddress.lat,
                     lon = uiState.value.myAddress.lon,
                     alertFrequencies = uiState.value.alertFrequencies,
-                    fcmToken = userInfoRepository.getFcmToken()
+                    fcmToken = token
                 )
             ).onSuccess { auth ->
                 setEvent(OnboardingContract.OnboardingEvent.PostSignUp(loadState = LoadState.Success))
@@ -144,6 +153,15 @@ class OnboardingViewModel @Inject constructor(
                 userInfoRepository.setRefreshToken(auth.refreshToken)
                 userInfoRepository.setUserHome(auth.userHome)
                 userInfoRepository.setUserId(auth.id)
+                AmplitudeUtils.setUserId(userId = auth.id)
+                AmplitudeUtils.trackEventWithProperties(
+                    eventName = USER_ALARM_FREQUENCIES,
+                    mapOf(
+                        USER_ID to auth.id,
+                        SCREEN_NAME to ALARM_REGISTER,
+                        USER_ALARM_FREQUENCIES to uiState.value.alertFrequencies
+                    )
+                )
             }.onFailure {
                 setEvent(OnboardingContract.OnboardingEvent.PostSignUp(loadState = LoadState.Error))
             }
@@ -190,6 +208,25 @@ class OnboardingViewModel @Inject constructor(
                 }.onFailure {
                     Timber.e("주소 변환 실패: ${it.message}")
                 }
+        }
+    }
+
+    private suspend fun getFcmTokenSafely(): String {
+        val cached = userInfoRepository.getFcmToken()
+        if (cached.isNotEmpty()) return cached
+
+        return suspendCoroutine { continuation ->
+            FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val token = task.result
+                    userInfoRepository.setFcmToken(token)
+                    Timber.d("FCM Token: $token")
+                    continuation.resume(token)
+                } else {
+                    Timber.e("FCM Token fetch failed: ${task.exception}")
+                    continuation.resume("")
+                }
+            }
         }
     }
 }

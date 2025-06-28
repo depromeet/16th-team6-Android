@@ -43,7 +43,7 @@ fun BusOperationInfoView(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(color = defaultTeam6Colors.greyElevatedBackground)
+            .background(color = defaultTeam6Colors.gray940)
     ) {
         Box(modifier = Modifier.fillMaxWidth()) {
             Icon(
@@ -117,7 +117,7 @@ fun BusOperationInfoView(
                 Text(
                     text = serviceHour.dailyType,
                     style = defaultTeam6Typography.bodyRegular13,
-                    color = defaultTeam6Colors.greySecondaryLabel
+                    color = defaultTeam6Colors.gray200
                 )
                 Spacer(modifier = Modifier.width(16.dp))
                 Text(
@@ -144,7 +144,7 @@ fun BusOperationInfoView(
                     Text(
                         text = serviceHour.dailyType,
                         style = defaultTeam6Typography.bodyRegular13,
-                        color = defaultTeam6Colors.greySecondaryLabel
+                        color = defaultTeam6Colors.gray200
                     )
                     Spacer(modifier = Modifier.width(6.dp))
                     Text(
@@ -163,14 +163,14 @@ fun BusOperationInfoView(
         Row(modifier = horizontalModifier.padding(vertical = 10.dp), verticalAlignment = Alignment.CenterVertically) {
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.ic_bus_course_info_12),
-                tint = defaultTeam6Colors.greySecondaryLabel,
+                tint = defaultTeam6Colors.gray200,
                 contentDescription = null
             )
             Spacer(modifier = Modifier.width(4.dp))
             Text(
                 text = "버스 정보는 운행상황 및 운수사의 정책에 따라 실제와 다를 수 있습니다.",
                 style = defaultTeam6Typography.bodyRegular11,
-                color = defaultTeam6Colors.greySecondaryLabel
+                color = defaultTeam6Colors.gray200
             )
         }
     }

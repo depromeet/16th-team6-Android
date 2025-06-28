@@ -1,6 +1,7 @@
-package com.depromeet.team6.presentation.ui.home.component
+package com.depromeet.team6.presentation.ui.itinerary.component
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -25,7 +26,7 @@ import com.depromeet.team6.ui.theme.LocalTeam6Colors
 import com.depromeet.team6.ui.theme.LocalTeam6Typography
 
 @Composable
-fun CourseDetailButton(
+fun AlarmRegisterButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -35,40 +36,45 @@ fun CourseDetailButton(
 
     Button(
         onClick = onClick,
-        modifier = modifier
-            .fillMaxWidth(),
-        contentPadding = PaddingValues(0.dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = colors.gray920,
-            contentColor = colors.white
+            containerColor = colors.systemGreen,
+            contentColor = colors.black
         ),
-        shape = RoundedCornerShape(10.dp)
+        shape = RoundedCornerShape(10.dp),
+        contentPadding = PaddingValues(0.dp)
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 14.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Icon(
-                imageVector = ImageVector.vectorResource(R.drawable.ic_all_route_white),
-                contentDescription = stringResource(R.string.home_icon_search_text)
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(R.drawable.ic_onboarding_bottom_sheet_bell_16),
+                    contentDescription = stringResource(R.string.last_transport_info_set_notification),
+                    tint = colors.black
+                )
 
-            Spacer(modifier = Modifier.width(8.dp))
+                Spacer(modifier = Modifier.width(8.dp))
 
-            Text(
-                text = text,
-                style = typography.bodyMedium15,
-                modifier = Modifier.padding(vertical = 14.dp)
-            )
+                Text(
+                    text = text,
+                    style = typography.heading5Bold17
+                )
+            }
         }
     }
 }
 
 @Preview
 @Composable
-fun CourseDetailButtonPreview() {
-    CourseDetailButton(
-        text = "상세 경로",
+fun AlarmRegisterButtonPreview() {
+    AlarmRegisterButton(
+        text = "검색하기",
         onClick = {},
         modifier = Modifier
     )

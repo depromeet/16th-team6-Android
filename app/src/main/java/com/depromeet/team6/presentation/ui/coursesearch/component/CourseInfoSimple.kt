@@ -41,7 +41,7 @@ fun CourseInfoSimple(
     Row(
         modifier = Modifier
             .clip(RoundedCornerShape(8.dp))
-            .background(defaultTeam6Colors.systemGrey5)
+            .background(defaultTeam6Colors.gray920)
             .padding(start = 7.dp, end = 10.dp, top = 6.dp, bottom = 6.dp)
             .fillMaxWidth()
             .wrapContentHeight()

@@ -4,6 +4,7 @@ import com.depromeet.team6.data.dataremote.model.response.transits.ResponseCours
 import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.course.CourseInfo
 import com.depromeet.team6.domain.model.course.LegInfo
+import com.depromeet.team6.domain.model.course.Station
 import com.depromeet.team6.domain.model.course.TransportType
 
 fun List<ResponseCourseSearchDto>.toDomain(): List<CourseInfo> = filter { response ->
@@ -50,7 +51,16 @@ fun List<ResponseCourseSearchDto>.toDomain(): List<CourseInfo> = filter { respon
                 lon = leg.end.lon.toDouble(),
                 address = ""
             ),
-            passShape = passShape ?: ""
+            passShape = passShape ?: "",
+            passStopList = leg.passStopList?.mapIndexedNotNull { idx, it ->
+                if (it.lon == null || it.lat == null) return@mapIndexedNotNull null
+                Station(
+                    index = idx,
+                    stationName = it.stationName,
+                    lon = it.lon,
+                    lat = it.lat
+                )
+            } ?: emptyList()
         )
     }
 

@@ -8,13 +8,17 @@ import android.content.Context
 import android.content.Intent
 import android.os.PowerManager
 import android.util.Log
+import androidx.annotation.Keep
+import androidx.compose.ui.graphics.toArgb
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.depromeet.team6.R
+import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.google.firebase.messaging.Constants
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 
+@Keep
 class FcmService : FirebaseMessagingService() {
 
     private lateinit var body: String
@@ -104,6 +108,8 @@ class FcmService : FirebaseMessagingService() {
             .setContentTitle(title ?: getString(R.string.notification_title_text))
             .setContentText(body ?: getString(R.string.notification_body_text))
             .setSmallIcon(R.drawable.ic_app_logo_foreground)
+            .setColor(defaultTeam6Colors.black.toArgb())
+            .setColorized(true)
             .setAutoCancel(true)
             .build()
 
@@ -136,6 +142,8 @@ class FcmService : FirebaseMessagingService() {
             .setContentTitle(title ?: getString(R.string.notification_title_text))
             .setContentText(body ?: getString(R.string.notification_body_text))
             .setSmallIcon(R.drawable.ic_app_logo_foreground)
+            .setColor(defaultTeam6Colors.black.toArgb())
+            .setColorized(true)
             .setAutoCancel(true)
             .setContentIntent(pendingIntent)
             .setCategory(Notification.CATEGORY_MESSAGE)
@@ -159,6 +167,8 @@ class FcmService : FirebaseMessagingService() {
             .setContentTitle(title)
             .setContentText(body)
             .setSmallIcon(R.drawable.ic_app_logo_foreground)
+            .setColor(defaultTeam6Colors.black.toArgb())
+            .setColorized(true)
             .setAutoCancel(true)
             .build()
 

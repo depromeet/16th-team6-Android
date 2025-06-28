@@ -8,10 +8,11 @@ import javax.inject.Inject
 class GetCourseSearchResultsUseCase @Inject constructor(
     private val repository: TransitsRepositoryImpl
 ) {
-    suspend operator fun invoke(startPoint: Address, endPoint: Address): Result<List<CourseInfo>> {
+    suspend operator fun invoke(startPoint: Address, endPoint: Address, sortType: Int): Result<List<CourseInfo>> {
         val apiResult = repository.getAvailableCourses(
             startPosition = startPoint,
-            endPosition = endPoint
+            endPosition = endPoint,
+            sortType = sortType
         )
         return apiResult
     }

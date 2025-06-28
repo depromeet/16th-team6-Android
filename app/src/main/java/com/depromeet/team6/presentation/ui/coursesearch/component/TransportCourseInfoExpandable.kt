@@ -14,7 +14,8 @@ import com.depromeet.team6.presentation.ui.itinerary.LegInfoDummyProvider
 @Composable
 fun TransportCourseInfoExpandable(
     legsInfo: List<LegInfo>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onToggleDismissClick: () -> Unit = {}
 ) {
     var expanded by remember { mutableStateOf(false) }
     if (!expanded) {
@@ -29,6 +30,7 @@ fun TransportCourseInfoExpandable(
             legsInfo = legsInfo,
             onClick = {
                 expanded = false
+                onToggleDismissClick()
             }
         )
     }

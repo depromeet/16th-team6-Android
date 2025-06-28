@@ -126,7 +126,7 @@ fun BusCourseScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(color = defaultTeam6Colors.greyElevatedBackground)
+            .background(color = defaultTeam6Colors.gray940)
             .padding(padding)
     ) {
         Column(
@@ -190,13 +190,13 @@ fun BusCourseScreen(
                         }
                         append(fullText.substring(numberEnd))
                     },
-                    style = defaultTeam6Typography.bodyRegular14.copy(color = defaultTeam6Colors.greySecondaryLabel)
+                    style = defaultTeam6Typography.bodyRegular14.copy(color = defaultTeam6Colors.gray200)
                 )
             }
             LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(color = defaultTeam6Colors.greyWashBackground),
+                    .background(color = defaultTeam6Colors.gray950),
                 state = listState
             ) {
                 items(uiState.busRouteStationList) { busRouteStation ->

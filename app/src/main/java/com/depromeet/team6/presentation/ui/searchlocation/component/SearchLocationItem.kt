@@ -55,7 +55,7 @@ fun SearchLocationItem(
                 Text(
                     text = homeSearchLocation.radius,
                     style = defaultTeam6Typography.bodyRegular14,
-                    color = defaultTeam6Colors.greySecondaryLabel,
+                    color = defaultTeam6Colors.gray200,
                     overflow = TextOverflow.Ellipsis
                 )
 
@@ -72,7 +72,7 @@ fun SearchLocationItem(
                 Text(
                     text = homeSearchLocation.address,
                     style = defaultTeam6Typography.bodyRegular14,
-                    color = defaultTeam6Colors.greySecondaryLabel,
+                    color = defaultTeam6Colors.gray200,
                     overflow = TextOverflow.Ellipsis
                 )
             }

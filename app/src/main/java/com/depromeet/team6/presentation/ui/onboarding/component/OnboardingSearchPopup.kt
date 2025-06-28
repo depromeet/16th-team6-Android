@@ -15,9 +15,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalContext
@@ -59,7 +57,7 @@ fun OnboardingSearchPopup(
         modifier = modifier
             .fillMaxSize()
             .addFocusCleaner(focusManager)
-            .background(color = defaultTeam6Colors.greyWashBackground)
+            .background(color = defaultTeam6Colors.gray950)
             .padding(padding)
     ) {
         OnboardingSearchTextField(
@@ -96,7 +94,7 @@ fun OnboardingSearchPopup(
                         modifier = Modifier.padding(start = 16.dp, top = 14.dp, bottom = 4.dp),
                         text = "주소 결과",
                         style = defaultTeam6Typography.bodyRegular14,
-                        color = defaultTeam6Colors.greyTertiaryLabel
+                        color = defaultTeam6Colors.gray400
                     )
                 }
                 items(addressLocations) { location ->
@@ -120,7 +118,7 @@ fun OnboardingSearchPopup(
                         modifier = Modifier.padding(start = 16.dp, top = 14.dp, bottom = 4.dp),
                         text = "장소 결과",
                         style = defaultTeam6Typography.bodyRegular14,
-                        color = defaultTeam6Colors.greyTertiaryLabel
+                        color = defaultTeam6Colors.gray400
                     )
                 }
                 items(placeLocations) { location ->

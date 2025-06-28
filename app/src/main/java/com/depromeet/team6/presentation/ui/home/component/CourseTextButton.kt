@@ -46,7 +46,7 @@ fun CourseTextButton(
         Text(
             text = startLocation,
             style = typography.bodyRegular15,
-            color = colors.systemGrey1
+            color = colors.gray300
         )
 
         Icon(
@@ -54,13 +54,13 @@ fun CourseTextButton(
             contentDescription = stringResource(R.string.home_icon_arrow_right_text),
             modifier = Modifier
                 .padding(horizontal = 8.dp),
-            tint = colors.systemGrey1
+            tint = colors.gray300
         )
 
         Text(
             text = destination,
             style = typography.bodyRegular15,
-            color = colors.systemGrey1
+            color = colors.gray300
         )
     }
 }

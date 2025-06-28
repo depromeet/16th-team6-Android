@@ -23,6 +23,7 @@ fun CurrentLocationSheet(
     currentLocation: String,
     destination: String,
     onSearchLocationClick: () -> Unit,
+    onDestinationClick: () -> Unit,
     onSearchClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -38,7 +39,7 @@ fun CurrentLocationSheet(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(
-                    colors.greyWashBackground,
+                    colors.gray950,
                     shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)
                 )
                 .padding(start = 16.dp, end = 16.dp, top = 24.dp, bottom = 20.dp)
@@ -47,7 +48,7 @@ fun CurrentLocationSheet(
                 locationTitle = stringResource(R.string.home_current_location_text),
                 location = currentLocation,
                 textColor = colors.systemGreen,
-                backgroundColor = colors.systemGrey6,
+                backgroundColor = colors.gray930,
                 modifier = Modifier,
                 onClick = { onSearchLocationClick() }
             )
@@ -57,9 +58,9 @@ fun CurrentLocationSheet(
             LocationText(
                 locationTitle = stringResource(R.string.home_destination_text),
                 location = destination,
-                textColor = colors.greySecondaryLabel,
-                backgroundColor = colors.greyWashBackground,
-                onClick = {},
+                textColor = colors.gray200,
+                backgroundColor = colors.gray950,
+                onClick = { onDestinationClick() },
                 modifier = Modifier
             )
 
@@ -81,6 +82,7 @@ fun CurrentLocationSheetPreview() {
         currentLocation = "중앙빌딩",
         destination = "우리집",
         onSearchLocationClick = {},
+        onDestinationClick = {},
         onSearchClick = { },
         modifier = Modifier
     )

@@ -9,6 +9,8 @@ plugins {
     alias(libs.plugins.dagger.hilt)
     alias(libs.plugins.kotlin.kapt)
     id("com.google.gms.google-services")
+    // Firebase Crashlytics
+    id("com.google.firebase.crashlytics")
 }
 
 val properties = Properties().apply {
@@ -37,8 +39,8 @@ android {
         applicationId = "com.depromeet.team6"
         minSdk = 26
         targetSdk = 34
-        versionCode = 9
-        versionName = "1.0.8"
+        versionCode = 13
+        versionName = "1.2.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "KAKAO_NATIVE_APP_KEY", properties["kakao.native.app.key"].toString())
@@ -133,6 +135,9 @@ dependencies {
     // Firebase
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
+    // Firebase Crashlytics
+    implementation(libs.firebase.crashlytics)
+    implementation(libs.google.firebase.analytics)
 
     // WebView
     implementation(libs.accompanist.webview)
@@ -154,6 +159,7 @@ dependencies {
 
     // Amplitude
     implementation(libs.amplitude)
+    implementation(libs.play.services.appset)
 }
 java {
     toolchain {

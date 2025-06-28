@@ -40,15 +40,27 @@ import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.course.TransportType
 import com.depromeet.team6.presentation.model.itinerary.FocusedMarkerParameter
 import com.depromeet.team6.presentation.ui.alarm.NotificationScheduler
-import com.depromeet.team6.presentation.ui.alarm.NotificationTimeConstants
+import com.depromeet.team6.presentation.ui.common.view.AtChaLoadingView
 import com.depromeet.team6.presentation.ui.home.component.AfterRegisterMap
 import com.depromeet.team6.presentation.ui.home.component.AfterRegisterSheet
 import com.depromeet.team6.presentation.ui.home.component.CharacterLottieSpeechBubble
 import com.depromeet.team6.presentation.ui.home.component.CurrentLocationSheet
 import com.depromeet.team6.presentation.ui.home.component.DeleteAlarmDialog
 import com.depromeet.team6.presentation.ui.home.component.TMapViewCompose
-import com.depromeet.team6.presentation.util.DefaultLntLng.DEFAULT_LNG
-import com.depromeet.team6.presentation.util.DefaultLntLng.DEFAULT_LNT
+import com.depromeet.team6.presentation.util.AmplitudeCommon.SCREEN_NAME
+import com.depromeet.team6.presentation.util.AmplitudeCommon.USER_ID
+import com.depromeet.team6.presentation.util.DefaultLatLng.DEFAULT_LAT
+import com.depromeet.team6.presentation.util.DefaultLatLng.DEFAULT_LNG
+import com.depromeet.team6.presentation.util.HomeAmplitude.ALERT_END_POPUP_1
+import com.depromeet.team6.presentation.util.HomeAmplitude.HOME
+import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_COURSESEARCH_ENTERED_DIRECT
+import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_COURSESEARCH_ENTERED_WITH_INPUT
+import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_DEPARTURE_TIME_CLICKED
+import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_DEPARTURE_TIME_SUGGESTION_CLICKED
+import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_DESTINATION_CLICKED
+import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_ROUTE_CLICKED
+import com.depromeet.team6.presentation.util.HomeAmplitude.POPUP
+import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
 import com.depromeet.team6.presentation.util.context.getUserLocation
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.presentation.util.permission.PermissionUtil
@@ -82,7 +94,7 @@ fun HomeRoute(
     val context = LocalContext.current
 
     var permissionGranted by remember { mutableStateOf(PermissionUtil.hasLocationPermissions(context)) }
-    var userLocation by remember { mutableStateOf(LatLng(DEFAULT_LNT, DEFAULT_LNG)) } // 서울시 기본 위치
+    var userLocation by remember { mutableStateOf(LatLng(DEFAULT_LAT, DEFAULT_LNG)) } // 서울시 기본 위치
 
     val locationPermissionsLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestMultiplePermissions(),
@@ -132,7 +144,7 @@ fun HomeRoute(
                 when (sideEffect) {
                     is HomeContract.HomeSideEffect.NavigateToMypage -> navigateToMypage()
                     is HomeContract.HomeSideEffect.NavigateToItinerary -> navigateToItinerary(
-                        Gson().toJson(uiState.courseInfo),
+                        Gson().toJson(uiState.itineraryInfo),
                         Gson().toJson(uiState.departurePoint),
                         Gson().toJson(uiState.destinationPoint),
                         sideEffect.markerParameter
@@ -184,44 +196,106 @@ fun HomeRoute(
     }
 
     when (uiState.loadState) {
-        LoadState.Idle -> HomeScreen(
-            userLocation = LatLng(userLocation.latitude, userLocation.longitude),
-            homeUiState = uiState,
-            onCharacterClick = { viewModel.onCharacterClick() },
-            navigateToMypage = navigateToMypage,
-            navigateToItinerary = navigateToItinerary,
-            modifier = modifier,
-            padding = padding,
-            onSearchClick = {
-                val currentLocationJSON = Gson().toJson(uiState.markerPoint)
-                val destinationPointJSON = Gson().toJson(uiState.destinationPoint)
-                navigateToCourseSearch(
-                    currentLocationJSON,
-                    destinationPointJSON
-                )
-            },
-            onFinishClick = {
-                viewModel.setEvent(HomeContract.HomeEvent.FinishAlarmClicked)
-//                viewModel.finishAlarm(context)
-            },
-            deleteAlarmConfirmed = {
-                viewModel.setEvent(HomeContract.HomeEvent.DeleteAlarmConfirmed)
-                viewModel.deleteAlarm(uiState.lastRouteId, context)
-            },
-            dismissDialog = {
-                viewModel.setEvent(HomeContract.HomeEvent.DismissDialog)
-            },
-            onRefreshClick = {
-            },
-            navigateToSearchLocation = {
-                navigateToSearchLocation(
-                    uiState.destinationPoint
-                )
-            }
-        )
-        LoadState.Error -> navigateToLogin()
+        LoadState.Idle, LoadState.Loading, LoadState.Success -> {
+            Box {
+                HomeScreen(
+                    userLocation = LatLng(userLocation.latitude, userLocation.longitude),
+                    homeUiState = uiState,
+                    getUserId = { viewModel.getUserId() },
+                    getCenterLocation = { position ->
+                        viewModel.getCenterLocation(position)
+                    },
+                    updateCurrentLocation = { newLocation ->
+                        viewModel.updateCurrentLocation(newLocation)
+                    },
+                    onTimerFinished = { viewModel.onTimerFinished() },
+                    getBusArrival = { viewModel.getBusArrival() },
+                    onCharacterClick = { viewModel.onCharacterClick() },
+                    navigateToMypage = navigateToMypage,
+//                    navigateToItinerary = navigateToItinerary,
+                    modifier = modifier,
+                    padding = padding,
+                    afterRegisterMapMarkerClick = { focusedMarkerParemeter ->
+                        viewModel.setEvent(HomeContract.HomeEvent.AfterRegisterMapMarkerClick)
+                        navigateToItinerary(
+                            Gson().toJson(uiState.itineraryInfo),
+                            Gson().toJson(uiState.departurePoint),
+                            Gson().toJson(uiState.destinationPoint),
+                            focusedMarkerParemeter
+                        )
+                    },
+                    courseDetailBtnClick = { key ->
+                        viewModel.setEvent(HomeContract.HomeEvent.CourseDetailButtonClick(key))
+                        navigateToItinerary(
+                            Gson().toJson(uiState.itineraryInfo),
+                            Gson().toJson(uiState.departurePoint),
+                            Gson().toJson(uiState.destinationPoint),
+                            null
+                        )
+                    },
+                    onSearchClick = {
+                        val currentLocationJSON = Gson().toJson(uiState.markerPoint)
+                        val destinationPointJSON = Gson().toJson(uiState.destinationPoint)
+                        navigateToCourseSearch(
+                            currentLocationJSON,
+                            destinationPointJSON
+                        )
 
-        else -> Unit
+                        AmplitudeUtils.trackEventWithProperties(
+                            eventName = HOME_COURSESEARCH_ENTERED_DIRECT,
+                            mapOf(
+                                USER_ID to viewModel.getUserId(),
+                                SCREEN_NAME to HOME,
+                                HOME_COURSESEARCH_ENTERED_DIRECT to 1
+                            )
+                        )
+                    },
+                    onDestinationClick = {
+                        AmplitudeUtils.trackEventWithProperties(
+                            eventName = HOME_DESTINATION_CLICKED,
+                            mapOf(
+                                USER_ID to viewModel.getUserId(),
+                                SCREEN_NAME to HOME,
+                                HOME_DESTINATION_CLICKED to 1
+                            )
+                        )
+                    },
+                    onFinishClick = {
+                        viewModel.setEvent(HomeContract.HomeEvent.FinishAlarmClicked)
+//                viewModel.finishAlarm(context)
+                    },
+                    deleteAlarmConfirmed = {
+                        viewModel.setEvent(HomeContract.HomeEvent.DeleteAlarmConfirmed)
+                        viewModel.deleteAlarm(uiState.lastRouteId, context)
+                    },
+                    dismissDialog = {
+                        viewModel.setEvent(HomeContract.HomeEvent.DismissDialog)
+                    },
+                    onRefreshClick = {
+                    },
+                    navigateToSearchLocation = {
+                        navigateToSearchLocation(
+                            uiState.destinationPoint
+                        )
+
+                        AmplitudeUtils.trackEventWithProperties(
+                            eventName = HOME_COURSESEARCH_ENTERED_WITH_INPUT,
+                            mapOf(
+                                USER_ID to viewModel.getUserId(),
+                                SCREEN_NAME to HOME,
+                                HOME_COURSESEARCH_ENTERED_WITH_INPUT to 1
+                            )
+                        )
+                    }
+                )
+
+                if (uiState.loadState == LoadState.Loading) {
+                    AtChaLoadingView()
+                }
+            }
+        }
+
+        LoadState.Error -> navigateToLogin()
     }
 }
 
@@ -231,16 +305,22 @@ fun HomeScreen(
     userLocation: LatLng,
     modifier: Modifier = Modifier,
     homeUiState: HomeContract.HomeUiState = HomeContract.HomeUiState(),
+    getUserId: () -> Int,
+    getCenterLocation: (LatLng) -> Unit = {},
+    updateCurrentLocation: (LatLng) -> Unit = {},
+    onTimerFinished: () -> Unit = {},
+    getBusArrival: () -> Unit = {},
     onCharacterClick: () -> Unit = {},
     onSearchClick: () -> Unit = {},
+    onDestinationClick: () -> Unit = {},
     onFinishClick: () -> Unit = {},
     onRefreshClick: () -> Unit = {},
     navigateToMypage: () -> Unit = {},
-    navigateToItinerary: (String, String, String, FocusedMarkerParameter?) -> Unit = { s: String, s1: String, s2: String, transportMarkerParameter: FocusedMarkerParameter? -> },
+    afterRegisterMapMarkerClick: (FocusedMarkerParameter?) -> Unit = { },
+    courseDetailBtnClick: (String) -> Unit = {},
     deleteAlarmConfirmed: () -> Unit = {},
     dismissDialog: () -> Unit = {},
-    navigateToSearchLocation: () -> Unit = {},
-    viewModel: HomeViewModel = hiltViewModel() // TODO : TmapViewCompose 변경 후 제거
+    navigateToSearchLocation: () -> Unit = {}
 ) {
     val context = LocalContext.current
     val colors = LocalTeam6Colors.current
@@ -275,21 +355,26 @@ fun HomeScreen(
                 padding,
                 currentLocation = userLocation,
                 legs = homeUiState.itineraryInfo!!.legs,
-                viewModel = viewModel,
+                isAlarmRegistered = homeUiState.isAlarmRegistered,
+                getCenterLocation = {
+                    getCenterLocation(it)
+                },
+                updateCurrentLocation = {
+                    updateCurrentLocation(it)
+                },
                 onTransportMarkerClick = { markerParameter ->
-                    navigateToItinerary(
-                        Gson().toJson(homeUiState.itineraryInfo),
-                        Gson().toJson(homeUiState.departurePoint),
-                        Gson().toJson(homeUiState.destinationPoint),
-                        markerParameter
-                    )
+                    afterRegisterMapMarkerClick(markerParameter)
                 }
             )
         } else {
             TMapViewCompose(
                 padding,
                 userLocation,
-                viewModel = viewModel
+                isAlarmRegistered = homeUiState.isAlarmRegistered,
+                userId = getUserId(),
+                getCenterLocation = {
+                    getCenterLocation(it)
+                }
             ) // Replace with your actual API key
         }
 
@@ -306,12 +391,6 @@ fun HomeScreen(
 
         // 알람 등록 시 Home UI
         if (homeUiState.isAlarmRegistered) {
-            notificationScheduler.scheduleNotificationForTime(
-                stringResource(R.string.app_name),
-                stringResource(R.string.notification_content_text),
-                NotificationTimeConstants.getDepartureTimeWithTodayDate()
-            )
-
             AfterRegisterSheet(
                 timerFinish = homeUiState.timerFinish,
                 startLocation = homeUiState.departurePointName,
@@ -321,35 +400,61 @@ fun HomeScreen(
                 transportationNumber = homeUiState.firstTransportationNumber,
                 transportationName = homeUiState.firstTransportationName,
                 timeToLeave = formatTimeString(homeUiState.departureTime),
-                boardingTime = formatTimeString(homeUiState.boardingTime),
+                boardingTime = homeUiState.boardingTime,
+                homeArrivedTime = homeUiState.homeArrivedTime,
                 destination = stringResource(R.string.home_my_home_text),
-                onCourseTextClick = {},
+                onCourseTextClick = {
+                    AmplitudeUtils.trackEventWithProperties(
+                        HOME_ROUTE_CLICKED,
+                        mapOf(
+                            SCREEN_NAME to HOME,
+                            USER_ID to getUserId(),
+                            HOME_ROUTE_CLICKED to 1
+                        )
+                    )
+                },
                 deleteAlarmConfirmed = deleteAlarmConfirmed,
                 dismissDialog = dismissDialog,
                 onFinishClick = {
                     onFinishClick()
                 },
-                onCourseDetailClick = {
-                    Timber.d("departurelocation 3 : ${homeUiState.departurePoint}")
-                    navigateToItinerary(
-                        Gson().toJson(homeUiState.itineraryInfo),
-                        Gson().toJson(homeUiState.departurePoint),
-                        Gson().toJson(homeUiState.destinationPoint),
-                        null
-                    )
-                },
+                onCourseDetailClick = courseDetailBtnClick,
                 onTimerFinished = {
-                    viewModel.onTimerFinished()
+                    onTimerFinished()
                 },
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .zIndex(1f),
                 onRefreshClick = {
                     onRefreshClick()
+                    if (homeUiState.firtTransportTation == TransportType.BUS) {
+                        getBusArrival()
+                    }
                 },
                 onIconClick = {
                     characterAnimationTrigger++
-                }
+                },
+                onHomeDepartureTimeClick = {
+                    AmplitudeUtils.trackEventWithProperties(
+                        HOME_DEPARTURE_TIME_CLICKED,
+                        mapOf(
+                            SCREEN_NAME to HOME,
+                            USER_ID to getUserId(),
+                            HOME_DEPARTURE_TIME_CLICKED to 1
+                        )
+                    )
+                },
+                onHomeExpectDepartureTimeClick = {
+                    AmplitudeUtils.trackEventWithProperties(
+                        HOME_DEPARTURE_TIME_CLICKED,
+                        mapOf(
+                            SCREEN_NAME to HOME,
+                            USER_ID to getUserId(),
+                            HOME_DEPARTURE_TIME_SUGGESTION_CLICKED to 1
+                        )
+                    )
+                },
+                busStationLeft = homeUiState.busRemainingStations
             )
         } else {
             notificationScheduler.cancelAllNotifications()
@@ -361,6 +466,7 @@ fun HomeScreen(
                 onSearchClick = {
                     onSearchClick()
                 },
+                onDestinationClick = { onDestinationClick() },
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .fillMaxWidth()
@@ -372,7 +478,8 @@ fun HomeScreen(
             !homeUiState.isAlarmRegistered ->
                 SpeechBubbleText(
                     stringResource(R.string.home_bubble_basic_text),
-                    "약 " + NumberFormat.getNumberInstance(Locale.US).format(homeUiState.taxiCost) + stringResource(R.string.home_bubble_won_text),
+                    "약 " + NumberFormat.getNumberInstance(Locale.US)
+                        .format(homeUiState.taxiCost) + stringResource(R.string.home_bubble_won_text),
                     null,
                     194.dp
                 )
@@ -404,7 +511,8 @@ fun HomeScreen(
             else ->
                 SpeechBubbleText(
                     stringResource(R.string.home_bubble_basic_text),
-                    "약 " + NumberFormat.getNumberInstance(Locale.US).format(homeUiState.taxiCost) + stringResource(R.string.home_bubble_won_text),
+                    "약 " + NumberFormat.getNumberInstance(Locale.US)
+                        .format(homeUiState.taxiCost) + stringResource(R.string.home_bubble_won_text),
                     null,
                     209.dp
                 )
@@ -499,7 +607,16 @@ fun HomeScreen(
                     },
                     onSuccess = {
                         deleteAlarmConfirmed()
-                    }
+                        AmplitudeUtils.trackEventWithProperties(
+                            ALERT_END_POPUP_1,
+                            mapOf(
+                                SCREEN_NAME to POPUP,
+                                USER_ID to getUserId(),
+                                ALERT_END_POPUP_1 to 1
+                            )
+                        )
+                    },
+                    sortType = 1
                 )
             }
         }
@@ -509,16 +626,31 @@ fun HomeScreen(
 private fun formatTimeString(timeString: String): String {
     return try {
         if (timeString.contains("T")) {
+            // ISO 날짜 형식 (2023-01-01T12:30:00) 처리
             val dateTime = LocalDateTime.parse(timeString)
-            val formatter = DateTimeFormatter.ofPattern("HH:mm")
+            val formatter = DateTimeFormatter.ofPattern("HH:mm:ss")
             dateTime.format(formatter)
-        } else if (timeString.contains(":") && timeString.split(":").size == 3) {
-            val timeParts = timeString.split(":")
-            "${timeParts[0]}:${timeParts[1]}"
+        } else if (timeString.contains(":") && timeString.split(":").size >= 2) {
+            // 이미 시간 형식이면 그대로 반환 (HH:mm:ss 또는 HH:mm)
+            if (timeString.split(":").size == 2) {
+                // HH:mm 형식인 경우 HH:mm:00으로 변환
+                "$timeString:00"
+            } else {
+                timeString
+            }
+        } else if (timeString.matches(Regex("\\d+"))) {
+            // 초 단위 값을 HH:mm:ss 형식으로 변환
+            val totalSeconds = timeString.toLong()
+            val hours = totalSeconds / 3600
+            val minutes = (totalSeconds % 3600) / 60
+            val seconds = totalSeconds % 60
+
+            String.format("%02d:%02d:%02d", hours, minutes, seconds)
         } else {
             timeString
         }
     } catch (e: Exception) {
+        Timber.e("formatTimeString 오류: ${e.message}")
         timeString
     }
 }
@@ -535,6 +667,7 @@ private data class SpeechBubbleText(
 private fun HomeScreenPreview() {
     HomeScreen(
         padding = PaddingValues(0.dp),
-        userLocation = LatLng(37.5665, 126.9780)
+        userLocation = LatLng(37.5665, 126.9780),
+        getUserId = { 1 }
     )
 }
