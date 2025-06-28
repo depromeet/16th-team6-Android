@@ -34,7 +34,7 @@ class MypageContract {
         val searchLocations: List<Location> = emptyList(),
         val searchPopupVisible: Boolean = false,
         val userCurrentLocation: LatLng = LatLng(DEFAULT_LAT, DEFAULT_LNG),
-        val myAdress: Address = Address(
+        val myAddress: Address = Address(
             name = "",
             lat = 0.0,
             lon = 0.0,
@@ -56,6 +56,7 @@ class MypageContract {
     sealed interface MypageSideEffect : UiSideEffect {
         data object NavigateBack : MypageSideEffect
         data object NavigateToLogin : MypageSideEffect
+        data object NavigateToFeedbackForm : MypageSideEffect
     }
 
     sealed class MypageEvent : UiEvent {
@@ -70,7 +71,7 @@ class MypageContract {
         data object AccountClicked : MypageEvent()
         data object ChangeHomeClicked : MypageEvent()
         data object AlarmSettingClicked : MypageEvent()
-        data class UpdateMyAddress(val myAdress: Address) : MypageEvent()
+        data class UpdateMyAddress(val myAddress: Address) : MypageEvent()
         data class ChangeMapViewVisible(val mapViewVisible: Boolean) : MypageEvent()
         data object ClearAddress : MypageEvent()
         data object ShowSearchPopup : MypageEvent()
