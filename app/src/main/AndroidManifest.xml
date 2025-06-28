@@ -87,10 +87,6 @@
             </intent-filter>
         </service>
         <receiver
-            android:name=".presentation.ui.alarm.NotificationReceiver"
-            android:enabled="true"
-            android:exported="false" />
-        <receiver
             android:name=".data.datalocal.service.LocationCheckReceiver"
             android:enabled="true"
             android:exported="false" />
