@@ -189,7 +189,15 @@ class OnboardingViewModel @Inject constructor(
                     onComplete(address)
                 }
                 .onFailure {
+                    handleApiException(it)
                 }
+//            getAddressFromCoordinatesUseCase(location.latitude, location.longitude)
+//                .onSuccess { address ->
+//                    setState { copy(myAddress = address) }
+//                    onComplete(address)
+//                }
+//                .onFailure {
+//                }
         }
     }
 
@@ -201,13 +209,21 @@ class OnboardingViewModel @Inject constructor(
             val location = context.getUserLocation()
             setState { copy(userCurrentLocation = location) }
 
-            getAddressFromCoordinatesUseCase.invoke(location.latitude, location.longitude)
+            getAddressFromCoordinatesUseCase(location.latitude, location.longitude)
                 .onSuccess { address ->
                     setState { copy(myAddress = address) }
                     onSuccess.invoke(address)
-                }.onFailure {
-                    Timber.e("주소 변환 실패: ${it.message}")
                 }
+                .onFailure { exception ->
+                    handleApiException(exception)
+                }
+//            getAddressFromCoordinatesUseCase.invoke(location.latitude, location.longitude)
+//                .onSuccess { address ->
+//                    setState { copy(myAddress = address) }
+//                    onSuccess.invoke(address)
+//                }.onFailure {
+//                    Timber.e("주소 변환 실패: ${it.message}")
+//                }
         }
     }
 
