@@ -98,8 +98,9 @@ class BusCourseViewModel @Inject constructor(
                     )
                 }
                 setEvent(BusCourseContract.BusCourseEvent.SetScreenLoadState(loadState = LoadState.Success))
-            }.onFailure {
+            }.onFailure {exception->
                 setEvent(BusCourseContract.BusCourseEvent.SetScreenLoadState(loadState = LoadState.Error))
+                handleApiException(exception = exception)
             }
         }
     }
