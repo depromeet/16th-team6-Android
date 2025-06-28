@@ -18,16 +18,11 @@ class DummyLocalDataSource @Inject constructor(
         get() = sharedPreferences.getString(TOKEN, INITIAL_VALUE).toString()
         set(value) = sharedPreferences.edit { putString(TOKEN, value) }
 
-    var nickname: String
-        get() = sharedPreferences.getString(NICKNAME, INITIAL_VALUE).toString()
-        set(value) = sharedPreferences.edit { putString(NICKNAME, value) }
-
     fun clear() = sharedPreferences.edit { clear() }
 
     companion object {
         private const val PREFERENCES_NAME = "user_preferences"
         private const val TOKEN = "token"
-        private const val NICKNAME = "nickname"
         private const val INITIAL_VALUE = ""
     }
 }

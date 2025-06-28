@@ -5,8 +5,6 @@ import com.google.android.gms.maps.model.LatLng
 data class UserInfo(
     val id: Int,
     val providerId: String,
-    val nickname: String,
-    val profileImageUrl: String,
     val address: String,
     val userHome: LatLng,
     val alertFrequencies: Set<Int>

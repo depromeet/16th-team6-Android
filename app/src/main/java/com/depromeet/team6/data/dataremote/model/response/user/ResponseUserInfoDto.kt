@@ -11,10 +11,6 @@ data class ResponseUserInfoDto(
     val id: Int,
     @SerialName("providerId")
     val providerId: String,
-    @SerialName("nickname")
-    val nickname: String,
-    @SerialName("profileImageUrl")
-    val profileImageUrl: String,
     @SerialName("address")
     val address: String,
     @SerialName("lat")

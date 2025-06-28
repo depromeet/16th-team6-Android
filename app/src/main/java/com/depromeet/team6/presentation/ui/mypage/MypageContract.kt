@@ -41,7 +41,6 @@ class MypageContract {
             address = ""
         ),
         val userInfo: MypageUserInfo = MypageUserInfo(
-            nickname = "",
             address = "",
             lat = 0.0,
             lon = 0.0,
