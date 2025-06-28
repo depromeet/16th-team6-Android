@@ -127,8 +127,9 @@ class OnboardingViewModel @Inject constructor(
                             searchLocations = locations.toPresentationList()
                         )
                     }
-                }.onFailure {
+                }.onFailure {exception->
                     setState { copy(searchLocations = emptyList()) }
+                    handleApiException(exception = exception)
                 }
             }
         }
@@ -139,7 +140,7 @@ class OnboardingViewModel @Inject constructor(
         viewModelScope.launch {
             val token = getFcmTokenSafely()
             postSignUpUseCase(
-                signUp = SignUp(
+                params = SignUp(
                     provider = KAKAO,
                     address = uiState.value.myAddress.name,
                     lat = uiState.value.myAddress.lat,
@@ -162,8 +163,9 @@ class OnboardingViewModel @Inject constructor(
                         USER_ALARM_FREQUENCIES to uiState.value.alertFrequencies
                     )
                 )
-            }.onFailure {
+            }.onFailure { exception ->
                 setEvent(OnboardingContract.OnboardingEvent.PostSignUp(loadState = LoadState.Error))
+                handleApiException(exception = exception)
             }
         }
     }
