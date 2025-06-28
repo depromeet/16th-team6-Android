@@ -74,6 +74,14 @@ abstract class BaseViewModel<State : UiState, SideEffect : UiSideEffect, Event :
                 is ErrorControlFailureException.SetUIStateException -> {
                     _uiState.value = exception.errorReduce(currentState) as State
                 }
+                is ErrorControlFailureException.ReportDiscord -> {
+                    //TODO: 디코 연동해라 민석아
+                }
+                is ErrorControlFailureException.ReportDiscordWithToast -> {
+                    viewModelScope.launch {
+                        //TODO: 디코 연동해라 민석아
+                        _sideEffect.emit(ApiErrorSideEffect.ShowToastSideEffect(exception.toastMessage))
+                    }                }
             }
         } else {
             logException(exception)

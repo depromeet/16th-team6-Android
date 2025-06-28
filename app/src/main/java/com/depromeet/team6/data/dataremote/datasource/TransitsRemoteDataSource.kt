@@ -33,7 +33,7 @@ class TransitsRemoteDataSource @Inject constructor(
         stationName = stationName,
         lat = lat,
         lon = lon
-    ).toResult()
+    ).parse()
 
     suspend fun getBusPositions(
         busRouteId: String,
@@ -43,7 +43,7 @@ class TransitsRemoteDataSource @Inject constructor(
         busRouteId = busRouteId,
         routeName = routeName,
         serviceRegion = serviceRegion
-    ).toResult()
+    ).parse()
 
     suspend fun getBusOperationInfo(
         busRouteId: String,
@@ -53,5 +53,5 @@ class TransitsRemoteDataSource @Inject constructor(
         busRouteId = busRouteId,
         routeName = routeName,
         serviceRegion = serviceRegion
-    ).toResult()
+    ).parse()
 }

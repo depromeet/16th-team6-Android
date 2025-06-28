@@ -3,6 +3,7 @@ package com.depromeet.team6.data.dataremote.service
 import com.depromeet.team6.data.dataremote.model.request.signup.RequestSignUpDto
 import com.depromeet.team6.data.dataremote.model.request.user.RequestModifyUserInfoDto
 import com.depromeet.team6.data.dataremote.model.response.base.ApiResponse
+import com.depromeet.team6.data.dataremote.model.response.base.BaseResponse
 import com.depromeet.team6.data.dataremote.model.response.user.ResponseAuthDto
 import com.depromeet.team6.data.dataremote.model.response.user.ResponseCheckDto
 import com.depromeet.team6.data.dataremote.model.response.user.ResponseUserInfoDto
@@ -28,18 +29,18 @@ interface AuthService {
     @GET("$API/$AUTH/$CHECK")
     suspend fun getCheck(
         @Query(PROVIDER) provider: Int
-    ): ApiResponse<ResponseCheckDto>
+    ): BaseResponse<ResponseCheckDto>
 
     @POST("$API/$AUTH/$SIGNUP")
     suspend fun postSignUp(
         @Body requestSignUpDto: RequestSignUpDto
-    ): ApiResponse<ResponseAuthDto>
+    ): BaseResponse<ResponseAuthDto>
 
     @GET("$API/$AUTH/$LOGIN")
     suspend fun getLogin(
         @Query(PROVIDER) provider: Int,
         @Query(FCM_TOKEN) fcmToken: String
-    ): ApiResponse<ResponseAuthDto>
+    ): BaseResponse<ResponseAuthDto>
 
     @POST("$API/$AUTH/$LOGOUT")
     suspend fun postLogout(): Response<Unit>

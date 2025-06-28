@@ -28,19 +28,19 @@ interface TransitsService {
         @Query("stationName") stationName: String,
         @Query("lat") lat: Double,
         @Query("lon") lon: Double
-    ): ApiResponse<ResponseBusArrivalsDto>
+    ): BaseResponse<ResponseBusArrivalsDto>
 
     @GET("$API/$TRANSITS/bus-routes/positions")
     suspend fun getBusPositions(
         @Query("busRouteId") busRouteId: String,
         @Query("routeName") routeName: String,
         @Query("serviceRegion") serviceRegion: String
-    ): ApiResponse<ResponseBusPositionsDto>
+    ): BaseResponse<ResponseBusPositionsDto>
 
     @GET("$API/$TRANSITS/$BUS_ROUTES/operation-info")
     suspend fun getBusOperationInfo(
         @Query("busRouteId") busRouteId: String,
         @Query("routeName") routeName: String,
         @Query("serviceRegion") serviceRegion: String
-    ): ApiResponse<ResponseBusOperationInfoDto>
+    ): BaseResponse<ResponseBusOperationInfoDto>
 }

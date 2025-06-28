@@ -1,6 +1,8 @@
 package com.depromeet.team6.domain.usecase
 
 import com.depromeet.team6.data.repositoryimpl.TransitsRepositoryImpl
+import com.depromeet.team6.domain.RouteMap.TRS_001
+import com.depromeet.team6.domain.ToastMessage.UNKNOWN
 import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.course.CourseInfo
 import com.depromeet.team6.domain.usecase.base.ApiRequestUseCase
@@ -29,8 +31,8 @@ class GetCourseSearchResultsUseCase @Inject constructor(
 
     override fun apiExceptionMapper(errorCode: String): ErrorControlFailureException {
         return when (errorCode) {
-            "TRS_001" -> ErrorControlFailureException.ShowToastException("알 수 없음")
-            else -> ErrorControlFailureException.ShowToastException("알 수 없음")
+            TRS_001 -> ErrorControlFailureException.ShowToastException(UNKNOWN)
+            else -> ErrorControlFailureException.ShowToastException(UNKNOWN)
         }
     }
 }

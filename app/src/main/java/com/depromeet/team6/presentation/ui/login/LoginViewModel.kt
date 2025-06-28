@@ -95,8 +95,9 @@ class LoginViewModel @Inject constructor(
                 } else {
                     setEvent(LoginContract.LoginEvent.GetCheckUserRegistered(isUserRegisteredState = LoadState.Error))
                 }
-            }.onFailure {
+            }.onFailure { exception ->
                 setEvent(LoginContract.LoginEvent.GetCheckUserRegistered(isUserRegisteredState = LoadState.Error))
+                handleApiException(exception=exception)
             }
         }
     }

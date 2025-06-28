@@ -2,6 +2,7 @@ package com.depromeet.team6.data.repositoryimpl
 
 import com.depromeet.team6.data.dataremote.datasource.AuthRemoteDataSource
 import com.depromeet.team6.data.dataremote.model.request.user.RequestModifyUserInfoDto
+import com.depromeet.team6.data.dataremote.model.response.base.BaseResponse
 import com.depromeet.team6.data.mapper.todata.toData
 import com.depromeet.team6.data.mapper.todomain.toDomain
 import com.depromeet.team6.domain.model.Auth
@@ -15,7 +16,7 @@ class AuthRepositoryImpl @Inject constructor(
     private val authRemoteDataSource: AuthRemoteDataSource
 ) : AuthRepository {
     override suspend fun getCheck(authorization: String, provider: Int): Result<Boolean> =
-        authRemoteDataSource.getCheck(authorization = authorization, provider = provider)
+        authRemoteDataSource.getCheck( provider = provider)
             .mapCatching { it.toDomain() }
 
     override suspend fun postSignUp(signUp: SignUp): Result<Auth> =
