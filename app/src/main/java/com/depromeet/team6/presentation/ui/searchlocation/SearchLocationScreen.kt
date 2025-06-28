@@ -114,7 +114,7 @@ fun SearchLocationRoute(
                     context = context,
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(defaultTeam6Colors.greyWashBackground)
+                        .background(defaultTeam6Colors.gray950)
                         .padding(
                             paddingValues = PaddingValues(
                                 start = padding.calculateStartPadding(LocalLayoutDirection.current),
@@ -235,7 +235,7 @@ fun SearchLocationScreen(
         modifier = modifier
             .fillMaxSize()
             .background(
-                color = defaultTeam6Colors.greyWashBackground
+                color = defaultTeam6Colors.gray950
             )
     ) {
         Column(

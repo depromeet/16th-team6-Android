@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -51,10 +50,10 @@ fun TMapViewCompose(
     padding: PaddingValues,
     currentLocation: LatLng,
     modifier: Modifier = Modifier,
-    viewModel: HomeViewModel
+    isAlarmRegistered: Boolean,
+    userId: Int,
+    getCenterLocation: (LatLng) -> Unit
 ) {
-    val uiState = viewModel.uiState.collectAsState().value
-
     val context = LocalContext.current
     val tMapView = remember { TMapView(context) }
     var isMapReady by remember { mutableStateOf(false) }

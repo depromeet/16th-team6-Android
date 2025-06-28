@@ -151,7 +151,7 @@ fun ItineraryRoute(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues = padding)
-                .background(defaultTeam6Colors.greyWashBackground),
+                .background(defaultTeam6Colors.gray950),
             navigateToBusCourse = navigateToBusCourse,
             currentLocationBtnClick = getCurrentLocation
         )

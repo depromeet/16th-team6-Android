@@ -73,7 +73,7 @@ fun ItineraryInfoDetail(
                 .align(Alignment.CenterHorizontally),
             text = stringResource(R.string.itinerary_info_legs_data_source),
             style = defaultTeam6Typography.bodyRegular12,
-            color = defaultTeam6Colors.systemGrey1
+            color = defaultTeam6Colors.gray300
         )
     }
 }

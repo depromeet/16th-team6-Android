@@ -10,4 +10,6 @@ plugins {
 
     // FCM
     id("com.google.gms.google-services") version "4.4.2" apply false
+    // Firebase Crashlytics
+    id("com.google.firebase.crashlytics") version "3.0.3" apply false
 }

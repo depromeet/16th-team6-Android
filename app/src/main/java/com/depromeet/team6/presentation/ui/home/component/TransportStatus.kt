@@ -60,13 +60,13 @@ fun TransportStatus(
                 modifier = Modifier
                     .padding(horizontal = 2.dp)
                     .align(Alignment.CenterVertically),
-                tint = colors.systemGrey1
+                tint = colors.gray300
             )
 
             Text(
                 text = stopLeft.toString(),
                 style = typography.bodyRegular13,
-                color = colors.systemGrey1,
+                color = colors.gray300,
                 modifier = Modifier
                     .padding(start = 4.dp)
             )
@@ -74,7 +74,7 @@ fun TransportStatus(
             Text(
                 text = stopLeftText,
                 style = typography.bodyRegular13,
-                color = colors.systemGrey1,
+                color = colors.gray300,
                 modifier = Modifier
                     .padding(horizontal = 2.dp)
             )

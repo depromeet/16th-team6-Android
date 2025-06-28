@@ -51,7 +51,7 @@ fun MypageSelectedHome(
                 Text(
                     text = homeLocation.address,
                     style = defaultTeam6Typography.bodySemiBold13,
-                    color = defaultTeam6Colors.greyTertiaryLabel
+                    color = defaultTeam6Colors.gray400
                 )
             } else {
                 Text(
@@ -67,7 +67,7 @@ fun MypageSelectedHome(
                 .fillMaxWidth()
                 .border(
                     width = 1.dp,
-                    color = defaultTeam6Colors.greyDefaultButton,
+                    color = defaultTeam6Colors.gray910,
                     shape = RoundedCornerShape(8.dp)
                 )
                 .roundedBackgroundWithPadding(

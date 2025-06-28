@@ -297,7 +297,7 @@ fun preview5() {
     TransportVectorIconComposable(
         modifier = Modifier.size(32.dp),
         type = TransportType.WALK,
-        color = defaultTeam6Colors.greySecondaryLabel,
+        color = defaultTeam6Colors.gray200,
         isMarker = true
     )
 }
