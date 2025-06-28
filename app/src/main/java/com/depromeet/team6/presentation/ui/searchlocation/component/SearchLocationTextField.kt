@@ -52,7 +52,7 @@ fun SearchLocationTextField(
             modifier = modifier
                 .weight(1f)
                 .roundedBackgroundWithPadding(
-                    backgroundColor = defaultTeam6Colors.greyQuaternaryLabel,
+                    backgroundColor = defaultTeam6Colors.gray700,
                     cornerRadius = 10.dp
                 )
                 .padding(horizontal = 16.dp),
@@ -76,7 +76,7 @@ fun SearchLocationTextField(
                         onValueChange(it)
                     }
                 },
-                cursorBrush = SolidColor(defaultTeam6Colors.greyTertiaryLabel),
+                cursorBrush = SolidColor(defaultTeam6Colors.gray400),
                 singleLine = true,
                 keyboardActions = keyboardActions,
                 keyboardOptions = keyboardOptions,
@@ -87,7 +87,7 @@ fun SearchLocationTextField(
                     if (value.isEmpty()) {
                         Text(
                             text = stringResource(R.string.home_search_location_search_text),
-                            color = defaultTeam6Colors.greySecondaryLabel,
+                            color = defaultTeam6Colors.gray200,
                             style = defaultTeam6Typography.bodyRegular17
                         )
                     }
@@ -99,7 +99,7 @@ fun SearchLocationTextField(
             Icon(
                 modifier = Modifier.noRippleClickable { onTextClearButtonClicked() },
                 imageVector = ImageVector.vectorResource(R.drawable.ic_search_circle_close),
-                tint = defaultTeam6Colors.greySecondaryLabel,
+                tint = defaultTeam6Colors.gray200,
                 contentDescription = null
             )
         }

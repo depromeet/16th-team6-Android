@@ -54,7 +54,7 @@ fun OnboardingSearchLocationItem(
                 Text(
                     text = onboardingSearchLocation.radius,
                     style = defaultTeam6Typography.bodyRegular14,
-                    color = defaultTeam6Colors.greySecondaryLabel
+                    color = defaultTeam6Colors.gray200
                 )
                 Icon(
                     modifier = Modifier.padding(horizontal = 6.dp),
@@ -65,7 +65,7 @@ fun OnboardingSearchLocationItem(
                 Text(
                     text = onboardingSearchLocation.address,
                     style = defaultTeam6Typography.bodyRegular14,
-                    color = defaultTeam6Colors.greySecondaryLabel,
+                    color = defaultTeam6Colors.gray200,
                     overflow = TextOverflow.Ellipsis
                 )
             }

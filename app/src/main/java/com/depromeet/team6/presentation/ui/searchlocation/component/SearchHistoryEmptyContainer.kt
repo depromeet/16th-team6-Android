@@ -21,14 +21,14 @@ fun SearchHistoryEmptyContainer(
         modifier = modifier
             .fillMaxSize()
             .background(
-                color = defaultTeam6Colors.greyWashBackground
+                color = defaultTeam6Colors.gray950
             ),
         contentAlignment = Alignment.Center
     ) {
         Text(
             text = stringResource(R.string.home_search_empty_history),
             style = defaultTeam6Typography.bodyRegular15,
-            color = defaultTeam6Colors.greyTertiaryLabel
+            color = defaultTeam6Colors.gray400
         )
     }
 }

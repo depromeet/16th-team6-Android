@@ -45,14 +45,14 @@ fun SoundVibrateSelectView(
     }
 
     val color = if (isSelected) colors.systemGreen else colors.white
-    val radioColor = if (isSelected) colors.systemGreen else colors.greyQuaternaryLabel
+    val radioColor = if (isSelected) colors.systemGreen else colors.gray700
     val radioIcon = if (isSelected) R.drawable.ic_mypage_radio_selected else R.drawable.ic_mypage_radio_unselected
 
     Box(
         modifier = modifier
             .fillMaxWidth()
             .background(
-                colors.greyElevatedBackground,
+                colors.gray940,
                 shape = RoundedCornerShape(12.dp)
             )
             .noRippleClickable(onSelected)

@@ -186,7 +186,7 @@ fun LoginScreen(
                 Text(
                     text = stringResource(loginViewPagerType.subTextRes),
                     style = defaultTeam6Typography.bodyRegular14,
-                    color = defaultTeam6Colors.greySecondaryLabel
+                    color = defaultTeam6Colors.gray200
                 )
             }
         }

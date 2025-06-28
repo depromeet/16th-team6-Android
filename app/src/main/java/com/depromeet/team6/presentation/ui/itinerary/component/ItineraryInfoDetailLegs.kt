@@ -226,7 +226,7 @@ private fun DetailLegsBus(
                 Text(
                     text = stringResource(R.string.itinerary_info_legs_boarding),
                     style = defaultTeam6Typography.bodySemiBold14,
-                    color = defaultTeam6Colors.greySecondaryLabel
+                    color = defaultTeam6Colors.gray200
                 )
             }
             Spacer(Modifier.height(16.dp))
@@ -294,7 +294,7 @@ private fun DetailLegsBus(
                         Text(
                             text = stop.stationName,
                             style = defaultTeam6Typography.bodyMedium13,
-                            color = defaultTeam6Colors.greySecondaryLabel
+                            color = defaultTeam6Colors.gray200
                         )
                     }
                 }
@@ -315,7 +315,7 @@ private fun DetailLegsBus(
                 Text(
                     text = stringResource(R.string.itinerary_info_legs_disembarking),
                     style = defaultTeam6Typography.bodySemiBold14,
-                    color = defaultTeam6Colors.greySecondaryLabel
+                    color = defaultTeam6Colors.gray200
                 )
             }
         }
@@ -424,14 +424,14 @@ private fun DetailLegsSubway(
                 Text(
                     text = stringResource(R.string.itinerary_info_legs_boarding),
                     style = defaultTeam6Typography.bodySemiBold14,
-                    color = defaultTeam6Colors.greySecondaryLabel
+                    color = defaultTeam6Colors.gray200
                 )
             }
             Spacer(Modifier.height(16.dp))
             Text(
                 text = subwayName,
                 style = defaultTeam6Typography.bodyMedium13,
-                color = defaultTeam6Colors.greySecondaryLabel
+                color = defaultTeam6Colors.gray200
             )
             Spacer(Modifier.height(16.dp))
             Row(
@@ -466,7 +466,7 @@ private fun DetailLegsSubway(
                         Text(
                             text = stop.stationName,
                             style = defaultTeam6Typography.bodyMedium13,
-                            color = defaultTeam6Colors.greySecondaryLabel
+                            color = defaultTeam6Colors.gray200
                         )
                     }
                 }
@@ -487,7 +487,7 @@ private fun DetailLegsSubway(
                 Text(
                     text = stringResource(R.string.itinerary_info_legs_disembarking),
                     style = defaultTeam6Typography.bodySemiBold14,
-                    color = defaultTeam6Colors.greySecondaryLabel
+                    color = defaultTeam6Colors.gray200
                 )
             }
         }
@@ -529,7 +529,7 @@ private fun DetailLegsWalk(
                 .offset(y = (-8).dp),
             text = stringResource(R.string.itinerary_info_legs_walk_time, timeMinute),
             style = defaultTeam6Typography.bodyMedium13,
-            color = defaultTeam6Colors.greySecondaryLabel
+            color = defaultTeam6Colors.gray200
         )
         Spacer(
             modifier = Modifier.width(4.dp)
@@ -539,7 +539,7 @@ private fun DetailLegsWalk(
                 .offset(y = (-8).dp),
             text = stringResource(R.string.itinerary_info_legs_walk_distance, distanceMeter),
             style = defaultTeam6Typography.bodyMedium13,
-            color = defaultTeam6Colors.systemGrey2
+            color = defaultTeam6Colors.gray500
         )
     }
 }
@@ -555,7 +555,7 @@ fun BoardingTime(
             .wrapContentSize()
             .border(
                 width = 1.dp,
-                color = defaultTeam6Colors.greyElevatedCard,
+                color = defaultTeam6Colors.gray910,
                 shape = RoundedCornerShape(size = 4.dp)
             )
             .roundedBackgroundWithPadding(
@@ -571,7 +571,7 @@ fun BoardingTime(
                 boardingTime.minute
             ),
             style = defaultTeam6Typography.bodyMedium11,
-            color = defaultTeam6Colors.greySecondaryLabel
+            color = defaultTeam6Colors.gray200
         )
     }
 }
@@ -581,7 +581,7 @@ private fun DottedLineWithCircles(
     height: Dp,
     modifier: Modifier = Modifier
 ) {
-    val dotColor: Color = defaultTeam6Colors.systemGrey3
+    val dotColor: Color = defaultTeam6Colors.gray600
     val unitSize = 5.dp
     val dotSize = unitSize
     val gapSize = unitSize

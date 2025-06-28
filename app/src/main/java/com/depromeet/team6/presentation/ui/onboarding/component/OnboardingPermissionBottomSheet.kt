@@ -44,7 +44,7 @@ fun OnboardingPermissionBottomSheet(
                 .fillMaxWidth()
                 .background(
                     shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
-                    color = defaultTeam6Colors.greyElevatedBackground
+                    color = defaultTeam6Colors.gray940
                 )
                 .padding(horizontal = 24.dp),
             verticalArrangement = Arrangement.Bottom
@@ -74,7 +74,7 @@ fun OnboardingPermissionBottomSheet(
                     Text(
                         text = stringResource(onboardingPermissionType.subTitleStringRes),
                         style = defaultTeam6Typography.bodyRegular13,
-                        color = defaultTeam6Colors.greySecondaryLabel
+                        color = defaultTeam6Colors.gray200
                     )
                 }
             }
