@@ -95,7 +95,6 @@ class ItineraryViewModel @Inject constructor(
                 }
                 .onFailure { exception ->
                     handleApiException(exception)
-
                 }
         }
     }

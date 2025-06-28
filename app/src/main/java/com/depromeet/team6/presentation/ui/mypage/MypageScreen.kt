@@ -1,8 +1,8 @@
 package com.depromeet.team6.presentation.ui.mypage
 
-import android.widget.Toast
 import android.content.Intent
 import android.net.Uri
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
