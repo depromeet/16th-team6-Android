@@ -70,6 +70,7 @@ fun MainNavHost(
         courseSearchNavGraph(
             padding = padding,
             navigateToItinerary = navigator::navigateToItinerary,
+            navigateToLogin = navigator::navigateToLogin,
             navigateToHome = navigator::navigateToHome
         )
 
