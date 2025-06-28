@@ -18,8 +18,7 @@ class BusCourseViewModel @Inject constructor(
     private val getBusPositionsUseCase: GetBusPositionsUseCase,
     private val getBusOperationInfoUseCase: GetBusOperationInfoUseCase
 ) : BaseViewModel<BusCourseContract.BusCourseUiState, BusCourseContract.BusCourseSideEffect, BusCourseContract.BusCourseEvent>() {
-    override fun createInitialState(): BusCourseContract.BusCourseUiState =
-        BusCourseContract.BusCourseUiState()
+    override fun createInitialState(): BusCourseContract.BusCourseUiState = BusCourseContract.BusCourseUiState()
 
     override suspend fun handleEvent(event: BusCourseContract.BusCourseEvent) {
         when (event) {
@@ -67,20 +66,14 @@ class BusCourseViewModel @Inject constructor(
                 setState {
                     copy(
                         remainingTime = Pair(
-                            remainingTimes.getOrNull(0) ?: -1,
-                            remainingTimes.getOrNull(1) ?: -1
-                        ),
-                        busStatus = Pair(
-                            busStatus[0],
-                            busStatus[1]
-                        ),
-                        busPositionParameter = BusPositionParameter(
+                            remainingTimes.getOrNull(0) ?: -1, remainingTimes.getOrNull(1) ?: -1
+                        ), busStatus = Pair(
+                            busStatus[0], busStatus[1]
+                        ), busPositionParameter = BusPositionParameter(
                             busRouteId = busArrival.busRouteId,
                             routeName = busArrival.routeName,
                             serviceRegion = busArrival.serviceRegion
-                        ),
-                        currentBusStationId = busArrival.busStationId,
-                        busRouteName = busArrival.routeName
+                        ), currentBusStationId = busArrival.busStationId, busRouteName = busArrival.routeName
                     )
                 }
             }.onFailure { exception ->
@@ -91,15 +84,11 @@ class BusCourseViewModel @Inject constructor(
     }
 
     private fun getBusPositions(
-        busRouteId: String,
-        routeName: String,
-        serviceRegion: String
+        busRouteId: String, routeName: String, serviceRegion: String
     ) {
         viewModelScope.launch {
             getBusPositionsUseCase(
-                busRouteId = busRouteId,
-                routeName = routeName,
-                serviceRegion = serviceRegion
+                busRouteId = busRouteId, routeName = routeName, serviceRegion = serviceRegion
             ).onSuccess { result ->
                 setState {
                     copy(
@@ -116,21 +105,19 @@ class BusCourseViewModel @Inject constructor(
     }
 
     private fun getBusOperationInfo(
-        busRouteId: String,
-        routeName: String,
-        serviceRegion: String
+        busRouteId: String, routeName: String, serviceRegion: String
     ) {
         viewModelScope.launch {
             getBusOperationInfoUseCase(
-                busRouteId = busRouteId,
-                routeName = routeName,
-                serviceRegion = serviceRegion
+                busRouteId = busRouteId, routeName = routeName, serviceRegion = serviceRegion
             ).onSuccess { busOperationInfo ->
                 setState {
                     copy(
                         busOperationInfo = busOperationInfo
                     )
                 }
+            }.onFailure { exception ->
+                handleApiException(exception = exception)
             }
         }
     }
