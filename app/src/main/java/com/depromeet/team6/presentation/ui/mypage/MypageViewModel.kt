@@ -192,67 +192,67 @@ class MypageViewModel @Inject constructor(
 
     fun modifyUserAddress(context: Context) {
         viewModelScope.launch {
-                val currentAddress = currentState.myAdress
+            val currentAddress = currentState.myAdress
 
-                val modifyUserInfoDto = RequestModifyUserInfoDto(
-                    address = currentAddress.name,
-                    lat = currentAddress.lat,
-                    lon = currentAddress.lon
-                )
+            val modifyUserInfoDto = RequestModifyUserInfoDto(
+                address = currentAddress.name,
+                lat = currentAddress.lat,
+                lon = currentAddress.lon
+            )
 
-                modifyUserInfoUseCase(modifyUserInfoDto = modifyUserInfoDto)
-                    .onSuccess { userInfo ->
-                        setState {
-                            copy(
-                                myAdress = Address(
-                                    name = currentAddress.name,
-                                    lat = userInfo.userHome.latitude,
-                                    lon = userInfo.userHome.longitude,
-                                    address = currentAddress.address
-                                )
+            modifyUserInfoUseCase(modifyUserInfoDto = modifyUserInfoDto)
+                .onSuccess { userInfo ->
+                    setState {
+                        copy(
+                            myAdress = Address(
+                                name = currentAddress.name,
+                                lat = userInfo.userHome.latitude,
+                                lon = userInfo.userHome.longitude,
+                                address = currentAddress.address
                             )
-                        }
+                        )
+                    }
 
-                        setState {
-                            copy(
-                                userInfo = currentState.userInfo.copy(
-                                    address = currentAddress.name,
-                                    lat = userInfo.userHome.latitude,
-                                    lon = userInfo.userHome.longitude
-                                )
+                    setState {
+                        copy(
+                            userInfo = currentState.userInfo.copy(
+                                address = currentAddress.name,
+                                lat = userInfo.userHome.latitude,
+                                lon = userInfo.userHome.longitude
                             )
-                        }
-
-                        setState { copy(mapViewVisible = false) }
-
-                        atChaToastMessage(context, R.string.mypage_change_home_toast_text, Toast.LENGTH_SHORT)
+                        )
                     }
-                    .onFailure { exception ->
-                        handleApiException(exception)
-                    }
+
+                    setState { copy(mapViewVisible = false) }
+
+                    atChaToastMessage(context, R.string.mypage_change_home_toast_text, Toast.LENGTH_SHORT)
+                }
+                .onFailure { exception ->
+                    handleApiException(exception)
+                }
         }
     }
 
     fun modifyAlarmFrequencies(context: Context) {
         viewModelScope.launch {
-                val modifyUserInfoDto = RequestModifyUserInfoDto(
-                    alertFrequencies = currentState.alertFrequencies
-                )
+            val modifyUserInfoDto = RequestModifyUserInfoDto(
+                alertFrequencies = currentState.alertFrequencies
+            )
 
-                modifyUserInfoUseCase(modifyUserInfoDto = modifyUserInfoDto)
-                    .onSuccess { userInfo ->
-                        setState {
-                            copy(
-                                userInfo = currentState.userInfo.copy(
-                                    alertFrequencies = userInfo.alertFrequencies
-                                )
+            modifyUserInfoUseCase(modifyUserInfoDto = modifyUserInfoDto)
+                .onSuccess { userInfo ->
+                    setState {
+                        copy(
+                            userInfo = currentState.userInfo.copy(
+                                alertFrequencies = userInfo.alertFrequencies
                             )
-                        }
-                        atChaToastMessage(context, R.string.mypage_change_alarm_time_toast_text, Toast.LENGTH_SHORT)
+                        )
                     }
-                    .onFailure { exception ->
-                        handleApiException(exception)
-                    }
+                    atChaToastMessage(context, R.string.mypage_change_alarm_time_toast_text, Toast.LENGTH_SHORT)
+                }
+                .onFailure { exception ->
+                    handleApiException(exception)
+                }
         }
     }
 

@@ -1,11 +1,9 @@
 package com.depromeet.team6.domain.usecase
 
 import com.depromeet.team6.data.repositoryimpl.AlarmRepositoryImpl
-import com.depromeet.team6.domain.repository.AlarmRepository
 import com.depromeet.team6.domain.usecase.base.ApiRequestUseCase
 import com.depromeet.team6.presentation.model.exception.ErrorControlFailureException
 import com.depromeet.team6.presentation.model.route.Route
-import retrofit2.Response
 import javax.inject.Inject
 
 class PostAlarmUseCase @Inject constructor(

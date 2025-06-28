@@ -6,7 +6,6 @@ import com.depromeet.team6.data.dataremote.util.ApiConstraints.API
 import com.depromeet.team6.data.dataremote.util.ApiConstraints.LAST_ROUTE_ID
 import com.depromeet.team6.data.dataremote.util.ApiConstraints.NOTIFICATIONS
 import com.depromeet.team6.data.dataremote.util.ApiConstraints.ROUTE
-import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.POST

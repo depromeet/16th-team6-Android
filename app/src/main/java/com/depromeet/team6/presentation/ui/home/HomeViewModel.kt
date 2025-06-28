@@ -1,7 +1,6 @@
 package com.depromeet.team6.presentation.ui.home
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.depromeet.team6.data.datalocal.manager.LockServiceManager
 import com.depromeet.team6.domain.model.Address

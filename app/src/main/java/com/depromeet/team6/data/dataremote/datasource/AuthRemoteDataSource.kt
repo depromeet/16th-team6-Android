@@ -29,7 +29,7 @@ class AuthRemoteDataSource @Inject constructor(
     suspend fun deleteWithDraw(): Response<Unit> =
         authService.deleteWithDraw()
 
-    suspend fun getUserInfo(): Result<ResponseUserInfoDto>  {
+    suspend fun getUserInfo(): Result<ResponseUserInfoDto> {
         val response = authService.getUserInfo()
         return response.parse()
     }

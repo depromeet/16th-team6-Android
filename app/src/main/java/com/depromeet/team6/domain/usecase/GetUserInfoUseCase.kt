@@ -1,15 +1,10 @@
 package com.depromeet.team6.domain.usecase
 
-import androidx.annotation.Nullable
 import com.depromeet.team6.data.repositoryimpl.AuthRepositoryImpl
-import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.UserInfo
-import com.depromeet.team6.domain.repository.AuthRepository
 import com.depromeet.team6.domain.usecase.base.ApiRequestUseCase
 import com.depromeet.team6.presentation.model.exception.ErrorControlFailureException
 import com.depromeet.team6.presentation.model.route.Route
-import com.depromeet.team6.presentation.ui.home.HomeContract
-import com.depromeet.team6.presentation.util.base.UiState
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -36,5 +31,4 @@ class GetUserInfoUseCase @Inject constructor(
             else -> ErrorControlFailureException.ShowToastException("알 수 없는 서버 에러입니다.")
         }
     }
-
 }

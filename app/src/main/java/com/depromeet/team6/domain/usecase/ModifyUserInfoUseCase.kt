@@ -3,7 +3,6 @@ package com.depromeet.team6.domain.usecase
 import com.depromeet.team6.data.dataremote.model.request.user.RequestModifyUserInfoDto
 import com.depromeet.team6.data.repositoryimpl.AuthRepositoryImpl
 import com.depromeet.team6.domain.model.UserInfo
-import com.depromeet.team6.domain.repository.AuthRepository
 import com.depromeet.team6.domain.usecase.base.ApiRequestUseCase
 import com.depromeet.team6.presentation.model.exception.ErrorControlFailureException
 import com.depromeet.team6.presentation.model.route.Route
@@ -11,10 +10,8 @@ import javax.inject.Inject
 
 class ModifyUserInfoUseCase @Inject constructor(
     private val authRepository: AuthRepositoryImpl
-) : ApiRequestUseCase<ModifyUserInfoUseCase.Params, UserInfo>()
-{
+) : ApiRequestUseCase<ModifyUserInfoUseCase.Params, UserInfo>() {
     data class Params(val modifyUserInfoDto: RequestModifyUserInfoDto)
-
 
     suspend operator fun invoke(modifyUserInfoDto: RequestModifyUserInfoDto): Result<UserInfo> =
         authRepository.modifyUserInfo(modifyUserInfoDto = modifyUserInfoDto)
