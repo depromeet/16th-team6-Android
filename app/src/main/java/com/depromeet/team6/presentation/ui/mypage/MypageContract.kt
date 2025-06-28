@@ -56,6 +56,7 @@ class MypageContract {
     sealed interface MypageSideEffect : UiSideEffect {
         data object NavigateBack : MypageSideEffect
         data object NavigateToLogin : MypageSideEffect
+        data object NavigateToFeedbackForm : MypageSideEffect
     }
 
     sealed class MypageEvent : UiEvent {

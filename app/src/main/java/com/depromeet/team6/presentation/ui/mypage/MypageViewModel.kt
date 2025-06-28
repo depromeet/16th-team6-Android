@@ -403,19 +403,28 @@ class MypageViewModel @Inject constructor(
 
     private fun navigateBack() {
         val currentScreen = currentState.currentScreen
-        if (currentScreen == MypageContract.MypageScreen.MAIN) {
-            setSideEffect(MypageContract.MypageSideEffect.NavigateBack)
-        } else if (currentScreen == MypageContract.MypageScreen.ACCOUNT) {
-            setState { copy(currentScreen = MypageContract.MypageScreen.MAIN) }
-        } else if (currentScreen == MypageContract.MypageScreen.CHANGE_HOME) {
-            setState { copy(currentScreen = MypageContract.MypageScreen.MAIN) }
-        } else if (currentScreen == MypageContract.MypageScreen.ALARM) {
-            if (currentState.alarmScreenState == MypageContract.AlarmScreenState.SOUND_SETTING) {
-                setState { copy(alarmScreenState = MypageContract.AlarmScreenState.MAIN) }
-            } else if (currentState.alarmScreenState == MypageContract.AlarmScreenState.TIME_SETTING) {
-                setState { copy(alarmScreenState = MypageContract.AlarmScreenState.MAIN) }
-            } else {
+        when (currentScreen) {
+            MypageContract.MypageScreen.MAIN -> {
+                setSideEffect(MypageContract.MypageSideEffect.NavigateBack)
+            }
+            MypageContract.MypageScreen.ACCOUNT -> {
                 setState { copy(currentScreen = MypageContract.MypageScreen.MAIN) }
+            }
+            MypageContract.MypageScreen.CHANGE_HOME -> {
+                setState { copy(currentScreen = MypageContract.MypageScreen.MAIN) }
+            }
+            MypageContract.MypageScreen.ALARM -> {
+                when (currentState.alarmScreenState) {
+                    MypageContract.AlarmScreenState.SOUND_SETTING -> {
+                        setState { copy(alarmScreenState = MypageContract.AlarmScreenState.MAIN) }
+                    }
+                    MypageContract.AlarmScreenState.TIME_SETTING -> {
+                        setState { copy(alarmScreenState = MypageContract.AlarmScreenState.MAIN) }
+                    }
+                    else -> {
+                        setState { copy(currentScreen = MypageContract.MypageScreen.MAIN) }
+                    }
+                }
             }
         }
     }

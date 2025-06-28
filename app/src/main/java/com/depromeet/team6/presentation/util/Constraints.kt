@@ -20,6 +20,7 @@ object DefaultLatLng {
 object WebViewUrl {
     const val PRIVACY_POLICY_URL =
         "https://mammoth-cheese-88e.notion.site/1008a99e3bbe80e88468c11f09c5a2dc?pvs=4"
+    const val FEEDBACK_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSdmiwKHcZWEgv6O2B_34NxUsjSbsXHkct9Y19txUJvrwbOOxw/viewform"
 }
 
 object BusOperationInfo {
