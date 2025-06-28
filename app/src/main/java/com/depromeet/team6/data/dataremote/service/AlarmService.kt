@@ -21,5 +21,5 @@ interface AlarmService {
     @DELETE("$API/$NOTIFICATIONS/$ROUTE")
     suspend fun deleteAlarm(
         @Query(LAST_ROUTE_ID) lastRouteId: String
-    ): Response<Unit>
+    ): BaseResponse<Unit>
 }

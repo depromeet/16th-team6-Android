@@ -234,33 +234,33 @@ class HomeViewModel @Inject constructor(
 
     fun deleteAlarm(lastRouteId: String, context: Context) {
         viewModelScope.launch {
-            if (deleteAlarmUseCase(
-                    lastRouteId = lastRouteId
-                ).isSuccessful
-            ) {
-                setEvent(HomeContract.HomeEvent.UpdateAlarmRegistered(false))
-                setEvent(HomeContract.HomeEvent.UpdateBusDeparted(false))
+            deleteAlarmUseCase(
+                lastRouteId = lastRouteId
+            )
+                .onSuccess {
+                    setEvent(HomeContract.HomeEvent.UpdateBusDeparted(false))
 
-                stopPollingBusStarted()
+                    stopPollingBusStarted()
 
-                val sharedPreferences = context.getSharedPreferences(
-                    "MyPreferences",
-                    Context.MODE_PRIVATE
-                )
-                val editor = sharedPreferences.edit()
+                    val sharedPreferences = context.getSharedPreferences(
+                        "MyPreferences",
+                        Context.MODE_PRIVATE
+                    )
+                    val editor = sharedPreferences.edit()
 
-                editor.remove("departurePoint")
-                editor.remove("lastCourseInfo")
-                editor.remove("lastRouteId")
-                editor.remove("alarmRegistered")
-                editor.remove("userDeparture")
+                    editor.remove("departurePoint")
+                    editor.remove("lastCourseInfo")
+                    editor.remove("lastRouteId")
+                    editor.remove("alarmRegistered")
+                    editor.remove("userDeparture")
 
-                editor.apply()
+                    editor.apply()
 
-                setEvent(HomeContract.HomeEvent.DismissDialog)
-            } else {
-                Log.d("알림 삭제 실패", "알림 삭제 실패")
-            }
+                    setEvent(HomeContract.HomeEvent.DismissDialog)
+                }
+                .onFailure { exception ->
+                    handleApiException(exception)
+                }
         }
     }
 

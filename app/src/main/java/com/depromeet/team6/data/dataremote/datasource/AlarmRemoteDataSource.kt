@@ -14,6 +14,8 @@ class AlarmRemoteDataSource @Inject constructor(
         return response.parse()
     }
 
-    suspend fun deleteAlarm(lastRouteId: String): Response<Unit> =
-        alarmService.deleteAlarm(lastRouteId = lastRouteId)
+    suspend fun deleteAlarm(lastRouteId: String): Result<Unit> {
+        val response = alarmService.deleteAlarm(lastRouteId = lastRouteId)
+        return response.parse()
+    }
 }
