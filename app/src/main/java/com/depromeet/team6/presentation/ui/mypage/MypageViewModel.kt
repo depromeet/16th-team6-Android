@@ -159,6 +159,9 @@ class MypageViewModel @Inject constructor(
                 }
                 isAddressInitialized = true
             }
+                .onFailure { exception ->
+                    handleApiException(exception)
+                }
         }
     }
 

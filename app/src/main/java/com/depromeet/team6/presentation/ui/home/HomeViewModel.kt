@@ -542,8 +542,8 @@ class HomeViewModel @Inject constructor(
                     )
                 }
                 setState { copy(destinationState = LoadState.Success) }
-            }.onFailure {
-                setState { copy(destinationState = LoadState.Error) }
+            }.onFailure { exception ->
+                handleApiException(exception)
             }
         }
     }
