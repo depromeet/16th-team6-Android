@@ -54,5 +54,5 @@ interface AuthService {
     @PUT("$API/$MEMBERS/$ME")
     suspend fun modifyUserInfo(
         @Body requestModifyUserInfoDto: RequestModifyUserInfoDto
-    ): ApiResponse<ResponseUserInfoDto>
+    ): BaseResponse<ResponseUserInfoDto>
 }

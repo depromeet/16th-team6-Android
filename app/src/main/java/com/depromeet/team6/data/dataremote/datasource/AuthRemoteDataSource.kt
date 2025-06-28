@@ -34,6 +34,8 @@ class AuthRemoteDataSource @Inject constructor(
         return response.parse()
     }
 
-    suspend fun modifyUserInfo(requestModifyUserInfoDto: RequestModifyUserInfoDto): Result<ResponseUserInfoDto> =
-        authService.modifyUserInfo(requestModifyUserInfoDto = requestModifyUserInfoDto).toResult()
+    suspend fun modifyUserInfo(requestModifyUserInfoDto: RequestModifyUserInfoDto): Result<ResponseUserInfoDto> {
+        val response = authService.modifyUserInfo(requestModifyUserInfoDto = requestModifyUserInfoDto)
+        return response.parse()
+    }
 }

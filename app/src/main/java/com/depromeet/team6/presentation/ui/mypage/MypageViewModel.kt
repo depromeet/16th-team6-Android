@@ -192,7 +192,6 @@ class MypageViewModel @Inject constructor(
 
     fun modifyUserAddress(context: Context) {
         viewModelScope.launch {
-            try {
                 val currentAddress = currentState.myAdress
 
                 val modifyUserInfoDto = RequestModifyUserInfoDto(
@@ -228,21 +227,14 @@ class MypageViewModel @Inject constructor(
 
                         atChaToastMessage(context, R.string.mypage_change_home_toast_text, Toast.LENGTH_SHORT)
                     }
-                    .onFailure { error ->
-                        Timber.e("주소 업데이트 실패: ${error.message}")
-                        setState { copy(loadState = LoadState.Error) }
+                    .onFailure { exception ->
+                        handleApiException(exception)
                     }
-            } catch (e: Exception) {
-                Timber.e("주소 업데이트 중 예외 발생: ${e.message}")
-                e.printStackTrace()
-                setState { copy(loadState = LoadState.Error) }
-            }
         }
     }
 
     fun modifyAlarmFrequencies(context: Context) {
         viewModelScope.launch {
-            try {
                 val modifyUserInfoDto = RequestModifyUserInfoDto(
                     alertFrequencies = currentState.alertFrequencies
                 )
@@ -258,15 +250,9 @@ class MypageViewModel @Inject constructor(
                         }
                         atChaToastMessage(context, R.string.mypage_change_alarm_time_toast_text, Toast.LENGTH_SHORT)
                     }
-                    .onFailure { error ->
-                        Timber.e("알림 설정 변경 실패: ${error.message}")
-                        setState { copy(loadState = LoadState.Error) }
+                    .onFailure { exception ->
+                        handleApiException(exception)
                     }
-            } catch (e: Exception) {
-                Timber.e("알림 설정 중 예외 발생: ${e.message}")
-                e.printStackTrace()
-                setState { copy(loadState = LoadState.Error) }
-            }
         }
     }
 
