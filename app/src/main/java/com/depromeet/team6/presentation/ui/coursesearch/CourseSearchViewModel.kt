@@ -157,13 +157,8 @@ class CourseSearchViewModel @Inject constructor(
                 .onSuccess {
                     setEvent(CourseSearchContract.CourseEvent.LoadCourseSearchResult(it))
                 }
-                .onFailure {
-                    setState {
-                        copy(
-                            courseDataLoadState = LoadState.Error
-                        )
-                    }
-                    setSideEffect(CourseSearchContract.CourseSideEffect.ShowSearchFailedToast(it.message!!))
+                .onFailure { exception ->
+                    handleApiException(exception)
                 }
         }
     }
