@@ -5,6 +5,12 @@ import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.course.CourseInfo
 import com.depromeet.team6.domain.usecase.base.ApiRequestUseCase
 import com.depromeet.team6.presentation.model.exception.ErrorControlFailureException
+import com.depromeet.team6.presentation.model.route.Route
+import com.depromeet.team6.presentation.util.ErrorToastMessage.MSG_INVALID_POSITION_RE_TRY
+import com.depromeet.team6.presentation.util.ErrorToastMessage.MSG_INVALID_USER_TOKEN
+import com.depromeet.team6.presentation.util.ErrorToastMessage.MSG_NOT_SERVICE_REGION
+import com.depromeet.team6.presentation.util.ErrorToastMessage.MSG_SHORT_DISTANCE
+import com.depromeet.team6.presentation.util.ErrorToastMessage.MSG_UNKNOWN_NETWORK_ERROR
 import javax.inject.Inject
 
 class GetCourseSearchResultsUseCase @Inject constructor(
@@ -29,8 +35,17 @@ class GetCourseSearchResultsUseCase @Inject constructor(
 
     override fun apiExceptionMapper(errorCode: String): ErrorControlFailureException {
         return when (errorCode) {
-            "TRS_001" -> ErrorControlFailureException.ShowToastException("알 수 없음")
-            else -> ErrorControlFailureException.ShowToastException("알 수 없음")
+            "REQ_001" -> TODO()
+            "REQ_002" -> TODO()
+            "TOK_002" -> ErrorControlFailureException.NavigateAndShowToastException(toastMessage = MSG_INVALID_USER_TOKEN, route = Route.Login)
+            "USR_002" -> ErrorControlFailureException.NavigateAndShowToastException(toastMessage = MSG_INVALID_POSITION_RE_TRY, route = Route.Home)
+            "LOC_003" -> ErrorControlFailureException.NavigateAndShowToastException(toastMessage = MSG_INVALID_POSITION_RE_TRY, route = Route.Home)
+            "LOC_004" -> ErrorControlFailureException.NavigateAndShowToastException(toastMessage = MSG_INVALID_POSITION_RE_TRY, route = Route.Home)
+            "TRS_001" -> TODO()
+            "TRS_011" -> ErrorControlFailureException.NavigateAndShowToastException(toastMessage = MSG_SHORT_DISTANCE, route = Route.Home)
+            "TRS_012" -> ErrorControlFailureException.NavigateAndShowToastException(toastMessage = MSG_NOT_SERVICE_REGION, route = Route.Home)
+            "INTERNAL_SERVER_ERROR" -> ErrorControlFailureException.ShowToastException(toastMessage = MSG_UNKNOWN_NETWORK_ERROR)
+            else -> ErrorControlFailureException.ShowToastException(MSG_UNKNOWN_NETWORK_ERROR)
         }
     }
 }

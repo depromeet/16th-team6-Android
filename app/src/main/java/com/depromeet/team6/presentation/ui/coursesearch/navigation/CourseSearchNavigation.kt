@@ -20,8 +20,8 @@ fun NavController.navigateCourseSearch(departurePoint: String, destinationPoint:
 fun NavGraphBuilder.courseSearchNavGraph(
     padding: PaddingValues,
     navigateToHome: () -> Unit,
-    navigateToItinerary: (String, String, String) -> Unit,
-    navigateToLogin: () -> Unit
+    navigateToLogin: () -> Unit,
+    navigateToItinerary: (String, String, String) -> Unit
 ) {
     composable(
         route = "${CourseSearchRoute.ROUTE}/{departurePoint}/{destinationPoint}",
