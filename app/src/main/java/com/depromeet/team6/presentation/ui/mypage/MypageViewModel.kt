@@ -287,7 +287,7 @@ class MypageViewModel @Inject constructor(
         lon: Double
     ) {
         viewModelScope.launch {
-            getAddressFromCoordinatesUseCase.invoke(lat, lon)
+            getAddressFromCoordinatesUseCase(lat, lon)
                 .onSuccess { address ->
                     setState {
                         copy(
@@ -296,9 +296,22 @@ class MypageViewModel @Inject constructor(
                             )
                         )
                     }
-                }.onFailure {
-                    Timber.e("주소 변환 실패: ${it.message}")
                 }
+                .onFailure { exception ->
+                    handleApiException(exception)
+                }
+//            getAddressFromCoordinatesUseCase.invoke(lat, lon)
+//                .onSuccess { address ->
+//                    setState {
+//                        copy(
+//                            myAdress = myAdress.copy(
+//                                address = address.address
+//                            )
+//                        )
+//                    }
+//                }.onFailure {
+//                    Timber.e("주소 변환 실패: ${it.message}")
+//                }
         }
     }
 
@@ -309,9 +322,18 @@ class MypageViewModel @Inject constructor(
                     setState { copy(myAddress = address) }
                     onComplete(address)
                 }
-                .onFailure {
-                    Timber.e("주소 변환 실패: ${it.message}")
+                .onFailure { exception ->
+                    handleApiException(exception)
                 }
+
+//            getAddressFromCoordinatesUseCase(location.latitude, location.longitude)
+//                .onSuccess { address ->
+//                    setState { copy(myAdress = address) }
+//                    onComplete(address)
+//                }
+//                .onFailure {
+//                    Timber.e("주소 변환 실패: ${it.message}")
+//                }
         }
     }
 

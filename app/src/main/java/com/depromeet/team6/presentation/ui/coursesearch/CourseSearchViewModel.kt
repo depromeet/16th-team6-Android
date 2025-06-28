@@ -157,14 +157,25 @@ class CourseSearchViewModel @Inject constructor(
                 .onSuccess {
                     setEvent(CourseSearchContract.CourseEvent.LoadCourseSearchResult(it))
                 }
-                .onFailure {
-                    setState {
-                        copy(
-                            courseDataLoadState = LoadState.Error
-                        )
-                    }
-                    setSideEffect(CourseSearchContract.CourseSideEffect.ShowSearchFailedToast(it.message!!))
+                .onFailure { exception ->
+                    handleApiException(exception)
                 }
+//            val courseInfo = loadSearchResult(
+//                startPoint = uiState.value.startingPoint!!,
+//                endPoint = uiState.value.destinationPoint!!,
+//                sortType = uiState.value.sortType
+//            )
+//                .onSuccess {
+//                    setEvent(CourseSearchContract.CourseEvent.LoadCourseSearchResult(it))
+//                }
+//                .onFailure {
+//                    setState {
+//                        copy(
+//                            courseDataLoadState = LoadState.Error
+//                        )
+//                    }
+//                    setSideEffect(CourseSearchContract.CourseSideEffect.ShowSearchFailedToast(it.message!!))
+//                }
         }
     }
 

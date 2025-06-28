@@ -190,7 +190,15 @@ class SearchLocationViewModel @Inject constructor(
                     onComplete(address)
                 }
                 .onFailure {
+                    handleApiException(it)
                 }
+//            getAddressFromCoordinatesUseCase(location.latitude, location.longitude)
+//                .onSuccess { address ->
+//                    setState { copy(selectLocation = address) }
+//                    onComplete(address)
+//                }
+//                .onFailure {
+//                }
         }
     }
 }
