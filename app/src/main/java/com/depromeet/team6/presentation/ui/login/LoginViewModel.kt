@@ -58,8 +58,9 @@ class LoginViewModel @Inject constructor(
                 userInfoRepository.setRefreshToken(auth.refreshToken)
                 userInfoRepository.setUserHome(auth.userHome)
                 userInfoRepository.setUserId(userId = auth.id)
-            }.onFailure {
+            }.onFailure { exception->
                 setEvent(LoginContract.LoginEvent.GetLogin(loadState = LoadState.Error))
+                handleApiException(exception = exception)
             }
         }
     }
