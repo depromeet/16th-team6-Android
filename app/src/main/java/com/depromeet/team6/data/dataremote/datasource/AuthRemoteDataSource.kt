@@ -24,11 +24,11 @@ class AuthRemoteDataSource @Inject constructor(
     suspend fun getLogin(provider: Int, fcmToken: String): Result<ResponseAuthDto> =
         authService.getLogin(provider = provider, fcmToken = fcmToken).parse()
 
-    suspend fun postLogout(): Response<Unit> =
-        authService.postLogout()
+    suspend fun postLogout(): Result<Unit> =
+        authService.postLogout().parse()
 
-    suspend fun deleteWithDraw(): Response<Unit> =
-        authService.deleteWithDraw()
+    suspend fun deleteWithDraw(): Result<Unit> =
+        authService.deleteWithDraw().parse()
 
     suspend fun getUserInfo(): Result<ResponseUserInfoDto> =
         authService.getUserInfo().toResult()

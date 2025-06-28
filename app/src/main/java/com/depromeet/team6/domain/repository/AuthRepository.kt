@@ -13,9 +13,9 @@ interface AuthRepository {
 
     suspend fun getLogin(provider: Int, fcmToken: String): Result<Auth>
 
-    suspend fun postLogout(): Response<Unit>
+    suspend fun postLogout(): Result<Unit>
 
-    suspend fun deleteWithDraw(): Response<Unit>
+    suspend fun deleteWithDraw(): Result<Unit>
 
     suspend fun getUserInfo(): Result<UserInfo>
 

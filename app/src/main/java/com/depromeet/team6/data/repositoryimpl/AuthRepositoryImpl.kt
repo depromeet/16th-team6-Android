@@ -29,10 +29,10 @@ class AuthRepositoryImpl @Inject constructor(
                 it.toDomain()
             }
 
-    override suspend fun postLogout(): Response<Unit> =
+    override suspend fun postLogout(): Result<Unit> =
         authRemoteDataSource.postLogout()
 
-    override suspend fun deleteWithDraw(): Response<Unit> =
+    override suspend fun deleteWithDraw(): Result<Unit> =
         authRemoteDataSource.deleteWithDraw()
 
     override suspend fun getUserInfo(): Result<UserInfo> =
