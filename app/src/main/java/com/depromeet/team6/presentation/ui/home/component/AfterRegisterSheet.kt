@@ -69,7 +69,7 @@ fun AfterRegisterSheet(
 
     var externalTriggerCount by remember { mutableStateOf(0) }
 
-    var timeTextColor = colors.systemGrey1
+    var timeTextColor = colors.gray300
     if (isConfirmed) timeTextColor = colors.white
     if (afterUserDeparted) timeTextColor = colors.systemRed
 
@@ -84,7 +84,7 @@ fun AfterRegisterSheet(
             modifier = modifier
                 .fillMaxWidth()
                 .background(
-                    colors.greyWashBackground,
+                    colors.gray950,
                     shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)
                 )
                 .padding(horizontal = 16.dp, vertical = 20.dp)
@@ -144,7 +144,7 @@ fun AfterRegisterSheet(
                                 .clickable {
                                     onIconClick()
                                 },
-                            tint = colors.systemGrey1
+                            tint = colors.gray300
                         )
                     }
                 }

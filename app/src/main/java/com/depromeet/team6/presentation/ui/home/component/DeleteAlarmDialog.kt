@@ -45,7 +45,7 @@ fun DeleteAlarmDialog(
             .padding(horizontal = 30.dp),
         shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(
-            containerColor = colors.greyElevatedBackground
+            containerColor = colors.gray940
         )
     ) {
         Column(
@@ -74,7 +74,7 @@ fun DeleteAlarmDialog(
                     contentPadding = PaddingValues(0.dp),
                     shape = RoundedCornerShape(8.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = colors.greyDefaultButton
+                        containerColor = colors.gray910
                     )
                 ) {
                     Text(

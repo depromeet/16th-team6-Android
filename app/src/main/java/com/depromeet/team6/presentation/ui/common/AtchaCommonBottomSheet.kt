@@ -132,7 +132,7 @@ fun AtchaCommonBottomSheet(
             topStart = Dimens.BottomSheetRoundCornerRadius,
             topEnd = Dimens.BottomSheetRoundCornerRadius
         ),
-        sheetContainerColor = defaultTeam6Colors.greyWashBackground,
+        sheetContainerColor = defaultTeam6Colors.gray950,
         sheetDragHandle = {
             DragHandle {
                 coroutineScope.launch {
@@ -166,7 +166,7 @@ fun DragHandle(
     width: Dp = 40.dp,
     height: Dp = 4.dp,
     shape: Shape = MaterialTheme.shapes.extraLarge,
-    color: Color = defaultTeam6Colors.greyQuaternaryLabel,
+    color: Color = defaultTeam6Colors.gray700,
     onClick: () -> Unit = {}
 ) {
     Surface(

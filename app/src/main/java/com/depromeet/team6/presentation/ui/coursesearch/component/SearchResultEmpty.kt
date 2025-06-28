@@ -27,7 +27,7 @@ fun SearchResultEmpty(
 ) {
     Box(
         modifier = modifier
-            .background(defaultTeam6Colors.greyWashBackground)
+            .background(defaultTeam6Colors.gray950)
             .fillMaxSize()
     ) {
         Column(
@@ -45,7 +45,7 @@ fun SearchResultEmpty(
             )
             Text(
                 text = stringResource(R.string.course_search_result_empty),
-                color = defaultTeam6Colors.greyTertiaryLabel,
+                color = defaultTeam6Colors.gray400,
                 style = defaultTeam6Typography.bodyRegular15
             )
         }

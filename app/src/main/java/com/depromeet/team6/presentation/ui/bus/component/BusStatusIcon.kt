@@ -46,14 +46,14 @@ fun BusStatusIcon(
             modifier = Modifier.width(54.dp).roundedBackgroundWithPadding(
                 cornerRadius = 3.dp,
                 padding = PaddingValues(vertical = 5.dp),
-                backgroundColor = defaultTeam6Colors.greyElevatedBackground
+                backgroundColor = defaultTeam6Colors.gray940
             ),
             horizontalArrangement = Arrangement.Center
         ) {
             Text(
                 text = busNumber,
                 style = defaultTeam6Typography.bodyRegular10,
-                color = defaultTeam6Colors.greySecondaryLabel
+                color = defaultTeam6Colors.gray200
             )
             Spacer(modifier = Modifier.width(2.dp))
             Text(

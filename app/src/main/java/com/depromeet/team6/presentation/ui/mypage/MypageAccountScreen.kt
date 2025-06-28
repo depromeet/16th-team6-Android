@@ -36,7 +36,7 @@ fun MypageAccountScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(colors.greyWashBackground)
+            .background(colors.gray950)
             .padding(padding)
     ) {
         Column(

@@ -237,7 +237,7 @@ fun MypageScreen(
         Box(
             modifier = modifier
                 .fillMaxSize()
-                .background(colors.greyWashBackground)
+                .background(colors.gray950)
                 .padding(padding)
         ) {
             Column(
@@ -298,7 +298,7 @@ fun MypageScreen(
             Text(
                 text = stringResource(R.string.itinerary_info_legs_data_source),
                 style = typography.bodyRegular12,
-                color = colors.systemGrey1,
+                color = colors.gray300,
                 modifier = Modifier.align(Alignment.BottomCenter)
                     .padding(bottom = 32.dp)
             )
