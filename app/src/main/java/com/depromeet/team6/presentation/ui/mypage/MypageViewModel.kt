@@ -198,8 +198,9 @@ class MypageViewModel @Inject constructor(
                             searchLocations = locations.toPresentationList()
                         )
                     }
-                }.onFailure {
+                }.onFailure {exception->
                     setState { copy(searchLocations = emptyList()) }
+                    handleApiException(exception = exception)
                 }
             }
         }
@@ -421,11 +422,12 @@ class MypageViewModel @Inject constructor(
 
     private fun withDraw() {
         viewModelScope.launch {
-            if (deleteWithDrawUseCase().isSuccessful) {
+            deleteWithDrawUseCase().onSuccess {
                 userInfoRepositoryImpl.clear()
                 setSideEffect(MypageContract.MypageSideEffect.NavigateToLogin)
-            } else {
+            }.onFailure { exception ->
                 setEvent(MypageContract.MypageEvent.WithDrawClicked)
+                handleApiException(exception = exception)
             }
         }
     }
