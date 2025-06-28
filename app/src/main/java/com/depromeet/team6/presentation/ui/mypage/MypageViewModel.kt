@@ -190,7 +190,7 @@ class MypageViewModel @Inject constructor(
     fun modifyUserAddress(context: Context) {
         viewModelScope.launch {
             try {
-                val currentAddress = currentState.myAdress
+                val currentAddress = currentState.myAddress
 
                 val modifyUserInfoDto = RequestModifyUserInfoDto(
                     address = currentAddress.name,
