@@ -55,16 +55,16 @@ fun MypageChangeHomeScreen(
             )
 
             MypageSelectedHome(
-                homeLocation = mypageUiState.myAdress,
+                homeLocation = mypageUiState.myAddress,
                 onClick = onModifyHomeButtonClick
             )
         }
 
         if (mypageUiState.mapViewVisible) {
-            val currentLocation by remember { mutableStateOf(mypageUiState.myAdress) }
+            val currentLocation by remember { mutableStateOf(mypageUiState.myAddress) }
             MypageMapView(
                 context = context,
-                myAddress = mypageUiState.myAdress,
+                myAddress = mypageUiState.myAddress,
                 getCenterLocation = getCenterLocation,
                 currentLocation = currentLocation,
                 buttonClicked = mapViewSelectButtonClicked,

@@ -64,7 +64,7 @@ class MypageViewModel @Inject constructor(
             }
             is MypageContract.MypageEvent.ClearAddress -> setState {
                 copy(
-                    myAdress = Address(
+                    myAddress = Address(
                         name = "",
                         lat = 0.0,
                         lon = 0.0,
@@ -91,7 +91,7 @@ class MypageViewModel @Inject constructor(
             is MypageContract.MypageEvent.UpdateSearchText -> handleUpdateSearchText(event = event)
             is MypageContract.MypageEvent.LocationSelectButtonClicked -> setState {
                 copy(
-                    myAdress = event.mypageSearchLocation,
+                    myAddress = event.mypageSearchLocation,
                     searchPopupVisible = false
                 )
             }
@@ -121,7 +121,7 @@ class MypageViewModel @Inject constructor(
     }
 
     fun getUserInfo() {
-        if (isAddressInitialized && currentState.myAdress.address.isNotEmpty()) {
+        if (isAddressInitialized && currentState.myAddress.address.isNotEmpty()) {
             Timber.d("주소가 이미 초기화되어 있어 getUserInfo에서 주소를 갱신하지 않습니다.")
             return
         }
@@ -131,11 +131,11 @@ class MypageViewModel @Inject constructor(
                 setLocationToHomeAddress(userInfo.userHome.latitude, userInfo.userHome.longitude)
                 setState {
                     copy(
-                        myAdress = Address(
+                        myAddress = Address(
                             name = userInfo.address,
                             lat = userInfo.userHome.latitude,
                             lon = userInfo.userHome.longitude,
-                            address = currentState.myAdress.address
+                            address = currentState.myAddress.address
                         )
                     )
                 }
@@ -202,7 +202,7 @@ class MypageViewModel @Inject constructor(
                     .onSuccess { userInfo ->
                         setState {
                             copy(
-                                myAdress = Address(
+                                myAddress = Address(
                                     name = currentAddress.name,
                                     lat = userInfo.userHome.latitude,
                                     lon = userInfo.userHome.longitude,
@@ -291,7 +291,7 @@ class MypageViewModel @Inject constructor(
                 .onSuccess { address ->
                     setState {
                         copy(
-                            myAdress = myAdress.copy(
+                            myAddress = myAddress.copy(
                                 address = address.address
                             )
                         )
@@ -306,7 +306,7 @@ class MypageViewModel @Inject constructor(
         viewModelScope.launch {
             getAddressFromCoordinatesUseCase(location.latitude, location.longitude)
                 .onSuccess { address ->
-                    setState { copy(myAdress = address) }
+                    setState { copy(myAddress = address) }
                     onComplete(address)
                 }
                 .onFailure {
