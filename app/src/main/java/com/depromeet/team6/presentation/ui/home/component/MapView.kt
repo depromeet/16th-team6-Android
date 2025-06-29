@@ -59,31 +59,6 @@ fun TMapViewCompose(
 
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
 
-    LaunchedEffect(Unit) {
-        tMapView.setSKTMapApiKey(BuildConfig.TMAP_API_KEY)
-        tMapView.setOnMapReadyListener {
-            tMapView.mapType = TMapView.MapType.NIGHT
-            isMapReady = true
-
-            // 드래그 종료 시 지도 중심 좌표 업데이트
-            tMapView.setOnDisableScrollWithZoomLevelListener { _, _ ->
-                val centerLat = tMapView.centerPoint.latitude
-                val centerLon = tMapView.centerPoint.longitude
-
-                getCenterLocation(LatLng(centerLat, centerLon))
-
-                AmplitudeUtils.trackEventWithProperties(
-                    eventName = HOME_COURSESEARCH_ENTERED_WITH_MAP_DRAG,
-                    mapOf(
-                        USER_ID to userId,
-                        SCREEN_NAME to HOME,
-                        HOME_COURSESEARCH_ENTERED_WITH_MAP_DRAG to true
-                    )
-                )
-            }
-        }
-    }
-
     // 현재 위치 변경될 때만 현위치 마커 갱신
     LaunchedEffect(currentLocation, isMapReady) {
         if (isMapReady) {
@@ -186,7 +161,6 @@ fun TMapViewCompose(
                         val tMapPoint =
                             TMapPoint(currentLocation.latitude, currentLocation.longitude)
                         tMapView.setCenterPoint(tMapPoint.latitude, tMapPoint.longitude)
-
                         getCenterLocation(LatLng(tMapPoint.latitude, tMapPoint.longitude))
 
                         AmplitudeUtils.trackEventWithProperties(
