@@ -30,7 +30,6 @@ import androidx.core.graphics.drawable.toBitmap
 import com.depromeet.team6.BuildConfig
 import com.depromeet.team6.R
 import com.depromeet.team6.presentation.ui.common.view.AtChaLoadingView
-import com.depromeet.team6.presentation.ui.home.HomeViewModel
 import com.depromeet.team6.presentation.util.AmplitudeCommon.SCREEN_NAME
 import com.depromeet.team6.presentation.util.AmplitudeCommon.USER_ID
 import com.depromeet.team6.presentation.util.HomeAmplitude.HOME
@@ -110,7 +109,7 @@ fun TMapViewCompose(
                     tMapView.setOnDisableScrollWithZoomLevelListener { _, _ ->
                         val centerLat = tMapView.centerPoint.latitude
                         val centerLon = tMapView.centerPoint.longitude
-                      
+
                         getCenterLocation(LatLng(centerLat, centerLon))
 
                         AmplitudeUtils.trackEventWithProperties(
