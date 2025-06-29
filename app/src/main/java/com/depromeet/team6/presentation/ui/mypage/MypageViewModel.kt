@@ -426,7 +426,6 @@ class MypageViewModel @Inject constructor(
                 userInfoRepositoryImpl.clear()
                 setSideEffect(MypageContract.MypageSideEffect.NavigateToLogin)
             }.onFailure { exception ->
-                setEvent(MypageContract.MypageEvent.WithDrawClicked)
                 handleApiException(exception = exception)
             }
         }

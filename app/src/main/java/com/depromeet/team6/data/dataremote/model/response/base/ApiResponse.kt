@@ -9,6 +9,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import retrofit2.Response
+import timber.log.Timber
 
 typealias BaseResponse<T> = Response<ApiResponse<T>>
 
@@ -33,12 +34,11 @@ fun <T> ApiResponse<T>.toResult(): Result<T> =
 suspend fun <T : Any, Z : ApiResponse<T>> Response<Z>.parse(): Result<T> {
     return if (isSuccessful) {
         val apiBody = body()
-            ?: return Result.failure(
-                ApiException.ApiRequestFailureException("EMPTY", "Response Body is Empty")
-            )
+            ?: return Result.success(Unit as T)
+
 
         if (apiBody.result == null) {
-            return Result.success(DummyResponseDto(dummy = "dummy") as T)
+            return Result.success(Unit as T)
         }
 
         return Result.success(apiBody.result)
@@ -50,9 +50,16 @@ suspend fun <T : Any, Z : ApiResponse<T>> Response<Z>.parse(): Result<T> {
                     // errorBody를 ApiResponse로 파싱하는게 맞나? (성공 실패 body 형식 확인해봐야 함)
                     Gson().fromJson(errorBodyString, ApiErrorResponse::class.java)
                 } catch (e: Exception) {
-                    return@withContext Result.failure(ApiException.NetworkFailureException(errorMessage = e.message ?: "ErrorResponse Parsing Error"))
+                    return@withContext Result.failure(
+                        ApiException.NetworkFailureException(
+                            errorMessage = e.message ?: "ErrorResponse Parsing Error"
+                        )
+                    )
                 }
-                val apiException = ApiException.ApiRequestFailureException(errorBody.responseCode, errorBody.message ?: "Unknown error")
+                val apiException = ApiException.ApiRequestFailureException(
+                    errorBody.responseCode,
+                    errorBody.message ?: "Unknown error"
+                )
                 return@withContext Result.failure(apiException)
             }
         }
