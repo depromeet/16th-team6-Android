@@ -1,7 +1,6 @@
 package com.depromeet.team6.data.dataremote.model.response.base
 
 import androidx.annotation.Keep
-import com.depromeet.team6.data.dataremote.model.response.dummy.DummyResponseDto
 import com.depromeet.team6.presentation.util.ErrorToastMessage.MSG_UNKNOWN_NETWORK_ERROR
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
@@ -9,7 +8,6 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import retrofit2.Response
-import timber.log.Timber
 
 typealias BaseResponse<T> = Response<ApiResponse<T>>
 
@@ -35,7 +33,6 @@ suspend fun <T : Any, Z : ApiResponse<T>> Response<Z>.parse(): Result<T> {
     return if (isSuccessful) {
         val apiBody = body()
             ?: return Result.success(Unit as T)
-
 
         if (apiBody.result == null) {
             return Result.success(Unit as T)
