@@ -1,6 +1,7 @@
 package com.depromeet.team6.data.dataremote.service
 
 import com.depromeet.team6.data.dataremote.model.response.base.ApiResponse
+import com.depromeet.team6.data.dataremote.model.response.base.BaseResponse
 import com.depromeet.team6.data.dataremote.model.response.transits.ResponseBusArrivalsDto
 import com.depromeet.team6.data.dataremote.model.response.transits.ResponseBusOperationInfoDto
 import com.depromeet.team6.data.dataremote.model.response.transits.ResponseBusPositionsDto
@@ -8,7 +9,6 @@ import com.depromeet.team6.data.dataremote.model.response.transits.ResponseCours
 import com.depromeet.team6.data.dataremote.util.ApiConstraints.API
 import com.depromeet.team6.data.dataremote.util.ApiConstraints.BUS_ROUTES
 import com.depromeet.team6.data.dataremote.util.ApiConstraints.TRANSITS
-import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -20,7 +20,7 @@ interface TransitsService {
         @Query("endLat") endLat: String,
         @Query("endLon") endLon: String,
         @Query("sortType") sortType: Int
-    ): Response<ApiResponse<List<ResponseCourseSearchDto>>>
+    ): BaseResponse<List<ResponseCourseSearchDto>>
 
     @GET("$API/$TRANSITS/bus-arrival")
     suspend fun getBusArrival(

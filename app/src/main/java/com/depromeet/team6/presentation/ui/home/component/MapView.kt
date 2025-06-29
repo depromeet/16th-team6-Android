@@ -110,13 +110,13 @@ fun TMapViewCompose(
                     tMapView.setOnDisableScrollWithZoomLevelListener { _, _ ->
                         val centerLat = tMapView.centerPoint.latitude
                         val centerLon = tMapView.centerPoint.longitude
-
-                        viewModel.getCenterLocation(LatLng(centerLat, centerLon))
+                      
+                        getCenterLocation(LatLng(centerLat, centerLon))
 
                         AmplitudeUtils.trackEventWithProperties(
                             eventName = HOME_COURSESEARCH_ENTERED_WITH_MAP_DRAG,
                             mapOf(
-                                USER_ID to viewModel.getUserId(),
+                                USER_ID to userId,
                                 SCREEN_NAME to HOME,
                                 HOME_COURSESEARCH_ENTERED_WITH_MAP_DRAG to true
                             )
@@ -152,7 +152,7 @@ fun TMapViewCompose(
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     .then(
-                        if (uiState.isAlarmRegistered) {
+                        if (isAlarmRegistered) {
                             Modifier.padding(bottom = 35.dp, end = 16.dp)
                         } else {
                             Modifier.padding(bottom = 35.dp, end = 16.dp)
@@ -162,13 +162,12 @@ fun TMapViewCompose(
                         val tMapPoint =
                             TMapPoint(currentLocation.latitude, currentLocation.longitude)
                         tMapView.setCenterPoint(tMapPoint.latitude, tMapPoint.longitude)
-
-                        viewModel.getCenterLocation(LatLng(tMapPoint.latitude, tMapPoint.longitude))
+                        getCenterLocation(LatLng(tMapPoint.latitude, tMapPoint.longitude))
 
                         AmplitudeUtils.trackEventWithProperties(
                             eventName = HOME_COURSESEARCH_ENTERED_WITH_CURRENT_LOCATION,
                             mapOf(
-                                USER_ID to viewModel.getUserId(),
+                                USER_ID to userId,
                                 SCREEN_NAME to HOME,
                                 HOME_COURSESEARCH_ENTERED_WITH_CURRENT_LOCATION to true
                             )

@@ -4,6 +4,7 @@ import com.depromeet.team6.data.dataremote.model.response.base.ApiResponse
 import com.depromeet.team6.data.dataremote.util.ApiConstraints.API
 import com.depromeet.team6.data.dataremote.util.ApiConstraints.TAXIFARE
 import com.depromeet.team6.data.dataremote.util.ApiConstraints.TRANSITS
+import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -14,5 +15,5 @@ interface TaxiCostService {
         @Query("startLon") startLon: Double,
         @Query("endLat") endLat: Double,
         @Query("endLon") endLon: Double
-    ): ApiResponse<Int>
+    ): Response<ApiResponse<Int>>
 }

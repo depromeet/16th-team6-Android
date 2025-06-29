@@ -36,6 +36,7 @@ import com.depromeet.team6.presentation.util.AmplitudeCommon.USER_ID
 import com.depromeet.team6.presentation.util.HomeAmplitude.ALERT_END_POPUP_2
 import com.depromeet.team6.presentation.util.HomeAmplitude.POPUP
 import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
+import com.depromeet.team6.presentation.util.base.ApiErrorSideEffect
 import com.depromeet.team6.presentation.util.toast.atChaToastMessage
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
@@ -49,6 +50,7 @@ fun CourseSearchRoute(
     destinationPoint: String,
     navigateToItinerary: (String, String, String) -> Unit,
     navigateToHome: () -> Unit,
+    navigateToLogin: () -> Unit,
     fromLockScreen: Boolean = false,
     viewModel: CourseSearchViewModel = hiltViewModel()
 ) {
@@ -86,6 +88,18 @@ fun CourseSearchRoute(
     LaunchedEffect(Unit) {
         viewModel.sideEffect.collect { sideEffect ->
             when (sideEffect) {
+                is ApiErrorSideEffect.ShowToastSideEffect -> {
+                    Toast.makeText(context, sideEffect.toastMessage, Toast.LENGTH_SHORT).show()
+                }
+
+                is ApiErrorSideEffect.NavigateToHomeSideEffect -> {
+                    navigateToHome()
+                }
+
+                is ApiErrorSideEffect.NavigateToLoginSideEffect -> {
+                    navigateToLogin()
+                }
+
                 is CourseSearchContract.CourseSideEffect.ShowNotificationToast -> {
                     Toast.makeText(context, context.getString(R.string.course_set_notification_snackbar), Toast.LENGTH_SHORT).show()
                 }

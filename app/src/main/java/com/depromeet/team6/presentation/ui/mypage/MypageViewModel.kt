@@ -64,7 +64,7 @@ class MypageViewModel @Inject constructor(
             }
             is MypageContract.MypageEvent.ClearAddress -> setState {
                 copy(
-                    myAdress = Address(
+                    myAddress = Address(
                         name = "",
                         lat = 0.0,
                         lon = 0.0,
@@ -91,7 +91,7 @@ class MypageViewModel @Inject constructor(
             is MypageContract.MypageEvent.UpdateSearchText -> handleUpdateSearchText(event = event)
             is MypageContract.MypageEvent.LocationSelectButtonClicked -> setState {
                 copy(
-                    myAdress = event.mypageSearchLocation,
+                    myAddress = event.mypageSearchLocation,
                     searchPopupVisible = false
                 )
             }
@@ -121,7 +121,7 @@ class MypageViewModel @Inject constructor(
     }
 
     fun getUserInfo() {
-        if (isAddressInitialized && currentState.myAdress.address.isNotEmpty()) {
+        if (isAddressInitialized && currentState.myAddress.address.isNotEmpty()) {
             Timber.d("주소가 이미 초기화되어 있어 getUserInfo에서 주소를 갱신하지 않습니다.")
             return
         }
@@ -131,11 +131,11 @@ class MypageViewModel @Inject constructor(
                 setLocationToHomeAddress(userInfo.userHome.latitude, userInfo.userHome.longitude)
                 setState {
                     copy(
-                        myAdress = Address(
+                        myAddress = Address(
                             name = userInfo.address,
                             lat = userInfo.userHome.latitude,
                             lon = userInfo.userHome.longitude,
-                            address = currentState.myAdress.address
+                            address = currentState.myAddress.address
                         )
                     )
                 }
@@ -143,8 +143,6 @@ class MypageViewModel @Inject constructor(
                 setState {
                     copy(
                         userInfo = MypageUserInfo(
-                            nickname = userInfo.nickname,
-                            profileImageUrl = userInfo.profileImageUrl,
                             address = userInfo.address,
                             lat = userInfo.userHome.latitude,
                             lon = userInfo.userHome.longitude,
@@ -192,7 +190,7 @@ class MypageViewModel @Inject constructor(
     fun modifyUserAddress(context: Context) {
         viewModelScope.launch {
             try {
-                val currentAddress = currentState.myAdress
+                val currentAddress = currentState.myAddress
 
                 val modifyUserInfoDto = RequestModifyUserInfoDto(
                     address = currentAddress.name,
@@ -204,7 +202,7 @@ class MypageViewModel @Inject constructor(
                     .onSuccess { userInfo ->
                         setState {
                             copy(
-                                myAdress = Address(
+                                myAddress = Address(
                                     name = currentAddress.name,
                                     lat = userInfo.userHome.latitude,
                                     lon = userInfo.userHome.longitude,
@@ -289,18 +287,31 @@ class MypageViewModel @Inject constructor(
         lon: Double
     ) {
         viewModelScope.launch {
-            getAddressFromCoordinatesUseCase.invoke(lat, lon)
+            getAddressFromCoordinatesUseCase(lat, lon)
                 .onSuccess { address ->
                     setState {
                         copy(
-                            myAdress = myAdress.copy(
+                            myAddress = myAddress.copy(
                                 address = address.address
                             )
                         )
                     }
-                }.onFailure {
-                    Timber.e("주소 변환 실패: ${it.message}")
                 }
+                .onFailure { exception ->
+                    handleApiException(exception)
+                }
+//            getAddressFromCoordinatesUseCase.invoke(lat, lon)
+//                .onSuccess { address ->
+//                    setState {
+//                        copy(
+//                            myAdress = myAdress.copy(
+//                                address = address.address
+//                            )
+//                        )
+//                    }
+//                }.onFailure {
+//                    Timber.e("주소 변환 실패: ${it.message}")
+//                }
         }
     }
 
@@ -308,12 +319,21 @@ class MypageViewModel @Inject constructor(
         viewModelScope.launch {
             getAddressFromCoordinatesUseCase(location.latitude, location.longitude)
                 .onSuccess { address ->
-                    setState { copy(myAdress = address) }
+                    setState { copy(myAddress = address) }
                     onComplete(address)
                 }
-                .onFailure {
-                    Timber.e("주소 변환 실패: ${it.message}")
+                .onFailure { exception ->
+                    handleApiException(exception)
                 }
+
+//            getAddressFromCoordinatesUseCase(location.latitude, location.longitude)
+//                .onSuccess { address ->
+//                    setState { copy(myAdress = address) }
+//                    onComplete(address)
+//                }
+//                .onFailure {
+//                    Timber.e("주소 변환 실패: ${it.message}")
+//                }
         }
     }
 
@@ -405,19 +425,28 @@ class MypageViewModel @Inject constructor(
 
     private fun navigateBack() {
         val currentScreen = currentState.currentScreen
-        if (currentScreen == MypageContract.MypageScreen.MAIN) {
-            setSideEffect(MypageContract.MypageSideEffect.NavigateBack)
-        } else if (currentScreen == MypageContract.MypageScreen.ACCOUNT) {
-            setState { copy(currentScreen = MypageContract.MypageScreen.MAIN) }
-        } else if (currentScreen == MypageContract.MypageScreen.CHANGE_HOME) {
-            setState { copy(currentScreen = MypageContract.MypageScreen.MAIN) }
-        } else if (currentScreen == MypageContract.MypageScreen.ALARM) {
-            if (currentState.alarmScreenState == MypageContract.AlarmScreenState.SOUND_SETTING) {
-                setState { copy(alarmScreenState = MypageContract.AlarmScreenState.MAIN) }
-            } else if (currentState.alarmScreenState == MypageContract.AlarmScreenState.TIME_SETTING) {
-                setState { copy(alarmScreenState = MypageContract.AlarmScreenState.MAIN) }
-            } else {
+        when (currentScreen) {
+            MypageContract.MypageScreen.MAIN -> {
+                setSideEffect(MypageContract.MypageSideEffect.NavigateBack)
+            }
+            MypageContract.MypageScreen.ACCOUNT -> {
                 setState { copy(currentScreen = MypageContract.MypageScreen.MAIN) }
+            }
+            MypageContract.MypageScreen.CHANGE_HOME -> {
+                setState { copy(currentScreen = MypageContract.MypageScreen.MAIN) }
+            }
+            MypageContract.MypageScreen.ALARM -> {
+                when (currentState.alarmScreenState) {
+                    MypageContract.AlarmScreenState.SOUND_SETTING -> {
+                        setState { copy(alarmScreenState = MypageContract.AlarmScreenState.MAIN) }
+                    }
+                    MypageContract.AlarmScreenState.TIME_SETTING -> {
+                        setState { copy(alarmScreenState = MypageContract.AlarmScreenState.MAIN) }
+                    }
+                    else -> {
+                        setState { copy(currentScreen = MypageContract.MypageScreen.MAIN) }
+                    }
+                }
             }
         }
     }

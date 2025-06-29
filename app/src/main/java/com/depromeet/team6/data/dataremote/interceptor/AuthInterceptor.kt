@@ -38,7 +38,7 @@ class AuthInterceptor @Inject constructor(
             if (localStorage.accessToken.isNotBlank()) originalRequest.newAuthBuilder() else originalRequest
         var response = chain.proceed(authRequest)
 
-        Timber.d("API_REQUEST : $originalRequest")
+        Timber.d("API_REQUEST : $authRequest")
         Timber.d("API_RESPONSE : $response")
         if (response.code == HTTP_BAD_REQUEST) {
             // errorBody를 문자열로 읽어 소비합니다. (더이상 response를 사용할 수 없게 되기에 복제해야함)
