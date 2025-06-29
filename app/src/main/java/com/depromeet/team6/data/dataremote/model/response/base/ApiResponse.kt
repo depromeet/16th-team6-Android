@@ -1,7 +1,7 @@
 package com.depromeet.team6.data.dataremote.model.response.base
 
 import androidx.annotation.Keep
-import com.depromeet.team6.presentation.util.ErrorToastMessage.MSG_UNKNOWN_NETWORK_ERROR
+import com.depromeet.team6.domain.ToastMessage.NETWORK
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -24,7 +24,7 @@ data class ApiResponse<T>(
 fun <T> ApiResponse<T>.toResult(): Result<T> =
     when {
         this.result != null -> Result.success(this.result)
-        this.message != null -> Result.failure(ApiException.NetworkFailureException(MSG_UNKNOWN_NETWORK_ERROR))
+        this.message != null -> Result.failure(ApiException.NetworkFailureException(NETWORK))
         else -> Result.failure(Exception("Unknown error occurred"))
     }
 
