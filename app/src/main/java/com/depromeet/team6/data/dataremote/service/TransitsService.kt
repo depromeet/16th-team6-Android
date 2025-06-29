@@ -12,7 +12,7 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface TransitsService {
-    @GET("$API/$TRANSITS/v2/last-routes")
+    @GET("$API/$TRANSITS/last-routes")
     suspend fun getAvailableCourses(
         @Query("startLat") startLat: String,
         @Query("startLon") startLon: String,
