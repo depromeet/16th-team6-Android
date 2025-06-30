@@ -86,8 +86,15 @@ fun AfterRegisterMap(
     val destinationLocation = LatLng(legs[legs.size - 1].endPoint.lat, legs[legs.size - 1].endPoint.lon)
     val markerSizePx = 28.dp.toPx().toInt()
 
-    var firstTransportationPoint = LatLng(legs[0].startPoint.lat, legs[0].startPoint.lon)
-    var markBusStationName = ""
+    val (firstTransportationPoint, markBusStationName) = remember(legs) {
+        val firstTransportLeg = legs.firstOrNull { it.transportType != TransportType.WALK }
+        val point = firstTransportLeg?.let { LatLng(it.startPoint.lat, it.startPoint.lon) }
+            ?: LatLng(legs[0].startPoint.lat, legs[0].startPoint.lon)
+        val busStationName = firstTransportLeg?.takeIf { it.transportType == TransportType.BUS }
+            ?.startPoint?.name ?: ""
+
+        Pair(point, busStationName)
+    }
 
     var hasShownToast by remember { mutableStateOf(false) }
 
@@ -106,16 +113,6 @@ fun AfterRegisterMap(
         if (isMapReady) {
             val departTMapPoint = TMapPoint(departLocation.latitude, departLocation.longitude)
             val destinationTMapPoint = TMapPoint(destinationLocation.latitude, destinationLocation.longitude)
-
-            for (leg in legs) {
-                if (leg.transportType != TransportType.WALK) {
-                    firstTransportationPoint = LatLng(leg.startPoint.lat, leg.startPoint.lon)
-                    if (leg.transportType == TransportType.BUS) {
-                        markBusStationName = leg.startPoint.name
-                    }
-                    break
-                }
-            }
 
             // 경로 그리기
             for ((index, leg) in legs.withIndex()) {
@@ -244,7 +241,7 @@ fun AfterRegisterMap(
         LocationServices.getFusedLocationProviderClient(context)
     }
 
-    val locationCallback = remember {
+    val locationCallback = remember(firstTransportationPoint) {
         object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult) {
                 locationResult.lastLocation?.let { location ->
