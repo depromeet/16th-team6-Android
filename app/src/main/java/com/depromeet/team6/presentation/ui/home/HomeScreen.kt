@@ -40,7 +40,6 @@ import com.depromeet.team6.R
 import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.course.TransportType
 import com.depromeet.team6.presentation.model.itinerary.FocusedMarkerParameter
-import com.depromeet.team6.presentation.ui.alarm.NotificationScheduler
 import com.depromeet.team6.presentation.ui.common.view.AtChaLoadingView
 import com.depromeet.team6.presentation.ui.home.component.AfterRegisterMap
 import com.depromeet.team6.presentation.ui.home.component.AfterRegisterSheet
@@ -328,8 +327,6 @@ fun HomeScreen(
     val context = LocalContext.current
     val colors = LocalTeam6Colors.current
 
-    val notificationScheduler = NotificationScheduler(context)
-
     var characterAnimationTrigger by remember { mutableStateOf(0) }
 
     Box(
@@ -460,8 +457,6 @@ fun HomeScreen(
                 busStationLeft = homeUiState.busRemainingStations
             )
         } else {
-            notificationScheduler.cancelAllNotifications()
-
             CurrentLocationSheet(
                 currentLocation = homeUiState.markerPoint.name,
                 onSearchLocationClick = navigateToSearchLocation,

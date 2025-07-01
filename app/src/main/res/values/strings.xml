@@ -44,6 +44,7 @@
     <string name="notification_content_text">"지금 바로 출발하셔야 해요!"</string>
     <string name="notification_title_text">"앗차!"</string>
     <string name="notification_body_text">"막차 출발 시간을 확인해보세요!"</string>
+    <string name="notification_ten_text">"지금 밖이세요? 막차 알림 등록하고 편히 귀가하세요. \uD83C\uDFE0"</string>
     <string name="notification_head_up_channel_name">앗차 중요 알림</string>
 
     <string name="dialog_finish_alarm_title">막차 알림을 종료할까요?</string>
