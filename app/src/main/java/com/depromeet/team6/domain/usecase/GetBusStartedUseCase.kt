@@ -15,7 +15,7 @@ class GetBusStartedUseCase @Inject constructor(
 ) : ApiRequestUseCase<GetBusStartedUseCase.Params, Boolean>() {
 
     data class Params(val lastRouteId: String)
-    private lateinit var errorReduce : HomeContract.HomeUiState.() -> HomeContract.HomeUiState
+    private lateinit var errorReduce: HomeContract.HomeUiState.() -> HomeContract.HomeUiState
 
     suspend operator fun invoke(lastRouteId: String): Result<Boolean> =
         invoke(params = Params(lastRouteId = lastRouteId))

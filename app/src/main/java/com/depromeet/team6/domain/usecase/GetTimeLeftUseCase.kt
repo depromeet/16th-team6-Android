@@ -10,7 +10,7 @@ class GetTimeLeftUseCase @Inject constructor(
     private val timeLeftRepository: TimeLeftRepository
 ) : ApiRequestUseCase<GetTimeLeftUseCase.Params, Int>() {
 
-    data class Params(val routeId : String)
+    data class Params(val routeId: String)
     suspend operator fun invoke(routeId: String): Result<Int> =
         invoke(Params(routeId = routeId))
 
