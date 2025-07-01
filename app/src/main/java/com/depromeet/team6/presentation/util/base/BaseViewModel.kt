@@ -51,7 +51,8 @@ abstract class BaseViewModel<State : UiState, SideEffect : UiSideEffect, Event :
 
     @Suppress("UNCHECKED_CAST")
     fun handleApiException(
-        exception: Throwable
+        exception: Throwable,
+        errorReduce : State.() -> State = { currentState }
     ) {
         if (exception is ErrorControlFailureException) {
             when (exception) {
@@ -72,7 +73,7 @@ abstract class BaseViewModel<State : UiState, SideEffect : UiSideEffect, Event :
                     }
                 }
                 is ErrorControlFailureException.SetUIStateException -> {
-                    _uiState.value = exception.errorReduce(currentState) as State
+                    _uiState.value = errorReduce(currentState)
                 }
             }
         } else {
