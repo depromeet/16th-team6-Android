@@ -32,7 +32,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CourseSearchViewModel @Inject constructor(
-    private val savedStateHandle: SavedStateHandle,
+    savedStateHandle: SavedStateHandle,
     private val loadSearchResult: GetCourseSearchResultsUseCase,
     private val postAlarmUseCase: PostAlarmUseCase,
     private val userInfoRepository: UserInfoRepository,
