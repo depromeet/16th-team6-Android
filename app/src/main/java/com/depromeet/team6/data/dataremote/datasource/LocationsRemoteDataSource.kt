@@ -17,7 +17,7 @@ class LocationsRemoteDataSource @Inject constructor(
         lat: Double,
         lon: Double
     ): Result<List<ResponseLocationsDto>> =
-        locationsService.getLocations(keyword = keyword, lat = lat, lon = lon).toResult()
+        locationsService.getLocations(keyword = keyword, lat = lat, lon = lon).parse()
 
     suspend fun getAddressFromCoordinates(lat: Double, lon: Double): Result<ResponseAddressDto> {
         val response = locationsService.getAddressFromCoordinates(lat = lat, lon = lon)

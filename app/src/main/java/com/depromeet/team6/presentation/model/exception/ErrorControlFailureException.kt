@@ -7,4 +7,6 @@ sealed class ErrorControlFailureException : IOException() {
     class ShowToastException(val toastMessage: String) : ErrorControlFailureException()
     class NavigateAndShowToastException(val toastMessage: String, val route: Route) : ErrorControlFailureException()
     class SetUIStateException() : ErrorControlFailureException()
+    class ReportDiscord : ErrorControlFailureException()
+    class ReportDiscordWithToast(val toastMessage: String) : ErrorControlFailureException()
 }

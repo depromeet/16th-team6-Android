@@ -1,10 +1,12 @@
 package com.depromeet.team6.domain.usecase
 
+import com.depromeet.team6.domain.ToastMessage.API_ERROR_INVALID_LOCATION
+import com.depromeet.team6.domain.ToastMessage.API_ERROR_NETWORK_FAILURE
+import com.depromeet.team6.domain.ToastMessage.API_ERROR_UNKNOWN
 import com.depromeet.team6.domain.model.RouteLocation
 import com.depromeet.team6.domain.repository.TaxiCostRepository
 import com.depromeet.team6.domain.usecase.base.ApiRequestUseCase
 import com.depromeet.team6.presentation.model.exception.ErrorControlFailureException
-import com.depromeet.team6.presentation.util.ErrorToastMessage
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -38,11 +40,11 @@ class GetTaxiCostUseCase @Inject constructor(
 
     override fun apiExceptionMapper(errorCode: String): ErrorControlFailureException {
         return when (errorCode) {
-            "LOC_003" -> ErrorControlFailureException.ShowToastException(toastMessage = ErrorToastMessage.MSG_INVALID_POSITION_RE_TRY)
-            "LOC_004" -> ErrorControlFailureException.ShowToastException(toastMessage = ErrorToastMessage.MSG_INVALID_POSITION_RE_TRY)
-            "TRS_002" -> ErrorControlFailureException.ShowToastException(toastMessage = ErrorToastMessage.MSG_NETWORK_ERROR_RETRY)
-            "INTERNAL_SERVER_ERROR" -> ErrorControlFailureException.ShowToastException(toastMessage = ErrorToastMessage.MSG_UNKNOWN_NETWORK_ERROR)
-            else -> ErrorControlFailureException.ShowToastException(toastMessage = ErrorToastMessage.MSG_UNKNOWN_NETWORK_ERROR)
+            "LOC_003" -> ErrorControlFailureException.ShowToastException(toastMessage = API_ERROR_INVALID_LOCATION)
+            "LOC_004" -> ErrorControlFailureException.ShowToastException(toastMessage = API_ERROR_INVALID_LOCATION)
+            "TRS_002" -> ErrorControlFailureException.ReportDiscordWithToast(toastMessage = API_ERROR_NETWORK_FAILURE)
+            "INTERNAL_SERVER_ERROR" -> ErrorControlFailureException.ShowToastException(toastMessage = API_ERROR_UNKNOWN)
+            else -> ErrorControlFailureException.ShowToastException(toastMessage = API_ERROR_UNKNOWN)
         }
     }
 }
