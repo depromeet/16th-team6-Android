@@ -1,5 +1,7 @@
 package com.depromeet.team6.data.dataremote.util
 
+import com.depromeet.team6.BuildConfig
+
 object Dummy {
     const val DUMMY = "dummy"
 }
@@ -48,4 +50,5 @@ object ApiConstraints {
     // Transits
     const val TRANSITS = "transits"
     const val BUS_ROUTES = "bus-routes"
+    const val LAST_ROUTE_CONFIG = BuildConfig.LAST_ROUTE
 }

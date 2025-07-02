@@ -40,8 +40,8 @@ class CourseSearchViewModel @Inject constructor(
 ) : BaseViewModel<CourseSearchContract.CourseUiState, CourseSearchContract.CourseSideEffect, CourseSearchContract.CourseEvent>() {
 
     init {
-        val departurePointJSON : String = savedStateHandle[DEPARTURE_POINT] ?: "알 수 없음"
-        val destinationPointJSON : String = savedStateHandle[DESTINATION_POINT] ?: "알 수 없음"
+        val departurePointJSON: String = savedStateHandle[DEPARTURE_POINT] ?: "알 수 없음"
+        val destinationPointJSON: String = savedStateHandle[DESTINATION_POINT] ?: "알 수 없음"
         setEvent(CourseSearchContract.CourseEvent.InitUiState(departurePointJSON, destinationPointJSON))
     }
     private var enterTime: Long = 0
