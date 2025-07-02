@@ -44,7 +44,6 @@ class MainNavigator(
         }
     }
 
-
     fun navigateToLogin() {
         clearBackStackTo(LoginRoute.ROUTE)
         navHostController.navigationLogin()
