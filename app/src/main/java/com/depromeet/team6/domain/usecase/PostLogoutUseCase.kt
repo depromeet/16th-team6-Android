@@ -24,17 +24,17 @@ class PostLogoutUseCase @Inject constructor(
 
     override fun apiExceptionMapper(errorCode: String): ErrorControlFailureException = when (errorCode) {
         REQ_001, REQ_002 ->
-            ErrorControlFailureException.ReportDiscordWithToast(ToastMessage.UNKNOWN)
+            ErrorControlFailureException.ReportDiscordWithToast(ToastMessage.API_ERROR_UNKNOWN)
 
         TOK_001 ->
-            ErrorControlFailureException.ShowToastException(ToastMessage.LOGIN_DATA_EXPIRED)
+            ErrorControlFailureException.ShowToastException(ToastMessage.API_ERROR_LOGIN_TOKEN_EXPIRED)
 
         TOK_002 ->
-            ErrorControlFailureException.ShowToastException(ToastMessage.LOGIN_DATA_EXPIRED)
+            ErrorControlFailureException.ShowToastException(ToastMessage.API_ERROR_LOGIN_TOKEN_EXPIRED)
 
         INTERNAL_SERVER_ERROR ->
-            ErrorControlFailureException.ShowToastException(ToastMessage.NETWORK)
+            ErrorControlFailureException.ShowToastException(ToastMessage.API_ERROR_NETWORK_FAILURE)
 
-        else -> ErrorControlFailureException.ShowToastException(ToastMessage.UNKNOWN)
+        else -> ErrorControlFailureException.ShowToastException(ToastMessage.API_ERROR_UNKNOWN)
     }
 }

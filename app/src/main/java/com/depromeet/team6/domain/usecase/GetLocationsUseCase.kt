@@ -4,10 +4,10 @@ import com.depromeet.team6.domain.Network.INTERNAL_SERVER_ERROR
 import com.depromeet.team6.domain.RequestFormat.LOC_001
 import com.depromeet.team6.domain.RequestFormat.LOC_003
 import com.depromeet.team6.domain.RequestFormat.LOC_004
-import com.depromeet.team6.domain.ToastMessage.NETWORK
-import com.depromeet.team6.domain.ToastMessage.RANGE_CURRENT_LOCATION
-import com.depromeet.team6.domain.ToastMessage.RANGE_LOCATION
-import com.depromeet.team6.domain.ToastMessage.UNKNOWN
+import com.depromeet.team6.domain.ToastMessage.API_ERROR_INVALID_CURRENT_LOCATION
+import com.depromeet.team6.domain.ToastMessage.API_ERROR_INVALID_LOCATION
+import com.depromeet.team6.domain.ToastMessage.API_ERROR_NETWORK_FAILURE
+import com.depromeet.team6.domain.ToastMessage.API_ERROR_UNKNOWN
 import com.depromeet.team6.domain.model.Location
 import com.depromeet.team6.domain.repository.LocationsRepository
 import com.depromeet.team6.domain.usecase.base.ApiRequestUseCase
@@ -30,17 +30,17 @@ class GetLocationsUseCase @Inject constructor(
 
     override fun apiExceptionMapper(errorCode: String): ErrorControlFailureException = when (errorCode) {
         LOC_003 ->
-            ErrorControlFailureException.ShowToastException(RANGE_LOCATION)
+            ErrorControlFailureException.ShowToastException(API_ERROR_INVALID_LOCATION)
 
         LOC_004 ->
-            ErrorControlFailureException.ShowToastException(RANGE_CURRENT_LOCATION)
+            ErrorControlFailureException.ShowToastException(API_ERROR_INVALID_CURRENT_LOCATION)
 
         LOC_001 ->
-            ErrorControlFailureException.ReportDiscordWithToast(NETWORK)
+            ErrorControlFailureException.ReportDiscordWithToast(API_ERROR_NETWORK_FAILURE)
 
         INTERNAL_SERVER_ERROR ->
-            ErrorControlFailureException.ShowToastException(NETWORK)
+            ErrorControlFailureException.ShowToastException(API_ERROR_NETWORK_FAILURE)
 
-        else -> ErrorControlFailureException.ShowToastException(UNKNOWN)
+        else -> ErrorControlFailureException.ShowToastException(API_ERROR_UNKNOWN)
     }
 }

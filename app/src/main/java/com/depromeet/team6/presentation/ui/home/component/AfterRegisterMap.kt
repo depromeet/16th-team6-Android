@@ -196,6 +196,7 @@ fun AfterRegisterMap(
 
                     val marker = markerItems!![0]
                     val parts = marker.id.split("_")
+                    if (parts[0] == "departPoint" || parts[0] == "destinationPoint") return
                     val transportTypeStr = parts[1]
                     val subTypeIdx = parts[2].toInt()
                     val transportType = enumValueOf<TransportType>(transportTypeStr)
