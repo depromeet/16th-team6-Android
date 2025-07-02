@@ -2,6 +2,7 @@ package com.depromeet.team6.presentation.ui.onboarding.component
 
 import android.content.Context
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -54,6 +55,10 @@ fun OnboardingSearchPopup(
     val focusRequester = remember { FocusRequester() }
 
     val (addressLocations, placeLocations) = searchLocations.partitionByAddressCategory()
+
+    BackHandler {
+        onBackButtonClicked()
+    }
 
     Column(
         modifier = modifier

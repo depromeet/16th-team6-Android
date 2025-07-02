@@ -28,14 +28,22 @@ class MainNavigator(
     val startDestination = LoginRoute.ROUTE
 
     fun navigateToOnboarding() {
-        clearBackStackTo(OnboardingRoute.ROUTE)
-        navHostController.navigationOnboarding()
+        navigateAndClearLoginStack(OnboardingRoute.ROUTE) {
+            navHostController.navigationOnboarding()
+        }
     }
 
     fun navigateToHome() {
-        clearBackStackTo(HomeRoute.ROUTE)
         navHostController.navigationHome()
     }
+
+    fun navigateToHomeAfterOnboarding() {
+        navHostController.navigate(HomeRoute.ROUTE) {
+            popUpTo(0) { inclusive = true }
+            launchSingleTop = true
+        }
+    }
+
 
     fun navigateToLogin() {
         clearBackStackTo(LoginRoute.ROUTE)
@@ -91,6 +99,13 @@ class MainNavigator(
             route = destination,
             inclusive = false
         )
+    }
+
+    private fun navigateAndClearLoginStack(route: String, navigate: () -> Unit) {
+        navHostController.navigate(route) {
+            popUpTo(LoginRoute.ROUTE) { inclusive = true }
+            launchSingleTop = true
+        }
     }
 }
 
