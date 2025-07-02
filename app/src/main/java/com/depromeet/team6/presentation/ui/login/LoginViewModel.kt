@@ -39,6 +39,7 @@ class LoginViewModel @Inject constructor(
             is LoginContract.LoginEvent.SetPagerState -> {
                 setState { copy(pagerState = event.pagerState) }
             }
+            is LoginContract.LoginEvent.SetLoadingState -> setState { copy(isLoading = event.isLoading) }
         }
     }
 
@@ -58,6 +59,8 @@ class LoginViewModel @Inject constructor(
                 userInfoRepository.setRefreshToken(auth.refreshToken)
                 userInfoRepository.setUserHome(auth.userHome)
                 userInfoRepository.setUserId(userId = auth.id)
+                setEvent(LoginContract.LoginEvent.SetLoadingState(isLoading = false))
+
             }.onFailure { exception ->
                 setEvent(LoginContract.LoginEvent.GetLogin(loadState = LoadState.Error))
                 handleApiException(exception = exception)
@@ -109,6 +112,7 @@ class LoginViewModel @Inject constructor(
         ) {
             setEvent(LoginContract.LoginEvent.GetLogin(LoadState.Success))
         } else {
+            setState { copy(loadState = LoadState.Idle) }
             Timber.d("Local Token is Empty")
         }
     }

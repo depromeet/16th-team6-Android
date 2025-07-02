@@ -61,8 +61,8 @@ fun OnboardingSearchPopup(
             .addFocusCleaner(focusManager)
             .background(color = defaultTeam6Colors.gray950)
             .padding(padding)
-            .advancedImePadding(),
-        ) {
+            .advancedImePadding()
+    ) {
         OnboardingSearchTextField(
             value = searchText,
             onValueChange = onSearchTextChange,

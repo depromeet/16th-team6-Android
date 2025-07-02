@@ -80,10 +80,10 @@ fun Modifier.advancedImePadding() =
         var consumePadding by remember { mutableIntStateOf(0) }
         onGloballyPositioned { coordinates ->
             consumePadding = coordinates.findRootCoordinates().size.height -
-                    (coordinates.positionInWindow().y + coordinates.size.height).toInt()
+                (coordinates.positionInWindow().y + coordinates.size.height).toInt()
         }
             .consumeWindowInsets(
-                PaddingValues(bottom = with(LocalDensity.current) { consumePadding.toDp() }),
+                PaddingValues(bottom = with(LocalDensity.current) { consumePadding.toDp() })
             )
             .imePadding()
     }

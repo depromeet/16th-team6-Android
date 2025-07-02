@@ -47,13 +47,13 @@ class HomeContract {
         val timerFinish: Boolean = false,
         val departurePointName: String = "",
         val markerPoint: Address = Address(
-            name = "성균관대학교 자연과학캠퍼스",
+            name = "",
             lat = 37.303534788694,
             lon = 127.01085807594,
             address = ""
         ),
         val departurePoint: Address = Address(
-            name = "성균관대학교 자연과학캠퍼스",
+            name = "",
             lat = 37.303534788694,
             lon = 127.01085807594,
             address = ""
