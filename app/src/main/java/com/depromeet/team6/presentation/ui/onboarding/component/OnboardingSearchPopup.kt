@@ -29,9 +29,11 @@ import com.depromeet.team6.presentation.mapper.toAddress
 import com.depromeet.team6.presentation.model.location.Location
 import com.depromeet.team6.presentation.ui.onboarding.OnboardingViewModel
 import com.depromeet.team6.presentation.util.modifier.addFocusCleaner
+import com.depromeet.team6.presentation.util.modifier.advancedImePadding
 import com.depromeet.team6.presentation.util.permission.PermissionUtil
 import com.depromeet.team6.presentation.util.toast.atChaToastMessage
 import com.depromeet.team6.presentation.util.view.partitionByAddressCategory
+import com.depromeet.team6.ui.theme.Team6Theme
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.depromeet.team6.ui.theme.defaultTeam6Typography
 
@@ -59,7 +61,8 @@ fun OnboardingSearchPopup(
             .addFocusCleaner(focusManager)
             .background(color = defaultTeam6Colors.gray950)
             .padding(padding)
-    ) {
+            .advancedImePadding(),
+        ) {
         OnboardingSearchTextField(
             value = searchText,
             onValueChange = onSearchTextChange,
@@ -140,5 +143,7 @@ fun OnboardingSearchPopup(
 @Preview
 @Composable
 private fun OnboardingSearchPopupPreview() {
-    OnboardingSearchPopup(padding = PaddingValues(0.dp))
+    Team6Theme {
+        OnboardingSearchPopup(padding = PaddingValues(0.dp))
+    }
 }
