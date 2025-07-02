@@ -2,7 +2,9 @@ package com.depromeet.team6.presentation.ui.main
 
 import android.os.Build
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,6 +21,7 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.depromeet.team6.R
 import com.depromeet.team6.data.datalocal.manager.LockServiceManager
 import com.depromeet.team6.data.datalocal.permission.PermissionUtil
 import com.depromeet.team6.presentation.ui.lock.LockScreenNavigator
@@ -26,6 +29,7 @@ import com.depromeet.team6.presentation.ui.main.navigation.MainNavHost
 import com.depromeet.team6.presentation.ui.main.navigation.MainNavigator
 import com.depromeet.team6.presentation.ui.main.navigation.rememberMainNavigator
 import com.depromeet.team6.presentation.ui.splash.SplashScreen
+import com.depromeet.team6.presentation.util.toast.atChaToastMessage
 import com.depromeet.team6.ui.theme.Team6Theme
 import com.google.firebase.Firebase
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -35,6 +39,7 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    private var backPressedTime = 0L
 
     @Inject
     lateinit var lockServiceManager: LockServiceManager
@@ -42,6 +47,26 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // 새로운 방식
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                val currentTime = System.currentTimeMillis()
+
+                if (currentTime - backPressedTime < 2000) {
+                    // 2초 내에 두 번 눌렀으면 앱 종료
+                    finishAffinity()
+                } else {
+                    // 첫 번째 뒤로가기
+                    backPressedTime = currentTime
+                    Toast.makeText(
+                        this@MainActivity,
+                        getString(R.string.all_toast_exit_app),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        })
 
         firebaseAnalytics = Firebase.analytics
 
@@ -109,4 +134,5 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
 }
