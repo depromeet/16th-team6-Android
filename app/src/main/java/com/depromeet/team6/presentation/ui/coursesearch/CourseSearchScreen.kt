@@ -116,11 +116,6 @@ fun CourseSearchRoute(
         }
     }
 
-    // UI state 초기화
-    LaunchedEffect(Unit) {
-        viewModel.setEvent(CourseSearchContract.CourseEvent.InitUiState(departurePoint, destinationPoint))
-    }
-
     when (uiState.courseDataLoadState) {
         LoadState.Loading -> {
             CourseSearchScreen(
