@@ -1,7 +1,6 @@
 package com.depromeet.team6.data.dataremote.datasource
 
 import com.depromeet.team6.data.dataremote.model.response.base.parse
-import com.depromeet.team6.data.dataremote.model.response.base.toResult
 import com.depromeet.team6.data.dataremote.model.response.transits.ResponseBusArrivalsDto
 import com.depromeet.team6.data.dataremote.model.response.transits.ResponseBusOperationInfoDto
 import com.depromeet.team6.data.dataremote.model.response.transits.ResponseBusPositionsDto
@@ -33,7 +32,7 @@ class TransitsRemoteDataSource @Inject constructor(
         stationName = stationName,
         lat = lat,
         lon = lon
-    ).toResult()
+    ).parse()
 
     suspend fun getBusPositions(
         busRouteId: String,
@@ -43,7 +42,7 @@ class TransitsRemoteDataSource @Inject constructor(
         busRouteId = busRouteId,
         routeName = routeName,
         serviceRegion = serviceRegion
-    ).toResult()
+    ).parse()
 
     suspend fun getBusOperationInfo(
         busRouteId: String,
@@ -53,5 +52,5 @@ class TransitsRemoteDataSource @Inject constructor(
         busRouteId = busRouteId,
         routeName = routeName,
         serviceRegion = serviceRegion
-    ).toResult()
+    ).parse()
 }

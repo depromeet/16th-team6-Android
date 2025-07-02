@@ -1,8 +1,7 @@
 package com.depromeet.team6.data.dataremote.model.response.base
 
 import androidx.annotation.Keep
-import com.depromeet.team6.data.dataremote.model.response.dummy.DummyResponseDto
-import com.depromeet.team6.presentation.util.ErrorToastMessage.MSG_UNKNOWN_NETWORK_ERROR
+import com.depromeet.team6.domain.ToastMessage.NETWORK
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -25,7 +24,7 @@ data class ApiResponse<T>(
 fun <T> ApiResponse<T>.toResult(): Result<T> =
     when {
         this.result != null -> Result.success(this.result)
-        this.message != null -> Result.failure(ApiException.NetworkFailureException(MSG_UNKNOWN_NETWORK_ERROR))
+        this.message != null -> Result.failure(ApiException.NetworkFailureException(NETWORK))
         else -> Result.failure(Exception("Unknown error occurred"))
     }
 
@@ -33,12 +32,10 @@ fun <T> ApiResponse<T>.toResult(): Result<T> =
 suspend fun <T : Any, Z : ApiResponse<T>> Response<Z>.parse(): Result<T> {
     return if (isSuccessful) {
         val apiBody = body()
-            ?: return Result.failure(
-                ApiException.ApiRequestFailureException("EMPTY", "Response Body is Empty")
-            )
+            ?: return Result.success(Unit as T)
 
         if (apiBody.result == null) {
-            return Result.success(DummyResponseDto(dummy = "dummy") as T)
+            return Result.success(Unit as T)
         }
 
         return Result.success(apiBody.result)
@@ -50,9 +47,16 @@ suspend fun <T : Any, Z : ApiResponse<T>> Response<Z>.parse(): Result<T> {
                     // errorBody를 ApiResponse로 파싱하는게 맞나? (성공 실패 body 형식 확인해봐야 함)
                     Gson().fromJson(errorBodyString, ApiErrorResponse::class.java)
                 } catch (e: Exception) {
-                    return@withContext Result.failure(ApiException.NetworkFailureException(errorMessage = e.message ?: "ErrorResponse Parsing Error"))
+                    return@withContext Result.failure(
+                        ApiException.NetworkFailureException(
+                            errorMessage = e.message ?: "ErrorResponse Parsing Error"
+                        )
+                    )
                 }
-                val apiException = ApiException.ApiRequestFailureException(errorBody.responseCode, errorBody.message ?: "Unknown error")
+                val apiException = ApiException.ApiRequestFailureException(
+                    errorBody.responseCode,
+                    errorBody.message ?: "Unknown error"
+                )
                 return@withContext Result.failure(apiException)
             }
         }

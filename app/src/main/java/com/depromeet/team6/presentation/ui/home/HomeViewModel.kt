@@ -580,9 +580,8 @@ class HomeViewModel @Inject constructor(
                         boardingTime = busArrival.realTimeBusArrival[0].remainingTime.toString()
                     )
                 }
-                Timber.e("버스 남은 시간: ${currentState.boardingTime}")
-            }.onFailure {
-                Timber.e("버스 도착 정보 조회 실패: ${it.message}")
+            }.onFailure { exception ->
+                handleApiException(exception = exception)
             }
         }
     }
