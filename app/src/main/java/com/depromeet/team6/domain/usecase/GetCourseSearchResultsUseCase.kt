@@ -1,10 +1,10 @@
 package com.depromeet.team6.domain.usecase
 
 import com.depromeet.team6.data.repositoryimpl.TransitsRepositoryImpl
+import com.depromeet.team6.domain.ToastMessage.API_ERROR_INVALID_LOCATION
 import com.depromeet.team6.domain.ToastMessage.API_ERROR_LOGIN_TOKEN_EXPIRED
 import com.depromeet.team6.domain.ToastMessage.API_ERROR_NETWORK_FAILURE
 import com.depromeet.team6.domain.ToastMessage.API_ERROR_OUT_OF_SERVICE_REGION
-import com.depromeet.team6.domain.ToastMessage.API_ERROR_INVALID_LOCATION
 import com.depromeet.team6.domain.ToastMessage.API_ERROR_SHORT_DISTANCE
 import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.course.CourseInfo

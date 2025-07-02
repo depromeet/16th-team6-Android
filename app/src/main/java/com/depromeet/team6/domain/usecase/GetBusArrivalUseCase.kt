@@ -10,10 +10,10 @@ import com.depromeet.team6.domain.RouteMap.TRS_018
 import com.depromeet.team6.domain.RouteMap.TRS_019
 import com.depromeet.team6.domain.ToastMessage.API_ERROR_BUS_ARRIVAL_MISSING
 import com.depromeet.team6.domain.ToastMessage.API_ERROR_BUS_ROUTE_MISSING
-import com.depromeet.team6.domain.ToastMessage.API_ERROR_NETWORK_FAILURE
-import com.depromeet.team6.domain.ToastMessage.API_ERROR_OUT_OF_SERVICE_REGION
 import com.depromeet.team6.domain.ToastMessage.API_ERROR_INVALID_CURRENT_LOCATION
 import com.depromeet.team6.domain.ToastMessage.API_ERROR_INVALID_LOCATION
+import com.depromeet.team6.domain.ToastMessage.API_ERROR_NETWORK_FAILURE
+import com.depromeet.team6.domain.ToastMessage.API_ERROR_OUT_OF_SERVICE_REGION
 import com.depromeet.team6.domain.ToastMessage.API_ERROR_UNKNOWN
 import com.depromeet.team6.domain.model.BusArrival
 import com.depromeet.team6.domain.repository.TransitsRepository

@@ -1,8 +1,8 @@
 package com.depromeet.team6.domain.usecase
 
+import com.depromeet.team6.domain.ToastMessage.API_ERROR_INVALID_LOCATION
 import com.depromeet.team6.domain.ToastMessage.API_ERROR_NETWORK_FAILURE
 import com.depromeet.team6.domain.ToastMessage.API_ERROR_OUT_OF_SERVICE_REGION
-import com.depromeet.team6.domain.ToastMessage.API_ERROR_INVALID_LOCATION
 import com.depromeet.team6.domain.repository.HomeRepository
 import com.depromeet.team6.domain.usecase.base.ApiRequestUseCase
 import com.depromeet.team6.presentation.model.exception.ErrorControlFailureException

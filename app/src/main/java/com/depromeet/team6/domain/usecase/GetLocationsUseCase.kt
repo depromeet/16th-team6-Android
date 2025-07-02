@@ -4,9 +4,9 @@ import com.depromeet.team6.domain.Network.INTERNAL_SERVER_ERROR
 import com.depromeet.team6.domain.RequestFormat.LOC_001
 import com.depromeet.team6.domain.RequestFormat.LOC_003
 import com.depromeet.team6.domain.RequestFormat.LOC_004
-import com.depromeet.team6.domain.ToastMessage.API_ERROR_NETWORK_FAILURE
 import com.depromeet.team6.domain.ToastMessage.API_ERROR_INVALID_CURRENT_LOCATION
 import com.depromeet.team6.domain.ToastMessage.API_ERROR_INVALID_LOCATION
+import com.depromeet.team6.domain.ToastMessage.API_ERROR_NETWORK_FAILURE
 import com.depromeet.team6.domain.ToastMessage.API_ERROR_UNKNOWN
 import com.depromeet.team6.domain.model.Location
 import com.depromeet.team6.domain.repository.LocationsRepository

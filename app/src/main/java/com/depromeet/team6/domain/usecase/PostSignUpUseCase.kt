@@ -8,10 +8,10 @@ import com.depromeet.team6.domain.RequestFormat.LOC_004
 import com.depromeet.team6.domain.RequestFormat.REQ_001
 import com.depromeet.team6.domain.RequestFormat.REQ_002
 import com.depromeet.team6.domain.ToastMessage.API_ERROR_DUPLICATED_TOKEN
-import com.depromeet.team6.domain.ToastMessage.API_ERROR_LOGIN_TOKEN_EXPIRED
-import com.depromeet.team6.domain.ToastMessage.API_ERROR_NETWORK_FAILURE
 import com.depromeet.team6.domain.ToastMessage.API_ERROR_INVALID_CURRENT_LOCATION
 import com.depromeet.team6.domain.ToastMessage.API_ERROR_INVALID_LOCATION
+import com.depromeet.team6.domain.ToastMessage.API_ERROR_LOGIN_TOKEN_EXPIRED
+import com.depromeet.team6.domain.ToastMessage.API_ERROR_NETWORK_FAILURE
 import com.depromeet.team6.domain.ToastMessage.API_ERROR_UNKNOWN
 import com.depromeet.team6.domain.model.Auth
 import com.depromeet.team6.domain.model.SignUp
