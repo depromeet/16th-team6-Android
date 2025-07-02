@@ -29,7 +29,6 @@ import com.depromeet.team6.presentation.ui.main.navigation.MainNavHost
 import com.depromeet.team6.presentation.ui.main.navigation.MainNavigator
 import com.depromeet.team6.presentation.ui.main.navigation.rememberMainNavigator
 import com.depromeet.team6.presentation.ui.splash.SplashScreen
-import com.depromeet.team6.presentation.util.toast.atChaToastMessage
 import com.depromeet.team6.ui.theme.Team6Theme
 import com.google.firebase.Firebase
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -48,25 +47,25 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // 새로운 방식
-        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                val currentTime = System.currentTimeMillis()
+        onBackPressedDispatcher.addCallback(
+            this,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    val currentTime = System.currentTimeMillis()
 
-                if (currentTime - backPressedTime < 2000) {
-                    // 2초 내에 두 번 눌렀으면 앱 종료
-                    finishAffinity()
-                } else {
-                    // 첫 번째 뒤로가기
-                    backPressedTime = currentTime
-                    Toast.makeText(
-                        this@MainActivity,
-                        getString(R.string.all_toast_exit_app),
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    if (currentTime - backPressedTime < 2000) {
+                        finishAffinity()
+                    } else {
+                        backPressedTime = currentTime
+                        Toast.makeText(
+                            this@MainActivity,
+                            getString(R.string.all_toast_exit_app),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
                 }
             }
-        })
+        )
 
         firebaseAnalytics = Firebase.analytics
 
@@ -81,7 +80,6 @@ class MainActivity : ComponentActivity() {
             PermissionUtil.onObtainingPermissionOverlayWindow(this)
         }
 
-        // LockActivity에서 전달된 데이터 확인 및 유효성 검사
         val navigateToCourseSearch = intent.getBooleanExtra(LockScreenNavigator.EXTRA_NAVIGATE_TO_COURSE_SEARCH, false)
         val departurePoint = intent.getStringExtra(LockScreenNavigator.EXTRA_DEPARTURE_POINT) ?: ""
         val destinationPoint = intent.getStringExtra(LockScreenNavigator.EXTRA_DESTINATION_POINT) ?: ""
@@ -134,5 +132,4 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-
 }
