@@ -4,10 +4,10 @@ import com.depromeet.team6.domain.Network.INTERNAL_SERVER_ERROR
 import com.depromeet.team6.domain.RouteMap.TRS_014
 import com.depromeet.team6.domain.RouteMap.TRS_015
 import com.depromeet.team6.domain.RouteMap.TRS_019
-import com.depromeet.team6.domain.ToastMessage.BUS_LOCATION
-import com.depromeet.team6.domain.ToastMessage.BUS_ROUTE
-import com.depromeet.team6.domain.ToastMessage.NETWORK
-import com.depromeet.team6.domain.ToastMessage.UNKNOWN
+import com.depromeet.team6.domain.ToastMessage.API_ERROR_BUS_LOCATION_MISSING
+import com.depromeet.team6.domain.ToastMessage.API_ERROR_BUS_ROUTE_MISSING
+import com.depromeet.team6.domain.ToastMessage.API_ERROR_NETWORK_FAILURE
+import com.depromeet.team6.domain.ToastMessage.API_ERROR_UNKNOWN
 import com.depromeet.team6.domain.model.BusPositions
 import com.depromeet.team6.domain.repository.TransitsRepository
 import com.depromeet.team6.domain.usecase.base.ApiRequestUseCase
@@ -38,14 +38,14 @@ class GetBusPositionsUseCase @Inject constructor(
 
     override fun apiExceptionMapper(errorCode: String): ErrorControlFailureException = when (errorCode) {
         TRS_014 ->
-            ErrorControlFailureException.ShowToastException(BUS_LOCATION)
+            ErrorControlFailureException.ShowToastException(API_ERROR_BUS_LOCATION_MISSING)
 
         TRS_015, TRS_019 ->
-            ErrorControlFailureException.ShowToastException(BUS_ROUTE)
+            ErrorControlFailureException.ShowToastException(API_ERROR_BUS_ROUTE_MISSING)
 
         INTERNAL_SERVER_ERROR ->
-            ErrorControlFailureException.ShowToastException(NETWORK)
+            ErrorControlFailureException.ShowToastException(API_ERROR_NETWORK_FAILURE)
 
-        else -> ErrorControlFailureException.ShowToastException(UNKNOWN)
+        else -> ErrorControlFailureException.ShowToastException(API_ERROR_UNKNOWN)
     }
 }

@@ -32,20 +32,20 @@ class GetLoginUseCase @Inject constructor(
 
     override fun apiExceptionMapper(errorCode: String): ErrorControlFailureException = when (errorCode) {
         REQ_001, REQ_002 ->
-            ErrorControlFailureException.ReportDiscordWithToast(ToastMessage.UNKNOWN)
+            ErrorControlFailureException.ReportDiscordWithToast(ToastMessage.API_ERROR_UNKNOWN)
 
         ATH_001, ATH_003 ->
-            ErrorControlFailureException.ShowToastException(ToastMessage.EXIST_USER)
+            ErrorControlFailureException.ShowToastException(ToastMessage.API_ERROR_DUPLICATED_TOKEN)
 
         LOC_003 ->
-            ErrorControlFailureException.ShowToastException(ToastMessage.RANGE_LOCATION)
+            ErrorControlFailureException.ShowToastException(ToastMessage.API_ERROR_INVALID_LOCATION)
 
         LOC_004 ->
-            ErrorControlFailureException.ShowToastException(ToastMessage.RANGE_CURRENT_LOCATION)
+            ErrorControlFailureException.ShowToastException(ToastMessage.API_ERROR_INVALID_CURRENT_LOCATION)
 
         INTERNAL_SERVER_ERROR ->
-            ErrorControlFailureException.ShowToastException(ToastMessage.NETWORK)
+            ErrorControlFailureException.ShowToastException(ToastMessage.API_ERROR_NETWORK_FAILURE)
 
-        else -> ErrorControlFailureException.ShowToastException(ToastMessage.UNKNOWN)
+        else -> ErrorControlFailureException.ShowToastException(ToastMessage.API_ERROR_UNKNOWN)
     }
 }

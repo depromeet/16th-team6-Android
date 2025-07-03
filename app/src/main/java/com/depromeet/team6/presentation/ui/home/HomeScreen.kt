@@ -146,7 +146,7 @@ fun HomeRoute(
                     is ApiErrorSideEffect.ShowToastSideEffect -> {
                         Toast.makeText(context, sideEffect.toastMessage, Toast.LENGTH_SHORT).show()
                     }
-
+                    is ApiErrorSideEffect.NavigateToLoginSideEffect -> navigateToLogin()
                     is HomeContract.HomeSideEffect.NavigateToMypage -> navigateToMypage()
                     is HomeContract.HomeSideEffect.NavigateToItinerary -> navigateToItinerary(
                         Gson().toJson(uiState.itineraryInfo),

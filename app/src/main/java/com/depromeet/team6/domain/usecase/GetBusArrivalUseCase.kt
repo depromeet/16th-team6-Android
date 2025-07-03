@@ -8,13 +8,13 @@ import com.depromeet.team6.domain.RouteMap.TRS_016
 import com.depromeet.team6.domain.RouteMap.TRS_017
 import com.depromeet.team6.domain.RouteMap.TRS_018
 import com.depromeet.team6.domain.RouteMap.TRS_019
-import com.depromeet.team6.domain.ToastMessage.BUS_ARRIVAL_INCORRECT
-import com.depromeet.team6.domain.ToastMessage.BUS_ROUTE
-import com.depromeet.team6.domain.ToastMessage.NETWORK
-import com.depromeet.team6.domain.ToastMessage.OUT_OF_RANGE
-import com.depromeet.team6.domain.ToastMessage.RANGE_CURRENT_LOCATION
-import com.depromeet.team6.domain.ToastMessage.RANGE_LOCATION
-import com.depromeet.team6.domain.ToastMessage.UNKNOWN
+import com.depromeet.team6.domain.ToastMessage.API_ERROR_BUS_ARRIVAL_MISSING
+import com.depromeet.team6.domain.ToastMessage.API_ERROR_BUS_ROUTE_MISSING
+import com.depromeet.team6.domain.ToastMessage.API_ERROR_INVALID_CURRENT_LOCATION
+import com.depromeet.team6.domain.ToastMessage.API_ERROR_INVALID_LOCATION
+import com.depromeet.team6.domain.ToastMessage.API_ERROR_NETWORK_FAILURE
+import com.depromeet.team6.domain.ToastMessage.API_ERROR_OUT_OF_SERVICE_REGION
+import com.depromeet.team6.domain.ToastMessage.API_ERROR_UNKNOWN
 import com.depromeet.team6.domain.model.BusArrival
 import com.depromeet.team6.domain.repository.TransitsRepository
 import com.depromeet.team6.domain.usecase.base.ApiRequestUseCase
@@ -43,23 +43,23 @@ class GetBusArrivalUseCase @Inject constructor(
 
     override fun apiExceptionMapper(errorCode: String): ErrorControlFailureException = when (errorCode) {
         LOC_003 ->
-            ErrorControlFailureException.ShowToastException(RANGE_LOCATION)
+            ErrorControlFailureException.ShowToastException(API_ERROR_INVALID_LOCATION)
 
         LOC_004 ->
-            ErrorControlFailureException.ShowToastException(RANGE_CURRENT_LOCATION)
+            ErrorControlFailureException.ShowToastException(API_ERROR_INVALID_CURRENT_LOCATION)
 
         TRS_012 ->
-            ErrorControlFailureException.NavigateAndShowToastException(OUT_OF_RANGE, Route.Home)
+            ErrorControlFailureException.NavigateAndShowToastException(API_ERROR_OUT_OF_SERVICE_REGION, Route.Home)
 
         TRS_016, TRS_017 ->
-            ErrorControlFailureException.ShowToastException(BUS_ARRIVAL_INCORRECT)
+            ErrorControlFailureException.ShowToastException(API_ERROR_BUS_ARRIVAL_MISSING)
 
         TRS_018, TRS_019 ->
-            ErrorControlFailureException.ShowToastException(BUS_ROUTE)
+            ErrorControlFailureException.ShowToastException(API_ERROR_BUS_ROUTE_MISSING)
 
         INTERNAL_SERVER_ERROR ->
-            ErrorControlFailureException.ShowToastException(NETWORK)
+            ErrorControlFailureException.ShowToastException(API_ERROR_NETWORK_FAILURE)
 
-        else -> ErrorControlFailureException.ShowToastException(UNKNOWN)
+        else -> ErrorControlFailureException.ShowToastException(API_ERROR_UNKNOWN)
     }
 }
