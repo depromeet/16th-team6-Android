@@ -7,13 +7,12 @@ import com.depromeet.team6.data.dataremote.model.response.transits.ResponseBusPo
 import com.depromeet.team6.data.dataremote.model.response.transits.ResponseCourseSearchDto
 import com.depromeet.team6.data.dataremote.util.ApiConstraints.API
 import com.depromeet.team6.data.dataremote.util.ApiConstraints.BUS_ROUTES
-import com.depromeet.team6.data.dataremote.util.ApiConstraints.LAST_ROUTE_CONFIG
 import com.depromeet.team6.data.dataremote.util.ApiConstraints.TRANSITS
 import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface TransitsService {
-    @GET("$API/$TRANSITS/$LAST_ROUTE_CONFIG")
+    @GET("$API/$TRANSITS/last-routes")
     suspend fun getAvailableCourses(
         @Query("startLat") startLat: String,
         @Query("startLon") startLon: String,

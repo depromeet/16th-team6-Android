@@ -22,7 +22,8 @@ class TransitsRepositoryImpl @Inject constructor(
             endLon = endPosition.lon.toString(),
             sortType = sortType
         ).map {
-            it.toDomain()
+            val sortedList = it.sortedBy { info -> info.departureDateTime }
+            sortedList.toDomain()
         }
 
     override suspend fun getBusArrival(

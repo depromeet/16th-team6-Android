@@ -61,6 +61,7 @@ import com.depromeet.team6.presentation.util.view.TransportTypeUiMapper
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.depromeet.team6.ui.theme.defaultTeam6Typography
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun ItineraryInfoDetailLegs(
@@ -138,6 +139,10 @@ private fun DetailLegsBus(
 ) {
     var rowHeight by remember { mutableStateOf(0) }
     var isPassStopShow by remember { mutableStateOf(false) }
+    val disembarkingDateTime: String = LocalDateTime
+        .parse(boardingDateTime)
+        .plusMinutes(timeMinute.toLong())
+        .format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
 
     Row(
         modifier = modifier
@@ -189,7 +194,7 @@ private fun DetailLegsBus(
                 )
                 Spacer(modifier = Modifier.height(2.dp))
                 BoardingTime(
-                    boardingDateTime = boardingDateTime,
+                    boardingDateTime = disembarkingDateTime,
                     modifier = Modifier
                 )
             }
@@ -336,6 +341,10 @@ private fun DetailLegsSubway(
 ) {
     var rowHeight by remember { mutableStateOf(0) }
     var isPassStopShow by remember { mutableStateOf(false) }
+    val disembarkingDateTime: String = LocalDateTime
+        .parse(boardingDateTime)
+        .plusMinutes(timeMinute.toLong())
+        .format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
 
     Row(
         modifier = modifier
@@ -387,7 +396,7 @@ private fun DetailLegsSubway(
                 )
                 Spacer(modifier = Modifier.height(2.dp))
                 BoardingTime(
-                    boardingDateTime = boardingDateTime,
+                    boardingDateTime = disembarkingDateTime,
                     modifier = Modifier
                 )
             }
