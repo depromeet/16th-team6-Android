@@ -83,7 +83,7 @@ import java.util.Locale
 @Composable
 fun HomeRoute(
     padding: PaddingValues,
-    afterOnboarding:Boolean = false,
+    afterOnboarding: Boolean = false,
     navigateToLogin: () -> Unit,
     navigateToCourseSearch: (String, String) -> Unit,
     navigateToMypage: () -> Unit,
@@ -638,7 +638,7 @@ fun HomeScreen(
                 HomeGreetBottomSheet(
                     modifier = Modifier
                         .align(Alignment.BottomCenter),
-                    buttonClicked = { greetBottomSheetButtonClicked() },
+                    buttonClicked = { greetBottomSheetButtonClicked() }
                 )
             }
         }

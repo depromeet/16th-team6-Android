@@ -48,7 +48,7 @@ fun HomeGreetBottomSheet(
         verticalArrangement = Arrangement.Bottom
     ) {
         Spacer(modifier = Modifier.height(20.dp))
-        Icon(imageVector = ImageVector.vectorResource(R.drawable.ic_home_greet_bottom_sheet),contentDescription = null, tint = Color.Unspecified, modifier = Modifier.fillMaxWidth().align(Alignment.CenterHorizontally).padding(vertical = 12.dp))
+        Icon(imageVector = ImageVector.vectorResource(R.drawable.ic_home_greet_bottom_sheet), contentDescription = null, tint = Color.Unspecified, modifier = Modifier.fillMaxWidth().align(Alignment.CenterHorizontally).padding(vertical = 12.dp))
 
         Spacer(modifier = Modifier.height(12.dp))
         Text(
@@ -80,7 +80,6 @@ fun HomeGreetBottomSheet(
         )
         Spacer(modifier = Modifier.height(20.dp))
     }
-
 }
 
 @Preview

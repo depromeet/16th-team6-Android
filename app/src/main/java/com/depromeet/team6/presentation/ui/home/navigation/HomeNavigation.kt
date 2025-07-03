@@ -8,7 +8,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.presentation.model.itinerary.FocusedMarkerParameter
-import com.depromeet.team6.presentation.ui.bus.navigation.BusCourseRoute
 import com.depromeet.team6.presentation.ui.home.HomeRoute
 import com.depromeet.team6.presentation.ui.home.navigation.HomeRoute.ARGUMENT
 import com.depromeet.team6.presentation.ui.home.navigation.HomeRoute.ROUTE
