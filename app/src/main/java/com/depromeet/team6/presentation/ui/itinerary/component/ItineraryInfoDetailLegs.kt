@@ -62,6 +62,7 @@ import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.depromeet.team6.ui.theme.defaultTeam6Typography
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import kotlin.math.max
 
 @Composable
 fun ItineraryInfoDetailLegs(
@@ -276,7 +277,7 @@ private fun DetailLegsBus(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = stringResource(R.string.itinerary_info_legs_bus_stopovers, timeMinute, passStopList.size),
+                    text = stringResource(R.string.itinerary_info_legs_bus_stopovers, timeMinute, max(0, passStopList.size - 1)),
                     style = defaultTeam6Typography.bodyMedium13,
                     color = defaultTeam6Colors.white
                 )
@@ -295,7 +296,8 @@ private fun DetailLegsBus(
                 Column(
                     verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    for (stop in passStopList) {
+                    for (i in 1 until passStopList.size - 1) {
+                        val stop = passStopList[i]
                         Text(
                             text = stop.stationName,
                             style = defaultTeam6Typography.bodyMedium13,
@@ -451,7 +453,7 @@ private fun DetailLegsSubway(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = stringResource(R.string.itinerary_info_legs_subway_stopovers, timeMinute, passStopList.size),
+                    text = stringResource(R.string.itinerary_info_legs_subway_stopovers, timeMinute, max(0, passStopList.size - 1)),
                     style = defaultTeam6Typography.bodyMedium13,
                     color = defaultTeam6Colors.white
                 )
@@ -471,7 +473,8 @@ private fun DetailLegsSubway(
                 Column(
                     verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    for (stop in passStopList) {
+                    for (i in 1 until passStopList.size - 1) {
+                        val stop = passStopList[i]
                         Text(
                             text = stop.stationName,
                             style = defaultTeam6Typography.bodyMedium13,

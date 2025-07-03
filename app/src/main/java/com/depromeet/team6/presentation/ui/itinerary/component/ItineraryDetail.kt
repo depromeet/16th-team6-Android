@@ -10,7 +10,6 @@ import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.RealTimeBusArrival
 import com.depromeet.team6.domain.model.course.CourseInfo
 import com.depromeet.team6.presentation.model.bus.BusArrivalParameter
-import timber.log.Timber
 import java.time.LocalDateTime
 
 @Composable
@@ -23,7 +22,6 @@ fun ItineraryDetail(
     onClickBusInfo: (BusArrivalParameter) -> Unit = {}
 ) {
     val arrivalDateTime = LocalDateTime.parse(courseInfo.departureTime).plusSeconds(courseInfo.totalTime.toLong())
-    Timber.d("busArrivalStatus : $busArrivalStatus")
     Column(
         modifier = modifier
             .padding(vertical = 12.dp)
