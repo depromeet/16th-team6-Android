@@ -2,7 +2,9 @@ package com.depromeet.team6.presentation.ui.main
 
 import android.os.Build
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,6 +21,7 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.depromeet.team6.R
 import com.depromeet.team6.data.datalocal.manager.LockServiceManager
 import com.depromeet.team6.data.datalocal.permission.PermissionUtil
 import com.depromeet.team6.presentation.ui.lock.LockScreenNavigator
@@ -35,6 +38,7 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    private var backPressedTime = 0L
 
     @Inject
     lateinit var lockServiceManager: LockServiceManager
@@ -42,6 +46,26 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        onBackPressedDispatcher.addCallback(
+            this,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    val currentTime = System.currentTimeMillis()
+
+                    if (currentTime - backPressedTime < 2000) {
+                        finishAffinity()
+                    } else {
+                        backPressedTime = currentTime
+                        Toast.makeText(
+                            this@MainActivity,
+                            getString(R.string.all_toast_exit_app),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+            }
+        )
 
         firebaseAnalytics = Firebase.analytics
 
@@ -56,7 +80,6 @@ class MainActivity : ComponentActivity() {
             PermissionUtil.onObtainingPermissionOverlayWindow(this)
         }
 
-        // LockActivity에서 전달된 데이터 확인 및 유효성 검사
         val navigateToCourseSearch = intent.getBooleanExtra(LockScreenNavigator.EXTRA_NAVIGATE_TO_COURSE_SEARCH, false)
         val departurePoint = intent.getStringExtra(LockScreenNavigator.EXTRA_DEPARTURE_POINT) ?: ""
         val destinationPoint = intent.getStringExtra(LockScreenNavigator.EXTRA_DESTINATION_POINT) ?: ""
