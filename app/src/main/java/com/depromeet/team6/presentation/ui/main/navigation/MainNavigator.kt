@@ -38,7 +38,7 @@ class MainNavigator(
     }
 
     fun navigateToHomeAfterOnboarding() {
-        navHostController.navigate(HomeRoute.ROUTE) {
+        navHostController.navigate("${HomeRoute.ROUTE}?${HomeRoute.ARGUMENT}=true") {
             popUpTo(0) { inclusive = true }
             launchSingleTop = true
         }

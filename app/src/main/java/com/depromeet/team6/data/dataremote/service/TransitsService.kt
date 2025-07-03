@@ -9,6 +9,7 @@ import com.depromeet.team6.data.dataremote.util.ApiConstraints.API
 import com.depromeet.team6.data.dataremote.util.ApiConstraints.BUS_ROUTES
 import com.depromeet.team6.data.dataremote.util.ApiConstraints.TRANSITS
 import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.Query
 
 interface TransitsService {
@@ -21,7 +22,7 @@ interface TransitsService {
         @Query("sortType") sortType: Int
     ): BaseResponse<List<ResponseCourseSearchDto>>
 
-    @GET("$API/$TRANSITS/bus-arrival")
+    @POST("$API/$TRANSITS/bus-arrival")
     suspend fun getBusArrival(
         @Query("routeName") routeName: String,
         @Query("stationName") stationName: String,

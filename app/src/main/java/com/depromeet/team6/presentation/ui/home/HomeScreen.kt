@@ -16,6 +16,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -46,6 +47,7 @@ import com.depromeet.team6.presentation.ui.home.component.AfterRegisterSheet
 import com.depromeet.team6.presentation.ui.home.component.CharacterLottieSpeechBubble
 import com.depromeet.team6.presentation.ui.home.component.CurrentLocationSheet
 import com.depromeet.team6.presentation.ui.home.component.DeleteAlarmDialog
+import com.depromeet.team6.presentation.ui.home.component.HomeGreetBottomSheet
 import com.depromeet.team6.presentation.ui.home.component.TMapViewCompose
 import com.depromeet.team6.presentation.util.AmplitudeCommon.SCREEN_NAME
 import com.depromeet.team6.presentation.util.AmplitudeCommon.USER_ID
@@ -67,6 +69,7 @@ import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.presentation.util.permission.PermissionUtil
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.depromeet.team6.ui.theme.LocalTeam6Colors
+import com.depromeet.team6.ui.theme.Team6Theme
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.android.gms.maps.model.LatLng
@@ -77,11 +80,10 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
-// TODO : maxsize -> 백그라운드 -> padding
-
 @Composable
 fun HomeRoute(
     padding: PaddingValues,
+    afterOnboarding:Boolean = false,
     navigateToLogin: () -> Unit,
     navigateToCourseSearch: (String, String) -> Unit,
     navigateToMypage: () -> Unit,
@@ -118,6 +120,7 @@ fun HomeRoute(
     LaunchedEffect(Unit) {
         viewModel.loadAlarmAndCourseInfoFromPrefs(context)
         viewModel.loadUserDepartureState(context)
+        viewModel.setEvent(HomeContract.HomeEvent.ChangeGreetBottomSheetVisible(afterOnboarding))
     }
 
     // 화면이 다시 활성화될 때마다 사용자 출발 상태를 새로 로드
@@ -143,6 +146,7 @@ fun HomeRoute(
                     is ApiErrorSideEffect.ShowToastSideEffect -> {
                         Toast.makeText(context, sideEffect.toastMessage, Toast.LENGTH_SHORT).show()
                     }
+
                     is HomeContract.HomeSideEffect.NavigateToMypage -> navigateToMypage()
                     is HomeContract.HomeSideEffect.NavigateToItinerary -> navigateToItinerary(
                         Gson().toJson(uiState.itineraryInfo),
@@ -287,6 +291,13 @@ fun HomeRoute(
                                 HOME_COURSESEARCH_ENTERED_WITH_INPUT to 1
                             )
                         )
+                    },
+                    greetBottomSheetButtonClicked = {
+                        viewModel.setEvent(
+                            HomeContract.HomeEvent.ChangeGreetBottomSheetVisible(
+                                false
+                            )
+                        )
                     }
                 )
 
@@ -321,12 +332,12 @@ fun HomeScreen(
     courseDetailBtnClick: (String) -> Unit = {},
     deleteAlarmConfirmed: () -> Unit = {},
     dismissDialog: () -> Unit = {},
-    navigateToSearchLocation: () -> Unit = {}
+    navigateToSearchLocation: () -> Unit = {},
+    greetBottomSheetButtonClicked: () -> Unit = {}
 ) {
-    val context = LocalContext.current
     val colors = LocalTeam6Colors.current
 
-    var characterAnimationTrigger by remember { mutableStateOf(0) }
+    var characterAnimationTrigger by remember { mutableIntStateOf(0) }
 
     Box(
         modifier = modifier
@@ -614,6 +625,20 @@ fun HomeScreen(
                         )
                     },
                     sortType = 1
+                )
+            }
+        }
+        if (homeUiState.greetBottomSheetVisible) {
+            Box(
+                modifier = modifier
+                    .fillMaxSize()
+                    .background(color = Team6Theme.colors.black.copy(alpha = 0.5f))
+                    .zIndex(Float.MAX_VALUE)
+            ) {
+                HomeGreetBottomSheet(
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter),
+                    buttonClicked = { greetBottomSheetButtonClicked() },
                 )
             }
         }

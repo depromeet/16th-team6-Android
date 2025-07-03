@@ -211,6 +211,10 @@ class HomeViewModel @Inject constructor(
                     )
                 )
             }
+
+            is HomeContract.HomeEvent.ChangeGreetBottomSheetVisible -> setState {
+                copy(greetBottomSheetVisible = event.visible)
+            }
         }
     }
 

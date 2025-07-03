@@ -66,7 +66,8 @@ class HomeContract {
         ),
         val logoutState: Boolean = false,
         val taxiCost: Int = 0,
-        val deleteAlarmDialogVisible: Boolean = false
+        val deleteAlarmDialogVisible: Boolean = false,
+        val greetBottomSheetVisible: Boolean = false
     ) : UiState
 
     sealed interface HomeSideEffect : UiSideEffect {
@@ -99,5 +100,6 @@ class HomeContract {
         data object SetDestination : HomeEvent()
         data object AfterRegisterMapMarkerClick : HomeEvent()
         data class CourseDetailButtonClick(val clickEventKey: String) : HomeEvent()
+        data class ChangeGreetBottomSheetVisible(val visible: Boolean) : HomeEvent()
     }
 }
