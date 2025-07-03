@@ -173,6 +173,7 @@
     <string name="home_bubble_user_departure">출발~!</string>
     <string name="mypage_alarm_vibration_text">진동</string>
     <string name="mypage_alarm_sound_text">소리</string>
+    <string name="all_toast_exit_app">한 번 더 누르면 앱이 종료됩니다</string>
 
 
 </resources>

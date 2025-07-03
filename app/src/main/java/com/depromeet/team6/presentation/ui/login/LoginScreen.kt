@@ -3,6 +3,7 @@ package com.depromeet.team6.presentation.ui.login
 import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -38,7 +39,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import com.depromeet.team6.R
 import com.depromeet.team6.presentation.type.LoginViewPagerType
+import com.depromeet.team6.presentation.ui.common.view.AtChaTreeDotsLoadingView
 import com.depromeet.team6.presentation.ui.login.component.LoginIndicator
+import com.depromeet.team6.presentation.ui.splash.SplashScreen
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.presentation.util.modifier.roundedBackgroundWithPadding
 import com.depromeet.team6.presentation.util.view.LoadState
@@ -117,6 +120,7 @@ fun LoginRoute(
             }
 
             LoadState.Error -> {
+                viewModel.setEvent(LoginContract.LoginEvent.SetLoadingState(isLoading = false))
                 navigateToOnboarding()
             }
 
@@ -126,14 +130,27 @@ fun LoginRoute(
 
     when (uiState.loadState) {
         LoadState.Idle -> {
-            LoginScreen(
-                padding = padding,
-                uiState = uiState,
-                onSignInClicked = {
-                    setLayoutLoginKakaoClickListener(context = context, callback = callback)
-                },
-                modifier = modifier
-            )
+            Box(modifier = modifier.fillMaxSize()) {
+                LoginScreen(
+                    padding = padding,
+                    uiState = uiState,
+                    onLoginClicked = {
+                        viewModel.setEvent(LoginContract.LoginEvent.SetLoadingState(isLoading = true))
+                        setLayoutLoginKakaoClickListener(context = context, callback = callback)
+                    },
+                    modifier = modifier
+                )
+                if (uiState.isLoading) {
+                    AtChaTreeDotsLoadingView(
+                        isLoading = uiState.isLoading,
+                        loadingText = "로그인 중",
+                        modifier = Modifier.padding(horizontal = 36.dp).align(Alignment.Center)
+                    )
+                }
+            }
+        }
+        LoadState.Loading -> {
+            SplashScreen()
         }
 
         LoadState.Success -> navigateToHome()
@@ -147,7 +164,7 @@ fun LoginRoute(
 fun LoginScreen(
     padding: PaddingValues,
     uiState: LoginContract.LoginUiState = LoginContract.LoginUiState(),
-    onSignInClicked: () -> Unit = {},
+    onLoginClicked: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -203,7 +220,7 @@ fun LoginScreen(
                     backgroundColor = defaultTeam6Colors.kakaoLoginButton,
                     cornerRadius = 8.dp
                 )
-                .noRippleClickable { onSignInClicked() },
+                .noRippleClickable { onLoginClicked() },
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
