@@ -697,7 +697,11 @@ fun HomeScreen(
                     }
                 },
                 onIconClick = {
-                    showTempMessage(ComponentType.DEPARTURE_TIME_CONFIRMED_CLICKED)
+                    if (homeUiState.isBusDeparted) {
+                        showTempMessage(ComponentType.DEPARTURE_TIME_CONFIRMED_CLICKED)
+                    } else {
+                        showTempMessage(ComponentType.DEPARTURE_TIME_NOT_CONFIRMED_CLICKED)
+                    }
                 },
                 onHomeDepartureTimeClick = {
                     showTempMessage(ComponentType.DEPARTURE_TIME_CONFIRMED_CLICKED)
