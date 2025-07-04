@@ -326,32 +326,6 @@ class HomeViewModel @Inject constructor(
                 .onFailure { exception ->
                     handleApiException(exception)
                 }
-//            getAddressFromCoordinatesUseCase.invoke(location.latitude, location.longitude)
-//                .onSuccess { addressData ->
-//                    setState {
-//                        copy(
-//                            markerPoint = if (addressData.name.isEmpty()) {
-//                                addressData.copy(name = addressData.address)
-//                            } else {
-//                                addressData
-//                            }
-//                        )
-//                    }
-//                    getTaxiCost()
-//                }.onFailure {
-//                    Timber.d("location error : ${it.message}")
-//                    setState {
-//                        // 위치 찾을 수 없는 경우 서울시청으로 임의 초기화
-//                        copy(
-//                            markerPoint = Address(
-//                                name = "서울특별시청",
-//                                lat = 37.56681744674135,
-//                                lon = 126.97866075004276,
-//                                address = ""
-//                            )
-//                        )
-//                    }
-//                }
         }
     }
 
@@ -510,8 +484,8 @@ class HomeViewModel @Inject constructor(
                         )
                     }
                     getTaxiCostUseCase.saveTaxiCost(it)
-                }.onFailure {
-                    setState {
+                }.onFailure { exception ->
+                    handleApiException(exception) {
                         copy(
                             taxiCost = 0
                         )
