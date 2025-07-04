@@ -177,6 +177,9 @@ class MypageViewModel @Inject constructor(
                 }
                 isAddressInitialized = true
             }
+                .onFailure { exception ->
+                    handleApiException(exception)
+                }
         }
     }
 
@@ -208,81 +211,67 @@ class MypageViewModel @Inject constructor(
 
     fun modifyUserAddress(context: Context) {
         viewModelScope.launch {
-            try {
-                val currentAddress = currentState.myAddress
+            val currentAddress = currentState.myAddress
 
-                val modifyUserInfoDto = RequestModifyUserInfoDto(
-                    address = currentAddress.name,
-                    lat = currentAddress.lat,
-                    lon = currentAddress.lon
-                )
+            val modifyUserInfoDto = RequestModifyUserInfoDto(
+                address = currentAddress.name,
+                lat = currentAddress.lat,
+                lon = currentAddress.lon
+            )
 
-                modifyUserInfoUseCase(modifyUserInfoDto = modifyUserInfoDto)
-                    .onSuccess { userInfo ->
-                        setState {
-                            copy(
-                                myAddress = Address(
-                                    name = currentAddress.name,
-                                    lat = userInfo.userHome.latitude,
-                                    lon = userInfo.userHome.longitude,
-                                    address = currentAddress.address
-                                )
+            modifyUserInfoUseCase(modifyUserInfoDto = modifyUserInfoDto)
+                .onSuccess { userInfo ->
+                    setState {
+                        copy(
+                            myAddress = Address(
+                                name = currentAddress.name,
+                                lat = userInfo.userHome.latitude,
+                                lon = userInfo.userHome.longitude,
+                                address = currentAddress.address
                             )
-                        }
+                        )
+                    }
 
-                        setState {
-                            copy(
-                                userInfo = currentState.userInfo.copy(
-                                    address = currentAddress.name,
-                                    lat = userInfo.userHome.latitude,
-                                    lon = userInfo.userHome.longitude
-                                )
+                    setState {
+                        copy(
+                            userInfo = currentState.userInfo.copy(
+                                address = currentAddress.name,
+                                lat = userInfo.userHome.latitude,
+                                lon = userInfo.userHome.longitude
                             )
-                        }
-
-                        setState { copy(mapViewVisible = false) }
-
-                        atChaToastMessage(context, R.string.mypage_change_home_toast_text, Toast.LENGTH_SHORT)
+                        )
                     }
-                    .onFailure { error ->
-                        Timber.e("주소 업데이트 실패: ${error.message}")
-                        setState { copy(loadState = LoadState.Error) }
-                    }
-            } catch (e: Exception) {
-                Timber.e("주소 업데이트 중 예외 발생: ${e.message}")
-                e.printStackTrace()
-                setState { copy(loadState = LoadState.Error) }
-            }
+
+                    setState { copy(mapViewVisible = false) }
+
+                    atChaToastMessage(context, R.string.mypage_change_home_toast_text, Toast.LENGTH_SHORT)
+                }
+                .onFailure { exception ->
+                    handleApiException(exception)
+                }
         }
     }
 
     fun modifyAlarmFrequencies(context: Context) {
         viewModelScope.launch {
-            try {
-                val modifyUserInfoDto = RequestModifyUserInfoDto(
-                    alertFrequencies = currentState.alertFrequencies
-                )
+            val modifyUserInfoDto = RequestModifyUserInfoDto(
+                alertFrequencies = currentState.alertFrequencies
+            )
 
-                modifyUserInfoUseCase(modifyUserInfoDto = modifyUserInfoDto)
-                    .onSuccess { userInfo ->
-                        setState {
-                            copy(
-                                userInfo = currentState.userInfo.copy(
-                                    alertFrequencies = userInfo.alertFrequencies
-                                )
+            modifyUserInfoUseCase(modifyUserInfoDto = modifyUserInfoDto)
+                .onSuccess { userInfo ->
+                    setState {
+                        copy(
+                            userInfo = currentState.userInfo.copy(
+                                alertFrequencies = userInfo.alertFrequencies
                             )
-                        }
-                        atChaToastMessage(context, R.string.mypage_change_alarm_time_toast_text, Toast.LENGTH_SHORT)
+                        )
                     }
-                    .onFailure { error ->
-                        Timber.e("알림 설정 변경 실패: ${error.message}")
-                        setState { copy(loadState = LoadState.Error) }
-                    }
-            } catch (e: Exception) {
-                Timber.e("알림 설정 중 예외 발생: ${e.message}")
-                e.printStackTrace()
-                setState { copy(loadState = LoadState.Error) }
-            }
+                    atChaToastMessage(context, R.string.mypage_change_alarm_time_toast_text, Toast.LENGTH_SHORT)
+                }
+                .onFailure { exception ->
+                    handleApiException(exception)
+                }
         }
     }
 

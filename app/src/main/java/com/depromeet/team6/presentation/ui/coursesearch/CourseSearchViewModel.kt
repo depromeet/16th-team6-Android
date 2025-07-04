@@ -200,23 +200,18 @@ class CourseSearchViewModel @Inject constructor(
         }
     }
 
-    fun registerAlarm() {
-        viewModelScope.launch {
-            setEvent(CourseSearchContract.CourseEvent.RegisterAlarm)
-        }
-    }
-
     fun postAlarm(lastRouteId: String) {
         viewModelScope.launch {
-            if (postAlarmUseCase(
-                    lastRouteId = lastRouteId
-                ).isSuccessful
-            ) {
-                setEvent(CourseSearchContract.CourseEvent.RegisterAlarm)
-                setSideEffect(CourseSearchContract.CourseSideEffect.NavigateHomeWithToast)
-            } else {
-                setEvent(CourseSearchContract.CourseEvent.RegisterAlarm)
-            }
+            postAlarmUseCase(
+                lastRouteId = lastRouteId
+            )
+                .onSuccess {
+                    setEvent(CourseSearchContract.CourseEvent.RegisterAlarm)
+                    setSideEffect(CourseSearchContract.CourseSideEffect.NavigateHomeWithToast)
+                }
+                .onFailure { exception ->
+                    handleApiException(exception)
+                }
         }
     }
 }

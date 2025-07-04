@@ -50,6 +50,7 @@ import com.depromeet.team6.presentation.ui.itinerary.component.ItineraryMap
 import com.depromeet.team6.presentation.ui.itinerary.component.ItinerarySummary
 import com.depromeet.team6.presentation.util.DefaultLatLng.DEFAULT_LAT
 import com.depromeet.team6.presentation.util.DefaultLatLng.DEFAULT_LNG
+import com.depromeet.team6.presentation.util.base.ApiErrorSideEffect
 import com.depromeet.team6.presentation.util.context.getUserLocation
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.presentation.util.modifier.roundedBackgroundWithPadding
@@ -71,6 +72,7 @@ fun ItineraryRoute(
     focusedMarkerParam: FocusedMarkerParameter?,
     navigateToBusCourse: (BusArrivalParameter) -> Unit,
     navigateToHome: () -> Unit,
+    navigateToLogin: () -> Unit,
     viewModel: ItineraryViewModel = hiltViewModel(),
     onBackPressed: () -> Unit
 ) {
@@ -104,6 +106,18 @@ fun ItineraryRoute(
         )
         viewModel.sideEffect.collect { sideEffect ->
             when (sideEffect) {
+                is ApiErrorSideEffect.ShowToastSideEffect -> {
+                    Toast.makeText(context, sideEffect.toastMessage, Toast.LENGTH_SHORT).show()
+                }
+
+                is ApiErrorSideEffect.NavigateToHomeSideEffect -> {
+                    navigateToHome()
+                }
+
+                is ApiErrorSideEffect.NavigateToLoginSideEffect -> {
+                    navigateToLogin()
+                }
+
                 ItineraryContract.ItinerarySideEffect.NavigateHomeWithToast -> {
                     navigateToHome()
                     atChaToastMessage(context, R.string.course_set_notification_snackbar, Toast.LENGTH_SHORT)

@@ -2,6 +2,7 @@ package com.depromeet.team6.presentation.ui.mypage
 
 import android.content.Intent
 import android.net.Uri
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -39,6 +40,7 @@ import com.depromeet.team6.presentation.ui.mypage.component.TitleBar
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingSearchPopup
 import com.depromeet.team6.presentation.util.WebViewUrl.FEEDBACK_FORM_URL
 import com.depromeet.team6.presentation.util.WebViewUrl.PRIVACY_POLICY_URL
+import com.depromeet.team6.presentation.util.base.ApiErrorSideEffect
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.depromeet.team6.ui.theme.LocalTeam6Colors
@@ -68,6 +70,12 @@ fun MypageRoute(
                     is MypageContract.MypageSideEffect.NavigateToLogin -> navigateToLogin()
                     is MypageContract.MypageSideEffect.NavigateToFeedbackForm -> {
                         context.startActivity(feedbackIntent)
+                    }
+                    is ApiErrorSideEffect.ShowToastSideEffect -> {
+                        Toast.makeText(context, sideEffect.toastMessage, Toast.LENGTH_SHORT).show()
+                    }
+                    is ApiErrorSideEffect.NavigateToLoginSideEffect -> {
+                        navigateToLogin()
                     }
                 }
             }

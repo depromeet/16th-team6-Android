@@ -1,7 +1,6 @@
 package com.depromeet.team6.presentation.ui.home
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.depromeet.team6.data.datalocal.manager.LockServiceManager
 import com.depromeet.team6.domain.model.Address
@@ -242,43 +241,32 @@ class HomeViewModel @Inject constructor(
 
     fun deleteAlarm(lastRouteId: String, context: Context) {
         viewModelScope.launch {
-            if (deleteAlarmUseCase(
-                    lastRouteId = lastRouteId
-                ).isSuccessful
-            ) {
-                setEvent(HomeContract.HomeEvent.UpdateAlarmRegistered(false))
-                setEvent(HomeContract.HomeEvent.UpdateBusDeparted(false))
+            deleteAlarmUseCase(
+                lastRouteId = lastRouteId
+            )
+                .onSuccess {
+                    setEvent(HomeContract.HomeEvent.UpdateBusDeparted(false))
 
-                stopPollingBusStarted()
+                    stopPollingBusStarted()
 
-                val sharedPreferences = context.getSharedPreferences(
-                    "MyPreferences",
-                    Context.MODE_PRIVATE
-                )
-                val editor = sharedPreferences.edit()
+                    val sharedPreferences = context.getSharedPreferences(
+                        "MyPreferences",
+                        Context.MODE_PRIVATE
+                    )
+                    val editor = sharedPreferences.edit()
+                    editor.remove("departurePoint")
+                    editor.remove("lastCourseInfo")
+                    editor.remove("lastRouteId")
+                    editor.remove("alarmRegistered")
+                    editor.remove("userDeparture")
 
-                editor.remove("departurePoint")
-                editor.remove("lastCourseInfo")
-                editor.remove("lastRouteId")
-                editor.remove("alarmRegistered")
-                editor.remove("userDeparture")
+                    editor.apply()
 
-                editor.apply()
-
-                val prefs = context.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
-                val characterEditor = prefs.edit()
-
-                characterEditor.remove("first_alarm_before_bus")
-                characterEditor.remove("first_alarm_after_bus")
-                characterEditor.remove("first_alarm_after_subway")
-                characterEditor.remove("first_user_departed_bus")
-                characterEditor.remove("first_user_departed_subway")
-                characterEditor.apply()
-
-                setEvent(HomeContract.HomeEvent.DismissDialog)
-            } else {
-                Log.d("알림 삭제 실패", "알림 삭제 실패")
-            }
+                    setEvent(HomeContract.HomeEvent.DismissDialog)
+                }
+                .onFailure { exception ->
+                    handleApiException(exception)
+                }
         }
     }
 
@@ -551,8 +539,8 @@ class HomeViewModel @Inject constructor(
                     )
                 }
                 setState { copy(destinationState = LoadState.Success) }
-            }.onFailure {
-                setState { copy(destinationState = LoadState.Error) }
+            }.onFailure { exception ->
+                handleApiException(exception)
             }
         }
     }
