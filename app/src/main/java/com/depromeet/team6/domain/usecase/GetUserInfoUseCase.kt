@@ -1,6 +1,12 @@
 package com.depromeet.team6.domain.usecase
 
 import com.depromeet.team6.data.repositoryimpl.AuthRepositoryImpl
+import com.depromeet.team6.domain.Auth.TOK_001
+import com.depromeet.team6.domain.Auth.TOK_002
+import com.depromeet.team6.domain.Auth.USR_002
+import com.depromeet.team6.domain.Network.INTERNAL_SERVER_ERROR
+import com.depromeet.team6.domain.ToastMessage.API_ERROR_LOGIN_TOKEN_EXPIRED
+import com.depromeet.team6.domain.ToastMessage.API_ERROR_UNKNOWN
 import com.depromeet.team6.domain.model.UserInfo
 import com.depromeet.team6.domain.usecase.base.ApiRequestUseCase
 import com.depromeet.team6.presentation.model.exception.ErrorControlFailureException
@@ -22,11 +28,11 @@ class GetUserInfoUseCase @Inject constructor(
 
     override fun apiExceptionMapper(errorCode: String): ErrorControlFailureException {
         return when (errorCode) {
-            "TOK_001" -> ErrorControlFailureException.NavigateAndShowToastException("로그인 정보가 만료되었습니다. 다시 로그인 해주세요.", Route.Login)
-            "TOK_002" -> ErrorControlFailureException.NavigateAndShowToastException("로그인 정보가 만료되었습니다. 다시 로그인 해주세요.", Route.Login)
-            "USR_002" -> ErrorControlFailureException.NavigateAndShowToastException("로그인 정보가 만료되었습니다. 다시 로그인 해주세요.", Route.Login)
-            "INTERNAL_SERVER_ERROR" -> ErrorControlFailureException.ShowToastException("알 수 없는 서버 에러입니다.")
-            else -> ErrorControlFailureException.ShowToastException("알 수 없는 서버 에러입니다.")
+            TOK_001 -> ErrorControlFailureException.NavigateAndShowToastException(API_ERROR_LOGIN_TOKEN_EXPIRED, Route.Login)
+            TOK_002 -> ErrorControlFailureException.NavigateAndShowToastException(API_ERROR_LOGIN_TOKEN_EXPIRED, Route.Login)
+            USR_002 -> ErrorControlFailureException.NavigateAndShowToastException(API_ERROR_LOGIN_TOKEN_EXPIRED, Route.Login)
+            INTERNAL_SERVER_ERROR -> ErrorControlFailureException.ShowToastException(API_ERROR_UNKNOWN)
+            else -> ErrorControlFailureException.ShowToastException(API_ERROR_UNKNOWN)
         }
     }
 }
