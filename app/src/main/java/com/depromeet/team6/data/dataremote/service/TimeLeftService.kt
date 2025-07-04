@@ -1,6 +1,6 @@
 package com.depromeet.team6.data.dataremote.service
 
-import com.depromeet.team6.data.dataremote.model.response.base.ApiResponse
+import com.depromeet.team6.data.dataremote.model.response.base.BaseResponse
 import com.depromeet.team6.data.dataremote.util.ApiConstraints.API
 import com.depromeet.team6.data.dataremote.util.ApiConstraints.DEPARTUREREMAINING
 import com.depromeet.team6.data.dataremote.util.ApiConstraints.LASTROUTES
@@ -13,5 +13,5 @@ interface TimeLeftService {
     @GET("$API/$TRANSITS/$LASTROUTES/{$ROUTEID}/$DEPARTUREREMAINING")
     suspend fun getDepartureRemainingTime(
         @Path(ROUTEID) routeId: String
-    ): ApiResponse<Int>
+    ): BaseResponse<Int>
 }

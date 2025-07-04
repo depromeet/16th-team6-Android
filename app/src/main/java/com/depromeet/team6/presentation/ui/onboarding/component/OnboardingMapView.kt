@@ -2,6 +2,7 @@ package com.depromeet.team6.presentation.ui.onboarding.component
 
 import android.content.Context
 import android.widget.FrameLayout
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -65,6 +66,10 @@ fun OnboardingMapView(
     var isMapReady by remember { mutableStateOf(false) }
     val offsetLat = 0.00005
     val coroutineScope = rememberCoroutineScope()
+
+    BackHandler {
+        backButtonClicked()
+    }
 
     // Lifecycle 제어: ON_START 이후에만 지도 초기화
     DisposableEffect(lifecycleOwner) {

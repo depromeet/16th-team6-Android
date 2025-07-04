@@ -52,7 +52,7 @@ fun MainNavHost(
 
         onboardingNavGraph(
             padding = padding,
-            navigateToHome = navigator::navigateToHome
+            navigateToHome = navigator::navigateToHomeAfterOnboarding
         )
 
         loginGraph(

@@ -49,19 +49,32 @@ class MypageViewModel @Inject constructor(
     override suspend fun handleEvent(event: MypageContract.MypageEvent) {
         when (event) {
             is MypageContract.MypageEvent.BackPressed -> navigateBack()
-            is MypageContract.MypageEvent.LogoutClicked -> setState { copy(logoutDialogVisible = true, withDrawDialogVisible = false) }
+            is MypageContract.MypageEvent.LogoutClicked -> setState {
+                copy(
+                    logoutDialogVisible = true,
+                    withDrawDialogVisible = false
+                )
+            }
+
             is MypageContract.MypageEvent.WithDrawClicked -> setState { copy(withDrawDialogVisible = true) }
             is MypageContract.MypageEvent.PolicyClicked -> setState { copy(isWebViewOpened = true) }
             is MypageContract.MypageEvent.PolicyClosed -> setState { copy(isWebViewOpened = false) }
             is MypageContract.MypageEvent.LogoutConfirmed -> logout()
             is MypageContract.MypageEvent.WithDrawConfirmed -> withDraw()
-            is MypageContract.MypageEvent.DismissDialog -> setState { copy(logoutDialogVisible = false, withDrawDialogVisible = false) }
+            is MypageContract.MypageEvent.DismissDialog -> setState {
+                copy(
+                    logoutDialogVisible = false,
+                    withDrawDialogVisible = false
+                )
+            }
+
             is MypageContract.MypageEvent.AccountClicked -> navigateToAccount()
             is MypageContract.MypageEvent.ChangeHomeClicked -> navigateToChangeHome()
             is MypageContract.MypageEvent.UpdateMyAddress -> getUserInfo()
             is MypageContract.MypageEvent.ChangeMapViewVisible -> setState {
                 copy(mapViewVisible = event.mapViewVisible)
             }
+
             is MypageContract.MypageEvent.ClearAddress -> setState {
                 copy(
                     myAddress = Address(
@@ -72,22 +85,26 @@ class MypageViewModel @Inject constructor(
                     )
                 )
             }
+
             is MypageContract.MypageEvent.ClearText -> setState {
                 copy(
                     searchText = "",
                     searchLocations = emptyList()
                 )
             }
+
             is MypageContract.MypageEvent.SearchPopUpBackPressed -> setState {
                 copy(
                     searchPopupVisible = false
                 )
             }
+
             is MypageContract.MypageEvent.ShowSearchPopup -> setState {
                 copy(
                     searchPopupVisible = true
                 )
             }
+
             is MypageContract.MypageEvent.UpdateSearchText -> handleUpdateSearchText(event = event)
             is MypageContract.MypageEvent.LocationSelectButtonClicked -> setState {
                 copy(
@@ -101,6 +118,7 @@ class MypageViewModel @Inject constructor(
                 setState { copy(selectedAlarmType = event.type) }
                 saveAlarmSettings(event.type)
             }
+
             MypageContract.MypageEvent.SoundSettingClicked -> {
                 setState {
                     copy(alarmScreenState = MypageContract.AlarmScreenState.SOUND_SETTING)
@@ -183,8 +201,9 @@ class MypageViewModel @Inject constructor(
                             searchLocations = locations.toPresentationList()
                         )
                     }
-                }.onFailure {
+                }.onFailure { exception ->
                     setState { copy(searchLocations = emptyList()) }
+                    handleApiException(exception = exception)
                 }
             }
         }
@@ -379,23 +398,24 @@ class MypageViewModel @Inject constructor(
     private fun logout() {
         userInfoRepositoryImpl.setAccessToken(userInfoRepositoryImpl.getRefreshToken())
         viewModelScope.launch {
-            if (postLogoutUseCase().isSuccessful) {
+            postLogoutUseCase().onSuccess {
                 setSideEffect(MypageContract.MypageSideEffect.NavigateToLogin)
                 setState { copy(loadState = LoadState.Error) }
                 userInfoRepositoryImpl.clear()
-            } else {
+            }.onFailure { exception ->
                 setEvent(MypageContract.MypageEvent.LogoutClicked)
+                handleApiException(exception = exception)
             }
         }
     }
 
     private fun withDraw() {
         viewModelScope.launch {
-            if (deleteWithDrawUseCase().isSuccessful) {
+            deleteWithDrawUseCase().onSuccess {
                 userInfoRepositoryImpl.clear()
                 setSideEffect(MypageContract.MypageSideEffect.NavigateToLogin)
-            } else {
-                setEvent(MypageContract.MypageEvent.WithDrawClicked)
+            }.onFailure { exception ->
+                handleApiException(exception = exception)
             }
         }
     }
@@ -418,20 +438,25 @@ class MypageViewModel @Inject constructor(
             MypageContract.MypageScreen.MAIN -> {
                 setSideEffect(MypageContract.MypageSideEffect.NavigateBack)
             }
+
             MypageContract.MypageScreen.ACCOUNT -> {
                 setState { copy(currentScreen = MypageContract.MypageScreen.MAIN) }
             }
+
             MypageContract.MypageScreen.CHANGE_HOME -> {
                 setState { copy(currentScreen = MypageContract.MypageScreen.MAIN) }
             }
+
             MypageContract.MypageScreen.ALARM -> {
                 when (currentState.alarmScreenState) {
                     MypageContract.AlarmScreenState.SOUND_SETTING -> {
                         setState { copy(alarmScreenState = MypageContract.AlarmScreenState.MAIN) }
                     }
+
                     MypageContract.AlarmScreenState.TIME_SETTING -> {
                         setState { copy(alarmScreenState = MypageContract.AlarmScreenState.MAIN) }
                     }
+
                     else -> {
                         setState { copy(currentScreen = MypageContract.MypageScreen.MAIN) }
                     }

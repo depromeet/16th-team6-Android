@@ -10,10 +10,11 @@ import com.google.accompanist.pager.PagerState
 class LoginContract {
     @OptIn(ExperimentalPagerApi::class)
     data class LoginUiState(
-        val loadState: LoadState = LoadState.Idle,
+        val loadState: LoadState = LoadState.Loading,
         val authTokenLoadState: LoadState = LoadState.Idle,
         val isUserRegisteredState: LoadState = LoadState.Idle,
-        val pagerState: PagerState = PagerState()
+        val pagerState: PagerState = PagerState(),
+        val isLoading: Boolean = false
     ) : UiState
 
     sealed interface LoginSideEffect : UiSideEffect {
@@ -27,5 +28,6 @@ class LoginContract {
         data class GetLogin(val loadState: LoadState) : LoginEvent()
         data class GetCheckUserRegistered(val isUserRegisteredState: LoadState) : LoginEvent()
         data class SetPagerState(val pagerState: PagerState) : LoginEvent()
+        data class SetLoadingState(val isLoading: Boolean) : LoginEvent()
     }
 }

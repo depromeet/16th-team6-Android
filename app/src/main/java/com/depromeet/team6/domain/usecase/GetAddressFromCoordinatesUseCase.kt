@@ -4,6 +4,7 @@ import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.repository.LocationsRepository
 import com.depromeet.team6.domain.usecase.base.ApiRequestUseCase
 import com.depromeet.team6.presentation.model.exception.ErrorControlFailureException
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -21,6 +22,8 @@ class GetAddressFromCoordinatesUseCase @Inject constructor(
     }
 
     override fun apiExceptionMapper(errorCode: String): ErrorControlFailureException {
+        Timber.d("errorCode : $errorCode")
+
         return when (errorCode) {
             else -> ErrorControlFailureException.ShowToastException("알 수 없음")
         }

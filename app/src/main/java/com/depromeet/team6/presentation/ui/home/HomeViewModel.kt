@@ -210,6 +210,10 @@ class HomeViewModel @Inject constructor(
                     )
                 )
             }
+
+            is HomeContract.HomeEvent.ChangeGreetBottomSheetVisible -> setState {
+                copy(greetBottomSheetVisible = event.visible)
+            }
         }
     }
 
@@ -266,36 +270,27 @@ class HomeViewModel @Inject constructor(
     private fun getBusStarted(lastRouteId: String) {
         this.lastRouteId = lastRouteId
         viewModelScope.launch {
-            try {
-                getBusStartedUseCase.invoke(lastRouteId = lastRouteId)
-                    .onSuccess {
-                        Timber.d("버스 출발여부 getBusStarted: $it")
-                        setState {
-                            copy(
-                                isBusDeparted = it
-                            )
-                        }
-                        if (it) {
-                            stopPollingBusStarted()
-                        }
-                    }.onFailure {
-                        Timber.e("버스 출발여부 에러: ${it.message}")
-                        setState {
-                            copy(
-                                isBusDeparted = true
-                            )
-                        }
+            getBusStartedUseCase.invoke(lastRouteId = lastRouteId)
+                .onSuccess {
+                    Timber.d("버스 출발여부 getBusStarted: $it")
+                    setState {
+                        copy(
+                            isBusDeparted = it
+                        )
+                    }
+                    if (it) {
                         stopPollingBusStarted()
                     }
-            } catch (e: Exception) {
-                Timber.e("예상치 못한 예외 발생: ${e.message}")
-                setState {
-                    copy(
-                        isBusDeparted = true
-                    )
+                }.onFailure {
+                    handleApiException(it) {
+                        copy(
+                            isBusDeparted = false
+                        )
+                    }
+                    // TODO : 실패 5번 누적되면 푸시알림 구현
+                    Timber.e("버스 출발여부 에러: ${it.message}")
+                    stopPollingBusStarted()
                 }
-                stopPollingBusStarted()
-            }
         }
     }
     private fun showSpeechBubbleTemporarily() {
@@ -579,9 +574,8 @@ class HomeViewModel @Inject constructor(
                         boardingTime = busArrival.realTimeBusArrival[0].remainingTime.toString()
                     )
                 }
-                Timber.e("버스 남은 시간: ${currentState.boardingTime}")
-            }.onFailure {
-                Timber.e("버스 도착 정보 조회 실패: ${it.message}")
+            }.onFailure { exception ->
+                handleApiException(exception = exception)
             }
         }
     }

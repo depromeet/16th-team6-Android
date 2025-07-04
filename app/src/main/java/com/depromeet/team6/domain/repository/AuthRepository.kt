@@ -4,7 +4,6 @@ import com.depromeet.team6.data.dataremote.model.request.user.RequestModifyUserI
 import com.depromeet.team6.domain.model.Auth
 import com.depromeet.team6.domain.model.SignUp
 import com.depromeet.team6.domain.model.UserInfo
-import retrofit2.Response
 
 interface AuthRepository {
     suspend fun getCheck(authorization: String, provider: Int): Result<Boolean>
@@ -13,9 +12,9 @@ interface AuthRepository {
 
     suspend fun getLogin(provider: Int, fcmToken: String): Result<Auth>
 
-    suspend fun postLogout(): Response<Unit>
+    suspend fun postLogout(): Result<Unit>
 
-    suspend fun deleteWithDraw(): Response<Unit>
+    suspend fun deleteWithDraw(): Result<Unit>
 
     suspend fun getUserInfo(): Result<UserInfo>
 

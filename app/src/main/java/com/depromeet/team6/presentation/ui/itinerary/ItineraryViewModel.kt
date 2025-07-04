@@ -112,7 +112,9 @@ class ItineraryViewModel @Inject constructor(
                         stationName = leg.startPoint.name,
                         lat = leg.startPoint.lat,
                         lon = leg.startPoint.lon
-                    )
+                    ).onFailure { exception ->
+                        handleApiException(exception = exception)
+                    }
                     result.mapCatching {
                         Timber.d("busArrivalStatusAPIResult : $it")
                         idx to it.realTimeBusArrival[0]

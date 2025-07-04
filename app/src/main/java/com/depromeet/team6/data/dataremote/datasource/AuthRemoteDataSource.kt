@@ -8,26 +8,25 @@ import com.depromeet.team6.data.dataremote.model.response.user.ResponseAuthDto
 import com.depromeet.team6.data.dataremote.model.response.user.ResponseCheckDto
 import com.depromeet.team6.data.dataremote.model.response.user.ResponseUserInfoDto
 import com.depromeet.team6.data.dataremote.service.AuthService
-import retrofit2.Response
 import javax.inject.Inject
 
 class AuthRemoteDataSource @Inject constructor(
     private val authService: AuthService
 ) {
-    suspend fun getCheck(authorization: String, provider: Int): Result<ResponseCheckDto> =
-        authService.getCheck(provider = provider).toResult()
+    suspend fun getCheck(provider: Int): Result<ResponseCheckDto> =
+        authService.getCheck(provider = provider).parse()
 
     suspend fun postSignUp(requestSignUpDto: RequestSignUpDto): Result<ResponseAuthDto> =
-        authService.postSignUp(requestSignUpDto = requestSignUpDto).toResult()
+        authService.postSignUp(requestSignUpDto = requestSignUpDto).parse()
 
     suspend fun getLogin(provider: Int, fcmToken: String): Result<ResponseAuthDto> =
-        authService.getLogin(provider = provider, fcmToken = fcmToken).toResult()
+        authService.getLogin(provider = provider, fcmToken = fcmToken).parse()
 
-    suspend fun postLogout(): Response<Unit> =
-        authService.postLogout()
+    suspend fun postLogout(): Result<Unit> =
+        authService.postLogout().parse()
 
-    suspend fun deleteWithDraw(): Response<Unit> =
-        authService.deleteWithDraw()
+    suspend fun deleteWithDraw(): Result<Unit> =
+        authService.deleteWithDraw().parse()
 
     suspend fun getUserInfo(): Result<ResponseUserInfoDto> {
         val response = authService.getUserInfo()
