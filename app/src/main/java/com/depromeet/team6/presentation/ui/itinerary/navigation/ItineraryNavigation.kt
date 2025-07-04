@@ -36,6 +36,7 @@ fun NavController.navigateToItinerary(
 fun NavGraphBuilder.itineraryNavGraph(
     padding: PaddingValues,
     navigateToBusCourse: (BusArrivalParameter) -> Unit,
+    navigateToLogin: () -> Unit,
     navigateToHome: () -> Unit,
     popBackStack: () -> Unit
 ) {
@@ -68,6 +69,7 @@ fun NavGraphBuilder.itineraryNavGraph(
             departurePointJSON = departurePoint,
             destinationPointJSON = destinationPoint,
             navigateToBusCourse = navigateToBusCourse,
+            navigateToLogin = navigateToLogin,
             navigateToHome = navigateToHome,
             onBackPressed = popBackStack,
             focusedMarkerParam = markerParam

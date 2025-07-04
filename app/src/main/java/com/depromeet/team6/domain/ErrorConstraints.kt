@@ -55,6 +55,7 @@ object ToastMessage {
 
     const val API_ERROR_SHORT_DISTANCE = "출발지와 도착지가 너무 가깝습니다. 출발지를 다시 선택해 주세요."
     const val API_ERROR_OUT_OF_SERVICE_REGION = "출발지가 수도권을 벗어났습니다. 출발지를 다시 선택해 주세요."
+    const val API_ERROR__OUT_OF_ROUTE = "경로를 찾을 수 없습니다. 다시 한번 등록해주세요."
 
     const val API_ERROR_BUS_LOCATION_MISSING = "버스 위치정보를 가져올 수 없습니다."
     const val API_ERROR_BUS_ROUTE_MISSING = "버스 노선정보를 찾을 수 없습니다."
