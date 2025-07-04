@@ -1,5 +1,6 @@
 package com.depromeet.team6.presentation.ui.home
 
+import android.content.Context
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -16,7 +17,6 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -28,7 +28,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -40,15 +39,18 @@ import androidx.lifecycle.flowWithLifecycle
 import com.depromeet.team6.R
 import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.course.TransportType
+import com.depromeet.team6.presentation.model.home.CharacterState
+import com.depromeet.team6.presentation.model.home.ComponentType
+import com.depromeet.team6.presentation.model.home.SpeechBubbleData
 import com.depromeet.team6.presentation.model.itinerary.FocusedMarkerParameter
 import com.depromeet.team6.presentation.ui.common.view.AtChaLoadingView
 import com.depromeet.team6.presentation.ui.home.component.AfterRegisterMap
 import com.depromeet.team6.presentation.ui.home.component.AfterRegisterSheet
-import com.depromeet.team6.presentation.ui.home.component.CharacterLottieSpeechBubble
 import com.depromeet.team6.presentation.ui.home.component.CurrentLocationSheet
 import com.depromeet.team6.presentation.ui.home.component.DeleteAlarmDialog
 import com.depromeet.team6.presentation.ui.home.component.HomeGreetBottomSheet
 import com.depromeet.team6.presentation.ui.home.component.TMapViewCompose
+import com.depromeet.team6.presentation.ui.home.component.UnifiedCharacterBubble
 import com.depromeet.team6.presentation.util.AmplitudeCommon.SCREEN_NAME
 import com.depromeet.team6.presentation.util.AmplitudeCommon.USER_ID
 import com.depromeet.team6.presentation.util.DefaultLatLng.DEFAULT_LAT
@@ -65,7 +67,6 @@ import com.depromeet.team6.presentation.util.HomeAmplitude.POPUP
 import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
 import com.depromeet.team6.presentation.util.base.ApiErrorSideEffect
 import com.depromeet.team6.presentation.util.context.getUserLocation
-import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.presentation.util.permission.PermissionUtil
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.depromeet.team6.ui.theme.LocalTeam6Colors
@@ -74,6 +75,10 @@ import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.android.gms.maps.model.LatLng
 import com.google.gson.Gson
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.text.NumberFormat
 import java.time.LocalDateTime
@@ -110,6 +115,38 @@ fun HomeRoute(
     )
 
     val systemUiController = rememberSystemUiController()
+
+    val characterTexts = CharacterTexts(
+        taxiCostText = stringResource(R.string.home_bubble_basic_text),
+        aboutText = stringResource(R.string.home_bubble_least_text),
+        wonText = stringResource(R.string.home_bubble_won_text),
+        moveMapText = stringResource(R.string.home_bubble_map_text),
+
+        expectDepartText = stringResource(R.string.home_bubble_alarm_emphasis_text),
+        expectTaxiCostText = stringResource(R.string.home_bubble_user_departure_taxi_cost_text),
+        expectBustDepartureText = stringResource(R.string.home_bubble_before_bus_departure_text),
+
+        expectTimeClickedText1 = stringResource(R.string.home_bubble_expect_departure_time_clicked_text_1),
+        expectTimeClickedText2 = stringResource(R.string.home_bubble_expect_departure_time_clicked_text_2),
+        changeLocationClickedText = stringResource(R.string.home_bubble_location_clicked_text),
+
+        busDepartureText1 = stringResource(R.string.home_bubble_bus_departure_text_1),
+        busDepartureText2 = stringResource(R.string.home_bubble_bus_departure_text_2),
+        subwayDepartureText1 = stringResource(R.string.home_bubble_subway_departure_text_1),
+        subwayDepartureText2 = stringResource(R.string.home_bubble_subway_departure_text_2),
+        timeInfoText1 = stringResource(R.string.home_bubble_time_info_text_1),
+        timeInfoText2 = stringResource(R.string.home_bubble_time_info_text_2),
+        departureTimeText1 = stringResource(R.string.home_bubble_departure_time_info_text_1),
+        busDepartureTaxiCostText = stringResource(R.string.home_bubble_departed_taxi_cost_text),
+        trustText1 = stringResource(R.string.home_bubble_trust_text_1),
+        trustText2 = stringResource(R.string.home_bubble_trust_text_2),
+
+        userDepartureBusText = stringResource(R.string.home_bubble_user_departure_bus_text),
+        userDepartureSubwayText = stringResource(R.string.home_bubble_user_departure_subway_text),
+        userDepartureDownText = stringResource(R.string.home_bubble_user_departure_down_text),
+        userDepartureDetailBtnText = stringResource(R.string.home_bubble_user_departure_detail_btn_text),
+        userDepartureCheckDetailText = stringResource(R.string.home_bubble_user_departure_check_detail_text)
+    )
 
     SideEffect {
         systemUiController.setStatusBarColor(
@@ -200,6 +237,247 @@ fun HomeRoute(
         viewModel.setEvent(HomeContract.HomeEvent.SetDestination)
     }
 
+    // 애니메이션, 말풍선
+    LaunchedEffect(Unit) {
+        val prefs = context.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
+        val currentCount = prefs.getInt("app_launch_count", 0)
+        val newCount = currentCount + 1
+
+        prefs.edit().putInt("app_launch_count", newCount).apply()
+    }
+
+    var previousConditionKey by remember { mutableStateOf("") }
+
+    val baseCharacterData = remember(
+        uiState.isAlarmRegistered,
+        uiState.userDeparture,
+        uiState.isBusDeparted,
+        uiState.taxiCost,
+        characterTexts
+    ) {
+        generateCharacterStateWithLaunchCount(uiState, characterTexts, context)
+    }
+
+    val conditionKey = remember(
+        uiState.isAlarmRegistered,
+        uiState.userDeparture,
+        uiState.isBusDeparted
+    ) {
+        "${uiState.isAlarmRegistered}_${uiState.userDeparture}_${uiState.isBusDeparted}"
+    }
+
+    var currentSpeechIndex by remember(conditionKey) { mutableStateOf(0) }
+    var animationTrigger by remember { mutableStateOf(0) }
+
+    val safeCurrentIndex = if (baseCharacterData.speechTexts.isNotEmpty()) {
+        currentSpeechIndex.coerceIn(0, baseCharacterData.speechTexts.size - 1)
+    } else {
+        0
+    }
+
+    var tempSpeechBubble by remember { mutableStateOf<SpeechBubbleData?>(null) }
+    var isShowingTempMessage by remember { mutableStateOf(false) }
+    var hideBubbleAfterComponentClick by remember { mutableStateOf(false) }
+
+    var hideDefaultBubbleAfterFirstMessage by remember { mutableStateOf(false) }
+    var isShowingFirstTimeMessage by remember { mutableStateOf(false) }
+
+    val currentConditionKey = remember(
+        uiState.isAlarmRegistered,
+        uiState.userDeparture,
+        uiState.isBusDeparted,
+        uiState.firtTransportTation
+    ) {
+        when {
+            uiState.isAlarmRegistered && !uiState.userDeparture && !uiState.isBusDeparted -> {
+                "before_bus_arrived"
+            }
+            uiState.isAlarmRegistered && !uiState.userDeparture -> {
+                if (uiState.firtTransportTation == TransportType.SUBWAY) {
+                    "after_subway_arrived"
+                } else {
+                    "after_bus_arrived"
+                }
+            }
+            uiState.isAlarmRegistered && !uiState.timerFinish && uiState.firtTransportTation == TransportType.BUS ->
+                "after_user_departure_bus"
+            uiState.isAlarmRegistered && !uiState.timerFinish && uiState.firtTransportTation == TransportType.SUBWAY ->
+                "after_user_departure_subway"
+            else -> "none"
+        }
+    }
+
+    LaunchedEffect(currentConditionKey) {
+        val prefs = context.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
+
+        if (previousConditionKey.isNotEmpty() &&
+            previousConditionKey != currentConditionKey &&
+            previousConditionKey != "none"
+        ) {
+            val previousPrefsKey = "first_$previousConditionKey"
+            prefs.edit().remove(previousPrefsKey).apply()
+        }
+
+        previousConditionKey = currentConditionKey
+
+        if (currentConditionKey == "none") {
+            hideDefaultBubbleAfterFirstMessage = false
+            return@LaunchedEffect
+        }
+
+        val prefsKey = "first_$currentConditionKey"
+
+        if (!prefs.getBoolean(prefsKey, false)) {
+            hideDefaultBubbleAfterFirstMessage = true
+        }
+
+        if (prefs.getBoolean(prefsKey, false)) {
+            return@LaunchedEffect
+        }
+
+        val speechBubble = when (currentConditionKey) {
+            "before_bus_arrived" -> SpeechBubbleData(
+                prefixText = "",
+                emphasisText = characterTexts.subwayDepartureText1,
+                suffixText = "",
+                lineCount = 1
+            )
+
+            "after_bus_arrived" -> SpeechBubbleData(
+                prefixText = "",
+                emphasisText = characterTexts.busDepartureText2,
+                suffixText = "",
+                topEmphasisText = characterTexts.busDepartureText1,
+                lineCount = 2
+            )
+
+            "after_subway_arrived" -> SpeechBubbleData(
+                prefixText = "",
+                emphasisText = characterTexts.subwayDepartureText2,
+                suffixText = "",
+                topEmphasisText = characterTexts.subwayDepartureText1,
+                lineCount = 2
+            )
+
+            "after_user_departure_bus" -> SpeechBubbleData(
+                prefixText = "",
+                emphasisText = characterTexts.userDepartureBusText,
+                suffixText = "",
+                lineCount = 1
+            )
+
+            "after_user_departure_subway" -> SpeechBubbleData(
+                prefixText = "",
+                emphasisText = characterTexts.userDepartureSubwayText,
+                suffixText = "",
+                lineCount = 1
+            )
+
+            else -> return@LaunchedEffect
+        }
+
+        while (isShowingTempMessage) {
+            delay(100)
+        }
+
+        delay(100)
+
+        isShowingTempMessage = true
+        isShowingFirstTimeMessage = true
+        tempSpeechBubble = speechBubble
+
+        delay(if (speechBubble.lineCount == 2) 4000 else 3200)
+
+        tempSpeechBubble = null
+        isShowingTempMessage = false
+        isShowingFirstTimeMessage = false
+
+        prefs.edit().putBoolean(prefsKey, true).apply()
+    }
+
+    fun showTempMessage(componentType: ComponentType) {
+        val speechBubble = when (componentType) {
+            ComponentType.DEPARTURE_TIME_NOT_CONFIRMED_CLICKED -> SpeechBubbleData(
+                prefixText = "",
+                emphasisText = characterTexts.expectTimeClickedText2,
+                suffixText = "",
+                topEmphasisText = characterTexts.expectTimeClickedText1,
+                lineCount = 2
+            )
+
+            ComponentType.DEPARTURE_TIME_CONFIRMED_CLICKED -> SpeechBubbleData(
+                prefixText = "",
+                emphasisText = characterTexts.timeInfoText1,
+                suffixText = "",
+                topEmphasisText = characterTexts.departureTimeText1,
+                lineCount = 2
+            )
+
+            ComponentType.ROUTE_TEXT_CLICKED -> SpeechBubbleData(
+                prefixText = "",
+                emphasisText = characterTexts.changeLocationClickedText,
+                suffixText = "",
+                lineCount = 1
+            )
+        }
+
+        isShowingTempMessage = true
+        tempSpeechBubble = speechBubble
+        animationTrigger++
+
+        CoroutineScope(Dispatchers.Main).launch {
+            if (speechBubble.lineCount == 2) {
+                delay(4000)
+            } else {
+                delay(3200)
+            }
+            tempSpeechBubble = null
+            isShowingTempMessage = false
+            hideBubbleAfterComponentClick = true
+        }
+    }
+
+    val finalSpeechTexts = when {
+        tempSpeechBubble != null -> listOf(tempSpeechBubble!!)
+        hideBubbleAfterComponentClick -> emptyList()
+        hideDefaultBubbleAfterFirstMessage -> emptyList()
+        isShowingFirstTimeMessage -> emptyList()
+        else -> baseCharacterData.speechTexts
+    }
+
+    val characterState = CharacterState(
+        speechTexts = finalSpeechTexts,
+        lottieResId = baseCharacterData.lottieResId,
+        bottomPadding = baseCharacterData.bottomPadding,
+        currentSpeechIndex = if (tempSpeechBubble != null) 0 else safeCurrentIndex,
+        animationTrigger = animationTrigger,
+        isAnimating = true
+    )
+
+    // 캐릭터 클릭 핸들러
+    val onCharacterClick = {
+        when {
+            isShowingFirstTimeMessage -> {
+                // 첫 번째 메시지 표시 중이면 아무것도 하지 않음
+            }
+            hideBubbleAfterComponentClick -> {
+                hideBubbleAfterComponentClick = false
+                animationTrigger += 1
+            }
+            hideDefaultBubbleAfterFirstMessage -> {
+                hideDefaultBubbleAfterFirstMessage = false
+                animationTrigger += 1
+            }
+            tempSpeechBubble == null && characterState.speechTexts.size > 1 -> {
+                currentSpeechIndex = (currentSpeechIndex + 1) % characterState.speechTexts.size
+                animationTrigger += 1
+            }
+            tempSpeechBubble == null -> {
+                animationTrigger += 1
+            }
+        }
+    }
+
     when (uiState.loadState) {
         LoadState.Idle, LoadState.Loading, LoadState.Success -> {
             Box {
@@ -215,7 +493,9 @@ fun HomeRoute(
                     },
                     onTimerFinished = { viewModel.onTimerFinished() },
                     getBusArrival = { viewModel.getBusArrival() },
-                    onCharacterClick = { viewModel.onCharacterClick() },
+                    onCharacterClick = onCharacterClick,
+                    characterState = characterState,
+                    showTempMessage = ::showTempMessage,
                     navigateToMypage = navigateToMypage,
 //                    navigateToItinerary = navigateToItinerary,
                     modifier = modifier,
@@ -323,6 +603,8 @@ fun HomeScreen(
     onTimerFinished: () -> Unit = {},
     getBusArrival: () -> Unit = {},
     onCharacterClick: () -> Unit = {},
+    characterState: CharacterState,
+    showTempMessage: (ComponentType) -> Unit = {},
     onSearchClick: () -> Unit = {},
     onDestinationClick: () -> Unit = {},
     onFinishClick: () -> Unit = {},
@@ -336,8 +618,6 @@ fun HomeScreen(
     greetBottomSheetButtonClicked: () -> Unit = {}
 ) {
     val colors = LocalTeam6Colors.current
-
-    var characterAnimationTrigger by remember { mutableIntStateOf(0) }
 
     Box(
         modifier = modifier
@@ -414,6 +694,7 @@ fun HomeScreen(
                 homeArrivedTime = homeUiState.homeArrivedTime,
                 destination = stringResource(R.string.home_my_home_text),
                 onCourseTextClick = {
+                    showTempMessage(ComponentType.ROUTE_TEXT_CLICKED)
                     AmplitudeUtils.trackEventWithProperties(
                         HOME_ROUTE_CLICKED,
                         mapOf(
@@ -442,9 +723,14 @@ fun HomeScreen(
                     }
                 },
                 onIconClick = {
-                    characterAnimationTrigger++
+                    if (homeUiState.isBusDeparted) {
+                        showTempMessage(ComponentType.DEPARTURE_TIME_CONFIRMED_CLICKED)
+                    } else {
+                        showTempMessage(ComponentType.DEPARTURE_TIME_NOT_CONFIRMED_CLICKED)
+                    }
                 },
                 onHomeDepartureTimeClick = {
+                    showTempMessage(ComponentType.DEPARTURE_TIME_CONFIRMED_CLICKED)
                     AmplitudeUtils.trackEventWithProperties(
                         HOME_DEPARTURE_TIME_CLICKED,
                         mapOf(
@@ -455,6 +741,7 @@ fun HomeScreen(
                     )
                 },
                 onHomeExpectDepartureTimeClick = {
+                    showTempMessage(ComponentType.DEPARTURE_TIME_NOT_CONFIRMED_CLICKED)
                     AmplitudeUtils.trackEventWithProperties(
                         HOME_DEPARTURE_TIME_CLICKED,
                         mapOf(
@@ -482,118 +769,13 @@ fun HomeScreen(
             )
         }
 
-        val (prefixText, emphasisText, suffixText, bottomPadding) = when {
-            !homeUiState.isAlarmRegistered ->
-                SpeechBubbleText(
-                    stringResource(R.string.home_bubble_basic_text),
-                    "약 " + NumberFormat.getNumberInstance(Locale.US)
-                        .format(homeUiState.taxiCost) + stringResource(R.string.home_bubble_won_text),
-                    null,
-                    194.dp
-                )
-
-            homeUiState.userDeparture ->
-                SpeechBubbleText(
-                    "",
-                    stringResource(R.string.home_bubble_user_departure),
-                    "",
-                    218.dp
-                )
-
-            homeUiState.isAlarmRegistered && homeUiState.isBusDeparted ->
-                SpeechBubbleText(
-                    "",
-                    stringResource(R.string.home_bubble_alarm_emphasis_text),
-                    "",
-                    218.dp
-                )
-
-            homeUiState.isAlarmRegistered ->
-                SpeechBubbleText(
-                    "",
-                    stringResource(R.string.home_bubble_alarm_emphasis_text),
-                    "",
-                    218.dp
-                )
-
-            else ->
-                SpeechBubbleText(
-                    stringResource(R.string.home_bubble_basic_text),
-                    "약 " + NumberFormat.getNumberInstance(Locale.US)
-                        .format(homeUiState.taxiCost) + stringResource(R.string.home_bubble_won_text),
-                    null,
-                    209.dp
-                )
-        }
-
-        var speechBubbleFlag by remember { mutableStateOf(true) }
-
-        val handleCharacterClick = {
-            speechBubbleFlag = !speechBubbleFlag
-            onCharacterClick()
-        }
-
-        if (!homeUiState.isAlarmRegistered) { // 첫 화면
-            CharacterLottieSpeechBubble(
-                prefixText = prefixText,
-                emphasisText = emphasisText,
-                suffixText = suffixText,
-                modifier = Modifier
-                    .align(Alignment.BottomStart)
-                    .padding(start = 8.dp, bottom = bottomPadding)
-                    .noRippleClickable(onClick = onCharacterClick),
-                onClick = handleCharacterClick,
-                lottieResId = R.raw.atcha_character_2,
-                lineCount = 1,
-                externalTrigger = characterAnimationTrigger
-            )
-        }
-        if (homeUiState.userDeparture) { // 사용자 출발 후
-            CharacterLottieSpeechBubble(
-                prefixText = prefixText,
-                emphasisText = emphasisText,
-                suffixText = suffixText,
-                modifier = Modifier
-                    .align(Alignment.BottomStart)
-                    .padding(start = 8.dp, bottom = bottomPadding)
-                    .noRippleClickable(onClick = onCharacterClick),
-                onClick = {},
-                lottieResId = R.raw.atcha_character_4,
-                lineCount = 1,
-                externalTrigger = characterAnimationTrigger
-            )
-        } else {
-            if (homeUiState.isAlarmRegistered && !homeUiState.isBusDeparted) { // 알림 등록 후 예상 출발 시간 화면
-                CharacterLottieSpeechBubble(
-                    prefixText = prefixText,
-                    emphasisText = emphasisText,
-                    suffixText = suffixText,
-                    modifier = Modifier
-                        .align(Alignment.BottomStart)
-                        .padding(start = 8.dp, bottom = bottomPadding)
-                        .noRippleClickable(onClick = onCharacterClick),
-                    onClick = {},
-                    lottieResId = R.raw.atcha_chararcter_3,
-                    lineCount = 1,
-                    externalTrigger = characterAnimationTrigger
-                )
-            }
-            if (homeUiState.isAlarmRegistered && homeUiState.isBusDeparted) { // 알림 등록 후 예상 출발 시간 화면
-                CharacterLottieSpeechBubble(
-                    prefixText = prefixText,
-                    emphasisText = emphasisText,
-                    suffixText = suffixText,
-                    modifier = Modifier
-                        .align(Alignment.BottomStart)
-                        .padding(start = 8.dp, bottom = bottomPadding)
-                        .noRippleClickable(onClick = onCharacterClick),
-                    onClick = {},
-                    lottieResId = R.raw.atcha_chararcter_3,
-                    lineCount = 1,
-                    externalTrigger = characterAnimationTrigger
-                )
-            }
-        }
+        UnifiedCharacterBubble(
+            characterState = characterState,
+            onCharacterClick = onCharacterClick,
+            modifier = Modifier
+                .align(Alignment.BottomStart)
+                .padding(start = 8.dp, bottom = characterState.bottomPadding)
+        )
 
         if (homeUiState.deleteAlarmDialogVisible) {
             Box(
@@ -677,11 +859,212 @@ private fun formatTimeString(timeString: String): String {
     }
 }
 
-private data class SpeechBubbleText(
-    val prefix: String,
-    val emphasis: String? = null,
-    val suffix: String? = null,
-    val bottomPadding: Dp
+private fun generateCharacterStateWithLaunchCount(
+    homeUiState: HomeContract.HomeUiState,
+    texts: CharacterTexts,
+    context: Context
+): CharacterState {
+    val prefs = context.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
+    val launchCount = prefs.getInt("app_launch_count", 0)
+
+    return when {
+        // 알림 등록 전
+        !homeUiState.isAlarmRegistered -> {
+            if (launchCount <= 2) {
+                CharacterState(
+                    speechTexts = listOf(
+                        SpeechBubbleData(
+                            prefixText = texts.taxiCostText,
+                            emphasisText = texts.aboutText + NumberFormat.getNumberInstance(Locale.US)
+                                .format(homeUiState.taxiCost) + texts.wonText,
+                            suffixText = null,
+                            topPrefixText = texts.moveMapText,
+                            lineCount = 2
+                        )
+                    ),
+                    lottieResId = R.raw.atcha_character_1,
+                    bottomPadding = 194.dp
+                )
+            } else {
+                CharacterState(
+                    speechTexts = listOf(
+                        SpeechBubbleData(
+                            prefixText = texts.taxiCostText,
+                            emphasisText = texts.aboutText + NumberFormat.getNumberInstance(Locale.US)
+                                .format(homeUiState.taxiCost) + texts.wonText,
+                            suffixText = null,
+                            lineCount = 1
+                        )
+                    ),
+                    lottieResId = R.raw.atcha_character_1,
+                    bottomPadding = 194.dp
+                )
+            }
+        }
+
+        // 알림 등록 후 & 사용자 출발 전 & 차고지 출발 전
+        homeUiState.isAlarmRegistered && !homeUiState.userDeparture && !homeUiState.isBusDeparted -> {
+            CharacterState(
+                speechTexts = listOf(
+                    SpeechBubbleData(
+                        prefixText = texts.expectTaxiCostText,
+                        emphasisText = texts.aboutText + NumberFormat.getNumberInstance(Locale.US)
+                            .format(homeUiState.taxiCost) + texts.wonText,
+                        suffixText = null,
+                        lineCount = 1
+                    ),
+                    SpeechBubbleData(
+                        prefixText = "",
+                        emphasisText = texts.trustText1,
+                        suffixText = texts.trustText2,
+                        lineCount = 1
+                    ),
+                    SpeechBubbleData(
+                        prefixText = "",
+                        emphasisText = texts.expectBustDepartureText,
+                        suffixText = "",
+                        lineCount = 1
+                    )
+                ),
+                lottieResId = R.raw.atcha_chararcter_3,
+                bottomPadding = 218.dp
+            )
+        }
+
+        // 알림 등록 후 & 사용자 출발 전 & 차고지 출발 후
+        homeUiState.isAlarmRegistered && !homeUiState.userDeparture && homeUiState.isBusDeparted -> {
+            CharacterState(
+                speechTexts = listOf(
+                    SpeechBubbleData(
+                        prefixText = "",
+                        emphasisText = texts.timeInfoText2,
+                        suffixText = "",
+                        topPrefixText = null,
+                        topEmphasisText = texts.timeInfoText1,
+                        topSuffixText = null,
+                        lineCount = 2
+                    ),
+                    SpeechBubbleData(
+                        prefixText = texts.busDepartureTaxiCostText,
+                        emphasisText = texts.aboutText + NumberFormat.getNumberInstance(Locale.US)
+                            .format(homeUiState.taxiCost) + texts.wonText,
+                        suffixText = null,
+                        lineCount = 1
+                    ),
+                    SpeechBubbleData(
+                        prefixText = "",
+                        emphasisText = texts.trustText1,
+                        suffixText = texts.trustText2,
+                        lineCount = 1
+                    )
+                ),
+                lottieResId = R.raw.atcha_character_4,
+                bottomPadding = 218.dp
+            )
+        }
+
+        // 알림 등록 후 & 사용자 출발 후 & 타이머 종료 전 & 버스
+        !homeUiState.timerFinish && homeUiState.firtTransportTation == TransportType.BUS -> {
+            CharacterState(
+                speechTexts = listOf(
+                    SpeechBubbleData(
+                        prefixText = texts.userDepartureDownText,
+                        emphasisText = texts.userDepartureDetailBtnText,
+                        suffixText = texts.userDepartureCheckDetailText,
+                        lineCount = 1
+                    ),
+                    SpeechBubbleData(
+                        prefixText = "",
+                        emphasisText = texts.trustText1,
+                        suffixText = texts.trustText2,
+                        lineCount = 1
+                    )
+                ),
+                lottieResId = R.raw.atcha_character_5,
+                bottomPadding = 218.dp
+            )
+        }
+
+        // 알림 등록 후 & 사용자 출발 후 & 타이머 종료 전 & 지하철
+        !homeUiState.timerFinish && homeUiState.firtTransportTation == TransportType.SUBWAY -> {
+            CharacterState(
+                speechTexts = listOf(
+                    SpeechBubbleData(
+                        prefixText = texts.userDepartureDownText,
+                        emphasisText = texts.userDepartureDetailBtnText,
+                        suffixText = texts.userDepartureCheckDetailText,
+                        lineCount = 1
+                    ),
+                    SpeechBubbleData(
+                        prefixText = "",
+                        emphasisText = texts.trustText1,
+                        suffixText = texts.trustText2,
+                        lineCount = 1
+                    )
+                ),
+                lottieResId = R.raw.atcha_character_5,
+                bottomPadding = 218.dp
+            )
+        }
+
+        // 알림 등록 후 & 사용자 출발 후 & 타이머 종료
+        homeUiState.timerFinish -> {
+            CharacterState()
+        }
+
+        else -> {
+            CharacterState(
+                speechTexts = listOf(
+                    SpeechBubbleData(
+                        prefixText = texts.taxiCostText,
+                        emphasisText = texts.aboutText + NumberFormat.getNumberInstance(Locale.US)
+                            .format(homeUiState.taxiCost) + texts.wonText,
+                        suffixText = null,
+                        lineCount = 1
+                    )
+                ),
+                lottieResId = R.raw.atcha_character_2,
+                bottomPadding = 194.dp
+            )
+        }
+    }
+}
+
+data class CharacterTexts(
+    // 알림 등록 전
+    val taxiCostText: String,
+    val aboutText: String,
+    val wonText: String,
+    val moveMapText: String,
+
+    // 알림 등록 후
+    // 사용자 출발 전 & 차고지 출발 전 (예상 출발 시간)
+    val expectDepartText: String,
+    val expectTaxiCostText: String,
+    val expectBustDepartureText: String,
+
+    val expectTimeClickedText1: String,
+    val expectTimeClickedText2: String,
+    val changeLocationClickedText: String,
+
+    // 사용자 출발 전 & 차고지 출발 후 (출발 시간)
+    val busDepartureText1: String,
+    val busDepartureText2: String,
+    val subwayDepartureText1: String,
+    val subwayDepartureText2: String,
+    val timeInfoText1: String,
+    val timeInfoText2: String,
+    val departureTimeText1: String,
+    val busDepartureTaxiCostText: String,
+    val trustText1: String,
+    val trustText2: String,
+
+    // 사용자 출발 후
+    val userDepartureBusText: String,
+    val userDepartureSubwayText: String,
+    val userDepartureDownText: String,
+    val userDepartureDetailBtnText: String,
+    val userDepartureCheckDetailText: String
 )
 
 @Preview
@@ -690,6 +1073,7 @@ private fun HomeScreenPreview() {
     HomeScreen(
         padding = PaddingValues(0.dp),
         userLocation = LatLng(37.5665, 126.9780),
-        getUserId = { 1 }
+        getUserId = { 1 },
+        characterState = CharacterState()
     )
 }

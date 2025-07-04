@@ -215,6 +215,10 @@ class HomeViewModel @Inject constructor(
             is HomeContract.HomeEvent.ChangeGreetBottomSheetVisible -> setState {
                 copy(greetBottomSheetVisible = event.visible)
             }
+
+            HomeContract.HomeEvent.CharacterClicked -> handleCharacterClick()
+            // is HomeContract.HomeEvent.ComponentClicked -> handleComponentClick(event.componentType, event.data)
+            is HomeContract.HomeEvent.ComponentClicked -> TODO()
         }
     }
 
@@ -260,6 +264,16 @@ class HomeViewModel @Inject constructor(
                 editor.remove("userDeparture")
 
                 editor.apply()
+
+                val prefs = context.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
+                val characterEditor = prefs.edit()
+
+                characterEditor.remove("first_alarm_before_bus")
+                characterEditor.remove("first_alarm_after_bus")
+                characterEditor.remove("first_alarm_after_subway")
+                characterEditor.remove("first_user_departed_bus")
+                characterEditor.remove("first_user_departed_subway")
+                characterEditor.apply()
 
                 setEvent(HomeContract.HomeEvent.DismissDialog)
             } else {
@@ -586,6 +600,33 @@ class HomeViewModel @Inject constructor(
             setState {
                 copy(
                     currentLocation = newLocation
+                )
+            }
+        }
+    }
+
+    private fun handleCharacterClick() {
+        val currentState = uiState.value.characterState
+        val speechTexts = currentState.speechTexts
+
+        if (speechTexts.size > 1) {
+            val nextIndex = (currentState.currentSpeechIndex + 1) % speechTexts.size
+            setState {
+                copy(
+                    characterState = currentState.copy(
+                        currentSpeechIndex = nextIndex,
+                        isAnimating = true,
+                        animationTrigger = currentState.animationTrigger + 1
+                    )
+                )
+            }
+        } else {
+            setState {
+                copy(
+                    characterState = currentState.copy(
+                        isAnimating = true,
+                        animationTrigger = currentState.animationTrigger + 1
+                    )
                 )
             }
         }
