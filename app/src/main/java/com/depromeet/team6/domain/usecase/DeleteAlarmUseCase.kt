@@ -24,7 +24,7 @@ class DeleteAlarmUseCase @Inject constructor(
         invoke(Params(lastRouteId))
 
     override suspend fun apiCall(params: Params): Result<Unit> {
-        return alarmRepository.postAlarm(
+        return alarmRepository.deleteAlarm(
             lastRouteId = params.lastRouteId
         )
     }
