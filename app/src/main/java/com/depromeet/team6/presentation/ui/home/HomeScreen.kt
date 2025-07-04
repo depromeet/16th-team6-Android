@@ -17,7 +17,6 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -117,6 +116,38 @@ fun HomeRoute(
 
     val systemUiController = rememberSystemUiController()
 
+    val characterTexts = CharacterTexts(
+        taxiCostText = stringResource(R.string.home_bubble_basic_text),
+        aboutText = stringResource(R.string.home_bubble_least_text),
+        wonText = stringResource(R.string.home_bubble_won_text),
+        moveMapText = stringResource(R.string.home_bubble_map_text),
+
+        expectDepartText = stringResource(R.string.home_bubble_alarm_emphasis_text),
+        expectTaxiCostText = stringResource(R.string.home_bubble_user_departure_taxi_cost_text),
+        expectBustDepartureText = stringResource(R.string.home_bubble_before_bus_departure_text),
+
+        expectTimeClickedText1 = stringResource(R.string.home_bubble_expect_departure_time_clicked_text_1),
+        expectTimeClickedText2 = stringResource(R.string.home_bubble_expect_departure_time_clicked_text_2),
+        changeLocationClickedText = stringResource(R.string.home_bubble_location_clicked_text),
+
+        busDepartureText1 = stringResource(R.string.home_bubble_bus_departure_text_1),
+        busDepartureText2 = stringResource(R.string.home_bubble_bus_departure_text_2),
+        subwayDepartureText1 = stringResource(R.string.home_bubble_subway_departure_text_1),
+        subwayDepartureText2 = stringResource(R.string.home_bubble_subway_departure_text_2),
+        timeInfoText1 = stringResource(R.string.home_bubble_time_info_text_1),
+        timeInfoText2 = stringResource(R.string.home_bubble_time_info_text_2),
+        departureTimeText1 = stringResource(R.string.home_bubble_departure_time_info_text_1),
+        busDepartureTaxiCostText = stringResource(R.string.home_bubble_departed_taxi_cost_text),
+        trustText1 = stringResource(R.string.home_bubble_trust_text_1),
+        trustText2 = stringResource(R.string.home_bubble_trust_text_2),
+
+        userDepartureBusText = stringResource(R.string.home_bubble_user_departure_bus_text),
+        userDepartureSubwayText = stringResource(R.string.home_bubble_user_departure_subway_text),
+        userDepartureDownText = stringResource(R.string.home_bubble_user_departure_down_text),
+        userDepartureDetailBtnText = stringResource(R.string.home_bubble_user_departure_detail_btn_text),
+        userDepartureCheckDetailText = stringResource(R.string.home_bubble_user_departure_check_detail_text)
+    )
+
     SideEffect {
         systemUiController.setStatusBarColor(
             color = Color.Transparent
@@ -206,177 +237,7 @@ fun HomeRoute(
         viewModel.setEvent(HomeContract.HomeEvent.SetDestination)
     }
 
-    when (uiState.loadState) {
-        LoadState.Idle, LoadState.Loading, LoadState.Success -> {
-            Box {
-                HomeScreen(
-                    userLocation = LatLng(userLocation.latitude, userLocation.longitude),
-                    homeUiState = uiState,
-                    getUserId = { viewModel.getUserId() },
-                    getCenterLocation = { position ->
-                        viewModel.getCenterLocation(position)
-                    },
-                    updateCurrentLocation = { newLocation ->
-                        viewModel.updateCurrentLocation(newLocation)
-                    },
-                    onTimerFinished = { viewModel.onTimerFinished() },
-                    getBusArrival = { viewModel.getBusArrival() },
-                    onCharacterClick = { viewModel.onCharacterClick() },
-                    navigateToMypage = navigateToMypage,
-//                    navigateToItinerary = navigateToItinerary,
-                    modifier = modifier,
-                    padding = padding,
-                    afterRegisterMapMarkerClick = { focusedMarkerParemeter ->
-                        viewModel.setEvent(HomeContract.HomeEvent.AfterRegisterMapMarkerClick)
-                        navigateToItinerary(
-                            Gson().toJson(uiState.itineraryInfo),
-                            Gson().toJson(uiState.departurePoint),
-                            Gson().toJson(uiState.destinationPoint),
-                            focusedMarkerParemeter
-                        )
-                    },
-                    courseDetailBtnClick = { key ->
-                        viewModel.setEvent(HomeContract.HomeEvent.CourseDetailButtonClick(key))
-                        navigateToItinerary(
-                            Gson().toJson(uiState.itineraryInfo),
-                            Gson().toJson(uiState.departurePoint),
-                            Gson().toJson(uiState.destinationPoint),
-                            null
-                        )
-                    },
-                    onSearchClick = {
-                        val currentLocationJSON = Gson().toJson(uiState.markerPoint)
-                        val destinationPointJSON = Gson().toJson(uiState.destinationPoint)
-                        navigateToCourseSearch(
-                            currentLocationJSON,
-                            destinationPointJSON
-                        )
-
-                        AmplitudeUtils.trackEventWithProperties(
-                            eventName = HOME_COURSESEARCH_ENTERED_DIRECT,
-                            mapOf(
-                                USER_ID to viewModel.getUserId(),
-                                SCREEN_NAME to HOME,
-                                HOME_COURSESEARCH_ENTERED_DIRECT to 1
-                            )
-                        )
-                    },
-                    onDestinationClick = {
-                        AmplitudeUtils.trackEventWithProperties(
-                            eventName = HOME_DESTINATION_CLICKED,
-                            mapOf(
-                                USER_ID to viewModel.getUserId(),
-                                SCREEN_NAME to HOME,
-                                HOME_DESTINATION_CLICKED to 1
-                            )
-                        )
-                    },
-                    onFinishClick = {
-                        viewModel.setEvent(HomeContract.HomeEvent.FinishAlarmClicked)
-//                viewModel.finishAlarm(context)
-                    },
-                    deleteAlarmConfirmed = {
-                        viewModel.setEvent(HomeContract.HomeEvent.DeleteAlarmConfirmed)
-                        viewModel.deleteAlarm(uiState.lastRouteId, context)
-                    },
-                    dismissDialog = {
-                        viewModel.setEvent(HomeContract.HomeEvent.DismissDialog)
-                    },
-                    onRefreshClick = {
-                    },
-                    navigateToSearchLocation = {
-                        navigateToSearchLocation(
-                            uiState.destinationPoint
-                        )
-
-                        AmplitudeUtils.trackEventWithProperties(
-                            eventName = HOME_COURSESEARCH_ENTERED_WITH_INPUT,
-                            mapOf(
-                                USER_ID to viewModel.getUserId(),
-                                SCREEN_NAME to HOME,
-                                HOME_COURSESEARCH_ENTERED_WITH_INPUT to 1
-                            )
-                        )
-                    },
-                    greetBottomSheetButtonClicked = {
-                        viewModel.setEvent(
-                            HomeContract.HomeEvent.ChangeGreetBottomSheetVisible(
-                                false
-                            )
-                        )
-                    }
-                )
-
-                if (uiState.loadState == LoadState.Loading) {
-                    AtChaLoadingView()
-                }
-            }
-        }
-
-        LoadState.Error -> navigateToLogin()
-    }
-}
-
-@Composable
-fun HomeScreen(
-    padding: PaddingValues,
-    userLocation: LatLng,
-    modifier: Modifier = Modifier,
-    homeUiState: HomeContract.HomeUiState = HomeContract.HomeUiState(),
-    getUserId: () -> Int,
-    getCenterLocation: (LatLng) -> Unit = {},
-    updateCurrentLocation: (LatLng) -> Unit = {},
-    onTimerFinished: () -> Unit = {},
-    getBusArrival: () -> Unit = {},
-    onCharacterClick: () -> Unit = {},
-    onSearchClick: () -> Unit = {},
-    onDestinationClick: () -> Unit = {},
-    onFinishClick: () -> Unit = {},
-    onRefreshClick: () -> Unit = {},
-    navigateToMypage: () -> Unit = {},
-    afterRegisterMapMarkerClick: (FocusedMarkerParameter?) -> Unit = { },
-    courseDetailBtnClick: (String) -> Unit = {},
-    deleteAlarmConfirmed: () -> Unit = {},
-    dismissDialog: () -> Unit = {},
-    navigateToSearchLocation: () -> Unit = {},
-    greetBottomSheetButtonClicked: () -> Unit = {}
-) {
-    val context = LocalContext.current
-    val colors = LocalTeam6Colors.current
-
-    var characterAnimationTrigger by remember { mutableIntStateOf(0) }
-    val characterTexts = CharacterTexts(
-        taxiCostText = stringResource(R.string.home_bubble_basic_text),
-        aboutText = stringResource(R.string.home_bubble_least_text),
-        wonText = stringResource(R.string.home_bubble_won_text),
-        moveMapText = stringResource(R.string.home_bubble_map_text),
-
-        expectDepartText = stringResource(R.string.home_bubble_alarm_emphasis_text),
-        expectTaxiCostText = stringResource(R.string.home_bubble_user_departure_taxi_cost_text),
-        expectBustDepartureText = stringResource(R.string.home_bubble_before_bus_departure_text),
-
-        expectTimeClickedText1 = stringResource(R.string.home_bubble_expect_departure_time_clicked_text_1),
-        expectTimeClickedText2 = stringResource(R.string.home_bubble_expect_departure_time_clicked_text_2),
-        changeLocationClickedText = stringResource(R.string.home_bubble_location_clicked_text),
-
-        busDepartureText1 = stringResource(R.string.home_bubble_bus_departure_text_1),
-        busDepartureText2 = stringResource(R.string.home_bubble_bus_departure_text_2),
-        subwayDepartureText1 = stringResource(R.string.home_bubble_subway_departure_text_1),
-        subwayDepartureText2 = stringResource(R.string.home_bubble_subway_departure_text_2),
-        timeInfoText1 = stringResource(R.string.home_bubble_time_info_text_1),
-        timeInfoText2 = stringResource(R.string.home_bubble_time_info_text_2),
-        departureTimeText1 = stringResource(R.string.home_bubble_departure_time_info_text_1),
-        busDepartureTaxiCostText = stringResource(R.string.home_bubble_departed_taxi_cost_text),
-        trustText1 = stringResource(R.string.home_bubble_trust_text_1),
-        trustText2 = stringResource(R.string.home_bubble_trust_text_2),
-
-        userDepartureBusText = stringResource(R.string.home_bubble_user_departure_bus_text),
-        userDepartureSubwayText = stringResource(R.string.home_bubble_user_departure_subway_text),
-        userDepartureDownText = stringResource(R.string.home_bubble_user_departure_down_text),
-        userDepartureDetailBtnText = stringResource(R.string.home_bubble_user_departure_detail_btn_text),
-        userDepartureCheckDetailText = stringResource(R.string.home_bubble_user_departure_check_detail_text)
-    )
-
+    // 애니메이션, 말풍선
     LaunchedEffect(Unit) {
         val prefs = context.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
         val currentCount = prefs.getInt("app_launch_count", 0)
@@ -385,22 +246,24 @@ fun HomeScreen(
         prefs.edit().putInt("app_launch_count", newCount).apply()
     }
 
+    var previousConditionKey by remember { mutableStateOf("") }
+
     val baseCharacterData = remember(
-        homeUiState.isAlarmRegistered,
-        homeUiState.userDeparture,
-        homeUiState.isBusDeparted,
-        homeUiState.taxiCost,
+        uiState.isAlarmRegistered,
+        uiState.userDeparture,
+        uiState.isBusDeparted,
+        uiState.taxiCost,
         characterTexts
     ) {
-        generateCharacterStateWithLaunchCount(homeUiState, characterTexts, context)
+        generateCharacterStateWithLaunchCount(uiState, characterTexts, context)
     }
 
     val conditionKey = remember(
-        homeUiState.isAlarmRegistered,
-        homeUiState.userDeparture,
-        homeUiState.isBusDeparted
+        uiState.isAlarmRegistered,
+        uiState.userDeparture,
+        uiState.isBusDeparted
     ) {
-        "${homeUiState.isAlarmRegistered}_${homeUiState.userDeparture}_${homeUiState.isBusDeparted}"
+        "${uiState.isAlarmRegistered}_${uiState.userDeparture}_${uiState.isBusDeparted}"
     }
 
     var currentSpeechIndex by remember(conditionKey) { mutableStateOf(0) }
@@ -420,31 +283,29 @@ fun HomeScreen(
     var isShowingFirstTimeMessage by remember { mutableStateOf(false) }
 
     val currentConditionKey = remember(
-        homeUiState.isAlarmRegistered,
-        homeUiState.userDeparture,
-        homeUiState.isBusDeparted,
-        homeUiState.firtTransportTation
+        uiState.isAlarmRegistered,
+        uiState.userDeparture,
+        uiState.isBusDeparted,
+        uiState.firtTransportTation
     ) {
         when {
-            homeUiState.isAlarmRegistered && !homeUiState.userDeparture && !homeUiState.isBusDeparted -> {
+            uiState.isAlarmRegistered && !uiState.userDeparture && !uiState.isBusDeparted -> {
                 "before_bus_arrived"
             }
-            homeUiState.isAlarmRegistered && !homeUiState.userDeparture -> {
-                if (homeUiState.firtTransportTation == TransportType.SUBWAY) {
+            uiState.isAlarmRegistered && !uiState.userDeparture -> {
+                if (uiState.firtTransportTation == TransportType.SUBWAY) {
                     "after_subway_arrived"
                 } else {
                     "after_bus_arrived"
                 }
             }
-            homeUiState.isAlarmRegistered && !homeUiState.timerFinish && homeUiState.firtTransportTation == TransportType.BUS ->
+            uiState.isAlarmRegistered && !uiState.timerFinish && uiState.firtTransportTation == TransportType.BUS ->
                 "after_user_departure_bus"
-            homeUiState.isAlarmRegistered && !homeUiState.timerFinish && homeUiState.firtTransportTation == TransportType.SUBWAY ->
+            uiState.isAlarmRegistered && !uiState.timerFinish && uiState.firtTransportTation == TransportType.SUBWAY ->
                 "after_user_departure_subway"
             else -> "none"
         }
     }
-
-    var previousConditionKey by remember { mutableStateOf("") }
 
     LaunchedEffect(currentConditionKey) {
         val prefs = context.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
@@ -592,6 +453,171 @@ fun HomeScreen(
         animationTrigger = animationTrigger,
         isAnimating = true
     )
+
+    // 캐릭터 클릭 핸들러
+    val onCharacterClick = {
+        when {
+            isShowingFirstTimeMessage -> {
+                // 첫 번째 메시지 표시 중이면 아무것도 하지 않음
+            }
+            hideBubbleAfterComponentClick -> {
+                hideBubbleAfterComponentClick = false
+                animationTrigger += 1
+            }
+            hideDefaultBubbleAfterFirstMessage -> {
+                hideDefaultBubbleAfterFirstMessage = false
+                animationTrigger += 1
+            }
+            tempSpeechBubble == null && characterState.speechTexts.size > 1 -> {
+                currentSpeechIndex = (currentSpeechIndex + 1) % characterState.speechTexts.size
+                animationTrigger += 1
+            }
+            tempSpeechBubble == null -> {
+                animationTrigger += 1
+            }
+        }
+    }
+
+    when (uiState.loadState) {
+        LoadState.Idle, LoadState.Loading, LoadState.Success -> {
+            Box {
+                HomeScreen(
+                    userLocation = LatLng(userLocation.latitude, userLocation.longitude),
+                    homeUiState = uiState,
+                    getUserId = { viewModel.getUserId() },
+                    getCenterLocation = { position ->
+                        viewModel.getCenterLocation(position)
+                    },
+                    updateCurrentLocation = { newLocation ->
+                        viewModel.updateCurrentLocation(newLocation)
+                    },
+                    onTimerFinished = { viewModel.onTimerFinished() },
+                    getBusArrival = { viewModel.getBusArrival() },
+                    onCharacterClick = onCharacterClick,
+                    characterState = characterState,
+                    showTempMessage = ::showTempMessage,
+                    navigateToMypage = navigateToMypage,
+//                    navigateToItinerary = navigateToItinerary,
+                    modifier = modifier,
+                    padding = padding,
+                    afterRegisterMapMarkerClick = { focusedMarkerParemeter ->
+                        viewModel.setEvent(HomeContract.HomeEvent.AfterRegisterMapMarkerClick)
+                        navigateToItinerary(
+                            Gson().toJson(uiState.itineraryInfo),
+                            Gson().toJson(uiState.departurePoint),
+                            Gson().toJson(uiState.destinationPoint),
+                            focusedMarkerParemeter
+                        )
+                    },
+                    courseDetailBtnClick = { key ->
+                        viewModel.setEvent(HomeContract.HomeEvent.CourseDetailButtonClick(key))
+                        navigateToItinerary(
+                            Gson().toJson(uiState.itineraryInfo),
+                            Gson().toJson(uiState.departurePoint),
+                            Gson().toJson(uiState.destinationPoint),
+                            null
+                        )
+                    },
+                    onSearchClick = {
+                        val currentLocationJSON = Gson().toJson(uiState.markerPoint)
+                        val destinationPointJSON = Gson().toJson(uiState.destinationPoint)
+                        navigateToCourseSearch(
+                            currentLocationJSON,
+                            destinationPointJSON
+                        )
+
+                        AmplitudeUtils.trackEventWithProperties(
+                            eventName = HOME_COURSESEARCH_ENTERED_DIRECT,
+                            mapOf(
+                                USER_ID to viewModel.getUserId(),
+                                SCREEN_NAME to HOME,
+                                HOME_COURSESEARCH_ENTERED_DIRECT to 1
+                            )
+                        )
+                    },
+                    onDestinationClick = {
+                        AmplitudeUtils.trackEventWithProperties(
+                            eventName = HOME_DESTINATION_CLICKED,
+                            mapOf(
+                                USER_ID to viewModel.getUserId(),
+                                SCREEN_NAME to HOME,
+                                HOME_DESTINATION_CLICKED to 1
+                            )
+                        )
+                    },
+                    onFinishClick = {
+                        viewModel.setEvent(HomeContract.HomeEvent.FinishAlarmClicked)
+//                viewModel.finishAlarm(context)
+                    },
+                    deleteAlarmConfirmed = {
+                        viewModel.setEvent(HomeContract.HomeEvent.DeleteAlarmConfirmed)
+                        viewModel.deleteAlarm(uiState.lastRouteId, context)
+                    },
+                    dismissDialog = {
+                        viewModel.setEvent(HomeContract.HomeEvent.DismissDialog)
+                    },
+                    onRefreshClick = {
+                    },
+                    navigateToSearchLocation = {
+                        navigateToSearchLocation(
+                            uiState.destinationPoint
+                        )
+
+                        AmplitudeUtils.trackEventWithProperties(
+                            eventName = HOME_COURSESEARCH_ENTERED_WITH_INPUT,
+                            mapOf(
+                                USER_ID to viewModel.getUserId(),
+                                SCREEN_NAME to HOME,
+                                HOME_COURSESEARCH_ENTERED_WITH_INPUT to 1
+                            )
+                        )
+                    },
+                    greetBottomSheetButtonClicked = {
+                        viewModel.setEvent(
+                            HomeContract.HomeEvent.ChangeGreetBottomSheetVisible(
+                                false
+                            )
+                        )
+                    }
+                )
+
+                if (uiState.loadState == LoadState.Loading) {
+                    AtChaLoadingView()
+                }
+            }
+        }
+
+        LoadState.Error -> navigateToLogin()
+    }
+}
+
+@Composable
+fun HomeScreen(
+    padding: PaddingValues,
+    userLocation: LatLng,
+    modifier: Modifier = Modifier,
+    homeUiState: HomeContract.HomeUiState = HomeContract.HomeUiState(),
+    getUserId: () -> Int,
+    getCenterLocation: (LatLng) -> Unit = {},
+    updateCurrentLocation: (LatLng) -> Unit = {},
+    onTimerFinished: () -> Unit = {},
+    getBusArrival: () -> Unit = {},
+    onCharacterClick: () -> Unit = {},
+    characterState: CharacterState,
+    showTempMessage: (ComponentType) -> Unit = {},
+    onSearchClick: () -> Unit = {},
+    onDestinationClick: () -> Unit = {},
+    onFinishClick: () -> Unit = {},
+    onRefreshClick: () -> Unit = {},
+    navigateToMypage: () -> Unit = {},
+    afterRegisterMapMarkerClick: (FocusedMarkerParameter?) -> Unit = { },
+    courseDetailBtnClick: (String) -> Unit = {},
+    deleteAlarmConfirmed: () -> Unit = {},
+    dismissDialog: () -> Unit = {},
+    navigateToSearchLocation: () -> Unit = {},
+    greetBottomSheetButtonClicked: () -> Unit = {}
+) {
+    val colors = LocalTeam6Colors.current
 
     Box(
         modifier = modifier
@@ -745,23 +771,7 @@ fun HomeScreen(
 
         UnifiedCharacterBubble(
             characterState = characterState,
-            onCharacterClick = {
-                if (isShowingFirstTimeMessage) {
-                    return@UnifiedCharacterBubble
-                }
-                if (hideBubbleAfterComponentClick) {
-                    hideBubbleAfterComponentClick = false
-                    animationTrigger += 1
-                } else if (hideDefaultBubbleAfterFirstMessage) {
-                    hideDefaultBubbleAfterFirstMessage = false
-                    animationTrigger += 1
-                } else if (tempSpeechBubble == null && characterState.speechTexts.size > 1) {
-                    currentSpeechIndex = (currentSpeechIndex + 1) % characterState.speechTexts.size
-                    animationTrigger += 1
-                } else if (tempSpeechBubble == null) {
-                    animationTrigger += 1
-                }
-            },
+            onCharacterClick = onCharacterClick,
             modifier = Modifier
                 .align(Alignment.BottomStart)
                 .padding(start = 8.dp, bottom = characterState.bottomPadding)
@@ -1063,6 +1073,7 @@ private fun HomeScreenPreview() {
     HomeScreen(
         padding = PaddingValues(0.dp),
         userLocation = LatLng(37.5665, 126.9780),
-        getUserId = { 1 }
+        getUserId = { 1 },
+        characterState = CharacterState()
     )
 }
