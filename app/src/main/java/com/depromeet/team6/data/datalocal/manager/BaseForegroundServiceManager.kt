@@ -5,6 +5,7 @@ import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import com.depromeet.team6.data.datalocal.service.LocationCheckReceiver
 import com.depromeet.team6.data.datalocal.service.LockService
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -42,6 +43,13 @@ class LockServiceManager @Inject constructor(
     private val alarmManager = applicationContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
     fun scheduleLocationCheck() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            if (!alarmManager.canScheduleExactAlarms()) {
+                scheduleInexactAlarm()
+                return
+            }
+        }
+
         val intent = Intent(applicationContext, LocationCheckReceiver::class.java)
         val pendingIntent = PendingIntent.getBroadcast(
             applicationContext,
@@ -59,7 +67,36 @@ class LockServiceManager @Inject constructor(
             calendar.add(Calendar.DAY_OF_MONTH, 1)
         }
 
-        alarmManager.setExactAndAllowWhileIdle(
+        try {
+            alarmManager.setExactAndAllowWhileIdle(
+                AlarmManager.RTC_WAKEUP,
+                calendar.timeInMillis,
+                pendingIntent
+            )
+        } catch (e: SecurityException) {
+            scheduleInexactAlarm()
+        }
+    }
+
+    private fun scheduleInexactAlarm() {
+        val intent = Intent(applicationContext, LocationCheckReceiver::class.java)
+        val pendingIntent = PendingIntent.getBroadcast(
+            applicationContext,
+            1001,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val calendar = Calendar.getInstance()
+        calendar.set(Calendar.HOUR_OF_DAY, 22)
+        calendar.set(Calendar.MINUTE, 0)
+        calendar.set(Calendar.SECOND, 0)
+
+        if (calendar.timeInMillis <= System.currentTimeMillis()) {
+            calendar.add(Calendar.DAY_OF_MONTH, 1)
+        }
+
+        alarmManager.setAndAllowWhileIdle(
             AlarmManager.RTC_WAKEUP,
             calendar.timeInMillis,
             pendingIntent

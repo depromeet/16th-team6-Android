@@ -1,6 +1,5 @@
 package com.depromeet.team6.data.dataremote.service
 
-import com.depromeet.team6.data.dataremote.model.response.base.ApiResponse
 import com.depromeet.team6.data.dataremote.model.response.base.BaseResponse
 import com.depromeet.team6.data.dataremote.model.response.transits.ResponseBusArrivalsDto
 import com.depromeet.team6.data.dataremote.model.response.transits.ResponseBusOperationInfoDto
@@ -10,6 +9,7 @@ import com.depromeet.team6.data.dataremote.util.ApiConstraints.API
 import com.depromeet.team6.data.dataremote.util.ApiConstraints.BUS_ROUTES
 import com.depromeet.team6.data.dataremote.util.ApiConstraints.TRANSITS
 import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.Query
 
 interface TransitsService {
@@ -22,25 +22,25 @@ interface TransitsService {
         @Query("sortType") sortType: Int
     ): BaseResponse<List<ResponseCourseSearchDto>>
 
-    @GET("$API/$TRANSITS/bus-arrival")
+    @POST("$API/$TRANSITS/bus-arrival")
     suspend fun getBusArrival(
         @Query("routeName") routeName: String,
         @Query("stationName") stationName: String,
         @Query("lat") lat: Double,
         @Query("lon") lon: Double
-    ): ApiResponse<ResponseBusArrivalsDto>
+    ): BaseResponse<ResponseBusArrivalsDto>
 
     @GET("$API/$TRANSITS/bus-routes/positions")
     suspend fun getBusPositions(
         @Query("busRouteId") busRouteId: String,
         @Query("routeName") routeName: String,
         @Query("serviceRegion") serviceRegion: String
-    ): ApiResponse<ResponseBusPositionsDto>
+    ): BaseResponse<ResponseBusPositionsDto>
 
     @GET("$API/$TRANSITS/$BUS_ROUTES/operation-info")
     suspend fun getBusOperationInfo(
         @Query("busRouteId") busRouteId: String,
         @Query("routeName") routeName: String,
         @Query("serviceRegion") serviceRegion: String
-    ): ApiResponse<ResponseBusOperationInfoDto>
+    ): BaseResponse<ResponseBusOperationInfoDto>
 }
