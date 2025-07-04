@@ -214,6 +214,10 @@ class HomeViewModel @Inject constructor(
             is HomeContract.HomeEvent.ChangeGreetBottomSheetVisible -> setState {
                 copy(greetBottomSheetVisible = event.visible)
             }
+
+            HomeContract.HomeEvent.CharacterClicked -> handleCharacterClick()
+            // is HomeContract.HomeEvent.ComponentClicked -> handleComponentClick(event.componentType, event.data)
+            is HomeContract.HomeEvent.ComponentClicked -> TODO()
         }
     }
 
@@ -250,7 +254,6 @@ class HomeViewModel @Inject constructor(
                         Context.MODE_PRIVATE
                     )
                     val editor = sharedPreferences.edit()
-
                     editor.remove("departurePoint")
                     editor.remove("lastCourseInfo")
                     editor.remove("lastRouteId")
@@ -585,6 +588,33 @@ class HomeViewModel @Inject constructor(
             setState {
                 copy(
                     currentLocation = newLocation
+                )
+            }
+        }
+    }
+
+    private fun handleCharacterClick() {
+        val currentState = uiState.value.characterState
+        val speechTexts = currentState.speechTexts
+
+        if (speechTexts.size > 1) {
+            val nextIndex = (currentState.currentSpeechIndex + 1) % speechTexts.size
+            setState {
+                copy(
+                    characterState = currentState.copy(
+                        currentSpeechIndex = nextIndex,
+                        isAnimating = true,
+                        animationTrigger = currentState.animationTrigger + 1
+                    )
+                )
+            }
+        } else {
+            setState {
+                copy(
+                    characterState = currentState.copy(
+                        isAnimating = true,
+                        animationTrigger = currentState.animationTrigger + 1
+                    )
                 )
             }
         }
