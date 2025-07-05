@@ -50,6 +50,7 @@ fun CourseSearchRoute(
     destinationPoint: String,
     navigateToItinerary: (String, String, String) -> Unit,
     navigateToHome: () -> Unit,
+    navigateToHomeAfterAlarmRegister: () -> Unit,
     navigateToLogin: () -> Unit,
     fromLockScreen: Boolean = false,
     viewModel: CourseSearchViewModel = hiltViewModel()
@@ -109,7 +110,7 @@ fun CourseSearchRoute(
                 }
 
                 is CourseSearchContract.CourseSideEffect.NavigateHomeWithToast -> {
-                    navigateToHome()
+                    navigateToHomeAfterAlarmRegister()
                     atChaToastMessage(context, R.string.course_set_notification_snackbar, Toast.LENGTH_SHORT)
                 }
             }

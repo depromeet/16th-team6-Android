@@ -44,6 +44,12 @@ class MainNavigator(
         }
     }
 
+    fun navigateToHomeAfterAlarmRegister() {
+        navHostController.navigate(HomeRoute.ROUTE) {
+            popUpTo(0) { inclusive = true }
+        }
+    }
+
     fun navigateToLogin() {
         clearBackStackTo(LoginRoute.ROUTE)
         navHostController.navigationLogin()

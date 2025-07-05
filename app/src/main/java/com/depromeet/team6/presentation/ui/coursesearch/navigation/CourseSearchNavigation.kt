@@ -20,6 +20,7 @@ fun NavController.navigateCourseSearch(departurePoint: String, destinationPoint:
 fun NavGraphBuilder.courseSearchNavGraph(
     padding: PaddingValues,
     navigateToHome: () -> Unit,
+    navigateToHomeAfterAlarmRegister: () -> Unit,
     navigateToLogin: () -> Unit,
     navigateToItinerary: (String, String, String) -> Unit
 ) {
@@ -42,6 +43,7 @@ fun NavGraphBuilder.courseSearchNavGraph(
             padding = padding,
             navigateToItinerary = navigateToItinerary,
             navigateToHome = navigateToHome,
+            navigateToHomeAfterAlarmRegister = navigateToHomeAfterAlarmRegister,
             navigateToLogin = navigateToLogin,
             departurePoint = departurePoint,
             destinationPoint = destinationPoint,
