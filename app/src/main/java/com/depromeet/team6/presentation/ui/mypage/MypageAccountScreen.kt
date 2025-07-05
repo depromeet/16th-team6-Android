@@ -1,5 +1,6 @@
 package com.depromeet.team6.presentation.ui.mypage
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,6 +33,10 @@ fun MypageAccountScreen(
     dismissDialog: () -> Unit = {}
 ) {
     val colors = LocalTeam6Colors.current
+    
+    BackHandler(enabled = mypageUiState.logoutDialogVisible || mypageUiState.withDrawDialogVisible) {
+        dismissDialog()
+    }
 
     Box(
         modifier = modifier
