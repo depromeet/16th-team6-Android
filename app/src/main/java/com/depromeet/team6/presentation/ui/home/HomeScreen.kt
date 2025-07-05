@@ -456,7 +456,6 @@ fun HomeRoute(
 
     // 캐릭터 클릭 핸들러
     val onCharacterClick = {
-        throw RuntimeException("킹받지?")
         when {
             isShowingFirstTimeMessage -> {
                 // 첫 번째 메시지 표시 중이면 아무것도 하지 않음

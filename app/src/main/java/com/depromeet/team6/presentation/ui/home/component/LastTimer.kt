@@ -85,7 +85,6 @@ fun LastTimer(
         verticalAlignment = Alignment.Bottom
     ) {
         if (remainingTimeMillis >= 90000L) {
-
             Text(
                 text = String.format("%02d", remainingMinutes),
                 style = typography.extraBold44,
@@ -111,8 +110,7 @@ fun LastTimer(
                 color = textColor,
                 modifier = Modifier.padding(start = 4.dp, bottom = 8.dp)
             )
-        }
-        else {
+        } else {
             Text(
                 text = stringResource(R.string.home_timer_arrive_soon),
                 style = typography.extraBold44,
