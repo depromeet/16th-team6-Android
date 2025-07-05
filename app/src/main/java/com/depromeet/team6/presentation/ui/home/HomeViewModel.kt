@@ -306,23 +306,30 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun onCharacterClick() {
+    private fun onCharacterClick() {
         showSpeechBubbleTemporarily()
-        getTaxiCost()
     }
 
     fun getCenterLocation(location: LatLng) {
         viewModelScope.launch {
             getAddressFromCoordinatesUseCase(location.latitude, location.longitude)
                 .onSuccess { addressData ->
+                    val newMarkerPoint = if (addressData.name.isEmpty()) {
+                        addressData.copy(name = addressData.address)
+                    } else {
+                        addressData
+                    }
                     setState {
-                        copy(
-                            markerPoint = if (addressData.name.isEmpty()) {
-                                addressData.copy(name = addressData.address)
-                            } else {
-                                addressData
-                            }
-                        )
+                        copy(markerPoint = newMarkerPoint)
+                    }
+
+                    val isAllNotDefault = newMarkerPoint.lat != DEFAULT_MARKER_LAT &&
+                            newMarkerPoint.lon != DEFAULT_MARKER_LON &&
+                            currentState.destinationPoint.lat != DEFAULT_DESTINATION_LAT &&
+                            currentState.destinationPoint.lon != DEFAULT_DESTINATION_LON
+
+                    if (isAllNotDefault) {
+                        getTaxiCost()
                     }
                     getTaxiCost()
                 }
@@ -514,6 +521,17 @@ class HomeViewModel @Inject constructor(
                     )
                 }
                 setState { copy(destinationState = LoadState.Success) }
+
+                val isAllNotDefault = currentState.markerPoint.lat != DEFAULT_MARKER_LAT &&
+                        currentState.markerPoint.lon != DEFAULT_MARKER_LON &&
+                        userInfo.userHome.latitude != DEFAULT_DESTINATION_LAT &&
+                        userInfo.userHome.longitude != DEFAULT_DESTINATION_LON
+
+                if (isAllNotDefault) {
+                    getTaxiCost()
+                }
+                getTaxiCost()
+
             }.onFailure { exception ->
                 handleApiException(exception)
             }
@@ -597,5 +615,9 @@ class HomeViewModel @Inject constructor(
 
     companion object {
         private const val MY_PREFERENCES_NAME = "MyPreferences"
+        private const val DEFAULT_MARKER_LAT = 37.303534788694
+        private const val DEFAULT_MARKER_LON = 127.01085807594
+        private const val DEFAULT_DESTINATION_LAT = 37.296391553347
+        private const val DEFAULT_DESTINATION_LON = 126.97755824522
     }
 }

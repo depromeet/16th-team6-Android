@@ -218,10 +218,6 @@ fun HomeRoute(
         }
     }
 
-    LaunchedEffect(Unit) {
-        viewModel.getTaxiCost()
-    }
-
     SideEffect {
         if (!PermissionUtil.isLocationPermissionRequested(context) &&
             !PermissionUtil.hasLocationPermissions(context)
