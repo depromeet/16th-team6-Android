@@ -54,7 +54,7 @@ android {
             isShrinkResources = true
             buildConfigField("String", "BASE_URL", properties["release.base.url"].toString())
             buildConfigField("String", "AMPLITUDE_API_KEY", properties["amplitude.prod.api.key"].toString())
-            buildConfigField("String", "LAST_ROUTE", properties["LAST_ROUTE"].toString())
+            buildConfigField("String", "LAST_ROUTE", "last-routes")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -67,7 +67,7 @@ android {
             versionNameSuffix = "-DEBUG"
             buildConfigField("String", "BASE_URL", properties["dev.base.url"].toString())
             buildConfigField("String", "AMPLITUDE_API_KEY", properties["amplitude.dev.api.key"].toString())
-            buildConfigField("String", "LAST_ROUTE", properties["LAST_ROUTE_V2"].toString())
+            buildConfigField("String", "LAST_ROUTE", "v2/last-routes")
         }
     }
     compileOptions {
