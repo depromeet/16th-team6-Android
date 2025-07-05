@@ -225,6 +225,29 @@ class HomeViewModel @Inject constructor(
         return userInfoRepository.getUserID()
     }
 
+    fun checkAfterRegisterDataComplete() {
+        val currentState = currentState
+
+        val isDataComplete = when {
+            !currentState.isAlarmRegistered -> true
+            currentState.isAlarmRegistered -> {
+                currentState.departurePointName.isNotEmpty() &&
+                    currentState.departureTime.isNotEmpty() &&
+                    currentState.boardingTime.isNotEmpty() &&
+                    currentState.homeArrivedTime.isNotEmpty() &&
+                    currentState.firstTransportationName.isNotEmpty() &&
+                    currentState.itineraryInfo != null
+            }
+            else -> false
+        }
+
+        setState {
+            copy(
+                afterRegisterDataLoadState = if (isDataComplete) LoadState.Success else LoadState.Loading
+            )
+        }
+    }
+
     fun onTimerFinished() {
         setState {
             copy(
@@ -377,12 +400,30 @@ class HomeViewModel @Inject constructor(
 
     fun loadAlarmAndCourseInfoFromPrefs(context: Context) {
         viewModelScope.launch {
+            setState { copy(alarmCheckLoadState = LoadState.Loading) }
+
             val prefs = context.getSharedPreferences(MY_PREFERENCES_NAME, Context.MODE_PRIVATE)
             val isAlarmRegistered = prefs.getBoolean("alarmRegistered", false)
             val lastRouteId = prefs.getString("lastRouteId", null)
 
             setEvent(HomeContract.HomeEvent.UpdateAlarmRegistered(isAlarmRegistered))
             lastRouteId?.let { HomeContract.HomeEvent.UpdateLastRouteId(it) }?.let { setEvent(it) }
+
+            if (!isAlarmRegistered) {
+                setState {
+                    copy(
+                        alarmCheckLoadState = LoadState.Success,
+                        afterRegisterDataLoadState = LoadState.Success
+                    )
+                }
+            }
+
+            setState {
+                copy(
+                    alarmCheckLoadState = LoadState.Success,
+                    afterRegisterDataLoadState = LoadState.Loading
+                )
+            }
 
             val departurePointJson = prefs.getString("departurePoint", null)
             departurePointJson?.let {
@@ -416,6 +457,8 @@ class HomeViewModel @Inject constructor(
                     Timber.e("CourseInfo 불러오기 실패: ${e.message}")
                 }
             }
+
+            checkAfterRegisterDataComplete()
         }
     }
 

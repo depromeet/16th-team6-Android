@@ -580,7 +580,10 @@ fun HomeRoute(
                     }
                 )
 
-                if (uiState.loadState == LoadState.Loading) {
+                if (uiState.loadState == LoadState.Loading ||
+                    uiState.alarmCheckLoadState == LoadState.Loading ||
+                    (uiState.isAlarmRegistered && uiState.afterRegisterDataLoadState == LoadState.Loading)
+                ) {
                     AtChaLoadingView()
                 }
             }
@@ -678,94 +681,103 @@ fun HomeScreen(
             isConfirmed = true
         }
 
-        // 알람 등록 시 Home UI
-        if (homeUiState.isAlarmRegistered) {
-            AfterRegisterSheet(
-                timerFinish = homeUiState.timerFinish,
-                startLocation = homeUiState.departurePointName,
-                isConfirmed = isConfirmed,
-                afterUserDeparted = homeUiState.userDeparture,
-                transportType = homeUiState.firtTransportTation,
-                transportationNumber = homeUiState.firstTransportationNumber,
-                transportationName = homeUiState.firstTransportationName,
-                timeToLeave = formatTimeString(homeUiState.departureTime),
-                boardingTime = homeUiState.boardingTime,
-                homeArrivedTime = homeUiState.homeArrivedTime,
-                destination = stringResource(R.string.home_my_home_text),
-                onCourseTextClick = {
-                    showTempMessage(ComponentType.ROUTE_TEXT_CLICKED)
-                    AmplitudeUtils.trackEventWithProperties(
-                        HOME_ROUTE_CLICKED,
-                        mapOf(
-                            SCREEN_NAME to HOME,
-                            USER_ID to getUserId(),
-                            HOME_ROUTE_CLICKED to 1
+        when {
+            homeUiState.alarmCheckLoadState == LoadState.Loading ||
+                (homeUiState.isAlarmRegistered && homeUiState.afterRegisterDataLoadState == LoadState.Loading) -> {
+            }
+
+            // 알림이 등록된 경우
+            homeUiState.isAlarmRegistered && homeUiState.afterRegisterDataLoadState == LoadState.Success -> {
+                AfterRegisterSheet(
+                    timerFinish = homeUiState.timerFinish,
+                    startLocation = homeUiState.departurePointName,
+                    isConfirmed = isConfirmed,
+                    afterUserDeparted = homeUiState.userDeparture,
+                    transportType = homeUiState.firtTransportTation,
+                    transportationNumber = homeUiState.firstTransportationNumber,
+                    transportationName = homeUiState.firstTransportationName,
+                    timeToLeave = formatTimeString(homeUiState.departureTime),
+                    boardingTime = homeUiState.boardingTime,
+                    homeArrivedTime = homeUiState.homeArrivedTime,
+                    destination = stringResource(R.string.home_my_home_text),
+                    onCourseTextClick = {
+                        showTempMessage(ComponentType.ROUTE_TEXT_CLICKED)
+                        AmplitudeUtils.trackEventWithProperties(
+                            HOME_ROUTE_CLICKED,
+                            mapOf(
+                                SCREEN_NAME to HOME,
+                                USER_ID to getUserId(),
+                                HOME_ROUTE_CLICKED to 1
+                            )
                         )
-                    )
-                },
-                deleteAlarmConfirmed = deleteAlarmConfirmed,
-                dismissDialog = dismissDialog,
-                onFinishClick = {
-                    onFinishClick()
-                },
-                onCourseDetailClick = courseDetailBtnClick,
-                onTimerFinished = {
-                    onTimerFinished()
-                },
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .zIndex(1f),
-                onRefreshClick = {
-                    onRefreshClick()
-                    if (homeUiState.firtTransportTation == TransportType.BUS) {
-                        getBusArrival()
-                    }
-                },
-                onIconClick = {
-                    if (homeUiState.isBusDeparted) {
+                    },
+                    deleteAlarmConfirmed = deleteAlarmConfirmed,
+                    dismissDialog = dismissDialog,
+                    onFinishClick = {
+                        onFinishClick()
+                    },
+                    onCourseDetailClick = courseDetailBtnClick,
+                    onTimerFinished = {
+                        onTimerFinished()
+                    },
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .zIndex(1f),
+                    onRefreshClick = {
+                        onRefreshClick()
+                        if (homeUiState.firtTransportTation == TransportType.BUS) {
+                            getBusArrival()
+                        }
+                    },
+                    onIconClick = {
+                        if (homeUiState.isBusDeparted) {
+                            showTempMessage(ComponentType.DEPARTURE_TIME_CONFIRMED_CLICKED)
+                        } else {
+                            showTempMessage(ComponentType.DEPARTURE_TIME_NOT_CONFIRMED_CLICKED)
+                        }
+                    },
+                    onHomeDepartureTimeClick = {
                         showTempMessage(ComponentType.DEPARTURE_TIME_CONFIRMED_CLICKED)
-                    } else {
+                        AmplitudeUtils.trackEventWithProperties(
+                            HOME_DEPARTURE_TIME_CLICKED,
+                            mapOf(
+                                SCREEN_NAME to HOME,
+                                USER_ID to getUserId(),
+                                HOME_DEPARTURE_TIME_CLICKED to 1
+                            )
+                        )
+                    },
+                    onHomeExpectDepartureTimeClick = {
                         showTempMessage(ComponentType.DEPARTURE_TIME_NOT_CONFIRMED_CLICKED)
-                    }
-                },
-                onHomeDepartureTimeClick = {
-                    showTempMessage(ComponentType.DEPARTURE_TIME_CONFIRMED_CLICKED)
-                    AmplitudeUtils.trackEventWithProperties(
-                        HOME_DEPARTURE_TIME_CLICKED,
-                        mapOf(
-                            SCREEN_NAME to HOME,
-                            USER_ID to getUserId(),
-                            HOME_DEPARTURE_TIME_CLICKED to 1
+                        AmplitudeUtils.trackEventWithProperties(
+                            HOME_DEPARTURE_TIME_CLICKED,
+                            mapOf(
+                                SCREEN_NAME to HOME,
+                                USER_ID to getUserId(),
+                                HOME_DEPARTURE_TIME_SUGGESTION_CLICKED to 1
+                            )
                         )
-                    )
-                },
-                onHomeExpectDepartureTimeClick = {
-                    showTempMessage(ComponentType.DEPARTURE_TIME_NOT_CONFIRMED_CLICKED)
-                    AmplitudeUtils.trackEventWithProperties(
-                        HOME_DEPARTURE_TIME_CLICKED,
-                        mapOf(
-                            SCREEN_NAME to HOME,
-                            USER_ID to getUserId(),
-                            HOME_DEPARTURE_TIME_SUGGESTION_CLICKED to 1
-                        )
-                    )
-                },
-                busStationLeft = homeUiState.busRemainingStations
-            )
-        } else {
-            CurrentLocationSheet(
-                currentLocation = homeUiState.markerPoint.name,
-                onSearchLocationClick = navigateToSearchLocation,
-                destination = stringResource(R.string.home_my_home_text),
-                onSearchClick = {
-                    onSearchClick()
-                },
-                onDestinationClick = { onDestinationClick() },
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .fillMaxWidth()
-                    .zIndex(1f)
-            )
+                    },
+                    busStationLeft = homeUiState.busRemainingStations
+                )
+            }
+
+            // 알림이 등록되지 않은 경우
+            !homeUiState.isAlarmRegistered && homeUiState.alarmCheckLoadState == LoadState.Success -> {
+                CurrentLocationSheet(
+                    currentLocation = homeUiState.markerPoint.name,
+                    onSearchLocationClick = navigateToSearchLocation,
+                    destination = stringResource(R.string.home_my_home_text),
+                    onSearchClick = {
+                        onSearchClick()
+                    },
+                    onDestinationClick = { onDestinationClick() },
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .fillMaxWidth()
+                        .zIndex(1f)
+                )
+            }
         }
 
         UnifiedCharacterBubble(

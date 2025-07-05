@@ -19,6 +19,8 @@ class HomeContract {
     data class HomeUiState(
         val loadState: LoadState = LoadState.Idle,
         val destinationState: LoadState = LoadState.Idle,
+        val afterRegisterDataLoadState: LoadState = LoadState.Idle,
+        val alarmCheckLoadState: LoadState = LoadState.Idle,
         val isAlarmRegistered: Boolean = false,
         val isBusDeparted: Boolean = false,
         val showSpeechBubble: Boolean = true,
