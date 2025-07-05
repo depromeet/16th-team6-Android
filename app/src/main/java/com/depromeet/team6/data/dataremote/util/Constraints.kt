@@ -50,5 +50,5 @@ object ApiConstraints {
     // Transits
     const val TRANSITS = "transits"
     const val BUS_ROUTES = "bus-routes"
-    const val LAST_ROUTE_CONFIG = BuildConfig.LAST_ROUTE
+    val LAST_ROUTE_CONFIG = BuildConfig.LAST_ROUTE
 }
