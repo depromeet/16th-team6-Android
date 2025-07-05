@@ -543,11 +543,7 @@ class HomeViewModel @Inject constructor(
             ).onSuccess { busArrival ->
                 setState {
                     copy(
-                        busRemainingStations = busArrival.realTimeBusArrival[0].remainingStations
-                    )
-                }
-                setState {
-                    copy(
+                        busRemainingStations = busArrival.realTimeBusArrival[0].remainingStations,
                         boardingTime = busArrival.realTimeBusArrival[0].remainingTime.toString()
                     )
                 }

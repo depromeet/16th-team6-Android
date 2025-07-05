@@ -14,8 +14,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.depromeet.team6.R
 import com.depromeet.team6.ui.theme.LocalTeam6Typography
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import kotlinx.coroutines.delay
@@ -77,34 +79,42 @@ fun LastTimer(
         }
     }
 
-    Row(
-        modifier = modifier,
-        verticalAlignment = Alignment.Bottom
-    ) {
+    if (remainingTimeMillis >= 9000L) {
+        Row(
+            modifier = modifier,
+            verticalAlignment = Alignment.Bottom
+        ) {
+            Text(
+                text = String.format("%02d", remainingMinutes),
+                style = typography.extraBold44,
+                color = textColor
+            )
+
+            Text(
+                text = "분",
+                style = typography.heading6Bold15,
+                color = textColor,
+                modifier = Modifier.padding(start = 4.dp, bottom = 8.dp, end = 12.dp)
+            )
+
+            Text(
+                text = String.format("%02d", remainingSeconds),
+                style = typography.extraBold44,
+                color = textColor
+            )
+
+            Text(
+                text = "초",
+                style = typography.heading6Bold15,
+                color = textColor,
+                modifier = Modifier.padding(start = 4.dp, bottom = 8.dp)
+            )
+        }
+    } else {
         Text(
-            text = String.format("%02d", remainingMinutes),
+            text = stringResource(R.string.home_timer_arrive_soon),
             style = typography.extraBold44,
             color = textColor
-        )
-
-        Text(
-            text = "분",
-            style = typography.heading6Bold15,
-            color = textColor,
-            modifier = Modifier.padding(start = 4.dp, bottom = 8.dp, end = 12.dp)
-        )
-
-        Text(
-            text = String.format("%02d", remainingSeconds),
-            style = typography.extraBold44,
-            color = textColor
-        )
-
-        Text(
-            text = "초",
-            style = typography.heading6Bold15,
-            color = textColor,
-            modifier = Modifier.padding(start = 4.dp, bottom = 8.dp)
         )
     }
 }
