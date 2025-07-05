@@ -12,10 +12,12 @@ import com.depromeet.team6.data.dataremote.util.ApiConstraints.TRANSITS
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Query
+import retrofit2.http.Url
 
 interface TransitsService {
-    @GET("$API/$TRANSITS/$LAST_ROUTE_CONFIG")
+    @GET
     suspend fun getAvailableCourses(
+        @Url url: String = "$API/$TRANSITS/$LAST_ROUTE_CONFIG",
         @Query("startLat") startLat: String,
         @Query("startLon") startLon: String,
         @Query("endLat") endLat: String,
