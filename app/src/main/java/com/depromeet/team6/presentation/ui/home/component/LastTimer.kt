@@ -79,11 +79,13 @@ fun LastTimer(
         }
     }
 
-    if (remainingTimeMillis >= 9000L) {
-        Row(
-            modifier = modifier,
-            verticalAlignment = Alignment.Bottom
-        ) {
+    // 1분 30초 기점으로 '곧 도착' 표시
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.Bottom
+    ) {
+        if (remainingTimeMillis >= 90000L) {
+
             Text(
                 text = String.format("%02d", remainingMinutes),
                 style = typography.extraBold44,
@@ -110,12 +112,13 @@ fun LastTimer(
                 modifier = Modifier.padding(start = 4.dp, bottom = 8.dp)
             )
         }
-    } else {
-        Text(
-            text = stringResource(R.string.home_timer_arrive_soon),
-            style = typography.extraBold44,
-            color = textColor
-        )
+        else {
+            Text(
+                text = stringResource(R.string.home_timer_arrive_soon),
+                style = typography.extraBold44,
+                color = textColor
+            )
+        }
     }
 }
 
