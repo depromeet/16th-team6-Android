@@ -326,9 +326,9 @@ class HomeViewModel @Inject constructor(
                     }
 
                     val isAllNotDefault = newMarkerPoint.lat != DEFAULT_MARKER_LAT &&
-                            newMarkerPoint.lon != DEFAULT_MARKER_LON &&
-                            currentState.destinationPoint.lat != DEFAULT_DESTINATION_LAT &&
-                            currentState.destinationPoint.lon != DEFAULT_DESTINATION_LON
+                        newMarkerPoint.lon != DEFAULT_MARKER_LON &&
+                        currentState.destinationPoint.lat != DEFAULT_DESTINATION_LAT &&
+                        currentState.destinationPoint.lon != DEFAULT_DESTINATION_LON
 
                     if (isAllNotDefault) {
                         getTaxiCost()
@@ -525,15 +525,14 @@ class HomeViewModel @Inject constructor(
                 setState { copy(destinationState = LoadState.Success) }
 
                 val isAllNotDefault = currentState.markerPoint.lat != DEFAULT_MARKER_LAT &&
-                        currentState.markerPoint.lon != DEFAULT_MARKER_LON &&
-                        userInfo.userHome.latitude != DEFAULT_DESTINATION_LAT &&
-                        userInfo.userHome.longitude != DEFAULT_DESTINATION_LON
+                    currentState.markerPoint.lon != DEFAULT_MARKER_LON &&
+                    userInfo.userHome.latitude != DEFAULT_DESTINATION_LAT &&
+                    userInfo.userHome.longitude != DEFAULT_DESTINATION_LON
 
                 if (isAllNotDefault) {
                     getTaxiCost()
                 }
                 getTaxiCost()
-
             }.onFailure { exception ->
                 handleApiException(exception)
             }

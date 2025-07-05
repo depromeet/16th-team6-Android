@@ -33,7 +33,7 @@ fun MypageAccountScreen(
     dismissDialog: () -> Unit = {}
 ) {
     val colors = LocalTeam6Colors.current
-    
+
     BackHandler(enabled = mypageUiState.logoutDialogVisible || mypageUiState.withDrawDialogVisible) {
         dismissDialog()
     }
