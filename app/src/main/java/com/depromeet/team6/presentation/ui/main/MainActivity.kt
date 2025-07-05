@@ -9,6 +9,8 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
@@ -29,6 +31,7 @@ import com.depromeet.team6.presentation.ui.main.navigation.MainNavHost
 import com.depromeet.team6.presentation.ui.main.navigation.MainNavigator
 import com.depromeet.team6.presentation.ui.main.navigation.rememberMainNavigator
 import com.depromeet.team6.presentation.ui.splash.SplashScreen
+import com.depromeet.team6.presentation.util.snackbar.SnackbarManager
 import com.depromeet.team6.ui.theme.Team6Theme
 import com.google.firebase.Firebase
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -89,6 +92,11 @@ class MainActivity : ComponentActivity() {
             val viewModel: MainViewModel = hiltViewModel()
             val navigator: MainNavigator = rememberMainNavigator(firebaseAnalytics = firebaseAnalytics)
             val showSplash by viewModel.showSplash.observeAsState(true)
+            val snackbarHostState = remember { SnackbarHostState() }
+
+            LaunchedEffect(Unit) {
+                SnackbarManager.initialize(snackbarHostState)
+            }
 
             var shouldNavigateToCourseSearch by remember { mutableStateOf(navigateToCourseSearch) }
 
@@ -110,6 +118,7 @@ class MainActivity : ComponentActivity() {
                     SplashScreen()
                 } else {
                     Scaffold(
+                        snackbarHost = { SnackbarHost(snackbarHostState) },
                         modifier = Modifier.fillMaxSize()
                     ) { innerPadding ->
                         MainNavHost(
