@@ -477,7 +477,7 @@ class HomeViewModel @Inject constructor(
         stopPollingBusStarted()
     }
 
-    fun getTaxiCost() {
+    private fun getTaxiCost() {
         viewModelScope.launch {
             getTaxiCostUseCase(
                 routeLocation = RouteLocation(
