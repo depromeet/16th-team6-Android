@@ -245,6 +245,7 @@ class HomeViewModel @Inject constructor(
                 lastRouteId = lastRouteId
             )
                 .onSuccess {
+                    setEvent(HomeContract.HomeEvent.UpdateAlarmRegistered(false))
                     setEvent(HomeContract.HomeEvent.UpdateBusDeparted(false))
 
                     stopPollingBusStarted()
@@ -263,6 +264,7 @@ class HomeViewModel @Inject constructor(
                     editor.apply()
 
                     setEvent(HomeContract.HomeEvent.DismissDialog)
+                    setSideEffect(HomeContract.HomeSideEffect.ShowDeleteAlarmToast)
                 }
                 .onFailure { exception ->
                     handleApiException(exception)
