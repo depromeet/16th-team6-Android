@@ -238,7 +238,7 @@ class CourseSearchViewModel @Inject constructor(
                     homeRepository.setAlarmRegistered(true)
                 }
             } catch (e: Exception) {
-                Timber.log("spf에 알림 데이터 저장 실패")
+                Timber.e("알림 정보 spf 저장 오류: ${e.message}")
             }
         }
     }
