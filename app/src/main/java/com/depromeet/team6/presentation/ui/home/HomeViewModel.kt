@@ -1,6 +1,7 @@
 package com.depromeet.team6.presentation.ui.home
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.depromeet.team6.data.datalocal.manager.LockServiceManager
 import com.depromeet.team6.domain.model.Address
@@ -35,7 +36,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
@@ -362,21 +365,30 @@ class HomeViewModel @Inject constructor(
 
         if (currentState.firtTransportTation == TransportType.BUS && currentState.isAlarmRegistered) {
             busStartedPollingJob = viewModelScope.launch {
+                try {
+                    val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
+                    val departureTime = LocalTime.parse(currentState.departureTime, timeFormatter)
+                    val now = LocalDateTime.now()
 
-                val departureTime = LocalDateTime.parse(currentState.departureTime, DateTimeFormatter.ISO_DATE_TIME)
-                val thirtyMinutesBefore = departureTime.minusMinutes(30)
-                val now = LocalDateTime.now()
+                    var departureDateTimeToday = LocalDateTime.of(LocalDate.now(), departureTime)
+                    if (departureDateTimeToday.isBefore(now) || departureDateTimeToday.isEqual(now)) {
+                        departureDateTimeToday = departureDateTimeToday.plusDays(1)
+                    }
 
-                if (now.isBefore(thirtyMinutesBefore)) {
-                    val delayUntilStart = java.time.Duration.between(now, thirtyMinutesBefore).toMillis()
-                    delay(delayUntilStart)
-                }
+                    val thirtyMinutesBefore = departureDateTimeToday.minusMinutes(30)
 
-                while (isActive) {
-                    Timber.d("버스 차고지 출발 여부 API 호출")
-                    getBusStarted(routeId)
+                    if (now.isBefore(thirtyMinutesBefore)) {
+                        val delayUntilStart = java.time.Duration.between(now, thirtyMinutesBefore).toMillis()
+                        delay(delayUntilStart)
+                    }
 
-                    delay(60000)
+                    while (isActive) {
+                        Timber.d("버스 차고지 출발 여부 API 호출")
+                        getBusStarted(routeId)
+                        delay(60000)
+                    }
+                } catch (e: Exception) {
+                    Timber.e("startPollingBusStarted 오류: ${e.message}")
                 }
             }
         }
