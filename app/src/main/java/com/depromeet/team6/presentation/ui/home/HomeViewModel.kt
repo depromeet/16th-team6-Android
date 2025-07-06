@@ -8,6 +8,7 @@ import com.depromeet.team6.domain.model.RouteLocation
 import com.depromeet.team6.domain.model.course.CourseInfo
 import com.depromeet.team6.domain.model.course.LegInfo
 import com.depromeet.team6.domain.model.course.TransportType
+import com.depromeet.team6.domain.repository.HomeRepository
 import com.depromeet.team6.domain.repository.UserInfoRepository
 import com.depromeet.team6.domain.usecase.DeleteAlarmUseCase
 import com.depromeet.team6.domain.usecase.GetAddressFromCoordinatesUseCase
@@ -41,6 +42,7 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val userInfoRepository: UserInfoRepository,
+    private val homeRepository: HomeRepository,
     private val getAddressFromCoordinatesUseCase: GetAddressFromCoordinatesUseCase,
     private val getUserInfoUseCase: GetUserInfoUseCase,
     private val getTaxiCostUseCase: GetTaxiCostUseCase,
@@ -262,7 +264,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun deleteAlarm(lastRouteId: String, context: Context) {
+    fun deleteAlarm(lastRouteId: String) {
         viewModelScope.launch {
             deleteAlarmUseCase(
                 lastRouteId = lastRouteId
@@ -273,18 +275,7 @@ class HomeViewModel @Inject constructor(
 
                     stopPollingBusStarted()
 
-                    val sharedPreferences = context.getSharedPreferences(
-                        "MyPreferences",
-                        Context.MODE_PRIVATE
-                    )
-                    val editor = sharedPreferences.edit()
-                    editor.remove("departurePoint")
-                    editor.remove("lastCourseInfo")
-                    editor.remove("lastRouteId")
-                    editor.remove("alarmRegistered")
-                    editor.remove("userDeparture")
-
-                    editor.apply()
+                    homeRepository.clearAlarmData()
 
                     setEvent(HomeContract.HomeEvent.DismissDialog)
                     setSideEffect(HomeContract.HomeSideEffect.ShowDeleteAlarmToast)
@@ -385,11 +376,9 @@ class HomeViewModel @Inject constructor(
         busStartedPollingJob = null
     }
 
-    // SharedPreferences에서 사용자 출발 상태를 로드
-    fun loadUserDepartureState(context: Context) {
+    fun loadUserDepartureState() {
         viewModelScope.launch {
-            val sharedPreferences = context.getSharedPreferences(MY_PREFERENCES_NAME, Context.MODE_PRIVATE)
-            val userDeparture = sharedPreferences.getBoolean("userDeparture", false)
+            val userDeparture = homeRepository.isUserDeparted()
             setEvent(HomeContract.HomeEvent.LoadUserDeparture(userDeparture))
             if (currentState.userDeparture && currentState.firtTransportTation == TransportType.BUS) {
                 getBusArrival()
@@ -398,16 +387,15 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun loadAlarmAndCourseInfoFromPrefs(context: Context) {
+    fun loadAlarmAndCourseInfoFromPrefs() {
         viewModelScope.launch {
             setState { copy(alarmCheckLoadState = LoadState.Loading) }
 
-            val prefs = context.getSharedPreferences(MY_PREFERENCES_NAME, Context.MODE_PRIVATE)
-            val isAlarmRegistered = prefs.getBoolean("alarmRegistered", false)
-            val lastRouteId = prefs.getString("lastRouteId", null)
+            val isAlarmRegistered = homeRepository.isAlarmRegistered()
+            val lastRouteId = homeRepository.getLastRouteId()
 
             setEvent(HomeContract.HomeEvent.UpdateAlarmRegistered(isAlarmRegistered))
-            lastRouteId?.let { HomeContract.HomeEvent.UpdateLastRouteId(it) }?.let { setEvent(it) }
+            setEvent(lastRouteId.let { HomeContract.HomeEvent.UpdateLastRouteId(it) })
 
             if (!isAlarmRegistered) {
                 setState {
@@ -425,36 +413,26 @@ class HomeViewModel @Inject constructor(
                 )
             }
 
-            val departurePointJson = prefs.getString("departurePoint", null)
-            departurePointJson?.let {
-                try {
-                    val departurePoint = Gson().fromJson(it, Address::class.java)
-                    setEvent(HomeContract.HomeEvent.UpdateDeparturePointName(departurePoint.name))
-                    setEvent(HomeContract.HomeEvent.UpdateDeparturePoint(departurePoint))
-                } catch (e: Exception) {
-                    Timber.e("DeparturePoint 불러오기 실패: ${e.message}")
-                    e.printStackTrace()
-                }
+            homeRepository.getDeparturePoint()?.let { departurePoint ->
+                setEvent(HomeContract.HomeEvent.UpdateDeparturePointName(departurePoint.name))
+                setEvent(HomeContract.HomeEvent.UpdateDeparturePoint(departurePoint))
             }
-            val courseInfoJson = prefs.getString("lastCourseInfo", null)
-            courseInfoJson?.let {
-                try {
-                    val courseInfo = Gson().fromJson(it, CourseInfo::class.java)
-                    setEvent(HomeContract.HomeEvent.LoadLegsResult(courseInfo))
-                    setEvent(HomeContract.HomeEvent.LoadDepartureDateTime(courseInfo.departureTime))
-                    setEvent(HomeContract.HomeEvent.LoadBoardingDateTime(courseInfo.boardingTime))
-                    setEvent(HomeContract.HomeEvent.LoadHomeArrivedTime(calculateArrivalTime(courseInfo.departureTime, courseInfo.totalTime)))
-                    setEvent(HomeContract.HomeEvent.LoadFirstTransportation(getFirstTransportation(courseInfo.legs)))
-                    setEvent(HomeContract.HomeEvent.LoadFirstTransportationNumber(getFirstTransportationNumber(courseInfo.legs)))
-                    setEvent(HomeContract.HomeEvent.LoadFirstTransportationName(getFirstTransportationName(courseInfo.legs)))
 
-                    if (getFirstTransportation(courseInfo.legs) == TransportType.BUS) {
-                        startPollingBusStarted(lastRouteId!!)
-                    } else if (getFirstTransportation(courseInfo.legs) == TransportType.SUBWAY) {
-                        setEvent(HomeContract.HomeEvent.UpdateBusDeparted(true))
+            homeRepository.getLastCourseInfo()?.let { courseInfo ->
+                setEvent(HomeContract.HomeEvent.LoadLegsResult(courseInfo))
+                setEvent(HomeContract.HomeEvent.LoadDepartureDateTime(courseInfo.departureTime))
+                setEvent(HomeContract.HomeEvent.LoadBoardingDateTime(courseInfo.boardingTime))
+                setEvent(HomeContract.HomeEvent.LoadHomeArrivedTime(calculateArrivalTime(courseInfo.departureTime, courseInfo.totalTime)))
+                setEvent(HomeContract.HomeEvent.LoadFirstTransportation(getFirstTransportation(courseInfo.legs)))
+                setEvent(HomeContract.HomeEvent.LoadFirstTransportationNumber(getFirstTransportationNumber(courseInfo.legs)))
+                setEvent(HomeContract.HomeEvent.LoadFirstTransportationName(getFirstTransportationName(courseInfo.legs)))
+
+                if (getFirstTransportation(courseInfo.legs) == TransportType.BUS) {
+                    if (lastRouteId.isNotEmpty()) {
+                        startPollingBusStarted(lastRouteId)
                     }
-                } catch (e: Exception) {
-                    Timber.e("CourseInfo 불러오기 실패: ${e.message}")
+                } else if (getFirstTransportation(courseInfo.legs) == TransportType.SUBWAY) {
+                    setEvent(HomeContract.HomeEvent.UpdateBusDeparted(true))
                 }
             }
 
@@ -658,7 +636,6 @@ class HomeViewModel @Inject constructor(
     }
 
     companion object {
-        private const val MY_PREFERENCES_NAME = "MyPreferences"
         private const val DEFAULT_MARKER_LAT = 37.303534788694
         private const val DEFAULT_MARKER_LON = 127.01085807594
         private const val DEFAULT_DESTINATION_LAT = 37.296391553347

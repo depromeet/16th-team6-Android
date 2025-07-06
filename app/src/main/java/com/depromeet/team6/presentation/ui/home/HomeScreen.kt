@@ -156,8 +156,8 @@ fun HomeRoute(
     }
 
     LaunchedEffect(Unit) {
-        viewModel.loadAlarmAndCourseInfoFromPrefs(context)
-        viewModel.loadUserDepartureState(context)
+        viewModel.loadAlarmAndCourseInfoFromPrefs()
+        viewModel.loadUserDepartureState()
         viewModel.setEvent(HomeContract.HomeEvent.ChangeGreetBottomSheetVisible(afterOnboarding))
     }
 
@@ -167,7 +167,7 @@ fun HomeRoute(
             override fun onResume(owner: LifecycleOwner) {
                 super.onResume(owner)
                 // 화면이 다시 보일 때마다 사용자 출발 상태 로드
-                viewModel.loadUserDepartureState(context)
+                viewModel.loadUserDepartureState()
             }
         }
 
@@ -550,7 +550,7 @@ fun HomeRoute(
                     },
                     deleteAlarmConfirmed = {
                         viewModel.setEvent(HomeContract.HomeEvent.DeleteAlarmConfirmed)
-                        viewModel.deleteAlarm(uiState.lastRouteId, context)
+                        viewModel.deleteAlarm(uiState.lastRouteId)
                     },
                     dismissDialog = {
                         viewModel.setEvent(HomeContract.HomeEvent.DismissDialog)
