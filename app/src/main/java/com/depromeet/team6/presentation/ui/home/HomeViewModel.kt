@@ -312,6 +312,7 @@ class HomeViewModel @Inject constructor(
                 }
         }
     }
+
     private fun showSpeechBubbleTemporarily() {
         speechBubbleJob?.cancel()
 
@@ -361,6 +362,16 @@ class HomeViewModel @Inject constructor(
 
         if (currentState.firtTransportTation == TransportType.BUS && currentState.isAlarmRegistered) {
             busStartedPollingJob = viewModelScope.launch {
+
+                val departureTime = LocalDateTime.parse(currentState.departureTime, DateTimeFormatter.ISO_DATE_TIME)
+                val thirtyMinutesBefore = departureTime.minusMinutes(30)
+                val now = LocalDateTime.now()
+
+                if (now.isBefore(thirtyMinutesBefore)) {
+                    val delayUntilStart = java.time.Duration.between(now, thirtyMinutesBefore).toMillis()
+                    delay(delayUntilStart)
+                }
+
                 while (isActive) {
                     Timber.d("버스 차고지 출발 여부 API 호출")
                     getBusStarted(routeId)
