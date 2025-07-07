@@ -26,7 +26,7 @@ interface LocationsService {
     suspend fun getAddressFromCoordinates(
         @Query("lat") lat: Double,
         @Query("lon") lon: Double
-    ): Response<ApiResponse<ResponseAddressDto>>
+    ): BaseResponse<ResponseAddressDto>
 
     @GET("api/locations/histories")
     suspend fun getSearchHistories(
