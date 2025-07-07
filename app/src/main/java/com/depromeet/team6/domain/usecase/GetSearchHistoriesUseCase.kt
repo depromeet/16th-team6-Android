@@ -19,7 +19,7 @@ import javax.inject.Singleton
 @Singleton
 class GetSearchHistoriesUseCase @Inject constructor(
     private val locationsRepository: LocationsRepository
-): ApiRequestUseCase<GetSearchHistoriesUseCase.Params, List<Location>>() {
+) : ApiRequestUseCase<GetSearchHistoriesUseCase.Params, List<Location>>() {
     data class Params(val lat: Double, val lon: Double)
 
     suspend operator fun invoke(lat: Double, lon: Double): Result<List<Location>> =

@@ -43,7 +43,7 @@ class DeleteSearchHistoryUseCase @Inject constructor(
     }
 
     override fun apiExceptionMapper(errorCode: String): ErrorControlFailureException {
-        return when(errorCode) {
+        return when (errorCode) {
             TOK_001 -> ErrorControlFailureException.ShowToastException(toastMessage = API_ERROR_LOGIN_TOKEN_EXPIRED)
             TOK_002 -> ErrorControlFailureException.ShowToastException(toastMessage = API_ERROR_LOGIN_TOKEN_EXPIRED)
             USR_002 -> ErrorControlFailureException.NavigateAndShowToastException(toastMessage = API_ERROR_LOGIN_TOKEN_EXPIRED, route = Route.Login)

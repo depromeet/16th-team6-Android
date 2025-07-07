@@ -137,7 +137,6 @@ class SearchLocationViewModel @Inject constructor(
         }
     }
 
-
     // 검색 내역 서버에 전송
     fun postSearchHistory(searchHistory: Location) {
         val convertedSearchHistory = SearchHistory(
@@ -164,7 +163,6 @@ class SearchLocationViewModel @Inject constructor(
         viewModelScope.launch {
             deleteAllSearchHistoryUseCase().onSuccess {
                 setEvent(SearchLocationContract.SearchLocationEvent.ClearRecentSearches)
-
             }
                 .onFailure { exception ->
                     handleApiException(exception)
