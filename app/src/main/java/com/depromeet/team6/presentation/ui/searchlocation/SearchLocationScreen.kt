@@ -43,6 +43,7 @@ import com.depromeet.team6.presentation.ui.searchlocation.component.SearchLocati
 import com.depromeet.team6.presentation.ui.searchlocation.component.SearchLocationTextField
 import com.depromeet.team6.presentation.util.DefaultLatLng.DEFAULT_LAT
 import com.depromeet.team6.presentation.util.DefaultLatLng.DEFAULT_LNG
+import com.depromeet.team6.presentation.util.base.ApiErrorSideEffect
 import com.depromeet.team6.presentation.util.context.getUserLocation
 import com.depromeet.team6.presentation.util.permission.PermissionUtil
 import com.depromeet.team6.presentation.util.view.LoadState
@@ -103,6 +104,10 @@ fun SearchLocationRoute(
             .collect { sideEffect ->
                 when (sideEffect) {
                     is SearchLocationContract.SearchLocationSideEffect.NavigateBack -> navigateToBack()
+                    is ApiErrorSideEffect.ShowToastSideEffect -> {
+                        Toast.makeText(context, sideEffect.toastMessage, Toast.LENGTH_SHORT).show()
+                    }
+                    is ApiErrorSideEffect.NavigateToLoginSideEffect -> navigateToLogin()
                 }
             }
     }

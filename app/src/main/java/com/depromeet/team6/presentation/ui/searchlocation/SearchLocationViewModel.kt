@@ -90,8 +90,9 @@ class SearchLocationViewModel @Inject constructor(
                         )
                     }
                 }
-                .onFailure {
+                .onFailure { exception ->
                     setState { copy(recentSearches = emptyList()) }
+                    handleApiException(exception)
                 }
         }
     }

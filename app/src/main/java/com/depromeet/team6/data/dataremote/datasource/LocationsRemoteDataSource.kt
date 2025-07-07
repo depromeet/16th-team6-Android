@@ -26,8 +26,10 @@ class LocationsRemoteDataSource @Inject constructor(
 //        locationsService.getAddressFromCoordinates(lat = lat, lon = lon).toResult()
     }
 
-    suspend fun getSearchHistories(lat: Double, lon: Double): Result<List<ResponseLocationsDto>> =
-        locationsService.getSearchHistories(lat = lat, lon = lon).toResult()
+    suspend fun getSearchHistories(lat: Double, lon: Double): Result<List<ResponseLocationsDto>> {
+        val response = locationsService.getSearchHistories(lat = lat, lon = lon)
+        return response.parse()
+    }
 
     suspend fun postSearchHistories(requestSearchHistoryDto: RequestSearchHistoryDto): Response<Unit> =
         locationsService.postSearchHistories(requestSearchHistoryDto = requestSearchHistoryDto)
