@@ -150,7 +150,7 @@ fun CourseSearchRoute(
                         val registeredCourse = uiState.courseData.find { it.routeId == routeId }
 
                         if (registeredCourse != null) {
-                            viewModel.saveAlarmData(departurePoint,destinationPoint,routeId)
+                            viewModel.saveAlarmData(departurePoint, destinationPoint, routeId)
                             viewModel.postAlarm(lastRouteId = routeId)
                         } else {
                             atChaToastMessage(context, R.string.course_set_notification_failed_snackbar)

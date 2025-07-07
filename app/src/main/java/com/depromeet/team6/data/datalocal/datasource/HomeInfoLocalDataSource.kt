@@ -3,9 +3,6 @@ package com.depromeet.team6.data.datalocal.datasource
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.core.content.edit
-import androidx.security.crypto.EncryptedSharedPreferences
-import androidx.security.crypto.MasterKey
-import com.depromeet.team6.BuildConfig
 import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.course.CourseInfo
 import com.depromeet.team6.presentation.model.bus.BusArrivalParameter
@@ -18,15 +15,15 @@ import javax.inject.Singleton
 @Singleton
 class HomeInfoLocalDataSource @Inject constructor(
     @ApplicationContext context: Context
-){
+) {
     private val sharedPreferences: SharedPreferences =
         context.getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE)
 
     private val gson = Gson()
 
     var isAlarmRegistered: Boolean
-    get() = getBooleanValue(ALARM_REGISTERED, false)
-    set(value) = setBooleanValue(ALARM_REGISTERED, value)
+        get() = getBooleanValue(ALARM_REGISTERED, false)
+        set(value) = setBooleanValue(ALARM_REGISTERED, value)
 
     var lastRouteId: String
         get() = getValue(LAST_ROUTE_ID)
