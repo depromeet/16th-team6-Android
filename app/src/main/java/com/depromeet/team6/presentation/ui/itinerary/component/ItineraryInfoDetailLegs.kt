@@ -101,7 +101,8 @@ fun ItineraryInfoDetailLegs(
                                     stationName = stationName,
                                     lat = leg.startPoint.lat,
                                     lon = leg.startPoint.lon,
-                                    subtypeIdx = subtypeIdx
+                                    subtypeIdx = subtypeIdx,
+                                    passingStations = leg.passStopList
                                 )
                             )
                         }

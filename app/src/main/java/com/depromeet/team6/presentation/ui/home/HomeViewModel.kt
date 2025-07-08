@@ -429,7 +429,8 @@ class HomeViewModel @Inject constructor(
                     stationName = leg.startPoint.name,
                     lat = leg.startPoint.lat,
                     lon = leg.startPoint.lon,
-                    subtypeIdx = 0
+                    subtypeIdx = 0,
+                    passingStations = leg.passStopList
                 )
             )
         )
@@ -539,7 +540,8 @@ class HomeViewModel @Inject constructor(
                 routeName = currentState.busArrivalParameter.routeName,
                 stationName = currentState.busArrivalParameter.stationName,
                 lat = currentState.busArrivalParameter.lat,
-                lon = currentState.busArrivalParameter.lon
+                lon = currentState.busArrivalParameter.lon,
+                passingStations = currentState.busArrivalParameter.passingStations
             ).onSuccess { busArrival ->
                 setState {
                     copy(

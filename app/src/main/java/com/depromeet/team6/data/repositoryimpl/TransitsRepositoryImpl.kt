@@ -1,6 +1,7 @@
 package com.depromeet.team6.data.repositoryimpl
 
 import com.depromeet.team6.data.dataremote.datasource.TransitsRemoteDataSource
+import com.depromeet.team6.data.dataremote.model.response.transits.Station
 import com.depromeet.team6.data.mapper.todomain.toDomain
 import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.BusArrival
@@ -22,21 +23,22 @@ class TransitsRepositoryImpl @Inject constructor(
             endLon = endPosition.lon.toString(),
             sortType = sortType
         ).map {
-            val sortedList = it.sortedBy { info -> info.departureDateTime }
-            sortedList.toDomain()
+            it.toDomain()
         }
 
     override suspend fun getBusArrival(
         routeName: String,
         stationName: String,
         lat: Double,
-        lon: Double
+        lon: Double,
+        passingStations: List<Station>
     ): Result<BusArrival> =
         transitsRemoteDataSource.getBusArrival(
             routeName = routeName,
             stationName = stationName,
             lat = lat,
-            lon = lon
+            lon = lon,
+            passStations = passingStations
         ).map { it.toDomain() }
 
     override suspend fun getBusPositions(

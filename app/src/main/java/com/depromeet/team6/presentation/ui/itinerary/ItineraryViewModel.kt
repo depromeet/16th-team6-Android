@@ -111,7 +111,8 @@ class ItineraryViewModel @Inject constructor(
                         routeName = leg.routeName!!,
                         stationName = leg.startPoint.name,
                         lat = leg.startPoint.lat,
-                        lon = leg.startPoint.lon
+                        lon = leg.startPoint.lon,
+                        passingStations = leg.passStopList
                     ).onFailure { exception ->
                         handleApiException(exception = exception)
                     }

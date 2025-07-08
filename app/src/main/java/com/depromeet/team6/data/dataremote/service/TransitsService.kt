@@ -1,5 +1,6 @@
 package com.depromeet.team6.data.dataremote.service
 
+import com.depromeet.team6.data.dataremote.model.request.transits.RequestBusArrivalDTO
 import com.depromeet.team6.data.dataremote.model.response.base.BaseResponse
 import com.depromeet.team6.data.dataremote.model.response.transits.ResponseBusArrivalsDto
 import com.depromeet.team6.data.dataremote.model.response.transits.ResponseBusOperationInfoDto
@@ -9,6 +10,7 @@ import com.depromeet.team6.data.dataremote.util.ApiConstraints.API
 import com.depromeet.team6.data.dataremote.util.ApiConstraints.BUS_ROUTES
 import com.depromeet.team6.data.dataremote.util.ApiConstraints.LAST_ROUTE_CONFIG
 import com.depromeet.team6.data.dataremote.util.ApiConstraints.TRANSITS
+import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Query
@@ -27,10 +29,7 @@ interface TransitsService {
 
     @POST("$API/$TRANSITS/bus-arrival")
     suspend fun getBusArrival(
-        @Query("routeName") routeName: String,
-        @Query("stationName") stationName: String,
-        @Query("lat") lat: Double,
-        @Query("lon") lon: Double
+        @Body requestBusArrivalDTO: RequestBusArrivalDTO
     ): BaseResponse<ResponseBusArrivalsDto>
 
     @GET("$API/$TRANSITS/bus-routes/positions")
