@@ -112,10 +112,6 @@ class MainActivity : ComponentActivity() {
                 CompositionLocalProvider(
                     LocalDialogController provides dialogController
                 ) {
-                    LaunchedEffect(Unit) {
-                        viewModel.startSplashTimer()
-                        viewModel.fetchFcmToken()
-                    }
                     if (showSplash) {
                         SplashScreen()
                     } else {
