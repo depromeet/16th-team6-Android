@@ -86,15 +86,16 @@ class ItineraryViewModel @Inject constructor(
 
     private fun postAlarm(routeId: String) {
         viewModelScope.launch {
-            if (postAlarmUseCase(
-                    lastRouteId = routeId
-                ).isSuccessful
-            ) {
-                setSideEffect(ItineraryContract.ItinerarySideEffect.ShowNotificationToastSetAlarm)
-                setSideEffect(ItineraryContract.ItinerarySideEffect.NavigateHomeWithToast)
-            } else {
-                setSideEffect(ItineraryContract.ItinerarySideEffect.ShowNotificationToastSetAlarmFailed)
-            }
+            postAlarmUseCase(
+                lastRouteId = routeId
+            )
+                .onSuccess {
+                    setSideEffect(ItineraryContract.ItinerarySideEffect.ShowNotificationToastSetAlarm)
+                    setSideEffect(ItineraryContract.ItinerarySideEffect.NavigateHomeWithToast)
+                }
+                .onFailure { exception ->
+                    handleApiException(exception)
+                }
         }
     }
 
