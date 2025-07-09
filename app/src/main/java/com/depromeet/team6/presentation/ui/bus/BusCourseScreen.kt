@@ -44,13 +44,13 @@ import com.depromeet.team6.presentation.ui.bus.component.BusOperationInfoView
 import com.depromeet.team6.presentation.ui.bus.component.BusStationItem
 import com.depromeet.team6.presentation.ui.common.TransportVectorIconComposable
 import com.depromeet.team6.presentation.ui.common.view.AtChaLoadingView
+import com.depromeet.team6.presentation.util.base.ApiErrorSideEffect
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.presentation.util.toast.atChaToastMessage
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.depromeet.team6.presentation.util.view.TransportTypeUiMapper
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.depromeet.team6.ui.theme.defaultTeam6Typography
-import timber.log.Timber
 
 @Composable
 fun BusCourseRoute(
@@ -68,6 +68,8 @@ fun BusCourseRoute(
         viewModel.sideEffect.flowWithLifecycle(lifecycle = lifecycleOwner.lifecycle)
             .collect { sideEffect ->
                 when (sideEffect) {
+                    is ApiErrorSideEffect.ShowToastSideEffect -> Toast.makeText(context, sideEffect.toastMessage, Toast.LENGTH_SHORT)
+                    is ApiErrorSideEffect.NavigateToBackSideEffect -> navigateToBackStack()
                     is BusCourseContract.BusCourseSideEffect.NavigateToBackStack -> navigateToBackStack()
                 }
             }
@@ -76,7 +78,6 @@ fun BusCourseRoute(
     LaunchedEffect(Unit) {
         viewModel.initUiState(busArrivalParameter)
     }
-    Timber.d("Load State : ${uiState.loadState}")
 
     when (uiState.loadState) {
         LoadState.Idle -> Unit

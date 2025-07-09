@@ -12,6 +12,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.location.Location
+import android.media.AudioAttributes
 import android.media.MediaPlayer
 import android.os.Build
 import android.os.CountDownTimer
@@ -74,47 +75,56 @@ class LockService : Service() {
         }
     }
 
-    private fun playAlarmSound() {
-        try {
-            Log.d("LockService", "알림음 재생 시작")
-            mediaPlayer?.release()
-            mediaPlayer = MediaPlayer.create(applicationContext, R.raw.alarm_sound)
-            mediaPlayer?.apply {
-                isLooping = false
-                setVolume(4.0f, 4.0f)
-                setOnCompletionListener {
-                    Log.d("LockService", "알림음 재생 완료")
+        private fun playAlarmSound() {
+            try {
+                Log.d("LockService", "알림음 재생 시작")
+
+                // 알람 볼륨채널 설정
+                val audioAttr = AudioAttributes.Builder()
+                    .setUsage(AudioAttributes.USAGE_ALARM)
+                    .build()
+
+                mediaPlayer?.release()
+                mediaPlayer = MediaPlayer.create(applicationContext, R.raw.alarm_sound)
+                mediaPlayer?.apply {
+                    isLooping = true
+                    setAudioAttributes(audioAttr)
+                    setVolume(4.0f, 4.0f)
+                    setOnCompletionListener {
+                        Log.d("LockService", "알림음 재생 완료")
+                    }
+                    start()
+                    Log.d("LockService", "알림음 재생 시작됨")
                 }
-                start()
-                Log.d("LockService", "알림음 재생 시작됨")
+            } catch (e: Exception) {
+                Log.e("LockService", "알림음 재생 중 오류 발생: ${e.message}", e)
             }
-        } catch (e: Exception) {
-            Log.e("LockService", "알림음 재생 중 오류 발생: ${e.message}", e)
         }
-    }
 
     private fun vibrate() {
         try {
             vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
 
-            val pattern = longArrayOf(0, 1000, 500)
-            val repeatIndex = 0
+            val pattern = longArrayOf(1000, 1000)
+            val amplitudes = intArrayOf(255, 0)
+            val repeatIndex = 99999
 
             val vibrationEffect = VibrationEffect.createWaveform(
                 pattern,
+                amplitudes,
                 repeatIndex
             )
             vibrator?.vibrate(vibrationEffect)
-
-            vibrationTimer?.cancel()
-            vibrationTimer = object : CountDownTimer(60000, 60000) {
-                override fun onTick(millisUntilFinished: Long) {
-                }
-
-                override fun onFinish() {
-                    stopVibration()
-                }
-            }.start()
+//
+//            vibrationTimer?.cancel()
+//            vibrationTimer = object : CountDownTimer(60000, 60000) {
+//                override fun onTick(millisUntilFinished: Long) {
+//                }
+//
+//                override fun onFinish() {
+//                    stopVibration()
+//                }
+//            }.start()
         } catch (e: Exception) {
             Log.e("LockService", "진동 중 오류 발생: ${e.message}", e)
         }
@@ -137,8 +147,8 @@ class LockService : Service() {
     }
 
     private fun stopVibration() {
-        vibrationTimer?.cancel()
-        vibrationTimer = null
+//        vibrationTimer?.cancel()
+//        vibrationTimer = null
         vibrator?.cancel()
         vibrator = null
         Log.d("LockService", "진동 중지")
