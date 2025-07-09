@@ -88,10 +88,6 @@ class OnboardingViewModel @Inject constructor(
                 )
             }
 
-            is OnboardingContract.OnboardingEvent.ChangePermissionDeniedBottomSheetVisible -> setState {
-                copy(permissionDeniedBottomSheetVisible = event.permissionDeniedBottomSheetVisible)
-            }
-
             is OnboardingContract.OnboardingEvent.ClearAddress -> setState {
                 copy(
                     myAddress = Address(

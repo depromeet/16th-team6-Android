@@ -1,9 +1,11 @@
 package com.depromeet.team6.presentation.util.dialog
 
+import android.content.Context
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.staticCompositionLocalOf
+import com.depromeet.team6.presentation.util.context.openAppSettings
 
 @Stable
 class DialogController {
@@ -11,14 +13,17 @@ class DialogController {
     val dialogState: State<DialogState?> = _dialogState
 
     fun showSystemSettingsDialog(
-        message: String = "현위치를 찾을 수 없어요.\n" +
-            "위치 권한을 허용해 주세요.",
-        onConfirm: () -> Unit,
+        context: Context,
+        message: String,
+        onConfirm: () -> Unit = {},
         onDismiss: () -> Unit = {}
     ) {
         _dialogState.value = DialogState.SystemSettings(
             message = message,
-            onConfirm = onConfirm,
+            onConfirm = {
+                onConfirm()
+                context.openAppSettings()
+            },
             onDismiss = onDismiss
         )
     }

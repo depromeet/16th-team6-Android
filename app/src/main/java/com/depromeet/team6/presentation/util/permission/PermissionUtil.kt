@@ -80,4 +80,8 @@ object PermissionUtil {
             notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
         }
     }
+
+    fun clearAllPermissionData(context: Context) {
+        getPreferences(context).edit().clear().apply()
+    }
 }

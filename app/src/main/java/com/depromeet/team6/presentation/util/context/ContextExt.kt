@@ -1,6 +1,9 @@
 package com.depromeet.team6.presentation.util.context
 
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import android.provider.Settings
 import com.depromeet.team6.presentation.util.DefaultLatLng.DEFAULT_LAT
 import com.depromeet.team6.presentation.util.DefaultLatLng.DEFAULT_LNG
 import com.google.android.gms.location.LocationServices
@@ -44,4 +47,11 @@ suspend fun Context.getUserLocation(): LatLng {
         Timber.e("User_Location Location permission not granted", e)
         LatLng(DEFAULT_LAT, DEFAULT_LNG)
     }
+}
+
+fun Context.openAppSettings() {
+    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+        data = Uri.fromParts("package", packageName, null)
+    }
+    startActivity(intent)
 }

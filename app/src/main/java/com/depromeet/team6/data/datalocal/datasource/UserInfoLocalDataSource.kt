@@ -72,10 +72,7 @@ class UserInfoLocalDataSource @Inject constructor(
         set(value) = setIntValue(USER_ID, value)
 
     fun clear() {
-        setValue(REFRESH_TOKEN, "")
-        setValue(ACCESS_TOKEN, "")
-        setValue(FCM_TOKEN, "")
-        setIntValue(USER_ID, INITIAL_INT)
+        sharedPreferences.edit().clear().apply()
         AmplitudeUtils.resetUserId()
     }
 
