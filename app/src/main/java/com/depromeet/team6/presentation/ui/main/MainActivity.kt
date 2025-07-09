@@ -7,10 +7,12 @@ import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
@@ -26,12 +28,14 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.depromeet.team6.R
 import com.depromeet.team6.data.datalocal.manager.LockServiceManager
 import com.depromeet.team6.data.datalocal.permission.PermissionUtil
+import com.depromeet.team6.presentation.ui.common.dialog.GlobalDialogHandler
 import com.depromeet.team6.presentation.ui.lock.LockScreenNavigator
 import com.depromeet.team6.presentation.ui.main.navigation.MainNavHost
 import com.depromeet.team6.presentation.ui.main.navigation.MainNavigator
 import com.depromeet.team6.presentation.ui.main.navigation.rememberMainNavigator
 import com.depromeet.team6.presentation.ui.splash.SplashScreen
-import com.depromeet.team6.presentation.util.snackbar.SnackbarManager
+import com.depromeet.team6.presentation.util.dialog.DialogController
+import com.depromeet.team6.presentation.util.dialog.LocalDialogController
 import com.depromeet.team6.ui.theme.Team6Theme
 import com.google.firebase.Firebase
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -92,11 +96,7 @@ class MainActivity : ComponentActivity() {
             val viewModel: MainViewModel = hiltViewModel()
             val navigator: MainNavigator = rememberMainNavigator(firebaseAnalytics = firebaseAnalytics)
             val showSplash by viewModel.showSplash.observeAsState(true)
-            val snackbarHostState = remember { SnackbarHostState() }
-
-            LaunchedEffect(Unit) {
-                SnackbarManager.initialize(snackbarHostState)
-            }
+            val dialogController = remember { DialogController() }
 
             var shouldNavigateToCourseSearch by remember { mutableStateOf(navigateToCourseSearch) }
 
@@ -109,32 +109,41 @@ class MainActivity : ComponentActivity() {
             }
 
             Team6Theme {
-                LaunchedEffect(Unit) {
-                    viewModel.startSplashTimer()
-                    viewModel.fetchFcmToken()
-                }
-
-                if (showSplash) {
-                    SplashScreen()
-                } else {
-                    Scaffold(
-                        snackbarHost = { SnackbarHost(snackbarHostState) },
-                        modifier = Modifier.fillMaxSize()
-                    ) { innerPadding ->
-                        MainNavHost(
-                            navigator = navigator,
-                            padding = innerPadding
-                        )
-
-                        if (shouldNavigateToCourseSearch) {
-                            LaunchedEffect(Unit) {
-                                navigator.navigateToCourseSearch(
-                                    departure = departurePoint,
-                                    destination = destinationPoint,
-                                    fromLockScreen = fromLockScreen
+                CompositionLocalProvider(
+                    LocalDialogController provides dialogController
+                ) {
+                    LaunchedEffect(Unit) {
+                        viewModel.startSplashTimer()
+                        viewModel.fetchFcmToken()
+                    }
+                    if (showSplash) {
+                        SplashScreen()
+                    } else {
+                        Box {
+                            Scaffold(
+                                modifier = Modifier.fillMaxSize()
+                            ) { innerPadding ->
+                                MainNavHost(
+                                    navigator = navigator,
+                                    padding = innerPadding
                                 )
-                                shouldNavigateToCourseSearch = false
+
+                                if (shouldNavigateToCourseSearch) {
+                                    LaunchedEffect(Unit) {
+                                        navigator.navigateToCourseSearch(
+                                            departure = departurePoint,
+                                            destination = destinationPoint,
+                                            fromLockScreen = fromLockScreen
+                                        )
+                                        shouldNavigateToCourseSearch = false
+                                    }
+                                }
                             }
+                            GlobalDialogHandler(
+                                controller = dialogController,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                            )
                         }
                     }
                 }
