@@ -54,9 +54,9 @@ import com.depromeet.team6.presentation.util.OnboardingAmplitude.HOME_REGISTER
 import com.depromeet.team6.presentation.util.OnboardingAmplitude.HOME_REGISTER_COMPLETE_CLICKED
 import com.depromeet.team6.presentation.util.OnboardingAmplitude.HOME_REGISTER_LOCATION_PERMISSION_CHECK
 import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
+import com.depromeet.team6.presentation.util.dialog.LocalDialogController
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.presentation.util.permission.PermissionUtil
-import com.depromeet.team6.presentation.util.snackbar.showLocationPermissionSnackbar
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.google.android.gms.maps.model.LatLng
@@ -74,6 +74,7 @@ fun OnboardingRoute(
     val settingIntent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
         data = Uri.fromParts("package", context.packageName, null)
     }
+    val dialogController = LocalDialogController.current
 
     val locationPermissionsLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestMultiplePermissions(),
@@ -129,8 +130,10 @@ fun OnboardingRoute(
                     }
 
                     is OnboardingContract.OnboardingSideEffect.SettingToastMessage -> {
-                        showLocationPermissionSnackbar(
-                            context = context
+                        dialogController.showSystemSettingsDialog(
+                            onConfirm = {
+                                context.startActivity(settingIntent)
+                            }
                         )
                     }
                 }
@@ -295,11 +298,7 @@ fun OnboardingRoute(
                     },
                     mapViewSelectButtonClicked = {
                         viewModel.setEvent(
-                            (
-                                OnboardingContract.OnboardingEvent.ChangeMapViewVisible(
-                                    false
-                                )
-                                )
+                            (OnboardingContract.OnboardingEvent.ChangeMapViewVisible(false))
                         )
                     }
                 )
