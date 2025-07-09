@@ -54,13 +54,15 @@ fun TMapViewCompose(
     getCenterLocation: (LatLng) -> Unit
 ) {
     val context = LocalContext.current
-    val tMapView = remember { TMapView(context) }
+    val tMapViewState = remember { mutableStateOf<TMapView?>(null) }
     var isMapReady by remember { mutableStateOf(false) }
 
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
 
     // 현재 위치 변경될 때만 현위치 마커 갱신
     LaunchedEffect(currentLocation, isMapReady) {
+        val tMapView = tMapViewState.value ?: return@LaunchedEffect
+
         if (isMapReady) {
             val tMapPoint = TMapPoint(currentLocation.latitude, currentLocation.longitude)
 
@@ -99,29 +101,30 @@ fun TMapViewCompose(
                 .height(screenHeight - 200.dp + padding.calculateTopPadding())
                 .align(Alignment.TopCenter),
             factory = { context ->
+                val tMapView = TMapView(context).apply {
+                    setSKTMapApiKey(BuildConfig.TMAP_API_KEY)
 
-                tMapView.setSKTMapApiKey(BuildConfig.TMAP_API_KEY)
-                tMapView.setOnMapReadyListener {
-                    tMapView.mapType = TMapView.MapType.NIGHT
-                    isMapReady = true
+                    setOnMapReadyListener {
+                        mapType = TMapView.MapType.NIGHT
+                        isMapReady = true
 
-                    // 드래그 종료 시 지도 중심 좌표 업데이트
-                    tMapView.setOnDisableScrollWithZoomLevelListener { _, _ ->
-                        val centerLat = tMapView.centerPoint.latitude
-                        val centerLon = tMapView.centerPoint.longitude
+                        setOnDisableScrollWithZoomLevelListener { _, _ ->
+                            val center = centerPoint
+                            getCenterLocation(LatLng(center.latitude, center.longitude))
 
-                        getCenterLocation(LatLng(centerLat, centerLon))
-
-                        AmplitudeUtils.trackEventWithProperties(
-                            eventName = HOME_COURSESEARCH_ENTERED_WITH_MAP_DRAG,
-                            mapOf(
-                                USER_ID to userId,
-                                SCREEN_NAME to HOME,
-                                HOME_COURSESEARCH_ENTERED_WITH_MAP_DRAG to true
+                            AmplitudeUtils.trackEventWithProperties(
+                                eventName = HOME_COURSESEARCH_ENTERED_WITH_MAP_DRAG,
+                                mapOf(
+                                    USER_ID to userId,
+                                    SCREEN_NAME to HOME,
+                                    HOME_COURSESEARCH_ENTERED_WITH_MAP_DRAG to true
+                                )
                             )
-                        )
+                        }
                     }
                 }
+
+                tMapViewState.value = tMapView
 
                 // FrameLayout을 직접 생성
                 FrameLayout(context).apply {
@@ -160,7 +163,10 @@ fun TMapViewCompose(
                     .clickable(enabled = isMapReady) {
                         val tMapPoint =
                             TMapPoint(currentLocation.latitude, currentLocation.longitude)
-                        tMapView.setCenterPoint(tMapPoint.latitude, tMapPoint.longitude)
+
+                        tMapViewState.value?.apply {
+                            setCenterPoint(tMapPoint.latitude, tMapPoint.longitude)
+                        }
                         getCenterLocation(LatLng(tMapPoint.latitude, tMapPoint.longitude))
 
                         AmplitudeUtils.trackEventWithProperties(
@@ -182,7 +188,7 @@ fun TMapViewCompose(
     DisposableEffect(Unit) {
         onDispose {
             Timber.d("TMapViewCompose destroy!")
-            tMapView.onDestroy()
+            tMapViewState.value?.onDestroy()
         }
     }
 }
