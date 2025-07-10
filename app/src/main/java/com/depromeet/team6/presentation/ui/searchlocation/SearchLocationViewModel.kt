@@ -90,8 +90,9 @@ class SearchLocationViewModel @Inject constructor(
                         )
                     }
                 }
-                .onFailure {
+                .onFailure { exception ->
                     setState { copy(recentSearches = emptyList()) }
+                    handleApiException(exception)
                 }
         }
     }
@@ -113,17 +114,26 @@ class SearchLocationViewModel @Inject constructor(
         )
 
         viewModelScope.launch {
-            if (deleteSearchHistoryUseCase(searchHistory = convertedSearchHistory).isSuccessful) {
-                updateRecentSearches(location = LatLng(location.latitude, location.longitude))
+            deleteSearchHistoryUseCase(
+                name = searchHistory.name,
+                lat = searchHistory.lat,
+                lon = searchHistory.lon,
+                businessCategory = searchHistory.businessCategory,
+                address = searchHistory.address
+            )
+                .onSuccess {
+                    updateRecentSearches(location = LatLng(location.latitude, location.longitude))
 
-                setEvent(
-                    SearchLocationContract.SearchLocationEvent.DeleteSearchHistory(
-                        searchHistory = convertedSearchHistory
+                    setEvent(
+                        SearchLocationContract.SearchLocationEvent.DeleteSearchHistory(
+                            searchHistory = convertedSearchHistory
+                        )
                     )
-                )
-            } else {
-                Timber.e("deleteSearchHistory failure")
-            }
+                }
+                .onFailure { exception ->
+                    Timber.e("deleteSearchHistory failure")
+                    handleApiException(exception)
+                }
         }
     }
 
@@ -138,22 +148,25 @@ class SearchLocationViewModel @Inject constructor(
         )
 
         viewModelScope.launch {
-            if (postSearchHistoriesUseCase(searchHistory = convertedSearchHistory).isSuccessful) {
-                Timber.e("postSearchHistory Success")
-            } else {
-                Timber.e("postSearchHistory failure")
-            }
+            postSearchHistoriesUseCase(searchHistory = convertedSearchHistory)
+                .onSuccess {
+                    Timber.e("postSearchHistory Success")
+                }
+                .onFailure { exception ->
+                    handleApiException(exception)
+                }
         }
     }
 
     // 최근 검색 내역 전체 삭제
     fun deleteAllSearchHistory() {
         viewModelScope.launch {
-            if (deleteAllSearchHistoryUseCase().isSuccessful) {
+            deleteAllSearchHistoryUseCase().onSuccess {
                 setEvent(SearchLocationContract.SearchLocationEvent.ClearRecentSearches)
-            } else {
-                Timber.e("deleteAllSearchHistory failure")
             }
+                .onFailure { exception ->
+                    handleApiException(exception)
+                }
         }
     }
 

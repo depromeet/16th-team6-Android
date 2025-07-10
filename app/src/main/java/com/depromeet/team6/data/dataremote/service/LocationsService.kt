@@ -1,13 +1,11 @@
 package com.depromeet.team6.data.dataremote.service
 
 import com.depromeet.team6.data.dataremote.model.request.search.RequestSearchHistoryDto
-import com.depromeet.team6.data.dataremote.model.response.base.ApiResponse
 import com.depromeet.team6.data.dataremote.model.response.base.BaseResponse
 import com.depromeet.team6.data.dataremote.model.response.locations.ResponseAddressDto
 import com.depromeet.team6.data.dataremote.model.response.locations.ResponseLocationsDto
 import com.depromeet.team6.data.dataremote.util.ApiConstraints.API
 import com.depromeet.team6.data.dataremote.util.ApiConstraints.LOCATIONS
-import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -26,18 +24,18 @@ interface LocationsService {
     suspend fun getAddressFromCoordinates(
         @Query("lat") lat: Double,
         @Query("lon") lon: Double
-    ): Response<ApiResponse<ResponseAddressDto>>
+    ): BaseResponse<ResponseAddressDto>
 
     @GET("api/locations/histories")
     suspend fun getSearchHistories(
         @Query("lat") lat: Double,
         @Query("lon") lon: Double
-    ): ApiResponse<List<ResponseLocationsDto>>
+    ): BaseResponse<List<ResponseLocationsDto>>
 
     @POST("api/locations/histories")
     suspend fun postSearchHistories(
         @Body requestSearchHistoryDto: RequestSearchHistoryDto
-    ): Response<Unit>
+    ): BaseResponse<Unit>
 
     @DELETE("api/locations/history")
     suspend fun deleteSearchHistory(
@@ -46,8 +44,8 @@ interface LocationsService {
         @Query("lon") lon: Double,
         @Query("businessCategory") businessCategory: String,
         @Query("address") address: String
-    ): Response<Unit>
+    ): BaseResponse<Unit>
 
     @DELETE("api/locations/histories")
-    suspend fun deleteAllSearchHistory(): Response<Unit>
+    suspend fun deleteAllSearchHistory(): BaseResponse<Unit>
 }
