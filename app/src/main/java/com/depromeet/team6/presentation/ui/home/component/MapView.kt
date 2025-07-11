@@ -152,9 +152,9 @@ fun TMapViewCompose(
                     .align(Alignment.BottomEnd)
                     .then(
                         if (isAlarmRegistered) {
-                            Modifier.padding(bottom = 35.dp, end = 16.dp)
+                            Modifier.padding(bottom = 55.dp, end = 16.dp)
                         } else {
-                            Modifier.padding(bottom = 35.dp, end = 16.dp)
+                            Modifier.padding(bottom = 55.dp, end = 16.dp)
                         }
                     )
                     .clickable(enabled = isMapReady) {
