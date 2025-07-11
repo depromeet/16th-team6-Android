@@ -96,7 +96,7 @@ fun TMapViewCompose(
         AndroidView(
             modifier = modifier
                 .fillMaxWidth()
-                .height(screenHeight - 200.dp + padding.calculateTopPadding())
+                .height(screenHeight - 180.dp + padding.calculateTopPadding())
                 .align(Alignment.TopCenter),
             factory = { context ->
 
