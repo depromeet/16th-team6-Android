@@ -355,7 +355,6 @@ class HomeViewModel @Inject constructor(
                     if (isAllNotDefault) {
                         getTaxiCost()
                     }
-                    getTaxiCost()
                 }
                 .onFailure { exception ->
                     handleApiException(exception)
@@ -584,7 +583,6 @@ class HomeViewModel @Inject constructor(
                 if (isAllNotDefault) {
                     getTaxiCost()
                 }
-                getTaxiCost()
             }.onFailure { exception ->
                 handleApiException(exception)
             }
