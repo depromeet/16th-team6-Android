@@ -5,5 +5,6 @@ data class MypageUserInfo(
     val lat: Double? = null,
     val lon: Double? = null,
     val alertFrequencies: Set<Int>? = null,
-    val fcmToken: String? = null
+    val fcmToken: String? = null,
+    val appVersion: String? = null
 )

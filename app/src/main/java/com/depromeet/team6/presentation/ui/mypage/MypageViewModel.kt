@@ -167,7 +167,8 @@ class MypageViewModel @Inject constructor(
                             lat = userInfo.userHome.latitude,
                             lon = userInfo.userHome.longitude,
                             alertFrequencies = userInfo.alertFrequencies,
-                            fcmToken = null
+                            fcmToken = null,
+                            appVersion = userInfo.appVersion
                         )
                     )
                 }

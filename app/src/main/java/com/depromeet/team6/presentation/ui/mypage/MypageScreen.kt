@@ -32,6 +32,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
+import com.depromeet.team6.BuildConfig
 import com.depromeet.team6.R
 import com.depromeet.team6.presentation.ui.common.view.AtChaWebView
 import com.depromeet.team6.presentation.ui.mypage.component.MyPageConfirmDialog
@@ -149,7 +150,8 @@ fun MypageRoute(
                                 onUpdateClicked = {
                                     mypageViewModel.navigateToPlayStore(context)
                                 },
-                                onBannerClicked = { mypageViewModel.setSideEffect(MypageContract.MypageSideEffect.NavigateToFeedbackForm) }
+                                onBannerClicked = { mypageViewModel.setSideEffect(MypageContract.MypageSideEffect.NavigateToFeedbackForm) },
+                                isUpdateBtnVisible = uiState.userInfo.appVersion != ("v" + BuildConfig.VERSION_NAME)
                             )
                         }
 
@@ -254,7 +256,8 @@ fun MypageScreen(
     logoutConfirmed: () -> Unit = {},
     withDrawConfirmed: () -> Unit = {},
     dismissDialog: () -> Unit = {},
-    onBannerClicked: () -> Unit = {}
+    onBannerClicked: () -> Unit = {},
+    isUpdateBtnVisible: Boolean = false
 ) {
     val colors = LocalTeam6Colors.current
     val typography = LocalTeam6Typography.current
@@ -310,7 +313,8 @@ fun MypageScreen(
 
                 MypageVersionItem(
                     title = stringResource(R.string.mypage_version_title_text),
-                    onClick = onUpdateClicked
+                    onClick = onUpdateClicked,
+                    updateBtnVisibility = isUpdateBtnVisible
                 )
             }
 
