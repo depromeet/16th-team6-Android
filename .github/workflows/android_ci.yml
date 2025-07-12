@@ -71,6 +71,22 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew build -PcompileSdkVersion=34
 
+      # ✅ 버전 정보 추출 및 API 호출
+      - name: Update App Version
+        if: ${{ success() }}
+        run: |
+          VERSION_NAME=$(grep -E "versionName\s+" app/build.gradle | awk '{print $2}' | tr -d '"')
+          
+          if [[ ! $VERSION_NAME =~ ^v ]]; then
+            VERSION_NAME="v$VERSION_NAME"
+          fi
+          
+          curl -X POST \
+            -H "Content-Type: application/json" \
+            -d "{\"version\": \"$VERSION_NAME\"}" \
+            "$VERSION_API_URL" \
+            || echo "Version API call failed, but continuing with build"
+
       # ✅ 성공 알림
       - name: Slack Notify - Success
         if: ${{ success() }}
