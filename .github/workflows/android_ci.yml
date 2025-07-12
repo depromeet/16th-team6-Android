@@ -74,13 +74,18 @@ jobs:
       # ✅ 버전 정보 추출 및 API 호출
       - name: Update App Version
         if: ${{ success() }}
+        env:
+          VERSION_API_URL: ${{ secrets.VERSION_API_URL }}
         run: |
-          VERSION_NAME=$(grep -E "versionName\s+" app/build.gradle | awk '{print $2}' | tr -d '"')
+          VERSION_NAME=$(grep -E "versionName\s*=" app/build.gradle.kts | sed 's/.*versionName\s*=\s*"\([^"]*\)".*/\1/')
           
           if [[ ! $VERSION_NAME =~ ^v ]]; then
             VERSION_NAME="v$VERSION_NAME"
           fi
           
+          echo "Current version: $VERSION_NAME"
+          
+          # API 호출
           curl -X POST \
             -H "Content-Type: application/json" \
             -d "{\"version\": \"$VERSION_NAME\"}" \
