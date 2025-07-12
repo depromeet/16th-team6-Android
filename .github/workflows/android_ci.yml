@@ -75,7 +75,9 @@ jobs:
       - name: Update App Version
         if: ${{ success() }}
         env:
-          VERSION_API_URL: ${{ secrets.VERSION_API_URL }}
+          SERVER_DEV_URL: ${{ secrets.SERVER_DEV_URL }}
+          SERVER_PROD_URL: ${{ secrets.SERVER_PROD_URL }}
+          VERSION_API_ENDPOINT: ${{ secrets.VERSION_API_ENDPOINT }}
         run: |
           VERSION_NAME=$(grep -E "versionName\s*=" app/build.gradle.kts | sed 's/.*versionName\s*=\s*"\([^"]*\)".*/\1/')
           
@@ -85,12 +87,25 @@ jobs:
           
           echo "Current version: $VERSION_NAME"
           
-          # API 호출
-          curl -X POST \
+          # 개발 서버에 API 호출
+          echo "Updating DEV server..."
+          (curl -X POST \
             -H "Content-Type: application/json" \
             -d "{\"version\": \"$VERSION_NAME\"}" \
-            "$VERSION_API_URL" \
-            || echo "Version API call failed, but continuing with build"
+            "${SERVER_DEV_URL}${VERSION_API_ENDPOINT}" \
+            && echo "DEV server updated successfully") \
+            || echo "DEV server update failed, but continuing..."
+          
+          # 운영 서버에 API 호출
+          echo "Updating PROD server..."
+          (curl -X POST \
+            -H "Content-Type: application/json" \
+            -d "{\"version\": \"$VERSION_NAME\"}" \
+            "${SERVER_PROD_URL}${VERSION_API_ENDPOINT}" \
+            && echo "PROD server updated successfully") \
+            || echo "PROD server update failed, but continuing..."
+          
+          echo "Version update process completed"
 
       # ✅ 성공 알림
       - name: Slack Notify - Success
