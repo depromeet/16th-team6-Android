@@ -34,6 +34,13 @@ object BusOperationInfo {
     const val UNKNOWN_KR = "알 수 없음"
 }
 
+object DefaultMarkerDestination {
+    const val DEFAULT_MARKER_LAT = 37.303534788694
+    const val DEFAULT_MARKER_LON = 127.01085807594
+    const val DEFAULT_DESTINATION_LAT = 37.296391553347
+    const val DEFAULT_DESTINATION_LON = 126.97755824522
+}
+
 object AmplitudeCommon {
     const val SCREEN_NAME = "screen_name"
     const val USER_ID = "USER_ID"

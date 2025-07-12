@@ -18,6 +18,10 @@ import com.depromeet.team6.domain.usecase.GetUserInfoUseCase
 import com.depromeet.team6.presentation.model.bus.BusArrivalParameter
 import com.depromeet.team6.presentation.util.AmplitudeCommon.SCREEN_NAME
 import com.depromeet.team6.presentation.util.AmplitudeCommon.USER_ID
+import com.depromeet.team6.presentation.util.DefaultMarkerDestination.DEFAULT_DESTINATION_LAT
+import com.depromeet.team6.presentation.util.DefaultMarkerDestination.DEFAULT_DESTINATION_LON
+import com.depromeet.team6.presentation.util.DefaultMarkerDestination.DEFAULT_MARKER_LAT
+import com.depromeet.team6.presentation.util.DefaultMarkerDestination.DEFAULT_MARKER_LON
 import com.depromeet.team6.presentation.util.HomeAmplitude.HOME
 import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_EVENT_ITINERARY_BTN_CLICK
 import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_EVENT_REGISTER_MAP_MARKER_CLICK
@@ -339,10 +343,14 @@ class HomeViewModel @Inject constructor(
                         copy(markerPoint = newMarkerPoint)
                     }
 
-                    val isAllNotDefault = newMarkerPoint.lat != DEFAULT_MARKER_LAT &&
-                        newMarkerPoint.lon != DEFAULT_MARKER_LON &&
-                        currentState.destinationPoint.lat != DEFAULT_DESTINATION_LAT &&
-                        currentState.destinationPoint.lon != DEFAULT_DESTINATION_LON
+                    val isAllNotDefault = (
+                        newMarkerPoint.lat != DEFAULT_MARKER_LAT &&
+                            newMarkerPoint.lon != DEFAULT_MARKER_LON
+                        ) &&
+                        (
+                            currentState.destinationPoint.lat != DEFAULT_DESTINATION_LAT &&
+                                currentState.destinationPoint.lon != DEFAULT_DESTINATION_LON
+                            )
 
                     if (isAllNotDefault) {
                         getTaxiCost()
@@ -564,10 +572,14 @@ class HomeViewModel @Inject constructor(
                 }
                 setState { copy(destinationState = LoadState.Success) }
 
-                val isAllNotDefault = currentState.markerPoint.lat != DEFAULT_MARKER_LAT &&
-                    currentState.markerPoint.lon != DEFAULT_MARKER_LON &&
-                    userInfo.userHome.latitude != DEFAULT_DESTINATION_LAT &&
-                    userInfo.userHome.longitude != DEFAULT_DESTINATION_LON
+                val isAllNotDefault = (
+                    currentState.markerPoint.lat != DEFAULT_MARKER_LAT &&
+                        currentState.markerPoint.lon != DEFAULT_MARKER_LON
+                    ) &&
+                    (
+                        userInfo.userHome.latitude != DEFAULT_DESTINATION_LAT &&
+                            userInfo.userHome.longitude != DEFAULT_DESTINATION_LON
+                        )
 
                 if (isAllNotDefault) {
                     getTaxiCost()
@@ -655,9 +667,6 @@ class HomeViewModel @Inject constructor(
     }
 
     companion object {
-        private const val DEFAULT_MARKER_LAT = 37.303534788694
-        private const val DEFAULT_MARKER_LON = 127.01085807594
-        private const val DEFAULT_DESTINATION_LAT = 37.296391553347
-        private const val DEFAULT_DESTINATION_LON = 126.97755824522
+        private const val MY_PREFERENCES_NAME = "MyPreferences"
     }
 }
