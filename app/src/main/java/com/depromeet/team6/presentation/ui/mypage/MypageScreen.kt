@@ -3,6 +3,7 @@ package com.depromeet.team6.presentation.ui.mypage
 import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -61,6 +62,10 @@ fun MypageRoute(
     val isInitialized = remember { mutableMapOf("initialized" to false) }
 
     val feedbackIntent = Intent(Intent.ACTION_VIEW, Uri.parse(FEEDBACK_FORM_URL))
+
+    BackHandler {
+        mypageViewModel.setEvent(MypageContract.MypageEvent.BackPressed)
+    }
 
     LaunchedEffect(mypageViewModel.sideEffect, lifecycleOwner) {
         mypageViewModel.sideEffect.flowWithLifecycle(lifecycle = lifecycleOwner.lifecycle)

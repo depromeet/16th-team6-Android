@@ -68,6 +68,7 @@ import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
 import com.depromeet.team6.presentation.util.base.ApiErrorSideEffect
 import com.depromeet.team6.presentation.util.context.getUserLocation
 import com.depromeet.team6.presentation.util.permission.PermissionUtil
+import com.depromeet.team6.presentation.util.toast.atChaToastMessage
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.depromeet.team6.ui.theme.LocalTeam6Colors
 import com.depromeet.team6.ui.theme.Team6Theme
@@ -191,6 +192,8 @@ fun HomeRoute(
                         Gson().toJson(uiState.destinationPoint),
                         sideEffect.markerParameter
                     )
+                    is HomeContract.HomeSideEffect.ShowDeleteAlarmToast ->
+                        atChaToastMessage(context, R.string.home_alarm_finish_text, Toast.LENGTH_SHORT)
                 }
             }
     }
@@ -216,10 +219,6 @@ fun HomeRoute(
         } else {
             viewModel.stopPollingBusStarted()
         }
-    }
-
-    LaunchedEffect(Unit) {
-        viewModel.getTaxiCost()
     }
 
     SideEffect {

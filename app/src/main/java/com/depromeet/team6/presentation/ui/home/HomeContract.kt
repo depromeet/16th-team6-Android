@@ -77,6 +77,7 @@ class HomeContract {
     sealed interface HomeSideEffect : UiSideEffect {
         data object NavigateToMypage : HomeSideEffect
         data class NavigateToItinerary(val markerParameter: FocusedMarkerParameter?) : HomeSideEffect
+        data object ShowDeleteAlarmToast : HomeSideEffect
     }
 
     sealed class HomeEvent : UiEvent {

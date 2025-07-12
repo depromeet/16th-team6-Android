@@ -19,6 +19,10 @@ import com.depromeet.team6.domain.usecase.GetUserInfoUseCase
 import com.depromeet.team6.presentation.model.bus.BusArrivalParameter
 import com.depromeet.team6.presentation.util.AmplitudeCommon.SCREEN_NAME
 import com.depromeet.team6.presentation.util.AmplitudeCommon.USER_ID
+import com.depromeet.team6.presentation.util.DefaultMarkerDestination.DEFAULT_DESTINATION_LAT
+import com.depromeet.team6.presentation.util.DefaultMarkerDestination.DEFAULT_DESTINATION_LON
+import com.depromeet.team6.presentation.util.DefaultMarkerDestination.DEFAULT_MARKER_LAT
+import com.depromeet.team6.presentation.util.DefaultMarkerDestination.DEFAULT_MARKER_LON
 import com.depromeet.team6.presentation.util.HomeAmplitude.HOME
 import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_EVENT_ITINERARY_BTN_CLICK
 import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_EVENT_REGISTER_MAP_MARKER_CLICK
@@ -245,6 +249,7 @@ class HomeViewModel @Inject constructor(
                 lastRouteId = lastRouteId
             )
                 .onSuccess {
+                    setEvent(HomeContract.HomeEvent.UpdateAlarmRegistered(false))
                     setEvent(HomeContract.HomeEvent.UpdateBusDeparted(false))
 
                     stopPollingBusStarted()
@@ -263,6 +268,7 @@ class HomeViewModel @Inject constructor(
                     editor.apply()
 
                     setEvent(HomeContract.HomeEvent.DismissDialog)
+                    setSideEffect(HomeContract.HomeSideEffect.ShowDeleteAlarmToast)
                 }
                 .onFailure { exception ->
                     handleApiException(exception)
@@ -306,54 +312,40 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun onCharacterClick() {
+    private fun onCharacterClick() {
         showSpeechBubbleTemporarily()
-        getTaxiCost()
     }
 
     fun getCenterLocation(location: LatLng) {
         viewModelScope.launch {
             getAddressFromCoordinatesUseCase(location.latitude, location.longitude)
                 .onSuccess { addressData ->
-                    setState {
-                        copy(
-                            markerPoint = if (addressData.name.isEmpty()) {
-                                addressData.copy(name = addressData.address)
-                            } else {
-                                addressData
-                            }
-                        )
+                    val newMarkerPoint = if (addressData.name.isEmpty()) {
+                        addressData.copy(name = addressData.address)
+                    } else {
+                        addressData
                     }
+                    setState {
+                        copy(markerPoint = newMarkerPoint)
+                    }
+
+                    val isAllNotDefault = (
+                        newMarkerPoint.lat != DEFAULT_MARKER_LAT &&
+                            newMarkerPoint.lon != DEFAULT_MARKER_LON
+                        ) &&
+                        (
+                            currentState.destinationPoint.lat != DEFAULT_DESTINATION_LAT &&
+                                currentState.destinationPoint.lon != DEFAULT_DESTINATION_LON
+                            )
+
+                    if (isAllNotDefault) {
+                        getTaxiCost()
+                    }
+                    getTaxiCost()
                 }
                 .onFailure { exception ->
                     handleApiException(exception)
                 }
-//            getAddressFromCoordinatesUseCase.invoke(location.latitude, location.longitude)
-//                .onSuccess { addressData ->
-//                    setState {
-//                        copy(
-//                            markerPoint = if (addressData.name.isEmpty()) {
-//                                addressData.copy(name = addressData.address)
-//                            } else {
-//                                addressData
-//                            }
-//                        )
-//                    }
-//                    getTaxiCost()
-//                }.onFailure {
-//                    Timber.d("location error : ${it.message}")
-//                    setState {
-//                        // 위치 찾을 수 없는 경우 서울시청으로 임의 초기화
-//                        copy(
-//                            markerPoint = Address(
-//                                name = "서울특별시청",
-//                                lat = 37.56681744674135,
-//                                lon = 126.97866075004276,
-//                                address = ""
-//                            )
-//                        )
-//                    }
-//                }
         }
     }
 
@@ -495,7 +487,7 @@ class HomeViewModel @Inject constructor(
         stopPollingBusStarted()
     }
 
-    fun getTaxiCost() {
+    private fun getTaxiCost() {
         viewModelScope.launch {
             getTaxiCostUseCase(
                 routeLocation = RouteLocation(
@@ -539,6 +531,20 @@ class HomeViewModel @Inject constructor(
                     )
                 }
                 setState { copy(destinationState = LoadState.Success) }
+
+                val isAllNotDefault = (
+                    currentState.markerPoint.lat != DEFAULT_MARKER_LAT &&
+                        currentState.markerPoint.lon != DEFAULT_MARKER_LON
+                    ) &&
+                    (
+                        userInfo.userHome.latitude != DEFAULT_DESTINATION_LAT &&
+                            userInfo.userHome.longitude != DEFAULT_DESTINATION_LON
+                        )
+
+                if (isAllNotDefault) {
+                    getTaxiCost()
+                }
+                getTaxiCost()
             }.onFailure { exception ->
                 handleApiException(exception)
             }

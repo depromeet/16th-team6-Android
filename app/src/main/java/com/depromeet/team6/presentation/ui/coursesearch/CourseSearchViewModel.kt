@@ -4,8 +4,10 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.lifecycle.viewModelScope
 import com.depromeet.team6.domain.model.Address
+import com.depromeet.team6.domain.model.RouteLocation
 import com.depromeet.team6.domain.repository.UserInfoRepository
 import com.depromeet.team6.domain.usecase.GetCourseSearchResultsUseCase
+import com.depromeet.team6.domain.usecase.GetTaxiCostUseCase
 import com.depromeet.team6.domain.usecase.PostAlarmUseCase
 import com.depromeet.team6.presentation.util.AmplitudeCommon.SCREEN_NAME
 import com.depromeet.team6.presentation.util.AmplitudeCommon.USER_ID
@@ -33,6 +35,7 @@ class CourseSearchViewModel @Inject constructor(
     private val loadSearchResult: GetCourseSearchResultsUseCase,
     private val postAlarmUseCase: PostAlarmUseCase,
     private val userInfoRepository: UserInfoRepository,
+    private val getTaxiCostUseCase: GetTaxiCostUseCase,
     @ApplicationContext private val context: Context
 ) : BaseViewModel<CourseSearchContract.CourseUiState, CourseSearchContract.CourseSideEffect, CourseSearchContract.CourseEvent>() {
 
@@ -200,6 +203,24 @@ class CourseSearchViewModel @Inject constructor(
         }
     }
 
+    private fun getTaxiCost() {
+        viewModelScope.launch {
+            getTaxiCostUseCase(
+                routeLocation = RouteLocation(
+                    startLat = uiState.value.startingPoint!!.lat,
+                    startLon = uiState.value.startingPoint!!.lon,
+                    endLat = uiState.value.destinationPoint!!.lat,
+                    endLon = uiState.value.destinationPoint!!.lon
+                )
+            )
+                .onSuccess {
+                    getTaxiCostUseCase.saveTaxiCost(it)
+                }.onFailure { exception ->
+                    handleApiException(exception)
+                }
+        }
+    }
+
     fun postAlarm(lastRouteId: String) {
         viewModelScope.launch {
             postAlarmUseCase(
@@ -208,6 +229,7 @@ class CourseSearchViewModel @Inject constructor(
                 .onSuccess {
                     setEvent(CourseSearchContract.CourseEvent.RegisterAlarm)
                     setSideEffect(CourseSearchContract.CourseSideEffect.NavigateHomeWithToast)
+                    getTaxiCost()
                 }
                 .onFailure { exception ->
                     handleApiException(exception)
