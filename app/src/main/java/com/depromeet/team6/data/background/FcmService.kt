@@ -11,8 +11,8 @@ import android.util.Log
 import androidx.annotation.Keep
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.app.NotificationCompat
-import androidx.core.content.ContextCompat
 import com.depromeet.team6.R
+import com.depromeet.team6.data.background.AlarmScheduler.scheduleLockScreenAlarm
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.google.firebase.messaging.Constants
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -64,13 +64,12 @@ class FcmService : FirebaseMessagingService() {
             sendHeadsUpNotification(title, body)
         }
         if (message.data.isNotEmpty()) {
-            if (type == FULL_SCREEN_ALERT) {
-                wakeLockAcquire()
-                startLockScreenService()
-            } else if (type == PUSH_ALERT) {
-                wakeLockAcquire()
-                sendHeadsUpNotification(title, body)
-            } else if (type == "REFRESH") {
+            if (type == FCM_TYPE_SUGGESTION) {
+            } else if (type == FCM_TYPE_REFRESH) {
+                val timeStamp = message.data["body"]
+                if (timeStamp != null) {
+                    scheduleLockScreenAlarm(this, timeStamp)
+                }
             } else {
                 sendDefaultNotification()
             }
@@ -178,15 +177,15 @@ class FcmService : FirebaseMessagingService() {
         notificationManager.notify(FCM_NOTIFICATION_ID, notification)
     }
 
-    private fun startLockScreenService() {
-        // LockService를 시작하는 인텐트 생성
-        val intent = Intent(this, LockService::class.java).apply {
-            // 잠금화면 표시 플래그 설정
-            putExtra(LockService.EXTRA_SHOW_LOCK_SCREEN, true)
-        }
-
-        ContextCompat.startForegroundService(this, intent)
-    }
+//    private fun startLockScreenService() {
+//        // LockService를 시작하는 인텐트 생성
+//        val intent = Intent(this, LockService::class.java).apply {
+//            // 잠금화면 표시 플래그 설정
+//            putExtra(LockService.EXTRA_SHOW_LOCK_SCREEN, true)
+//        }
+//
+//        ContextCompat.startForegroundService(this, intent)
+//    }
 
     companion object {
         private const val CHANNEL_ID = "ATCHA_CHANNEL"
@@ -196,5 +195,7 @@ class FcmService : FirebaseMessagingService() {
         private const val PUSH_ALERT = "PUSH_ALERT"
         private const val WAKE_LOCK_TAG = "Atcha:WakeLock"
         private const val HEAD_UP_CHANNEL_ID = "ATCHA_HEADS_UP_CHANNEL"
+        private const val FCM_TYPE_SUGGESTION = "SUGGESTION"
+        private const val FCM_TYPE_REFRESH = "REFRESH"
     }
 }

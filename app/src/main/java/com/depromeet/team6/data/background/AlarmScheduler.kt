@@ -5,14 +5,49 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import com.depromeet.team6.data.background.LockService.Companion.LOCATION_NOTIFICATION_ID
+import timber.log.Timber
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import java.util.Calendar
 
 object AlarmScheduler {
 
-    private const val REQ_CODE = 1001
+    private const val LOCATION_NOTIFICATION_ID = 1001
+    private const val ALARM_START_ID = 2001
     private const val ACTION_ALARM = "com.example.ACTION_SCHEDULED_ALARM"
 
+    fun scheduleLockScreenAlarm(context: Context, timeStamp: String) {
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+        Timber.d("AlarmScheduler : 알람 시간 미뤄짐 : $timeStamp")
+
+        val timeInMillis = isoLocalDateTimeToMillis(timeStamp)
+
+        // 잠금화면 포그라운드 서비스 할당
+        val intent = Intent(context, LockService::class.java)
+        val pendingIntent = PendingIntent.getForegroundService(
+            context,
+            ALARM_START_ID,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val exactSupported = Build.VERSION.SDK_INT < Build.VERSION_CODES.S || alarmManager.canScheduleExactAlarms()
+        if (exactSupported) {
+            alarmManager.setExactAndAllowWhileIdle(
+                AlarmManager.RTC_WAKEUP,
+                timeInMillis,
+                pendingIntent
+            )
+        } else {
+            alarmManager.setAndAllowWhileIdle(
+                AlarmManager.RTC_WAKEUP,
+                timeInMillis,
+                pendingIntent
+            )
+        }
+    }
     fun scheduleLocationCheck(context: Context) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
@@ -76,5 +111,17 @@ object AlarmScheduler {
             calendar.timeInMillis,
             pendingIntent
         )
+    }
+
+    private fun isoLocalDateTimeToMillis(
+        isoTime: String
+    ): Long {
+        val dateTime = LocalDateTime.parse(isoTime, DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+        val zone = ZoneId.systemDefault()
+
+        val instant = dateTime.atZone(zone).toInstant()
+
+        // 3) epoch millis 반환
+        return instant.toEpochMilli()
     }
 }

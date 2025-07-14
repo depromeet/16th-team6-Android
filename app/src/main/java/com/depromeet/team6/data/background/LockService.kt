@@ -12,6 +12,7 @@ import android.media.AudioAttributes
 import android.media.MediaPlayer
 import android.os.CountDownTimer
 import android.os.IBinder
+import android.os.PowerManager
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.util.Log
@@ -183,19 +184,16 @@ class LockService : Service() {
             return START_STICKY
         }
 
-        val showLockScreen = intent?.getBooleanExtra(EXTRA_SHOW_LOCK_SCREEN, false) ?: false
-
         startLockReceiver()
+        wakeLockAcquire()
 
-        if (showLockScreen) {
-            CoroutineScope(Dispatchers.IO).launch {
-                val taxiCost = taxiCostUseCase.getLastSavedTaxiCost()
+        CoroutineScope(Dispatchers.IO).launch {
+            val taxiCost = taxiCostUseCase.getLastSavedTaxiCost()
 
-                withContext(Dispatchers.Main) {
-                    playAlarm()
+            withContext(Dispatchers.Main) {
+                playAlarm()
 
-                    lockScreenNavigator.navigateToLockScreen(applicationContext, taxiCost)
-                }
+                lockScreenNavigator.navigateToLockScreen(applicationContext, taxiCost)
             }
         }
 
@@ -224,6 +222,20 @@ class LockService : Service() {
         unregisterReceiver(LockReceiver)
     }
 
+    private fun wakeLockAcquire() {
+        try {
+            val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
+            val wakeLock = powerManager.newWakeLock(
+                PowerManager.FULL_WAKE_LOCK or PowerManager.ACQUIRE_CAUSES_WAKEUP,
+                WAKE_LOCK_TAG
+            )
+
+            // 10초 동안 화면 유지
+            wakeLock.acquire(10 * 1000L)
+        } catch (e: Exception) {
+            Log.e("FCM", "WakeLock error: ${e.message}")
+        }
+    }
     companion object {
         const val EXTRA_SHOW_LOCK_SCREEN = "extra_show_lock_screen"
         const val EXTRA_CHECK_LOCATION = "extra_check_location"
@@ -238,5 +250,6 @@ class LockService : Service() {
         private const val ATCHA_SERVICE_NAME = "ATCHA_SERVICE"
 
         const val NOTIFICATION_ID = 1
+        private const val WAKE_LOCK_TAG = "Atcha:WakeLock"
     }
 }
