@@ -189,11 +189,11 @@ fun SetNotificationButton(
         modifier = Modifier
             .clip(RoundedCornerShape(8.dp))
             .background(color = defaultTeam6Colors.gray910)
-            .padding(vertical = 13.dp, horizontal = 28.dp)
-            .fillMaxWidth()
             .noRippleClickable {
                 btnClickEvent()
-            },
+            }
+            .padding(vertical = 13.dp, horizontal = 28.dp)
+            .fillMaxWidth(),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {

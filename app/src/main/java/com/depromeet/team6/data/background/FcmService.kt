@@ -13,14 +13,19 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.core.app.NotificationCompat
 import com.depromeet.team6.R
 import com.depromeet.team6.data.background.AlarmScheduler.scheduleLockScreenAlarm
+import com.depromeet.team6.domain.repository.HomeRepository
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.google.firebase.messaging.Constants
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @Keep
+@AndroidEntryPoint
 class FcmService : FirebaseMessagingService() {
 
+    @Inject lateinit var homeRepository: HomeRepository
     private lateinit var body: String
     private lateinit var title: String
 
@@ -69,6 +74,7 @@ class FcmService : FirebaseMessagingService() {
                 val timeStamp = message.data["body"]
                 if (timeStamp != null) {
                     scheduleLockScreenAlarm(this, timeStamp)
+                    updateDepartureTime(timeStamp)
                 }
             } else {
                 sendDefaultNotification()
@@ -78,6 +84,13 @@ class FcmService : FirebaseMessagingService() {
         }
     }
 
+    private fun updateDepartureTime(timeStamp: String) {
+        val courseInfo = homeRepository.getLastCourseInfo() ?: return
+        val newCourseInfo = courseInfo.copy(
+            departureTime = timeStamp
+        )
+        homeRepository.setLastCourseInfo(newCourseInfo)
+    }
     private fun wakeLockAcquire() {
         try {
             val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
