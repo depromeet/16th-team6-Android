@@ -61,6 +61,8 @@ import com.depromeet.team6.presentation.util.view.TransportTypeUiMapper
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.depromeet.team6.ui.theme.defaultTeam6Typography
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import kotlin.math.max
 
 @Composable
 fun ItineraryInfoDetailLegs(
@@ -99,7 +101,8 @@ fun ItineraryInfoDetailLegs(
                                     stationName = stationName,
                                     lat = leg.startPoint.lat,
                                     lon = leg.startPoint.lon,
-                                    subtypeIdx = subtypeIdx
+                                    subtypeIdx = subtypeIdx,
+                                    passingStations = leg.passStopList
                                 )
                             )
                         }
@@ -138,6 +141,10 @@ private fun DetailLegsBus(
 ) {
     var rowHeight by remember { mutableStateOf(0) }
     var isPassStopShow by remember { mutableStateOf(false) }
+    val disembarkingDateTime: String = LocalDateTime
+        .parse(boardingDateTime)
+        .plusMinutes(timeMinute.toLong())
+        .format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
 
     Row(
         modifier = modifier
@@ -189,7 +196,7 @@ private fun DetailLegsBus(
                 )
                 Spacer(modifier = Modifier.height(2.dp))
                 BoardingTime(
-                    boardingDateTime = boardingDateTime,
+                    boardingDateTime = disembarkingDateTime,
                     modifier = Modifier
                 )
             }
@@ -271,7 +278,7 @@ private fun DetailLegsBus(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = stringResource(R.string.itinerary_info_legs_bus_stopovers, timeMinute, passStopList.size),
+                    text = stringResource(R.string.itinerary_info_legs_bus_stopovers, timeMinute, max(0, passStopList.size - 1)),
                     style = defaultTeam6Typography.bodyMedium13,
                     color = defaultTeam6Colors.white
                 )
@@ -290,7 +297,8 @@ private fun DetailLegsBus(
                 Column(
                     verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    for (stop in passStopList) {
+                    for (i in 1 until passStopList.size - 1) {
+                        val stop = passStopList[i]
                         Text(
                             text = stop.stationName,
                             style = defaultTeam6Typography.bodyMedium13,
@@ -336,6 +344,10 @@ private fun DetailLegsSubway(
 ) {
     var rowHeight by remember { mutableStateOf(0) }
     var isPassStopShow by remember { mutableStateOf(false) }
+    val disembarkingDateTime: String = LocalDateTime
+        .parse(boardingDateTime)
+        .plusMinutes(timeMinute.toLong())
+        .format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
 
     Row(
         modifier = modifier
@@ -387,7 +399,7 @@ private fun DetailLegsSubway(
                 )
                 Spacer(modifier = Modifier.height(2.dp))
                 BoardingTime(
-                    boardingDateTime = boardingDateTime,
+                    boardingDateTime = disembarkingDateTime,
                     modifier = Modifier
                 )
             }
@@ -442,7 +454,7 @@ private fun DetailLegsSubway(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = stringResource(R.string.itinerary_info_legs_subway_stopovers, timeMinute, passStopList.size),
+                    text = stringResource(R.string.itinerary_info_legs_subway_stopovers, timeMinute, max(0, passStopList.size - 1)),
                     style = defaultTeam6Typography.bodyMedium13,
                     color = defaultTeam6Colors.white
                 )
@@ -462,7 +474,8 @@ private fun DetailLegsSubway(
                 Column(
                     verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    for (stop in passStopList) {
+                    for (i in 1 until passStopList.size - 1) {
+                        val stop = passStopList[i]
                         Text(
                             text = stop.stationName,
                             style = defaultTeam6Typography.bodyMedium13,

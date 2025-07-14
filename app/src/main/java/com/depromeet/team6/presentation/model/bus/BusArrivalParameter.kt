@@ -1,5 +1,6 @@
 package com.depromeet.team6.presentation.model.bus
 
+import com.depromeet.team6.domain.model.course.Station
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -8,5 +9,6 @@ data class BusArrivalParameter(
     val stationName: String,
     val lat: Double,
     val lon: Double,
-    val subtypeIdx: Int
+    val subtypeIdx: Int,
+    val passingStations: List<Station> = emptyList()
 )

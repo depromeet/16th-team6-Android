@@ -1,7 +1,7 @@
 package com.depromeet.team6.presentation.ui.coursesearch
 
 import android.content.Context
-import android.content.SharedPreferences
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.RouteLocation
@@ -10,6 +10,8 @@ import com.depromeet.team6.domain.repository.UserInfoRepository
 import com.depromeet.team6.domain.usecase.GetCourseSearchResultsUseCase
 import com.depromeet.team6.domain.usecase.GetTaxiCostUseCase
 import com.depromeet.team6.domain.usecase.PostAlarmUseCase
+import com.depromeet.team6.presentation.ui.coursesearch.navigation.CourseSearchRoute.DEPARTURE_POINT
+import com.depromeet.team6.presentation.ui.coursesearch.navigation.CourseSearchRoute.DESTINATION_POINT
 import com.depromeet.team6.presentation.util.AmplitudeCommon.SCREEN_NAME
 import com.depromeet.team6.presentation.util.AmplitudeCommon.USER_ID
 import com.depromeet.team6.presentation.util.CourseSearchAmplitude.COURSE_SEARCH
@@ -34,6 +36,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CourseSearchViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     private val loadSearchResult: GetCourseSearchResultsUseCase,
     private val postAlarmUseCase: PostAlarmUseCase,
     private val userInfoRepository: UserInfoRepository,
@@ -42,11 +45,14 @@ class CourseSearchViewModel @Inject constructor(
     @ApplicationContext private val context: Context
 ) : BaseViewModel<CourseSearchContract.CourseUiState, CourseSearchContract.CourseSideEffect, CourseSearchContract.CourseEvent>() {
 
+    init {
+        val departurePointJSON: String = savedStateHandle[DEPARTURE_POINT] ?: "알 수 없음"
+        val destinationPointJSON: String = savedStateHandle[DESTINATION_POINT] ?: "알 수 없음"
+        setEvent(CourseSearchContract.CourseEvent.InitUiState(departurePointJSON, destinationPointJSON))
+    }
     private var enterTime: Long = 0
 
     override fun createInitialState(): CourseSearchContract.CourseUiState = CourseSearchContract.CourseUiState()
-
-    private val sharedPreferences: SharedPreferences = context.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
 
     override suspend fun handleEvent(event: CourseSearchContract.CourseEvent) {
         when (event) {
@@ -178,6 +184,8 @@ class CourseSearchViewModel @Inject constructor(
     }
 
     fun setDepartureDestination(departure: String, destination: String) {
+        val sharedPreferences = context.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
+
         try {
             val fromLockScreen = sharedPreferences.getBoolean("fromLockScreen", false)
 

@@ -43,7 +43,8 @@ class HomeContract {
             stationName = "",
             lat = 0.0,
             lon = 0.0,
-            subtypeIdx = 0
+            subtypeIdx = 0,
+            passingStations = emptyList()
         ),
         // 사용자 출발 여부
         val userDeparture: Boolean = false,

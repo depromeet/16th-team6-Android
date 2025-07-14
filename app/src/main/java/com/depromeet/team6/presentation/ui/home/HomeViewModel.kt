@@ -486,7 +486,8 @@ class HomeViewModel @Inject constructor(
                     stationName = leg.startPoint.name,
                     lat = leg.startPoint.lat,
                     lon = leg.startPoint.lon,
-                    subtypeIdx = 0
+                    subtypeIdx = 0,
+                    passingStations = leg.passStopList
                 )
             )
         )
@@ -543,8 +544,8 @@ class HomeViewModel @Inject constructor(
                         )
                     }
                     getTaxiCostUseCase.saveTaxiCost(it)
-                }.onFailure {
-                    setState {
+                }.onFailure { exception ->
+                    handleApiException(exception) {
                         copy(
                             taxiCost = 0
                         )
@@ -609,15 +610,12 @@ class HomeViewModel @Inject constructor(
                 routeName = currentState.busArrivalParameter.routeName,
                 stationName = currentState.busArrivalParameter.stationName,
                 lat = currentState.busArrivalParameter.lat,
-                lon = currentState.busArrivalParameter.lon
+                lon = currentState.busArrivalParameter.lon,
+                passingStations = currentState.busArrivalParameter.passingStations
             ).onSuccess { busArrival ->
                 setState {
                     copy(
-                        busRemainingStations = busArrival.realTimeBusArrival[0].remainingStations
-                    )
-                }
-                setState {
-                    copy(
+                        busRemainingStations = busArrival.realTimeBusArrival[0].remainingStations,
                         boardingTime = busArrival.realTimeBusArrival[0].remainingTime.toString()
                     )
                 }

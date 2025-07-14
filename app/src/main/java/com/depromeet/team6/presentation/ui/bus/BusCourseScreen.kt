@@ -1,5 +1,6 @@
 package com.depromeet.team6.presentation.ui.bus
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -24,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.SpanStyle
@@ -43,10 +45,12 @@ import com.depromeet.team6.presentation.ui.bus.component.BusStationItem
 import com.depromeet.team6.presentation.ui.common.TransportVectorIconComposable
 import com.depromeet.team6.presentation.ui.common.view.AtChaLoadingView
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
+import com.depromeet.team6.presentation.util.toast.atChaToastMessage
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.depromeet.team6.presentation.util.view.TransportTypeUiMapper
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.depromeet.team6.ui.theme.defaultTeam6Typography
+import timber.log.Timber
 
 @Composable
 fun BusCourseRoute(
@@ -58,6 +62,7 @@ fun BusCourseRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     val lifecycleOwner = LocalLifecycleOwner.current
+    val context = LocalContext.current
 
     LaunchedEffect(viewModel.sideEffect, lifecycleOwner) {
         viewModel.sideEffect.flowWithLifecycle(lifecycle = lifecycleOwner.lifecycle)
@@ -71,8 +76,10 @@ fun BusCourseRoute(
     LaunchedEffect(Unit) {
         viewModel.initUiState(busArrivalParameter)
     }
+    Timber.d("Load State : ${uiState.loadState}")
 
     when (uiState.loadState) {
+        LoadState.Idle -> Unit
         LoadState.Loading, LoadState.Success -> {
             Box {
                 BusCourseScreen(
@@ -89,7 +96,10 @@ fun BusCourseRoute(
             }
         }
 
-        else -> Unit
+        else -> {
+            atChaToastMessage(context, R.string.toast_cannot_load_screen, Toast.LENGTH_SHORT)
+            navigateToBackStack()
+        }
     }
 }
 
