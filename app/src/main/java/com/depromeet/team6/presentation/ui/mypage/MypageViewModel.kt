@@ -10,6 +10,7 @@ import com.depromeet.team6.data.dataremote.model.request.user.RequestModifyUserI
 import com.depromeet.team6.data.repositoryimpl.UserInfoRepositoryImpl
 import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.MypageUserInfo
+import com.depromeet.team6.domain.repository.HomeRepository
 import com.depromeet.team6.domain.usecase.DeleteWithDrawUseCase
 import com.depromeet.team6.domain.usecase.GetAddressFromCoordinatesUseCase
 import com.depromeet.team6.domain.usecase.GetLocationsUseCase
@@ -33,6 +34,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MypageViewModel @Inject constructor(
     private val userInfoRepositoryImpl: UserInfoRepositoryImpl,
+    private val homeRepository: HomeRepository,
     private val postLogoutUseCase: PostLogoutUseCase,
     private val getLocationsUseCase: GetLocationsUseCase,
     private val getAddressFromCoordinatesUseCase: GetAddressFromCoordinatesUseCase,
@@ -402,6 +404,7 @@ class MypageViewModel @Inject constructor(
                 setSideEffect(MypageContract.MypageSideEffect.NavigateToLogin)
                 setState { copy(loadState = LoadState.Error) }
                 userInfoRepositoryImpl.clear()
+                homeRepository.clearAlarmData()
             }.onFailure { exception ->
                 setEvent(MypageContract.MypageEvent.LogoutClicked)
                 handleApiException(exception = exception)
@@ -413,6 +416,7 @@ class MypageViewModel @Inject constructor(
         viewModelScope.launch {
             deleteWithDrawUseCase().onSuccess {
                 userInfoRepositoryImpl.clear()
+                homeRepository.clearAlarmData()
                 setSideEffect(MypageContract.MypageSideEffect.NavigateToLogin)
             }.onFailure { exception ->
                 handleApiException(exception = exception)
