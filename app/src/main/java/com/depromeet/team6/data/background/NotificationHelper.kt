@@ -17,14 +17,14 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class NotificationHelper @Inject constructor (
+class NotificationHelper @Inject constructor(
     @ApplicationContext val context: Context
 ) {
 
     companion object {
-        private const val RECOMMENDATION_CHANNEL_ID   = "atcha_recommendation"
+        private const val RECOMMENDATION_CHANNEL_ID = "atcha_recommendation"
         private const val RECOMMENDATION_CHANNEL_NAME = "10시 알람 추천"
-        private const val DEFAULT_CHANNEL_ID   = "default_channel"
+        private const val DEFAULT_CHANNEL_ID = "default_channel"
         private const val DEFAULT_CHANNEL_NAME = "일반 알림"
     }
 
@@ -40,7 +40,7 @@ class NotificationHelper @Inject constructor (
     private fun createChannel(
         id: String,
         name: String,
-        importance: Int = NotificationManager.IMPORTANCE_DEFAULT,
+        importance: Int = NotificationManager.IMPORTANCE_DEFAULT
     ) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             notificationManager.createNotificationChannel(NotificationChannel(id, name, importance))
@@ -59,7 +59,7 @@ class NotificationHelper @Inject constructor (
             0,
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or
-                    PendingIntent.FLAG_IMMUTABLE
+                PendingIntent.FLAG_IMMUTABLE
         )
 
         val notification = NotificationCompat.Builder(context, channelId)

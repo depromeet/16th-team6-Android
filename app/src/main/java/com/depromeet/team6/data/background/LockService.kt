@@ -108,7 +108,6 @@ class LockService : Service() {
             )
             vibrator?.vibrate(vibrationEffect)
             Log.e("LockService", "진동 성공~~~~!!!!")
-
         } catch (e: Exception) {
             Log.e("LockService", "진동 중 오류 발생: ${e.message}", e)
         }

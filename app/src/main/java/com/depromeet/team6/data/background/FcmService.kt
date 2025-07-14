@@ -71,9 +71,7 @@ class FcmService : FirebaseMessagingService() {
                 wakeLockAcquire()
                 sendHeadsUpNotification(title, body)
             } else if (type == "REFRESH") {
-
-            }
-            else {
+            } else {
                 sendDefaultNotification()
             }
         } else {

@@ -23,8 +23,9 @@ class LocationCheckReceiver : BroadcastReceiver() {
 
     @Inject
     lateinit var userInfoRepositoryImpl: UserInfoRepositoryImpl
+
     @Inject
-    lateinit var notificationHelper : NotificationHelper
+    lateinit var notificationHelper: NotificationHelper
 
     override fun onReceive(context: Context, intent: Intent) {
         // 위치 권한이 없으면 다음날로 알림 미루기
@@ -64,7 +65,7 @@ class LocationCheckReceiver : BroadcastReceiver() {
         }
     }
 
-    private fun hasLocationPermission(context : Context): Boolean {
+    private fun hasLocationPermission(context: Context): Boolean {
         val fineLocationGranted = ContextCompat.checkSelfPermission(
             context,
             Manifest.permission.ACCESS_FINE_LOCATION
