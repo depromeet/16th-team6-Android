@@ -1,7 +1,5 @@
-package com.depromeet.team6.data.datalocal.service
+package com.depromeet.team6.data.background
 
-import android.Manifest
-import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -10,20 +8,15 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.content.pm.PackageManager
-import android.location.Location
 import android.media.AudioAttributes
 import android.media.MediaPlayer
-import android.os.Build
 import android.os.CountDownTimer
 import android.os.IBinder
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.util.Log
 import androidx.core.app.NotificationCompat
-import androidx.core.content.ContextCompat
 import com.depromeet.team6.R
-import com.depromeet.team6.data.datalocal.manager.LockServiceManager
 import com.depromeet.team6.data.repositoryimpl.UserInfoRepositoryImpl
 import com.depromeet.team6.domain.usecase.GetTaxiCostUseCase
 import com.depromeet.team6.domain.usecase.GetTimeLeftUseCase
@@ -35,10 +28,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
-import kotlin.coroutines.resume
 
 @AndroidEntryPoint
 class LockService : Service() {
@@ -70,36 +61,37 @@ class LockService : Service() {
 
         if (isSound) {
             playAlarmSound()
+            vibrate()
         } else {
             vibrate()
         }
     }
 
-        private fun playAlarmSound() {
-            try {
-                Log.d("LockService", "알림음 재생 시작")
+    private fun playAlarmSound() {
+        try {
+            Log.d("LockService", "알림음 재생 시작")
 
-                // 알람 볼륨채널 설정
-                val audioAttr = AudioAttributes.Builder()
-                    .setUsage(AudioAttributes.USAGE_ALARM)
-                    .build()
+            // TODO : 미디어 볼륨말고 알람볼륨 채널 사용하게 바꿔야해요
+            val audioAttr = AudioAttributes.Builder()
+                .setUsage(AudioAttributes.USAGE_ALARM)
+                .build()
 
-                mediaPlayer?.release()
-                mediaPlayer = MediaPlayer.create(applicationContext, R.raw.alarm_sound)
-                mediaPlayer?.apply {
-                    isLooping = true
-                    setAudioAttributes(audioAttr)
-                    setVolume(4.0f, 4.0f)
-                    setOnCompletionListener {
-                        Log.d("LockService", "알림음 재생 완료")
-                    }
-                    start()
-                    Log.d("LockService", "알림음 재생 시작됨")
+            mediaPlayer?.release()
+            mediaPlayer = MediaPlayer.create(applicationContext, R.raw.alarm_sound)
+            mediaPlayer?.apply {
+                isLooping = true
+                setAudioAttributes(audioAttr)
+                setVolume(4.0f, 4.0f)
+                setOnCompletionListener {
+                    Log.d("LockService", "알림음 재생 완료")
                 }
-            } catch (e: Exception) {
-                Log.e("LockService", "알림음 재생 중 오류 발생: ${e.message}", e)
+                start()
+                Log.d("LockService", "알림음 재생 시작됨")
             }
+        } catch (e: Exception) {
+            Log.e("LockService", "알림음 재생 중 오류 발생: ${e.message}", e)
         }
+    }
 
     private fun vibrate() {
         try {
@@ -107,7 +99,7 @@ class LockService : Service() {
 
             val pattern = longArrayOf(1000, 1000)
             val amplitudes = intArrayOf(255, 0)
-            val repeatIndex = 99999
+            val repeatIndex = 0
 
             val vibrationEffect = VibrationEffect.createWaveform(
                 pattern,
@@ -115,16 +107,8 @@ class LockService : Service() {
                 repeatIndex
             )
             vibrator?.vibrate(vibrationEffect)
-//
-//            vibrationTimer?.cancel()
-//            vibrationTimer = object : CountDownTimer(60000, 60000) {
-//                override fun onTick(millisUntilFinished: Long) {
-//                }
-//
-//                override fun onFinish() {
-//                    stopVibration()
-//                }
-//            }.start()
+            Log.e("LockService", "진동 성공~~~~!!!!")
+
         } catch (e: Exception) {
             Log.e("LockService", "진동 중 오류 발생: ${e.message}", e)
         }
@@ -147,8 +131,6 @@ class LockService : Service() {
     }
 
     private fun stopVibration() {
-//        vibrationTimer?.cancel()
-//        vibrationTimer = null
         vibrator?.cancel()
         vibrator = null
         Log.d("LockService", "진동 중지")
@@ -204,8 +186,6 @@ class LockService : Service() {
 
         val showLockScreen = intent?.getBooleanExtra(EXTRA_SHOW_LOCK_SCREEN, false) ?: false
 
-        val checkLocation = intent?.getBooleanExtra(EXTRA_CHECK_LOCATION, false) ?: false
-
         startLockReceiver()
 
         if (showLockScreen) {
@@ -220,10 +200,6 @@ class LockService : Service() {
             }
         }
 
-        if (checkLocation) {
-            handleLocationCheckRequest()
-        }
-
         return START_STICKY
     }
 
@@ -236,124 +212,6 @@ class LockService : Service() {
         vibrationTimer = null
         lockServiceManager.stop()
         super.onDestroy()
-    }
-
-    private fun handleLocationCheckRequest() {
-        if (!hasLocationPermission()) {
-            scheduleNextLocationCheckAndStop()
-            return
-        }
-
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                val currentLocation = getCurrentLocation()
-                if (currentLocation == null) {
-                    scheduleNextLocationCheckAndStop()
-                    return@launch
-                }
-
-                val homeLatitude = userInfoRepositoryImpl.getUserHome().latitude
-                val homeLongitude = userInfoRepositoryImpl.getUserHome().longitude
-
-                val distance = calculateDistance(
-                    currentLocation.latitude,
-                    currentLocation.longitude,
-                    homeLatitude,
-                    homeLongitude
-                )
-
-                if (distance > 1.0) {
-                    showLocationNotification()
-                }
-
-                scheduleNextLocationCheckAndStop()
-            } catch (e: Exception) {
-                scheduleNextLocationCheckAndStop()
-            }
-        }
-    }
-
-    private fun hasLocationPermission(): Boolean {
-        val fineLocationGranted = ContextCompat.checkSelfPermission(
-            this,
-            Manifest.permission.ACCESS_FINE_LOCATION
-        ) == PackageManager.PERMISSION_GRANTED
-
-        val coarseLocationGranted = ContextCompat.checkSelfPermission(
-            this,
-            Manifest.permission.ACCESS_COARSE_LOCATION
-        ) == PackageManager.PERMISSION_GRANTED
-
-        val backgroundLocationGranted = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_BACKGROUND_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
-        } else {
-            true
-        }
-        return (fineLocationGranted || coarseLocationGranted) && backgroundLocationGranted
-    }
-
-    @SuppressLint("MissingPermission")
-    private suspend fun getCurrentLocation(): Location? {
-        return try {
-            suspendCancellableCoroutine { continuation ->
-                fusedLocationClient?.lastLocation?.addOnCompleteListener { task ->
-                    if (task.isSuccessful && task.result != null) {
-                        continuation.resume(task.result)
-                    } else {
-                        continuation.resume(null)
-                    }
-                }?.addOnFailureListener { exception ->
-                    continuation.resume(null)
-                }
-            }
-        } catch (e: SecurityException) {
-            null
-        } catch (e: Exception) {
-            null
-        }
-    }
-
-    private fun calculateDistance(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Double {
-        val results = FloatArray(1)
-        Location.distanceBetween(lat1, lon1, lat2, lon2, results)
-        return (results[0] / 1000.0)
-    }
-
-    private fun showLocationNotification() {
-        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-
-        val channel = NotificationChannel(
-            LOCATION_CHANNEL_ID,
-            LOCATION_CHANNEL_NAME,
-            NotificationManager.IMPORTANCE_DEFAULT
-        )
-        notificationManager.createNotificationChannel(channel)
-
-        val intent = Intent(this, MainActivity::class.java)
-        val pendingIntent = PendingIntent.getActivity(
-            this,
-            0,
-            intent,
-            PendingIntent.FLAG_UPDATE_CURRENT or
-                PendingIntent.FLAG_IMMUTABLE
-        )
-
-        val notification = NotificationCompat.Builder(this, LOCATION_CHANNEL_ID)
-            .setContentText(getString(R.string.notification_ten_text))
-            .setSmallIcon(R.drawable.ic_app_logo_foreground)
-            .setContentIntent(pendingIntent)
-            .setAutoCancel(true)
-            .build()
-
-        notificationManager.notify(LOCATION_NOTIFICATION_ID, notification)
-    }
-
-    private fun scheduleNextLocationCheckAndStop() {
-        lockServiceManager.scheduleLocationCheck()
-        stopSelf()
     }
 
     private fun startLockReceiver() {
@@ -372,7 +230,7 @@ class LockService : Service() {
         const val EXTRA_CHECK_LOCATION = "extra_check_location"
         const val ACTION_STOP_ALARM_SOUND = "com.depromeet.team6.STOP_ALARM_SOUND"
 
-        private const val LOCATION_NOTIFICATION_ID = 1001
+        const val LOCATION_NOTIFICATION_ID = 1001
 
         private const val LOCATION_CHANNEL_ID = "ATCHA_LOCATION_CHANNEL"
         private const val LOCATION_CHANNEL_NAME = "ATCHA_LOCATION"

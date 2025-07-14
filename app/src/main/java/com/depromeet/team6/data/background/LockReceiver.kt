@@ -1,4 +1,4 @@
-package com.depromeet.team6.data.datalocal.service
+package com.depromeet.team6.data.background
 
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -14,14 +14,14 @@ object LockReceiver : BroadcastReceiver() {
     private lateinit var taxiCostUseCase: GetTaxiCostUseCase
 
     fun initialize(navigator: LockScreenNavigator, taxiCostUseCase: GetTaxiCostUseCase) {
-        this.navigator = navigator
-        this.taxiCostUseCase = taxiCostUseCase
+        LockReceiver.navigator = navigator
+        LockReceiver.taxiCostUseCase = taxiCostUseCase
     }
 
     override fun onReceive(context: Context, intent: Intent) {
         when (intent.action) {
             Intent.ACTION_SCREEN_ON -> {
-                if (::navigator.isInitialized) {
+                if (LockReceiver::navigator.isInitialized) {
                     CoroutineScope(Dispatchers.IO).launch {
                         try {
                             val taxiCost = taxiCostUseCase.getLastSavedTaxiCost()

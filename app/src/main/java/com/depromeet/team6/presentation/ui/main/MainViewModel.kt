@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.depromeet.team6.data.datalocal.manager.LockServiceManager
+import com.depromeet.team6.data.background.LockServiceManager
 import com.depromeet.team6.domain.repository.UserInfoRepository
 import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.lifecycle.HiltViewModel

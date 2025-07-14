@@ -2,7 +2,7 @@ package com.depromeet.team6.presentation.ui.home
 
 import android.content.Context
 import androidx.lifecycle.viewModelScope
-import com.depromeet.team6.data.datalocal.manager.LockServiceManager
+import com.depromeet.team6.data.background.LockServiceManager
 import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.RouteLocation
 import com.depromeet.team6.domain.model.course.CourseInfo

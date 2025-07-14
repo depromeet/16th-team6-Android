@@ -1,4 +1,4 @@
-package com.depromeet.team6.data.datalocal.service
+package com.depromeet.team6.data.background
 
 import android.app.Notification
 import android.app.NotificationChannel
@@ -47,6 +47,8 @@ class FcmService : FirebaseMessagingService() {
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
 
+        Log.d("FCM", "[FCM] FcmService -> 시작~~~~~~~~~~~~~~~!")
+
         Log.d("FCM", "[FCM] FcmService -> data: ${message.data}")
         Log.d("FCM", "[FCM] FcmService -> notification: ${message.notification}")
 
@@ -68,7 +70,10 @@ class FcmService : FirebaseMessagingService() {
             } else if (type == PUSH_ALERT) {
                 wakeLockAcquire()
                 sendHeadsUpNotification(title, body)
-            } else {
+            } else if (type == "REFRESH") {
+
+            }
+            else {
                 sendDefaultNotification()
             }
         } else {
