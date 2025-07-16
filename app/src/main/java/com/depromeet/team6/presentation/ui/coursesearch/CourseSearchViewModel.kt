@@ -3,10 +3,12 @@ package com.depromeet.team6.presentation.ui.coursesearch
 import android.content.Context
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.depromeet.team6.data.background.AlarmScheduler
 import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.RouteLocation
 import com.depromeet.team6.domain.repository.HomeRepository
 import com.depromeet.team6.domain.repository.UserInfoRepository
+import com.depromeet.team6.domain.usecase.DeleteAlarmUseCase
 import com.depromeet.team6.domain.usecase.GetCourseSearchResultsUseCase
 import com.depromeet.team6.domain.usecase.GetTaxiCostUseCase
 import com.depromeet.team6.domain.usecase.PostAlarmUseCase
@@ -42,6 +44,7 @@ class CourseSearchViewModel @Inject constructor(
     private val userInfoRepository: UserInfoRepository,
     private val homeRepository: HomeRepository,
     private val getTaxiCostUseCase: GetTaxiCostUseCase,
+    private val deleteAlarmUseCase: DeleteAlarmUseCase,
     @ApplicationContext private val context: Context
 ) : BaseViewModel<CourseSearchContract.CourseUiState, CourseSearchContract.CourseSideEffect, CourseSearchContract.CourseEvent>() {
 
@@ -232,7 +235,7 @@ class CourseSearchViewModel @Inject constructor(
         }
     }
 
-    fun saveAlarmData(departurePoint: String, destinationPoint: String, routeId: String) {
+    private fun saveAlarmData(departurePoint: String, destinationPoint: String, routeId: String) {
         viewModelScope.launch {
             try {
                 val departureAddress = Gson().fromJson(departurePoint, Address::class.java)
@@ -251,7 +254,7 @@ class CourseSearchViewModel @Inject constructor(
         }
     }
 
-    fun postAlarm(lastRouteId: String) {
+    fun postAlarm(departurePoint: String, destinationPoint: String, lastRouteId: String, alarmTimeStamp: String) {
         viewModelScope.launch {
             postAlarmUseCase(
                 lastRouteId = lastRouteId
@@ -260,6 +263,25 @@ class CourseSearchViewModel @Inject constructor(
                     setEvent(CourseSearchContract.CourseEvent.RegisterAlarm)
                     setSideEffect(CourseSearchContract.CourseSideEffect.NavigateHomeWithToast)
                     getTaxiCost()
+                    saveAlarmData(departurePoint, destinationPoint, lastRouteId)
+                    AlarmScheduler.scheduleLockScreenAlarm(
+                        context = context,
+                        timeStamp = alarmTimeStamp
+                    )
+                }
+                .onFailure { exception ->
+                    handleApiException(exception)
+                }
+        }
+    }
+
+    fun updateAlarm(departurePoint: String, destinationPoint: String, lastRouteId: String, alarmTimeStamp: String) {
+        viewModelScope.launch {
+            deleteAlarmUseCase(
+                lastRouteId = lastRouteId
+            )
+                .onSuccess {
+                    postAlarm(departurePoint, destinationPoint, lastRouteId, alarmTimeStamp)
                 }
                 .onFailure { exception ->
                     handleApiException(exception)

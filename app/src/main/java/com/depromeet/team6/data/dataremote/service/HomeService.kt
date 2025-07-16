@@ -6,7 +6,6 @@ import com.depromeet.team6.data.dataremote.util.ApiConstraints.BUS_STARTED
 import com.depromeet.team6.data.dataremote.util.ApiConstraints.LAST_ROUTES
 import com.depromeet.team6.data.dataremote.util.ApiConstraints.LAST_ROUTE_ID
 import com.depromeet.team6.data.dataremote.util.ApiConstraints.ROUTES
-import com.depromeet.team6.data.dataremote.util.ApiConstraints.TRANSITS
 import retrofit2.http.GET
 import retrofit2.http.Path
 

@@ -45,7 +45,7 @@ object ApiConstraints {
 
     // Alarm
     const val NOTIFICATIONS = "notifications"
-    const val ROUTE = "route"
+    const val USER_ROUTE = "user-routes"
 
     // Transits
     const val TRANSITS = "transits"
