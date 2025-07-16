@@ -2,6 +2,7 @@ package com.depromeet.team6.data.dataremote.service
 
 import com.depromeet.team6.data.dataremote.model.response.base.BaseResponse
 import com.depromeet.team6.data.dataremote.util.ApiConstraints.API
+import com.depromeet.team6.data.dataremote.util.ApiConstraints.ROUTES
 import com.depromeet.team6.data.dataremote.util.ApiConstraints.TAXIFARE
 import com.depromeet.team6.data.dataremote.util.ApiConstraints.TRANSITS
 import retrofit2.http.GET
