@@ -9,3 +9,12 @@ data class UserInfo(
     val userHome: LatLng,
     val alertFrequencies: Set<Int>
 )
+
+data class GetUserInfo(
+    val id: Int,
+    val providerId: String,
+    val address: String,
+    val userHome: LatLng,
+    val alertFrequencies: Set<Int>,
+    val appVersion: String
+)

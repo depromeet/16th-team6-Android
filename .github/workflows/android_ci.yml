@@ -71,6 +71,42 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew build -PcompileSdkVersion=34
 
+      # ✅ 버전 정보 추출 및 API 호출
+      - name: Update App Version
+        if: ${{ success() }}
+        env:
+          SERVER_DEV_URL: ${{ secrets.SERVER_DEV_URL }}
+          SERVER_PROD_URL: ${{ secrets.SERVER_PROD_URL }}
+          VERSION_API_ENDPOINT: ${{ secrets.VERSION_API_ENDPOINT }}
+        run: |
+          VERSION_NAME=$(grep -E "versionName\s*=" app/build.gradle.kts | sed 's/.*versionName\s*=\s*"\([^"]*\)".*/\1/')
+          
+          if [[ ! $VERSION_NAME =~ ^v ]]; then
+            VERSION_NAME="v$VERSION_NAME"
+          fi
+          
+          echo "Current version: $VERSION_NAME"
+          
+          # 개발 서버에 API 호출
+          echo "Updating DEV server..."
+          (curl -X POST \
+            -H "Content-Type: application/json" \
+            -d "{\"version\": \"$VERSION_NAME\"}" \
+            "${SERVER_DEV_URL}${VERSION_API_ENDPOINT}" \
+            && echo "DEV server updated successfully") \
+            || echo "DEV server update failed, but continuing..."
+          
+          # 운영 서버에 API 호출
+          echo "Updating PROD server..."
+          (curl -X POST \
+            -H "Content-Type: application/json" \
+            -d "{\"version\": \"$VERSION_NAME\"}" \
+            "${SERVER_PROD_URL}${VERSION_API_ENDPOINT}" \
+            && echo "PROD server updated successfully") \
+            || echo "PROD server update failed, but continuing..."
+          
+          echo "Version update process completed"
+
       # ✅ 성공 알림
       - name: Slack Notify - Success
         if: ${{ success() }}
