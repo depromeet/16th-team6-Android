@@ -213,13 +213,13 @@ fun HomeRoute(
         }
     }
 
-    LaunchedEffect(uiState.isAlarmRegistered, uiState.firtTransportTation) {
-        if (uiState.isAlarmRegistered && uiState.firtTransportTation == TransportType.BUS) {
-            viewModel.startPollingBusStarted(routeId = uiState.lastRouteId)
-        } else {
-            viewModel.stopPollingBusStarted()
-        }
-    }
+//    LaunchedEffect(uiState.isAlarmRegistered, uiState.firtTransportTation) {
+//        if (uiState.isAlarmRegistered && uiState.firtTransportTation == TransportType.BUS) {
+//            viewModel.startPollingBusStarted(routeId = uiState.lastRouteId)
+//        } else {
+//            viewModel.stopPollingBusStarted()
+//        }
+//    }
 
     SideEffect {
         if (!PermissionUtil.isLocationPermissionRequested(context) &&

@@ -37,12 +37,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
@@ -282,7 +279,7 @@ class HomeViewModel @Inject constructor(
                     setEvent(HomeContract.HomeEvent.UpdateAlarmRegistered(false))
                     setEvent(HomeContract.HomeEvent.UpdateBusDeparted(false))
 
-                    stopPollingBusStarted()
+//                    stopPollingBusStarted()
 
                     homeRepository.clearAlarmData()
 
@@ -306,9 +303,9 @@ class HomeViewModel @Inject constructor(
                             isBusDeparted = it
                         )
                     }
-                    if (it) {
-                        stopPollingBusStarted()
-                    }
+//                    if (it) {
+//                        stopPollingBusStarted()
+//                    }
                 }.onFailure {
                     handleApiException(it) {
                         copy(
@@ -317,7 +314,7 @@ class HomeViewModel @Inject constructor(
                     }
                     // TODO : 실패 5번 누적되면 푸시알림 구현
                     Timber.e("버스 출발여부 에러: ${it.message}")
-                    stopPollingBusStarted()
+//                    stopPollingBusStarted()
                 }
         }
     }
@@ -368,51 +365,51 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun startPollingBusStarted(routeId: String) {
-        busStartedPollingJob?.cancel()
-        lastRouteId = routeId
-
-        if (currentState.firtTransportTation == TransportType.BUS && currentState.isAlarmRegistered) {
-            busStartedPollingJob = viewModelScope.launch {
-                try {
-                    val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
-                    val departureTime = LocalTime.parse(currentState.departureTime, timeFormatter)
-                    val now = LocalDateTime.now()
-
-                    var departureDateTimeToday = LocalDateTime.of(LocalDate.now(), departureTime)
-                    if (departureDateTimeToday.isBefore(now) || departureDateTimeToday.isEqual(now)) {
-                        departureDateTimeToday = departureDateTimeToday.plusDays(1)
-                    }
-
-                    val thirtyMinutesBefore = departureDateTimeToday.minusMinutes(30)
-
-                    if (now.isBefore(thirtyMinutesBefore)) {
-                        val delayUntilStart = java.time.Duration.between(now, thirtyMinutesBefore).toMillis()
-                        delay(delayUntilStart)
-                    }
-
-                    while (isActive) {
-                        Timber.d("버스 차고지 출발 여부 API 호출")
-                        getBusStarted(routeId)
-                        delay(60000)
-                    }
-                } catch (e: Exception) {
-                    Timber.e("startPollingBusStarted 오류: ${e.message}")
-                }
-            }
-        }
-    }
-
-    fun stopPollingBusStarted() {
-        busStartedPollingJob?.cancel()
-        busStartedPollingJob = null
-    }
+//    fun startPollingBusStarted(routeId: String) {
+//        busStartedPollingJob?.cancel()
+//        lastRouteId = routeId
+//
+//        if (currentState.firtTransportTation == TransportType.BUS && currentState.isAlarmRegistered) {
+//            busStartedPollingJob = viewModelScope.launch {
+//                try {
+//                    val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
+//                    val departureTime = LocalTime.parse(currentState.departureTime, timeFormatter)
+//                    val now = LocalDateTime.now()
+//
+//                    var departureDateTimeToday = LocalDateTime.of(LocalDate.now(), departureTime)
+//                    if (departureDateTimeToday.isBefore(now) || departureDateTimeToday.isEqual(now)) {
+//                        departureDateTimeToday = departureDateTimeToday.plusDays(1)
+//                    }
+//
+//                    val thirtyMinutesBefore = departureDateTimeToday.minusMinutes(30)
+//
+//                    if (now.isBefore(thirtyMinutesBefore)) {
+//                        val delayUntilStart = java.time.Duration.between(now, thirtyMinutesBefore).toMillis()
+//                        delay(delayUntilStart)
+//                    }
+//
+//                    while (isActive) {
+//                        Timber.d("버스 차고지 출발 여부 API 호출")
+//                        loadDepartureTime()
+//                        delay(60000)
+//                    }
+//                } catch (e: Exception) {
+//                    Timber.e("startPollingBusStarted 오류: ${e.message}")
+//                }
+//            }
+//        }
+//    }
+//
+//    fun stopPollingBusStarted() {
+//        busStartedPollingJob?.cancel()
+//        busStartedPollingJob = null
+//    }
 
     fun loadUserDepartureState() {
         viewModelScope.launch {
             val userDeparture = homeRepository.isUserDeparted()
             setEvent(HomeContract.HomeEvent.LoadUserDeparture(userDeparture))
-            if (currentState.userDeparture && currentState.firtTransportTation == TransportType.BUS) {
+            if (userDeparture && currentState.firtTransportTation == TransportType.BUS) {
                 getBusArrival()
             }
         }
@@ -476,9 +473,9 @@ class HomeViewModel @Inject constructor(
                 setEvent(HomeContract.HomeEvent.LoadFirstTransportationName(getFirstTransportationName(courseInfo.legs)))
 
                 if (getFirstTransportation(courseInfo.legs) == TransportType.BUS) {
-                    if (lastRouteId.isNotEmpty()) {
-                        startPollingBusStarted(lastRouteId)
-                    }
+//                    if (lastRouteId.isNotEmpty()) {
+//                        startPollingBusStarted(lastRouteId)
+//                    }
                 } else if (getFirstTransportation(courseInfo.legs) == TransportType.SUBWAY) {
                     setEvent(HomeContract.HomeEvent.UpdateBusDeparted(true))
                 }
@@ -544,10 +541,10 @@ class HomeViewModel @Inject constructor(
         return firstTransportationName
     }
 
-    override fun onCleared() {
-        super.onCleared()
-        stopPollingBusStarted()
-    }
+//    override fun onCleared() {
+//        super.onCleared()
+//        stopPollingBusStarted()
+//    }
 
     private fun getTaxiCost() {
         viewModelScope.launch {
