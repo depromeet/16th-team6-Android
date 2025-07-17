@@ -39,6 +39,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.time.Duration
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
@@ -94,7 +95,7 @@ class HomeViewModel @Inject constructor(
             is HomeContract.HomeEvent.LoadDepartureDateTime -> {
                 setState {
                     copy(
-                        departureTime = event.departureTime.substring(11, 16)
+                        departureTime = event.departureTime
                     )
                 }
             }
@@ -416,6 +417,14 @@ class HomeViewModel @Inject constructor(
     }
 
     fun loadDepartureTime() {
+        // 남은시간 3분 이하부터는 새로고침 불가
+        val now: LocalDateTime = LocalDateTime.now()
+        val departureTime = LocalDateTime.parse(currentState.departureTime, DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+        val diff: Duration = Duration.between(now, departureTime)
+        if (diff <= Duration.ofMinutes(2)) {
+            return
+        }
+
         viewModelScope.launch {
             refreshAlarmTimerUseCase()
                 .onSuccess {
