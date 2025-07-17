@@ -1,6 +1,7 @@
 package com.depromeet.team6.data.dataremote.datasource
 
 import com.depromeet.team6.data.dataremote.model.request.alarm.RequestAlarmDto
+import com.depromeet.team6.data.dataremote.model.response.alarm.ResponseAlarmRefreshDTO
 import com.depromeet.team6.data.dataremote.model.response.base.parse
 import com.depromeet.team6.data.dataremote.service.AlarmService
 import javax.inject.Inject
@@ -17,4 +18,7 @@ class AlarmRemoteDataSource @Inject constructor(
         val response = alarmService.deleteAlarm(lastRouteId = lastRouteId)
         return response.parse()
     }
+
+    suspend fun refreshAlarm(): Result<ResponseAlarmRefreshDTO> =
+        alarmService.refreshAlarm().parse()
 }

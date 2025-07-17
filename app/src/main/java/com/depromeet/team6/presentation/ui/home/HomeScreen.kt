@@ -491,7 +491,7 @@ fun HomeRoute(
                         viewModel.updateCurrentLocation(newLocation)
                     },
                     onTimerFinished = { viewModel.onTimerFinished() },
-                    getBusArrival = { viewModel.getBusArrival() },
+                    getDepartureTime = { viewModel.loadDepartureTime() },
                     onCharacterClick = onCharacterClick,
                     characterState = characterState,
                     showTempMessage = ::showTempMessage,
@@ -603,7 +603,7 @@ fun HomeScreen(
     getCenterLocation: (LatLng) -> Unit = {},
     updateCurrentLocation: (LatLng) -> Unit = {},
     onTimerFinished: () -> Unit = {},
-    getBusArrival: () -> Unit = {},
+    getDepartureTime: () -> Unit = {},
     onCharacterClick: () -> Unit = {},
     characterState: CharacterState,
     showTempMessage: (ComponentType) -> Unit = {},
@@ -726,7 +726,7 @@ fun HomeScreen(
                     onRefreshClick = {
                         onRefreshClick()
                         if (homeUiState.firtTransportTation == TransportType.BUS) {
-                            getBusArrival()
+                            getDepartureTime()
                         }
                     },
                     onIconClick = {

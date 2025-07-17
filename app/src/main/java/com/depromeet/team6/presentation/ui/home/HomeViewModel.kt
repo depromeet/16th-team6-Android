@@ -1,6 +1,8 @@
 package com.depromeet.team6.presentation.ui.home
 
+import android.content.Context
 import androidx.lifecycle.viewModelScope
+import com.depromeet.team6.data.background.AlarmScheduler
 import com.depromeet.team6.data.background.LockServiceManager
 import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.RouteLocation
@@ -15,6 +17,7 @@ import com.depromeet.team6.domain.usecase.GetBusStartedUseCase
 import com.depromeet.team6.domain.usecase.GetCourseSearchResultsUseCase
 import com.depromeet.team6.domain.usecase.GetTaxiCostUseCase
 import com.depromeet.team6.domain.usecase.GetUserInfoUseCase
+import com.depromeet.team6.domain.usecase.RefreshAlarmTimerUseCase
 import com.depromeet.team6.presentation.model.bus.BusArrivalParameter
 import com.depromeet.team6.presentation.util.AmplitudeCommon.SCREEN_NAME
 import com.depromeet.team6.presentation.util.AmplitudeCommon.USER_ID
@@ -31,6 +34,7 @@ import com.depromeet.team6.presentation.util.base.BaseViewModel
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
@@ -52,7 +56,9 @@ class HomeViewModel @Inject constructor(
     val getCourseSearchResultUseCase: GetCourseSearchResultsUseCase,
     private val getBusStartedUseCase: GetBusStartedUseCase,
     private val getBusArrivalUseCase: GetBusArrivalUseCase,
-    private val deleteAlarmUseCase: DeleteAlarmUseCase
+    private val deleteAlarmUseCase: DeleteAlarmUseCase,
+    private val refreshAlarmTimerUseCase: RefreshAlarmTimerUseCase,
+    @ApplicationContext private val context: Context
 ) : BaseViewModel<HomeContract.HomeUiState, HomeContract.HomeSideEffect, HomeContract.HomeEvent>() {
     private var speechBubbleJob: Job? = null
     private var busStartedPollingJob: Job? = null
@@ -408,8 +414,24 @@ class HomeViewModel @Inject constructor(
             setEvent(HomeContract.HomeEvent.LoadUserDeparture(userDeparture))
             if (currentState.userDeparture && currentState.firtTransportTation == TransportType.BUS) {
                 getBusArrival()
-                Timber.e("busArrivalParameter", currentState.busArrivalParameter.toString())
             }
+        }
+    }
+
+    fun loadDepartureTime() {
+        viewModelScope.launch {
+            refreshAlarmTimerUseCase()
+                .onSuccess {
+                    setState {
+                        copy(
+                            departureTime = it
+                        )
+                    }
+                    AlarmScheduler.scheduleLockScreenAlarm(context, it)
+                }
+                .onFailure {
+                    handleApiException(it)
+                }
         }
     }
 
