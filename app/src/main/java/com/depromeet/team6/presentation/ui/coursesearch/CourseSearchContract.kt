@@ -16,6 +16,7 @@ class CourseSearchContract {
         val sortType: Int = 1,
         val showDeleteAlarmDialog: Boolean = false,
         val showOverlayPermissionDialog: Boolean = false,
+        val showPermissionSnackbar: Boolean = false,
         val selectedRouteId: String = ""
     ) : UiState
 
@@ -38,5 +39,7 @@ class CourseSearchContract {
         data object DismissDeleteAlarmDialog : CourseEvent()
         data object ShowOverlayPermissionDialog : CourseEvent()
         data object DismissOverlayPermissionDialog : CourseEvent()
+        data object ShowPermissionSnackbar : CourseEvent()
+        data object DismissPermissionSnackbar : CourseEvent()
     }
 }

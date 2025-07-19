@@ -109,16 +109,4 @@ object PermissionUtil {
         }
         context.startActivity(intent)
     }
-
-    fun isOverlayDialogShown(context: Context): Boolean {
-        return getPreferences(context).getBoolean(KEY_OVERLAY_DIALOG_SHOWN, false)
-    }
-
-    fun setOverlayDialogShown(context: Context) {
-        savePermissionRequested(context, KEY_OVERLAY_DIALOG_SHOWN)
-    }
-
-    fun shouldShowDialog(context: Context): Boolean {
-        return !isOverlayDialogShown(context)
-    }
 }

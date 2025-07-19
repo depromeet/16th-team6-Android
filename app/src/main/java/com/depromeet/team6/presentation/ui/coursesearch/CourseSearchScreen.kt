@@ -8,7 +8,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -34,6 +36,7 @@ import com.depromeet.team6.presentation.ui.coursesearch.component.TransportTabMe
 import com.depromeet.team6.presentation.ui.home.component.DeleteAlarmDialog
 import com.depromeet.team6.presentation.ui.itinerary.LegInfoDummyProvider
 import com.depromeet.team6.presentation.ui.overlay.OverlayPermissionDialog
+import com.depromeet.team6.presentation.ui.overlay.PermissionSnackbar
 import com.depromeet.team6.presentation.util.AmplitudeCommon.SCREEN_NAME
 import com.depromeet.team6.presentation.util.AmplitudeCommon.USER_ID
 import com.depromeet.team6.presentation.util.HomeAmplitude.ALERT_END_POPUP_2
@@ -69,14 +72,9 @@ fun CourseSearchRoute(
                 Lifecycle.Event.ON_RESUME -> {
                     viewModel.setEvent(CourseSearchContract.CourseEvent.OnEnter)
 
-                    if (PermissionUtil.isOverlayDialogShown(context) &&
-                        PermissionUtil.isOverlayPermissionRequested(context)) {
-                        if (!PermissionUtil.hasOverlayPermission(context)) {
-                            atChaToastMessage(context,
-                                R.string.overlay_permission_toast_message, Toast.LENGTH_LONG)
-                        }
-                    }
+                    viewModel.checkOverlayPermissionOnResume()
                 }
+
                 Lifecycle.Event.ON_PAUSE -> viewModel.setEvent(CourseSearchContract.CourseEvent.OnExit)
                 else -> {}
             }
@@ -144,6 +142,7 @@ fun CourseSearchRoute(
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
             }
         }
+
         LoadState.Success -> {
             CourseSearchScreen(
                 uiState = uiState,
@@ -154,11 +153,11 @@ fun CourseSearchRoute(
                 navigateToItinerary = navigateToItinerary,
                 setNotification = { routeId ->
                     if (PermissionUtil.needsOverlayPermission(context)) {
-                        if (PermissionUtil.shouldShowDialog(context)) {
+
+                        if (viewModel.shouldShowOverlayDialog()) {
                             viewModel.showOverlayPermissionDialog()
                         } else {
-                            atChaToastMessage(context,
-                                R.string.overlay_permission_toast_message, Toast.LENGTH_LONG)
+                            viewModel.showPermissionSnackbar()
                         }
                     } else {
                         viewModel.registerAlarmWithPermissionCheck(
@@ -170,8 +169,31 @@ fun CourseSearchRoute(
                 },
                 backButtonClicked = { navigateToHome() },
                 courseInfoToggleClick = { viewModel.setEvent(CourseSearchContract.CourseEvent.ItemCourseDetailToggleClick) },
-                itemCardClick = { viewModel.setEvent(CourseSearchContract.CourseEvent.ItemCardClick(isTextClicked = it)) }
+                itemCardClick = {
+                    viewModel.setEvent(
+                        CourseSearchContract.CourseEvent.ItemCardClick(
+                            isTextClicked = it
+                        )
+                    )
+                }
             )
+            if (uiState.showPermissionSnackbar) {
+                Box(modifier = Modifier.fillMaxSize()) {
+                    PermissionSnackbar(
+                        onSettingsClick = {
+                            viewModel.dismissPermissionSnackbar()
+                            PermissionUtil.openOverlayPermissionSettings(context)
+                        },
+                        onDismiss = {
+                            viewModel.dismissPermissionSnackbar()
+                        },
+                        modifier = Modifier
+                            .align(Alignment.TopCenter)
+                            .padding(top = 40.dp)
+                    )
+                }
+            }
+
 
             if (uiState.showOverlayPermissionDialog) {
                 Box(
@@ -186,11 +208,12 @@ fun CourseSearchRoute(
                         OverlayPermissionDialog(
                             onDismiss = {
                                 viewModel.dismissOverlayPermissionDialog()
-                                PermissionUtil.setOverlayDialogShown(context)
+                                viewModel.markOverlayDialogAsShow()
+                                viewModel.showPermissionSnackbar()
                             },
                             onSettingClicked = {
                                 viewModel.dismissOverlayPermissionDialog()
-                                PermissionUtil.setOverlayDialogShown(context)
+                                viewModel.markOverlayDialogAsShow()
                                 PermissionUtil.openOverlayPermissionSettings(context)
                             }
                         )
