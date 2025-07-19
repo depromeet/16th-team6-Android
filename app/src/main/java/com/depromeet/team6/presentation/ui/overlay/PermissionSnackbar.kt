@@ -1,11 +1,9 @@
 package com.depromeet.team6.presentation.ui.overlay
 
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
@@ -37,7 +35,6 @@ fun PermissionSnackbar(
     modifier: Modifier = Modifier,
     autoDismissDelay: Long = 3500L
 ) {
-
     var isVisible by remember { mutableStateOf(false) }
     var shouldDismiss by remember { mutableStateOf(false) }
 
@@ -81,7 +78,6 @@ fun PermissionSnackbar(
                 .padding(horizontal = 16.dp, vertical = 20.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-
             Text(
                 text = stringResource(
                     R.string.overlay_permission_toast_message

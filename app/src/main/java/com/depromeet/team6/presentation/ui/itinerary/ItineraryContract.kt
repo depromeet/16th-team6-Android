@@ -4,7 +4,6 @@ import android.util.SparseArray
 import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.RealTimeBusArrival
 import com.depromeet.team6.domain.model.course.CourseInfo
-import com.depromeet.team6.presentation.ui.coursesearch.CourseSearchContract.CourseEvent
 import com.depromeet.team6.presentation.util.DefaultLatLng.DEFAULT_LAT
 import com.depromeet.team6.presentation.util.DefaultLatLng.DEFAULT_LNG
 import com.depromeet.team6.presentation.util.base.UiEvent

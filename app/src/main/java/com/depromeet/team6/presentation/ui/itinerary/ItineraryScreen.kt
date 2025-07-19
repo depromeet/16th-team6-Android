@@ -48,7 +48,6 @@ import com.depromeet.team6.domain.model.course.LegInfo
 import com.depromeet.team6.presentation.model.bus.BusArrivalParameter
 import com.depromeet.team6.presentation.model.itinerary.FocusedMarkerParameter
 import com.depromeet.team6.presentation.ui.common.AtchaCommonBottomSheet
-import com.depromeet.team6.presentation.ui.coursesearch.CourseSearchContract
 import com.depromeet.team6.presentation.ui.home.component.RefreshLottieButton
 import com.depromeet.team6.presentation.ui.itinerary.component.ItineraryDetail
 import com.depromeet.team6.presentation.ui.itinerary.component.ItineraryMap
@@ -102,7 +101,8 @@ fun ItineraryRoute(
             when (event) {
                 Lifecycle.Event.ON_RESUME -> {
                     if (viewModel.hasShownOverlayDialogBefore() &&
-                        PermissionUtil.isOverlayPermissionRequested(context)) {
+                        PermissionUtil.isOverlayPermissionRequested(context)
+                    ) {
                         if (!PermissionUtil.hasOverlayPermission(context)) {
                             viewModel.showPermissionSnackbar()
                         }

@@ -28,7 +28,6 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.depromeet.team6.R
-import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.ui.theme.LocalTeam6Colors
 import com.depromeet.team6.ui.theme.LocalTeam6Typography
 
@@ -55,8 +54,8 @@ fun OverlayPermissionDialog(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = buildAnnotatedString { 
-                    append(stringResource(R.string.overlay_permission_content_text_start).replace("\\n","\n"))
+                text = buildAnnotatedString {
+                    append(stringResource(R.string.overlay_permission_content_text_start).replace("\\n", "\n"))
                     withStyle(style = SpanStyle(color = colors.systemGreen)) {
                         append(stringResource(R.string.overlay_permission_content_text_mid))
                     }
@@ -77,39 +76,38 @@ fun OverlayPermissionDialog(
                     containerColor = colors.gray950
                 )
             ) {
-                    Row(
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
                         modifier = Modifier
-                            .fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            modifier = Modifier
-                                .padding(vertical = 12.dp, horizontal = 12.dp),
-                            imageVector = ImageVector.vectorResource(R.drawable.ic_logo_with_grey_backgroud),
-                            contentDescription = null,
-                            tint = Color.Unspecified
-                        )
+                            .padding(vertical = 12.dp, horizontal = 12.dp),
+                        imageVector = ImageVector.vectorResource(R.drawable.ic_logo_with_grey_backgroud),
+                        contentDescription = null,
+                        tint = Color.Unspecified
+                    )
 
-                        Text(
-                            text = stringResource(R.string.overlay_permission_atcha_text),
-                            color = colors.white,
-                            style = typography.heading5Bold17,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.padding(horizontal = 7.dp)
-                        )
+                    Text(
+                        text = stringResource(R.string.overlay_permission_atcha_text),
+                        color = colors.white,
+                        style = typography.heading5Bold17,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(horizontal = 7.dp)
+                    )
 
-                        Spacer(modifier = Modifier.weight(1f))
+                    Spacer(modifier = Modifier.weight(1f))
 
-                        Icon(
-                            modifier = Modifier
-                                .padding(end = 12.dp),
-                            imageVector = ImageVector.vectorResource(R.drawable.ic_permission_toggle_on),
-                            contentDescription = null,
-                            tint = Color.Unspecified
-                        )
-
-                    }
+                    Icon(
+                        modifier = Modifier
+                            .padding(end = 12.dp),
+                        imageVector = ImageVector.vectorResource(R.drawable.ic_permission_toggle_on),
+                        contentDescription = null,
+                        tint = Color.Unspecified
+                    )
                 }
+            }
 
             Row(
                 modifier = Modifier
@@ -157,7 +155,6 @@ fun OverlayPermissionDialog(
             }
         }
     }
-
 }
 
 @Preview

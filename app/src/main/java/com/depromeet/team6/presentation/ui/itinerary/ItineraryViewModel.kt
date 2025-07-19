@@ -9,7 +9,6 @@ import com.depromeet.team6.domain.model.course.TransportType
 import com.depromeet.team6.domain.repository.UserInfoRepository
 import com.depromeet.team6.domain.usecase.GetBusArrivalUseCase
 import com.depromeet.team6.domain.usecase.PostAlarmUseCase
-import com.depromeet.team6.presentation.ui.coursesearch.CourseSearchContract
 import com.depromeet.team6.presentation.util.AmplitudeCommon.SCREEN_NAME
 import com.depromeet.team6.presentation.util.AmplitudeCommon.USER_ID
 import com.depromeet.team6.presentation.util.ItineraryAmplitude.ITINERARY
@@ -17,7 +16,6 @@ import com.depromeet.team6.presentation.util.ItineraryAmplitude.ITINERARY_ALARM_
 import com.depromeet.team6.presentation.util.ItineraryAmplitude.ITINERARY_EVENT_ALARM_REGISTERED
 import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
 import com.depromeet.team6.presentation.util.base.BaseViewModel
-import com.depromeet.team6.presentation.util.permission.PermissionUtil
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.google.android.gms.maps.model.LatLng
 import com.google.gson.Gson
