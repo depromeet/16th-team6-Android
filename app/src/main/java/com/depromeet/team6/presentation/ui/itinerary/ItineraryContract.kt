@@ -4,6 +4,7 @@ import android.util.SparseArray
 import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.RealTimeBusArrival
 import com.depromeet.team6.domain.model.course.CourseInfo
+import com.depromeet.team6.presentation.ui.coursesearch.CourseSearchContract.CourseEvent
 import com.depromeet.team6.presentation.util.DefaultLatLng.DEFAULT_LAT
 import com.depromeet.team6.presentation.util.DefaultLatLng.DEFAULT_LNG
 import com.depromeet.team6.presentation.util.base.UiEvent
@@ -22,7 +23,9 @@ class ItineraryContract {
         val currentLocation: LatLng = LatLng(
             DEFAULT_LAT,
             DEFAULT_LNG
-        )
+        ),
+        val showOverlayPermissionDialog: Boolean = false,
+        val showPermissionSnackbar: Boolean = false
     ) : UiState
 
     sealed interface ItinerarySideEffect : UiSideEffect {
@@ -36,5 +39,9 @@ class ItineraryContract {
         data object RefreshButtonClicked : ItineraryEvent()
         data class CurrentLocationClicked(val location: LatLng) : ItineraryEvent()
         data class RegisterAlarm(val routeId: String) : ItineraryEvent()
+        data object ShowOverlayPermissionDialog : ItineraryEvent()
+        data object DismissOverlayPermissionDialog : ItineraryEvent()
+        data object ShowPermissionSnackbar : ItineraryEvent()
+        data object DismissPermissionSnackbar : ItineraryEvent()
     }
 }

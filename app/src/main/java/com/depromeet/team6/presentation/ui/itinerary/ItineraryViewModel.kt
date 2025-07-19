@@ -9,6 +9,7 @@ import com.depromeet.team6.domain.model.course.TransportType
 import com.depromeet.team6.domain.repository.UserInfoRepository
 import com.depromeet.team6.domain.usecase.GetBusArrivalUseCase
 import com.depromeet.team6.domain.usecase.PostAlarmUseCase
+import com.depromeet.team6.presentation.ui.coursesearch.CourseSearchContract
 import com.depromeet.team6.presentation.util.AmplitudeCommon.SCREEN_NAME
 import com.depromeet.team6.presentation.util.AmplitudeCommon.USER_ID
 import com.depromeet.team6.presentation.util.ItineraryAmplitude.ITINERARY
@@ -16,6 +17,7 @@ import com.depromeet.team6.presentation.util.ItineraryAmplitude.ITINERARY_ALARM_
 import com.depromeet.team6.presentation.util.ItineraryAmplitude.ITINERARY_EVENT_ALARM_REGISTERED
 import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
 import com.depromeet.team6.presentation.util.base.BaseViewModel
+import com.depromeet.team6.presentation.util.permission.PermissionUtil
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.google.android.gms.maps.model.LatLng
 import com.google.gson.Gson
@@ -33,6 +35,8 @@ class ItineraryViewModel @Inject constructor(
     private val userInfoRepository: UserInfoRepository
 ) : BaseViewModel<ItineraryContract.ItineraryUiState, ItineraryContract.ItinerarySideEffect, ItineraryContract.ItineraryEvent>() {
     override fun createInitialState(): ItineraryContract.ItineraryUiState = ItineraryContract.ItineraryUiState()
+
+    private var hasShownOverlayDialog = false
 
     override suspend fun handleEvent(event: ItineraryContract.ItineraryEvent) {
         when (event) {
@@ -62,6 +66,26 @@ class ItineraryViewModel @Inject constructor(
                         USER_ID to userInfoRepository.getUserID(),
                         ITINERARY_ALARM_REGISTER_BTN_CLICKED to 1
                     )
+                )
+            }
+            is ItineraryContract.ItineraryEvent.DismissOverlayPermissionDialog -> setState {
+                copy(
+                    showOverlayPermissionDialog = false
+                )
+            }
+            is ItineraryContract.ItineraryEvent.DismissPermissionSnackbar -> setState {
+                copy(
+                    showPermissionSnackbar = false
+                )
+            }
+            is ItineraryContract.ItineraryEvent.ShowOverlayPermissionDialog -> setState {
+                copy(
+                    showOverlayPermissionDialog = true
+                )
+            }
+            is ItineraryContract.ItineraryEvent.ShowPermissionSnackbar -> setState {
+                copy(
+                    showPermissionSnackbar = true
                 )
             }
         }
@@ -134,5 +158,33 @@ class ItineraryViewModel @Inject constructor(
             }
         }
         Timber.d("busArrivalStatus ViewModel : ${currentState.busArrivalStatus}")
+    }
+
+    fun showOverlayPermissionDialog() {
+        setEvent(ItineraryContract.ItineraryEvent.ShowOverlayPermissionDialog)
+    }
+
+    fun dismissOverlayPermissionDialog() {
+        setEvent(ItineraryContract.ItineraryEvent.DismissOverlayPermissionDialog)
+    }
+
+    fun shouldShowOverlayDialog(): Boolean {
+        return !hasShownOverlayDialog
+    }
+
+    fun markOverlayDialogAsShow() {
+        hasShownOverlayDialog = true
+    }
+
+    fun hasShownOverlayDialogBefore(): Boolean {
+        return hasShownOverlayDialog
+    }
+
+    fun showPermissionSnackbar() {
+        setEvent(ItineraryContract.ItineraryEvent.ShowPermissionSnackbar)
+    }
+
+    fun dismissPermissionSnackbar() {
+        setEvent(ItineraryContract.ItineraryEvent.DismissPermissionSnackbar)
     }
 }
