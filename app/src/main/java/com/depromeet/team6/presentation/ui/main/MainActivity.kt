@@ -1,5 +1,7 @@
 package com.depromeet.team6.presentation.ui.main
 
+import android.app.ComponentCaller
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
@@ -23,7 +25,6 @@ import androidx.core.view.WindowInsetsControllerCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.depromeet.team6.R
 import com.depromeet.team6.data.datalocal.manager.LockServiceManager
-import com.depromeet.team6.data.datalocal.permission.PermissionUtil
 import com.depromeet.team6.presentation.ui.lock.LockScreenNavigator
 import com.depromeet.team6.presentation.ui.main.navigation.MainNavHost
 import com.depromeet.team6.presentation.ui.main.navigation.MainNavigator
@@ -75,10 +76,6 @@ class MainActivity : ComponentActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
         enableEdgeToEdge()
-
-        if (PermissionUtil.alertPermissionCheck(this)) {
-            PermissionUtil.onObtainingPermissionOverlayWindow(this)
-        }
 
         val navigateToCourseSearch = intent.getBooleanExtra(LockScreenNavigator.EXTRA_NAVIGATE_TO_COURSE_SEARCH, false)
         val departurePoint = intent.getStringExtra(LockScreenNavigator.EXTRA_DEPARTURE_POINT) ?: ""

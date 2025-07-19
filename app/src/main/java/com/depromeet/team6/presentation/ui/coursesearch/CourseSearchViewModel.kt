@@ -3,6 +3,7 @@ package com.depromeet.team6.presentation.ui.coursesearch
 import android.content.Context
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.depromeet.team6.R
 import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.RouteLocation
 import com.depromeet.team6.domain.repository.HomeRepository
@@ -26,6 +27,7 @@ import com.depromeet.team6.presentation.util.CourseSearchAmplitude.COURSE_SEARCH
 import com.depromeet.team6.presentation.util.CourseSearchAmplitude.COURSE_SEARCH_TOGGLE_DISABLED
 import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
 import com.depromeet.team6.presentation.util.base.BaseViewModel
+import com.depromeet.team6.presentation.util.toast.atChaToastMessage
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -138,6 +140,16 @@ class CourseSearchViewModel @Inject constructor(
                 copy(
                     showDeleteAlarmDialog = false,
                     selectedRouteId = ""
+                )
+            }
+            is CourseSearchContract.CourseEvent.DismissOverlayPermissionDialog -> setState {
+                copy(
+                    showOverlayPermissionDialog = false
+                )
+            }
+            is CourseSearchContract.CourseEvent.ShowOverlayPermissionDialog -> setState {
+                copy(
+                    showOverlayPermissionDialog = true
                 )
             }
         }
@@ -264,6 +276,29 @@ class CourseSearchViewModel @Inject constructor(
                 .onFailure { exception ->
                     handleApiException(exception)
                 }
+        }
+    }
+
+    fun showOverlayPermissionDialog() {
+        setEvent(CourseSearchContract.CourseEvent.ShowOverlayPermissionDialog)
+    }
+
+    fun dismissOverlayPermissionDialog() {
+        setEvent(CourseSearchContract.CourseEvent.DismissOverlayPermissionDialog)
+    }
+
+    fun registerAlarmWithPermissionCheck(routeId: String, departurePoint: String, destinationPoint: String) {
+        if (uiState.value.sortType == 1) {
+            val registeredCourse = uiState.value.courseData.find { it.routeId == routeId }
+
+            if (registeredCourse != null) {
+                saveAlarmData(departurePoint, destinationPoint, routeId)
+                postAlarm(lastRouteId = routeId)
+            } else {
+                atChaToastMessage(context, R.string.course_set_notification_failed_snackbar)
+            }
+        } else if (uiState.value.sortType == 2) {
+            showDeleteAlarmDialog(routeId)
         }
     }
 }

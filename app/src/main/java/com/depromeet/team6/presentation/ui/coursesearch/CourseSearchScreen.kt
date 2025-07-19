@@ -1,6 +1,7 @@
 package com.depromeet.team6.presentation.ui.coursesearch
 
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -16,6 +17,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
@@ -31,12 +33,14 @@ import com.depromeet.team6.presentation.ui.coursesearch.component.DestinationSea
 import com.depromeet.team6.presentation.ui.coursesearch.component.TransportTabMenu
 import com.depromeet.team6.presentation.ui.home.component.DeleteAlarmDialog
 import com.depromeet.team6.presentation.ui.itinerary.LegInfoDummyProvider
+import com.depromeet.team6.presentation.ui.overlay.OverlayPermissionDialog
 import com.depromeet.team6.presentation.util.AmplitudeCommon.SCREEN_NAME
 import com.depromeet.team6.presentation.util.AmplitudeCommon.USER_ID
 import com.depromeet.team6.presentation.util.HomeAmplitude.ALERT_END_POPUP_2
 import com.depromeet.team6.presentation.util.HomeAmplitude.POPUP
 import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
 import com.depromeet.team6.presentation.util.base.ApiErrorSideEffect
+import com.depromeet.team6.presentation.util.permission.PermissionUtil
 import com.depromeet.team6.presentation.util.toast.atChaToastMessage
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
@@ -62,7 +66,17 @@ fun CourseSearchRoute(
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             when (event) {
-                Lifecycle.Event.ON_RESUME -> viewModel.setEvent(CourseSearchContract.CourseEvent.OnEnter)
+                Lifecycle.Event.ON_RESUME -> {
+                    viewModel.setEvent(CourseSearchContract.CourseEvent.OnEnter)
+
+                    if (PermissionUtil.isOverlayDialogShown(context) &&
+                        PermissionUtil.isOverlayPermissionRequested(context)) {
+                        if (!PermissionUtil.hasOverlayPermission(context)) {
+                            atChaToastMessage(context,
+                                R.string.overlay_permission_toast_message, Toast.LENGTH_LONG)
+                        }
+                    }
+                }
                 Lifecycle.Event.ON_PAUSE -> viewModel.setEvent(CourseSearchContract.CourseEvent.OnExit)
                 else -> {}
             }
@@ -139,26 +153,50 @@ fun CourseSearchRoute(
                     .padding(padding),
                 navigateToItinerary = navigateToItinerary,
                 setNotification = { routeId ->
-                    if (uiState.sortType == 1) {
-                        // 기존 코드 유지 - sortType이 1일 때 알림 등록
-
-                        val registeredCourse = uiState.courseData.find { it.routeId == routeId }
-
-                        if (registeredCourse != null) {
-                            viewModel.saveAlarmData(departurePoint, destinationPoint, routeId)
-                            viewModel.postAlarm(lastRouteId = routeId)
+                    if (PermissionUtil.needsOverlayPermission(context)) {
+                        if (PermissionUtil.shouldShowDialog(context)) {
+                            viewModel.showOverlayPermissionDialog()
                         } else {
-                            atChaToastMessage(context, R.string.course_set_notification_failed_snackbar)
+                            atChaToastMessage(context,
+                                R.string.overlay_permission_toast_message, Toast.LENGTH_LONG)
                         }
-                    } else if (uiState.sortType == 2) {
-                        // 다이얼로그 표시
-                        viewModel.showDeleteAlarmDialog(routeId)
+                    } else {
+                        viewModel.registerAlarmWithPermissionCheck(
+                            routeId,
+                            departurePoint,
+                            destinationPoint
+                        )
                     }
                 },
                 backButtonClicked = { navigateToHome() },
                 courseInfoToggleClick = { viewModel.setEvent(CourseSearchContract.CourseEvent.ItemCourseDetailToggleClick) },
                 itemCardClick = { viewModel.setEvent(CourseSearchContract.CourseEvent.ItemCardClick(isTextClicked = it)) }
             )
+
+            if (uiState.showOverlayPermissionDialog) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(color = defaultTeam6Colors.black.copy(alpha = 0.76f))
+                ) {
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        OverlayPermissionDialog(
+                            onDismiss = {
+                                viewModel.dismissOverlayPermissionDialog()
+                                PermissionUtil.setOverlayDialogShown(context)
+                            },
+                            onSettingClicked = {
+                                viewModel.dismissOverlayPermissionDialog()
+                                PermissionUtil.setOverlayDialogShown(context)
+                                PermissionUtil.openOverlayPermissionSettings(context)
+                            }
+                        )
+                    }
+                }
+            }
 
             // 다이얼로그 표시
             if (uiState.showDeleteAlarmDialog) {

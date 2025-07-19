@@ -61,6 +61,7 @@
     <string name="overlay_permission_atcha_text">앗차</string>
     <string name="overlay_permission_close_text">닫기</string>
     <string name="overlay_permission_go_setting_text">설정하기</string>
+    <string name="overlay_permission_toast_message">"'다른 앱 위에 표시'를 허용해주세요"</string>
 
     <!-- LoginScreen -->
     <string name="login_pager_main_text_first">오후 10시에 미리\n막차알림 등록하세요</string>

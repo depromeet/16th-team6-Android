@@ -15,6 +15,7 @@ class CourseSearchContract {
         val courseData: List<CourseInfo> = emptyList(),
         val sortType: Int = 1,
         val showDeleteAlarmDialog: Boolean = false,
+        val showOverlayPermissionDialog: Boolean = false,
         val selectedRouteId: String = ""
     ) : UiState
 
@@ -35,5 +36,7 @@ class CourseSearchContract {
         data class ItemCardClick(val isTextClicked: Boolean) : CourseEvent()
         data class ShowDeleteAlarmDialog(val routeId: String) : CourseEvent()
         data object DismissDeleteAlarmDialog : CourseEvent()
+        data object ShowOverlayPermissionDialog : CourseEvent()
+        data object DismissOverlayPermissionDialog : CourseEvent()
     }
 }
