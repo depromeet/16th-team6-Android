@@ -12,6 +12,7 @@ import com.depromeet.team6.domain.usecase.DeleteAlarmUseCase
 import com.depromeet.team6.domain.usecase.GetCourseSearchResultsUseCase
 import com.depromeet.team6.domain.usecase.GetTaxiCostUseCase
 import com.depromeet.team6.domain.usecase.GetUserInfoUseCase
+import com.depromeet.team6.domain.usecase.InitAlarmUseCase
 import com.depromeet.team6.domain.usecase.PostAlarmUseCase
 import com.depromeet.team6.presentation.ui.coursesearch.navigation.CourseSearchRoute.DEPARTURE_POINT
 import com.depromeet.team6.presentation.ui.coursesearch.navigation.CourseSearchRoute.DESTINATION_POINT
@@ -34,7 +35,6 @@ import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -47,6 +47,7 @@ class CourseSearchViewModel @Inject constructor(
     private val getTaxiCostUseCase: GetTaxiCostUseCase,
     private val deleteAlarmUseCase: DeleteAlarmUseCase,
     private val getUserInfoUseCase: GetUserInfoUseCase,
+    private val initAlarmUseCase: InitAlarmUseCase,
     @ApplicationContext private val context: Context
 ) : BaseViewModel<CourseSearchContract.CourseUiState, CourseSearchContract.CourseSideEffect, CourseSearchContract.CourseEvent>() {
 
@@ -237,25 +238,25 @@ class CourseSearchViewModel @Inject constructor(
         }
     }
 
-    private fun saveAlarmData(departurePoint: String, destinationPoint: String, routeId: String) {
-        viewModelScope.launch {
-            try {
-                val departureAddress = Gson().fromJson(departurePoint, Address::class.java)
-                val destinationAddress = Gson().fromJson(destinationPoint, Address::class.java)
-                val registeredCourse = uiState.value.courseData.find { it.routeId == routeId }
-
-                if (registeredCourse != null && departureAddress != null) {
-                    homeRepository.setDeparturePoint(departureAddress)
-                    homeRepository.setDestinationPoint(destinationAddress)
-                    homeRepository.setLastCourseInfo(registeredCourse)
-                    homeRepository.setLastRouteId(routeId)
-                    homeRepository.setAlarmRegistered(true)
-                }
-            } catch (e: Exception) {
-                Timber.e("알림 정보 spf 저장 오류: ${e.message}")
-            }
-        }
-    }
+//    private fun saveAlarmData(departurePoint: String, destinationPoint: String, routeId: String) {
+//        viewModelScope.launch {
+//            try {
+//                val departureAddress = Gson().fromJson(departurePoint, Address::class.java)
+//                val destinationAddress = Gson().fromJson(destinationPoint, Address::class.java)
+//                val registeredCourse = uiState.value.courseData.find { it.routeId == routeId }
+//
+//                if (registeredCourse != null && departureAddress != null) {
+//                    homeRepository.setDeparturePoint(departureAddress)
+//                    homeRepository.setDestinationPoint(destinationAddress)
+//                    homeRepository.setLastCourseInfo(registeredCourse)
+//                    homeRepository.setLastRouteId(routeId)
+//                    homeRepository.setAlarmRegistered(true)
+//                }
+//            } catch (e: Exception) {
+//                Timber.e("알림 정보 spf 저장 오류: ${e.message}")
+//            }
+//        }
+//    }
 
     fun postAlarm(departurePoint: String, destinationPoint: String, lastRouteId: String, alarmTimeStamp: String) {
         viewModelScope.launch {
@@ -263,10 +264,15 @@ class CourseSearchViewModel @Inject constructor(
                 lastRouteId = lastRouteId
             )
                 .onSuccess {
+                    val registeredCourse = uiState.value.courseData.find { it.routeId == lastRouteId }
+                    val departureAddress = Gson().fromJson(departurePoint, Address::class.java)
+                    val destinationAddress = Gson().fromJson(destinationPoint, Address::class.java)
+
                     setEvent(CourseSearchContract.CourseEvent.RegisterAlarm)
                     setSideEffect(CourseSearchContract.CourseSideEffect.NavigateHomeWithToast)
                     getTaxiCost()
-                    saveAlarmData(departurePoint, destinationPoint, lastRouteId)
+//                    saveAlarmData(departurePoint, destinationPoint, lastRouteId)
+                    initAlarmUseCase(departureAddress, destinationAddress, registeredCourse!!, lastRouteId)
                     AlarmScheduler.scheduleLockScreenAlarm(
                         context = context,
                         timeStamp = alarmTimeStamp

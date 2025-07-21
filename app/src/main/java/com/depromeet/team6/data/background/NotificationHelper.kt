@@ -73,7 +73,7 @@ class NotificationHelper @Inject constructor(
             .setAutoCancel(true)
             .build()
 
-        notificationManager.notify(ALARM_AWARE_NOTIFICATION_ID, notification)
+        notificationManager.notify(ALARM_AWARE_NOTIFICATION_ID + min, notification)
     }
 
     fun sendRecommendationNotification() {

@@ -283,6 +283,7 @@ class HomeViewModel @Inject constructor(
 //                    stopPollingBusStarted()
 
                     homeRepository.clearAlarmData()
+                    AlarmScheduler.unScheduleAllAlarms(context)
 
                     setEvent(HomeContract.HomeEvent.DismissDialog)
                     setSideEffect(HomeContract.HomeSideEffect.ShowDeleteAlarmToast)

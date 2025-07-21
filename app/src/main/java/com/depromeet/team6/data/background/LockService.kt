@@ -83,11 +83,7 @@ class LockService : Service() {
                 isLooping = true
                 setAudioAttributes(audioAttr)
                 setVolume(4.0f, 4.0f)
-                setOnCompletionListener {
-                    Log.d("LockService", "알림음 재생 완료")
-                }
                 start()
-                Log.d("LockService", "알림음 재생 시작됨")
             }
         } catch (e: Exception) {
             Log.e("LockService", "알림음 재생 중 오류 발생: ${e.message}", e)
@@ -108,7 +104,6 @@ class LockService : Service() {
                 repeatIndex
             )
             vibrator?.vibrate(vibrationEffect)
-            Log.e("LockService", "진동 성공~~~~!!!!")
         } catch (e: Exception) {
             Log.e("LockService", "진동 중 오류 발생: ${e.message}", e)
         }
@@ -127,18 +122,15 @@ class LockService : Service() {
             release()
         }
         mediaPlayer = null
-        Log.d("LockService", "알림음 재생 중지")
     }
 
     private fun stopVibration() {
         vibrator?.cancel()
         vibrator = null
-        Log.d("LockService", "진동 중지")
     }
 
     override fun onCreate() {
         super.onCreate()
-        Log.d("LockService", "onCreate 호출됨")
         LockReceiver.initialize(lockScreenNavigator, taxiCostUseCase)
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)

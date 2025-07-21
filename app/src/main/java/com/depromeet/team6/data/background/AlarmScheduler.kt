@@ -5,7 +5,6 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import timber.log.Timber
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -19,9 +18,6 @@ object AlarmScheduler {
 
     fun scheduleLockScreenAlarm(context: Context, timeStamp: String) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-
-        Timber.d("AlarmScheduler : 알람 시간 미뤄짐 : $timeStamp")
-
         val timeInMillis = isoLocalDateTimeToMillis(timeStamp)
 
         // 잠금화면 포그라운드 서비스 할당
@@ -61,12 +57,14 @@ object AlarmScheduler {
             intent.putExtra("alarmTime", pushTime)
             val pendingIntent = PendingIntent.getBroadcast(
                 context,
-                ALARM_AWARE_NOTIFICATION_ID,
+                ALARM_AWARE_NOTIFICATION_ID + pushTime,
                 intent,
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
 
+
             val exactSupported = Build.VERSION.SDK_INT < Build.VERSION_CODES.S || alarmManager.canScheduleExactAlarms()
+
             if (exactSupported) {
                 alarmManager.setExactAndAllowWhileIdle(
                     AlarmManager.RTC_WAKEUP,
@@ -81,6 +79,10 @@ object AlarmScheduler {
                 )
             }
         }
+    }
+
+    fun unScheduleAllAlarms(context: Context) {
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
     }
 
     fun scheduleLocationCheck(context: Context) {

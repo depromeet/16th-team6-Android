@@ -18,7 +18,6 @@ class AlarmReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context?, intent: Intent?) {
         val timeMin = intent!!.getIntExtra("alarmTime", 0)
-
         when (timeMin) {
             5 -> {
                 if (alarmRepository.push5fired) return

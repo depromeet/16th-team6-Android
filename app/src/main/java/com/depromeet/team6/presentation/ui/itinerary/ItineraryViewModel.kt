@@ -14,6 +14,7 @@ import com.depromeet.team6.domain.repository.UserInfoRepository
 import com.depromeet.team6.domain.usecase.GetBusArrivalUseCase
 import com.depromeet.team6.domain.usecase.GetTaxiCostUseCase
 import com.depromeet.team6.domain.usecase.GetUserInfoUseCase
+import com.depromeet.team6.domain.usecase.InitAlarmUseCase
 import com.depromeet.team6.domain.usecase.PostAlarmUseCase
 import com.depromeet.team6.presentation.util.AmplitudeCommon.SCREEN_NAME
 import com.depromeet.team6.presentation.util.AmplitudeCommon.USER_ID
@@ -41,7 +42,8 @@ class ItineraryViewModel @Inject constructor(
     private val userInfoRepository: UserInfoRepository,
     private val homeRepository: HomeRepository,
     private val getTaxiCostUseCase: GetTaxiCostUseCase,
-    private val getUserInfoUseCase: GetUserInfoUseCase
+    private val getUserInfoUseCase: GetUserInfoUseCase,
+    private val initAlarmUseCase: InitAlarmUseCase,
 ) : BaseViewModel<ItineraryContract.ItineraryUiState, ItineraryContract.ItinerarySideEffect, ItineraryContract.ItineraryEvent>() {
     override fun createInitialState(): ItineraryContract.ItineraryUiState = ItineraryContract.ItineraryUiState()
 
@@ -108,7 +110,8 @@ class ItineraryViewModel @Inject constructor(
                     setSideEffect(ItineraryContract.ItinerarySideEffect.ShowNotificationToastSetAlarm)
                     setSideEffect(ItineraryContract.ItinerarySideEffect.NavigateHomeWithToast)
                     getTaxiCost()
-                    saveAlarmData(departurePoint, destinationPoint, lastRouteId)
+//                    saveAlarmData(departurePoint, destinationPoint, lastRouteId)
+                    initAlarmUseCase(departurePoint, destinationPoint, currentState.itineraryInfo!!, lastRouteId)
                     AlarmScheduler.scheduleLockScreenAlarm(
                         context = context,
                         timeStamp = alarmTimeStamp
@@ -121,23 +124,23 @@ class ItineraryViewModel @Inject constructor(
         }
     }
 
-    private fun saveAlarmData(departurePoint: Address, destinationPoint: Address, routeId: String) {
-        viewModelScope.launch {
-            try {
-                val registeredCourse = uiState.value.itineraryInfo
-
-                if (registeredCourse != null && departurePoint != null) {
-                    homeRepository.setDeparturePoint(departurePoint)
-                    homeRepository.setDestinationPoint(destinationPoint)
-                    homeRepository.setLastCourseInfo(registeredCourse)
-                    homeRepository.setLastRouteId(routeId)
-                    homeRepository.setAlarmRegistered(true)
-                }
-            } catch (e: Exception) {
-                Timber.e("알림 정보 spf 저장 오류: ${e.message}")
-            }
-        }
-    }
+//    private fun saveAlarmData(departurePoint: Address, destinationPoint: Address, routeId: String) {
+//        viewModelScope.launch {
+//            try {
+//                val registeredCourse = uiState.value.itineraryInfo
+//
+//                if (registeredCourse != null && departurePoint != null) {
+//                    homeRepository.setDeparturePoint(departurePoint)
+//                    homeRepository.setDestinationPoint(destinationPoint)
+//                    homeRepository.setLastCourseInfo(registeredCourse)
+//                    homeRepository.setLastRouteId(routeId)
+//                    homeRepository.setAlarmRegistered(true)
+//                }
+//            } catch (e: Exception) {
+//                Timber.e("알림 정보 spf 저장 오류: ${e.message}")
+//            }
+//        }
+//    }
 
     private fun getTaxiCost() {
         viewModelScope.launch {
