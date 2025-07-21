@@ -15,7 +15,7 @@ object AlarmScheduler {
 
     private const val LOCATION_NOTIFICATION_ID = 1001
     private const val ALARM_START_ID = 2001
-    private const val ACTION_ALARM = "com.example.ACTION_SCHEDULED_ALARM"
+    private const val ALARM_AWARE_NOTIFICATION_ID = 2002
 
     fun scheduleLockScreenAlarm(context: Context, timeStamp: String) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
@@ -48,6 +48,41 @@ object AlarmScheduler {
             )
         }
     }
+
+    fun scheduleAdditionalPushAlarm(context: Context, alarmTime: String, pushTimes: Set<Int>) {
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val alarmTimeMillis = isoLocalDateTimeToMillis(alarmTime)
+
+        for (pushTime in pushTimes) {
+            val pushInterval = pushTime * 60_000L
+            val pushTimeMillis = alarmTimeMillis - pushInterval
+
+            val intent = Intent(context, AlarmReceiver::class.java)
+            intent.putExtra("alarmTime", pushTime)
+            val pendingIntent = PendingIntent.getBroadcast(
+                context,
+                ALARM_AWARE_NOTIFICATION_ID,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            )
+
+            val exactSupported = Build.VERSION.SDK_INT < Build.VERSION_CODES.S || alarmManager.canScheduleExactAlarms()
+            if (exactSupported) {
+                alarmManager.setExactAndAllowWhileIdle(
+                    AlarmManager.RTC_WAKEUP,
+                    pushTimeMillis,
+                    pendingIntent
+                )
+            } else {
+                alarmManager.setAndAllowWhileIdle(
+                    AlarmManager.RTC_WAKEUP,
+                    pushTimeMillis,
+                    pendingIntent
+                )
+            }
+        }
+    }
+
     fun scheduleLocationCheck(context: Context) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 

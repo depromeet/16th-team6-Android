@@ -6,19 +6,21 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.os.PowerManager
 import android.util.Log
 import androidx.annotation.Keep
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.app.NotificationCompat
 import com.depromeet.team6.R
-import com.depromeet.team6.data.background.AlarmScheduler.scheduleLockScreenAlarm
+import com.depromeet.team6.data.dataremote.datasource.AuthRemoteDataSource
 import com.depromeet.team6.domain.repository.HomeRepository
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.google.firebase.messaging.Constants
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @Keep
@@ -26,6 +28,8 @@ import javax.inject.Inject
 class FcmService : FirebaseMessagingService() {
 
     @Inject lateinit var homeRepository: HomeRepository
+
+    @Inject lateinit var authRemoteDataSource: AuthRemoteDataSource
     private lateinit var body: String
     private lateinit var title: String
 
@@ -73,8 +77,16 @@ class FcmService : FirebaseMessagingService() {
             } else if (type == FCM_TYPE_REFRESH) {
                 val timeStamp = message.data["body"]
                 if (timeStamp != null) {
-                    scheduleLockScreenAlarm(this, timeStamp)
+                    AlarmScheduler.scheduleLockScreenAlarm(this, timeStamp)
                     updateDepartureTime(timeStamp)
+                    CoroutineScope(Dispatchers.IO).launch {
+                        authRemoteDataSource.getUserInfo()
+                            .onSuccess {
+                                val pushIntervals = it.alertFrequencies
+                                AlarmScheduler.scheduleAdditionalPushAlarm(this@FcmService, timeStamp, pushIntervals)
+                            }
+                            .onFailure { }
+                    }
                 }
             } else {
                 sendDefaultNotification()
@@ -91,45 +103,45 @@ class FcmService : FirebaseMessagingService() {
         )
         homeRepository.setLastCourseInfo(newCourseInfo)
     }
-    private fun wakeLockAcquire() {
-        try {
-            val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
-            val wakeLock = powerManager.newWakeLock(
-                PowerManager.FULL_WAKE_LOCK or PowerManager.ACQUIRE_CAUSES_WAKEUP,
-                WAKE_LOCK_TAG
-            )
-
-            // 10초 동안 화면 유지
-            wakeLock.acquire(10 * 1000L)
-        } catch (e: Exception) {
-            Log.e("FCM", "WakeLock error: ${e.message}")
-        }
-    }
-
-    private fun sendNotification(title: String?, body: String?) {
-        Log.d("FCM", "[FCM] sendNotification 호출됨 - title: $title, body: $body")
-
-        val notificationManager =
-            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-
-        val channel = NotificationChannel(
-            CHANNEL_ID,
-            CHANNEL_NAME,
-            NotificationManager.IMPORTANCE_HIGH
-        )
-        notificationManager.createNotificationChannel(channel)
-
-        val notification = NotificationCompat.Builder(this, CHANNEL_ID)
-            .setContentTitle(title ?: getString(R.string.notification_title_text))
-            .setContentText(body ?: getString(R.string.notification_body_text))
-            .setSmallIcon(R.drawable.ic_app_logo_foreground)
-            .setColor(defaultTeam6Colors.black.toArgb())
-            .setColorized(true)
-            .setAutoCancel(true)
-            .build()
-
-        notificationManager.notify(FCM_NOTIFICATION_ID, notification)
-    }
+//    private fun wakeLockAcquire() {
+//        try {
+//            val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
+//            val wakeLock = powerManager.newWakeLock(
+//                PowerManager.FULL_WAKE_LOCK or PowerManager.ACQUIRE_CAUSES_WAKEUP,
+//                WAKE_LOCK_TAG
+//            )
+//
+//            // 10초 동안 화면 유지
+//            wakeLock.acquire(10 * 1000L)
+//        } catch (e: Exception) {
+//            Log.e("FCM", "WakeLock error: ${e.message}")
+//        }
+//    }
+//
+//    private fun sendNotification(title: String?, body: String?) {
+//        Log.d("FCM", "[FCM] sendNotification 호출됨 - title: $title, body: $body")
+//
+//        val notificationManager =
+//            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+//
+//        val channel = NotificationChannel(
+//            CHANNEL_ID,
+//            CHANNEL_NAME,
+//            NotificationManager.IMPORTANCE_HIGH
+//        )
+//        notificationManager.createNotificationChannel(channel)
+//
+//        val notification = NotificationCompat.Builder(this, CHANNEL_ID)
+//            .setContentTitle(title ?: getString(R.string.notification_title_text))
+//            .setContentText(body ?: getString(R.string.notification_body_text))
+//            .setSmallIcon(R.drawable.ic_app_logo_foreground)
+//            .setColor(defaultTeam6Colors.black.toArgb())
+//            .setColorized(true)
+//            .setAutoCancel(true)
+//            .build()
+//
+//        notificationManager.notify(FCM_NOTIFICATION_ID, notification)
+//    }
 
     private fun sendHeadsUpNotification(title: String?, body: String?) {
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager

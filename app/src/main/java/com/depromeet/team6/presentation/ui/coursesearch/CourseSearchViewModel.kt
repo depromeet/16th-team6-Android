@@ -11,6 +11,7 @@ import com.depromeet.team6.domain.repository.UserInfoRepository
 import com.depromeet.team6.domain.usecase.DeleteAlarmUseCase
 import com.depromeet.team6.domain.usecase.GetCourseSearchResultsUseCase
 import com.depromeet.team6.domain.usecase.GetTaxiCostUseCase
+import com.depromeet.team6.domain.usecase.GetUserInfoUseCase
 import com.depromeet.team6.domain.usecase.PostAlarmUseCase
 import com.depromeet.team6.presentation.ui.coursesearch.navigation.CourseSearchRoute.DEPARTURE_POINT
 import com.depromeet.team6.presentation.ui.coursesearch.navigation.CourseSearchRoute.DESTINATION_POINT
@@ -45,6 +46,7 @@ class CourseSearchViewModel @Inject constructor(
     private val homeRepository: HomeRepository,
     private val getTaxiCostUseCase: GetTaxiCostUseCase,
     private val deleteAlarmUseCase: DeleteAlarmUseCase,
+    private val getUserInfoUseCase: GetUserInfoUseCase,
     @ApplicationContext private val context: Context
 ) : BaseViewModel<CourseSearchContract.CourseUiState, CourseSearchContract.CourseSideEffect, CourseSearchContract.CourseEvent>() {
 
@@ -268,9 +270,23 @@ class CourseSearchViewModel @Inject constructor(
                         context = context,
                         timeStamp = alarmTimeStamp
                     )
+                    postAdditionalAlarmSchedule(alarmTimeStamp)
                 }
                 .onFailure { exception ->
                     handleApiException(exception)
+                }
+        }
+    }
+
+    fun postAdditionalAlarmSchedule(alarmTime: String) {
+        viewModelScope.launch {
+            getUserInfoUseCase()
+                .onSuccess {
+                    val freq = it.alertFrequencies
+                    AlarmScheduler.scheduleAdditionalPushAlarm(context, alarmTime, freq)
+                }
+                .onFailure {
+                    handleApiException(it)
                 }
         }
     }

@@ -421,7 +421,7 @@ class HomeViewModel @Inject constructor(
         val now: LocalDateTime = LocalDateTime.now()
         val departureTime = LocalDateTime.parse(currentState.departureTime, DateTimeFormatter.ISO_LOCAL_DATE_TIME)
         val diff: Duration = Duration.between(now, departureTime)
-        if (diff <= Duration.ofMinutes(2)) {
+        if (diff <= Duration.ofMinutes(3)) {
             return
         }
 

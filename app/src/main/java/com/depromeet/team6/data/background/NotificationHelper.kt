@@ -9,10 +9,8 @@ import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat.getString
 import com.depromeet.team6.R
-import com.depromeet.team6.data.background.LockService.Companion.LOCATION_NOTIFICATION_ID
 import com.depromeet.team6.presentation.ui.main.MainActivity
 import dagger.hilt.android.qualifiers.ApplicationContext
-import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -24,8 +22,17 @@ class NotificationHelper @Inject constructor(
     companion object {
         private const val RECOMMENDATION_CHANNEL_ID = "atcha_recommendation"
         private const val RECOMMENDATION_CHANNEL_NAME = "10시 알람 추천"
-        private const val DEFAULT_CHANNEL_ID = "default_channel"
-        private const val DEFAULT_CHANNEL_NAME = "일반 알림"
+        private const val ALARM_PUSH_CHANNEL_ID = "atcha_additional_alarm_push"
+        private const val ALARM_PUSH_CHANNEL_NAME = "알람 전 푸시 알림"
+
+        private const val ALARM_AWARE_5_MIN = "출발 5분 전이에요"
+        private const val ALARM_AWARE_10_MIN = "출발 10분 전이에요"
+        private const val ALARM_AWARE_15_MIN = "출발 15분 전이에요"
+        private const val ALARM_AWARE_30_MIN = "출발 30분 전이에요"
+        private const val ALARM_AWARE_1_HOUR = "출발 1시간 전이에요"
+
+        private const val LOCATION_NOTIFICATION_ID = 1001
+        private const val ALARM_AWARE_NOTIFICATION_ID = 2001
     }
 
     private val notificationManager: NotificationManager by lazy {
@@ -33,7 +40,7 @@ class NotificationHelper @Inject constructor(
     }
 
     init {
-        createChannel(DEFAULT_CHANNEL_ID, DEFAULT_CHANNEL_NAME)
+        createChannel(ALARM_PUSH_CHANNEL_ID, ALARM_PUSH_CHANNEL_NAME)
         createChannel(RECOMMENDATION_CHANNEL_ID, RECOMMENDATION_CHANNEL_NAME)
     }
 
@@ -47,8 +54,29 @@ class NotificationHelper @Inject constructor(
         }
     }
 
+    fun sendAlarmAwareNotification(min: Int) {
+        val channelId = ALARM_PUSH_CHANNEL_ID
+
+        notificationManager.createNotificationChannel(NotificationChannel(channelId, ALARM_PUSH_CHANNEL_NAME, NotificationManager.IMPORTANCE_DEFAULT))
+
+        val message = when (min) {
+            5 -> ALARM_AWARE_5_MIN
+            10 -> ALARM_AWARE_10_MIN
+            15 -> ALARM_AWARE_15_MIN
+            30 -> ALARM_AWARE_30_MIN
+            60 -> ALARM_AWARE_1_HOUR
+            else -> return@sendAlarmAwareNotification
+        }
+        val notification = NotificationCompat.Builder(context, channelId)
+            .setContentText(message)
+            .setSmallIcon(R.drawable.ic_app_logo_foreground)
+            .setAutoCancel(true)
+            .build()
+
+        notificationManager.notify(ALARM_AWARE_NOTIFICATION_ID, notification)
+    }
+
     fun sendRecommendationNotification() {
-        Timber.d("Notification Recommendation : 유후~~!")
         val channelId = RECOMMENDATION_CHANNEL_ID
 
         notificationManager.createNotificationChannel(NotificationChannel(channelId, RECOMMENDATION_CHANNEL_NAME, NotificationManager.IMPORTANCE_DEFAULT))
