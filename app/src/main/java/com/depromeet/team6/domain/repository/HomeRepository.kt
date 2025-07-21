@@ -16,8 +16,8 @@ interface HomeRepository {
     fun setDeparturePoint(address: Address?)
     fun getDeparturePoint(): Address?
 
-    fun setDestinationPoint(destinationPoint: String)
-    fun getDestinationPoint(): String
+    fun setDestinationPoint(destinationPoint: Address?)
+    fun getDestinationPoint(): Address?
 
     fun setLastCourseInfo(courseInfo: CourseInfo?)
     fun getLastCourseInfo(): CourseInfo?

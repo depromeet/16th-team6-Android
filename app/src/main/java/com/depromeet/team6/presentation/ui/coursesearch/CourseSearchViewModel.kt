@@ -241,11 +241,12 @@ class CourseSearchViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val departureAddress = Gson().fromJson(departurePoint, Address::class.java)
+                val destinationAddress = Gson().fromJson(destinationPoint, Address::class.java)
                 val registeredCourse = uiState.value.courseData.find { it.routeId == routeId }
 
                 if (registeredCourse != null && departureAddress != null) {
                     homeRepository.setDeparturePoint(departureAddress)
-                    homeRepository.setDestinationPoint(destinationPoint)
+                    homeRepository.setDestinationPoint(destinationAddress)
                     homeRepository.setLastCourseInfo(registeredCourse)
                     homeRepository.setLastRouteId(routeId)
                     homeRepository.setAlarmRegistered(true)
