@@ -31,8 +31,11 @@ class LocationsRemoteDataSource @Inject constructor(
 
     suspend fun postSearchHistories(requestSearchHistoryDto: RequestSearchHistoryDto): Result<Unit> {
         val response = locationsService.postSearchHistories(requestSearchHistoryDto = requestSearchHistoryDto)
-        if (response.isSuccessful) return Result.success(Unit)
-        else return Result.failure(Exception("Failed to post search history"))
+        if (response.isSuccessful) {
+            return Result.success(Unit)
+        } else {
+            return Result.failure(Exception("Failed to post search history"))
+        }
     }
 
     suspend fun deleteSearchHistory(

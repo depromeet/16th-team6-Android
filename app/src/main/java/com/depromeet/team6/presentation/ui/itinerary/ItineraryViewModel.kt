@@ -36,14 +36,14 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ItineraryViewModel @Inject constructor(
-    @ApplicationContext private val context : Context,
+    @ApplicationContext private val context: Context,
     private val getBusArrivalUseCase: GetBusArrivalUseCase,
     private val postAlarmUseCase: PostAlarmUseCase,
     private val userInfoRepository: UserInfoRepository,
     private val homeRepository: HomeRepository,
     private val getTaxiCostUseCase: GetTaxiCostUseCase,
     private val getUserInfoUseCase: GetUserInfoUseCase,
-    private val initAlarmUseCase: InitAlarmUseCase,
+    private val initAlarmUseCase: InitAlarmUseCase
 ) : BaseViewModel<ItineraryContract.ItineraryUiState, ItineraryContract.ItinerarySideEffect, ItineraryContract.ItineraryEvent>() {
     override fun createInitialState(): ItineraryContract.ItineraryUiState = ItineraryContract.ItineraryUiState()
 
@@ -71,7 +71,8 @@ class ItineraryViewModel @Inject constructor(
                     departurePoint = currentState.departurePoint!!,
                     destinationPoint = currentState.destinationPoint!!,
                     alarmTimeStamp = currentState.itineraryInfo!!.departureTime,
-                    lastRouteId = event.routeId)
+                    lastRouteId = event.routeId
+                )
                 AmplitudeUtils.trackEventWithProperties(
                     eventName = ITINERARY_EVENT_ALARM_REGISTERED,
                     properties = mapOf(

@@ -11,9 +11,9 @@ class InitAlarmUseCase @Inject constructor(
     private val homeRepository: HomeRepository
 ) {
     operator fun invoke(
-        departureAddress : Address,
+        departureAddress: Address,
         destinationAddress: Address,
-        registeredCourseInfo : CourseInfo,
+        registeredCourseInfo: CourseInfo,
         lastRouteId: String
     ) {
         alarmFiredLocalDataSource.resetAll()
@@ -22,6 +22,5 @@ class InitAlarmUseCase @Inject constructor(
         homeRepository.setLastCourseInfo(registeredCourseInfo)
         homeRepository.setLastRouteId(lastRouteId)
         homeRepository.setAlarmRegistered(true)
-
     }
 }
