@@ -102,3 +102,8 @@ object ItineraryAmplitude {
     const val ITINERARY_EVENT_ALARM_REGISTERED = "alert_button"
     const val ITINERARY_ALARM_REGISTER_BTN_CLICKED = "alert_button"
 }
+
+object MyPageAmplitude {
+    const val MY_PAGE = "마이페이지"
+    const val MYPAGE_BANNER_CLICKED = "mypage_banner_clicked"
+}
