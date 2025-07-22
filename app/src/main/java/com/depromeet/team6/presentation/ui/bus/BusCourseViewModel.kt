@@ -49,7 +49,8 @@ class BusCourseViewModel @Inject constructor(
                 routeName = currentState.busArrivalParameter.routeName,
                 stationName = busArrivalParameter.stationName,
                 lat = busArrivalParameter.lat,
-                lon = busArrivalParameter.lon
+                lon = busArrivalParameter.lon,
+                passingStations = busArrivalParameter.passingStations
             ).onSuccess { busArrival ->
                 getBusPositions(
                     busRouteId = busArrival.busRouteId,

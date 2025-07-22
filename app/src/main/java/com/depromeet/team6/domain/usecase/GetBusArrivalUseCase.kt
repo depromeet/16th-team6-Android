@@ -16,6 +16,7 @@ import com.depromeet.team6.domain.ToastMessage.API_ERROR_NETWORK_FAILURE
 import com.depromeet.team6.domain.ToastMessage.API_ERROR_OUT_OF_SERVICE_REGION
 import com.depromeet.team6.domain.ToastMessage.API_ERROR_UNKNOWN
 import com.depromeet.team6.domain.model.BusArrival
+import com.depromeet.team6.domain.model.course.Station
 import com.depromeet.team6.domain.repository.TransitsRepository
 import com.depromeet.team6.domain.usecase.base.ApiRequestUseCase
 import com.depromeet.team6.presentation.model.exception.ErrorControlFailureException
@@ -28,17 +29,25 @@ class GetBusArrivalUseCase @Inject constructor(
     private val transitsRepository: TransitsRepository
 ) : ApiRequestUseCase<GetBusArrivalUseCase.Params, BusArrival>() {
 
-    data class Params(val routeName: String, val stationName: String, val lat: Double, val lon: Double)
+    data class Params(val routeName: String, val stationName: String, val lat: Double, val lon: Double, val passingStations: List<Station>)
 
-    suspend operator fun invoke(routeName: String, stationName: String, lat: Double, lon: Double): Result<BusArrival> =
-        invoke(Params(routeName = routeName, stationName = stationName, lat = lat, lon = lon))
+    suspend operator fun invoke(routeName: String, stationName: String, lat: Double, lon: Double, passingStations: List<Station>): Result<BusArrival> =
+        invoke(Params(routeName = routeName, stationName = stationName, lat = lat, lon = lon, passingStations = passingStations))
 
     override suspend fun apiCall(params: Params): Result<BusArrival> =
         transitsRepository.getBusArrival(
             routeName = params.routeName,
             stationName = params.stationName,
             lat = params.lat,
-            lon = params.lon
+            lon = params.lon,
+            passingStations = params.passingStations.map {
+                com.depromeet.team6.data.dataremote.model.response.transits.Station(
+                    index = it.index,
+                    stationName = it.stationName,
+                    lat = it.lat,
+                    lon = it.lon
+                )
+            }
         )
 
     override fun apiExceptionMapper(errorCode: String): ErrorControlFailureException = when (errorCode) {

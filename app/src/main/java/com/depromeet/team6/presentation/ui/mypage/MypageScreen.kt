@@ -3,6 +3,7 @@ package com.depromeet.team6.presentation.ui.mypage
 import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,6 +32,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
+import com.depromeet.team6.BuildConfig
 import com.depromeet.team6.R
 import com.depromeet.team6.presentation.ui.common.view.AtChaWebView
 import com.depromeet.team6.presentation.ui.mypage.component.MyPageConfirmDialog
@@ -64,6 +66,10 @@ fun MypageRoute(
     val isInitialized = remember { mutableMapOf("initialized" to false) }
 
     val feedbackIntent = Intent(Intent.ACTION_VIEW, Uri.parse(FEEDBACK_FORM_URL))
+
+    BackHandler {
+        mypageViewModel.setEvent(MypageContract.MypageEvent.BackPressed)
+    }
 
     LaunchedEffect(mypageViewModel.sideEffect, lifecycleOwner) {
         mypageViewModel.sideEffect.flowWithLifecycle(lifecycle = lifecycleOwner.lifecycle)
@@ -159,7 +165,8 @@ fun MypageRoute(
                                 onUpdateClicked = {
                                     mypageViewModel.navigateToPlayStore(context)
                                 },
-                                onBannerClicked = { mypageViewModel.setSideEffect(MypageContract.MypageSideEffect.NavigateToFeedbackForm) }
+                                onBannerClicked = { mypageViewModel.setSideEffect(MypageContract.MypageSideEffect.NavigateToFeedbackForm) },
+                                isUpdateBtnVisible = uiState.userInfo.appVersion != ("v" + BuildConfig.VERSION_NAME)
                             )
                         }
 
@@ -264,7 +271,8 @@ fun MypageScreen(
     logoutConfirmed: () -> Unit = {},
     withDrawConfirmed: () -> Unit = {},
     dismissDialog: () -> Unit = {},
-    onBannerClicked: () -> Unit = {}
+    onBannerClicked: () -> Unit = {},
+    isUpdateBtnVisible: Boolean = false
 ) {
     val colors = LocalTeam6Colors.current
     val typography = LocalTeam6Typography.current
@@ -320,7 +328,8 @@ fun MypageScreen(
 
                 MypageVersionItem(
                     title = stringResource(R.string.mypage_version_title_text),
-                    onClick = onUpdateClicked
+                    onClick = onUpdateClicked,
+                    updateBtnVisibility = isUpdateBtnVisible
                 )
             }
 

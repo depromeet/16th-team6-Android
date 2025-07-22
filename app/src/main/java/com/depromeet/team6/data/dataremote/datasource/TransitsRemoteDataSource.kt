@@ -1,10 +1,12 @@
 package com.depromeet.team6.data.dataremote.datasource
 
+import com.depromeet.team6.data.dataremote.model.request.transits.RequestBusArrivalDTO
 import com.depromeet.team6.data.dataremote.model.response.base.parse
 import com.depromeet.team6.data.dataremote.model.response.transits.ResponseBusArrivalsDto
 import com.depromeet.team6.data.dataremote.model.response.transits.ResponseBusOperationInfoDto
 import com.depromeet.team6.data.dataremote.model.response.transits.ResponseBusPositionsDto
 import com.depromeet.team6.data.dataremote.model.response.transits.ResponseCourseSearchDto
+import com.depromeet.team6.data.dataremote.model.response.transits.Station
 import com.depromeet.team6.data.dataremote.service.TransitsService
 import javax.inject.Inject
 
@@ -18,7 +20,13 @@ class TransitsRemoteDataSource @Inject constructor(
         endLon: String,
         sortType: Int
     ): Result<List<ResponseCourseSearchDto>> {
-        val response = transitsService.getAvailableCourses(startLat, startLon, endLat, endLon, sortType)
+        val response = transitsService.getAvailableCourses(
+            startLat = startLat,
+            startLon = startLon,
+            endLat = endLat,
+            endLon = endLon,
+            sortType = sortType
+        )
         return response.parse()
     }
 
@@ -26,12 +34,16 @@ class TransitsRemoteDataSource @Inject constructor(
         routeName: String,
         stationName: String,
         lat: Double,
-        lon: Double
+        lon: Double,
+        passStations: List<Station>
     ): Result<ResponseBusArrivalsDto> = transitsService.getBusArrival(
-        routeName = routeName,
-        stationName = stationName,
-        lat = lat,
-        lon = lon
+        RequestBusArrivalDTO(
+            routeName = routeName,
+            stationName = stationName,
+            lat = lat,
+            lon = lon,
+            passStations = passStations
+        )
     ).parse()
 
     suspend fun getBusPositions(

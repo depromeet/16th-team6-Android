@@ -71,7 +71,8 @@ fun MainNavHost(
             padding = padding,
             navigateToItinerary = navigator::navigateToItinerary,
             navigateToLogin = navigator::navigateToLogin,
-            navigateToHome = navigator::navigateToHome
+            navigateToHome = navigator::navigateToHome,
+            navigateToHomeAfterAlarmRegister = navigator::navigateToHomeAfterAlarmRegister
         )
 
         itineraryNavGraph(

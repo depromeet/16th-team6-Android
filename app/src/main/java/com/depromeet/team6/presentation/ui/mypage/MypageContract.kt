@@ -45,7 +45,8 @@ class MypageContract {
             lat = 0.0,
             lon = 0.0,
             alertFrequencies = emptySet(),
-            fcmToken = ""
+            fcmToken = "",
+            appVersion = ""
         ),
         val alertFrequencies: Set<Int> = setOf(1),
         val mapViewVisible: Boolean = false,

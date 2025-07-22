@@ -19,6 +19,8 @@ class HomeContract {
     data class HomeUiState(
         val loadState: LoadState = LoadState.Idle,
         val destinationState: LoadState = LoadState.Idle,
+        val afterRegisterDataLoadState: LoadState = LoadState.Idle,
+        val alarmCheckLoadState: LoadState = LoadState.Idle,
         val isAlarmRegistered: Boolean = false,
         val isBusDeparted: Boolean = false,
         val showSpeechBubble: Boolean = true,
@@ -41,7 +43,8 @@ class HomeContract {
             stationName = "",
             lat = 0.0,
             lon = 0.0,
-            subtypeIdx = 0
+            subtypeIdx = 0,
+            passingStations = emptyList()
         ),
         // 사용자 출발 여부
         val userDeparture: Boolean = false,
@@ -77,6 +80,7 @@ class HomeContract {
     sealed interface HomeSideEffect : UiSideEffect {
         data object NavigateToMypage : HomeSideEffect
         data class NavigateToItinerary(val markerParameter: FocusedMarkerParameter?) : HomeSideEffect
+        data object ShowDeleteAlarmToast : HomeSideEffect
     }
 
     sealed class HomeEvent : UiEvent {

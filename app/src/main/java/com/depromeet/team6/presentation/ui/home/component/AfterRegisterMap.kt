@@ -41,6 +41,7 @@ import com.depromeet.team6.domain.model.course.LegInfo
 import com.depromeet.team6.domain.model.course.TransportType
 import com.depromeet.team6.presentation.model.itinerary.FocusedMarkerParameter
 import com.depromeet.team6.presentation.ui.common.TransportVectorIconBitmap
+import com.depromeet.team6.presentation.ui.common.view.AtChaLoadingView
 import com.depromeet.team6.presentation.ui.itinerary.LegInfoDummyProvider
 import com.depromeet.team6.presentation.ui.itinerary.component.getWayPointList
 import com.depromeet.team6.presentation.util.permission.PermissionUtil
@@ -324,46 +325,50 @@ fun AfterRegisterMap(
     Box(
         modifier = modifier
     ) {
-        // Tmap
-        AndroidView(
-            modifier = modifier
-                .fillMaxWidth()
-                // TODO : 하단 모달 영역 제외한 부분에 띄우도록 수정
-                .height(screenHeight - 248.dp + padding.calculateBottomPadding())
-                .align(Alignment.TopCenter),
-            factory = { context ->
-                // FrameLayout을 직접 생성
-                FrameLayout(context).apply {
-                    // TMapView를 FrameLayout에 추가
-                    addView(tMapView)
-                }
-            },
-            update = { frameLayout ->
-                // Update logic if needed (e.g., map settings)
-            }
-        )
-
-        // 현위치 버튼
-        Image(
-            imageVector = ImageVector.vectorResource(id = R.drawable.ic_all_current_location),
-            contentDescription = stringResource(R.string.home_current_location_btn),
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .then(
-                    if (isAlarmRegistered) {
-                        Modifier.padding(bottom = 25.dp, end = 16.dp)
-                    } else {
-                        Modifier.padding(bottom = 25.dp, end = 16.dp)
+        if (isMapReady) {
+            // Tmap
+            AndroidView(
+                modifier = modifier
+                    .fillMaxWidth()
+                    // TODO : 하단 모달 영역 제외한 부분에 띄우도록 수정
+                    .height(screenHeight - 248.dp + padding.calculateBottomPadding())
+                    .align(Alignment.TopCenter),
+                factory = { context ->
+                    // FrameLayout을 직접 생성
+                    FrameLayout(context).apply {
+                        // TMapView를 FrameLayout에 추가
+                        addView(tMapView)
                     }
-                )
-                .clickable(enabled = isMapReady) {
-                    val tMapPoint = TMapPoint(userLocation.latitude, userLocation.longitude)
-                    tMapView.setCenterPoint(tMapPoint.latitude, tMapPoint.longitude)
-
-                    getCenterLocation(LatLng(tMapPoint.latitude, tMapPoint.longitude))
+                },
+                update = { frameLayout ->
+                    // Update logic if needed (e.g., map settings)
                 }
-                .graphicsLayer { alpha = if (isMapReady) 1f else 0.5f } // 비활성화 시 투명도 조정
-        )
+            )
+
+            // 현위치 버튼
+            Image(
+                imageVector = ImageVector.vectorResource(id = R.drawable.ic_all_current_location),
+                contentDescription = stringResource(R.string.home_current_location_btn),
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .then(
+                        if (isAlarmRegistered) {
+                            Modifier.padding(bottom = 25.dp, end = 16.dp)
+                        } else {
+                            Modifier.padding(bottom = 25.dp, end = 16.dp)
+                        }
+                    )
+                    .clickable(enabled = isMapReady) {
+                        val tMapPoint = TMapPoint(userLocation.latitude, userLocation.longitude)
+                        tMapView.setCenterPoint(tMapPoint.latitude, tMapPoint.longitude)
+
+                        getCenterLocation(LatLng(tMapPoint.latitude, tMapPoint.longitude))
+                    }
+                    .graphicsLayer { alpha = if (isMapReady) 1f else 0.5f } // 비활성화 시 투명도 조정
+            )
+        } else {
+            AtChaLoadingView()
+        }
     }
 }
 

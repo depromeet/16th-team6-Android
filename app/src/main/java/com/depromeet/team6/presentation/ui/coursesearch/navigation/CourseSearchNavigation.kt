@@ -20,11 +20,12 @@ fun NavController.navigateCourseSearch(departurePoint: String, destinationPoint:
 fun NavGraphBuilder.courseSearchNavGraph(
     padding: PaddingValues,
     navigateToHome: () -> Unit,
+    navigateToHomeAfterAlarmRegister: () -> Unit,
     navigateToLogin: () -> Unit,
     navigateToItinerary: (String, String, String) -> Unit
 ) {
     composable(
-        route = "${CourseSearchRoute.ROUTE}/{departurePoint}/{destinationPoint}",
+        route = "${CourseSearchRoute.ROUTE}/{${CourseSearchRoute.DEPARTURE_POINT}}/{${CourseSearchRoute.DESTINATION_POINT}}",
         arguments = listOf(
             navArgument("departurePoint") { type = NavType.StringType },
             navArgument("destinationPoint") { type = NavType.StringType },
@@ -42,6 +43,7 @@ fun NavGraphBuilder.courseSearchNavGraph(
             padding = padding,
             navigateToItinerary = navigateToItinerary,
             navigateToHome = navigateToHome,
+            navigateToHomeAfterAlarmRegister = navigateToHomeAfterAlarmRegister,
             navigateToLogin = navigateToLogin,
             departurePoint = departurePoint,
             destinationPoint = destinationPoint,
@@ -52,4 +54,6 @@ fun NavGraphBuilder.courseSearchNavGraph(
 
 object CourseSearchRoute {
     const val ROUTE = "courseSearch"
+    const val DEPARTURE_POINT = "departurePoint"
+    const val DESTINATION_POINT = "destinationPoint"
 }

@@ -50,6 +50,7 @@ fun CourseSearchRoute(
     destinationPoint: String,
     navigateToItinerary: (String, String, String) -> Unit,
     navigateToHome: () -> Unit,
+    navigateToHomeAfterAlarmRegister: () -> Unit,
     navigateToLogin: () -> Unit,
     fromLockScreen: Boolean = false,
     viewModel: CourseSearchViewModel = hiltViewModel()
@@ -109,16 +110,11 @@ fun CourseSearchRoute(
                 }
 
                 is CourseSearchContract.CourseSideEffect.NavigateHomeWithToast -> {
-                    navigateToHome()
+                    navigateToHomeAfterAlarmRegister()
                     atChaToastMessage(context, R.string.course_set_notification_snackbar, Toast.LENGTH_SHORT)
                 }
             }
         }
-    }
-
-    // UI state 초기화
-    LaunchedEffect(Unit) {
-        viewModel.setEvent(CourseSearchContract.CourseEvent.InitUiState(departurePoint, destinationPoint))
     }
 
     when (uiState.courseDataLoadState) {
@@ -145,20 +141,11 @@ fun CourseSearchRoute(
                 setNotification = { routeId ->
                     if (uiState.sortType == 1) {
                         // 기존 코드 유지 - sortType이 1일 때 알림 등록
-                        val sharedPreferences = context.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
-                        val editor = sharedPreferences.edit()
 
                         val registeredCourse = uiState.courseData.find { it.routeId == routeId }
 
                         if (registeredCourse != null) {
-                            val courseJson = Gson().toJson(registeredCourse)
-                            editor.putString("departurePoint", departurePoint) // 출발지
-                            editor.putString("destinationPoint", destinationPoint) // 도착지
-                            editor.putBoolean("alarmRegistered", true) // 알람 등록 여부
-                            editor.putString("lastRouteId", routeId) // 막차 경로 Id
-                            editor.putString("lastCourseInfo", courseJson) // 막차 경로
-                            editor.apply()
-
+                            viewModel.saveAlarmData(departurePoint, destinationPoint, routeId)
                             viewModel.postAlarm(lastRouteId = routeId)
                         } else {
                             atChaToastMessage(context, R.string.course_set_notification_failed_snackbar)
