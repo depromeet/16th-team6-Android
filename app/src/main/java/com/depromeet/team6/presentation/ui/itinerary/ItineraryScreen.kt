@@ -22,6 +22,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
@@ -38,6 +39,9 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.depromeet.team6.R
 import com.depromeet.team6.domain.model.course.LegInfo
@@ -48,6 +52,8 @@ import com.depromeet.team6.presentation.ui.home.component.RefreshLottieButton
 import com.depromeet.team6.presentation.ui.itinerary.component.ItineraryDetail
 import com.depromeet.team6.presentation.ui.itinerary.component.ItineraryMap
 import com.depromeet.team6.presentation.ui.itinerary.component.ItinerarySummary
+import com.depromeet.team6.presentation.ui.overlay.OverlayPermissionDialog
+import com.depromeet.team6.presentation.ui.overlay.PermissionSnackbar
 import com.depromeet.team6.presentation.util.DefaultLatLng.DEFAULT_LAT
 import com.depromeet.team6.presentation.util.DefaultLatLng.DEFAULT_LNG
 import com.depromeet.team6.presentation.util.base.ApiErrorSideEffect
@@ -78,6 +84,7 @@ fun ItineraryRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
+    val lifecycleOwner = LocalLifecycleOwner.current
 
     val getCurrentLocation: () -> Unit = {
         coroutineScope.launch {
@@ -87,6 +94,29 @@ fun ItineraryRoute(
             }
         }
     }
+
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            when (event) {
+                Lifecycle.Event.ON_RESUME -> {
+                    if (viewModel.hasShownOverlayDialogBefore() &&
+                        PermissionUtil.isOverlayPermissionRequested(context)
+                    ) {
+                        if (!PermissionUtil.hasOverlayPermission(context)) {
+                            viewModel.showPermissionSnackbar()
+                        }
+                    }
+                }
+                else -> {}
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
+
     // SideEffect 감지
     LaunchedEffect(Unit) {
         val location = if (PermissionUtil.hasLocationPermissions(context)) {
@@ -134,29 +164,84 @@ fun ItineraryRoute(
 
     when (uiState.courseDataLoadState) {
         LoadState.Idle -> {}
-        LoadState.Success -> ItineraryScreen(
-            marginTop = padding.calculateTopPadding(),
-            marginBottom = padding.calculateBottomPadding(),
-            uiState = uiState,
-            focusedMarkerParam = focusedMarkerParam,
-            onBackPressed = onBackPressed,
-            onRefreshButtonClick = { viewModel.setEvent(ItineraryContract.ItineraryEvent.RefreshButtonClicked) },
-            registerAlarmButtonClick = { routeId ->
-                val registeredCourse = uiState.itineraryInfo
+        LoadState.Success -> {
+            ItineraryScreen(
+                marginTop = padding.calculateTopPadding(),
+                marginBottom = padding.calculateBottomPadding(),
+                uiState = uiState,
+                focusedMarkerParam = focusedMarkerParam,
+                onBackPressed = onBackPressed,
+                onRefreshButtonClick = { viewModel.setEvent(ItineraryContract.ItineraryEvent.RefreshButtonClicked) },
+                registerAlarmButtonClick = { routeId ->
+                    if (PermissionUtil.needsOverlayPermission(context)) {
+                        if (viewModel.shouldShowOverlayDialog()) {
+                            viewModel.showOverlayPermissionDialog()
+                        } else {
+                            viewModel.showPermissionSnackbar()
+                        }
+                    } else {
+                        val sharedPreferences =
+                            context.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
+                        val editor = sharedPreferences.edit()
 
-                if (registeredCourse != null) {
-                    viewModel.setEvent(ItineraryContract.ItineraryEvent.RegisterAlarm(routeId = routeId))
-                } else {
-                    atChaToastMessage(context, R.string.course_set_notification_failed_snackbar)
+                        val registeredCourse = uiState.itineraryInfo
+
+                        if (registeredCourse != null) {
+                            viewModel.setEvent(ItineraryContract.ItineraryEvent.RegisterAlarm(routeId = routeId))
+                        } else {
+                            atChaToastMessage(context, R.string.course_set_notification_failed_snackbar)
+                        }
+                    }
+                },
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues = padding)
+                    .background(defaultTeam6Colors.gray950),
+                navigateToBusCourse = navigateToBusCourse,
+                currentLocationBtnClick = getCurrentLocation
+            )
+            if (uiState.showPermissionSnackbar) {
+                Box(modifier = Modifier.fillMaxSize()) {
+                    PermissionSnackbar(
+                        onSettingsClick = {
+                            viewModel.dismissPermissionSnackbar()
+                            PermissionUtil.openOverlayPermissionSettings(context)
+                        },
+                        onDismiss = {
+                            viewModel.dismissPermissionSnackbar()
+                        },
+                        modifier = Modifier
+                            .align(Alignment.TopCenter)
+                            .padding(top = 40.dp)
+                    )
                 }
-            },
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues = padding)
-                .background(defaultTeam6Colors.gray950),
-            navigateToBusCourse = navigateToBusCourse,
-            currentLocationBtnClick = getCurrentLocation
-        )
+            }
+            if (uiState.showOverlayPermissionDialog) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(color = defaultTeam6Colors.black.copy(alpha = 0.76f))
+                ) {
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        OverlayPermissionDialog(
+                            onDismiss = {
+                                viewModel.dismissOverlayPermissionDialog()
+                                viewModel.markOverlayDialogAsShow()
+                                viewModel.showPermissionSnackbar()
+                            },
+                            onSettingClicked = {
+                                viewModel.dismissOverlayPermissionDialog()
+                                viewModel.markOverlayDialogAsShow()
+                                PermissionUtil.openOverlayPermissionSettings(context)
+                            }
+                        )
+                    }
+                }
+            }
+        }
         else -> Unit
     }
 }

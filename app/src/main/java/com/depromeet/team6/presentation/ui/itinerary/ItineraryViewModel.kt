@@ -47,6 +47,8 @@ class ItineraryViewModel @Inject constructor(
 ) : BaseViewModel<ItineraryContract.ItineraryUiState, ItineraryContract.ItinerarySideEffect, ItineraryContract.ItineraryEvent>() {
     override fun createInitialState(): ItineraryContract.ItineraryUiState = ItineraryContract.ItineraryUiState()
 
+    private var hasShownOverlayDialog = false
+
     override suspend fun handleEvent(event: ItineraryContract.ItineraryEvent) {
         when (event) {
             is ItineraryContract.ItineraryEvent.LoadLegsResult -> {
@@ -80,6 +82,26 @@ class ItineraryViewModel @Inject constructor(
                         USER_ID to userInfoRepository.getUserID(),
                         ITINERARY_ALARM_REGISTER_BTN_CLICKED to 1
                     )
+                )
+            }
+            is ItineraryContract.ItineraryEvent.DismissOverlayPermissionDialog -> setState {
+                copy(
+                    showOverlayPermissionDialog = false
+                )
+            }
+            is ItineraryContract.ItineraryEvent.DismissPermissionSnackbar -> setState {
+                copy(
+                    showPermissionSnackbar = false
+                )
+            }
+            is ItineraryContract.ItineraryEvent.ShowOverlayPermissionDialog -> setState {
+                copy(
+                    showOverlayPermissionDialog = true
+                )
+            }
+            is ItineraryContract.ItineraryEvent.ShowPermissionSnackbar -> setState {
+                copy(
+                    showPermissionSnackbar = true
                 )
             }
         }
@@ -209,5 +231,33 @@ class ItineraryViewModel @Inject constructor(
             }
         }
         Timber.d("busArrivalStatus ViewModel : ${currentState.busArrivalStatus}")
+    }
+
+    fun showOverlayPermissionDialog() {
+        setEvent(ItineraryContract.ItineraryEvent.ShowOverlayPermissionDialog)
+    }
+
+    fun dismissOverlayPermissionDialog() {
+        setEvent(ItineraryContract.ItineraryEvent.DismissOverlayPermissionDialog)
+    }
+
+    fun shouldShowOverlayDialog(): Boolean {
+        return !hasShownOverlayDialog
+    }
+
+    fun markOverlayDialogAsShow() {
+        hasShownOverlayDialog = true
+    }
+
+    fun hasShownOverlayDialogBefore(): Boolean {
+        return hasShownOverlayDialog
+    }
+
+    fun showPermissionSnackbar() {
+        setEvent(ItineraryContract.ItineraryEvent.ShowPermissionSnackbar)
+    }
+
+    fun dismissPermissionSnackbar() {
+        setEvent(ItineraryContract.ItineraryEvent.DismissPermissionSnackbar)
     }
 }

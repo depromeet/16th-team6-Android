@@ -54,6 +54,15 @@
 
     <string name="dialog_change_alarm_title">기존 막차 알림을 종료하고\n선택한 알림으로 변경할까요?</string>
 
+    <!-- Overlay Permission -->
+    <string name="overlay_permission_content_text_start">막차 알림을 등록하려면\n</string>
+    <string name="overlay_permission_content_text_mid">"'다른 앱 위에 표시' "</string>
+    <string name="overlay_permission_content_text_end">권한이 필요해요</string>
+    <string name="overlay_permission_atcha_text">앗차</string>
+    <string name="overlay_permission_close_text">닫기</string>
+    <string name="overlay_permission_go_setting_text">설정하기</string>
+    <string name="overlay_permission_toast_message">"'다른 앱 위에 표시'를 허용해주세요"</string>
+
     <!-- LoginScreen -->
     <string name="login_pager_main_text_first">오후 10시에 미리\n막차알림 등록하세요</string>
     <string name="login_pager_main_text_second">자리에서 떠나기 전에\n여러번 막차 알림 드려요</string>
