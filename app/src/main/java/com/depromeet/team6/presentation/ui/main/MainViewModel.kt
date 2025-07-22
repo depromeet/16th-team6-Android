@@ -24,6 +24,11 @@ class MainViewModel @Inject constructor(
     private val _showSplash = MutableLiveData(true)
     val showSplash: LiveData<Boolean> = _showSplash
 
+    init {
+        startSplashTimer()
+        fetchFcmToken()
+    }
+
     /**
      * 🔹 FCM 토큰 가져오기 & 저장
      */

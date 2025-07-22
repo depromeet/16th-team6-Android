@@ -1,7 +1,6 @@
 package com.depromeet.team6.presentation.ui.onboarding.component
 
 import android.content.Context
-import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -24,7 +23,6 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.depromeet.team6.R
 import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.presentation.mapper.toAddress
 import com.depromeet.team6.presentation.model.location.Location
@@ -32,7 +30,6 @@ import com.depromeet.team6.presentation.ui.onboarding.OnboardingViewModel
 import com.depromeet.team6.presentation.util.modifier.addFocusCleaner
 import com.depromeet.team6.presentation.util.modifier.advancedImePadding
 import com.depromeet.team6.presentation.util.permission.PermissionUtil
-import com.depromeet.team6.presentation.util.toast.atChaToastMessage
 import com.depromeet.team6.presentation.util.view.partitionByAddressCategory
 import com.depromeet.team6.ui.theme.Team6Theme
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
@@ -49,7 +46,8 @@ fun OnboardingSearchPopup(
     onSearchTextChange: (String) -> Unit = {},
     onBackButtonClicked: () -> Unit = {},
     onTextClearButtonClicked: () -> Unit = {},
-    selectButtonClicked: (Address) -> Unit = {}
+    selectButtonClicked: (Address) -> Unit = {},
+    settingDialog: () -> Unit
 ) {
     val focusManager = LocalFocusManager.current
     val focusRequester = remember { FocusRequester() }
@@ -79,11 +77,7 @@ fun OnboardingSearchPopup(
                         selectButtonClicked(address)
                     }
                 } else {
-                    atChaToastMessage(
-                        context = context,
-                        R.string.onboarding_location_no_permission_toast,
-                        length = Toast.LENGTH_SHORT
-                    )
+                    settingDialog()
                 }
             },
             focusRequester = focusRequester
@@ -149,6 +143,9 @@ fun OnboardingSearchPopup(
 @Composable
 private fun OnboardingSearchPopupPreview() {
     Team6Theme {
-        OnboardingSearchPopup(padding = PaddingValues(0.dp))
+        OnboardingSearchPopup(
+            padding = PaddingValues(0.dp),
+            settingDialog = {}
+        )
     }
 }

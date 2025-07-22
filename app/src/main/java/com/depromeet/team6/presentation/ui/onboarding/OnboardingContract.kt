@@ -24,8 +24,7 @@ class OnboardingContract {
         val searchLocations: List<Location> = emptyList(),
         var userCurrentLocation: LatLng = LatLng(DEFAULT_LAT, DEFAULT_LNG),
         val alertFrequencies: Set<Int> = setOf(1),
-        var permissionBottomSheetVisible: Boolean = false,
-        var permissionDeniedBottomSheetVisible: Boolean = false,
+        var permissionBottomSheetVisible: Boolean = true,
         val myAddress: Address = Address(
             name = "",
             lat = 0.0,
@@ -36,7 +35,11 @@ class OnboardingContract {
     ) : UiState
 
     sealed interface OnboardingSideEffect : UiSideEffect {
-        data object DummySideEffect : OnboardingSideEffect
+        data object RequestLocationPermission : OnboardingSideEffect
+        data object RequestNotificationPermission : OnboardingSideEffect
+        data object LocationPermissionDeniedDialog : OnboardingSideEffect
+        data object LocationSettingDialog : OnboardingSideEffect
+        data object NotificationPermissionDeniedDialog : OnboardingSideEffect
     }
 
     sealed class OnboardingEvent : UiEvent {
@@ -55,7 +58,6 @@ class OnboardingContract {
         data class ChangePermissionBottomSheetVisible(val permissionBottomSheetVisible: Boolean) : OnboardingEvent()
         data class UpdateUserLocation(val context: Context) : OnboardingEvent()
         data object SearchPopUpBackPressed : OnboardingEvent()
-        data class ChangePermissionDeniedBottomSheetVisible(val permissionDeniedBottomSheetVisible: Boolean) : OnboardingEvent()
         data object ClearAddress : OnboardingEvent()
         data class ChangeMapViewVisible(val mapViewVisible: Boolean) : OnboardingEvent()
     }

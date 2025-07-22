@@ -417,6 +417,7 @@ class MypageViewModel @Inject constructor(
         viewModelScope.launch {
             deleteWithDrawUseCase().onSuccess {
                 userInfoRepositoryImpl.clear()
+                setSideEffect(MypageContract.MypageSideEffect.ClearPermissionData)
                 homeRepository.clearAlarmData()
                 setSideEffect(MypageContract.MypageSideEffect.NavigateToLogin)
             }.onFailure { exception ->
