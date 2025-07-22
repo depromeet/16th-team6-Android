@@ -5,6 +5,7 @@ import com.depromeet.team6.data.dataremote.model.request.user.RequestModifyUserI
 import com.depromeet.team6.data.mapper.todata.toData
 import com.depromeet.team6.data.mapper.todomain.toDomain
 import com.depromeet.team6.domain.model.Auth
+import com.depromeet.team6.domain.model.GetUserInfo
 import com.depromeet.team6.domain.model.SignUp
 import com.depromeet.team6.domain.model.UserInfo
 import com.depromeet.team6.domain.repository.AuthRepository
@@ -33,7 +34,7 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun deleteWithDraw(): Result<Unit> =
         authRemoteDataSource.deleteWithDraw()
 
-    override suspend fun getUserInfo(): Result<UserInfo> =
+    override suspend fun getUserInfo(): Result<GetUserInfo> =
         authRemoteDataSource.getUserInfo()
             .mapCatching { it.toDomain() }
 

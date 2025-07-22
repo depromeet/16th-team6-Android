@@ -2,6 +2,7 @@ package com.depromeet.team6.domain.repository
 
 import com.depromeet.team6.data.dataremote.model.request.user.RequestModifyUserInfoDto
 import com.depromeet.team6.domain.model.Auth
+import com.depromeet.team6.domain.model.GetUserInfo
 import com.depromeet.team6.domain.model.SignUp
 import com.depromeet.team6.domain.model.UserInfo
 
@@ -16,7 +17,7 @@ interface AuthRepository {
 
     suspend fun deleteWithDraw(): Result<Unit>
 
-    suspend fun getUserInfo(): Result<UserInfo>
+    suspend fun getUserInfo(): Result<GetUserInfo>
 
     suspend fun modifyUserInfo(modifyUserInfoDto: RequestModifyUserInfoDto): Result<UserInfo>
 }
