@@ -47,7 +47,7 @@ object AmplitudeCommon {
 }
 
 object OnboardingAmplitude {
-    const val USER_ALARM_FREQUENCIES = "user_alarm_frequencies"
+    const val USER_PUSH_FREQUENCIES = "user_push_frequencies"
     const val HOME_REGISTER_LOCATION_PERMISSION_CHECK = "home_register_location_permission_clicked"
     const val HOME_REGISTER_COMPLETE_CLICKED = "home_register_complete_clicked"
     const val ALARM_SETTING_ALARM_PERMISSION_CLICKED = "alarm_setting_alarm_permission_clicked"
