@@ -26,6 +26,8 @@ import com.depromeet.team6.presentation.util.DefaultMarkerDestination.DEFAULT_DE
 import com.depromeet.team6.presentation.util.DefaultMarkerDestination.DEFAULT_MARKER_LAT
 import com.depromeet.team6.presentation.util.DefaultMarkerDestination.DEFAULT_MARKER_LON
 import com.depromeet.team6.presentation.util.HomeAmplitude.HOME
+import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_EVENT_CHARACTER_CLICK_AFTER_ALARM
+import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_EVENT_CHARACTER_CLICK_BEFORE_ALARM
 import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_EVENT_ITINERARY_BTN_CLICK
 import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_EVENT_REGISTER_MAP_MARKER_CLICK
 import com.depromeet.team6.presentation.util.HomeAmplitude.REGISTER_MAP_MARKER_CLICKED
@@ -82,7 +84,24 @@ class HomeViewModel @Inject constructor(
                 )
             }
 
-            is HomeContract.HomeEvent.OnCharacterClick -> onCharacterClick()
+            is HomeContract.HomeEvent.OnCharacterClick -> {
+                if (currentState.isAlarmRegistered) {
+                    AmplitudeUtils.trackEventWithProperties(
+                        eventName = HOME_EVENT_CHARACTER_CLICK_AFTER_ALARM,
+                        properties = mapOf(
+                            HOME_EVENT_CHARACTER_CLICK_AFTER_ALARM to 1
+                        )
+                    )
+                } else {
+                    AmplitudeUtils.trackEventWithProperties(
+                        eventName = HOME_EVENT_CHARACTER_CLICK_BEFORE_ALARM,
+                        properties = mapOf(
+                            HOME_EVENT_CHARACTER_CLICK_BEFORE_ALARM to 1
+                        )
+                    )
+                }
+
+            }
             is HomeContract.HomeEvent.SetDestination -> setDestination()
             is HomeContract.HomeEvent.LoadLegsResult -> {
                 setState {
@@ -314,8 +333,6 @@ class HomeViewModel @Inject constructor(
                             isBusDeparted = false
                         )
                     }
-                    // TODO : 실패 5번 누적되면 푸시알림 구현
-                    Timber.e("버스 출발여부 에러: ${it.message}")
 //                    stopPollingBusStarted()
                 }
         }

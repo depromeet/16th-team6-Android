@@ -20,7 +20,7 @@ import com.depromeet.team6.presentation.util.AmplitudeCommon.SCREEN_NAME
 import com.depromeet.team6.presentation.util.AmplitudeCommon.USER_ID
 import com.depromeet.team6.presentation.util.ItineraryAmplitude.ITINERARY
 import com.depromeet.team6.presentation.util.ItineraryAmplitude.ITINERARY_ALARM_REGISTER_BTN_CLICKED
-import com.depromeet.team6.presentation.util.ItineraryAmplitude.ITINERARY_EVENT_ALARM_REGISTERED
+import com.depromeet.team6.presentation.util.ItineraryAmplitude.ITINERARY_EVENT_ALARM_REGISTERED_SCREEN
 import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
 import com.depromeet.team6.presentation.util.base.BaseViewModel
 import com.depromeet.team6.presentation.util.view.LoadState
@@ -74,7 +74,7 @@ class ItineraryViewModel @Inject constructor(
                     lastRouteId = event.routeId
                 )
                 AmplitudeUtils.trackEventWithProperties(
-                    eventName = ITINERARY_EVENT_ALARM_REGISTERED,
+                    eventName = ITINERARY_EVENT_ALARM_REGISTERED_SCREEN,
                     properties = mapOf(
                         SCREEN_NAME to ITINERARY,
                         USER_ID to userInfoRepository.getUserID(),

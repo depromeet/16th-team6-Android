@@ -187,6 +187,9 @@ class LockService : Service() {
 
                 lockScreenNavigator.navigateToLockScreen(applicationContext, taxiCost)
             }
+
+//            delay(ALARM_DURATION_MS)
+//            withContext(Dispatchers.Main) { stopAlarm() }
         }
 
         return START_STICKY
@@ -243,5 +246,7 @@ class LockService : Service() {
 
         const val NOTIFICATION_ID = 1
         private const val WAKE_LOCK_TAG = "Atcha:WakeLock"
+
+        const val ALARM_DURATION_MS = 60_000L
     }
 }

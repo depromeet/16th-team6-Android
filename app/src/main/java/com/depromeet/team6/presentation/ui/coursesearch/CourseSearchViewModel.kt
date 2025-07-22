@@ -20,7 +20,7 @@ import com.depromeet.team6.presentation.util.AmplitudeCommon.SCREEN_NAME
 import com.depromeet.team6.presentation.util.AmplitudeCommon.USER_ID
 import com.depromeet.team6.presentation.util.CourseSearchAmplitude.COURSE_SEARCH
 import com.depromeet.team6.presentation.util.CourseSearchAmplitude.COURSE_SEARCH_ALARM_REGISTERED
-import com.depromeet.team6.presentation.util.CourseSearchAmplitude.COURSE_SEARCH_EVENT_ALARM_REGISTERED
+import com.depromeet.team6.presentation.util.CourseSearchAmplitude.COURSE_SEARCH_EVENT_ALARM_REGISTERED_SCREEN
 import com.depromeet.team6.presentation.util.CourseSearchAmplitude.COURSE_SEARCH_EVENT_CARD_CLICKED
 import com.depromeet.team6.presentation.util.CourseSearchAmplitude.COURSE_SEARCH_EVENT_DURATION
 import com.depromeet.team6.presentation.util.CourseSearchAmplitude.COURSE_SEARCH_EVENT_ITEM_TOGGLED
@@ -79,13 +79,27 @@ class CourseSearchViewModel @Inject constructor(
             is CourseSearchContract.CourseEvent.RegisterAlarm -> {
                 setSideEffect(CourseSearchContract.CourseSideEffect.ShowNotificationToast)
                 AmplitudeUtils.trackEventWithProperties(
-                    eventName = COURSE_SEARCH_EVENT_ALARM_REGISTERED,
+                    eventName = COURSE_SEARCH_EVENT_ALARM_REGISTERED_SCREEN,
                     properties = mapOf(
                         SCREEN_NAME to COURSE_SEARCH,
                         USER_ID to userInfoRepository.getUserID(),
                         COURSE_SEARCH_ALARM_REGISTERED to 1
                     )
                 )
+
+                val departureTimeRank = uiState.value.courseData
+                    .sortedByDescending { it.boardingTime }
+                    .indexOfFirst { it.routeId == uiState.value.selectedRouteId } + 1
+                val minWalkRank = uiState.value.courseData.indexOfFirst { it.routeId == uiState.value.selectedRouteId } + 1
+//                AmplitudeUtils.trackEventWithProperties(
+//                    eventName = COURSE_SEARCH_EVENT_ALARM_REGISTERED_DATA,
+//                    properties = mapOf(
+//                        COURSE_SEARCH_ALARM_DEPARTURE_TIME_RANK to "later_departure_time_rank",
+//                        COURSE_SEARCH_ALARM_MIN_WALK_RANK to "minimal_walk_rank",
+//                        COURSE_SEARCH_ALARM_MIN_TOTAL_TIME_RANK to "minimal_total_time_rank",
+//                        COURSE_SEARCH_ALARM_TRANSFER_COUNT to "transfer_count"
+//                    )
+//                )
             }
             is CourseSearchContract.CourseEvent.LoadCourseSearchResult -> setState {
                 copy(

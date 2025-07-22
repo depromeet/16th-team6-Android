@@ -68,6 +68,8 @@ object HomeAmplitude {
     const val HOME_DEPARTURE_TIME_SUGGESTION_CLICKED = "home_departure_time_suggestion_clicked"
     const val HOME_ROUTE_CLICKED = "home_route_clicked"
     const val POPUP = "팝업"
+    const val HOME_EVENT_CHARACTER_CLICK_AFTER_ALARM = "character_clicked_after_alarm"
+    const val HOME_EVENT_CHARACTER_CLICK_BEFORE_ALARM = "character_clicked_before_alarm"
     const val ALERT_END_POPUP_1 = "alert_end_popup_1"
     const val ALERT_END_POPUP_2 = "alert_end_popup_2"
     const val REGISTER_MAP_MARKER_CLICKED = "home_transit_icon_clicked"
@@ -89,16 +91,22 @@ object CourseSearchAmplitude {
     const val COURSE_SEARCH_EVENT_CARD_CLICKED = "courssesearch_card"
     const val COURSE_SEARCH_EVENT_ITEM_TOGGLED = "coursesearch_toggle"
     const val COURSE_SEARCH_EVENT_DURATION = "coursesearch_view_duration"
-    const val COURSE_SEARCH_EVENT_ALARM_REGISTERED = "alert_button"
+    const val COURSE_SEARCH_EVENT_ALARM_REGISTERED_SCREEN = "alert_button"
+    const val COURSE_SEARCH_EVENT_ALARM_REGISTERED_DATA = "alarm_registered"
+
     const val COURSE_SEARCH_TOGGLE_DISABLED = "coursesearch_toggle"
     const val COURSE_SEARCH_ITEM_CARD_CLICKED = "courssesearch_card_expand"
     const val COURSE_SEARCH_ITEM_DETAIL_TEXT_CLICKED = "courssesearch_card_viewdetails"
     const val COURSE_SEARCH_STAY_TIME = "coursesearch_view_duration"
     const val COURSE_SEARCH_ALARM_REGISTERED = "alert_button"
+    const val COURSE_SEARCH_ALARM_DEPARTURE_TIME_RANK = "later_departure_time_rank"
+    const val COURSE_SEARCH_ALARM_MIN_WALK_RANK = "minimal_walk_rank"
+    const val COURSE_SEARCH_ALARM_MIN_TOTAL_TIME_RANK = "minimal_total_time_rank"
+    const val COURSE_SEARCH_ALARM_TRANSFER_COUNT = "transfer_count"
 }
 
 object ItineraryAmplitude {
     const val ITINERARY = "상세경로"
-    const val ITINERARY_EVENT_ALARM_REGISTERED = "alert_button"
+    const val ITINERARY_EVENT_ALARM_REGISTERED_SCREEN = "alert_button"
     const val ITINERARY_ALARM_REGISTER_BTN_CLICKED = "alert_button"
 }
