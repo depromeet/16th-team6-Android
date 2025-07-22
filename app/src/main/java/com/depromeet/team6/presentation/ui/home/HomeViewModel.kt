@@ -100,7 +100,6 @@ class HomeViewModel @Inject constructor(
                         )
                     )
                 }
-
             }
             is HomeContract.HomeEvent.SetDestination -> setDestination()
             is HomeContract.HomeEvent.LoadLegsResult -> {
