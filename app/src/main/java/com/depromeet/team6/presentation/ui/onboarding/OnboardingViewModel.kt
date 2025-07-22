@@ -151,7 +151,7 @@ class OnboardingViewModel @Inject constructor(
                 AmplitudeUtils.trackEventWithProperty(
                     eventName = USER_PUSH_FREQUENCIES,
                     propertyName = USER_PUSH_FREQUENCIES,
-                    propertyValue = uiState.value.alertFrequencies,
+                    propertyValue = uiState.value.alertFrequencies
                 )
             }.onFailure { exception ->
                 setEvent(OnboardingContract.OnboardingEvent.PostSignUp(loadState = LoadState.Error))

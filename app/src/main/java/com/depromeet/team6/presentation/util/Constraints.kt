@@ -56,7 +56,11 @@ object OnboardingAmplitude {
     const val ONBOARDING_NOTIFICATION_PERMISSION_SETTINGS_CLICKED = "onboarding_notification_permission_settings_clicked"
     const val ONBOARDING_LOCATION_PERMISSION_SETTINGS_CLICKED = "onboarding_location_permission_settings_clicked"
     const val SYSTEM_SETTING = "설정하기"
-    const val CLOSE = "허용안함"
+    const val DENIED = "허용안함"
+    const val GRANT = "허용"
+    const val ONBOARDING_LOCATION_PERMISSION_CLICKED = "onboarding_location_permission_clicked"
+    const val ONBOARDING_NOTIFICATION_PERMISSION_CLICKED = "onboarding_notification_permission_clicked"
+    const val ONBOARDING_COMPLETE = "onboarding_complete"
 }
 
 object HomeAmplitude {

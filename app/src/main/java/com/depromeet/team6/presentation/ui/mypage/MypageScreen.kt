@@ -40,10 +40,7 @@ import com.depromeet.team6.presentation.ui.mypage.component.MypageListItem
 import com.depromeet.team6.presentation.ui.mypage.component.MypageVersionItem
 import com.depromeet.team6.presentation.ui.mypage.component.TitleBar
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingSearchPopup
-import com.depromeet.team6.presentation.util.AmplitudeCommon.SCREEN_NAME
 import com.depromeet.team6.presentation.util.MyPageAmplitude.MYPAGE_BANNER_CLICKED
-import com.depromeet.team6.presentation.util.OnboardingAmplitude.HOME_REGISTER
-import com.depromeet.team6.presentation.util.OnboardingAmplitude.HOME_REGISTER_COMPLETE_CLICKED
 import com.depromeet.team6.presentation.util.WebViewUrl.FEEDBACK_FORM_URL
 import com.depromeet.team6.presentation.util.WebViewUrl.PRIVACY_POLICY_URL
 import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils

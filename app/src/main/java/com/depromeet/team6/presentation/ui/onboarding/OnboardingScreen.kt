@@ -49,11 +49,14 @@ import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingTitle
 import com.depromeet.team6.presentation.util.AmplitudeCommon.SCREEN_NAME
 import com.depromeet.team6.presentation.util.OnboardingAmplitude.ALARM_REGISTER
 import com.depromeet.team6.presentation.util.OnboardingAmplitude.ALARM_SETTING_ALARM_PERMISSION_CLICKED
-import com.depromeet.team6.presentation.util.OnboardingAmplitude.CLOSE
+import com.depromeet.team6.presentation.util.OnboardingAmplitude.DENIED
+import com.depromeet.team6.presentation.util.OnboardingAmplitude.GRANT
 import com.depromeet.team6.presentation.util.OnboardingAmplitude.HOME_REGISTER
 import com.depromeet.team6.presentation.util.OnboardingAmplitude.HOME_REGISTER_COMPLETE_CLICKED
 import com.depromeet.team6.presentation.util.OnboardingAmplitude.HOME_REGISTER_LOCATION_PERMISSION_CHECK
+import com.depromeet.team6.presentation.util.OnboardingAmplitude.ONBOARDING_LOCATION_PERMISSION_CLICKED
 import com.depromeet.team6.presentation.util.OnboardingAmplitude.ONBOARDING_LOCATION_PERMISSION_SETTINGS_CLICKED
+import com.depromeet.team6.presentation.util.OnboardingAmplitude.ONBOARDING_NOTIFICATION_PERMISSION_CLICKED
 import com.depromeet.team6.presentation.util.OnboardingAmplitude.ONBOARDING_NOTIFICATION_PERMISSION_SETTINGS_CLICKED
 import com.depromeet.team6.presentation.util.OnboardingAmplitude.SYSTEM_SETTING
 import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
@@ -82,8 +85,18 @@ fun OnboardingRoute(
             val anyDenied = permissions.any { !it.value }
 
             if (anyDenied) {
+                AmplitudeUtils.trackEventWithProperty(
+                    eventName = ONBOARDING_LOCATION_PERMISSION_CLICKED,
+                    propertyName = ONBOARDING_LOCATION_PERMISSION_CLICKED,
+                    propertyValue = DENIED
+                )
                 viewModel.setSideEffect(OnboardingContract.OnboardingSideEffect.LocationPermissionDeniedDialog)
             } else {
+                AmplitudeUtils.trackEventWithProperty(
+                    eventName = ONBOARDING_LOCATION_PERMISSION_CLICKED,
+                    propertyName = ONBOARDING_LOCATION_PERMISSION_CLICKED,
+                    propertyValue = GRANT
+                )
                 Timber.d("Location_Permission Has Granted")
             }
         }
@@ -93,8 +106,18 @@ fun OnboardingRoute(
         contract = ActivityResultContracts.RequestPermission(),
         onResult = { granted ->
             if (granted) {
+                AmplitudeUtils.trackEventWithProperty(
+                    eventName = ONBOARDING_NOTIFICATION_PERMISSION_CLICKED,
+                    propertyName = ONBOARDING_NOTIFICATION_PERMISSION_CLICKED,
+                    propertyValue = GRANT
+                )
                 Timber.d("Notification_Permission Has Granted")
             } else {
+                AmplitudeUtils.trackEventWithProperty(
+                    eventName = ONBOARDING_NOTIFICATION_PERMISSION_CLICKED,
+                    propertyName = ONBOARDING_NOTIFICATION_PERMISSION_CLICKED,
+                    propertyValue = DENIED
+                )
                 viewModel.setSideEffect(OnboardingContract.OnboardingSideEffect.NotificationPermissionDeniedDialog)
             }
         }
@@ -143,7 +166,7 @@ fun OnboardingRoute(
                                 AmplitudeUtils.trackEventWithProperty(
                                     eventName = ONBOARDING_LOCATION_PERMISSION_SETTINGS_CLICKED,
                                     propertyName = ONBOARDING_LOCATION_PERMISSION_SETTINGS_CLICKED,
-                                    propertyValue = CLOSE
+                                    propertyValue = DENIED
                                 )
                             },
                             message = context.getString(R.string.onboarding_location_permission_denied_dialog)
@@ -164,7 +187,7 @@ fun OnboardingRoute(
                                 AmplitudeUtils.trackEventWithProperty(
                                     eventName = ONBOARDING_NOTIFICATION_PERMISSION_SETTINGS_CLICKED,
                                     propertyName = ONBOARDING_NOTIFICATION_PERMISSION_SETTINGS_CLICKED,
-                                    propertyValue = CLOSE
+                                    propertyValue = DENIED
                                 )
                             },
                             message = context.getString(R.string.onboarding_notification_permission_denied_dialog)
