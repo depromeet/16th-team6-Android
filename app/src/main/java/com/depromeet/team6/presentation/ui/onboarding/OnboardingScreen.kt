@@ -49,9 +49,13 @@ import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingTitle
 import com.depromeet.team6.presentation.util.AmplitudeCommon.SCREEN_NAME
 import com.depromeet.team6.presentation.util.OnboardingAmplitude.ALARM_REGISTER
 import com.depromeet.team6.presentation.util.OnboardingAmplitude.ALARM_SETTING_ALARM_PERMISSION_CLICKED
+import com.depromeet.team6.presentation.util.OnboardingAmplitude.CLOSE
 import com.depromeet.team6.presentation.util.OnboardingAmplitude.HOME_REGISTER
 import com.depromeet.team6.presentation.util.OnboardingAmplitude.HOME_REGISTER_COMPLETE_CLICKED
 import com.depromeet.team6.presentation.util.OnboardingAmplitude.HOME_REGISTER_LOCATION_PERMISSION_CHECK
+import com.depromeet.team6.presentation.util.OnboardingAmplitude.ONBOARDING_LOCATION_PERMISSION_SETTINGS_CLICKED
+import com.depromeet.team6.presentation.util.OnboardingAmplitude.ONBOARDING_NOTIFICATION_PERMISSION_SETTINGS_CLICKED
+import com.depromeet.team6.presentation.util.OnboardingAmplitude.SYSTEM_SETTING
 import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
 import com.depromeet.team6.presentation.util.dialog.LocalDialogController
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
@@ -128,6 +132,20 @@ fun OnboardingRoute(
                     is OnboardingContract.OnboardingSideEffect.LocationPermissionDeniedDialog -> {
                         dialogController.showSystemSettingsDialog(
                             context = context,
+                            onConfirm = {
+                                AmplitudeUtils.trackEventWithProperty(
+                                    eventName = ONBOARDING_LOCATION_PERMISSION_SETTINGS_CLICKED,
+                                    propertyName = ONBOARDING_LOCATION_PERMISSION_SETTINGS_CLICKED,
+                                    propertyValue = SYSTEM_SETTING
+                                )
+                            },
+                            onDismiss = {
+                                AmplitudeUtils.trackEventWithProperty(
+                                    eventName = ONBOARDING_LOCATION_PERMISSION_SETTINGS_CLICKED,
+                                    propertyName = ONBOARDING_LOCATION_PERMISSION_SETTINGS_CLICKED,
+                                    propertyValue = CLOSE
+                                )
+                            },
                             message = context.getString(R.string.onboarding_location_permission_denied_dialog)
                         )
                     }
@@ -135,6 +153,20 @@ fun OnboardingRoute(
                     is OnboardingContract.OnboardingSideEffect.NotificationPermissionDeniedDialog -> {
                         dialogController.showSystemSettingsDialog(
                             context = context,
+                            onConfirm = {
+                                AmplitudeUtils.trackEventWithProperty(
+                                    eventName = ONBOARDING_NOTIFICATION_PERMISSION_SETTINGS_CLICKED,
+                                    propertyName = ONBOARDING_NOTIFICATION_PERMISSION_SETTINGS_CLICKED,
+                                    propertyValue = SYSTEM_SETTING
+                                )
+                            },
+                            onDismiss = {
+                                AmplitudeUtils.trackEventWithProperty(
+                                    eventName = ONBOARDING_NOTIFICATION_PERMISSION_SETTINGS_CLICKED,
+                                    propertyName = ONBOARDING_NOTIFICATION_PERMISSION_SETTINGS_CLICKED,
+                                    propertyValue = CLOSE
+                                )
+                            },
                             message = context.getString(R.string.onboarding_notification_permission_denied_dialog)
                         )
                     }

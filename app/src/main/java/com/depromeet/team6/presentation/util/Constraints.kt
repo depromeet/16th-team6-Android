@@ -53,6 +53,10 @@ object OnboardingAmplitude {
     const val ALARM_SETTING_ALARM_PERMISSION_CLICKED = "alarm_setting_alarm_permission_clicked"
     const val HOME_REGISTER = "집 등록(온보딩)"
     const val ALARM_REGISTER = "알림 등록(온보딩)"
+    const val ONBOARDING_NOTIFICATION_PERMISSION_SETTINGS_CLICKED = "onboarding_notification_permission_settings_clicked"
+    const val ONBOARDING_LOCATION_PERMISSION_SETTINGS_CLICKED = "onboarding_location_permission_settings_clicked"
+    const val SYSTEM_SETTING = "설정하기"
+    const val CLOSE = "허용안함"
 }
 
 object HomeAmplitude {
