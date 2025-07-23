@@ -213,13 +213,13 @@ fun HomeRoute(
         }
     }
 
-    LaunchedEffect(uiState.isAlarmRegistered, uiState.firtTransportTation) {
-        if (uiState.isAlarmRegistered && uiState.firtTransportTation == TransportType.BUS) {
-            viewModel.startPollingBusStarted(routeId = uiState.lastRouteId)
-        } else {
-            viewModel.stopPollingBusStarted()
-        }
-    }
+//    LaunchedEffect(uiState.isAlarmRegistered, uiState.firtTransportTation) {
+//        if (uiState.isAlarmRegistered && uiState.firtTransportTation == TransportType.BUS) {
+//            viewModel.startPollingBusStarted(routeId = uiState.lastRouteId)
+//        } else {
+//            viewModel.stopPollingBusStarted()
+//        }
+//    }
 
     SideEffect {
         if (!PermissionUtil.isLocationPermissionRequested(context) &&
@@ -455,6 +455,7 @@ fun HomeRoute(
 
     // 캐릭터 클릭 핸들러
     val onCharacterClick = {
+        viewModel.setEvent(HomeContract.HomeEvent.OnCharacterClick)
         when {
             isShowingFirstTimeMessage -> {
                 // 첫 번째 메시지 표시 중이면 아무것도 하지 않음
@@ -491,7 +492,7 @@ fun HomeRoute(
                         viewModel.updateCurrentLocation(newLocation)
                     },
                     onTimerFinished = { viewModel.onTimerFinished() },
-                    getBusArrival = { viewModel.getBusArrival() },
+                    getDepartureTime = { viewModel.loadDepartureTime() },
                     onCharacterClick = onCharacterClick,
                     characterState = characterState,
                     showTempMessage = ::showTempMessage,
@@ -603,7 +604,7 @@ fun HomeScreen(
     getCenterLocation: (LatLng) -> Unit = {},
     updateCurrentLocation: (LatLng) -> Unit = {},
     onTimerFinished: () -> Unit = {},
-    getBusArrival: () -> Unit = {},
+    getDepartureTime: () -> Unit = {},
     onCharacterClick: () -> Unit = {},
     characterState: CharacterState,
     showTempMessage: (ComponentType) -> Unit = {},
@@ -726,7 +727,7 @@ fun HomeScreen(
                     onRefreshClick = {
                         onRefreshClick()
                         if (homeUiState.firtTransportTation == TransportType.BUS) {
-                            getBusArrival()
+                            getDepartureTime()
                         }
                     },
                     onIconClick = {

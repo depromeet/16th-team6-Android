@@ -26,7 +26,7 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.depromeet.team6.R
-import com.depromeet.team6.data.datalocal.manager.LockServiceManager
+import com.depromeet.team6.data.background.LockServiceManager
 import com.depromeet.team6.data.datalocal.permission.PermissionUtil
 import com.depromeet.team6.presentation.ui.common.dialog.GlobalDialogHandler
 import com.depromeet.team6.presentation.ui.lock.LockScreenNavigator

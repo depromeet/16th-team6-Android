@@ -60,7 +60,6 @@ import com.depromeet.team6.presentation.util.view.LoadState
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.depromeet.team6.ui.theme.defaultTeam6Typography
 import com.google.android.gms.maps.model.LatLng
-import com.google.gson.Gson
 import kotlinx.coroutines.launch
 
 @Composable
@@ -143,20 +142,9 @@ fun ItineraryRoute(
             onBackPressed = onBackPressed,
             onRefreshButtonClick = { viewModel.setEvent(ItineraryContract.ItineraryEvent.RefreshButtonClicked) },
             registerAlarmButtonClick = { routeId ->
-                val sharedPreferences = context.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
-                val editor = sharedPreferences.edit()
-
                 val registeredCourse = uiState.itineraryInfo
 
                 if (registeredCourse != null) {
-                    val courseJson = Gson().toJson(registeredCourse)
-                    editor.putString("departurePoint", departurePointJSON) // 출발지
-                    editor.putString("destinationPoint", destinationPointJSON) // 도착지
-                    editor.putBoolean("alarmRegistered", true) // 알람 등록 여부
-                    editor.putString("lastRouteId", routeId) // 막차 경로 Id
-                    editor.putString("lastCourseInfo", courseJson) // 막차 경로
-                    editor.apply()
-
                     viewModel.setEvent(ItineraryContract.ItineraryEvent.RegisterAlarm(routeId = routeId))
                 } else {
                     atChaToastMessage(context, R.string.course_set_notification_failed_snackbar)

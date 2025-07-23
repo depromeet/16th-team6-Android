@@ -1,7 +1,9 @@
 package com.depromeet.team6.presentation.ui.home
 
+import android.content.Context
 import androidx.lifecycle.viewModelScope
-import com.depromeet.team6.data.datalocal.manager.LockServiceManager
+import com.depromeet.team6.data.background.AlarmScheduler
+import com.depromeet.team6.data.background.LockServiceManager
 import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.RouteLocation
 import com.depromeet.team6.domain.model.course.LegInfo
@@ -15,6 +17,7 @@ import com.depromeet.team6.domain.usecase.GetBusStartedUseCase
 import com.depromeet.team6.domain.usecase.GetCourseSearchResultsUseCase
 import com.depromeet.team6.domain.usecase.GetTaxiCostUseCase
 import com.depromeet.team6.domain.usecase.GetUserInfoUseCase
+import com.depromeet.team6.domain.usecase.RefreshAlarmTimerUseCase
 import com.depromeet.team6.presentation.model.bus.BusArrivalParameter
 import com.depromeet.team6.presentation.util.AmplitudeCommon.SCREEN_NAME
 import com.depromeet.team6.presentation.util.AmplitudeCommon.USER_ID
@@ -23,6 +26,8 @@ import com.depromeet.team6.presentation.util.DefaultMarkerDestination.DEFAULT_DE
 import com.depromeet.team6.presentation.util.DefaultMarkerDestination.DEFAULT_MARKER_LAT
 import com.depromeet.team6.presentation.util.DefaultMarkerDestination.DEFAULT_MARKER_LON
 import com.depromeet.team6.presentation.util.HomeAmplitude.HOME
+import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_EVENT_CHARACTER_CLICK_AFTER_ALARM
+import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_EVENT_CHARACTER_CLICK_BEFORE_ALARM
 import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_EVENT_ITINERARY_BTN_CLICK
 import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_EVENT_REGISTER_MAP_MARKER_CLICK
 import com.depromeet.team6.presentation.util.HomeAmplitude.REGISTER_MAP_MARKER_CLICKED
@@ -31,14 +36,13 @@ import com.depromeet.team6.presentation.util.base.BaseViewModel
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.time.LocalDate
+import java.time.Duration
 import java.time.LocalDateTime
-import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
@@ -52,7 +56,9 @@ class HomeViewModel @Inject constructor(
     val getCourseSearchResultUseCase: GetCourseSearchResultsUseCase,
     private val getBusStartedUseCase: GetBusStartedUseCase,
     private val getBusArrivalUseCase: GetBusArrivalUseCase,
-    private val deleteAlarmUseCase: DeleteAlarmUseCase
+    private val deleteAlarmUseCase: DeleteAlarmUseCase,
+    private val refreshAlarmTimerUseCase: RefreshAlarmTimerUseCase,
+    @ApplicationContext private val context: Context
 ) : BaseViewModel<HomeContract.HomeUiState, HomeContract.HomeSideEffect, HomeContract.HomeEvent>() {
     private var speechBubbleJob: Job? = null
     private var busStartedPollingJob: Job? = null
@@ -78,7 +84,23 @@ class HomeViewModel @Inject constructor(
                 )
             }
 
-            is HomeContract.HomeEvent.OnCharacterClick -> onCharacterClick()
+            is HomeContract.HomeEvent.OnCharacterClick -> {
+                if (currentState.isAlarmRegistered) {
+                    AmplitudeUtils.trackEventWithProperties(
+                        eventName = HOME_EVENT_CHARACTER_CLICK_AFTER_ALARM,
+                        properties = mapOf(
+                            HOME_EVENT_CHARACTER_CLICK_AFTER_ALARM to 1
+                        )
+                    )
+                } else {
+                    AmplitudeUtils.trackEventWithProperties(
+                        eventName = HOME_EVENT_CHARACTER_CLICK_BEFORE_ALARM,
+                        properties = mapOf(
+                            HOME_EVENT_CHARACTER_CLICK_BEFORE_ALARM to 1
+                        )
+                    )
+                }
+            }
             is HomeContract.HomeEvent.SetDestination -> setDestination()
             is HomeContract.HomeEvent.LoadLegsResult -> {
                 setState {
@@ -91,7 +113,7 @@ class HomeViewModel @Inject constructor(
             is HomeContract.HomeEvent.LoadDepartureDateTime -> {
                 setState {
                     copy(
-                        departureTime = event.departureTime.substring(11, 16)
+                        departureTime = event.departureTime
                     )
                 }
             }
@@ -276,9 +298,10 @@ class HomeViewModel @Inject constructor(
                     setEvent(HomeContract.HomeEvent.UpdateAlarmRegistered(false))
                     setEvent(HomeContract.HomeEvent.UpdateBusDeparted(false))
 
-                    stopPollingBusStarted()
+//                    stopPollingBusStarted()
 
                     homeRepository.clearAlarmData()
+                    AlarmScheduler.unScheduleAllAlarms(context)
 
                     setEvent(HomeContract.HomeEvent.DismissDialog)
                     setSideEffect(HomeContract.HomeSideEffect.ShowDeleteAlarmToast)
@@ -300,18 +323,16 @@ class HomeViewModel @Inject constructor(
                             isBusDeparted = it
                         )
                     }
-                    if (it) {
-                        stopPollingBusStarted()
-                    }
+//                    if (it) {
+//                        stopPollingBusStarted()
+//                    }
                 }.onFailure {
                     handleApiException(it) {
                         copy(
                             isBusDeparted = false
                         )
                     }
-                    // TODO : 실패 5번 누적되면 푸시알림 구현
-                    Timber.e("버스 출발여부 에러: ${it.message}")
-                    stopPollingBusStarted()
+//                    stopPollingBusStarted()
                 }
         }
     }
@@ -362,54 +383,78 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun startPollingBusStarted(routeId: String) {
-        busStartedPollingJob?.cancel()
-        lastRouteId = routeId
-
-        if (currentState.firtTransportTation == TransportType.BUS && currentState.isAlarmRegistered) {
-            busStartedPollingJob = viewModelScope.launch {
-                try {
-                    val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
-                    val departureTime = LocalTime.parse(currentState.departureTime, timeFormatter)
-                    val now = LocalDateTime.now()
-
-                    var departureDateTimeToday = LocalDateTime.of(LocalDate.now(), departureTime)
-                    if (departureDateTimeToday.isBefore(now) || departureDateTimeToday.isEqual(now)) {
-                        departureDateTimeToday = departureDateTimeToday.plusDays(1)
-                    }
-
-                    val thirtyMinutesBefore = departureDateTimeToday.minusMinutes(30)
-
-                    if (now.isBefore(thirtyMinutesBefore)) {
-                        val delayUntilStart = java.time.Duration.between(now, thirtyMinutesBefore).toMillis()
-                        delay(delayUntilStart)
-                    }
-
-                    while (isActive) {
-                        Timber.d("버스 차고지 출발 여부 API 호출")
-                        getBusStarted(routeId)
-                        delay(60000)
-                    }
-                } catch (e: Exception) {
-                    Timber.e("startPollingBusStarted 오류: ${e.message}")
-                }
-            }
-        }
-    }
-
-    fun stopPollingBusStarted() {
-        busStartedPollingJob?.cancel()
-        busStartedPollingJob = null
-    }
+//    fun startPollingBusStarted(routeId: String) {
+//        busStartedPollingJob?.cancel()
+//        lastRouteId = routeId
+//
+//        if (currentState.firtTransportTation == TransportType.BUS && currentState.isAlarmRegistered) {
+//            busStartedPollingJob = viewModelScope.launch {
+//                try {
+//                    val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
+//                    val departureTime = LocalTime.parse(currentState.departureTime, timeFormatter)
+//                    val now = LocalDateTime.now()
+//
+//                    var departureDateTimeToday = LocalDateTime.of(LocalDate.now(), departureTime)
+//                    if (departureDateTimeToday.isBefore(now) || departureDateTimeToday.isEqual(now)) {
+//                        departureDateTimeToday = departureDateTimeToday.plusDays(1)
+//                    }
+//
+//                    val thirtyMinutesBefore = departureDateTimeToday.minusMinutes(30)
+//
+//                    if (now.isBefore(thirtyMinutesBefore)) {
+//                        val delayUntilStart = java.time.Duration.between(now, thirtyMinutesBefore).toMillis()
+//                        delay(delayUntilStart)
+//                    }
+//
+//                    while (isActive) {
+//                        Timber.d("버스 차고지 출발 여부 API 호출")
+//                        loadDepartureTime()
+//                        delay(60000)
+//                    }
+//                } catch (e: Exception) {
+//                    Timber.e("startPollingBusStarted 오류: ${e.message}")
+//                }
+//            }
+//        }
+//    }
+//
+//    fun stopPollingBusStarted() {
+//        busStartedPollingJob?.cancel()
+//        busStartedPollingJob = null
+//    }
 
     fun loadUserDepartureState() {
         viewModelScope.launch {
             val userDeparture = homeRepository.isUserDeparted()
             setEvent(HomeContract.HomeEvent.LoadUserDeparture(userDeparture))
-            if (currentState.userDeparture && currentState.firtTransportTation == TransportType.BUS) {
+            if (userDeparture && currentState.firtTransportTation == TransportType.BUS) {
                 getBusArrival()
-                Timber.e("busArrivalParameter", currentState.busArrivalParameter.toString())
             }
+        }
+    }
+
+    fun loadDepartureTime() {
+        // 남은시간 3분 이하부터는 새로고침 불가
+        val now: LocalDateTime = LocalDateTime.now()
+        val departureTime = LocalDateTime.parse(currentState.departureTime, DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+        val diff: Duration = Duration.between(now, departureTime)
+        if (diff <= Duration.ofMinutes(3)) {
+            return
+        }
+
+        viewModelScope.launch {
+            refreshAlarmTimerUseCase()
+                .onSuccess {
+                    setState {
+                        copy(
+                            departureTime = it
+                        )
+                    }
+                    AlarmScheduler.scheduleLockScreenAlarm(context, it)
+                }
+                .onFailure {
+                    handleApiException(it)
+                }
         }
     }
 
@@ -454,9 +499,9 @@ class HomeViewModel @Inject constructor(
                 setEvent(HomeContract.HomeEvent.LoadFirstTransportationName(getFirstTransportationName(courseInfo.legs)))
 
                 if (getFirstTransportation(courseInfo.legs) == TransportType.BUS) {
-                    if (lastRouteId.isNotEmpty()) {
-                        startPollingBusStarted(lastRouteId)
-                    }
+//                    if (lastRouteId.isNotEmpty()) {
+//                        startPollingBusStarted(lastRouteId)
+//                    }
                 } else if (getFirstTransportation(courseInfo.legs) == TransportType.SUBWAY) {
                     setEvent(HomeContract.HomeEvent.UpdateBusDeparted(true))
                 }
@@ -522,10 +567,10 @@ class HomeViewModel @Inject constructor(
         return firstTransportationName
     }
 
-    override fun onCleared() {
-        super.onCleared()
-        stopPollingBusStarted()
-    }
+//    override fun onCleared() {
+//        super.onCleared()
+//        stopPollingBusStarted()
+//    }
 
     private fun getTaxiCost() {
         viewModelScope.launch {

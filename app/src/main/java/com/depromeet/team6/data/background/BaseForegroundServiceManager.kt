@@ -1,4 +1,4 @@
-package com.depromeet.team6.data.datalocal.manager
+package com.depromeet.team6.data.background
 
 import android.app.AlarmManager
 import android.app.PendingIntent
@@ -6,8 +6,7 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import com.depromeet.team6.data.datalocal.service.LocationCheckReceiver
-import com.depromeet.team6.data.datalocal.service.LockService
+import com.depromeet.team6.data.background.LockService.Companion.LOCATION_NOTIFICATION_ID
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.util.Calendar
 import javax.inject.Inject
@@ -53,7 +52,7 @@ class LockServiceManager @Inject constructor(
         val intent = Intent(applicationContext, LocationCheckReceiver::class.java)
         val pendingIntent = PendingIntent.getBroadcast(
             applicationContext,
-            1001,
+            LOCATION_NOTIFICATION_ID,
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
@@ -82,7 +81,7 @@ class LockServiceManager @Inject constructor(
         val intent = Intent(applicationContext, LocationCheckReceiver::class.java)
         val pendingIntent = PendingIntent.getBroadcast(
             applicationContext,
-            1001,
+            LOCATION_NOTIFICATION_ID,
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )

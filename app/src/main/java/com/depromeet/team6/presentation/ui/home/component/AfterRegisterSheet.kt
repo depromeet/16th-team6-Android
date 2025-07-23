@@ -69,8 +69,7 @@ fun AfterRegisterSheet(
 
     var externalTriggerCount by remember { mutableStateOf(0) }
 
-    var timeTextColor = colors.gray300
-    if (isConfirmed) timeTextColor = colors.white
+    var timeTextColor = colors.white
     if (afterUserDeparted) timeTextColor = colors.systemRed
 
     Box(
@@ -121,15 +120,9 @@ fun AfterRegisterSheet(
                             style = typography.bodyMedium13,
                             color = colors.white
                         )
-                    } else if (isConfirmed) {
-                        Text(
-                            text = stringResource(R.string.home_start_time_text),
-                            style = typography.bodyMedium13,
-                            color = colors.white
-                        )
                     } else {
                         Text(
-                            text = stringResource(R.string.home_expect_start_time_text),
+                            text = stringResource(R.string.home_start_time_text),
                             style = typography.bodyMedium13,
                             color = colors.white
                         )
@@ -150,7 +143,7 @@ fun AfterRegisterSheet(
                 }
 
                 // 새로고침 버튼 (조건부로 오른쪽에 표시)
-                if ((isConfirmed || afterUserDeparted) && !timerFinish) {
+                if (!timerFinish) {
                     RefreshLottieButton(
                         onClick = onRefreshClick,
                         tint = colors.white,

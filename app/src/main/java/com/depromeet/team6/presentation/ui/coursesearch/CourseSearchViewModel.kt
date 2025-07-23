@@ -3,12 +3,16 @@ package com.depromeet.team6.presentation.ui.coursesearch
 import android.content.Context
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.depromeet.team6.data.background.AlarmScheduler
 import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.RouteLocation
 import com.depromeet.team6.domain.repository.HomeRepository
 import com.depromeet.team6.domain.repository.UserInfoRepository
+import com.depromeet.team6.domain.usecase.DeleteAlarmUseCase
 import com.depromeet.team6.domain.usecase.GetCourseSearchResultsUseCase
 import com.depromeet.team6.domain.usecase.GetTaxiCostUseCase
+import com.depromeet.team6.domain.usecase.GetUserInfoUseCase
+import com.depromeet.team6.domain.usecase.InitAlarmUseCase
 import com.depromeet.team6.domain.usecase.PostAlarmUseCase
 import com.depromeet.team6.presentation.ui.coursesearch.navigation.CourseSearchRoute.DEPARTURE_POINT
 import com.depromeet.team6.presentation.ui.coursesearch.navigation.CourseSearchRoute.DESTINATION_POINT
@@ -16,7 +20,7 @@ import com.depromeet.team6.presentation.util.AmplitudeCommon.SCREEN_NAME
 import com.depromeet.team6.presentation.util.AmplitudeCommon.USER_ID
 import com.depromeet.team6.presentation.util.CourseSearchAmplitude.COURSE_SEARCH
 import com.depromeet.team6.presentation.util.CourseSearchAmplitude.COURSE_SEARCH_ALARM_REGISTERED
-import com.depromeet.team6.presentation.util.CourseSearchAmplitude.COURSE_SEARCH_EVENT_ALARM_REGISTERED
+import com.depromeet.team6.presentation.util.CourseSearchAmplitude.COURSE_SEARCH_EVENT_ALARM_REGISTERED_SCREEN
 import com.depromeet.team6.presentation.util.CourseSearchAmplitude.COURSE_SEARCH_EVENT_CARD_CLICKED
 import com.depromeet.team6.presentation.util.CourseSearchAmplitude.COURSE_SEARCH_EVENT_DURATION
 import com.depromeet.team6.presentation.util.CourseSearchAmplitude.COURSE_SEARCH_EVENT_ITEM_TOGGLED
@@ -31,7 +35,6 @@ import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -42,6 +45,9 @@ class CourseSearchViewModel @Inject constructor(
     private val userInfoRepository: UserInfoRepository,
     private val homeRepository: HomeRepository,
     private val getTaxiCostUseCase: GetTaxiCostUseCase,
+    private val deleteAlarmUseCase: DeleteAlarmUseCase,
+    private val getUserInfoUseCase: GetUserInfoUseCase,
+    private val initAlarmUseCase: InitAlarmUseCase,
     @ApplicationContext private val context: Context
 ) : BaseViewModel<CourseSearchContract.CourseUiState, CourseSearchContract.CourseSideEffect, CourseSearchContract.CourseEvent>() {
 
@@ -73,13 +79,27 @@ class CourseSearchViewModel @Inject constructor(
             is CourseSearchContract.CourseEvent.RegisterAlarm -> {
                 setSideEffect(CourseSearchContract.CourseSideEffect.ShowNotificationToast)
                 AmplitudeUtils.trackEventWithProperties(
-                    eventName = COURSE_SEARCH_EVENT_ALARM_REGISTERED,
+                    eventName = COURSE_SEARCH_EVENT_ALARM_REGISTERED_SCREEN,
                     properties = mapOf(
                         SCREEN_NAME to COURSE_SEARCH,
                         USER_ID to userInfoRepository.getUserID(),
                         COURSE_SEARCH_ALARM_REGISTERED to 1
                     )
                 )
+
+                val departureTimeRank = uiState.value.courseData
+                    .sortedByDescending { it.boardingTime }
+                    .indexOfFirst { it.routeId == uiState.value.selectedRouteId } + 1
+                val minWalkRank = uiState.value.courseData.indexOfFirst { it.routeId == uiState.value.selectedRouteId } + 1
+//                AmplitudeUtils.trackEventWithProperties(
+//                    eventName = COURSE_SEARCH_EVENT_ALARM_REGISTERED_DATA,
+//                    properties = mapOf(
+//                        COURSE_SEARCH_ALARM_DEPARTURE_TIME_RANK to "later_departure_time_rank",
+//                        COURSE_SEARCH_ALARM_MIN_WALK_RANK to "minimal_walk_rank",
+//                        COURSE_SEARCH_ALARM_MIN_TOTAL_TIME_RANK to "minimal_total_time_rank",
+//                        COURSE_SEARCH_ALARM_TRANSFER_COUNT to "transfer_count"
+//                    )
+//                )
             }
             is CourseSearchContract.CourseEvent.LoadCourseSearchResult -> setState {
                 copy(
@@ -232,34 +252,73 @@ class CourseSearchViewModel @Inject constructor(
         }
     }
 
-    fun saveAlarmData(departurePoint: String, destinationPoint: String, routeId: String) {
-        viewModelScope.launch {
-            try {
-                val departureAddress = Gson().fromJson(departurePoint, Address::class.java)
-                val registeredCourse = uiState.value.courseData.find { it.routeId == routeId }
+//    private fun saveAlarmData(departurePoint: String, destinationPoint: String, routeId: String) {
+//        viewModelScope.launch {
+//            try {
+//                val departureAddress = Gson().fromJson(departurePoint, Address::class.java)
+//                val destinationAddress = Gson().fromJson(destinationPoint, Address::class.java)
+//                val registeredCourse = uiState.value.courseData.find { it.routeId == routeId }
+//
+//                if (registeredCourse != null && departureAddress != null) {
+//                    homeRepository.setDeparturePoint(departureAddress)
+//                    homeRepository.setDestinationPoint(destinationAddress)
+//                    homeRepository.setLastCourseInfo(registeredCourse)
+//                    homeRepository.setLastRouteId(routeId)
+//                    homeRepository.setAlarmRegistered(true)
+//                }
+//            } catch (e: Exception) {
+//                Timber.e("알림 정보 spf 저장 오류: ${e.message}")
+//            }
+//        }
+//    }
 
-                if (registeredCourse != null && departureAddress != null) {
-                    homeRepository.setDeparturePoint(departureAddress)
-                    homeRepository.setDestinationPoint(destinationPoint)
-                    homeRepository.setLastCourseInfo(registeredCourse)
-                    homeRepository.setLastRouteId(routeId)
-                    homeRepository.setAlarmRegistered(true)
-                }
-            } catch (e: Exception) {
-                Timber.e("알림 정보 spf 저장 오류: ${e.message}")
-            }
-        }
-    }
-
-    fun postAlarm(lastRouteId: String) {
+    fun postAlarm(departurePoint: String, destinationPoint: String, lastRouteId: String, alarmTimeStamp: String) {
         viewModelScope.launch {
             postAlarmUseCase(
                 lastRouteId = lastRouteId
             )
                 .onSuccess {
+                    val registeredCourse = uiState.value.courseData.find { it.routeId == lastRouteId }
+                    val departureAddress = Gson().fromJson(departurePoint, Address::class.java)
+                    val destinationAddress = Gson().fromJson(destinationPoint, Address::class.java)
+
                     setEvent(CourseSearchContract.CourseEvent.RegisterAlarm)
                     setSideEffect(CourseSearchContract.CourseSideEffect.NavigateHomeWithToast)
                     getTaxiCost()
+//                    saveAlarmData(departurePoint, destinationPoint, lastRouteId)
+                    initAlarmUseCase(departureAddress, destinationAddress, registeredCourse!!, lastRouteId)
+                    AlarmScheduler.scheduleLockScreenAlarm(
+                        context = context,
+                        timeStamp = alarmTimeStamp
+                    )
+                    postAdditionalAlarmSchedule(alarmTimeStamp)
+                }
+                .onFailure { exception ->
+                    handleApiException(exception)
+                }
+        }
+    }
+
+    fun postAdditionalAlarmSchedule(alarmTime: String) {
+        viewModelScope.launch {
+            getUserInfoUseCase()
+                .onSuccess {
+                    val freq = it.alertFrequencies
+                    AlarmScheduler.scheduleAdditionalPushAlarm(context, alarmTime, freq)
+                }
+                .onFailure {
+                    handleApiException(it)
+                }
+        }
+    }
+
+    fun updateAlarm(departurePoint: String, destinationPoint: String, lastRouteId: String, alarmTimeStamp: String) {
+        viewModelScope.launch {
+            deleteAlarmUseCase(
+                lastRouteId = lastRouteId
+            )
+                .onSuccess {
+                    postAlarm(departurePoint, destinationPoint, lastRouteId, alarmTimeStamp)
                 }
                 .onFailure { exception ->
                     handleApiException(exception)

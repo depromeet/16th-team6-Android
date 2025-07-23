@@ -33,11 +33,11 @@ class HomeRepositoryImpl @Inject constructor(
 
     override fun getDeparturePoint(): Address? = homeInfoLocalDataSource.departurePoint
 
-    override fun setDestinationPoint(destinationPoint: String) {
+    override fun setDestinationPoint(destinationPoint: Address?) {
         homeInfoLocalDataSource.destinationPoint = destinationPoint
     }
 
-    override fun getDestinationPoint(): String = homeInfoLocalDataSource.destinationPoint
+    override fun getDestinationPoint(): Address? = homeInfoLocalDataSource.destinationPoint
 
     override fun setLastCourseInfo(courseInfo: CourseInfo?) {
         homeInfoLocalDataSource.lastCourseInfo = courseInfo

@@ -6,7 +6,7 @@ import android.os.Build
 import android.util.Base64
 import androidx.appcompat.app.AppCompatDelegate
 import com.depromeet.team6.BuildConfig.KAKAO_NATIVE_APP_KEY
-import com.depromeet.team6.data.datalocal.manager.LockServiceManager
+import com.depromeet.team6.data.background.LockServiceManager
 import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils.initAmplitude
 import com.kakao.sdk.common.KakaoSdk
 import com.kakao.sdk.common.util.Utility

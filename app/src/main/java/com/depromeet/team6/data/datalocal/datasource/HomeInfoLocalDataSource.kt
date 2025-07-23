@@ -89,9 +89,33 @@ class HomeInfoLocalDataSource @Inject constructor(
         get() = getBooleanValue(USER_DEPARTURE, false)
         set(value) = setBooleanValue(USER_DEPARTURE, value)
 
-    var destinationPoint: String
-        get() = getValue(DESTINATION_POINT)
-        set(value) = setValue(DESTINATION_POINT, value)
+    var destinationPoint: Address?
+        get() {
+            val json = getValue(DESTINATION_POINT)
+            return if (json.isNotEmpty()) {
+                try {
+                    gson.fromJson(json, Address::class.java)
+                } catch (e: Exception) {
+                    Timber.e("DeparturePoint 불러오기 실패: ${e.message}")
+                    null
+                }
+            } else {
+                null
+            }
+        }
+        set(value) {
+            val json = if (value != null) {
+                try {
+                    gson.toJson(value)
+                } catch (e: Exception) {
+                    Timber.e("DeparturePoint 저장 실패: ${e.message}")
+                    ""
+                }
+            } else {
+                ""
+            }
+            setValue(DESTINATION_POINT, json)
+        }
 
     var busArrivalParameter: BusArrivalParameter?
         get() {

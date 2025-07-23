@@ -13,4 +13,9 @@ class AlarmRepositoryImpl @Inject constructor(
 
     override suspend fun deleteAlarm(lastRouteId: String): Result<Unit> =
         alarmRemoteDataSource.deleteAlarm(lastRouteId = lastRouteId)
+
+    override suspend fun refreshAlarm(): Result<String> =
+        alarmRemoteDataSource.refreshAlarm().map {
+            it.departureTime
+        }
 }

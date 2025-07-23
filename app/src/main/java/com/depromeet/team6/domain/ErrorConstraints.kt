@@ -60,4 +60,6 @@ object ToastMessage {
     const val API_ERROR_BUS_LOCATION_MISSING = "버스 위치정보를 가져올 수 없습니다."
     const val API_ERROR_BUS_ROUTE_MISSING = "버스 노선정보를 찾을 수 없습니다."
     const val API_ERROR_BUS_ARRIVAL_MISSING = "버스 도착정보를 알 수 없습니다."
+
+    const val API_ERROR_ALARM_REFRESH_FAILED = "현재 출발시간을 갱신할 수 없습니다."
 }

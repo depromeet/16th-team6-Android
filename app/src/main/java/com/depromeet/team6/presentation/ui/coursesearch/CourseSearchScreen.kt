@@ -41,7 +41,6 @@ import com.depromeet.team6.presentation.util.toast.atChaToastMessage
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.google.gson.Gson
-import timber.log.Timber
 
 @Composable
 fun CourseSearchRoute(
@@ -141,12 +140,15 @@ fun CourseSearchRoute(
                 setNotification = { routeId ->
                     if (uiState.sortType == 1) {
                         // 기존 코드 유지 - sortType이 1일 때 알림 등록
-
                         val registeredCourse = uiState.courseData.find { it.routeId == routeId }
 
                         if (registeredCourse != null) {
-                            viewModel.saveAlarmData(departurePoint, destinationPoint, routeId)
-                            viewModel.postAlarm(lastRouteId = routeId)
+                            viewModel.postAlarm(
+                                departurePoint = departurePoint,
+                                destinationPoint = destinationPoint,
+                                lastRouteId = routeId,
+                                alarmTimeStamp = registeredCourse.departureTime
+                            )
                         } else {
                             atChaToastMessage(context, R.string.course_set_notification_failed_snackbar)
                         }
@@ -176,7 +178,6 @@ fun CourseSearchRoute(
                                 viewModel.dismissDeleteAlarmDialog()
                             },
                             onSuccess = {
-                                Timber.e("여기 앰플 왜안됨요 ??????????????")
                                 AmplitudeUtils.trackEventWithProperties(
                                     ALERT_END_POPUP_2,
                                     mapOf(
@@ -208,7 +209,12 @@ fun CourseSearchRoute(
                                     editor.putString("lastCourseInfo", courseJson) // 막차 경로
                                     editor.apply()
 
-                                    viewModel.postAlarm(lastRouteId = uiState.selectedRouteId)
+                                    viewModel.updateAlarm(
+                                        departurePoint = departurePoint,
+                                        destinationPoint = destinationPoint,
+                                        lastRouteId = uiState.selectedRouteId,
+                                        alarmTimeStamp = registeredCourse.departureTime
+                                    )
                                     viewModel.dismissDeleteAlarmDialog()
                                 } else {
                                     atChaToastMessage(context, R.string.course_set_notification_failed_snackbar)

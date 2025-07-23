@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 
     <uses-permission
         android:name="android.permission.SCHEDULE_EXACT_ALARM"
@@ -75,12 +76,12 @@
             android:theme="@style/Theme.Team6"
             />
         <service
-            android:name=".data.datalocal.service.LockService"
+            android:name=".data.background.LockService"
             android:exported="false"
             android:foregroundServiceType="specialUse"
             android:permission="android.permission.FOREGROUND_SERVICE"/>
         <service
-            android:name=".data.datalocal.service.FcmService"
+            android:name=".data.background.FcmService"
             android:enabled="true"
             android:exported="false"
             android:stopWithTask="false">
@@ -89,7 +90,15 @@
             </intent-filter>
         </service>
         <receiver
-            android:name=".data.datalocal.service.LocationCheckReceiver"
+            android:name=".data.background.LocationCheckReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name=".data.background.AlarmReceiver"
             android:enabled="true"
             android:exported="false" />
     </application>

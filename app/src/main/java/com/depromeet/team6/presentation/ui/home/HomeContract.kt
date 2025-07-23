@@ -81,6 +81,7 @@ class HomeContract {
         data object NavigateToMypage : HomeSideEffect
         data class NavigateToItinerary(val markerParameter: FocusedMarkerParameter?) : HomeSideEffect
         data object ShowDeleteAlarmToast : HomeSideEffect
+        data class ShowToast(val message: String) : HomeSideEffect
     }
 
     sealed class HomeEvent : UiEvent {
