@@ -47,12 +47,20 @@ object AmplitudeCommon {
 }
 
 object OnboardingAmplitude {
-    const val USER_ALARM_FREQUENCIES = "user_alarm_frequencies"
+    const val USER_PUSH_FREQUENCIES = "user_push_frequencies"
     const val HOME_REGISTER_LOCATION_PERMISSION_CHECK = "home_register_location_permission_clicked"
     const val HOME_REGISTER_COMPLETE_CLICKED = "home_register_complete_clicked"
     const val ALARM_SETTING_ALARM_PERMISSION_CLICKED = "alarm_setting_alarm_permission_clicked"
     const val HOME_REGISTER = "집 등록(온보딩)"
     const val ALARM_REGISTER = "알림 등록(온보딩)"
+    const val ONBOARDING_NOTIFICATION_PERMISSION_SETTINGS_CLICKED = "onboarding_notification_permission_settings_clicked"
+    const val ONBOARDING_LOCATION_PERMISSION_SETTINGS_CLICKED = "onboarding_location_permission_settings_clicked"
+    const val SYSTEM_SETTING = "설정하기"
+    const val DENIED = "허용안함"
+    const val GRANT = "허용"
+    const val ONBOARDING_LOCATION_PERMISSION_CLICKED = "onboarding_location_permission_clicked"
+    const val ONBOARDING_NOTIFICATION_PERMISSION_CLICKED = "onboarding_notification_permission_clicked"
+    const val ONBOARDING_COMPLETE = "onboarding_complete"
 }
 
 object HomeAmplitude {
@@ -109,4 +117,9 @@ object ItineraryAmplitude {
     const val ITINERARY = "상세경로"
     const val ITINERARY_EVENT_ALARM_REGISTERED_SCREEN = "alert_button"
     const val ITINERARY_ALARM_REGISTER_BTN_CLICKED = "alert_button"
+}
+
+object MyPageAmplitude {
+    const val MY_PAGE = "마이페이지"
+    const val MYPAGE_BANNER_CLICKED = "mypage_banner_clicked"
 }

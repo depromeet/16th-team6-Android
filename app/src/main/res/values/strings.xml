@@ -27,9 +27,9 @@
     <string name="onboarding_notification_permission_bottom_sheet_title">제때 막차 알림을 드리기 위해\n알림을 허용해주세요</string>
     <string name="onboarding_notification_permission_bottom_sheet_sub_title">본인 출발 알림, 막차 출발 알림, 목적지 도착</string>
     <string name="onboarding_notification_permission_bottom_sheet_type">알림</string>
-    <string name="onboarding_location_no_permission_toast">설정에서 앗차 위치 접근 허용을 항상으로 설정해주세요.</string>
-    <string name="onboarding_location_permission_denied_bottom_sheet_title">원활한 앗차 사용을 위해서는\n위치 정보에 대한 접근 허가가 필요해요</string>
-    <string name="onboarding_location_permission_denied_bottom_sheet_description">1. 설정에서 앗차 선택\n2. 위치를 선택\n3. 위치 접근 허용을 항상으로 설정\n4. 정확한 위치 정보를 사용</string>
+    <string name="onboarding_location_permission_denied_dialog">위치 권한을 허용하지 않으면\n현위치의 막차를 확인할 수 없어요.</string>
+    <string name="onboarding_notification_permission_denied_dialog">알림을 허용하지 않으면\n막차 알람이 울리지 못해요.</string>
+
 
 
     <!-- LockScreen -->
@@ -135,7 +135,7 @@
     <string name="home_arrive_station_toast_text">목적지 부근에 도착했습니다</string>
 
     <!-- All -->
-    <string name="all_acha_character">앗차 캐릭터</string>
+    <string name="all_atcha_character">앗차 캐릭터</string>
 
     <!-- Course -->
     <string name="last_transport_info_remaining_hour">%1d시간</string>
@@ -213,5 +213,8 @@
     <string name="mypage_alarm_sound_text">소리</string>
     <string name="all_toast_exit_app">한 번 더 누르면 앱이 종료됩니다</string>
 
+    <!-- Dialog -->
+    <string name="all_dialog_location_permission">현위치를 찾을 수 없어요.\n위치 권한을 허용해 주세요.</string>
+    <string name="all_dialog_notification_permission">알림을 받을 수 없어요.\n알림 권한을 허용해 주세요.</string>
 
 </resources>

@@ -58,6 +58,8 @@ class MypageContract {
         data object NavigateBack : MypageSideEffect
         data object NavigateToLogin : MypageSideEffect
         data object NavigateToFeedbackForm : MypageSideEffect
+        data object SettingDialog : MypageSideEffect
+        data object ClearPermissionData : MypageSideEffect
     }
 
     sealed class MypageEvent : UiEvent {

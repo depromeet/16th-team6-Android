@@ -86,6 +86,10 @@ object PermissionUtil {
         }
     }
 
+    fun clearAllPermissionData(context: Context) {
+        getPreferences(context).edit().clear().apply()
+    }
+
     fun needsOverlayPermission(context: Context): Boolean {
         return !Settings.canDrawOverlays(context)
     }

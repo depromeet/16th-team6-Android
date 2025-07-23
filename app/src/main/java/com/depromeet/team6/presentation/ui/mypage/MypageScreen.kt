@@ -40,10 +40,14 @@ import com.depromeet.team6.presentation.ui.mypage.component.MypageListItem
 import com.depromeet.team6.presentation.ui.mypage.component.MypageVersionItem
 import com.depromeet.team6.presentation.ui.mypage.component.TitleBar
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingSearchPopup
+import com.depromeet.team6.presentation.util.MyPageAmplitude.MYPAGE_BANNER_CLICKED
 import com.depromeet.team6.presentation.util.WebViewUrl.FEEDBACK_FORM_URL
 import com.depromeet.team6.presentation.util.WebViewUrl.PRIVACY_POLICY_URL
+import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
 import com.depromeet.team6.presentation.util.base.ApiErrorSideEffect
+import com.depromeet.team6.presentation.util.dialog.LocalDialogController
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
+import com.depromeet.team6.presentation.util.permission.PermissionUtil
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.depromeet.team6.ui.theme.LocalTeam6Colors
 import com.depromeet.team6.ui.theme.LocalTeam6Typography
@@ -59,6 +63,7 @@ fun MypageRoute(
     val uiState = mypageViewModel.uiState.collectAsStateWithLifecycle().value
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
+    val dialogController = LocalDialogController.current
 
     val isInitialized = remember { mutableMapOf("initialized" to false) }
 
@@ -76,12 +81,24 @@ fun MypageRoute(
                     is MypageContract.MypageSideEffect.NavigateToLogin -> navigateToLogin()
                     is MypageContract.MypageSideEffect.NavigateToFeedbackForm -> {
                         context.startActivity(feedbackIntent)
+                        AmplitudeUtils.trackEvent(
+                            eventName = MYPAGE_BANNER_CLICKED
+                        )
                     }
                     is ApiErrorSideEffect.ShowToastSideEffect -> {
                         Toast.makeText(context, sideEffect.toastMessage, Toast.LENGTH_SHORT).show()
                     }
                     is ApiErrorSideEffect.NavigateToLoginSideEffect -> {
                         navigateToLogin()
+                    }
+                    is MypageContract.MypageSideEffect.SettingDialog -> {
+                        dialogController.showSystemSettingsDialog(
+                            context = context,
+                            message = context.getString(R.string.all_dialog_location_permission)
+                        )
+                    }
+                    is MypageContract.MypageSideEffect.ClearPermissionData -> {
+                        PermissionUtil.clearAllPermissionData(context)
                     }
                 }
             }
@@ -123,6 +140,9 @@ fun MypageRoute(
             },
             onTextClearButtonClicked = {
                 mypageViewModel.setEvent(MypageContract.MypageEvent.ClearText)
+            },
+            settingDialog = {
+                mypageViewModel.setSideEffect(MypageContract.MypageSideEffect.SettingDialog)
             }
         )
     } else {

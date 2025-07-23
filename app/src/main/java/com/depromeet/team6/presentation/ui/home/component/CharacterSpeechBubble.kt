@@ -39,8 +39,8 @@ fun CharacterSpeechBubble(
         }
 
         Image(
-            imageVector = ImageVector.vectorResource(R.drawable.ic_all_acha_character),
-            contentDescription = stringResource(R.string.all_acha_character)
+            imageVector = ImageVector.vectorResource(R.drawable.ic_all_atcha_character),
+            contentDescription = stringResource(R.string.all_atcha_character)
         )
     }
 }
