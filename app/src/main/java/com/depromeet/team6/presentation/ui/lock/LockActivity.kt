@@ -10,6 +10,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.lifecycle.lifecycleScope
 import com.depromeet.team6.data.background.LockService
 import com.depromeet.team6.presentation.util.AmplitudeCommon.SCREEN_NAME
 import com.depromeet.team6.presentation.util.AmplitudeCommon.USER_ID
@@ -20,6 +21,8 @@ import com.depromeet.team6.presentation.util.LockAmplitude.LOCK_BUTTON_START
 import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
 import com.depromeet.team6.ui.theme.Team6Theme
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -32,8 +35,15 @@ class LockActivity : ComponentActivity() {
     private val viewModel: LockViewModel by viewModels()
     private lateinit var sharedPreferences: SharedPreferences
 
+    private val ALARM_DURATION = 60_000L * 2
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        lifecycleScope.launch {
+            delay(ALARM_DURATION)
+            finish()
+        }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
             setShowWhenLocked(true)

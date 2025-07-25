@@ -10,9 +10,11 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.media.AudioAttributes
 import android.media.MediaPlayer
+import android.os.Build
 import android.os.CountDownTimer
 import android.os.IBinder
 import android.os.PowerManager
+import android.os.VibrationAttributes
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.util.Log
@@ -28,6 +30,7 @@ import com.google.android.gms.location.LocationServices
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -103,7 +106,19 @@ class LockService : Service() {
                 amplitudes,
                 repeatIndex
             )
-            vibrator?.vibrate(vibrationEffect)
+
+            // for API level 33 or higher
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                vibrator!!.vibrate(
+                    vibrationEffect,
+                    VibrationAttributes.createForUsage(VibrationAttributes.USAGE_ALARM)
+                )
+            } else {
+                vibrator!!.vibrate(
+                    vibrationEffect,
+                    AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_ALARM).build()
+                )
+            }
         } catch (e: Exception) {
             Log.e("LockService", "진동 중 오류 발생: ${e.message}", e)
         }
@@ -143,7 +158,7 @@ class LockService : Service() {
         val channel = NotificationChannel(
             channelId,
             ATCHA_SERVICE_NAME,
-            NotificationManager.IMPORTANCE_LOW
+            NotificationManager.IMPORTANCE_HIGH
         )
         val notificationManager = getSystemService(NotificationManager::class.java)
         notificationManager.createNotificationChannel(channel)
@@ -160,7 +175,7 @@ class LockService : Service() {
         return NotificationCompat.Builder(this, channelId)
             .setSmallIcon(R.drawable.ic_app_logo_foreground)
             .setContentIntent(pendingIntent)
-            .setPriority(NotificationCompat.PRIORITY_LOW)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
             .build()
     }
 
@@ -188,8 +203,10 @@ class LockService : Service() {
                 lockScreenNavigator.navigateToLockScreen(applicationContext, taxiCost)
             }
 
-//            delay(ALARM_DURATION_MS)
-//            withContext(Dispatchers.Main) { stopAlarm() }
+            delay(ALARM_DURATION_MS)
+            withContext(Dispatchers.Main) {
+                stopSelf()
+            }
         }
 
         return START_STICKY
@@ -247,6 +264,6 @@ class LockService : Service() {
         const val NOTIFICATION_ID = 1
         private const val WAKE_LOCK_TAG = "Atcha:WakeLock"
 
-        const val ALARM_DURATION_MS = 60_000L
+        const val ALARM_DURATION_MS = 60_000L * 2
     }
 }

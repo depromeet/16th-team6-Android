@@ -18,7 +18,7 @@ object AlarmScheduler {
 
     fun scheduleLockScreenAlarm(context: Context, timeStamp: String) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val timeInMillis = isoLocalDateTimeToMillis(timeStamp)
+        val timeInMillis = isoLocalDateTimeToMillis(timeStamp) - (60_000L * 3)
 
         // 잠금화면 포그라운드 서비스 할당
         val intent = Intent(context, LockService::class.java)
