@@ -84,7 +84,7 @@ class NotificationHelper @Inject constructor(
         val intent = Intent(context, MainActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(
             context,
-            0,
+            LOCATION_NOTIFICATION_ID,
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or
                 PendingIntent.FLAG_IMMUTABLE

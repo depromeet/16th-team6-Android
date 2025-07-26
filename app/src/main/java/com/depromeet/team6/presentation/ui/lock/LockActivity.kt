@@ -37,7 +37,7 @@ class LockActivity : ComponentActivity() {
     private val viewModel: LockViewModel by viewModels()
     private lateinit var sharedPreferences: SharedPreferences
 
-    private val ALARM_DURATION = 5_000L * 2
+    private val ALARM_DURATION = 60_000L * 2
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

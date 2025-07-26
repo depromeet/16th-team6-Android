@@ -6,7 +6,6 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import com.depromeet.team6.data.background.LockService.Companion.LOCATION_NOTIFICATION_ID
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.util.Calendar
 import javax.inject.Inject
@@ -52,7 +51,7 @@ class LockServiceManager @Inject constructor(
         val intent = Intent(applicationContext, LocationCheckReceiver::class.java)
         val pendingIntent = PendingIntent.getBroadcast(
             applicationContext,
-            LOCATION_NOTIFICATION_ID,
+            0,
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
@@ -81,7 +80,7 @@ class LockServiceManager @Inject constructor(
         val intent = Intent(applicationContext, LocationCheckReceiver::class.java)
         val pendingIntent = PendingIntent.getBroadcast(
             applicationContext,
-            LOCATION_NOTIFICATION_ID,
+            0,
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )

@@ -19,6 +19,7 @@ import android.os.VibrationEffect
 import android.os.Vibrator
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
 import com.depromeet.team6.R
 import com.depromeet.team6.data.repositoryimpl.UserInfoRepositoryImpl
 import com.depromeet.team6.domain.usecase.GetTaxiCostUseCase
@@ -40,10 +41,6 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class LockService : Service() {
-
-    @Inject
-    lateinit var lockServiceManager: LockServiceManager
-
     @Inject
     lateinit var lockScreenNavigator: LockScreenNavigator
 
@@ -62,6 +59,9 @@ class LockService : Service() {
     private var vibrationTimer: CountDownTimer? = null
 
     private var fusedLocationClient: FusedLocationProviderClient? = null
+    private val notificationManager by lazy {
+        getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    }
 
     private fun playAlarm() {
         val isSound = userInfoRepositoryImpl.getAlarmSound()
@@ -152,18 +152,17 @@ class LockService : Service() {
         LockReceiver.initialize(lockScreenNavigator, taxiCostUseCase)
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-        startForeground(NOTIFICATION_ID, createForegroundNotification())
+        startForeground(ALARM_NOTIFICATION_ID, createForegroundNotification())
     }
 
     private fun createForegroundNotification(): Notification {
-        val channelId = ATCHA_SERVICE_CHANNEL
+        val channelId = ATCHA_SERVICE_CHANNEL_ID
 
         val channel = NotificationChannel(
             channelId,
             ATCHA_SERVICE_NAME,
             NotificationManager.IMPORTANCE_HIGH
         )
-        val notificationManager = getSystemService(NotificationManager::class.java)
         notificationManager.createNotificationChannel(channel)
 
         val intent = Intent(this, MainActivity::class.java)
@@ -177,6 +176,9 @@ class LockService : Service() {
 
         return NotificationCompat.Builder(this, channelId)
             .setSmallIcon(R.drawable.ic_app_logo_foreground)
+            .setContentText(
+                getString(R.string.notification_content_text)
+            )
             .setContentIntent(pendingIntent)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .build()
@@ -215,6 +217,29 @@ class LockService : Service() {
                         LOCK_ACTION_TAKEN_TIME to Unit
                     )
                 )
+                val notificationIntent = Intent(this@LockService, MainActivity::class.java)
+                val pendingIntent = PendingIntent.getActivity(
+                    this@LockService,
+                    0,
+                    notificationIntent,
+                    PendingIntent.FLAG_UPDATE_CURRENT or
+                            PendingIntent.FLAG_IMMUTABLE
+                )
+
+                val notification = NotificationCompat.Builder(this@LockService, ATCHA_SERVICE_CHANNEL_ID)
+                    .setContentText(
+                        ContextCompat.getString(
+                            this@LockService,
+                            R.string.notification_alarm_timeout
+                        )
+                    )
+                    .setSmallIcon(R.drawable.ic_app_logo_foreground)
+                    .setContentIntent(pendingIntent)
+                    .setAutoCancel(true)
+                    .build()
+
+                notificationManager.notify(ALARM_NOTIFICATION_ID, notification)
+                stopForeground(STOP_FOREGROUND_DETACH)
                 stopSelf()
             }
         }
@@ -229,7 +254,6 @@ class LockService : Service() {
         stopAlarm()
         vibrationTimer?.cancel()
         vibrationTimer = null
-        lockServiceManager.stop()
         super.onDestroy()
     }
 
@@ -259,21 +283,16 @@ class LockService : Service() {
         }
     }
     companion object {
-        const val EXTRA_SHOW_LOCK_SCREEN = "extra_show_lock_screen"
-        const val EXTRA_CHECK_LOCATION = "extra_check_location"
         const val ACTION_STOP_ALARM_SOUND = "com.depromeet.team6.STOP_ALARM_SOUND"
 
-        const val LOCATION_NOTIFICATION_ID = 1001
+        const val ALARM_NOTIFICATION_ID = 1
+        const val ALARM_NOTIFICATION_TIMEOUT_ID = 2
 
-        private const val LOCATION_CHANNEL_ID = "ATCHA_LOCATION_CHANNEL"
-        private const val LOCATION_CHANNEL_NAME = "ATCHA_LOCATION"
+        private const val ATCHA_SERVICE_CHANNEL_ID = "ATCHA_Alarm_Channel"
+        private const val ATCHA_SERVICE_NAME = "ATCHA_Alarm"
 
-        private const val ATCHA_SERVICE_CHANNEL = "ATCHA_SERVICE_CHANNEL"
-        private const val ATCHA_SERVICE_NAME = "ATCHA_SERVICE"
-
-        const val NOTIFICATION_ID = 1
         private const val WAKE_LOCK_TAG = "Atcha:WakeLock"
 
-        const val ALARM_DURATION_MS = 5_000L * 2
+        const val ALARM_DURATION_MS = 60_000L * 2
     }
 }

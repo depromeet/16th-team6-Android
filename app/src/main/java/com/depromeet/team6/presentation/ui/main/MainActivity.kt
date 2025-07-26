@@ -25,7 +25,6 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.depromeet.team6.R
-import com.depromeet.team6.data.background.LockServiceManager
 import com.depromeet.team6.presentation.ui.common.dialog.GlobalDialogHandler
 import com.depromeet.team6.presentation.ui.lock.LockScreenNavigator
 import com.depromeet.team6.presentation.ui.main.navigation.MainNavHost
@@ -39,14 +38,11 @@ import com.google.firebase.Firebase
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.analytics
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private var backPressedTime = 0L
 
-    @Inject
-    lateinit var lockServiceManager: LockServiceManager
     private lateinit var firebaseAnalytics: FirebaseAnalytics
 
     override fun onCreate(savedInstanceState: Bundle?) {
