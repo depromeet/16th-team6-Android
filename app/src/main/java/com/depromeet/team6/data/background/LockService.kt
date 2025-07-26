@@ -223,7 +223,7 @@ class LockService : Service() {
                     0,
                     notificationIntent,
                     PendingIntent.FLAG_UPDATE_CURRENT or
-                            PendingIntent.FLAG_IMMUTABLE
+                        PendingIntent.FLAG_IMMUTABLE
                 )
 
                 val notification = NotificationCompat.Builder(this@LockService, ATCHA_SERVICE_CHANNEL_ID)

@@ -14,7 +14,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val userInfoRepository: UserInfoRepository,
+    private val userInfoRepository: UserInfoRepository
 ) : ViewModel() {
 
     private var fcmToken: String? = null

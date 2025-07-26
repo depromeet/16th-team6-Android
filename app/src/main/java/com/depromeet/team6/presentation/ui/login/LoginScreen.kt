@@ -84,7 +84,7 @@ fun LoginRoute(
             viewModel.setKakaoAccessToken(oAuthToken.accessToken)
         }
     }
-    
+
     Timber.d("initial uiState : ${uiState.loadState}")
 
     LaunchedEffect(Unit) {
