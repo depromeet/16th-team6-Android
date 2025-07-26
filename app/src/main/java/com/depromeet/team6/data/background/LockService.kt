@@ -25,6 +25,9 @@ import com.depromeet.team6.domain.usecase.GetTaxiCostUseCase
 import com.depromeet.team6.domain.usecase.GetTimeLeftUseCase
 import com.depromeet.team6.presentation.ui.lock.LockScreenNavigator
 import com.depromeet.team6.presentation.ui.main.MainActivity
+import com.depromeet.team6.presentation.util.LockAmplitude.LOCK_ACTION_TAKEN
+import com.depromeet.team6.presentation.util.LockAmplitude.LOCK_ACTION_TAKEN_TIME
+import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import dagger.hilt.android.AndroidEntryPoint
@@ -205,6 +208,13 @@ class LockService : Service() {
 
             delay(ALARM_DURATION_MS)
             withContext(Dispatchers.Main) {
+                AmplitudeUtils.trackEventWithProperties(
+                    LOCK_ACTION_TAKEN,
+                    mapOf(
+                        LOCK_ACTION_TAKEN to 'N',
+                        LOCK_ACTION_TAKEN_TIME to Unit
+                    )
+                )
                 stopSelf()
             }
         }
@@ -264,6 +274,6 @@ class LockService : Service() {
         const val NOTIFICATION_ID = 1
         private const val WAKE_LOCK_TAG = "Atcha:WakeLock"
 
-        const val ALARM_DURATION_MS = 60_000L * 2
+        const val ALARM_DURATION_MS = 5_000L * 2
     }
 }

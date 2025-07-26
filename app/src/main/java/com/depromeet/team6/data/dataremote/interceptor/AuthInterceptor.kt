@@ -40,7 +40,7 @@ class AuthInterceptor @Inject constructor(
 
         Timber.d("API_REQUEST : $authRequest")
         Timber.d("API_RESPONSE : $response")
-        if (response.code == HTTP_BAD_REQUEST) {
+        if (response.code == 400) {
             // errorBody를 문자열로 읽어 소비합니다. (더이상 response를 사용할 수 없게 되기에 복제해야함)
             val errorBodyString = response.body?.string()
             // errorBody 복제를 위해 기존의 ContentType을 가져옵니다.
@@ -178,7 +178,6 @@ class AuthInterceptor @Inject constructor(
     }
 
     companion object {
-        const val HTTP_BAD_REQUEST = 400
         const val CODE_TOKEN_EXPIRE = "TOK_001"
         const val AUTHORIZATION = "Authorization"
         const val BEARER = "Bearer "
