@@ -70,6 +70,7 @@ import com.depromeet.team6.presentation.util.HomeAmplitude.POPUP
 import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
 import com.depromeet.team6.presentation.util.base.ApiErrorSideEffect
 import com.depromeet.team6.presentation.util.context.getUserLocation
+import com.depromeet.team6.presentation.util.dialog.LocalDialogController
 import com.depromeet.team6.presentation.util.permission.PermissionUtil
 import com.depromeet.team6.presentation.util.toast.atChaToastMessage
 import com.depromeet.team6.presentation.util.view.LoadState
@@ -106,6 +107,7 @@ fun HomeRoute(
     val context = LocalContext.current
 
     var permissionGranted by remember { mutableStateOf(PermissionUtil.hasLocationPermissions(context)) }
+    val dialogController = LocalDialogController.current
     var userLocation by remember { mutableStateOf(LatLng(DEFAULT_LAT, DEFAULT_LNG)) } // 서울시 기본 위치
 
     val locationPermissionsLauncher = rememberLauncherForActivityResult(
@@ -205,6 +207,14 @@ fun HomeRoute(
         if (PermissionUtil.hasLocationPermissions(context)) { // 위치 권한이 있으면
             val location = context.getUserLocation()
             userLocation = location
+        } else {
+            dialogController.showSystemSettingsDialog(
+                context = context,
+                message = context.getString(R.string.all_dialog_location_permission),
+                onConfirm = {
+                    PermissionUtil.requestLocationPermissions(context, locationPermissionsLauncher)
+                }
+            )
         }
 
         viewModel.getCenterLocation(LatLng(userLocation.latitude, userLocation.longitude))
@@ -216,24 +226,16 @@ fun HomeRoute(
         }
     }
 
-//    LaunchedEffect(uiState.isAlarmRegistered, uiState.firtTransportTation) {
-//        if (uiState.isAlarmRegistered && uiState.firtTransportTation == TransportType.BUS) {
-//            viewModel.startPollingBusStarted(routeId = uiState.lastRouteId)
-//        } else {
-//            viewModel.stopPollingBusStarted()
+//    SideEffect {
+//        if (!PermissionUtil.isLocationPermissionRequested(context) &&
+//            !PermissionUtil.hasLocationPermissions(context)
+//        ) {
+//            PermissionUtil.requestLocationPermissions(
+//                context = context,
+//                locationPermissionLauncher = locationPermissionsLauncher
+//            )
 //        }
 //    }
-
-    SideEffect {
-        if (!PermissionUtil.isLocationPermissionRequested(context) &&
-            !PermissionUtil.hasLocationPermissions(context)
-        ) {
-            PermissionUtil.requestLocationPermissions(
-                context = context,
-                locationPermissionLauncher = locationPermissionsLauncher
-            )
-        }
-    }
 
     LaunchedEffect(Unit) {
         viewModel.setEvent(HomeContract.HomeEvent.SetDestination)
