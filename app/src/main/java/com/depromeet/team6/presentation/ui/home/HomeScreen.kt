@@ -641,7 +641,7 @@ fun HomeScreen(
             contentDescription = stringResource(R.string.mypage_icon_description),
             modifier = Modifier
                 .align(Alignment.TopEnd)
-                .padding(top = 12.dp + padding.calculateTopPadding(), end = 16.dp)
+                .padding(top = 12.dp, end = 16.dp)
                 .clickable {
                     navigateToMypage()
                 }
