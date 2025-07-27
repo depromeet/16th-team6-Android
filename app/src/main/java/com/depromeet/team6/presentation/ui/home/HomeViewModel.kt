@@ -3,7 +3,6 @@ package com.depromeet.team6.presentation.ui.home
 import android.content.Context
 import androidx.lifecycle.viewModelScope
 import com.depromeet.team6.data.background.AlarmScheduler
-import com.depromeet.team6.data.background.LockServiceManager
 import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.RouteLocation
 import com.depromeet.team6.domain.model.course.LegInfo
@@ -35,6 +34,8 @@ import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
 import com.depromeet.team6.presentation.util.base.BaseViewModel
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.google.android.gms.maps.model.LatLng
+import com.google.firebase.Firebase
+import com.google.firebase.crashlytics.crashlytics
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Job
@@ -63,9 +64,6 @@ class HomeViewModel @Inject constructor(
     private var speechBubbleJob: Job? = null
     private var busStartedPollingJob: Job? = null
     private var lastRouteId: String = ""
-
-    @Inject
-    lateinit var lockServiceManager: LockServiceManager
 
     init {
         showSpeechBubbleTemporarily()
@@ -301,8 +299,15 @@ class HomeViewModel @Inject constructor(
 //                    stopPollingBusStarted()
 
                     homeRepository.clearAlarmData()
-                    AlarmScheduler.unScheduleAllAlarms(context)
-
+                    getUserInfoUseCase()
+                        .onSuccess {
+                            val freq = it.alertFrequencies
+                            AlarmScheduler.unScheduleAllAlarms(context, freq)
+                        }
+                        .onFailure {
+                            handleApiException(it)
+                            Firebase.crashlytics.recordException(RuntimeException("deleteAlarm 오류 : 알람취소를 눌렀지만 실제로 unschedule 로직이 실행되지 않음"))
+                        }
                     setEvent(HomeContract.HomeEvent.DismissDialog)
                     setSideEffect(HomeContract.HomeSideEffect.ShowDeleteAlarmToast)
                 }

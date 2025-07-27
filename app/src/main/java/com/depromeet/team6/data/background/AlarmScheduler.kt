@@ -5,6 +5,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import com.depromeet.team6.BuildConfig
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -18,7 +19,7 @@ object AlarmScheduler {
 
     fun scheduleLockScreenAlarm(context: Context, timeStamp: String) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val timeInMillis = isoLocalDateTimeToMillis(timeStamp)
+        val timeInMillis = if (BuildConfig.DEBUG) isoLocalDateTimeToMillis(timeStamp) - (60_000L * 3) else isoLocalDateTimeToMillis(timeStamp)
 
         // 잠금화면 포그라운드 서비스 할당
         val intent = Intent(context, LockService::class.java)
@@ -80,8 +81,29 @@ object AlarmScheduler {
         }
     }
 
-    fun unScheduleAllAlarms(context: Context) {
+    fun unScheduleAllAlarms(context: Context, pushTimes: Set<Int>) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        // 잠금화면 포그라운드 서비스 해제
+        val lockAlarmIntent = Intent(context, LockService::class.java)
+        val lockAlarmPendingIntent = PendingIntent.getForegroundService(
+            context,
+            ALARM_START_ID,
+            lockAlarmIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+        alarmManager.cancel(lockAlarmPendingIntent)
+
+        // 5분, 10분 전 푸시알림 해제
+        for (pushTime in pushTimes) {
+            val intent = Intent(context, AlarmReceiver::class.java)
+            val pendingIntent = PendingIntent.getBroadcast(
+                context,
+                ALARM_AWARE_NOTIFICATION_ID + pushTime,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            )
+            alarmManager.cancel(pendingIntent)
+        }
     }
 
     fun scheduleLocationCheck(context: Context) {

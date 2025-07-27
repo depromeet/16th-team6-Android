@@ -10,34 +10,37 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.media.AudioAttributes
 import android.media.MediaPlayer
+import android.os.Build
 import android.os.CountDownTimer
 import android.os.IBinder
 import android.os.PowerManager
+import android.os.VibrationAttributes
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
 import com.depromeet.team6.R
 import com.depromeet.team6.data.repositoryimpl.UserInfoRepositoryImpl
 import com.depromeet.team6.domain.usecase.GetTaxiCostUseCase
 import com.depromeet.team6.domain.usecase.GetTimeLeftUseCase
 import com.depromeet.team6.presentation.ui.lock.LockScreenNavigator
 import com.depromeet.team6.presentation.ui.main.MainActivity
+import com.depromeet.team6.presentation.util.LockAmplitude.LOCK_ACTION_TAKEN
+import com.depromeet.team6.presentation.util.LockAmplitude.LOCK_ACTION_TAKEN_TIME
+import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class LockService : Service() {
-
-    @Inject
-    lateinit var lockServiceManager: LockServiceManager
-
     @Inject
     lateinit var lockScreenNavigator: LockScreenNavigator
 
@@ -56,6 +59,9 @@ class LockService : Service() {
     private var vibrationTimer: CountDownTimer? = null
 
     private var fusedLocationClient: FusedLocationProviderClient? = null
+    private val notificationManager by lazy {
+        getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    }
 
     private fun playAlarm() {
         val isSound = userInfoRepositoryImpl.getAlarmSound()
@@ -103,7 +109,19 @@ class LockService : Service() {
                 amplitudes,
                 repeatIndex
             )
-            vibrator?.vibrate(vibrationEffect)
+
+            // for API level 33 or higher
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                vibrator!!.vibrate(
+                    vibrationEffect,
+                    VibrationAttributes.createForUsage(VibrationAttributes.USAGE_ALARM)
+                )
+            } else {
+                vibrator!!.vibrate(
+                    vibrationEffect,
+                    AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_ALARM).build()
+                )
+            }
         } catch (e: Exception) {
             Log.e("LockService", "진동 중 오류 발생: ${e.message}", e)
         }
@@ -134,18 +152,17 @@ class LockService : Service() {
         LockReceiver.initialize(lockScreenNavigator, taxiCostUseCase)
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-        startForeground(NOTIFICATION_ID, createForegroundNotification())
+        startForeground(ALARM_NOTIFICATION_ID, createForegroundNotification())
     }
 
     private fun createForegroundNotification(): Notification {
-        val channelId = ATCHA_SERVICE_CHANNEL
+        val channelId = ATCHA_SERVICE_CHANNEL_ID
 
         val channel = NotificationChannel(
             channelId,
             ATCHA_SERVICE_NAME,
-            NotificationManager.IMPORTANCE_LOW
+            NotificationManager.IMPORTANCE_HIGH
         )
-        val notificationManager = getSystemService(NotificationManager::class.java)
         notificationManager.createNotificationChannel(channel)
 
         val intent = Intent(this, MainActivity::class.java)
@@ -159,8 +176,11 @@ class LockService : Service() {
 
         return NotificationCompat.Builder(this, channelId)
             .setSmallIcon(R.drawable.ic_app_logo_foreground)
+            .setContentText(
+                getString(R.string.notification_content_text)
+            )
             .setContentIntent(pendingIntent)
-            .setPriority(NotificationCompat.PRIORITY_LOW)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
             .build()
     }
 
@@ -188,8 +208,40 @@ class LockService : Service() {
                 lockScreenNavigator.navigateToLockScreen(applicationContext, taxiCost)
             }
 
-//            delay(ALARM_DURATION_MS)
-//            withContext(Dispatchers.Main) { stopAlarm() }
+            delay(ALARM_DURATION_MS)
+            withContext(Dispatchers.Main) {
+                AmplitudeUtils.trackEventWithProperties(
+                    LOCK_ACTION_TAKEN,
+                    mapOf(
+                        LOCK_ACTION_TAKEN to 'N',
+                        LOCK_ACTION_TAKEN_TIME to Unit
+                    )
+                )
+                val notificationIntent = Intent(this@LockService, MainActivity::class.java)
+                val pendingIntent = PendingIntent.getActivity(
+                    this@LockService,
+                    0,
+                    notificationIntent,
+                    PendingIntent.FLAG_UPDATE_CURRENT or
+                        PendingIntent.FLAG_IMMUTABLE
+                )
+
+                val notification = NotificationCompat.Builder(this@LockService, ATCHA_SERVICE_CHANNEL_ID)
+                    .setContentText(
+                        ContextCompat.getString(
+                            this@LockService,
+                            R.string.notification_alarm_timeout
+                        )
+                    )
+                    .setSmallIcon(R.drawable.ic_app_logo_foreground)
+                    .setContentIntent(pendingIntent)
+                    .setAutoCancel(true)
+                    .build()
+
+                notificationManager.notify(ALARM_NOTIFICATION_ID, notification)
+                stopForeground(STOP_FOREGROUND_DETACH)
+                stopSelf()
+            }
         }
 
         return START_STICKY
@@ -202,7 +254,6 @@ class LockService : Service() {
         stopAlarm()
         vibrationTimer?.cancel()
         vibrationTimer = null
-        lockServiceManager.stop()
         super.onDestroy()
     }
 
@@ -232,21 +283,16 @@ class LockService : Service() {
         }
     }
     companion object {
-        const val EXTRA_SHOW_LOCK_SCREEN = "extra_show_lock_screen"
-        const val EXTRA_CHECK_LOCATION = "extra_check_location"
         const val ACTION_STOP_ALARM_SOUND = "com.depromeet.team6.STOP_ALARM_SOUND"
 
-        const val LOCATION_NOTIFICATION_ID = 1001
+        const val ALARM_NOTIFICATION_ID = 1
+        const val ALARM_NOTIFICATION_TIMEOUT_ID = 2
 
-        private const val LOCATION_CHANNEL_ID = "ATCHA_LOCATION_CHANNEL"
-        private const val LOCATION_CHANNEL_NAME = "ATCHA_LOCATION"
+        private const val ATCHA_SERVICE_CHANNEL_ID = "ATCHA_Alarm_Channel"
+        private const val ATCHA_SERVICE_NAME = "ATCHA_Alarm"
 
-        private const val ATCHA_SERVICE_CHANNEL = "ATCHA_SERVICE_CHANNEL"
-        private const val ATCHA_SERVICE_NAME = "ATCHA_SERVICE"
-
-        const val NOTIFICATION_ID = 1
         private const val WAKE_LOCK_TAG = "Atcha:WakeLock"
 
-        const val ALARM_DURATION_MS = 60_000L
+        const val ALARM_DURATION_MS = 60_000L * 2
     }
 }

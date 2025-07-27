@@ -47,12 +47,22 @@
     <string name="notification_body_text">"막차 출발 시간을 확인해보세요!"</string>
     <string name="notification_ten_text">"지금 밖이세요? 막차 알림 등록하고 편히 귀가하세요. \uD83C\uDFE0"</string>
     <string name="notification_head_up_channel_name">앗차 중요 알림</string>
+    <string name="notification_alarm_timeout">막차... 안타시나요..? 🥲</string>
 
     <string name="dialog_finish_alarm_title">막차 알림을 종료할까요?</string>
     <string name="dialog_finish_alarm_back_text">돌아가기</string>
     <string name="dialog_finish_alarm_finish_text">종료하기</string>
 
     <string name="dialog_change_alarm_title">기존 막차 알림을 종료하고\n선택한 알림으로 변경할까요?</string>
+
+    <!-- Overlay Permission -->
+    <string name="overlay_permission_content_text_start">막차 알림을 등록하려면\n</string>
+    <string name="overlay_permission_content_text_mid">"'다른 앱 위에 표시' "</string>
+    <string name="overlay_permission_content_text_end">권한이 필요해요</string>
+    <string name="overlay_permission_atcha_text">앗차</string>
+    <string name="overlay_permission_close_text">닫기</string>
+    <string name="overlay_permission_go_setting_text">설정하기</string>
+    <string name="overlay_permission_toast_message">"'다른 앱 위에 표시'를 허용해주세요"</string>
 
     <!-- LoginScreen -->
     <string name="login_pager_main_text_first">오후 10시에 미리\n막차알림 등록하세요</string>

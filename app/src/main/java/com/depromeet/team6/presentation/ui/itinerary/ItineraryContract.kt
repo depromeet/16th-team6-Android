@@ -22,7 +22,9 @@ class ItineraryContract {
         val currentLocation: LatLng = LatLng(
             DEFAULT_LAT,
             DEFAULT_LNG
-        )
+        ),
+        val showOverlayPermissionDialog: Boolean = false,
+        val showPermissionSnackbar: Boolean = false
     ) : UiState
 
     sealed interface ItinerarySideEffect : UiSideEffect {
@@ -36,5 +38,9 @@ class ItineraryContract {
         data object RefreshButtonClicked : ItineraryEvent()
         data class CurrentLocationClicked(val location: LatLng) : ItineraryEvent()
         data class RegisterAlarm(val routeId: String) : ItineraryEvent()
+        data object ShowOverlayPermissionDialog : ItineraryEvent()
+        data object DismissOverlayPermissionDialog : ItineraryEvent()
+        data object ShowPermissionSnackbar : ItineraryEvent()
+        data object DismissPermissionSnackbar : ItineraryEvent()
     }
 }

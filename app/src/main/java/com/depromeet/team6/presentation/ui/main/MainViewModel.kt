@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.depromeet.team6.data.background.LockServiceManager
 import com.depromeet.team6.domain.repository.UserInfoRepository
 import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,8 +14,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val userInfoRepository: UserInfoRepository,
-    private val lockServiceManager: LockServiceManager
+    private val userInfoRepository: UserInfoRepository
 ) : ViewModel() {
 
     private var fcmToken: String? = null
@@ -53,13 +51,6 @@ class MainViewModel @Inject constructor(
             delay(SPLASH_SCREEN_DELAY)
             _showSplash.value = false
         }
-    }
-
-    /**
-     * 🔹 Lock Service 실행
-     */
-    fun startLockService() {
-        lockServiceManager.start()
     }
 
     companion object {

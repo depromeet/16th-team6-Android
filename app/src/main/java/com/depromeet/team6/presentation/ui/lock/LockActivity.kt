@@ -10,16 +10,21 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.lifecycle.lifecycleScope
 import com.depromeet.team6.data.background.LockService
 import com.depromeet.team6.presentation.util.AmplitudeCommon.SCREEN_NAME
 import com.depromeet.team6.presentation.util.AmplitudeCommon.USER_ID
 import com.depromeet.team6.presentation.util.LockAmplitude.LOCK
+import com.depromeet.team6.presentation.util.LockAmplitude.LOCK_ACTION_TAKEN
+import com.depromeet.team6.presentation.util.LockAmplitude.LOCK_ACTION_TAKEN_TIME
 import com.depromeet.team6.presentation.util.LockAmplitude.LOCK_BUTTON
 import com.depromeet.team6.presentation.util.LockAmplitude.LOCK_BUTTON_LATER_ROUTE
 import com.depromeet.team6.presentation.util.LockAmplitude.LOCK_BUTTON_START
 import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
 import com.depromeet.team6.ui.theme.Team6Theme
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -32,8 +37,17 @@ class LockActivity : ComponentActivity() {
     private val viewModel: LockViewModel by viewModels()
     private lateinit var sharedPreferences: SharedPreferences
 
+    private val ALARM_DURATION = 60_000L * 2
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val alarmStartedTime = System.currentTimeMillis()
+
+        lifecycleScope.launch {
+            delay(ALARM_DURATION)
+            finish()
+        }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
             setShowWhenLocked(true)
@@ -61,6 +75,14 @@ class LockActivity : ComponentActivity() {
                                 SCREEN_NAME to LOCK,
                                 USER_ID to viewModel.getUserId(),
                                 LOCK_BUTTON_START to 1
+                            )
+                        )
+                        val actionTime = (System.currentTimeMillis() - alarmStartedTime) / 1000L
+                        AmplitudeUtils.trackEventWithProperties(
+                            LOCK_ACTION_TAKEN,
+                            mapOf(
+                                LOCK_ACTION_TAKEN to 'Y',
+                                LOCK_ACTION_TAKEN_TIME to actionTime
                             )
                         )
                         lockScreenNavigator.navigateToSpecificScreen(this)

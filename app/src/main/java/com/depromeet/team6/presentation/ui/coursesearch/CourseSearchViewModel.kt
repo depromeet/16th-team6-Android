@@ -30,6 +30,7 @@ import com.depromeet.team6.presentation.util.CourseSearchAmplitude.COURSE_SEARCH
 import com.depromeet.team6.presentation.util.CourseSearchAmplitude.COURSE_SEARCH_TOGGLE_DISABLED
 import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
 import com.depromeet.team6.presentation.util.base.BaseViewModel
+import com.depromeet.team6.presentation.util.permission.PermissionUtil
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -56,6 +57,8 @@ class CourseSearchViewModel @Inject constructor(
         val destinationPointJSON: String = savedStateHandle[DESTINATION_POINT] ?: "알 수 없음"
         setEvent(CourseSearchContract.CourseEvent.InitUiState(departurePointJSON, destinationPointJSON))
     }
+
+    private var hasShownOverlayDialog = false
     private var enterTime: Long = 0
 
     override fun createInitialState(): CourseSearchContract.CourseUiState = CourseSearchContract.CourseUiState()
@@ -159,6 +162,22 @@ class CourseSearchViewModel @Inject constructor(
                     showDeleteAlarmDialog = false,
                     selectedRouteId = ""
                 )
+            }
+            is CourseSearchContract.CourseEvent.DismissOverlayPermissionDialog -> setState {
+                copy(
+                    showOverlayPermissionDialog = false
+                )
+            }
+            is CourseSearchContract.CourseEvent.ShowOverlayPermissionDialog -> setState {
+                copy(
+                    showOverlayPermissionDialog = true
+                )
+            }
+            is CourseSearchContract.CourseEvent.DismissPermissionSnackbar -> setState {
+                copy(showPermissionSnackbar = false)
+            }
+            is CourseSearchContract.CourseEvent.ShowPermissionSnackbar -> setState {
+                copy(showPermissionSnackbar = true)
             }
         }
     }
@@ -324,5 +343,37 @@ class CourseSearchViewModel @Inject constructor(
                     handleApiException(exception)
                 }
         }
+    }
+
+    fun showOverlayPermissionDialog() {
+        setEvent(CourseSearchContract.CourseEvent.ShowOverlayPermissionDialog)
+    }
+
+    fun dismissOverlayPermissionDialog() {
+        setEvent(CourseSearchContract.CourseEvent.DismissOverlayPermissionDialog)
+    }
+
+    fun shouldShowOverlayDialog(): Boolean {
+        return !hasShownOverlayDialog
+    }
+
+    fun markOverlayDialogAsShow() {
+        hasShownOverlayDialog = true
+    }
+
+    fun checkOverlayPermissionOnResume() {
+        if (hasShownOverlayDialog && PermissionUtil.isOverlayPermissionRequested(context)) {
+            if (!PermissionUtil.hasOverlayPermission(context)) {
+                showPermissionSnackbar()
+            }
+        }
+    }
+
+    fun showPermissionSnackbar() {
+        setEvent(CourseSearchContract.CourseEvent.ShowPermissionSnackbar)
+    }
+
+    fun dismissPermissionSnackbar() {
+        setEvent(CourseSearchContract.CourseEvent.DismissPermissionSnackbar)
     }
 }

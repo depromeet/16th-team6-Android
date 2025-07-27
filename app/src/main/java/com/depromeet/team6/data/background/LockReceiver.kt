@@ -3,6 +3,12 @@ package com.depromeet.team6.data.background
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.media.AudioAttributes
+import android.os.Build
+import android.os.VibrationAttributes
+import android.os.VibrationEffect
+import android.os.Vibrator
+import android.util.Log
 import com.depromeet.team6.domain.usecase.GetTaxiCostUseCase
 import com.depromeet.team6.presentation.ui.lock.LockScreenNavigator
 import kotlinx.coroutines.CoroutineScope
@@ -32,6 +38,40 @@ object LockReceiver : BroadcastReceiver() {
                     }
                 }
             }
+            Intent.ACTION_SCREEN_OFF -> {
+                vibrate(context)
+            }
+        }
+    }
+
+    private fun vibrate(context: Context) {
+        try {
+            val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+
+            val pattern = longArrayOf(1000, 1000)
+            val amplitudes = intArrayOf(255, 0)
+            val repeatIndex = 0
+
+            val vibrationEffect = VibrationEffect.createWaveform(
+                pattern,
+                amplitudes,
+                repeatIndex
+            )
+
+            // for API level 33 or higher
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                vibrator!!.vibrate(
+                    vibrationEffect,
+                    VibrationAttributes.createForUsage(VibrationAttributes.USAGE_ALARM)
+                )
+            } else {
+                vibrator!!.vibrate(
+                    vibrationEffect,
+                    AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_ALARM).build()
+                )
+            }
+        } catch (e: Exception) {
+            Log.e("LockService", "진동 중 오류 발생: ${e.message}", e)
         }
     }
 }

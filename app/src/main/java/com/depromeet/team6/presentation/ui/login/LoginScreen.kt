@@ -53,6 +53,7 @@ import com.google.accompanist.pager.HorizontalPager
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.user.UserApiClient
 import kotlinx.coroutines.delay
+import timber.log.Timber
 
 fun setLayoutLoginKakaoClickListener(
     context: Context,
@@ -83,6 +84,8 @@ fun LoginRoute(
             viewModel.setKakaoAccessToken(oAuthToken.accessToken)
         }
     }
+
+    Timber.d("initial uiState : ${uiState.loadState}")
 
     LaunchedEffect(Unit) {
         viewModel.checkAutoLogin()
