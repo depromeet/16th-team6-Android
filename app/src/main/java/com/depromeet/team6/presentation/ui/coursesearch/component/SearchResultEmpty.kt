@@ -23,7 +23,8 @@ import com.depromeet.team6.ui.theme.defaultTeam6Typography
 
 @Composable
 fun SearchResultEmpty(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isApiError: Boolean = false
 ) {
     Box(
         modifier = modifier
