@@ -35,6 +35,7 @@ import com.depromeet.team6.presentation.util.AmplitudeCommon.USER_ID
 import com.depromeet.team6.presentation.util.HomeAmplitude.HOME
 import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_COURSESEARCH_ENTERED_WITH_CURRENT_LOCATION
 import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_COURSESEARCH_ENTERED_WITH_MAP_DRAG
+import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_EVENT_COURSESEARCH_ENTERED
 import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
 import com.google.android.gms.maps.model.LatLng
 import com.skt.tmap.TMapPoint
@@ -48,9 +49,10 @@ import timber.log.Timber
 fun TMapViewCompose(
     padding: PaddingValues,
     currentLocation: LatLng,
-    modifier: Modifier = Modifier,
     isAlarmRegistered: Boolean,
     userId: Int,
+    modifier: Modifier = Modifier,
+    isMapFocused: Boolean = true,
     getCenterLocation: (LatLng) -> Unit
 ) {
     val context = LocalContext.current
@@ -113,7 +115,7 @@ fun TMapViewCompose(
                         getCenterLocation(LatLng(centerLat, centerLon))
 
                         AmplitudeUtils.trackEventWithProperties(
-                            eventName = HOME_COURSESEARCH_ENTERED_WITH_MAP_DRAG,
+                            eventName = HOME_EVENT_COURSESEARCH_ENTERED,
                             mapOf(
                                 USER_ID to userId,
                                 SCREEN_NAME to HOME,
@@ -170,7 +172,7 @@ fun TMapViewCompose(
                         getCenterLocation(LatLng(tMapPoint.latitude, tMapPoint.longitude))
 
                         AmplitudeUtils.trackEventWithProperties(
-                            eventName = HOME_COURSESEARCH_ENTERED_WITH_CURRENT_LOCATION,
+                            eventName = HOME_EVENT_COURSESEARCH_ENTERED,
                             mapOf(
                                 USER_ID to userId,
                                 SCREEN_NAME to HOME,

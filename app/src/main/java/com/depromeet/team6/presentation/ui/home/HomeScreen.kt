@@ -65,6 +65,7 @@ import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_COURSESEARCH_ENT
 import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_DEPARTURE_TIME_CLICKED
 import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_DEPARTURE_TIME_SUGGESTION_CLICKED
 import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_DESTINATION_CLICKED
+import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_EVENT_COURSESEARCH_ENTERED
 import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_ROUTE_CLICKED
 import com.depromeet.team6.presentation.util.HomeAmplitude.POPUP
 import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
@@ -532,7 +533,7 @@ fun HomeRoute(
                         )
 
                         AmplitudeUtils.trackEventWithProperties(
-                            eventName = HOME_COURSESEARCH_ENTERED_DIRECT,
+                            eventName = HOME_EVENT_COURSESEARCH_ENTERED,
                             mapOf(
                                 USER_ID to viewModel.getUserId(),
                                 SCREEN_NAME to HOME,
@@ -569,7 +570,7 @@ fun HomeRoute(
                         )
 
                         AmplitudeUtils.trackEventWithProperties(
-                            eventName = HOME_COURSESEARCH_ENTERED_WITH_INPUT,
+                            eventName = HOME_EVENT_COURSESEARCH_ENTERED,
                             mapOf(
                                 USER_ID to viewModel.getUserId(),
                                 SCREEN_NAME to HOME,

@@ -67,6 +67,7 @@ object HomeAmplitude {
     const val HOME = "홈"
     const val HOME_EVENT_REGISTER_MAP_MARKER_CLICK = "home_transit_icon_clicked"
     const val HOME_EVENT_ITINERARY_BTN_CLICK = "home_itinerary_clicked"
+    const val HOME_EVENT_COURSESEARCH_ENTERED = "home_coursesearch_entered"
     const val HOME_COURSESEARCH_ENTERED_DIRECT = "home_coursesearch_entered_direct"
     const val HOME_COURSESEARCH_ENTERED_WITH_MAP_DRAG = "home_coursesearch_entered_with_map_drag"
     const val HOME_COURSESEARCH_ENTERED_WITH_CURRENT_LOCATION = "home_coursesearch_entered_with_current_location"
