@@ -66,6 +66,7 @@ fun AfterRegisterMap(
     isAlarmRegistered: Boolean,
     isMapFocused: Boolean,
     modifier: Modifier = Modifier,
+    mapModified: () -> Unit,
     updateCurrentLocation: (LatLng) -> Unit,
     getCenterLocation: (LatLng) -> Unit,
     onTransportMarkerClick: (FocusedMarkerParameter) -> Unit = {}
@@ -100,6 +101,11 @@ fun AfterRegisterMap(
         tMapView.setOnMapReadyListener {
             tMapView.mapType = TMapView.MapType.NIGHT
             isMapReady = true
+
+            // 화면 스크롤 발생시 mapFocused 여부 변경
+            tMapView.setOnEnableScrollWithZoomLevelListener { _, _ ->
+                mapModified()
+            }
         }
     }
 
@@ -397,6 +403,7 @@ fun AfterRegisterMapPreview(
         isAlarmRegistered = false,
         isMapFocused = true,
         getCenterLocation = {},
-        updateCurrentLocation = {}
+        updateCurrentLocation = {},
+        mapModified = {}
     )
 }

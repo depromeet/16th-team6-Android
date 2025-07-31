@@ -675,6 +675,9 @@ fun HomeScreen(
                 legs = homeUiState.itineraryInfo!!.legs,
                 isAlarmRegistered = homeUiState.isAlarmRegistered,
                 isMapFocused = homeUiState.isMapFocused,
+                mapModified = {
+                    mapModified()
+                },
                 getCenterLocation = {
                     getCenterLocation(it)
                 },
