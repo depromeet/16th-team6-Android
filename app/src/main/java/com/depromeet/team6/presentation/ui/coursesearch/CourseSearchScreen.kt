@@ -54,6 +54,7 @@ fun CourseSearchRoute(
     navigateToHome: () -> Unit,
     navigateToHomeAfterAlarmRegister: () -> Unit,
     navigateToLogin: () -> Unit,
+    popBackStack: () -> Unit,
     fromLockScreen: Boolean = false,
     viewModel: CourseSearchViewModel = hiltViewModel()
 ) {
@@ -102,6 +103,10 @@ fun CourseSearchRoute(
 
                 is ApiErrorSideEffect.NavigateToHomeSideEffect -> {
                     navigateToHome()
+                }
+
+                is ApiErrorSideEffect.NavigateToBackSideEffect -> {
+                    popBackStack()
                 }
 
                 is ApiErrorSideEffect.NavigateToLoginSideEffect -> {
