@@ -227,10 +227,16 @@ class LockService : Service() {
                 )
 
                 val notification = NotificationCompat.Builder(this@LockService, ATCHA_SERVICE_CHANNEL_ID)
+                    .setContentTitle(
+                        ContextCompat.getString(
+                            this@LockService,
+                            R.string.notification_alarm_timeout_title
+                        )
+                    )
                     .setContentText(
                         ContextCompat.getString(
                             this@LockService,
-                            R.string.notification_alarm_timeout
+                            R.string.notification_alarm_timeout_body
                         )
                     )
                     .setSmallIcon(R.drawable.ic_app_logo_foreground)
