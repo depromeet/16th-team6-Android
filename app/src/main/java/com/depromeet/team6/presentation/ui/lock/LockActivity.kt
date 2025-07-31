@@ -124,7 +124,6 @@ class LockActivity : ComponentActivity() {
     }
 
     private fun stopLockServiceAndExit(context: Context) {
-
         // 서비스 종료
         val stopIntent = Intent(context, LockService::class.java)
         context.stopService(stopIntent)

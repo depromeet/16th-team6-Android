@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.runtime.Composable
@@ -27,7 +26,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -584,6 +585,20 @@ fun HomeRoute(
                                 false
                             )
                         )
+                    },
+                    currentLocationClicked = {
+                        viewModel.setState {
+                            copy(
+                                isMapFocused = true
+                            )
+                        }
+                    },
+                    mapModified = {
+                        viewModel.setState {
+                            copy(
+                                isMapFocused = false
+                            )
+                        }
                     }
                 )
 
@@ -624,9 +639,13 @@ fun HomeScreen(
     deleteAlarmConfirmed: () -> Unit = {},
     dismissDialog: () -> Unit = {},
     navigateToSearchLocation: () -> Unit = {},
-    greetBottomSheetButtonClicked: () -> Unit = {}
+    greetBottomSheetButtonClicked: () -> Unit = {},
+    currentLocationClicked: () -> Unit = {},
+    mapModified: () -> Unit = {}
 ) {
     val colors = LocalTeam6Colors.current
+    var bottomSheetHeight by remember { mutableStateOf(0.dp) }
+    val density = LocalDensity.current
 
     Box(
         modifier = modifier
@@ -655,6 +674,7 @@ fun HomeScreen(
                 currentLocation = userLocation,
                 legs = homeUiState.itineraryInfo!!.legs,
                 isAlarmRegistered = homeUiState.isAlarmRegistered,
+                isMapFocused = homeUiState.isMapFocused,
                 getCenterLocation = {
                     getCenterLocation(it)
                 },
@@ -671,8 +691,12 @@ fun HomeScreen(
                 userLocation,
                 isAlarmRegistered = homeUiState.isAlarmRegistered,
                 userId = getUserId(),
+                isMapFocused = homeUiState.isMapFocused,
                 getCenterLocation = {
                     getCenterLocation(it)
+                },
+                mapModified = {
+                    mapModified()
                 }
             ) // Replace with your actual API key
         }
@@ -727,9 +751,7 @@ fun HomeScreen(
                     onTimerFinished = {
                         onTimerFinished()
                     },
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .zIndex(1f),
+
                     onRefreshClick = {
                         onRefreshClick()
                         if (homeUiState.firtTransportTation == TransportType.BUS) {
@@ -765,7 +787,14 @@ fun HomeScreen(
                             )
                         )
                     },
-                    busStationLeft = homeUiState.busRemainingStations
+                    busStationLeft = homeUiState.busRemainingStations,
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .zIndex(1f)
+                        .onGloballyPositioned { coordinates ->
+                            // coordinates.size.height는 픽셀 단위이므로 dp로 변환해야 합니다.
+                            bottomSheetHeight = with(density) { coordinates.size.height.toDp() }
+                        }
                 )
             }
 
@@ -781,8 +810,11 @@ fun HomeScreen(
                     onDestinationClick = { onDestinationClick() },
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
-                        .fillMaxWidth()
                         .zIndex(1f)
+                        .onGloballyPositioned { coordinates ->
+                            // coordinates.size.height는 픽셀 단위이므로 dp로 변환해야 합니다.
+                            bottomSheetHeight = with(density) { coordinates.size.height.toDp() }
+                        }
                 )
             }
         }
@@ -793,6 +825,22 @@ fun HomeScreen(
             modifier = Modifier
                 .align(Alignment.BottomStart)
                 .padding(start = 8.dp, bottom = characterState.bottomPadding)
+        )
+
+        Timber.d("bottomsheetheightei : $bottomSheetHeight")
+        // 현위치 버튼
+        Image(
+            imageVector = ImageVector.vectorResource(id = R.drawable.ic_all_current_location),
+            contentDescription = stringResource(R.string.home_current_location_btn),
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(
+                    bottom = bottomSheetHeight + 16.dp,
+                    end = 16.dp
+                )
+                .clickable {
+                    currentLocationClicked()
+                }
         )
 
         if (homeUiState.deleteAlarmDialogVisible) {

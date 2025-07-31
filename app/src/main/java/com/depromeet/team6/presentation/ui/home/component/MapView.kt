@@ -2,7 +2,6 @@ package com.depromeet.team6.presentation.ui.home.component
 
 import android.widget.FrameLayout
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,11 +16,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -50,10 +47,11 @@ fun TMapViewCompose(
     padding: PaddingValues,
     currentLocation: LatLng,
     isAlarmRegistered: Boolean,
+    isMapFocused: Boolean,
     userId: Int,
     modifier: Modifier = Modifier,
-    isMapFocused: Boolean = true,
-    getCenterLocation: (LatLng) -> Unit
+    getCenterLocation: (LatLng) -> Unit,
+    mapModified: () -> Unit
 ) {
     val context = LocalContext.current
     val tMapView = remember { TMapView(context) }
@@ -123,6 +121,11 @@ fun TMapViewCompose(
                             )
                         )
                     }
+
+                    // 화면 스크롤 발생시 mapFocused 여부 변경
+                    tMapView.setOnEnableScrollWithZoomLevelListener { _, _ ->
+                        mapModified()
+                    }
                 }
 
                 // FrameLayout을 직접 생성
@@ -136,6 +139,22 @@ fun TMapViewCompose(
             }
         )
 
+        if (isMapFocused && isMapReady) {
+            val tMapPoint =
+                TMapPoint(currentLocation.latitude, currentLocation.longitude)
+            tMapView.setCenterPoint(tMapPoint.latitude, tMapPoint.longitude)
+            getCenterLocation(LatLng(tMapPoint.latitude, tMapPoint.longitude))
+
+            AmplitudeUtils.trackEventWithProperties(
+                eventName = HOME_EVENT_COURSESEARCH_ENTERED,
+                mapOf(
+                    USER_ID to userId,
+                    SCREEN_NAME to HOME,
+                    HOME_COURSESEARCH_ENTERED_WITH_CURRENT_LOCATION to true
+                )
+            )
+        }
+
         if (isMapReady) {
             // 출발 마커
             Image(
@@ -147,41 +166,41 @@ fun TMapViewCompose(
             )
 
             // 현위치 버튼
-            Image(
-                imageVector = ImageVector.vectorResource(id = R.drawable.ic_all_current_location),
-                contentDescription = stringResource(R.string.home_current_location_btn),
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .then(
-                        if (isAlarmRegistered) {
-                            Modifier.padding(
-                                bottom = screenHeight * 0.2f,
-                                end = 16.dp
-                            )
-                        } else {
-                            Modifier.padding(
-                                bottom = screenHeight * 0.1f,
-                                end = 16.dp
-                            )
-                        }
-                    )
-                    .clickable(enabled = isMapReady) {
-                        val tMapPoint =
-                            TMapPoint(currentLocation.latitude, currentLocation.longitude)
-                        tMapView.setCenterPoint(tMapPoint.latitude, tMapPoint.longitude)
-                        getCenterLocation(LatLng(tMapPoint.latitude, tMapPoint.longitude))
-
-                        AmplitudeUtils.trackEventWithProperties(
-                            eventName = HOME_EVENT_COURSESEARCH_ENTERED,
-                            mapOf(
-                                USER_ID to userId,
-                                SCREEN_NAME to HOME,
-                                HOME_COURSESEARCH_ENTERED_WITH_CURRENT_LOCATION to true
-                            )
-                        )
-                    }
-                    .graphicsLayer { alpha = if (isMapReady) 1f else 0.5f } // 비활성화 시 투명도 조정
-            )
+//            Image(
+//                imageVector = ImageVector.vectorResource(id = R.drawable.ic_all_current_location),
+//                contentDescription = stringResource(R.string.home_current_location_btn),
+//                modifier = Modifier
+//                    .align(Alignment.BottomEnd)
+//                    .then(
+//                        if (isAlarmRegistered) {
+//                            Modifier.padding(
+//                                bottom = screenHeight * 0.2f,
+//                                end = 16.dp
+//                            )
+//                        } else {
+//                            Modifier.padding(
+//                                bottom = screenHeight * 0.1f,
+//                                end = 16.dp
+//                            )
+//                        }
+//                    )
+//                    .clickable(enabled = isMapReady) {
+//                        val tMapPoint =
+//                            TMapPoint(currentLocation.latitude, currentLocation.longitude)
+//                        tMapView.setCenterPoint(tMapPoint.latitude, tMapPoint.longitude)
+//                        getCenterLocation(LatLng(tMapPoint.latitude, tMapPoint.longitude))
+//
+//                        AmplitudeUtils.trackEventWithProperties(
+//                            eventName = HOME_EVENT_COURSESEARCH_ENTERED,
+//                            mapOf(
+//                                USER_ID to userId,
+//                                SCREEN_NAME to HOME,
+//                                HOME_COURSESEARCH_ENTERED_WITH_CURRENT_LOCATION to true
+//                            )
+//                        )
+//                    }
+//                    .graphicsLayer { alpha = if (isMapReady) 1f else 0.5f } // 비활성화 시 투명도 조정
+//            )
         } else {
             AtChaLoadingView()
         }

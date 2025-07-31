@@ -6,13 +6,10 @@ import android.location.Location
 import android.os.Looper
 import android.widget.FrameLayout
 import android.widget.Toast
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -22,13 +19,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
@@ -71,6 +64,7 @@ fun AfterRegisterMap(
     currentLocation: LatLng,
     legs: List<LegInfo>,
     isAlarmRegistered: Boolean,
+    isMapFocused: Boolean,
     modifier: Modifier = Modifier,
     updateCurrentLocation: (LatLng) -> Unit,
     getCenterLocation: (LatLng) -> Unit,
@@ -346,28 +340,35 @@ fun AfterRegisterMap(
             )
 
             // 현위치 버튼
-            Image(
-                imageVector = ImageVector.vectorResource(id = R.drawable.ic_all_current_location),
-                contentDescription = stringResource(R.string.home_current_location_btn),
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .then(
-                        if (isAlarmRegistered) {
-                            Modifier.padding(bottom = 25.dp, end = 16.dp)
-                        } else {
-                            Modifier.padding(bottom = 25.dp, end = 16.dp)
-                        }
-                    )
-                    .clickable(enabled = isMapReady) {
-                        val tMapPoint = TMapPoint(userLocation.latitude, userLocation.longitude)
-                        tMapView.setCenterPoint(tMapPoint.latitude, tMapPoint.longitude)
-
-                        getCenterLocation(LatLng(tMapPoint.latitude, tMapPoint.longitude))
-                    }
-                    .graphicsLayer { alpha = if (isMapReady) 1f else 0.5f } // 비활성화 시 투명도 조정
-            )
+//            Image(
+//                imageVector = ImageVector.vectorResource(id = R.drawable.ic_all_current_location),
+//                contentDescription = stringResource(R.string.home_current_location_btn),
+//                modifier = Modifier
+//                    .align(Alignment.BottomEnd)
+//                    .then(
+//                        if (isAlarmRegistered) {
+//                            Modifier.padding(bottom = 25.dp, end = 16.dp)
+//                        } else {
+//                            Modifier.padding(bottom = 25.dp, end = 16.dp)
+//                        }
+//                    )
+//                    .clickable(enabled = isMapReady) {
+//                        val tMapPoint = TMapPoint(userLocation.latitude, userLocation.longitude)
+//                        tMapView.setCenterPoint(tMapPoint.latitude, tMapPoint.longitude)
+//
+//                        getCenterLocation(LatLng(tMapPoint.latitude, tMapPoint.longitude))
+//                    }
+//                    .graphicsLayer { alpha = if (isMapReady) 1f else 0.5f } // 비활성화 시 투명도 조정
+//            )
         } else {
             AtChaLoadingView()
+        }
+
+        if (isMapFocused && isMapReady) {
+            val tMapPoint =
+                TMapPoint(currentLocation.latitude, currentLocation.longitude)
+            tMapView.setCenterPoint(tMapPoint.latitude, tMapPoint.longitude)
+            getCenterLocation(LatLng(tMapPoint.latitude, tMapPoint.longitude))
         }
     }
 }
@@ -394,6 +395,7 @@ fun AfterRegisterMapPreview(
         legs = legs,
         currentLocation = LatLng(37.5665, 126.9780),
         isAlarmRegistered = false,
+        isMapFocused = true,
         getCenterLocation = {},
         updateCurrentLocation = {}
     )

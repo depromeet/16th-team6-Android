@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -73,14 +72,14 @@ fun AfterRegisterSheet(
     if (afterUserDeparted) timeTextColor = colors.systemRed
 
     Box(
-        modifier = Modifier
-            .fillMaxSize()
+        modifier = modifier
+            .fillMaxWidth()
             .height(248.dp)
             .zIndex(1f),
         contentAlignment = Alignment.BottomCenter
     ) {
         Column(
-            modifier = modifier
+            modifier = Modifier
                 .fillMaxWidth()
                 .background(
                     colors.gray950,
@@ -182,11 +181,10 @@ fun AfterRegisterSheet(
             CourseTextButton(
                 startLocation = startLocation,
                 destination = destination,
-                onClick = onCourseTextClick,
-                modifier = modifier
+                onClick = onCourseTextClick
             )
 
-            Spacer(modifier = modifier.height(26.dp))
+            Spacer(modifier = Modifier.height(26.dp))
 
             FinishCourseDetailButton(
                 onFinishClick = {
@@ -202,8 +200,7 @@ fun AfterRegisterSheet(
                     } else {
                         onCourseDetailClick(HOME_ITINERARY_CLICKED_SUGGESTED)
                     }
-                },
-                modifier = modifier
+                }
             )
         }
     }
