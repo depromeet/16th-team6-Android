@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -74,6 +75,7 @@ import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
 import com.depromeet.team6.presentation.util.base.ApiErrorSideEffect
 import com.depromeet.team6.presentation.util.context.getUserLocation
 import com.depromeet.team6.presentation.util.dialog.LocalDialogController
+import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.presentation.util.permission.PermissionUtil
 import com.depromeet.team6.presentation.util.toast.atChaToastMessage
 import com.depromeet.team6.presentation.util.view.LoadState
@@ -676,9 +678,7 @@ fun HomeScreen(
                 legs = homeUiState.itineraryInfo!!.legs,
                 isAlarmRegistered = homeUiState.isAlarmRegistered,
                 isMapFocused = homeUiState.isMapFocused,
-                mapModified = {
-                    mapModified()
-                },
+                mapModified = mapModified,
                 getCenterLocation = {
                     getCenterLocation(it)
                 },
@@ -699,9 +699,7 @@ fun HomeScreen(
                 getCenterLocation = {
                     getCenterLocation(it)
                 },
-                mapModified = {
-                    mapModified()
-                }
+                mapModified = mapModified
             ) // Replace with your actual API key
         }
 
@@ -831,18 +829,18 @@ fun HomeScreen(
                 .padding(start = 8.dp, bottom = characterState.bottomPadding)
         )
 
-        Timber.d("bottomsheetheightei : $bottomSheetHeight")
         // 현위치 버튼
-        Image(
+        Icon(
             imageVector = ImageVector.vectorResource(id = R.drawable.ic_all_current_location),
             contentDescription = stringResource(R.string.home_current_location_btn),
+            tint = Color.Unspecified,
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(
                     bottom = bottomSheetHeight + 16.dp,
                     end = 16.dp
                 )
-                .clickable {
+                .noRippleClickable {
                     currentLocationClicked()
                 }
         )
