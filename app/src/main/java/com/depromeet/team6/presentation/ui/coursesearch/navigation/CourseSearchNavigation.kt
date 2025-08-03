@@ -6,6 +6,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.presentation.ui.coursesearch.CourseSearchRoute
 
 fun NavController.navigateCourseSearch(departurePoint: String, destinationPoint: String, fromLockScreen: Boolean = false) {
@@ -23,6 +24,7 @@ fun NavGraphBuilder.courseSearchNavGraph(
     navigateToHomeAfterAlarmRegister: () -> Unit,
     navigateToLogin: () -> Unit,
     navigateToItinerary: (String, String, String) -> Unit,
+    navigateToSearchLocation: (Address, Address) -> Unit,
     popBackStack: () -> Unit
 ) {
     composable(
@@ -46,6 +48,7 @@ fun NavGraphBuilder.courseSearchNavGraph(
             navigateToHome = navigateToHome,
             navigateToHomeAfterAlarmRegister = navigateToHomeAfterAlarmRegister,
             navigateToLogin = navigateToLogin,
+            navigateToSearchLocation = navigateToSearchLocation,
             popBackStack = popBackStack,
             departurePoint = departurePoint,
             destinationPoint = destinationPoint,

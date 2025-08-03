@@ -32,6 +32,7 @@ class SearchLocationContract {
 
     sealed interface SearchLocationSideEffect : UiSideEffect {
         data object NavigateBack : SearchLocationSideEffect
+        data class ShowToastSideEffect(val message: String) : SearchLocationSideEffect
     }
 
     sealed class SearchLocationEvent : UiEvent {

@@ -61,6 +61,7 @@ fun SearchLocationRoute(
     viewModel: SearchLocationViewModel = hiltViewModel(),
     homeViewModel: HomeViewModel = hiltViewModel(),
     destinationLocation: Address,
+    departureLocation: Address?,
     navigateToBack: () -> Unit = {},
     navigateToLogin: () -> Unit = {},
     navigateToCourseSearch: (String, String) -> Unit
@@ -96,17 +97,12 @@ fun SearchLocationRoute(
         viewModel.updateRecentSearches(location = userLocation)
     }
 
-    LaunchedEffect(uiState.searchResults) {
-        if (uiState.searchQuery.isNotEmpty() && uiState.searchResults.isEmpty()) {
-            Toast.makeText(context, "검색 결과가 없습니다.", Toast.LENGTH_SHORT).show()
-        }
-    }
-
     LaunchedEffect(viewModel.sideEffect, lifecycleOwner) {
         viewModel.sideEffect.flowWithLifecycle(lifecycle = lifecycleOwner.lifecycle)
             .collect { sideEffect ->
                 when (sideEffect) {
                     is SearchLocationContract.SearchLocationSideEffect.NavigateBack -> navigateToBack()
+                    is SearchLocationContract.SearchLocationSideEffect.ShowToastSideEffect -> Toast.makeText(context, sideEffect.message, Toast.LENGTH_SHORT).show()
                     is ApiErrorSideEffect.ShowToastSideEffect -> {
                         Toast.makeText(context, sideEffect.toastMessage, Toast.LENGTH_SHORT).show()
                     }
