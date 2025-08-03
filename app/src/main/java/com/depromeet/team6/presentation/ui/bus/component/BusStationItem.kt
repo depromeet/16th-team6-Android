@@ -57,9 +57,13 @@ fun BusStationItem(
         afterTurnPoint -> 0.3f to 0.3f
         else -> 1f to 1f
     }
-    val backgroundModifier = if (isCurrentStation) modifier.background(
-        color = Team6Theme.colors.gray930
-    ) else modifier
+    val backgroundModifier = if (isCurrentStation) {
+        modifier.background(
+            color = Team6Theme.colors.gray930
+        )
+    } else {
+        modifier
+    }
     Row(
         modifier = backgroundModifier
             .fillMaxWidth()
