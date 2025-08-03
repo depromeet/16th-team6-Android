@@ -20,7 +20,7 @@ fun NavController.navigationSearchLocation(
     val departureLocationJSON = departureLocation?.let { Gson().toJson(it) }
 
     val route = if (departureLocation != null) {
-        "${SearchLocationRoute.ROUTE}/$destinationLocationJSON?${DEPARTURE_LOCATION}=$departureLocationJSON"
+        "${SearchLocationRoute.ROUTE}/$destinationLocationJSON?$DEPARTURE_LOCATION=$departureLocationJSON"
     } else {
         "${SearchLocationRoute.ROUTE}/$destinationLocationJSON"
     }

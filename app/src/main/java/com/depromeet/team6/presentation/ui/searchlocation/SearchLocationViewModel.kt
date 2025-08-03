@@ -34,7 +34,7 @@ class SearchLocationViewModel @Inject constructor(
 ) : BaseViewModel<SearchLocationContract.SearchLocationUiState, SearchLocationContract.SearchLocationSideEffect, SearchLocationContract.SearchLocationEvent>() {
 
     init {
-        val departureLocationJSON : String? = savedStateHandle[DEPARTURE_LOCATION]
+        val departureLocationJSON: String? = savedStateHandle[DEPARTURE_LOCATION]
         if (departureLocationJSON != null) {
             val departureLocation = Gson().fromJson(departureLocationJSON, Address::class.java)
             setState {

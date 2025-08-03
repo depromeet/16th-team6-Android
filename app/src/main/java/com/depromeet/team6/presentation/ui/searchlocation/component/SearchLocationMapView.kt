@@ -2,6 +2,7 @@ package com.depromeet.team6.presentation.ui.searchlocation.component
 
 import android.content.Context
 import android.widget.FrameLayout
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -20,6 +22,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
@@ -41,6 +44,8 @@ import com.depromeet.team6.R
 import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.presentation.ui.common.bottomsheet.AtChaLocationSettingBottomSheet
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
+import com.depromeet.team6.presentation.util.modifier.roundedBackgroundWithPadding
+import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.google.android.gms.maps.model.LatLng
 import com.skt.tmap.TMapPoint
 import com.skt.tmap.TMapView
@@ -146,15 +151,14 @@ fun SearchLocationMapView(
             )
 
             // 뒤로가기 아이콘
-            Icon(
+            CircleBtnBack(
                 modifier = Modifier
+                    .size(36.dp)
                     .align(Alignment.TopStart)
-                    .noRippleClickable { backButtonClicked() }
-                    .padding(vertical = 16.dp, horizontal = 18.dp)
-                    .offset(y = marginTop),
-                imageVector = ImageVector.vectorResource(R.drawable.ic_all_arrow_left_white),
-                tint = Color.Unspecified,
-                contentDescription = null
+                    .offset(x = 16.dp, y = 12.dp + marginTop)
+                    .noRippleClickable {
+                        backButtonClicked()
+                    }
             )
 
             // 하단 UI
@@ -231,6 +235,27 @@ fun startScrollIdleCheck(
         }
 
         getCenterLocation(previousLatLng!!)
+    }
+}
+
+@Composable
+private fun CircleBtnBack(
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .roundedBackgroundWithPadding(
+                cornerRadius = 100.dp,
+                backgroundColor = defaultTeam6Colors.gray940
+            ),
+        contentAlignment = Alignment.Center
+    ) {
+        Image(
+            modifier = Modifier.size(20.dp),
+            imageVector = ImageVector.vectorResource(R.drawable.ic_all_arrow_left_grey),
+            colorFilter = ColorFilter.tint(defaultTeam6Colors.white),
+            contentDescription = "ItineraryCircleBtnBack"
+        )
     }
 }
 
