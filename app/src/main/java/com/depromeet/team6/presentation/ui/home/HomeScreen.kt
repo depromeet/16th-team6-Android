@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.runtime.Composable
@@ -652,7 +653,6 @@ fun HomeScreen(
             .fillMaxSize()
             .background(color = colors.black)
             .padding(
-                top = WindowInsets.statusBars.asPaddingValues().calculateTopPadding(),
                 bottom = padding.calculateBottomPadding()
             )
     ) {
@@ -662,6 +662,7 @@ fun HomeScreen(
             modifier = Modifier
                 .align(Alignment.TopEnd)
                 .padding(top = 12.dp, end = 16.dp)
+                .offset(y = WindowInsets.statusBars.asPaddingValues().calculateTopPadding())
                 .clickable {
                     navigateToMypage()
                 }
@@ -670,7 +671,7 @@ fun HomeScreen(
 
         if (homeUiState.isAlarmRegistered) {
             AfterRegisterMap(
-                padding,
+                padding = padding,
                 currentLocation = userLocation,
                 legs = homeUiState.itineraryInfo!!.legs,
                 isAlarmRegistered = homeUiState.isAlarmRegistered,
