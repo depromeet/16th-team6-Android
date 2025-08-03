@@ -1,5 +1,6 @@
 package com.depromeet.team6.presentation.ui.home
 
+import android.app.Activity
 import android.content.Context
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -33,6 +34,8 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
@@ -630,7 +633,6 @@ fun HomeScreen(
             .fillMaxSize()
             .background(color = colors.black)
             .padding(
-                top = WindowInsets.statusBars.asPaddingValues().calculateTopPadding(),
                 bottom = padding.calculateBottomPadding()
             )
     ) {
@@ -639,7 +641,7 @@ fun HomeScreen(
             contentDescription = stringResource(R.string.mypage_icon_description),
             modifier = Modifier
                 .align(Alignment.TopEnd)
-                .padding(top = 12.dp, end = 16.dp)
+                .padding(top = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()+12.dp, end = 16.dp)
                 .clickable {
                     navigateToMypage()
                 }
