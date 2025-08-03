@@ -22,7 +22,8 @@ fun NavGraphBuilder.courseSearchNavGraph(
     navigateToHome: () -> Unit,
     navigateToHomeAfterAlarmRegister: () -> Unit,
     navigateToLogin: () -> Unit,
-    navigateToItinerary: (String, String, String) -> Unit
+    navigateToItinerary: (String, String, String) -> Unit,
+    popBackStack: () -> Unit
 ) {
     composable(
         route = "${CourseSearchRoute.ROUTE}/{${CourseSearchRoute.DEPARTURE_POINT}}/{${CourseSearchRoute.DESTINATION_POINT}}",
@@ -45,6 +46,7 @@ fun NavGraphBuilder.courseSearchNavGraph(
             navigateToHome = navigateToHome,
             navigateToHomeAfterAlarmRegister = navigateToHomeAfterAlarmRegister,
             navigateToLogin = navigateToLogin,
+            popBackStack = popBackStack,
             departurePoint = departurePoint,
             destinationPoint = destinationPoint,
             fromLockScreen = fromLockScreen

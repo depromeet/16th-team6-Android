@@ -86,6 +86,20 @@ object PermissionUtil {
         }
     }
 
+    fun requestAllRequiredPermissions(
+        allPermissionsLauncher: ManagedActivityResultLauncher<Array<String>, Map<String, Boolean>>
+    ) {
+        val permissionsToRequest = mutableListOf(
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        )
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            permissionsToRequest.add(Manifest.permission.POST_NOTIFICATIONS)
+        }
+
+        allPermissionsLauncher.launch(permissionsToRequest.toTypedArray())
+    }
+
     fun clearAllPermissionData(context: Context) {
         getPreferences(context).edit().clear().apply()
     }

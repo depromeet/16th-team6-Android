@@ -21,11 +21,12 @@
     <string name="onboarding_edit_location_button_current_region">수정하기</string>
     <string name="onboarding_search_text_field_placeholder">지번, 도로명, 건물명으로 검색</string>
     <string name="onboarding_next_button">다음</string>
+    <string name="onboarding_permission_bottom_sheet_title">막차 안내를 위해\n꼭 필요한 권한만 받아요</string>
     <string name="onboarding_location_permission_bottom_sheet_title">정확한 막차 경로 안내를 위해\n위치 접근을 허용해주세요</string>
-    <string name="onboarding_location_permission_bottom_sheet_sub_title">정확한 위치 설정으로 현 위치 표시, 경로 안내</string>
+    <string name="onboarding_location_permission_bottom_sheet_sub_title">현위치를 기준으로 빠르게 막차를 찾아요</string>
     <string name="onboarding_location_permission_bottom_sheet_type">위치</string>
     <string name="onboarding_notification_permission_bottom_sheet_title">제때 막차 알림을 드리기 위해\n알림을 허용해주세요</string>
-    <string name="onboarding_notification_permission_bottom_sheet_sub_title">본인 출발 알림, 막차 출발 알림, 목적지 도착</string>
+    <string name="onboarding_notification_permission_bottom_sheet_sub_title">제시간에 막차를 탈 수 있게 알림을 드려요</string>
     <string name="onboarding_notification_permission_bottom_sheet_type">알림</string>
     <string name="onboarding_location_permission_denied_dialog">위치 권한을 허용하지 않으면\n현위치의 막차를 확인할 수 없어요.</string>
     <string name="onboarding_notification_permission_denied_dialog">알림을 허용하지 않으면\n막차 알람이 울리지 못해요.</string>
@@ -47,7 +48,8 @@
     <string name="notification_body_text">"막차 출발 시간을 확인해보세요!"</string>
     <string name="notification_ten_text">"지금 밖이세요? 막차 알림 등록하고 편히 귀가하세요. \uD83C\uDFE0"</string>
     <string name="notification_head_up_channel_name">앗차 중요 알림</string>
-    <string name="notification_alarm_timeout">막차... 안타시나요..? 🥲</string>
+    <string name="notification_alarm_timeout_title">출발 알림이 자동 종료되었어요.</string>
+    <string name="notification_alarm_timeout_body">클릭해서 경로 재탐색 하기</string>
 
     <string name="dialog_finish_alarm_title">막차 알림을 종료할까요?</string>
     <string name="dialog_finish_alarm_back_text">돌아가기</string>
@@ -155,7 +157,8 @@
     <string name="notification_channel_description_text">앱 내부 알림 채널</string>
     <string name="course_search_failed_snackbar">경로를 조회하는데 실패했어요</string>
     <string name="course_detail_description">상세경로</string>
-    <string name="course_search_result_empty">검색 가능한 막차 정보가 없습니다.</string>
+    <string name="course_search_result_error">검색 가능한 막차 정보가 없습니다.</string>
+    <string name="course_search_result_empty">앗! 시간이 늦어서 더이상 막차가 없어요.</string>
 
     <!-- Bus Course -->
     <string name="bus_course_info">운행정보</string>

@@ -26,6 +26,7 @@ class HomeContract {
         val showSpeechBubble: Boolean = true,
         val locationAddress: String = "",
         val currentLocation: LatLng = LatLng(DEFAULT_LAT, DEFAULT_LNG),
+        val isMapFocused: Boolean = true,
         // 알림 등록 후 경로 표시
         val itineraryInfo: CourseInfo? = null,
         val courseDataLoadState: LoadState = LoadState.Idle,

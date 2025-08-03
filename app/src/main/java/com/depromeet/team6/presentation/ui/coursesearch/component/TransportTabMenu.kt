@@ -21,6 +21,8 @@ import com.depromeet.team6.domain.model.course.LegInfo
 import com.depromeet.team6.presentation.ui.itinerary.LegInfoDummyProvider
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import kotlinx.coroutines.launch
+import java.time.LocalTime
+import java.time.ZoneId
 
 @Composable
 fun TransportTabMenu(
@@ -70,23 +72,32 @@ fun TransportTabMenu(
                 } else {
                     availableCourses.filter { it.filterCategory == page }
                 }
-
-            if (resultItems.isEmpty() && isLoaded) {
-                SearchResultEmpty(
-                    modifier = Modifier.padding(top = 10.dp)
-                )
-            } else {
-                LastTransportInfoList(
-                    listData = resultItems,
-                    onItemClick = onItemClick,
-                    courseInfoToggleClick = courseInfoToggleClick,
-                    onRegisterAlarmBtnClick = { routeId ->
-                        onRegisterAlarmBtnClick(routeId)
-                    }
-                )
+            if (isLoaded) {
+                if (resultItems.isEmpty() || isMidNight()) {
+                    SearchResultEmpty(
+                        modifier = Modifier.padding(top = 10.dp)
+                    )
+                } else {
+                    LastTransportInfoList(
+                        listData = resultItems,
+                        onItemClick = onItemClick,
+                        courseInfoToggleClick = courseInfoToggleClick,
+                        onRegisterAlarmBtnClick = { routeId ->
+                            onRegisterAlarmBtnClick(routeId)
+                        }
+                    )
+                }
             }
         }
     }
+}
+
+private fun isMidNight(): Boolean {
+    val currentTime = LocalTime.now(ZoneId.systemDefault())
+    val midnight = LocalTime.MIDNIGHT // 00:00:00
+    val fiveAM = LocalTime.of(5, 0, 0) // 05:00:00
+
+    return !currentTime.isBefore(midnight) && currentTime.isBefore(fiveAM)
 }
 
 @Preview

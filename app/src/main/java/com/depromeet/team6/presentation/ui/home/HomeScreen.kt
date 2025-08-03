@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.runtime.Composable
@@ -27,7 +26,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -65,11 +66,13 @@ import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_COURSESEARCH_ENT
 import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_DEPARTURE_TIME_CLICKED
 import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_DEPARTURE_TIME_SUGGESTION_CLICKED
 import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_DESTINATION_CLICKED
+import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_EVENT_COURSESEARCH_ENTERED
 import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_ROUTE_CLICKED
 import com.depromeet.team6.presentation.util.HomeAmplitude.POPUP
 import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
 import com.depromeet.team6.presentation.util.base.ApiErrorSideEffect
 import com.depromeet.team6.presentation.util.context.getUserLocation
+import com.depromeet.team6.presentation.util.dialog.LocalDialogController
 import com.depromeet.team6.presentation.util.permission.PermissionUtil
 import com.depromeet.team6.presentation.util.toast.atChaToastMessage
 import com.depromeet.team6.presentation.util.view.LoadState
@@ -106,6 +109,7 @@ fun HomeRoute(
     val context = LocalContext.current
 
     var permissionGranted by remember { mutableStateOf(PermissionUtil.hasLocationPermissions(context)) }
+    val dialogController = LocalDialogController.current
     var userLocation by remember { mutableStateOf(LatLng(DEFAULT_LAT, DEFAULT_LNG)) } // 서울시 기본 위치
 
     val locationPermissionsLauncher = rememberLauncherForActivityResult(
@@ -205,6 +209,14 @@ fun HomeRoute(
         if (PermissionUtil.hasLocationPermissions(context)) { // 위치 권한이 있으면
             val location = context.getUserLocation()
             userLocation = location
+        } else {
+            dialogController.showSystemSettingsDialog(
+                context = context,
+                message = context.getString(R.string.all_dialog_location_permission),
+                onConfirm = {
+                    PermissionUtil.requestLocationPermissions(context, locationPermissionsLauncher)
+                }
+            )
         }
 
         viewModel.getCenterLocation(LatLng(userLocation.latitude, userLocation.longitude))
@@ -216,24 +228,16 @@ fun HomeRoute(
         }
     }
 
-//    LaunchedEffect(uiState.isAlarmRegistered, uiState.firtTransportTation) {
-//        if (uiState.isAlarmRegistered && uiState.firtTransportTation == TransportType.BUS) {
-//            viewModel.startPollingBusStarted(routeId = uiState.lastRouteId)
-//        } else {
-//            viewModel.stopPollingBusStarted()
+//    SideEffect {
+//        if (!PermissionUtil.isLocationPermissionRequested(context) &&
+//            !PermissionUtil.hasLocationPermissions(context)
+//        ) {
+//            PermissionUtil.requestLocationPermissions(
+//                context = context,
+//                locationPermissionLauncher = locationPermissionsLauncher
+//            )
 //        }
 //    }
-
-    SideEffect {
-        if (!PermissionUtil.isLocationPermissionRequested(context) &&
-            !PermissionUtil.hasLocationPermissions(context)
-        ) {
-            PermissionUtil.requestLocationPermissions(
-                context = context,
-                locationPermissionLauncher = locationPermissionsLauncher
-            )
-        }
-    }
 
     LaunchedEffect(Unit) {
         viewModel.setEvent(HomeContract.HomeEvent.SetDestination)
@@ -530,7 +534,7 @@ fun HomeRoute(
                         )
 
                         AmplitudeUtils.trackEventWithProperties(
-                            eventName = HOME_COURSESEARCH_ENTERED_DIRECT,
+                            eventName = HOME_EVENT_COURSESEARCH_ENTERED,
                             mapOf(
                                 USER_ID to viewModel.getUserId(),
                                 SCREEN_NAME to HOME,
@@ -567,7 +571,7 @@ fun HomeRoute(
                         )
 
                         AmplitudeUtils.trackEventWithProperties(
-                            eventName = HOME_COURSESEARCH_ENTERED_WITH_INPUT,
+                            eventName = HOME_EVENT_COURSESEARCH_ENTERED,
                             mapOf(
                                 USER_ID to viewModel.getUserId(),
                                 SCREEN_NAME to HOME,
@@ -581,6 +585,20 @@ fun HomeRoute(
                                 false
                             )
                         )
+                    },
+                    currentLocationClicked = {
+                        viewModel.setState {
+                            copy(
+                                isMapFocused = true
+                            )
+                        }
+                    },
+                    mapModified = {
+                        viewModel.setState {
+                            copy(
+                                isMapFocused = false
+                            )
+                        }
                     }
                 )
 
@@ -621,9 +639,13 @@ fun HomeScreen(
     deleteAlarmConfirmed: () -> Unit = {},
     dismissDialog: () -> Unit = {},
     navigateToSearchLocation: () -> Unit = {},
-    greetBottomSheetButtonClicked: () -> Unit = {}
+    greetBottomSheetButtonClicked: () -> Unit = {},
+    currentLocationClicked: () -> Unit = {},
+    mapModified: () -> Unit = {}
 ) {
     val colors = LocalTeam6Colors.current
+    var bottomSheetHeight by remember { mutableStateOf(0.dp) }
+    val density = LocalDensity.current
 
     Box(
         modifier = modifier
@@ -651,6 +673,10 @@ fun HomeScreen(
                 currentLocation = userLocation,
                 legs = homeUiState.itineraryInfo!!.legs,
                 isAlarmRegistered = homeUiState.isAlarmRegistered,
+                isMapFocused = homeUiState.isMapFocused,
+                mapModified = {
+                    mapModified()
+                },
                 getCenterLocation = {
                     getCenterLocation(it)
                 },
@@ -667,8 +693,12 @@ fun HomeScreen(
                 userLocation,
                 isAlarmRegistered = homeUiState.isAlarmRegistered,
                 userId = getUserId(),
+                isMapFocused = homeUiState.isMapFocused,
                 getCenterLocation = {
                     getCenterLocation(it)
+                },
+                mapModified = {
+                    mapModified()
                 }
             ) // Replace with your actual API key
         }
@@ -723,9 +753,7 @@ fun HomeScreen(
                     onTimerFinished = {
                         onTimerFinished()
                     },
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .zIndex(1f),
+
                     onRefreshClick = {
                         onRefreshClick()
                         if (homeUiState.firtTransportTation == TransportType.BUS) {
@@ -761,7 +789,14 @@ fun HomeScreen(
                             )
                         )
                     },
-                    busStationLeft = homeUiState.busRemainingStations
+                    busStationLeft = homeUiState.busRemainingStations,
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .zIndex(1f)
+                        .onGloballyPositioned { coordinates ->
+                            // coordinates.size.height는 픽셀 단위이므로 dp로 변환해야 합니다.
+                            bottomSheetHeight = with(density) { coordinates.size.height.toDp() }
+                        }
                 )
             }
 
@@ -777,8 +812,11 @@ fun HomeScreen(
                     onDestinationClick = { onDestinationClick() },
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
-                        .fillMaxWidth()
                         .zIndex(1f)
+                        .onGloballyPositioned { coordinates ->
+                            // coordinates.size.height는 픽셀 단위이므로 dp로 변환해야 합니다.
+                            bottomSheetHeight = with(density) { coordinates.size.height.toDp() }
+                        }
                 )
             }
         }
@@ -789,6 +827,22 @@ fun HomeScreen(
             modifier = Modifier
                 .align(Alignment.BottomStart)
                 .padding(start = 8.dp, bottom = characterState.bottomPadding)
+        )
+
+        Timber.d("bottomsheetheightei : $bottomSheetHeight")
+        // 현위치 버튼
+        Image(
+            imageVector = ImageVector.vectorResource(id = R.drawable.ic_all_current_location),
+            contentDescription = stringResource(R.string.home_current_location_btn),
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(
+                    bottom = bottomSheetHeight + 16.dp,
+                    end = 16.dp
+                )
+                .clickable {
+                    currentLocationClicked()
+                }
         )
 
         if (homeUiState.deleteAlarmDialogVisible) {

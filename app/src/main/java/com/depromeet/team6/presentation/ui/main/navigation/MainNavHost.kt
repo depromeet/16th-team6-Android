@@ -72,7 +72,8 @@ fun MainNavHost(
             navigateToItinerary = navigator::navigateToItinerary,
             navigateToLogin = navigator::navigateToLogin,
             navigateToHome = navigator::navigateToHome,
-            navigateToHomeAfterAlarmRegister = navigator::navigateToHomeAfterAlarmRegister
+            navigateToHomeAfterAlarmRegister = navigator::navigateToHomeAfterAlarmRegister,
+            popBackStack = navigator::popBackStack
         )
 
         itineraryNavGraph(

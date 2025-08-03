@@ -456,6 +456,11 @@ class HomeViewModel @Inject constructor(
                         )
                     }
                     AlarmScheduler.scheduleLockScreenAlarm(context, it)
+                    homeRepository.setLastCourseInfo(
+                        homeRepository.getLastCourseInfo()!!.copy(
+                            departureTime = it
+                        )
+                    )
                 }
                 .onFailure {
                     handleApiException(it)

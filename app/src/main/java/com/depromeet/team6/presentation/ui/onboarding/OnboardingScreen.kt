@@ -1,8 +1,8 @@
 package com.depromeet.team6.presentation.ui.onboarding
 
 import android.Manifest
-import android.app.Activity
 import android.content.Context
+import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -27,7 +27,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.app.ActivityCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -35,7 +34,6 @@ import androidx.lifecycle.flowWithLifecycle
 import com.depromeet.team6.R
 import com.depromeet.team6.presentation.type.OnboardingSelectLocationButtonType
 import com.depromeet.team6.presentation.type.OnboardingType
-import com.depromeet.team6.presentation.type.toPermissionType
 import com.depromeet.team6.presentation.ui.onboarding.component.AlarmTime
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingAlarmSelector
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingButton
@@ -78,6 +76,49 @@ fun OnboardingRoute(
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val dialogController = LocalDialogController.current
+
+    val allPermissionsLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestMultiplePermissions(),
+        onResult = { permissions ->
+            val fineLocationGranted = permissions[Manifest.permission.ACCESS_FINE_LOCATION] ?: false
+            val coarseLocationGranted = permissions[Manifest.permission.ACCESS_COARSE_LOCATION] ?: false
+
+            // 위치권한 허용여부 로깅
+            if (fineLocationGranted || coarseLocationGranted) {
+                AmplitudeUtils.trackEventWithProperty(
+                    eventName = ONBOARDING_LOCATION_PERMISSION_CLICKED,
+                    propertyName = ONBOARDING_LOCATION_PERMISSION_CLICKED,
+                    propertyValue = GRANT
+                )
+                Timber.d("Location_Permission Has Granted")
+            } else {
+                AmplitudeUtils.trackEventWithProperty(
+                    eventName = ONBOARDING_LOCATION_PERMISSION_CLICKED,
+                    propertyName = ONBOARDING_LOCATION_PERMISSION_CLICKED,
+                    propertyValue = DENIED
+                )
+                viewModel.setSideEffect(OnboardingContract.OnboardingSideEffect.LocationPermissionDeniedDialog)
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                val postNotificationsGranted = permissions[Manifest.permission.POST_NOTIFICATIONS] ?: false
+                if (postNotificationsGranted) {
+                    AmplitudeUtils.trackEventWithProperty(
+                        eventName = ONBOARDING_NOTIFICATION_PERMISSION_CLICKED,
+                        propertyName = ONBOARDING_NOTIFICATION_PERMISSION_CLICKED,
+                        propertyValue = GRANT
+                    )
+                    Timber.d("Notification_Permission Has Granted")
+                } else {
+                    AmplitudeUtils.trackEventWithProperty(
+                        eventName = ONBOARDING_NOTIFICATION_PERMISSION_CLICKED,
+                        propertyName = ONBOARDING_NOTIFICATION_PERMISSION_CLICKED,
+                        propertyValue = DENIED
+                    )
+                    viewModel.setSideEffect(OnboardingContract.OnboardingSideEffect.NotificationPermissionDeniedDialog)
+                }
+            }
+        }
+    )
 
     val locationPermissionsLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestMultiplePermissions(),
@@ -210,7 +251,7 @@ fun OnboardingRoute(
             OnboardingType.ALARM -> {
                 viewModel.setEvent(
                     OnboardingContract.OnboardingEvent.ChangePermissionBottomSheetVisible(
-                        permissionBottomSheetVisible = true
+                        permissionBottomSheetVisible = false
                     )
                 )
             }
@@ -295,47 +336,49 @@ fun OnboardingRoute(
                                 permissionBottomSheetVisible = false
                             )
                         )
-
-                        when (uiState.onboardingType) {
-                            OnboardingType.HOME -> {
-                                when {
-                                    PermissionUtil.hasLocationPermissions(context) -> {
-                                        Unit
-                                    }
-
-                                    PermissionUtil.isLocationPermissionRequested(context) &&
-                                        !ActivityCompat.shouldShowRequestPermissionRationale(
-                                            context as Activity,
-                                            Manifest.permission.ACCESS_FINE_LOCATION
-                                        ) -> {
-                                        viewModel.setSideEffect(OnboardingContract.OnboardingSideEffect.LocationPermissionDeniedDialog)
-                                    }
-
-                                    else -> {
-                                        viewModel.setSideEffect(
-                                            OnboardingContract.OnboardingSideEffect.RequestLocationPermission
-                                        )
-                                    }
-                                }
-                                AmplitudeUtils.trackEventWithProperty(
-                                    eventName = HOME_REGISTER_LOCATION_PERMISSION_CHECK,
-                                    propertyName = SCREEN_NAME,
-                                    propertyValue = HOME_REGISTER
-                                )
-                            }
-
-                            OnboardingType.ALARM -> {
-                                if (!PermissionUtil.hasNotificationPermission(context)
-                                ) {
-                                    viewModel.setSideEffect(OnboardingContract.OnboardingSideEffect.RequestNotificationPermission)
-                                }
-                                AmplitudeUtils.trackEventWithProperty(
-                                    eventName = ALARM_SETTING_ALARM_PERMISSION_CLICKED,
-                                    propertyName = SCREEN_NAME,
-                                    propertyValue = ALARM_REGISTER
-                                )
-                            }
-                        }
+                        PermissionUtil.requestAllRequiredPermissions(
+                            allPermissionsLauncher
+                        )
+                        AmplitudeUtils.trackEventWithProperty(
+                            eventName = HOME_REGISTER_LOCATION_PERMISSION_CHECK,
+                            propertyName = SCREEN_NAME,
+                            propertyValue = HOME_REGISTER
+                        )
+                        AmplitudeUtils.trackEventWithProperty(
+                            eventName = ALARM_SETTING_ALARM_PERMISSION_CLICKED,
+                            propertyName = SCREEN_NAME,
+                            propertyValue = ALARM_REGISTER
+                        )
+//                        // 위치권한 요청
+//                        if (PermissionUtil.hasLocationPermissions(context)) {
+//                            Unit
+//                        } else if (PermissionUtil.isLocationPermissionRequested(context) &&
+//                                !ActivityCompat.shouldShowRequestPermissionRationale(
+//                                    context as Activity,
+//                                    Manifest.permission.ACCESS_FINE_LOCATION
+//                                )) {
+//                            viewModel.setSideEffect(OnboardingContract.OnboardingSideEffect.LocationPermissionDeniedDialog)
+//                        } else {
+//                            viewModel.setSideEffect(
+//                                OnboardingContract.OnboardingSideEffect.RequestLocationPermission
+//                            )
+//                        }
+//                        AmplitudeUtils.trackEventWithProperty(
+//                            eventName = HOME_REGISTER_LOCATION_PERMISSION_CHECK,
+//                            propertyName = SCREEN_NAME,
+//                            propertyValue = HOME_REGISTER
+//                        )
+//
+//                        // 알림권한 요청
+//                        if (!PermissionUtil.hasNotificationPermission(context)
+//                        ) {
+//                            viewModel.setSideEffect(OnboardingContract.OnboardingSideEffect.RequestNotificationPermission)
+//                        }
+//                        AmplitudeUtils.trackEventWithProperty(
+//                            eventName = ALARM_SETTING_ALARM_PERMISSION_CLICKED,
+//                            propertyName = SCREEN_NAME,
+//                            propertyValue = ALARM_REGISTER
+//                        )
                     },
                     onLocationButtonClicked = {
                         if (PermissionUtil.hasLocationPermissions(context = context)) {
@@ -463,7 +506,6 @@ fun OnboardingScreen(
         }
         OnboardingPermissionBottomSheet(
             modifier = Modifier.align(Alignment.BottomCenter),
-            onboardingPermissionType = uiState.onboardingType.toPermissionType(),
             bottomSheetVisible = uiState.permissionBottomSheetVisible,
             buttonClicked = bottomSheetButtonClicked
         )

@@ -34,6 +34,7 @@ import com.google.android.gms.location.LocationServices
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -62,6 +63,7 @@ class LockService : Service() {
     private val notificationManager by lazy {
         getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     }
+    private val timerScope = CoroutineScope(Dispatchers.Default)
 
     private fun playAlarm() {
         val isSound = userInfoRepositoryImpl.getAlarmSound()
@@ -191,11 +193,6 @@ class LockService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.d("LockService", "onStartCommand 호출됨")
 
-        if (intent?.action == ACTION_STOP_ALARM_SOUND) {
-            stopAlarm()
-            return START_STICKY
-        }
-
         startLockReceiver()
         wakeLockAcquire()
 
@@ -207,7 +204,10 @@ class LockService : Service() {
 
                 lockScreenNavigator.navigateToLockScreen(applicationContext, taxiCost)
             }
+        }
 
+        // 2분 후 알람 종료
+        timerScope.launch {
             delay(ALARM_DURATION_MS)
             withContext(Dispatchers.Main) {
                 AmplitudeUtils.trackEventWithProperties(
@@ -227,10 +227,16 @@ class LockService : Service() {
                 )
 
                 val notification = NotificationCompat.Builder(this@LockService, ATCHA_SERVICE_CHANNEL_ID)
+                    .setContentTitle(
+                        ContextCompat.getString(
+                            this@LockService,
+                            R.string.notification_alarm_timeout_title
+                        )
+                    )
                     .setContentText(
                         ContextCompat.getString(
                             this@LockService,
-                            R.string.notification_alarm_timeout
+                            R.string.notification_alarm_timeout_body
                         )
                     )
                     .setSmallIcon(R.drawable.ic_app_logo_foreground)
@@ -254,6 +260,7 @@ class LockService : Service() {
         stopAlarm()
         vibrationTimer?.cancel()
         vibrationTimer = null
+        timerScope.cancel()
         super.onDestroy()
     }
 
@@ -283,8 +290,6 @@ class LockService : Service() {
         }
     }
     companion object {
-        const val ACTION_STOP_ALARM_SOUND = "com.depromeet.team6.STOP_ALARM_SOUND"
-
         const val ALARM_NOTIFICATION_ID = 1
         const val ALARM_NOTIFICATION_TIMEOUT_ID = 2
 

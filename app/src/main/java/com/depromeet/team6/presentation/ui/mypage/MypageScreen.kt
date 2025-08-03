@@ -4,6 +4,8 @@ import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -68,6 +70,11 @@ fun MypageRoute(
     val isInitialized = remember { mutableMapOf("initialized" to false) }
 
     val feedbackIntent = Intent(Intent.ACTION_VIEW, Uri.parse(FEEDBACK_FORM_URL))
+
+    val notificationPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+        onResult = {}
+    )
 
     BackHandler {
         mypageViewModel.setEvent(MypageContract.MypageEvent.BackPressed)
@@ -163,7 +170,18 @@ fun MypageRoute(
                                 mypageUiState = uiState,
                                 onAccountClick = { mypageViewModel.setEvent(MypageContract.MypageEvent.AccountClicked) },
                                 onChangeHomeClick = { mypageViewModel.setEvent(MypageContract.MypageEvent.ChangeHomeClicked) },
-                                onAlarmSettingClick = { mypageViewModel.setEvent(MypageContract.MypageEvent.AlarmSettingClicked) },
+                                onAlarmSettingClick = {
+                                    mypageViewModel.setEvent(MypageContract.MypageEvent.AlarmSettingClicked)
+                                    if (!PermissionUtil.hasNotificationPermission(context)) {
+                                        dialogController.showSystemSettingsDialog(
+                                            context = context,
+                                            message = context.getString(R.string.all_dialog_notification_permission),
+                                            onConfirm = {
+                                                PermissionUtil.requestNotificationPermission(context, notificationPermissionLauncher)
+                                            }
+                                        )
+                                    }
+                                },
                                 onBackClick = { mypageViewModel.setEvent(MypageContract.MypageEvent.BackPressed) },
                                 onWebViewClicked = { mypageViewModel.setEvent(MypageContract.MypageEvent.PolicyClicked) },
                                 dismissDialog = { mypageViewModel.setEvent(MypageContract.MypageEvent.DismissDialog) },
