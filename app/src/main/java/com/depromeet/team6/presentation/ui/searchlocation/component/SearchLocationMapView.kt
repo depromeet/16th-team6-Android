@@ -242,7 +242,7 @@ fun SearchLocationMapViewPreview() {
         currentLocation = LatLng(
 //            name = "서울 시청",
             37.5665,
-            126.9780,
+            126.9780
 //            address = "서울특별시"
         ),
         myAddress = Address(

@@ -111,10 +111,10 @@ fun SearchLocationRoute(
 //            val location = context.getUserLocation()
 //            userLocation = LatLng(DEFAULT_LAT, DEFAULT_LNG)
 //
-////            homeViewModel.getCenterLocation(userLocation)
-////            viewModel.setState {
-////                copy(searchQuery = homeUiState.departurePoint.name)
-////            }
+// //            homeViewModel.getCenterLocation(userLocation)
+// //            viewModel.setState {
+// //                copy(searchQuery = homeUiState.departurePoint.name)
+// //            }
 //
 //            viewModel.setEvent(
 //                SearchLocationContract.SearchLocationEvent.UpdateUserLocationSate(

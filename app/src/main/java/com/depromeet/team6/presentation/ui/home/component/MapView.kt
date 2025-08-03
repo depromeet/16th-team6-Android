@@ -165,7 +165,6 @@ fun TMapViewCompose(
                     .align(Alignment.Center)
                     .padding(bottom = 118.dp)
             )
-
         } else {
             AtChaLoadingView()
         }
