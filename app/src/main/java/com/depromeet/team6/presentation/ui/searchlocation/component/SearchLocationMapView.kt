@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -54,7 +55,7 @@ import timber.log.Timber
 @Composable
 fun SearchLocationMapView(
     marginTop: Dp,
-    currentLocation: Address,
+    currentLocation: LatLng,
     myAddress: Address,
     context: Context,
     modifier: Modifier = Modifier,
@@ -112,8 +113,8 @@ fun SearchLocationMapView(
                         addView(tMapView)
                         tMapView.post {
                             if (isFirstZoom) {
-                                val lat = currentLocation.lat - offsetLat
-                                val lon = currentLocation.lon
+                                val lat = myAddress.lat - offsetLat
+                                val lon = myAddress.lon
 
                                 tMapView.setCenterPoint(lat, lon, true)
                                 tMapView.zoomLevel = 18
@@ -132,8 +133,8 @@ fun SearchLocationMapView(
                                     icon = markerBitmap
                                     setTMapPoint(
                                         TMapPoint(
-                                            currentLocation.lat,
-                                            currentLocation.lon
+                                            currentLocation.latitude,
+                                            currentLocation.longitude
                                         )
                                     )
                                 }
@@ -149,9 +150,9 @@ fun SearchLocationMapView(
             Icon(
                 modifier = Modifier
                     .align(Alignment.TopStart)
-                    .noRippleClickable { backButtonClicked() }
-                    .padding(vertical = 16.dp, horizontal = 18.dp)
-                    .offset(y = marginTop),
+                    .size(24.dp)
+                    .offset(x = 16.dp, y = 18.dp)
+                    .noRippleClickable { backButtonClicked() },
                 imageVector = ImageVector.vectorResource(R.drawable.ic_all_arrow_left_white),
                 tint = Color.Unspecified,
                 contentDescription = null
@@ -179,7 +180,7 @@ fun SearchLocationMapView(
                             .align(Alignment.BottomEnd)
                             .padding(end = 16.dp, bottom = 16.dp)
                             .clickable(enabled = isMapReady) {
-                                val tMapPoint = TMapPoint(currentLocation.lat, currentLocation.lon)
+                                val tMapPoint = TMapPoint(currentLocation.latitude, currentLocation.longitude)
                                 tMapView.setCenterPoint(
                                     tMapPoint.latitude - offsetLat,
                                     tMapPoint.longitude
@@ -238,11 +239,11 @@ fun startScrollIdleCheck(
 @Composable
 fun SearchLocationMapViewPreview() {
     SearchLocationMapView(
-        currentLocation = Address(
-            name = "서울 시청",
-            lat = 37.5665,
-            lon = 126.9780,
-            address = "서울특별시"
+        currentLocation = LatLng(
+//            name = "서울 시청",
+            37.5665,
+            126.9780,
+//            address = "서울특별시"
         ),
         myAddress = Address(
             name = "서울 시청",

@@ -2,6 +2,8 @@ package com.depromeet.team6.presentation.ui.searchlocation
 
 import android.content.Context
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,6 +35,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
+import com.depromeet.team6.R
 import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.Location
 import com.depromeet.team6.presentation.ui.common.view.AtChaLoadingView
@@ -48,6 +51,7 @@ import com.depromeet.team6.presentation.util.DefaultLatLng.DEFAULT_LAT
 import com.depromeet.team6.presentation.util.DefaultLatLng.DEFAULT_LNG
 import com.depromeet.team6.presentation.util.base.ApiErrorSideEffect
 import com.depromeet.team6.presentation.util.context.getUserLocation
+import com.depromeet.team6.presentation.util.dialog.LocalDialogController
 import com.depromeet.team6.presentation.util.permission.PermissionUtil
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
@@ -71,26 +75,57 @@ fun SearchLocationRoute(
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
 
+    var permissionGranted by remember { mutableStateOf(PermissionUtil.hasLocationPermissions(context)) }
+    val dialogController = LocalDialogController.current
     var userLocation by remember { mutableStateOf(LatLng(DEFAULT_LAT, DEFAULT_LNG)) }
+    val locationPermissionsLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestMultiplePermissions(),
+        onResult = { permissions ->
+            permissionGranted = permissions.values.all { it }
+            if (permissionGranted) {
+                Timber.d("Location_Permission Has Granted")
+            }
+        }
+    )
 
-    LaunchedEffect(Unit) {
-        Timber.tag("Location Permission").d("${PermissionUtil.hasLocationPermissions(context)}")
-        if (PermissionUtil.hasLocationPermissions(context)) {
+    LaunchedEffect(permissionGranted) {
+        if (PermissionUtil.hasLocationPermissions(context)) { // 위치 권한이 있으면
             val location = context.getUserLocation()
-            userLocation = LatLng(DEFAULT_LAT, DEFAULT_LNG)
-
-//            homeViewModel.getCenterLocation(userLocation)
-//            viewModel.setState {
-//                copy(searchQuery = homeUiState.departurePoint.name)
-//            }
-
+            userLocation = location
             viewModel.setEvent(
                 SearchLocationContract.SearchLocationEvent.UpdateUserLocationSate(
                     LoadState.Success
                 )
             )
+        } else {
+            dialogController.showSystemSettingsDialog(
+                context = context,
+                message = context.getString(R.string.all_dialog_location_permission),
+                onConfirm = {
+                    PermissionUtil.requestLocationPermissions(context, locationPermissionsLauncher)
+                }
+            )
         }
     }
+
+//    LaunchedEffect(Unit) {
+//        Timber.tag("Location Permission").d("${PermissionUtil.hasLocationPermissions(context)}")
+//        if (PermissionUtil.hasLocationPermissions(context)) {
+//            val location = context.getUserLocation()
+//            userLocation = LatLng(DEFAULT_LAT, DEFAULT_LNG)
+//
+////            homeViewModel.getCenterLocation(userLocation)
+////            viewModel.setState {
+////                copy(searchQuery = homeUiState.departurePoint.name)
+////            }
+//
+//            viewModel.setEvent(
+//                SearchLocationContract.SearchLocationEvent.UpdateUserLocationSate(
+//                    LoadState.Success
+//                )
+//            )
+//        }
+//    }
 
     LaunchedEffect(uiState.userLocation) {
         viewModel.updateRecentSearches(location = userLocation)
@@ -317,13 +352,13 @@ fun SearchLocationScreen(
         }
 
         if (uiState.searchSelectMapView) {
-            val currentLocation by remember { mutableStateOf(uiState.selectLocation) }
+//            val currentLocation by remember { mutableStateOf(uiState.selectLocation) }
             SearchLocationMapView(
                 marginTop = marginTop,
                 context = context,
                 myAddress = uiState.selectLocation,
                 getCenterLocation = getCenterLocation,
-                currentLocation = currentLocation,
+                currentLocation = location,
                 setDepartureButtonClicked = navigateToCourseSearch,
                 backButtonClicked = clearAddress
             )

@@ -690,8 +690,8 @@ fun HomeScreen(
             )
         } else {
             TMapViewCompose(
-                padding,
-                userLocation,
+                padding = padding,
+                currentLocation = userLocation,
                 isAlarmRegistered = homeUiState.isAlarmRegistered,
                 userId = getUserId(),
                 isMapFocused = homeUiState.isMapFocused,

@@ -61,6 +61,7 @@ fun TMapViewCompose(
 
     // 현재 위치 변경될 때만 현위치 마커 갱신
     LaunchedEffect(currentLocation, isMapReady) {
+        Timber.d("mapView Recomposed")
         if (isMapReady) {
             val tMapPoint = TMapPoint(currentLocation.latitude, currentLocation.longitude)
 
@@ -165,42 +166,6 @@ fun TMapViewCompose(
                     .padding(bottom = 118.dp)
             )
 
-            // 현위치 버튼
-//            Image(
-//                imageVector = ImageVector.vectorResource(id = R.drawable.ic_all_current_location),
-//                contentDescription = stringResource(R.string.home_current_location_btn),
-//                modifier = Modifier
-//                    .align(Alignment.BottomEnd)
-//                    .then(
-//                        if (isAlarmRegistered) {
-//                            Modifier.padding(
-//                                bottom = screenHeight * 0.2f,
-//                                end = 16.dp
-//                            )
-//                        } else {
-//                            Modifier.padding(
-//                                bottom = screenHeight * 0.1f,
-//                                end = 16.dp
-//                            )
-//                        }
-//                    )
-//                    .clickable(enabled = isMapReady) {
-//                        val tMapPoint =
-//                            TMapPoint(currentLocation.latitude, currentLocation.longitude)
-//                        tMapView.setCenterPoint(tMapPoint.latitude, tMapPoint.longitude)
-//                        getCenterLocation(LatLng(tMapPoint.latitude, tMapPoint.longitude))
-//
-//                        AmplitudeUtils.trackEventWithProperties(
-//                            eventName = HOME_EVENT_COURSESEARCH_ENTERED,
-//                            mapOf(
-//                                USER_ID to userId,
-//                                SCREEN_NAME to HOME,
-//                                HOME_COURSESEARCH_ENTERED_WITH_CURRENT_LOCATION to true
-//                            )
-//                        )
-//                    }
-//                    .graphicsLayer { alpha = if (isMapReady) 1f else 0.5f } // 비활성화 시 투명도 조정
-//            )
         } else {
             AtChaLoadingView()
         }
