@@ -151,7 +151,7 @@ fun SearchLocationMapView(
                 modifier = Modifier
                     .align(Alignment.TopStart)
                     .size(24.dp)
-                    .offset(x = 16.dp, y = 18.dp)
+                    .offset(x = 16.dp, y = 18.dp + marginTop)
                     .noRippleClickable { backButtonClicked() },
                 imageVector = ImageVector.vectorResource(R.drawable.ic_all_arrow_left_white),
                 tint = Color.Unspecified,
