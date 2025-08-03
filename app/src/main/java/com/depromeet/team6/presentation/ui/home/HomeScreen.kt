@@ -630,7 +630,6 @@ fun HomeScreen(
             .fillMaxSize()
             .background(color = colors.black)
             .padding(
-                top = WindowInsets.statusBars.asPaddingValues().calculateTopPadding(),
                 bottom = padding.calculateBottomPadding()
             )
     ) {
@@ -639,7 +638,7 @@ fun HomeScreen(
             contentDescription = stringResource(R.string.mypage_icon_description),
             modifier = Modifier
                 .align(Alignment.TopEnd)
-                .padding(top = 12.dp, end = 16.dp)
+                .padding(top = WindowInsets.statusBars.asPaddingValues().calculateTopPadding() + 12.dp, end = 16.dp)
                 .clickable {
                     navigateToMypage()
                 }
