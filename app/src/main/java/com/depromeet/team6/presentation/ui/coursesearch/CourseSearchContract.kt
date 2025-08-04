@@ -9,7 +9,8 @@ import com.depromeet.team6.presentation.util.view.LoadState
 
 class CourseSearchContract {
     data class CourseUiState(
-        val courseDataLoadState: LoadState = LoadState.Idle,
+        val courseUiLoadState: LoadState = LoadState.Idle,
+        val courseSearchDataLoadState: CourseSearchDataState = CourseSearchDataState.Idle,
         val startingPoint: Address? = null,
         val destinationPoint: Address? = null,
         val courseData: List<CourseInfo> = emptyList(),
@@ -19,6 +20,14 @@ class CourseSearchContract {
         val showPermissionSnackbar: Boolean = false,
         val selectedRouteId: String = ""
     ) : UiState
+
+    enum class CourseSearchDataState {
+        Idle,
+        Loading,
+        Success,
+        NoResult, // 막차 검색정보가 없음
+        ServiceEnded // 시간이 늦어서 막차가 없음
+    }
 
     sealed interface CourseSideEffect : UiSideEffect {
         data object ShowNotificationToast : CourseSideEffect

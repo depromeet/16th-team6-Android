@@ -44,6 +44,8 @@ class GetCourseSearchResultsUseCase @Inject constructor(
             "TRS_001" -> TODO()
             "TRS_011" -> ErrorControlFailureException.NavigateAndShowToastException(toastMessage = API_ERROR_SHORT_DISTANCE, route = Route.Back)
             "TRS_012" -> ErrorControlFailureException.NavigateAndShowToastException(toastMessage = API_ERROR_OUT_OF_SERVICE_REGION, route = Route.Back)
+            "LRT_003" -> ErrorControlFailureException.SetUIStateException(errorCode = "LRT_003")
+            "LRT_004" -> ErrorControlFailureException.SetUIStateException(errorCode = "LRT_004")
             "INTERNAL_SERVER_ERROR" -> ErrorControlFailureException.ShowToastException(toastMessage = API_ERROR_NETWORK_FAILURE)
             else -> ErrorControlFailureException.ShowToastException(API_ERROR_NETWORK_FAILURE)
         }

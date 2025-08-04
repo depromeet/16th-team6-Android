@@ -15,17 +15,31 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.depromeet.team6.R
+import com.depromeet.team6.presentation.ui.coursesearch.CourseSearchContract
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.depromeet.team6.ui.theme.defaultTeam6Typography
 
 @Composable
 fun SearchResultEmpty(
     modifier: Modifier = Modifier,
-    isApiError: Boolean = false
+    dataLoadState: CourseSearchContract.CourseSearchDataState = CourseSearchContract.CourseSearchDataState.NoResult,
+    isApiError: Boolean = false,
+    isMidNight: Boolean = false
 ) {
+    var pageMessage = when (dataLoadState) {
+        CourseSearchContract.CourseSearchDataState.NoResult -> {
+            stringResource(R.string.course_search_result_empty)
+        }
+        CourseSearchContract.CourseSearchDataState.ServiceEnded -> {
+            stringResource(R.string.course_search_result_empty)
+        }
+        else -> ""
+    }
+    if (isMidNight) pageMessage = stringResource(R.string.course_search_result_midnight)
     Box(
         modifier = modifier
             .background(defaultTeam6Colors.gray950)
@@ -45,7 +59,8 @@ fun SearchResultEmpty(
                 modifier = Modifier.height(16.dp)
             )
             Text(
-                text = stringResource(R.string.course_search_result_empty),
+                text = pageMessage,
+                textAlign = TextAlign.Center,
                 color = defaultTeam6Colors.gray400,
                 style = defaultTeam6Typography.bodyRegular15
             )

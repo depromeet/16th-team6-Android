@@ -332,8 +332,8 @@ class HomeViewModel @Inject constructor(
 //                        stopPollingBusStarted()
 //                    }
                 }.onFailure {
-                    handleApiException(it) {
-                        copy(
+                    handleApiException(it) { code ->
+                        currentState.copy(
                             isBusDeparted = false
                         )
                     }
@@ -601,7 +601,7 @@ class HomeViewModel @Inject constructor(
                     getTaxiCostUseCase.saveTaxiCost(it)
                 }.onFailure { exception ->
                     handleApiException(exception) {
-                        copy(
+                        currentState.copy(
                             taxiCost = 0
                         )
                     }

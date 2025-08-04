@@ -59,7 +59,7 @@ import timber.log.Timber
 @Composable
 fun SearchLocationMapView(
     marginTop: Dp,
-    currentLocation: Address,
+    currentLocation: LatLng,
     myAddress: Address,
     context: Context,
     modifier: Modifier = Modifier,
@@ -117,8 +117,8 @@ fun SearchLocationMapView(
                         addView(tMapView)
                         tMapView.post {
                             if (isFirstZoom) {
-                                val lat = currentLocation.lat - offsetLat
-                                val lon = currentLocation.lon
+                                val lat = myAddress.lat - offsetLat
+                                val lon = myAddress.lon
 
                                 tMapView.setCenterPoint(lat, lon, true)
                                 tMapView.zoomLevel = 18
@@ -137,8 +137,8 @@ fun SearchLocationMapView(
                                     icon = markerBitmap
                                     setTMapPoint(
                                         TMapPoint(
-                                            currentLocation.lat,
-                                            currentLocation.lon
+                                            currentLocation.latitude,
+                                            currentLocation.longitude
                                         )
                                     )
                                 }
@@ -183,7 +183,7 @@ fun SearchLocationMapView(
                             .align(Alignment.BottomEnd)
                             .padding(end = 16.dp, bottom = 16.dp)
                             .clickable(enabled = isMapReady) {
-                                val tMapPoint = TMapPoint(currentLocation.lat, currentLocation.lon)
+                                val tMapPoint = TMapPoint(currentLocation.latitude, currentLocation.longitude)
                                 tMapView.setCenterPoint(
                                     tMapPoint.latitude - offsetLat,
                                     tMapPoint.longitude
@@ -263,11 +263,11 @@ private fun CircleBtnBack(
 @Composable
 fun SearchLocationMapViewPreview() {
     SearchLocationMapView(
-        currentLocation = Address(
-            name = "서울 시청",
-            lat = 37.5665,
-            lon = 126.9780,
-            address = "서울특별시"
+        currentLocation = LatLng(
+//            name = "서울 시청",
+            37.5665,
+            126.9780
+//            address = "서울특별시"
         ),
         myAddress = Address(
             name = "서울 시청",

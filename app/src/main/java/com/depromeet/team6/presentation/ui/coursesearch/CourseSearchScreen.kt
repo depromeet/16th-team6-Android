@@ -132,7 +132,7 @@ fun CourseSearchRoute(
         }
     }
 
-    when (uiState.courseDataLoadState) {
+    when (uiState.courseUiLoadState) {
         LoadState.Loading -> {
             CourseSearchScreen(
                 uiState = uiState,
@@ -337,7 +337,8 @@ fun CourseSearchScreen(
 
         TransportTabMenu(
             availableCourses = uiState.courseData,
-            isLoaded = uiState.courseDataLoadState == LoadState.Success,
+            isLoaded = uiState.courseUiLoadState == LoadState.Success,
+            courseSearchDataState = uiState.courseSearchDataLoadState,
             onItemClick = { courseInfoJson, isTextClicked ->
                 itemCardClick(isTextClicked)
                 navigateToItinerary(
