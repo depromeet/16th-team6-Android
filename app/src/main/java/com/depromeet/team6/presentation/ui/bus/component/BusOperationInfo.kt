@@ -112,6 +112,7 @@ fun BusOperationInfoView(
             )
         }
         busOperationInfo.serviceHours.forEach { serviceHour ->
+            if (serviceHour.startTime == null || serviceHour.endTime == null) return@forEach
             Spacer(modifier = Modifier.height(6.dp))
             Row(modifier = horizontalModifier, verticalAlignment = Alignment.CenterVertically) {
                 Text(

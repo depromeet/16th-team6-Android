@@ -9,7 +9,7 @@ data class BusOperationInfo(
 data class BusServiceHour(
     val dailyType: String,
     val busDirection: String,
-    val startTime: String,
-    val endTime: String,
+    val startTime: String?,
+    val endTime: String?,
     val term: Int
 )

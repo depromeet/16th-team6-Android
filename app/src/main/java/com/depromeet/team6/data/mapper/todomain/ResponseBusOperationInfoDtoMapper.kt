@@ -25,8 +25,8 @@ fun BusServiceHour.toDomain(): com.depromeet.team6.domain.model.BusServiceHour {
     return com.depromeet.team6.domain.model.BusServiceHour(
         dailyType = dailyTypeMapper(this.dailyType),
         busDirection = this.busDirection.toString(),
-        startTime = timeMapper(this.startTime),
-        endTime = timeMapper(this.endTime),
+        startTime = if (this.startTime != null) timeMapper(this.startTime) else null,
+        endTime = if (this.endTime != null) timeMapper(this.endTime) else null,
         term = this.term
     )
 }
