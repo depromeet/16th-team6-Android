@@ -151,12 +151,9 @@ fun ItineraryRoute(
                     navigateToHome()
                     atChaToastMessage(context, R.string.course_set_notification_snackbar, Toast.LENGTH_SHORT)
                 }
-                ItineraryContract.ItinerarySideEffect.ShowNotificationToastSetAlarm -> {
-                    Toast.makeText(context, context.getString(R.string.course_set_notification_snackbar), Toast.LENGTH_SHORT).show()
-                }
 
                 ItineraryContract.ItinerarySideEffect.ShowNotificationToastSetAlarmFailed -> {
-                    Toast.makeText(context, context.getString(R.string.course_set_notification_failed_snackbar), Toast.LENGTH_SHORT).show()
+                    atChaToastMessage(context, R.string.course_set_notification_failed_snackbar, Toast.LENGTH_SHORT)
                 }
             }
         }

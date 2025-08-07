@@ -113,10 +113,6 @@ fun CourseSearchRoute(
                     navigateToLogin()
                 }
 
-                is CourseSearchContract.CourseSideEffect.ShowNotificationToast -> {
-                    Toast.makeText(context, context.getString(R.string.course_set_notification_snackbar), Toast.LENGTH_SHORT).show()
-                }
-
                 is CourseSearchContract.CourseSideEffect.ShowSearchFailedToast -> {
                     Toast.makeText(context, sideEffect.message, Toast.LENGTH_SHORT).show()
                 }
