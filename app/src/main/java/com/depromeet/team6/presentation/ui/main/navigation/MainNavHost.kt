@@ -72,6 +72,7 @@ fun MainNavHost(
             navigateToItinerary = navigator::navigateToItinerary,
             navigateToLogin = navigator::navigateToLogin,
             navigateToHome = navigator::navigateToHome,
+            navigateToSearchLocation = navigator::navigateToSearchLocation,
             navigateToHomeAfterAlarmRegister = navigator::navigateToHomeAfterAlarmRegister,
             popBackStack = navigator::popBackStack
         )

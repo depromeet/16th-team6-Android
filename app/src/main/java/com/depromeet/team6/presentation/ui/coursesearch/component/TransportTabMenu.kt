@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import com.depromeet.team6.R
 import com.depromeet.team6.domain.model.course.CourseInfo
 import com.depromeet.team6.domain.model.course.LegInfo
+import com.depromeet.team6.presentation.ui.coursesearch.CourseSearchContract
 import com.depromeet.team6.presentation.ui.itinerary.LegInfoDummyProvider
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import kotlinx.coroutines.launch
@@ -28,6 +29,7 @@ import java.time.ZoneId
 fun TransportTabMenu(
     availableCourses: List<CourseInfo>,
     isLoaded: Boolean,
+    courseSearchDataState: CourseSearchContract.CourseSearchDataState,
     modifier: Modifier = Modifier,
     onRegisterAlarmBtnClick: (String) -> Unit = {},
     courseInfoToggleClick: () -> Unit = {},
@@ -73,11 +75,9 @@ fun TransportTabMenu(
                     availableCourses.filter { it.filterCategory == page }
                 }
             if (isLoaded) {
-                if (resultItems.isEmpty() || isMidNight()) {
-                    SearchResultEmpty(
-                        modifier = Modifier.padding(top = 10.dp)
-                    )
-                } else {
+                if (courseSearchDataState == CourseSearchContract.CourseSearchDataState.Success &&
+                    !isMidNight()
+                ) {
                     LastTransportInfoList(
                         listData = resultItems,
                         onItemClick = onItemClick,
@@ -86,7 +86,27 @@ fun TransportTabMenu(
                             onRegisterAlarmBtnClick(routeId)
                         }
                     )
+                } else {
+                    SearchResultEmpty(
+                        modifier = Modifier.padding(top = 10.dp),
+                        dataLoadState = courseSearchDataState,
+                        isMidNight = isMidNight()
+                    )
                 }
+//                if (resultItems.isEmpty() || isMidNight()) {
+//                    SearchResultEmpty(
+//                        modifier = Modifier.padding(top = 10.dp)
+//                    )
+//                } else {
+//                    LastTransportInfoList(
+//                        listData = resultItems,
+//                        onItemClick = onItemClick,
+//                        courseInfoToggleClick = courseInfoToggleClick,
+//                        onRegisterAlarmBtnClick = { routeId ->
+//                            onRegisterAlarmBtnClick(routeId)
+//                        }
+//                    )
+//                }
             }
         }
     }
@@ -121,7 +141,8 @@ fun PreviewTabMenu(
     )
     TransportTabMenu(
         availableCourses = mockDataList,
-        isLoaded = true
+        isLoaded = true,
+        courseSearchDataState = CourseSearchContract.CourseSearchDataState.Success
     )
 }
 
@@ -130,6 +151,7 @@ fun PreviewTabMenu(
 fun PreviewTabMenuEmpty() {
     TransportTabMenu(
         availableCourses = emptyList(),
-        isLoaded = false
+        isLoaded = false,
+        courseSearchDataState = CourseSearchContract.CourseSearchDataState.Success
     )
 }

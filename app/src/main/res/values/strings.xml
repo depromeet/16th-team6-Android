@@ -157,8 +157,8 @@
     <string name="notification_channel_description_text">앱 내부 알림 채널</string>
     <string name="course_search_failed_snackbar">경로를 조회하는데 실패했어요</string>
     <string name="course_detail_description">상세경로</string>
-    <string name="course_search_result_error">검색 가능한 막차 정보가 없습니다.</string>
-    <string name="course_search_result_empty">앗! 시간이 늦어서 더이상 막차가 없어요.</string>
+    <string name="course_search_result_empty">검색 가능한 막차가 없어요</string>
+    <string name="course_search_result_midnight">24:00 ~ 05:00\n막차 검색을 할 수 없어요</string>
 
     <!-- Bus Course -->
     <string name="bus_course_info">운행정보</string>

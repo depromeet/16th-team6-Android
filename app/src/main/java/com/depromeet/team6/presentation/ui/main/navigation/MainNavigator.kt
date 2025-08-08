@@ -85,8 +85,11 @@ class MainNavigator(
         navHostController.navigationMypage()
     }
 
-    fun navigateToSearchLocation(destinationLocation: Address) {
-        navHostController.navigationSearchLocation(destinationLocation = destinationLocation)
+    fun navigateToSearchLocation(destinationLocation: Address, departureLocation: Address? = null) {
+        navHostController.navigationSearchLocation(
+            destinationLocation = destinationLocation,
+            departureLocation = departureLocation
+        )
     }
 
     fun navigateToBusCourse(busArrivalParameter: BusArrivalParameter) {

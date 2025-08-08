@@ -223,28 +223,28 @@ fun LockScreen(
                 )
             }
 
-            Button(
-                onClick = {
-                    onTimerFinish()
-                    onLateClick()
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp)
-                    .padding(bottom = 32.dp),
-                contentPadding = PaddingValues(0.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = colors.greenLockButton
-                ),
-                shape = RoundedCornerShape(10.dp)
-            ) {
-                Text(
-                    text = stringResource(R.string.lock_screen_late_btn),
-                    color = colors.main,
-                    style = typography.bodyMedium17,
-                    modifier = Modifier.padding(vertical = 14.dp)
-                )
-            }
+//            Button(
+//                onClick = {
+//                    onTimerFinish()
+//                    onLateClick()
+//                },
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .padding(horizontal = 20.dp)
+//                    .padding(bottom = 32.dp),
+//                contentPadding = PaddingValues(0.dp),
+//                colors = ButtonDefaults.buttonColors(
+//                    containerColor = colors.greenLockButton
+//                ),
+//                shape = RoundedCornerShape(10.dp)
+//            ) {
+//                Text(
+//                    text = stringResource(R.string.lock_screen_late_btn),
+//                    color = colors.main,
+//                    style = typography.bodyMedium17,
+//                    modifier = Modifier.padding(vertical = 14.dp)
+//                )
+//            }
         }
     }
 }
