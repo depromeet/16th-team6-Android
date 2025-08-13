@@ -27,7 +27,6 @@ import com.depromeet.team6.ui.theme.defaultTeam6Typography
 fun SearchResultEmpty(
     modifier: Modifier = Modifier,
     dataLoadState: CourseSearchContract.CourseSearchDataState = CourseSearchContract.CourseSearchDataState.NoResult,
-    isApiError: Boolean = false,
     isMidNight: Boolean = false
 ) {
     var pageMessage = when (dataLoadState) {
