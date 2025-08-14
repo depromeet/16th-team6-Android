@@ -41,9 +41,9 @@ object NetworkModule {
         @Auth authInterceptor: Interceptor
     ): OkHttpClient =
         OkHttpClient.Builder().apply {
-            connectTimeout(10, TimeUnit.SECONDS)
-            writeTimeout(10, TimeUnit.SECONDS)
-            readTimeout(10, TimeUnit.SECONDS)
+            connectTimeout(15, TimeUnit.SECONDS)
+            writeTimeout(15, TimeUnit.SECONDS)
+            readTimeout(15, TimeUnit.SECONDS)
             addInterceptor(authInterceptor)
             if (DEBUG) addInterceptor(loggingInterceptor)
         }.build()
