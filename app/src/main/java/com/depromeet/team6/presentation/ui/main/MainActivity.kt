@@ -24,8 +24,10 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.depromeet.team6.R
 import com.depromeet.team6.presentation.ui.common.dialog.GlobalDialogHandler
+import com.depromeet.team6.presentation.ui.coursesearch.component.SearchResultEmpty
 import com.depromeet.team6.presentation.ui.lock.LockScreenNavigator
 import com.depromeet.team6.presentation.ui.main.navigation.MainNavHost
 import com.depromeet.team6.presentation.ui.main.navigation.MainNavigator
@@ -33,6 +35,7 @@ import com.depromeet.team6.presentation.ui.main.navigation.rememberMainNavigator
 import com.depromeet.team6.presentation.ui.splash.SplashScreen
 import com.depromeet.team6.presentation.util.dialog.DialogController
 import com.depromeet.team6.presentation.util.dialog.LocalDialogController
+import com.depromeet.team6.presentation.util.view.NetworkState
 import com.depromeet.team6.ui.theme.Team6Theme
 import com.google.firebase.Firebase
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -87,6 +90,7 @@ class MainActivity : ComponentActivity() {
             val navigator: MainNavigator = rememberMainNavigator(firebaseAnalytics = firebaseAnalytics)
             val showSplash by viewModel.showSplash.observeAsState(true)
             val dialogController = remember { DialogController() }
+            val networkAvailability = viewModel.networkAvailability.collectAsStateWithLifecycle()
 
             var shouldNavigateToCourseSearch by remember { mutableStateOf(navigateToCourseSearch) }
 
@@ -98,42 +102,47 @@ class MainActivity : ComponentActivity() {
                 }
             }
 
-            Team6Theme {
-                CompositionLocalProvider(
-                    LocalDialogController provides dialogController
-                ) {
-                    if (showSplash) {
-                        SplashScreen()
-                    } else {
-                        Box {
-                            Scaffold(
-                                modifier = Modifier.fillMaxSize()
-                            ) { innerPadding ->
-                                MainNavHost(
-                                    navigator = navigator,
-                                    padding = innerPadding
-                                )
+            if (networkAvailability.value == NetworkState.Unavailable) {
+                SearchResultEmpty()
+            } else {
+                Team6Theme {
+                    CompositionLocalProvider(
+                        LocalDialogController provides dialogController
+                    ) {
+                        if (showSplash) {
+                            SplashScreen()
+                        } else {
+                            Box {
+                                Scaffold(
+                                    modifier = Modifier.fillMaxSize()
+                                ) { innerPadding ->
+                                    MainNavHost(
+                                        navigator = navigator,
+                                        padding = innerPadding
+                                    )
 
-                                if (shouldNavigateToCourseSearch) {
-                                    LaunchedEffect(Unit) {
-                                        navigator.navigateToCourseSearch(
-                                            departure = departurePoint,
-                                            destination = destinationPoint,
-                                            fromLockScreen = fromLockScreen
-                                        )
-                                        shouldNavigateToCourseSearch = false
+                                    if (shouldNavigateToCourseSearch) {
+                                        LaunchedEffect(Unit) {
+                                            navigator.navigateToCourseSearch(
+                                                departure = departurePoint,
+                                                destination = destinationPoint,
+                                                fromLockScreen = fromLockScreen
+                                            )
+                                            shouldNavigateToCourseSearch = false
+                                        }
                                     }
                                 }
+                                GlobalDialogHandler(
+                                    controller = dialogController,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                )
                             }
-                            GlobalDialogHandler(
-                                controller = dialogController,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                            )
                         }
                     }
                 }
             }
+
         }
     }
 }
