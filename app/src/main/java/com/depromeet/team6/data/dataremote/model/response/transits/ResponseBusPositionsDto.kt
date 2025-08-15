@@ -49,7 +49,7 @@ data class ResponseBusOperationInfoDto(
 data class BusServiceHour(
     @SerialName("dailyType") val dailyType: String,
     @SerialName("busDirection") val busDirection: String? = "",
-    @SerialName("startTime") val startTime: String,
-    @SerialName("endTime") val endTime: String,
+    @SerialName("startTime") val startTime: String?,
+    @SerialName("endTime") val endTime: String?,
     @SerialName("term") val term: Int
 )

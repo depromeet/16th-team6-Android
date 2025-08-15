@@ -190,7 +190,8 @@ fun BusCourseScreen(
                 Icon(
                     imageVector = ImageVector.vectorResource(R.drawable.ic_bus_course_info_12),
                     contentDescription = null,
-                    tint = Color.Unspecified
+                    tint = Color.Unspecified,
+                    modifier = Modifier.noRippleClickable { changeBusOperationInfoVisible() }
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 Text(
