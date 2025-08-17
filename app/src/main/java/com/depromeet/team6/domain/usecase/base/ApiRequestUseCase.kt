@@ -2,34 +2,41 @@ package com.depromeet.team6.domain.usecase.base
 
 import com.depromeet.team6.data.dataremote.model.response.base.ApiException
 import com.depromeet.team6.presentation.model.exception.ErrorControlFailureException
+import kotlinx.coroutines.CancellationException
 
 abstract class ApiRequestUseCase<P, R> {
 
-    // 템플릿 메서드 ― 흐름 고정 (final 처럼 사용)
+    // 템플릿 메서드 패턴
     suspend operator fun invoke(params: P): Result<R> {
-        val apiResult = apiCall(params)
+        return try {
+            val apiResult = apiCall(params)
 
-        return apiResult.fold(
-            onSuccess = {
-                Result.success(it)
-            },
-            onFailure = { apiException ->
-                return when (apiException) {
-                    is ApiException.NetworkFailureException -> {
-                        Result.failure(ErrorControlFailureException.ShowToastException("알 수 없는 서버에러입니다."))
-                    }
+            apiResult.fold(
+                onSuccess = {
+                    Result.success(it)
+                },
+                onFailure = { apiException ->
+                    return when (apiException) {
+                        is ApiException.NetworkFailureException -> {
+                            Result.failure(ErrorControlFailureException.ShowToastException("알 수 없는 서버에러입니다."))
+                        }
 
-                    is ApiException.ApiRequestFailureException -> {
-                        val errorControlFailureException = apiExceptionMapper(apiException.errorCode)
-                        Result.failure(errorControlFailureException)
-                    }
+                        is ApiException.ApiRequestFailureException -> {
+                            val errorControlFailureException = apiExceptionMapper(apiException.errorCode)
+                            Result.failure(errorControlFailureException)
+                        }
 
-                    else -> {
-                        Result.failure(ErrorControlFailureException.ShowToastException("알 수 없는 서버에러입니다."))
+                        else -> {
+                            Result.failure(ErrorControlFailureException.ShowToastException("알 수 없는 서버에러입니다."))
+                        }
                     }
                 }
-            }
-        )
+            )
+        } catch (e : CancellationException) {
+            throw e
+        } catch (e: ApiException.NetworkFailureException) {
+            Result.failure(e)
+        }
     }
 
     /** API 호출로직 */

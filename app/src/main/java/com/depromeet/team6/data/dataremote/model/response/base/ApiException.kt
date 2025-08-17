@@ -16,16 +16,29 @@ sealed class ApiException(
 ) : IOException() {
 
     companion object {
-        const val NETWORK_ERROR_CODE = "NET_000"
+        const val NETWORK_NOT_AVAILABLE = "NET_000"
+        const val CANNOT_FIND_SERVER_HOST = "NET_001"
+        const val REQUEST_TIMEOUT = "NET_002"
+        const val UNKNOWN_FAILURE = "NET_003"
     }
 
     /** Network Failure
      * - 기기가 오프라인, 타임아웃, DNS 실패, SSL 오류,
      *   혹은 기타 이유로 정상적인 HTTP 요청을 하지 못한 상황
      */
-    class NetworkFailureException(
+    sealed class NetworkFailureException(
+        errorCode: String,
         errorMessage: String = "네트워크 연결을 확인해 주세요."
-    ) : ApiException(NETWORK_ERROR_CODE, errorMessage)
+    ) : ApiException(NETWORK_NOT_AVAILABLE, errorMessage) {
+        // Timeout, DNS 실패, 연결 불가 등 구체적인 네트워크 오류를 객체(object)나 클래스로 정의
+        data object Timeout : NetworkFailureException(REQUEST_TIMEOUT, "요청 시간이 초과되었습니다.")
+
+        data object NoConnection : NetworkFailureException(NETWORK_NOT_AVAILABLE, "네트워크 연결을 확인해주세요.")
+
+        data object CannotFindHost : NetworkFailureException(CANNOT_FIND_SERVER_HOST, "서버 주소를 찾을 수 없습니다.")
+
+        data class UnknownFailure(val detailMessage : String) : NetworkFailureException(UNKNOWN_FAILURE, detailMessage)
+    }
 
     /** Business Logic Failure
      * - HTTP 통신은 성공했지만, 서버가

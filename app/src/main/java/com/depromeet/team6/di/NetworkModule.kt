@@ -3,6 +3,7 @@ package com.depromeet.team6.di
 import com.depromeet.team6.BuildConfig
 import com.depromeet.team6.BuildConfig.DEBUG
 import com.depromeet.team6.data.dataremote.interceptor.AuthInterceptor
+import com.depromeet.team6.data.dataremote.interceptor.TimeoutInterceptor
 import com.depromeet.team6.di.qualifier.Auth
 import com.depromeet.team6.di.qualifier.Team6
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
@@ -38,13 +39,15 @@ object NetworkModule {
     @Singleton
     fun providesOkHttpClient(
         loggingInterceptor: HttpLoggingInterceptor,
-        @Auth authInterceptor: Interceptor
+        @Auth authInterceptor: Interceptor,
+        timeoutInterceptor: TimeoutInterceptor
     ): OkHttpClient =
         OkHttpClient.Builder().apply {
-            connectTimeout(15, TimeUnit.SECONDS)
-            writeTimeout(15, TimeUnit.SECONDS)
-            readTimeout(15, TimeUnit.SECONDS)
+            connectTimeout(1, TimeUnit.MILLISECONDS)
+            writeTimeout(1, TimeUnit.MILLISECONDS)
+            readTimeout(1, TimeUnit.MILLISECONDS)
             addInterceptor(authInterceptor)
+            addInterceptor(timeoutInterceptor)
             if (DEBUG) addInterceptor(loggingInterceptor)
         }.build()
 
@@ -59,6 +62,10 @@ object NetworkModule {
     @Singleton
     @Auth
     fun provideAuthInterceptor(interceptor: AuthInterceptor): Interceptor = interceptor
+
+//    @Provides
+//    @Singleton
+//    fun provideRetryInterceptor(interceptor : TimeoutInterceptor): TimeoutInterceptor = interceptor
 
     @ExperimentalSerializationApi
     @Provides

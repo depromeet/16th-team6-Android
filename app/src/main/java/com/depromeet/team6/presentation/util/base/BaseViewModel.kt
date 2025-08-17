@@ -2,6 +2,7 @@ package com.depromeet.team6.presentation.util.base
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.depromeet.team6.data.dataremote.model.response.base.ApiException
 import com.depromeet.team6.presentation.model.exception.ErrorControlFailureException
 import com.depromeet.team6.presentation.model.route.Route
 import com.google.firebase.Firebase
@@ -87,6 +88,11 @@ abstract class BaseViewModel<State : UiState, SideEffect : UiSideEffect, Event :
             }
         } else {
             logException(exception)
+            if (exception is ApiException.NetworkFailureException) {
+                viewModelScope.launch {
+                    _sideEffect.emit(ApiErrorSideEffect.ShowToastSideEffect(exception.errorMessage))
+                }
+            }
         }
     }
 
