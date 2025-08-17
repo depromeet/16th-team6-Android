@@ -37,7 +37,7 @@ sealed class ApiException(
 
         data object CannotFindHost : NetworkFailureException(CANNOT_FIND_SERVER_HOST, "서버 주소를 찾을 수 없습니다.")
 
-        data class UnknownFailure(val detailMessage : String) : NetworkFailureException(UNKNOWN_FAILURE, detailMessage)
+        data class UnknownFailure(val detailMessage: String) : NetworkFailureException(UNKNOWN_FAILURE, detailMessage)
     }
 
     /** Business Logic Failure

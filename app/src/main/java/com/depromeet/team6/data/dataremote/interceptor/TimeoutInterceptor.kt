@@ -16,7 +16,7 @@ import javax.inject.Inject
 import javax.net.ssl.SSLException
 
 class TimeoutInterceptor @Inject constructor(
-    @ApplicationContext context : Context
+    @ApplicationContext context: Context
 ) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val originalRequest = chain.request()
@@ -41,7 +41,7 @@ class TimeoutInterceptor @Inject constructor(
         }
         try {
             return chain.proceed(originalRequest)
-        } catch (e : IOException) {
+        } catch (e: IOException) {
             Timber.e(e)
             throw requestExceptionMapper(e)
         }
@@ -49,17 +49,17 @@ class TimeoutInterceptor @Inject constructor(
 
     // 멱등하지 않은 Http 메서드에 대해서만 재요청 처리하기 위함
     // 멱등하지 않은 Http 매서드의 경우 여러번 재요청할 시 서버에서 의도된 동작을 하지 않을 수 있습니다.
-    private fun isIdempotentMethod(method: String) : Boolean {
+    private fun isIdempotentMethod(method: String): Boolean {
         return when (method) {
             "POST", "CONNECT", "PATCH" -> false
             else -> true
         }
     }
 
-    private fun requestExceptionMapper(e : IOException) : ApiException.NetworkFailureException {
+    private fun requestExceptionMapper(e: IOException): ApiException.NetworkFailureException {
         return when (e) {
             is SocketTimeoutException -> ApiException.NetworkFailureException.Timeout
-            is ConnectException, is SocketException-> ApiException.NetworkFailureException.CannotFindHost
+            is ConnectException, is SocketException -> ApiException.NetworkFailureException.CannotFindHost
             is SSLException -> ApiException.NetworkFailureException.CannotFindHost
             is UnknownHostException -> ApiException.NetworkFailureException.NoConnection
             is InterruptedIOException -> ApiException.NetworkFailureException.Timeout

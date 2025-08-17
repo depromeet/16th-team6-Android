@@ -20,7 +20,7 @@ data class ApiResponse<T>(
 )
 
 @Deprecated("이 메서드 대신 Response.parse() 확장함수 사용하도록 전부 리팩토링 해주세요")
-//fun <T> ApiResponse<T>.toResult(): Result<T> =
+// fun <T> ApiResponse<T>.toResult(): Result<T> =
 //    when {
 //        this.result != null -> Result.success(this.result)
 //        this.message != null -> Result.failure(ApiException.NetworkFailureException(API_ERROR_NETWORK_FAILURE))
@@ -59,8 +59,10 @@ suspend fun <T : Any, Z : ApiResponse<T>> Response<Z>.parse(): Result<T> {
                 return@withContext Result.failure(apiException)
             }
         }
-            ?: return Result.failure(ApiException.NetworkFailureException.UnknownFailure(
-                detailMessage = "ErrorResponse have No Error Body"
-            ))
+            ?: return Result.failure(
+                ApiException.NetworkFailureException.UnknownFailure(
+                    detailMessage = "ErrorResponse have No Error Body"
+                )
+            )
     }
 }

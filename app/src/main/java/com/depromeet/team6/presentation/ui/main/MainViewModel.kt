@@ -40,7 +40,7 @@ class MainViewModel @Inject constructor(
         context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
     // UI에 노출할 네트워크 상태 StateFlow
-    val networkAvailability : StateFlow<NetworkState> = observeNetworkStatus()
+    val networkAvailability: StateFlow<NetworkState> = observeNetworkStatus()
         .stateIn(
             // viewModelScope를 사용하여 ViewModel 생명주기 동안 Flow가 활성화되도록 합니다.
             scope = viewModelScope,

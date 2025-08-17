@@ -43,9 +43,9 @@ object NetworkModule {
         timeoutInterceptor: TimeoutInterceptor
     ): OkHttpClient =
         OkHttpClient.Builder().apply {
-            connectTimeout(1, TimeUnit.MILLISECONDS)
-            writeTimeout(1, TimeUnit.MILLISECONDS)
-            readTimeout(1, TimeUnit.MILLISECONDS)
+            connectTimeout(10, TimeUnit.SECONDS)
+            writeTimeout(10, TimeUnit.SECONDS)
+            readTimeout(15, TimeUnit.SECONDS)
             addInterceptor(authInterceptor)
             addInterceptor(timeoutInterceptor)
             if (DEBUG) addInterceptor(loggingInterceptor)

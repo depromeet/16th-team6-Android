@@ -32,7 +32,7 @@ abstract class ApiRequestUseCase<P, R> {
                     }
                 }
             )
-        } catch (e : CancellationException) {
+        } catch (e: CancellationException) {
             throw e
         } catch (e: ApiException.NetworkFailureException) {
             Result.failure(e)
