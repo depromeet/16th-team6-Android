@@ -136,7 +136,7 @@ class ItineraryViewModel @Inject constructor(
                     initAlarmUseCase(departurePoint, destinationPoint, currentState.itineraryInfo!!, lastRouteId)
                     AlarmScheduler.scheduleLockScreenAlarm(
                         context = context,
-                        timeStamp = alarmTimeStamp
+                        alarmTimeStamp = alarmTimeStamp
                     )
                     postAdditionalAlarmSchedule(alarmTimeStamp)
                 }
