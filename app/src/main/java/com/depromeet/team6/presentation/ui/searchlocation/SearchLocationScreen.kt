@@ -96,7 +96,7 @@ fun SearchLocationRoute(
                 )
             )
         } else {
-            dialogController.showSystemSettingsDialog(
+            dialogController.showAtchaCommonAlert(
                 context = context,
                 message = context.getString(R.string.all_dialog_location_permission),
                 onConfirm = {

@@ -99,7 +99,7 @@ fun MypageRoute(
                         navigateToLogin()
                     }
                     is MypageContract.MypageSideEffect.SettingDialog -> {
-                        dialogController.showSystemSettingsDialog(
+                        dialogController.showAtchaCommonAlert(
                             context = context,
                             message = context.getString(R.string.all_dialog_location_permission)
                         )
@@ -173,7 +173,7 @@ fun MypageRoute(
                                 onAlarmSettingClick = {
                                     mypageViewModel.setEvent(MypageContract.MypageEvent.AlarmSettingClicked)
                                     if (!PermissionUtil.hasNotificationPermission(context)) {
-                                        dialogController.showSystemSettingsDialog(
+                                        dialogController.showAtchaCommonAlert(
                                             context = context,
                                             message = context.getString(R.string.all_dialog_notification_permission),
                                             onConfirm = {

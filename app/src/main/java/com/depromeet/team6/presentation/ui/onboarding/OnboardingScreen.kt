@@ -187,14 +187,14 @@ fun OnboardingRoute(
                     }
 
                     is OnboardingContract.OnboardingSideEffect.LocationSettingDialog -> {
-                        dialogController.showSystemSettingsDialog(
+                        dialogController.showAtchaCommonAlert(
                             context = context,
                             message = context.getString(R.string.all_dialog_location_permission)
                         )
                     }
 
                     is OnboardingContract.OnboardingSideEffect.LocationPermissionDeniedDialog -> {
-                        dialogController.showSystemSettingsDialog(
+                        dialogController.showAtchaCommonAlert(
                             context = context,
                             onConfirm = {
                                 AmplitudeUtils.trackEventWithProperty(
@@ -215,7 +215,7 @@ fun OnboardingRoute(
                     }
 
                     is OnboardingContract.OnboardingSideEffect.NotificationPermissionDeniedDialog -> {
-                        dialogController.showSystemSettingsDialog(
+                        dialogController.showAtchaCommonAlert(
                             context = context,
                             onConfirm = {
                                 AmplitudeUtils.trackEventWithProperty(
