@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
@@ -26,6 +28,8 @@ import androidx.core.view.WindowInsetsControllerCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.depromeet.team6.R
 import com.depromeet.team6.presentation.ui.common.dialog.GlobalDialogHandler
+import com.depromeet.team6.presentation.ui.common.snackbar.GlobalSnackbarHandler
+import com.depromeet.team6.presentation.ui.common.snackbar.LocalSnackbarHostState
 import com.depromeet.team6.presentation.ui.lock.LockScreenNavigator
 import com.depromeet.team6.presentation.ui.main.navigation.MainNavHost
 import com.depromeet.team6.presentation.ui.main.navigation.MainNavigator
@@ -33,11 +37,17 @@ import com.depromeet.team6.presentation.ui.main.navigation.rememberMainNavigator
 import com.depromeet.team6.presentation.ui.splash.SplashScreen
 import com.depromeet.team6.presentation.util.dialog.DialogController
 import com.depromeet.team6.presentation.util.dialog.LocalDialogController
+import com.depromeet.team6.presentation.util.snackbar.LocalSnackbarController
+import com.depromeet.team6.presentation.util.snackbar.SnackbarController
+import com.depromeet.team6.presentation.util.snackbar.rememberSnackbarController
 import com.depromeet.team6.ui.theme.Team6Theme
 import com.google.firebase.Firebase
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.analytics
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -87,6 +97,9 @@ class MainActivity : ComponentActivity() {
             val navigator: MainNavigator = rememberMainNavigator(firebaseAnalytics = firebaseAnalytics)
             val showSplash by viewModel.showSplash.observeAsState(true)
             val dialogController = remember { DialogController() }
+            val snackbarHostState = remember { SnackbarHostState() }
+            val (snackbarController, snackbarData) = rememberSnackbarController()
+
 
             var shouldNavigateToCourseSearch by remember { mutableStateOf(navigateToCourseSearch) }
 
@@ -100,13 +113,18 @@ class MainActivity : ComponentActivity() {
 
             Team6Theme {
                 CompositionLocalProvider(
-                    LocalDialogController provides dialogController
+                    LocalDialogController provides dialogController,
+                    LocalSnackbarHostState provides snackbarHostState,
+                    LocalSnackbarController provides snackbarController
                 ) {
                     if (showSplash) {
                         SplashScreen()
                     } else {
                         Box {
                             Scaffold(
+                                snackbarHost = {
+                                    SnackbarHost(hostState = snackbarHostState)
+                                },
                                 modifier = Modifier.fillMaxSize()
                             ) { innerPadding ->
                                 MainNavHost(
@@ -129,6 +147,11 @@ class MainActivity : ComponentActivity() {
                                 controller = dialogController,
                                 modifier = Modifier
                                     .fillMaxWidth()
+                            )
+
+                            GlobalSnackbarHandler(
+                                snackbarData = snackbarData.value,
+                                onDismiss = { snackbarData.value = null },
                             )
                         }
                     }

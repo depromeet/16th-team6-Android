@@ -22,7 +22,6 @@ import com.depromeet.team6.presentation.mapper.toPresentationList
 import com.depromeet.team6.presentation.util.base.BaseViewModel
 import com.depromeet.team6.presentation.util.context.getUserLocation
 import com.depromeet.team6.presentation.util.permission.PermissionUtil
-import com.depromeet.team6.presentation.util.toast.atChaTextButtonToastMessage
 import com.depromeet.team6.presentation.util.toast.atChaToastMessage
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.google.android.gms.maps.model.LatLng
@@ -214,7 +213,7 @@ class MypageViewModel @Inject constructor(
         }
     }
 
-    fun modifyUserAddress(context: Context) {
+    fun modifyUserAddress(callback: () -> Unit = {}) {
         viewModelScope.launch {
             val currentAddress = currentState.myAddress
 
@@ -249,15 +248,7 @@ class MypageViewModel @Inject constructor(
 
                     setState { copy(mapViewVisible = false) }
 
-                    atChaTextButtonToastMessage(
-                        context = context,
-                        messageResId = R.string.mypage_change_alarm_time_toast_text,
-                        buttonTextResId = ,
-                        length = Toast.LENGTH_SHORT,
-                        onClick =
-                    )
-
-//                    atChaToastMessage(context, R.string.mypage_change_home_toast_text, Toast.LENGTH_SHORT)
+                    callback()
                 }
                 .onFailure { exception ->
                     handleApiException(exception)
