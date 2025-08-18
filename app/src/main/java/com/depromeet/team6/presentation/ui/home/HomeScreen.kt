@@ -213,7 +213,7 @@ fun HomeRoute(
             val location = context.getUserLocation()
             userLocation = location
         } else {
-            dialogController.showAtchaCommonAlert(
+            dialogController.showAtchaSystemSettingAlert(
                 context = context,
                 message = context.getString(R.string.all_dialog_location_permission),
                 onConfirm = {

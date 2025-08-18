@@ -12,7 +12,7 @@ class DialogController {
     private val _dialogState = mutableStateOf<DialogState?>(null)
     val dialogState: State<DialogState?> = _dialogState
 
-    fun showAtchaCommonAlert(
+    fun showAtchaSystemSettingAlert(
         context: Context,
         message: String,
         onConfirm: () -> Unit = {},
@@ -24,6 +24,18 @@ class DialogController {
                 onConfirm()
                 context.openAppSettings()
             },
+            onDismiss = onDismiss
+        )
+    }
+
+    fun showAtchaCommonAlert(
+        message: String,
+        onConfirm: () -> Unit = {},
+        onDismiss: () -> Unit = {}
+    ) {
+        _dialogState.value = DialogState.SystemSettings(
+            message = message,
+            onConfirm = onConfirm,
             onDismiss = onDismiss
         )
     }

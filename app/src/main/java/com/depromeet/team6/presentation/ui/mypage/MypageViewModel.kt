@@ -1,5 +1,6 @@
 package com.depromeet.team6.presentation.ui.mypage
 
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -21,6 +22,7 @@ import com.depromeet.team6.presentation.mapper.toPresentationList
 import com.depromeet.team6.presentation.util.base.BaseViewModel
 import com.depromeet.team6.presentation.util.context.getUserLocation
 import com.depromeet.team6.presentation.util.permission.PermissionUtil
+import com.depromeet.team6.presentation.util.toast.atChaTextButtonToastMessage
 import com.depromeet.team6.presentation.util.toast.atChaToastMessage
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.google.android.gms.maps.model.LatLng
@@ -247,7 +249,15 @@ class MypageViewModel @Inject constructor(
 
                     setState { copy(mapViewVisible = false) }
 
-                    atChaToastMessage(context, R.string.mypage_change_home_toast_text, Toast.LENGTH_SHORT)
+                    atChaTextButtonToastMessage(
+                        context = context,
+                        messageResId = R.string.mypage_change_alarm_time_toast_text,
+                        buttonTextResId = ,
+                        length = Toast.LENGTH_SHORT,
+                        onClick =
+                    )
+
+//                    atChaToastMessage(context, R.string.mypage_change_home_toast_text, Toast.LENGTH_SHORT)
                 }
                 .onFailure { exception ->
                     handleApiException(exception)
@@ -285,7 +295,7 @@ class MypageViewModel @Inject constructor(
                 setPackage("com.android.vending")
             }
             context.startActivity(intent)
-        } catch (e: android.content.ActivityNotFoundException) {
+        } catch (e: ActivityNotFoundException) {
             val intent = Intent(Intent.ACTION_VIEW).apply {
                 data = Uri.parse("https://play.google.com/store/apps/details?id=${context.packageName}")
             }
