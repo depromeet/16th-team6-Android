@@ -1,7 +1,6 @@
 package com.depromeet.team6.data.dataremote.model.response.base
 
 import androidx.annotation.Keep
-import com.depromeet.team6.domain.ToastMessage.API_ERROR_NETWORK_FAILURE
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -21,12 +20,12 @@ data class ApiResponse<T>(
 )
 
 @Deprecated("이 메서드 대신 Response.parse() 확장함수 사용하도록 전부 리팩토링 해주세요")
-fun <T> ApiResponse<T>.toResult(): Result<T> =
-    when {
-        this.result != null -> Result.success(this.result)
-        this.message != null -> Result.failure(ApiException.NetworkFailureException(API_ERROR_NETWORK_FAILURE))
-        else -> Result.failure(Exception("Unknown error occurred"))
-    }
+// fun <T> ApiResponse<T>.toResult(): Result<T> =
+//    when {
+//        this.result != null -> Result.success(this.result)
+//        this.message != null -> Result.failure(ApiException.NetworkFailureException(API_ERROR_NETWORK_FAILURE))
+//        else -> Result.failure(Exception("Unknown error occurred"))
+//    }
 
 @Suppress("UNCHECKED_CAST")
 suspend fun <T : Any, Z : ApiResponse<T>> Response<Z>.parse(): Result<T> {
@@ -48,8 +47,8 @@ suspend fun <T : Any, Z : ApiResponse<T>> Response<Z>.parse(): Result<T> {
                     Gson().fromJson(errorBodyString, ApiErrorResponse::class.java)
                 } catch (e: Exception) {
                     return@withContext Result.failure(
-                        ApiException.NetworkFailureException(
-                            errorMessage = e.message ?: "ErrorResponse Parsing Error"
+                        ApiException.NetworkFailureException.UnknownFailure(
+                            detailMessage = e.message ?: "ErrorResponse Parsing Error"
                         )
                     )
                 }
@@ -60,6 +59,10 @@ suspend fun <T : Any, Z : ApiResponse<T>> Response<Z>.parse(): Result<T> {
                 return@withContext Result.failure(apiException)
             }
         }
-            ?: return Result.failure(ApiException.NetworkFailureException())
+            ?: return Result.failure(
+                ApiException.NetworkFailureException.UnknownFailure(
+                    detailMessage = "ErrorResponse have No Error Body"
+                )
+            )
     }
 }

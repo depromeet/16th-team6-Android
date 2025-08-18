@@ -80,7 +80,6 @@ class CourseSearchViewModel @Inject constructor(
                 )
             }
             is CourseSearchContract.CourseEvent.RegisterAlarm -> {
-                setSideEffect(CourseSearchContract.CourseSideEffect.ShowNotificationToast)
                 AmplitudeUtils.trackEventWithProperties(
                     eventName = COURSE_SEARCH_EVENT_ALARM_REGISTERED_SCREEN,
                     properties = mapOf(

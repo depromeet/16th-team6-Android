@@ -29,7 +29,6 @@ class ItineraryContract {
 
     sealed interface ItinerarySideEffect : UiSideEffect {
         data object NavigateHomeWithToast : ItinerarySideEffect
-        data object ShowNotificationToastSetAlarm : ItinerarySideEffect
         data object ShowNotificationToastSetAlarmFailed : ItinerarySideEffect
     }
 
