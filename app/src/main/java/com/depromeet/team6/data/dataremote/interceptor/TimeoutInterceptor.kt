@@ -27,7 +27,6 @@ class TimeoutInterceptor @Inject constructor(
             try {
                 return chain.proceed(originalRequest)
             } catch (e: IOException) {
-                Timber.e(e)
                 // 멱등하지 않은 요청에 대해서는 재시도 하지 않고 throw
                 if (!isIdempotentMethod(originalRequest.method)) {
                     throw requestExceptionMapper(e)
