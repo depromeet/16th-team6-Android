@@ -18,6 +18,8 @@ import javax.net.ssl.SSLException
 class TimeoutInterceptor @Inject constructor(
     @ApplicationContext context: Context
 ) : Interceptor {
+
+    @Throws(ApiException.NetworkFailureException::class)
     override fun intercept(chain: Interceptor.Chain): Response {
         val originalRequest = chain.request()
         var retryCount = 0
