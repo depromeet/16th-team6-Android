@@ -2,18 +2,17 @@ package com.depromeet.team6.presentation.ui.searchlocation
 
 import android.content.Context
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.HorizontalDivider
@@ -33,6 +32,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
+import com.depromeet.team6.R
 import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.Location
 import com.depromeet.team6.presentation.ui.common.view.AtChaLoadingView
@@ -48,6 +48,7 @@ import com.depromeet.team6.presentation.util.DefaultLatLng.DEFAULT_LAT
 import com.depromeet.team6.presentation.util.DefaultLatLng.DEFAULT_LNG
 import com.depromeet.team6.presentation.util.base.ApiErrorSideEffect
 import com.depromeet.team6.presentation.util.context.getUserLocation
+import com.depromeet.team6.presentation.util.dialog.LocalDialogController
 import com.depromeet.team6.presentation.util.permission.PermissionUtil
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
@@ -61,6 +62,7 @@ fun SearchLocationRoute(
     viewModel: SearchLocationViewModel = hiltViewModel(),
     homeViewModel: HomeViewModel = hiltViewModel(),
     destinationLocation: Address,
+    departureLocation: Address?,
     navigateToBack: () -> Unit = {},
     navigateToLogin: () -> Unit = {},
     navigateToCourseSearch: (String, String) -> Unit
@@ -71,35 +73,60 @@ fun SearchLocationRoute(
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
 
+    var permissionGranted by remember { mutableStateOf(PermissionUtil.hasLocationPermissions(context)) }
+    val dialogController = LocalDialogController.current
     var userLocation by remember { mutableStateOf(LatLng(DEFAULT_LAT, DEFAULT_LNG)) }
+    val locationPermissionsLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestMultiplePermissions(),
+        onResult = { permissions ->
+            permissionGranted = permissions.values.all { it }
+            if (permissionGranted) {
+                Timber.d("Location_Permission Has Granted")
+            }
+        }
+    )
 
-    LaunchedEffect(Unit) {
-        Timber.tag("Location Permission").d("${PermissionUtil.hasLocationPermissions(context)}")
-        if (PermissionUtil.hasLocationPermissions(context)) {
+    LaunchedEffect(permissionGranted) {
+        if (PermissionUtil.hasLocationPermissions(context)) { // 위치 권한이 있으면
             val location = context.getUserLocation()
-            userLocation = LatLng(DEFAULT_LAT, DEFAULT_LNG)
-
-//            homeViewModel.getCenterLocation(userLocation)
-//            viewModel.setState {
-//                copy(searchQuery = homeUiState.departurePoint.name)
-//            }
-
+            userLocation = location
             viewModel.setEvent(
                 SearchLocationContract.SearchLocationEvent.UpdateUserLocationSate(
                     LoadState.Success
                 )
             )
+        } else {
+            dialogController.showSystemSettingsDialog(
+                context = context,
+                message = context.getString(R.string.all_dialog_location_permission),
+                onConfirm = {
+                    PermissionUtil.requestLocationPermissions(context, locationPermissionsLauncher)
+                }
+            )
         }
     }
+
+//    LaunchedEffect(Unit) {
+//        Timber.tag("Location Permission").d("${PermissionUtil.hasLocationPermissions(context)}")
+//        if (PermissionUtil.hasLocationPermissions(context)) {
+//            val location = context.getUserLocation()
+//            userLocation = LatLng(DEFAULT_LAT, DEFAULT_LNG)
+//
+// //            homeViewModel.getCenterLocation(userLocation)
+// //            viewModel.setState {
+// //                copy(searchQuery = homeUiState.departurePoint.name)
+// //            }
+//
+//            viewModel.setEvent(
+//                SearchLocationContract.SearchLocationEvent.UpdateUserLocationSate(
+//                    LoadState.Success
+//                )
+//            )
+//        }
+//    }
 
     LaunchedEffect(uiState.userLocation) {
         viewModel.updateRecentSearches(location = userLocation)
-    }
-
-    LaunchedEffect(uiState.searchResults) {
-        if (uiState.searchQuery.isNotEmpty() && uiState.searchResults.isEmpty()) {
-            Toast.makeText(context, "검색 결과가 없습니다.", Toast.LENGTH_SHORT).show()
-        }
     }
 
     LaunchedEffect(viewModel.sideEffect, lifecycleOwner) {
@@ -107,6 +134,7 @@ fun SearchLocationRoute(
             .collect { sideEffect ->
                 when (sideEffect) {
                     is SearchLocationContract.SearchLocationSideEffect.NavigateBack -> navigateToBack()
+                    is SearchLocationContract.SearchLocationSideEffect.ShowToastSideEffect -> Toast.makeText(context, sideEffect.message, Toast.LENGTH_SHORT).show()
                     is ApiErrorSideEffect.ShowToastSideEffect -> {
                         Toast.makeText(context, sideEffect.toastMessage, Toast.LENGTH_SHORT).show()
                     }
@@ -117,103 +145,101 @@ fun SearchLocationRoute(
 
     when (uiState.loadState) {
         LoadState.Idle, LoadState.Loading, LoadState.Success -> {
-            Box {
-                SearchLocationScreen(
-                    context = context,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(defaultTeam6Colors.gray950)
-                        .padding(
-                            paddingValues = PaddingValues(
-                                start = padding.calculateStartPadding(LocalLayoutDirection.current),
-                                end = padding.calculateEndPadding(LocalLayoutDirection.current),
-                                top = 0.dp,
-                                bottom = padding.calculateBottomPadding()
-                            )
-                        ),
-                    marginTop = padding.calculateTopPadding(),
-                    viewModel = viewModel,
-                    backButtonClick = navigateToBack,
-                    location = userLocation,
-                    uiState = uiState,
-                    searchText = uiState.searchQuery,
-                    onSearchTextChange = { newText ->
-                        viewModel.setState {
-                            copy(searchQuery = newText)
-                        }
-                        viewModel.setEvent(
-                            SearchLocationContract.SearchLocationEvent.UpdateSearchQuery(
-                                text = newText,
-                                lat = userLocation.latitude,
-                                lon = userLocation.longitude
+            SearchLocationScreen(
+                context = context,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(defaultTeam6Colors.gray950)
+                    .padding(
+                        paddingValues = PaddingValues(
+                            start = padding.calculateStartPadding(LocalLayoutDirection.current),
+                            end = padding.calculateEndPadding(LocalLayoutDirection.current),
+                            top = 0.dp,
+                            bottom = padding.calculateBottomPadding()
+                        )
+                    ),
+                marginTop = padding.calculateTopPadding(),
+                viewModel = viewModel,
+                backButtonClick = navigateToBack,
+                location = userLocation,
+                uiState = uiState,
+                searchText = uiState.searchQuery,
+                onSearchTextChange = { newText ->
+                    viewModel.setState {
+                        copy(searchQuery = newText)
+                    }
+                    viewModel.setEvent(
+                        SearchLocationContract.SearchLocationEvent.UpdateSearchQuery(
+                            text = newText,
+                            lat = userLocation.latitude,
+                            lon = userLocation.longitude
+                        )
+                    )
+                },
+                onDeleteAllButtonClicked = { viewModel.deleteAllSearchHistory() },
+                onDeleteButtonClicked =
+                { searchHistory -> // 검색 내역 삭제
+                    viewModel.deleteSearchHistory(
+                        searchHistory = searchHistory,
+                        location = userLocation
+                    )
+                },
+                selectButtonClicked = { searchHistory -> // 장소 선택
+                    // 장소 텍스트 검색
+                    viewModel.setState {
+                        copy(searchQuery = searchHistory.name)
+                    }
+                    viewModel.setState {
+                        copy(
+                            selectLocation = Address(
+                                searchHistory.name,
+                                searchHistory.lat,
+                                searchHistory.lon,
+                                searchHistory.address
                             )
                         )
-                    },
-                    onDeleteAllButtonClicked = { viewModel.deleteAllSearchHistory() },
-                    onDeleteButtonClicked =
-                    { searchHistory -> // 검색 내역 삭제
-                        viewModel.deleteSearchHistory(
-                            searchHistory = searchHistory,
-                            location = userLocation
+                    }
+                    viewModel.setEvent(
+                        SearchLocationContract.SearchLocationEvent.UpdateSearchQuery(
+                            text = searchHistory.name,
+                            lat = userLocation.latitude,
+                            lon = userLocation.longitude
                         )
-                    },
-                    selectButtonClicked = { searchHistory -> // 장소 선택
-                        // 장소 텍스트 검색
-                        viewModel.setState {
-                            copy(searchQuery = searchHistory.name)
-                        }
-                        viewModel.setState {
-                            copy(
-                                selectLocation = Address(
-                                    searchHistory.name,
-                                    searchHistory.lat,
-                                    searchHistory.lon,
-                                    searchHistory.address
-                                )
-                            )
-                        }
-                        viewModel.setEvent(
-                            SearchLocationContract.SearchLocationEvent.UpdateSearchQuery(
-                                text = searchHistory.name,
-                                lat = userLocation.latitude,
-                                lon = userLocation.longitude
-                            )
+                    )
+                    viewModel.setEvent(
+                        SearchLocationContract.SearchLocationEvent.ChangeSearchSelectMapViewVisible(
+                            true
                         )
-                        viewModel.setEvent(
-                            SearchLocationContract.SearchLocationEvent.ChangeSearchSelectMapViewVisible(
-                                true
-                            )
+                    )
+                    // 최근 검색 내역 추가
+                    viewModel.postSearchHistory(searchHistory)
+                },
+                navigateToCourseSearch = {
+                    viewModel.setEvent(
+                        SearchLocationContract.SearchLocationEvent.ChangeSearchSelectMapViewVisible(
+                            false
                         )
-                        // 최근 검색 내역 추가
-                        viewModel.postSearchHistory(searchHistory)
-                    },
-                    navigateToCourseSearch = {
-                        viewModel.setEvent(
-                            SearchLocationContract.SearchLocationEvent.ChangeSearchSelectMapViewVisible(
-                                false
-                            )
-                        )
+                    )
 
-                        val currentLocationJSON = Gson().toJson(uiState.selectLocation)
-                        val destinationPointJSON = Gson().toJson(destinationLocation)
-                        navigateToCourseSearch(
-                            currentLocationJSON,
-                            destinationPointJSON
+                    val currentLocationJSON = Gson().toJson(uiState.selectLocation)
+                    val destinationPointJSON = Gson().toJson(destinationLocation)
+                    navigateToCourseSearch(
+                        currentLocationJSON,
+                        destinationPointJSON
+                    )
+                },
+                clearAddress = {
+                    viewModel.setEvent(SearchLocationContract.SearchLocationEvent.ClearText)
+                    viewModel.setEvent(
+                        SearchLocationContract.SearchLocationEvent.ChangeSearchSelectMapViewVisible(
+                            searchSelectMapView = false
                         )
-                    },
-                    clearAddress = {
-                        viewModel.setEvent(SearchLocationContract.SearchLocationEvent.ClearText)
-                        viewModel.setEvent(
-                            SearchLocationContract.SearchLocationEvent.ChangeSearchSelectMapViewVisible(
-                                searchSelectMapView = false
-                            )
-                        )
-                    },
-                    getCenterLocation = { viewModel.getCenterLocation(it) }
-                )
-                if (uiState.loadState == LoadState.Loading) {
-                    AtChaLoadingView()
-                }
+                    )
+                },
+                getCenterLocation = { viewModel.getCenterLocation(it) }
+            )
+            if (uiState.loadState == LoadState.Loading) {
+                AtChaLoadingView()
             }
         }
 
@@ -245,13 +271,11 @@ fun SearchLocationScreen(
             .background(
                 color = defaultTeam6Colors.gray950
             )
-            .padding(
-                top = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
-            )
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
+                .padding(top = marginTop)
         ) {
             BackTopBar(
                 backButtonClick = { backButtonClick() },
@@ -317,13 +341,13 @@ fun SearchLocationScreen(
         }
 
         if (uiState.searchSelectMapView) {
-            val currentLocation by remember { mutableStateOf(uiState.selectLocation) }
+//            val currentLocation by remember { mutableStateOf(uiState.selectLocation) }
             SearchLocationMapView(
                 marginTop = marginTop,
                 context = context,
                 myAddress = uiState.selectLocation,
                 getCenterLocation = getCenterLocation,
-                currentLocation = currentLocation,
+                currentLocation = location,
                 setDepartureButtonClicked = navigateToCourseSearch,
                 backButtonClicked = clearAddress
             )

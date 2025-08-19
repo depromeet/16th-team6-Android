@@ -1,5 +1,6 @@
 package com.depromeet.team6.presentation.ui.searchlocation
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.Location
@@ -10,8 +11,10 @@ import com.depromeet.team6.domain.usecase.GetAddressFromCoordinatesUseCase
 import com.depromeet.team6.domain.usecase.GetLocationsUseCase
 import com.depromeet.team6.domain.usecase.GetSearchHistoriesUseCase
 import com.depromeet.team6.domain.usecase.PostSearchHistoriesUseCase
+import com.depromeet.team6.presentation.ui.searchlocation.navigation.SearchLocationRoute.DEPARTURE_LOCATION
 import com.depromeet.team6.presentation.util.base.BaseViewModel
 import com.google.android.gms.maps.model.LatLng
+import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -21,6 +24,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SearchLocationViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     private val getLocationsUseCase: GetLocationsUseCase,
     private val getSearchHistoriesUseCase: GetSearchHistoriesUseCase,
     private val postSearchHistoriesUseCase: PostSearchHistoriesUseCase,
@@ -29,6 +33,22 @@ class SearchLocationViewModel @Inject constructor(
     private val getAddressFromCoordinatesUseCase: GetAddressFromCoordinatesUseCase
 ) : BaseViewModel<SearchLocationContract.SearchLocationUiState, SearchLocationContract.SearchLocationSideEffect, SearchLocationContract.SearchLocationEvent>() {
 
+    init {
+        val departureLocationJSON: String? = savedStateHandle[DEPARTURE_LOCATION]
+        if (departureLocationJSON != null) {
+            val departureLocation = Gson().fromJson(departureLocationJSON, Address::class.java)
+            setState {
+                copy(searchQuery = departureLocation.name)
+            }
+            setEvent(
+                SearchLocationContract.SearchLocationEvent.UpdateSearchQuery(
+                    text = departureLocation.name,
+                    lat = departureLocation.lat,
+                    lon = departureLocation.lon
+                )
+            )
+        }
+    }
     override fun createInitialState(): SearchLocationContract.SearchLocationUiState =
         SearchLocationContract.SearchLocationUiState()
 
@@ -183,6 +203,9 @@ class SearchLocationViewModel @Inject constructor(
                     lat = event.lat,
                     lon = event.lon
                 ).onSuccess { locations ->
+                    if (locations.isEmpty()) {
+                        setSideEffect(SearchLocationContract.SearchLocationSideEffect.ShowToastSideEffect("검색 결과가 없습니다."))
+                    }
                     setState {
                         copy(
                             searchResults = locations

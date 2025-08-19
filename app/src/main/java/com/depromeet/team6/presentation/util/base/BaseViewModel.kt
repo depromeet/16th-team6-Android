@@ -53,7 +53,7 @@ abstract class BaseViewModel<State : UiState, SideEffect : UiSideEffect, Event :
     @Suppress("UNCHECKED_CAST")
     fun handleApiException(
         exception: Throwable,
-        errorReduce: State.() -> State = { currentState }
+        errorReduce: (String) -> State = { currentState }
     ) {
         if (exception is ErrorControlFailureException) {
             when (exception) {
@@ -74,7 +74,7 @@ abstract class BaseViewModel<State : UiState, SideEffect : UiSideEffect, Event :
                     }
                 }
                 is ErrorControlFailureException.SetUIStateException -> {
-                    _uiState.value = errorReduce(currentState)
+                    _uiState.value = errorReduce(exception.errorCode)
                 }
                 is ErrorControlFailureException.ReportDiscord -> {
                     // TODO: 디코 연동해라 민석아

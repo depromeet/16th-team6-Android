@@ -24,6 +24,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.depromeet.team6.R
+import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.course.LegInfo
 import com.depromeet.team6.presentation.ui.common.view.AtChaLoadingView
 import com.depromeet.team6.presentation.ui.coursesearch.component.CourseAppBar
@@ -39,6 +40,7 @@ import com.depromeet.team6.presentation.util.HomeAmplitude.ALERT_END_POPUP_2
 import com.depromeet.team6.presentation.util.HomeAmplitude.POPUP
 import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
 import com.depromeet.team6.presentation.util.base.ApiErrorSideEffect
+import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.presentation.util.permission.PermissionUtil
 import com.depromeet.team6.presentation.util.toast.atChaToastMessage
 import com.depromeet.team6.presentation.util.view.LoadState
@@ -54,6 +56,7 @@ fun CourseSearchRoute(
     navigateToHome: () -> Unit,
     navigateToHomeAfterAlarmRegister: () -> Unit,
     navigateToLogin: () -> Unit,
+    navigateToSearchLocation: (Address, Address) -> Unit,
     popBackStack: () -> Unit,
     fromLockScreen: Boolean = false,
     viewModel: CourseSearchViewModel = hiltViewModel()
@@ -125,7 +128,7 @@ fun CourseSearchRoute(
         }
     }
 
-    when (uiState.courseDataLoadState) {
+    when (uiState.courseUiLoadState) {
         LoadState.Loading -> {
             CourseSearchScreen(
                 uiState = uiState,
@@ -176,6 +179,12 @@ fun CourseSearchRoute(
                         CourseSearchContract.CourseEvent.ItemCardClick(
                             isTextClicked = it
                         )
+                    )
+                },
+                searchBarClick = {
+                    navigateToSearchLocation(
+                        uiState.destinationPoint!!,
+                        uiState.startingPoint!!
                     )
                 }
             )
@@ -304,7 +313,8 @@ fun CourseSearchScreen(
     setNotification: (String) -> Unit = {},
     backButtonClicked: () -> Unit = {},
     courseInfoToggleClick: () -> Unit = {},
-    itemCardClick: (Boolean) -> Unit = {}
+    itemCardClick: (Boolean) -> Unit = {},
+    searchBarClick: () -> Unit = {}
 ) {
     Column(
         modifier = modifier
@@ -316,11 +326,15 @@ fun CourseSearchScreen(
             destination = "우리집",
             modifier = Modifier
                 .padding(top = 6.dp, start = 16.dp, end = 16.dp, bottom = 10.dp)
+                .noRippleClickable {
+                    searchBarClick()
+                }
         )
 
         TransportTabMenu(
             availableCourses = uiState.courseData,
-            isLoaded = uiState.courseDataLoadState == LoadState.Success,
+            isLoaded = uiState.courseUiLoadState == LoadState.Success,
+            courseSearchDataState = uiState.courseSearchDataLoadState,
             onItemClick = { courseInfoJson, isTextClicked ->
                 itemCardClick(isTextClicked)
                 navigateToItinerary(

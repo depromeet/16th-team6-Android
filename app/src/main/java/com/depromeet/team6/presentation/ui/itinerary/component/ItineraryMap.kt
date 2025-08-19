@@ -252,7 +252,7 @@ fun ItineraryMap(
 }
 
 @Composable
-fun CircleBtnBack(
+private fun CircleBtnBack(
     modifier: Modifier = Modifier
 ) {
     Box(

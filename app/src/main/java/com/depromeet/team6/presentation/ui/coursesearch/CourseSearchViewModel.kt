@@ -105,7 +105,7 @@ class CourseSearchViewModel @Inject constructor(
             }
             is CourseSearchContract.CourseEvent.LoadCourseSearchResult -> setState {
                 copy(
-                    courseDataLoadState = LoadState.Success,
+                    courseUiLoadState = LoadState.Success,
                     courseData = event.searchResult
                 )
             }
@@ -195,7 +195,7 @@ class CourseSearchViewModel @Inject constructor(
     private fun getSearchResults() {
         setState {
             copy(
-                courseDataLoadState = LoadState.Loading
+                courseUiLoadState = LoadState.Loading
             )
         }
         viewModelScope.launch {
@@ -206,9 +206,28 @@ class CourseSearchViewModel @Inject constructor(
             )
                 .onSuccess {
                     setEvent(CourseSearchContract.CourseEvent.LoadCourseSearchResult(it))
+                    setState {
+                        copy(
+                            courseSearchDataLoadState = CourseSearchContract.CourseSearchDataState.Success
+                        )
+                    }
                 }
                 .onFailure { exception ->
-                    handleApiException(exception)
+                    handleApiException(exception) { errorCode ->
+                        when (errorCode) {
+                            "LRT_003" -> {
+                                currentState.copy(
+                                    courseSearchDataLoadState = CourseSearchContract.CourseSearchDataState.NoResult
+                                )
+                            }
+                            "LRT_004" -> {
+                                currentState.copy(
+                                    courseSearchDataLoadState = CourseSearchContract.CourseSearchDataState.ServiceEnded
+                                )
+                            }
+                            else -> currentState
+                        }
+                    }
                 }
         }
     }
@@ -248,7 +267,7 @@ class CourseSearchViewModel @Inject constructor(
                 getSearchResults()
             }
         } catch (e: Exception) {
-            setState { copy(courseDataLoadState = LoadState.Error) }
+            setState { copy(courseUiLoadState = LoadState.Error) }
         }
     }
 
