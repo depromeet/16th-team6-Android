@@ -8,14 +8,14 @@ import com.depromeet.team6.domain.ToastMessage.API_ERROR_OUT_OF_SERVICE_REGION
 import com.depromeet.team6.domain.ToastMessage.API_ERROR_SHORT_DISTANCE
 import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.course.CourseInfo
-import com.depromeet.team6.domain.usecase.base.ApiRequestUseCase
+import com.depromeet.team6.domain.usecase.base.NetworkRequestUseCase
 import com.depromeet.team6.presentation.model.exception.ErrorControlFailureException
 import com.depromeet.team6.presentation.model.route.Route
 import javax.inject.Inject
 
 class GetCourseSearchResultsUseCase @Inject constructor(
     private val repository: TransitsRepositoryImpl
-) : ApiRequestUseCase<GetCourseSearchResultsUseCase.Params, List<CourseInfo>>() {
+) : NetworkRequestUseCase<GetCourseSearchResultsUseCase.Params, List<CourseInfo>>() {
 
     data class Params(val startPoint: Address, val endPoint: Address, val sortType: Int)
 

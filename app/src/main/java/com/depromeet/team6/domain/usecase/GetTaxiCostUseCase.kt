@@ -5,14 +5,14 @@ import com.depromeet.team6.domain.ToastMessage.API_ERROR_NETWORK_FAILURE
 import com.depromeet.team6.domain.ToastMessage.API_ERROR_UNKNOWN
 import com.depromeet.team6.domain.model.RouteLocation
 import com.depromeet.team6.domain.repository.TaxiCostRepository
-import com.depromeet.team6.domain.usecase.base.ApiRequestUseCase
+import com.depromeet.team6.domain.usecase.base.NetworkRequestUseCase
 import com.depromeet.team6.presentation.model.exception.ErrorControlFailureException
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class GetTaxiCostUseCase @Inject constructor(
     private val taxiCostRepository: TaxiCostRepository
-) : ApiRequestUseCase<GetTaxiCostUseCase.Params, Int>() {
+) : NetworkRequestUseCase<GetTaxiCostUseCase.Params, Int>() {
 
     data class Params(val routeLocation: RouteLocation)
     suspend operator fun invoke(routeLocation: RouteLocation): Result<Int> =

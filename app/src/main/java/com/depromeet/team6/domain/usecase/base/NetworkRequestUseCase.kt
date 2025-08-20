@@ -4,7 +4,7 @@ import com.depromeet.team6.data.dataremote.model.response.base.ApiException
 import com.depromeet.team6.presentation.model.exception.ErrorControlFailureException
 import kotlinx.coroutines.CancellationException
 
-abstract class ApiRequestUseCase<P, R> {
+abstract class NetworkRequestUseCase<P, R> {
 
     // 템플릿 메서드 패턴
     suspend operator fun invoke(params: P): Result<R> {

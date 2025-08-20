@@ -9,14 +9,14 @@ import com.depromeet.team6.domain.RouteMap.TRS_013
 import com.depromeet.team6.domain.ToastMessage.API_ERROR_LOGIN_TOKEN_EXPIRED
 import com.depromeet.team6.domain.ToastMessage.API_ERROR_UNKNOWN
 import com.depromeet.team6.domain.ToastMessage.API_ERROR__OUT_OF_ROUTE
-import com.depromeet.team6.domain.usecase.base.ApiRequestUseCase
+import com.depromeet.team6.domain.usecase.base.NetworkRequestUseCase
 import com.depromeet.team6.presentation.model.exception.ErrorControlFailureException
 import com.depromeet.team6.presentation.model.route.Route
 import javax.inject.Inject
 
 class PostAlarmUseCase @Inject constructor(
     private val alarmRepository: AlarmRepositoryImpl
-) : ApiRequestUseCase<PostAlarmUseCase.Params, Unit>() {
+) : NetworkRequestUseCase<PostAlarmUseCase.Params, Unit>() {
 
     data class Params(val lastRouteId: String)
 

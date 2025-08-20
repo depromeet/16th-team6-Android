@@ -7,13 +7,13 @@ import com.depromeet.team6.domain.RequestFormat.REQ_001
 import com.depromeet.team6.domain.RequestFormat.REQ_002
 import com.depromeet.team6.domain.ToastMessage
 import com.depromeet.team6.domain.repository.LocationsRepository
-import com.depromeet.team6.domain.usecase.base.ApiRequestUseCase
+import com.depromeet.team6.domain.usecase.base.NetworkRequestUseCase
 import com.depromeet.team6.presentation.model.exception.ErrorControlFailureException
 import javax.inject.Inject
 
 class DeleteAllSearchHistoryUseCase @Inject constructor(
     private val locationsRepository: LocationsRepository
-) : ApiRequestUseCase<Unit, Unit>() {
+) : NetworkRequestUseCase<Unit, Unit>() {
     suspend operator fun invoke(): Result<Unit> = invoke(Unit)
 
     override suspend fun apiCall(params: Unit): Result<Unit> =
