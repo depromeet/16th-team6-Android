@@ -221,4 +221,12 @@
     <string name="all_dialog_location_permission">현위치를 찾을 수 없어요.\n위치 권한을 허용해 주세요.</string>
     <string name="all_dialog_notification_permission">알림을 받을 수 없어요.\n알림 권한을 허용해 주세요.</string>
 
+    <!-- TextListItem -->
+    <string name="text_list_item_check_tv">체크 아이콘</string>
+    <string name="text_list_item_arrow_tv">오른쪽 이동 아이콘</string>
+    <string name="text_list_item_radio_selected_tv">선택된 라디오 버튼</string>
+    <string name="text_list_item_radio_unselected_tv">선택되지 않은 라디오 버튼</string>
+
+    <!-- TextField -->
+    <string name="textfield_search_clear">텍스트 지우기 아이콘</string>
 </resources>
