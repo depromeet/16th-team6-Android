@@ -41,7 +41,7 @@ import com.depromeet.team6.presentation.ui.searchlocation.component.BackTopBar
 import com.depromeet.team6.presentation.ui.searchlocation.component.SearchDepartureTextField
 import com.depromeet.team6.presentation.ui.searchlocation.component.SearchHistoryContainer
 import com.depromeet.team6.presentation.ui.searchlocation.component.SearchHistoryEmptyContainer
-import com.depromeet.team6.presentation.ui.searchlocation.component.SearchLocationItem
+import com.depromeet.team6.presentation.ui.common.list.LocationListItemDistance
 import com.depromeet.team6.presentation.ui.searchlocation.component.SearchLocationMapView
 import com.depromeet.team6.presentation.ui.searchlocation.component.SearchLocationTextField
 import com.depromeet.team6.presentation.util.DefaultLatLng.DEFAULT_LAT
@@ -328,8 +328,8 @@ fun SearchLocationScreen(
                     if (uiState.searchResults.isNotEmpty()) {
                         LazyColumn {
                             items(uiState.searchResults) { location ->
-                                SearchLocationItem(
-                                    homeSearchLocation = location,
+                                LocationListItemDistance(
+                                    location = location,
                                     modifier = Modifier,
                                     selectButtonClicked = selectButtonClicked
                                 )
