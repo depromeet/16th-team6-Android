@@ -23,7 +23,7 @@ fun AtchaCommonSnackBar(
     modifier: Modifier = Modifier,
     text: String,
     buttonText: String?,
-    onClick: () -> Unit,
+    onClick: () -> Unit
 ) {
     Row(
         modifier = modifier
@@ -51,15 +51,13 @@ fun AtchaCommonSnackBar(
                 style = Team6Theme.typography.bodySemiBold14
             )
         }
-
     }
 }
 
 @Preview
 @Composable
 private fun AtchaCommonSnackBarPreview() {
-
-    Column (modifier = Modifier.fillMaxSize().background(Color.White)){
+    Column(modifier = Modifier.fillMaxSize().background(Color.White)) {
         AtchaCommonSnackBar(
             text = "텍스트",
             buttonText = "텍스트",

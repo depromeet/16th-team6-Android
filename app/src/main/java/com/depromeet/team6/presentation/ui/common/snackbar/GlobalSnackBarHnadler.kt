@@ -24,7 +24,7 @@ import kotlinx.coroutines.delay
 fun GlobalSnackbarHandler(
     snackbarData: CustomSnackbarData?,
     onDismiss: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     val isSnackbarVisible = remember { mutableStateOf(false) }
 
@@ -67,7 +67,6 @@ fun GlobalSnackbarHandler(
             )
         }
     }
-
 }
 
 val LocalSnackbarHostState = staticCompositionLocalOf<SnackbarHostState> {

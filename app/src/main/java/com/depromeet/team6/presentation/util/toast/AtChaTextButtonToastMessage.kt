@@ -1,7 +1,6 @@
 package com.depromeet.team6.presentation.util.toast
 
 import android.content.Context
-import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -17,7 +16,7 @@ fun atChaTextButtonToastMessage(
     @StringRes messageResId: Int,
     @StringRes buttonTextResId: Int,
     length: Int = Toast.LENGTH_SHORT,
-    onClick:()->Unit
+    onClick: () -> Unit
 ) {
     val layoutInflater = LayoutInflater.from(context)
     val layout = layoutInflater.inflate(R.layout.atcha_text_button_toast, null)
@@ -48,7 +47,6 @@ fun atChaTextButtonToastMessage(
             false
         }
     }
-
 
     val yOffsetDp = 12
     val yOffsetPx = (yOffsetDp * context.resources.displayMetrics.density).toInt()

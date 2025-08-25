@@ -47,7 +47,6 @@ import com.depromeet.team6.presentation.util.WebViewUrl.FEEDBACK_FORM_URL
 import com.depromeet.team6.presentation.util.WebViewUrl.PRIVACY_POLICY_URL
 import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
 import com.depromeet.team6.presentation.util.base.ApiErrorSideEffect
-import com.depromeet.team6.presentation.util.context.openAppSettings
 import com.depromeet.team6.presentation.util.dialog.LocalDialogController
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.presentation.util.permission.PermissionUtil
@@ -69,7 +68,6 @@ fun MypageRoute(
     val context = LocalContext.current
     val dialogController = LocalDialogController.current
     val snackbarController = LocalSnackbarController.current
-
 
     val isInitialized = remember { mutableMapOf("initialized" to false) }
 

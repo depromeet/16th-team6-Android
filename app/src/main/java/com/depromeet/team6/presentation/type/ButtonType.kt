@@ -12,7 +12,7 @@ enum class ButtonType(
     val backgroundAlpha: Float = 1f,
     val textColor: Color,
     val stroke: Dp,
-    val strokeColor: Color?,
+    val strokeColor: Color?
 ) {
     PRIMARY(
         backGroundColor = defaultTeam6Colors.primaryMain,
@@ -60,7 +60,7 @@ enum class ButtonType(
         strokeColor = defaultTeam6Colors.gray800,
         backgroundAlpha = 0f
 
-    ),
+    )
 }
 
 enum class ButtonSize(
@@ -91,5 +91,3 @@ enum class ButtonSize(
         textStyle = defaultTeam6Typography.bodySemiBold14
     );
 }
-
-

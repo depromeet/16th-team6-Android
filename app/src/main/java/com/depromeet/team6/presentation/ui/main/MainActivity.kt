@@ -38,16 +38,12 @@ import com.depromeet.team6.presentation.ui.splash.SplashScreen
 import com.depromeet.team6.presentation.util.dialog.DialogController
 import com.depromeet.team6.presentation.util.dialog.LocalDialogController
 import com.depromeet.team6.presentation.util.snackbar.LocalSnackbarController
-import com.depromeet.team6.presentation.util.snackbar.SnackbarController
 import com.depromeet.team6.presentation.util.snackbar.rememberSnackbarController
 import com.depromeet.team6.ui.theme.Team6Theme
 import com.google.firebase.Firebase
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.analytics
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -100,7 +96,6 @@ class MainActivity : ComponentActivity() {
             val snackbarHostState = remember { SnackbarHostState() }
             val (snackbarController, snackbarData) = rememberSnackbarController()
 
-
             var shouldNavigateToCourseSearch by remember { mutableStateOf(navigateToCourseSearch) }
 
             SideEffect {
@@ -151,7 +146,7 @@ class MainActivity : ComponentActivity() {
 
                             GlobalSnackbarHandler(
                                 snackbarData = snackbarData.value,
-                                onDismiss = { snackbarData.value = null },
+                                onDismiss = { snackbarData.value = null }
                             )
                         }
                     }

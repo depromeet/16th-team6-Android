@@ -8,13 +8,10 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.staticCompositionLocalOf
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import androidx.compose.runtime.State
-
 
 val LocalSnackbarController = staticCompositionLocalOf<SnackbarController> {
     error("SnackbarController not provided")
 }
-
 
 class SnackbarController(
     private val scope: CoroutineScope,

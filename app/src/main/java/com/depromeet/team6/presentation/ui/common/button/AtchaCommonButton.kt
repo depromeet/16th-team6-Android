@@ -39,12 +39,14 @@ fun AtchaCommonButton(
                         color = buttonType.strokeColor,
                         shape = RoundedCornerShape(buttonSize.roundPadding)
                     )
-                } else Modifier
+                } else {
+                    Modifier
+                }
             )
             .roundedBackgroundWithPadding(
                 backgroundColor = buttonType.backGroundColor.copy(alpha = buttonType.backgroundAlpha),
                 cornerRadius = buttonSize.roundPadding,
-                padding = PaddingValues(vertical = buttonSize.verticalPadding),
+                padding = PaddingValues(vertical = buttonSize.verticalPadding)
             )
             .noRippleClickable(onClick),
         contentAlignment = Alignment.Center
@@ -122,7 +124,7 @@ private fun AtchaCommonButtonPreview() {
                 buttonText = "버튼",
                 onClick = {}
             )
-            Spacer(modifier = Modifier.weight(1f),)
+            Spacer(modifier = Modifier.weight(1f))
         }
     }
 }
