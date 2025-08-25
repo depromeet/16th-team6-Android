@@ -9,6 +9,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.media.AudioAttributes
+import android.media.AudioManager
 import android.media.MediaPlayer
 import android.os.Build
 import android.os.CountDownTimer
@@ -58,6 +59,7 @@ class LockService : Service() {
     private var vibrator: Vibrator? = null
 
     private var vibrationTimer: CountDownTimer? = null
+    private var originalAlarmVolume: Int? = null
 
     private var fusedLocationClient: FusedLocationProviderClient? = null
     private val notificationManager by lazy {
@@ -79,20 +81,29 @@ class LockService : Service() {
     private fun playAlarmSound() {
         try {
             Log.d("LockService", "알림음 재생 시작")
-
-            // TODO : 미디어 볼륨말고 알람볼륨 채널 사용하게 바꿔야해요
             val audioAttr = AudioAttributes.Builder()
                 .setUsage(AudioAttributes.USAGE_ALARM)
                 .build()
 
+            val audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+            val maxIdx = audioManager.getStreamMaxVolume(AudioManager.STREAM_ALARM)
+            val nowIdx = audioManager.getStreamVolume(AudioManager.STREAM_ALARM)
+            originalAlarmVolume = nowIdx
+
+            audioManager.setStreamVolume(AudioManager.STREAM_ALARM, (maxIdx).toInt(), 0)
+
+
+            val afd = resources.openRawResourceFd(R.raw.alarm_sound)
             mediaPlayer?.release()
-            mediaPlayer = MediaPlayer.create(applicationContext, R.raw.alarm_sound)
-            mediaPlayer?.apply {
-                isLooping = true
+            mediaPlayer = MediaPlayer().apply{
                 setAudioAttributes(audioAttr)
-                setVolume(4.0f, 4.0f)
+                setDataSource(afd.fileDescriptor, afd.startOffset, afd.length)
+                isLooping = true
+                prepare()
+                setVolume(1.0f, 1.0f)
                 start()
             }
+            afd.close()
         } catch (e: Exception) {
             Log.e("LockService", "알림음 재생 중 오류 발생: ${e.message}", e)
         }
@@ -142,6 +153,11 @@ class LockService : Service() {
             release()
         }
         mediaPlayer = null
+        // --- 알람이 종료될 때 기존의 알람 채널 볼륨 복구---
+        originalAlarmVolume?.let {
+            val audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+            audioManager.setStreamVolume(AudioManager.STREAM_ALARM, it, 0) // 원래 시스템 볼륨으로 복원
+        }
     }
 
     private fun stopVibration() {
