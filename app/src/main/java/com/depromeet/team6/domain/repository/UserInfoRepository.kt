@@ -25,7 +25,11 @@ interface UserInfoRepository {
 
     fun clear()
 
-    fun saveAlarmSound(isSound: Boolean)
+    fun saveIsAlarmSound(isSound: Boolean)
 
-    fun getAlarmSound(): Boolean
+    fun getIsAlarmSound(): Boolean
+
+    fun saveAlarmVolume(volume: Int)
+
+    fun getAlarmVolume() : Int
 }

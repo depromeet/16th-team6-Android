@@ -68,7 +68,7 @@ class LockService : Service() {
     private val timerScope = CoroutineScope(Dispatchers.Default)
 
     private fun playAlarm() {
-        val isSound = userInfoRepositoryImpl.getAlarmSound()
+        val isSound = userInfoRepositoryImpl.getIsAlarmSound()
 
         if (isSound) {
             playAlarmSound()
@@ -86,12 +86,10 @@ class LockService : Service() {
                 .build()
 
             val audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
-            val maxIdx = audioManager.getStreamMaxVolume(AudioManager.STREAM_ALARM)
-            val nowIdx = audioManager.getStreamVolume(AudioManager.STREAM_ALARM)
-            originalAlarmVolume = nowIdx
+            val alarmVolume = userInfoRepositoryImpl.getAlarmVolume()
+            originalAlarmVolume = audioManager.getStreamVolume(AudioManager.STREAM_ALARM)
 
-            audioManager.setStreamVolume(AudioManager.STREAM_ALARM, (maxIdx).toInt(), 0)
-
+            audioManager.setStreamVolume(AudioManager.STREAM_ALARM, alarmVolume, 0)
 
             val afd = resources.openRawResourceFd(R.raw.alarm_sound)
             mediaPlayer?.release()

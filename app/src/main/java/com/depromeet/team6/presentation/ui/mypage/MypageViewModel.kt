@@ -368,7 +368,7 @@ class MypageViewModel @Inject constructor(
                     MypageContract.AlarmType.SOUND -> true
                     MypageContract.AlarmType.VIBRATION -> false
                 }
-                userInfoRepositoryImpl.saveAlarmSound(isSound)
+                userInfoRepositoryImpl.saveIsAlarmSound(isSound)
             } catch (e: Exception) {
                 Timber.e("알람 설정 저장 실패: ${e.message}")
             }
@@ -378,7 +378,7 @@ class MypageViewModel @Inject constructor(
     private fun loadAlarmSettings() {
         viewModelScope.launch {
             try {
-                val isSound = userInfoRepositoryImpl.getAlarmSound()
+                val isSound = userInfoRepositoryImpl.getIsAlarmSound()
 
                 val alarmType = if (isSound) {
                     MypageContract.AlarmType.SOUND
