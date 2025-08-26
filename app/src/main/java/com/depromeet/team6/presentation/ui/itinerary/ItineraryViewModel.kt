@@ -130,7 +130,6 @@ class ItineraryViewModel @Inject constructor(
                 lastRouteId = lastRouteId
             )
                 .onSuccess {
-                    setSideEffect(ItineraryContract.ItinerarySideEffect.ShowNotificationToastSetAlarm)
                     setSideEffect(ItineraryContract.ItinerarySideEffect.NavigateHomeWithToast)
                     getTaxiCost()
 //                    saveAlarmData(departurePoint, destinationPoint, lastRouteId)
