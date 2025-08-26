@@ -62,7 +62,7 @@ fun OverlayPermissionDialog(
                     append(stringResource(R.string.overlay_permission_content_text_end))
                 },
                 color = colors.white,
-                style = typography.heading5SemiBold17,
+                style = typography.heading3_H3SB17,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(top = 32.dp)
             )
@@ -92,7 +92,7 @@ fun OverlayPermissionDialog(
                     Text(
                         text = stringResource(R.string.overlay_permission_atcha_text),
                         color = colors.white,
-                        style = typography.heading5Bold17,
+                        style = typography.body2_B2SB15,
                         textAlign = TextAlign.Center,
                         modifier = Modifier.padding(horizontal = 7.dp)
                     )
@@ -148,7 +148,7 @@ fun OverlayPermissionDialog(
                     Text(
                         text = stringResource(R.string.overlay_permission_go_setting_text),
                         color = colors.black,
-                        style = typography.bodySemiBold14,
+                        style = typography.body5_B5SB14,
                         modifier = Modifier.padding(vertical = 13.dp)
                     )
                 }

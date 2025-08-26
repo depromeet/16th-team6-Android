@@ -66,7 +66,7 @@ fun LastTransportInfoItem(
                         id = R.string.last_transport_info_remaining_hour,
                         remainingHour
                     ),
-                    style = defaultTeam6Typography.heading3Bold22,
+                    style = defaultTeam6Typography.heading1_H1B22,
                     color = defaultTeam6Colors.white
                 )
                 Spacer(
@@ -79,7 +79,7 @@ fun LastTransportInfoItem(
                         id = R.string.last_transport_info_remaining_minute,
                         remainingMinute
                     ),
-                    style = defaultTeam6Typography.heading3Bold22,
+                    style = defaultTeam6Typography.heading1_H1B22,
                     color = defaultTeam6Colors.white
                 )
             }
@@ -100,7 +100,7 @@ fun LastTransportInfoItem(
                 text = stringResource(
                     id = R.string.course_detail_description
                 ),
-                style = defaultTeam6Typography.bodyRegular12,
+                style = defaultTeam6Typography.detail1_R12,
                 color = defaultTeam6Colors.gray200
             )
             Image(

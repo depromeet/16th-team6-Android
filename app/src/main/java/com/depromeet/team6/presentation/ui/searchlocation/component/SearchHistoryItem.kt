@@ -44,7 +44,7 @@ fun SearchHistoryItem(
             Text(
                 text = homeSearchLocation.name,
                 color = defaultTeam6Colors.white,
-                style = defaultTeam6Typography.bodyRegular15,
+                style = defaultTeam6Typography.body4_B4R15,
                 overflow = TextOverflow.Ellipsis
             )
 
@@ -55,7 +55,7 @@ fun SearchHistoryItem(
             ) {
                 Text(
                     text = homeSearchLocation.radius,
-                    style = defaultTeam6Typography.bodyRegular14,
+                    style = defaultTeam6Typography.body6_B6R14,
                     color = defaultTeam6Colors.gray200,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -72,7 +72,7 @@ fun SearchHistoryItem(
 
                 Text(
                     text = homeSearchLocation.address,
-                    style = defaultTeam6Typography.bodyRegular14,
+                    style = defaultTeam6Typography.body6_B6R14,
                     color = defaultTeam6Colors.gray200,
                     overflow = TextOverflow.Ellipsis
                 )

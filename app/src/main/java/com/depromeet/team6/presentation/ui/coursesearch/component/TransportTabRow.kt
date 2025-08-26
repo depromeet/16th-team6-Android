@@ -90,7 +90,7 @@ fun TransportTabRow(
                             .padding(vertical = 6.dp, horizontal = 14.dp),
                         text = tabName,
                         color = defaultTeam6Colors.white,
-                        style = defaultTeam6Typography.bodySemiBold14,
+                        style = defaultTeam6Typography.body5_B5SB14,
                         textAlign = TextAlign.Center,
                         onTextLayout = { textLayoutResult ->
                             /**

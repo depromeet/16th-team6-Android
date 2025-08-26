@@ -31,5 +31,5 @@ interface UserInfoRepository {
 
     fun saveAlarmVolume(volume: Int)
 
-    fun getAlarmVolume() : Int
+    fun getAlarmVolume(): Int
 }

@@ -74,7 +74,7 @@ fun SoundVibrateSelectView(
 
             Text(
                 text = title,
-                style = typography.bodyMedium15,
+                style = typography.body3_B3M15,
                 color = color
             )
 

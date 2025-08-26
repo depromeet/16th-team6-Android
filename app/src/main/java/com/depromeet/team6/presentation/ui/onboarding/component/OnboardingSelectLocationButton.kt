@@ -66,7 +66,7 @@ fun OnboardingSelectLocationButton(
                     R.string.onboarding_edit_location_button_current_region
                 }
             ),
-            style = defaultTeam6Typography.bodyRegular14,
+            style = defaultTeam6Typography.body6_B6R14,
             color = defaultTeam6Colors.white
         )
     }

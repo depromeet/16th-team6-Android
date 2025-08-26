@@ -44,7 +44,7 @@ fun SystemSettingsDialog(
         ) {
             Text(
                 text = message,
-                style = Team6Theme.typography.heading5SemiBold17,
+                style = Team6Theme.typography.heading3_H3SB17,
                 color = Team6Theme.colors.white,
                 textAlign = TextAlign.Center
 
@@ -55,7 +55,7 @@ fun SystemSettingsDialog(
                 Text(
                     text = "닫기",
                     textAlign = TextAlign.Center,
-                    style = Team6Theme.typography.bodySemiBold14,
+                    style = Team6Theme.typography.body5_B5SB14,
                     color = Team6Theme.colors.white,
                     modifier = Modifier
                         .weight(1f)
@@ -70,7 +70,7 @@ fun SystemSettingsDialog(
                 Text(
                     text = "설정하기",
                     textAlign = TextAlign.Center,
-                    style = Team6Theme.typography.bodySemiBold14,
+                    style = Team6Theme.typography.body5_B5SB14,
                     color = Team6Theme.colors.black,
                     modifier = Modifier
                         .weight(1f)

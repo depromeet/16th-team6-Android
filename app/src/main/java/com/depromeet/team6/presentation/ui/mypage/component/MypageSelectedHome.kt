@@ -79,7 +79,7 @@ fun MypageSelectedHome(
         ) {
             Text(
                 text = stringResource(R.string.mypage_change_home_button_text),
-                style = defaultTeam6Typography.bodyRegular14,
+                style = defaultTeam6Typography.body6_B6R14,
                 color = defaultTeam6Colors.white
             )
         }

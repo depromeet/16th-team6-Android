@@ -60,7 +60,7 @@ fun CourseInfoDetailItem(
             )
             Text(
                 text = context.resources.getString(R.string.course_detail_info_duration, duration),
-                style = defaultTeam6Typography.bodyRegular12,
+                style = defaultTeam6Typography.detail1_R12,
                 color = defaultTeam6Colors.gray200
             )
         }
@@ -98,7 +98,7 @@ fun CourseInfoDetailItem(
                 Spacer(modifier = Modifier.height(5.dp))
                 Text(
                     text = context.resources.getString(R.string.course_detail_info_duration, duration),
-                    style = defaultTeam6Typography.bodyRegular12,
+                    style = defaultTeam6Typography.detail1_R12,
                     color = defaultTeam6Colors.gray400
                 )
                 Spacer(modifier = Modifier.height(14.dp))

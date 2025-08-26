@@ -48,7 +48,7 @@ fun ItinerarySummary(
                     .fillMaxWidth()
                     .padding(vertical = 8.dp),
                 text = stringResource(R.string.itinerary_summary_duration_time, durationHour, durationMinute),
-                style = defaultTeam6Typography.heading2Bold26,
+                style = defaultTeam6Typography.display4_D4SB28,
                 fontSize = 28.sp,
                 color = defaultTeam6Colors.white
             )
@@ -58,7 +58,7 @@ fun ItinerarySummary(
                     .fillMaxWidth()
                     .padding(vertical = 8.dp),
                 text = stringResource(R.string.itinerary_summary_duration_minute, durationMinute),
-                style = defaultTeam6Typography.heading2Bold26,
+                style = defaultTeam6Typography.display4_D4SB28,
                 fontSize = 28.sp,
                 color = defaultTeam6Colors.white
             )
@@ -76,7 +76,7 @@ fun ItinerarySummary(
                 (departHour + durationHour + ((departMinute + durationMinute) / 60)) % 24,
                 (departMinute + durationMinute) % 60
             ),
-            style = defaultTeam6Typography.bodyRegular12,
+            style = defaultTeam6Typography.detail1_R12,
             color = defaultTeam6Colors.gray400
         )
 

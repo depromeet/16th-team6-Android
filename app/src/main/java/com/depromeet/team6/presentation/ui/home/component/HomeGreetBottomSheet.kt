@@ -59,7 +59,7 @@ fun HomeGreetBottomSheet(
                 }
                 append("를 제공하고 있어요")
             },
-            style = Team6Theme.typography.heading4Bold20,
+            style = Team6Theme.typography.heading2_H2B20,
             color = Team6Theme.colors.white
         )
         Spacer(modifier = Modifier.height(24.dp))

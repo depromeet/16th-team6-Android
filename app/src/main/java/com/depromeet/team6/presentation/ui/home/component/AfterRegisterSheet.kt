@@ -116,13 +116,13 @@ fun AfterRegisterSheet(
                     } else if (afterUserDeparted && timerFinish) {
                         Text(
                             text = stringResource(R.string.home_final_departure_time_text),
-                            style = typography.bodyMedium13,
+                            style = typography.body7_B7M13,
                             color = colors.white
                         )
                     } else {
                         Text(
                             text = stringResource(R.string.home_start_time_text),
-                            style = typography.bodyMedium13,
+                            style = typography.body7_B7M13,
                             color = colors.white
                         )
                     }

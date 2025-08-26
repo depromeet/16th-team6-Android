@@ -96,7 +96,7 @@ fun SummaryBarChart(
                         Text(
                             text = "분",
                             color = defaultTeam6Colors.gray200,
-                            style = defaultTeam6Typography.bodyMedium10,
+                            style = defaultTeam6Typography.detail3_M9,
                             fontSize = 9.sp
                         )
                     }
@@ -128,7 +128,7 @@ fun SummaryBarChart(
                         Text(
                             text = "분",
                             color = defaultTeam6Colors.white,
-                            style = defaultTeam6Typography.bodyMedium10,
+                            style = defaultTeam6Typography.detail3_M9,
                             fontSize = 9.sp
                         )
                     }

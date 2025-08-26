@@ -226,13 +226,13 @@ private fun DetailLegsBus(
             Row {
                 Text(
                     text = boardingStation,
-                    style = defaultTeam6Typography.bodySemiBold14,
+                    style = defaultTeam6Typography.body5_B5SB14,
                     color = defaultTeam6Colors.white
                 )
                 Spacer(Modifier.width(4.dp))
                 Text(
                     text = stringResource(R.string.itinerary_info_legs_boarding),
-                    style = defaultTeam6Typography.bodySemiBold14,
+                    style = defaultTeam6Typography.body5_B5SB14,
                     color = defaultTeam6Colors.gray200
                 )
             }
@@ -279,7 +279,7 @@ private fun DetailLegsBus(
             ) {
                 Text(
                     text = stringResource(R.string.itinerary_info_legs_bus_stopovers, timeMinute, max(0, passStopList.size - 1)),
-                    style = defaultTeam6Typography.bodyMedium13,
+                    style = defaultTeam6Typography.body7_B7M13,
                     color = defaultTeam6Colors.white
                 )
                 Spacer(
@@ -301,7 +301,7 @@ private fun DetailLegsBus(
                         val stop = passStopList[i]
                         Text(
                             text = stop.stationName,
-                            style = defaultTeam6Typography.bodyMedium13,
+                            style = defaultTeam6Typography.body7_B7M13,
                             color = defaultTeam6Colors.gray200
                         )
                     }
@@ -316,13 +316,13 @@ private fun DetailLegsBus(
             ) {
                 Text(
                     text = disembarkingStation,
-                    style = defaultTeam6Typography.bodySemiBold14,
+                    style = defaultTeam6Typography.body5_B5SB14,
                     color = defaultTeam6Colors.white
                 )
                 Spacer(Modifier.width(4.dp))
                 Text(
                     text = stringResource(R.string.itinerary_info_legs_disembarking),
-                    style = defaultTeam6Typography.bodySemiBold14,
+                    style = defaultTeam6Typography.body5_B5SB14,
                     color = defaultTeam6Colors.gray200
                 )
             }
@@ -429,20 +429,20 @@ private fun DetailLegsSubway(
             Row {
                 Text(
                     text = boardingStation,
-                    style = defaultTeam6Typography.bodySemiBold14,
+                    style = defaultTeam6Typography.body5_B5SB14,
                     color = defaultTeam6Colors.white
                 )
                 Spacer(Modifier.width(4.dp))
                 Text(
                     text = stringResource(R.string.itinerary_info_legs_boarding),
-                    style = defaultTeam6Typography.bodySemiBold14,
+                    style = defaultTeam6Typography.body5_B5SB14,
                     color = defaultTeam6Colors.gray200
                 )
             }
             Spacer(Modifier.height(16.dp))
             Text(
                 text = subwayName,
-                style = defaultTeam6Typography.bodyMedium13,
+                style = defaultTeam6Typography.body7_B7M13,
                 color = defaultTeam6Colors.gray200
             )
             Spacer(Modifier.height(16.dp))
@@ -455,7 +455,7 @@ private fun DetailLegsSubway(
             ) {
                 Text(
                     text = stringResource(R.string.itinerary_info_legs_subway_stopovers, timeMinute, max(0, passStopList.size - 1)),
-                    style = defaultTeam6Typography.bodyMedium13,
+                    style = defaultTeam6Typography.body7_B7M13,
                     color = defaultTeam6Colors.white
                 )
                 Spacer(
@@ -478,7 +478,7 @@ private fun DetailLegsSubway(
                         val stop = passStopList[i]
                         Text(
                             text = stop.stationName,
-                            style = defaultTeam6Typography.bodyMedium13,
+                            style = defaultTeam6Typography.body7_B7M13,
                             color = defaultTeam6Colors.gray200
                         )
                     }
@@ -493,13 +493,13 @@ private fun DetailLegsSubway(
             ) {
                 Text(
                     text = disembarkingStation,
-                    style = defaultTeam6Typography.bodySemiBold14,
+                    style = defaultTeam6Typography.body5_B5SB14,
                     color = defaultTeam6Colors.white
                 )
                 Spacer(Modifier.width(4.dp))
                 Text(
                     text = stringResource(R.string.itinerary_info_legs_disembarking),
-                    style = defaultTeam6Typography.bodySemiBold14,
+                    style = defaultTeam6Typography.body5_B5SB14,
                     color = defaultTeam6Colors.gray200
                 )
             }
@@ -541,7 +541,7 @@ private fun DetailLegsWalk(
             modifier = Modifier
                 .offset(y = (-8).dp),
             text = stringResource(R.string.itinerary_info_legs_walk_time, timeMinute),
-            style = defaultTeam6Typography.bodyMedium13,
+            style = defaultTeam6Typography.body7_B7M13,
             color = defaultTeam6Colors.gray200
         )
         Spacer(
@@ -551,7 +551,7 @@ private fun DetailLegsWalk(
             modifier = Modifier
                 .offset(y = (-8).dp),
             text = stringResource(R.string.itinerary_info_legs_walk_distance, distanceMeter),
-            style = defaultTeam6Typography.bodyMedium13,
+            style = defaultTeam6Typography.body7_B7M13,
             color = defaultTeam6Colors.gray500
         )
     }
@@ -583,7 +583,7 @@ fun BoardingTime(
                 boardingTime.hour,
                 boardingTime.minute
             ),
-            style = defaultTeam6Typography.bodyMedium11,
+            style = defaultTeam6Typography.detail2_M11,
             color = defaultTeam6Colors.gray200
         )
     }

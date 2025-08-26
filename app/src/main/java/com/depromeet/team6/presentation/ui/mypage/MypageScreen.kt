@@ -377,7 +377,7 @@ fun MypageScreen(
 
             Text(
                 text = stringResource(R.string.itinerary_info_legs_data_source),
-                style = typography.bodyRegular12,
+                style = typography.detail1_R12,
                 color = colors.gray300,
                 modifier = Modifier.align(Alignment.BottomCenter)
                     .padding(bottom = 32.dp)

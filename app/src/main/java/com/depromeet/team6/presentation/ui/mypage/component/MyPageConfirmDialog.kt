@@ -49,7 +49,7 @@ fun MyPageConfirmDialog(
             Text(
                 text = title,
                 color = colors.white,
-                style = typography.heading5Bold17,
+                style = typography.heading3_H3SB17,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(top = 32.dp, bottom = 20.dp)
             )
@@ -73,7 +73,7 @@ fun MyPageConfirmDialog(
                     Text(
                         text = stringResource(R.string.mypage_dialog_cancle),
                         color = colors.white,
-                        style = typography.bodyMedium14,
+                        style = typography.body6_B6R14,
                         modifier = Modifier.padding(vertical = 13.dp)
                     )
                 }
@@ -91,7 +91,7 @@ fun MyPageConfirmDialog(
                     Text(
                         text = confirmText,
                         color = colors.black,
-                        style = typography.bodyMedium14,
+                        style = typography.body5_B5SB14,
                         modifier = Modifier.padding(vertical = 13.dp)
                     )
                 }

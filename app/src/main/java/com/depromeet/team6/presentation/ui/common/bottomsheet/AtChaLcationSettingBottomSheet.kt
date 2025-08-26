@@ -47,7 +47,7 @@ fun AtChaLocationSettingBottomSheet(
             Text(
                 text = locationName,
                 modifier = Modifier.fillMaxWidth(),
-                style = defaultTeam6Typography.heading5SemiBold17,
+                style = defaultTeam6Typography.heading3_H3SB17,
                 color = defaultTeam6Colors.white
             )
 
@@ -55,14 +55,14 @@ fun AtChaLocationSettingBottomSheet(
             Text(
                 text = locationAddress,
                 modifier = Modifier.fillMaxWidth(),
-                style = defaultTeam6Typography.bodyRegular14,
+                style = defaultTeam6Typography.body6_B6R14,
                 color = defaultTeam6Colors.gray200
             )
         } else {
             Text(
                 text = locationAddress,
                 modifier = Modifier.fillMaxWidth(),
-                style = defaultTeam6Typography.heading5SemiBold17,
+                style = defaultTeam6Typography.heading3_H3SB17,
                 color = defaultTeam6Colors.white
             )
         }

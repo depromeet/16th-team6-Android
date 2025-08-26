@@ -45,7 +45,7 @@ fun SearchHistoryContainer(
         ) {
             Text(
                 text = stringResource(R.string.home_search_recent_history_text),
-                style = defaultTeam6Typography.bodyRegular14,
+                style = defaultTeam6Typography.body6_B6R14,
                 color = defaultTeam6Colors.gray400
             )
 

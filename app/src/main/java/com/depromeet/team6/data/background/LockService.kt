@@ -93,7 +93,7 @@ class LockService : Service() {
 
             val afd = resources.openRawResourceFd(R.raw.alarm_sound)
             mediaPlayer?.release()
-            mediaPlayer = MediaPlayer().apply{
+            mediaPlayer = MediaPlayer().apply {
                 setAudioAttributes(audioAttr)
                 setDataSource(afd.fileDescriptor, afd.startOffset, afd.length)
                 isLooping = true

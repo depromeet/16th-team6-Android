@@ -81,14 +81,14 @@ fun SearchLocationTextField(
                 keyboardActions = keyboardActions,
                 keyboardOptions = keyboardOptions,
                 visualTransformation = visualTransformation,
-                textStyle = defaultTeam6Typography.bodyRegular17.copy(color = defaultTeam6Colors.white),
+                textStyle = defaultTeam6Typography.body1_B1R17.copy(color = defaultTeam6Colors.white),
                 decorationBox = { innerTextField ->
                     innerTextField()
                     if (value.isEmpty()) {
                         Text(
                             text = stringResource(R.string.home_search_location_search_text),
                             color = defaultTeam6Colors.gray200,
-                            style = defaultTeam6Typography.bodyRegular17
+                            style = defaultTeam6Typography.body1_B1R17
                         )
                     }
                 }

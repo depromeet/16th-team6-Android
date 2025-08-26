@@ -51,7 +51,7 @@ fun MypageVersionItem(
         ) {
             Text(
                 text = title + currentVersion,
-                style = typography.bodyRegular15,
+                style = typography.body4_B4R15,
                 color = colors.white
             )
 
@@ -70,7 +70,7 @@ fun MypageVersionItem(
                 ) {
                     Text(
                         text = stringResource(id = R.string.mypage_version_update_text),
-                        style = defaultTeam6Typography.bodyMedium13,
+                        style = defaultTeam6Typography.body7_B7M13,
                         color = defaultTeam6Colors.white
                     )
                 }

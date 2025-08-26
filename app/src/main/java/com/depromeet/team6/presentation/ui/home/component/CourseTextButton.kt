@@ -45,7 +45,7 @@ fun CourseTextButton(
 
         Text(
             text = startLocation,
-            style = typography.bodyRegular15,
+            style = typography.body4_B4R15,
             color = colors.gray300
         )
 
@@ -59,7 +59,7 @@ fun CourseTextButton(
 
         Text(
             text = destination,
-            style = typography.bodyRegular15,
+            style = typography.body4_B4R15,
             color = colors.gray300
         )
     }

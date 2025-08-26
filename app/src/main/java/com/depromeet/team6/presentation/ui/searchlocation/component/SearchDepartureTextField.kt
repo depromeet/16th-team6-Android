@@ -49,7 +49,7 @@ fun SearchDepartureTextField(
             Text(
                 text = stringResource(R.string.home_search_departure_home_text),
                 color = defaultTeam6Colors.white,
-                style = defaultTeam6Typography.bodyRegular17
+                style = defaultTeam6Typography.body1_B1R17
             )
         }
     }

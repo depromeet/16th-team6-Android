@@ -27,7 +27,7 @@ fun SearchHistoryEmptyContainer(
     ) {
         Text(
             text = stringResource(R.string.home_search_empty_history),
-            style = defaultTeam6Typography.bodyRegular15,
+            style = defaultTeam6Typography.body4_B4R15,
             color = defaultTeam6Colors.gray400
         )
     }

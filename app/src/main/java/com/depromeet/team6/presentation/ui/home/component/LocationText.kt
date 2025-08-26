@@ -64,7 +64,7 @@ fun LocationText(
 
             Text(
                 text = locationTitle,
-                style = typography.bodyMedium15,
+                style = typography.body3_B3M15,
                 color = textColor
             )
 
@@ -72,7 +72,7 @@ fun LocationText(
 
             Text(
                 text = location,
-                style = typography.bodyMedium15,
+                style = typography.body3_B3M15,
                 color = textColor
             )
         }
