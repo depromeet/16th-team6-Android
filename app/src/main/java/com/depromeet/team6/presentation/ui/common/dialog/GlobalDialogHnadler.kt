@@ -16,7 +16,7 @@ fun GlobalDialogHandler(
 
     when (val state = dialogState) {
         is DialogState.SystemSettings -> {
-            SystemSettingsDialog(
+            AtchaCommonAlert(
                 modifier = modifier,
                 message = state.message,
                 onConfirm = {

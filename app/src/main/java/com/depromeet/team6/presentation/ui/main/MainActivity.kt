@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
@@ -27,6 +29,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.depromeet.team6.R
 import com.depromeet.team6.presentation.ui.common.dialog.GlobalDialogHandler
+import com.depromeet.team6.presentation.ui.common.snackbar.GlobalSnackbarHandler
+import com.depromeet.team6.presentation.ui.common.snackbar.LocalSnackbarHostState
 import com.depromeet.team6.presentation.ui.coursesearch.component.SearchResultEmpty
 import com.depromeet.team6.presentation.ui.lock.LockScreenNavigator
 import com.depromeet.team6.presentation.ui.main.navigation.MainNavHost
@@ -35,6 +39,8 @@ import com.depromeet.team6.presentation.ui.main.navigation.rememberMainNavigator
 import com.depromeet.team6.presentation.ui.splash.SplashScreen
 import com.depromeet.team6.presentation.util.dialog.DialogController
 import com.depromeet.team6.presentation.util.dialog.LocalDialogController
+import com.depromeet.team6.presentation.util.snackbar.LocalSnackbarController
+import com.depromeet.team6.presentation.util.snackbar.rememberSnackbarController
 import com.depromeet.team6.presentation.util.view.NetworkState
 import com.depromeet.team6.ui.theme.Team6Theme
 import com.google.firebase.Firebase
@@ -91,6 +97,8 @@ class MainActivity : ComponentActivity() {
             val showSplash by viewModel.showSplash.observeAsState(true)
             val dialogController = remember { DialogController() }
             val networkAvailability = viewModel.networkAvailability.collectAsStateWithLifecycle()
+            val snackbarHostState = remember { SnackbarHostState() }
+            val (snackbarController, snackbarData) = rememberSnackbarController()
 
             var shouldNavigateToCourseSearch by remember { mutableStateOf(navigateToCourseSearch) }
 
@@ -101,19 +109,23 @@ class MainActivity : ComponentActivity() {
                     isAppearanceLightNavigationBars = false
                 }
             }
-
             if (networkAvailability.value == NetworkState.Unavailable) {
                 SearchResultEmpty()
             } else {
                 Team6Theme {
                     CompositionLocalProvider(
-                        LocalDialogController provides dialogController
+                        LocalDialogController provides dialogController,
+                        LocalSnackbarHostState provides snackbarHostState,
+                        LocalSnackbarController provides snackbarController
                     ) {
                         if (showSplash) {
                             SplashScreen()
                         } else {
                             Box {
                                 Scaffold(
+                                    snackbarHost = {
+                                        SnackbarHost(hostState = snackbarHostState)
+                                    },
                                     modifier = Modifier.fillMaxSize()
                                 ) { innerPadding ->
                                     MainNavHost(
@@ -136,6 +148,11 @@ class MainActivity : ComponentActivity() {
                                     controller = dialogController,
                                     modifier = Modifier
                                         .fillMaxWidth()
+                                )
+
+                                GlobalSnackbarHandler(
+                                    snackbarData = snackbarData.value,
+                                    onDismiss = { snackbarData.value = null }
                                 )
                             }
                         }
