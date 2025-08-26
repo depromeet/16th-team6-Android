@@ -39,9 +39,9 @@ import com.depromeet.team6.presentation.ui.main.navigation.rememberMainNavigator
 import com.depromeet.team6.presentation.ui.splash.SplashScreen
 import com.depromeet.team6.presentation.util.dialog.DialogController
 import com.depromeet.team6.presentation.util.dialog.LocalDialogController
-import com.depromeet.team6.presentation.util.view.NetworkState
 import com.depromeet.team6.presentation.util.snackbar.LocalSnackbarController
 import com.depromeet.team6.presentation.util.snackbar.rememberSnackbarController
+import com.depromeet.team6.presentation.util.view.NetworkState
 import com.depromeet.team6.ui.theme.Team6Theme
 import com.google.firebase.Firebase
 import com.google.firebase.analytics.FirebaseAnalytics
