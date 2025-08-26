@@ -1,5 +1,6 @@
 package com.depromeet.team6.presentation.ui.mypage
 
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -212,7 +213,7 @@ class MypageViewModel @Inject constructor(
         }
     }
 
-    fun modifyUserAddress(context: Context) {
+    fun modifyUserAddress(callback: () -> Unit = {}) {
         viewModelScope.launch {
             val currentAddress = currentState.myAddress
 
@@ -247,7 +248,7 @@ class MypageViewModel @Inject constructor(
 
                     setState { copy(mapViewVisible = false) }
 
-                    atChaToastMessage(context, R.string.mypage_change_home_toast_text, Toast.LENGTH_SHORT)
+                    callback()
                 }
                 .onFailure { exception ->
                     handleApiException(exception)
@@ -285,7 +286,7 @@ class MypageViewModel @Inject constructor(
                 setPackage("com.android.vending")
             }
             context.startActivity(intent)
-        } catch (e: android.content.ActivityNotFoundException) {
+        } catch (e: ActivityNotFoundException) {
             val intent = Intent(Intent.ACTION_VIEW).apply {
                 data = Uri.parse("https://play.google.com/store/apps/details?id=${context.packageName}")
             }

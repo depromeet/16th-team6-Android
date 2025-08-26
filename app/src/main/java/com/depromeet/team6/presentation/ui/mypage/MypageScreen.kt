@@ -50,6 +50,7 @@ import com.depromeet.team6.presentation.util.base.ApiErrorSideEffect
 import com.depromeet.team6.presentation.util.dialog.LocalDialogController
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.presentation.util.permission.PermissionUtil
+import com.depromeet.team6.presentation.util.snackbar.LocalSnackbarController
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.depromeet.team6.ui.theme.LocalTeam6Colors
 import com.depromeet.team6.ui.theme.LocalTeam6Typography
@@ -66,6 +67,7 @@ fun MypageRoute(
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
     val dialogController = LocalDialogController.current
+    val snackbarController = LocalSnackbarController.current
 
     val isInitialized = remember { mutableMapOf("initialized" to false) }
 
@@ -92,18 +94,22 @@ fun MypageRoute(
                             eventName = MYPAGE_BANNER_CLICKED
                         )
                     }
+
                     is ApiErrorSideEffect.ShowToastSideEffect -> {
                         Toast.makeText(context, sideEffect.toastMessage, Toast.LENGTH_SHORT).show()
                     }
+
                     is ApiErrorSideEffect.NavigateToLoginSideEffect -> {
                         navigateToLogin()
                     }
+
                     is MypageContract.MypageSideEffect.SettingDialog -> {
-                        dialogController.showSystemSettingsDialog(
+                        dialogController.showAtchaSystemSettingAlert(
                             context = context,
                             message = context.getString(R.string.all_dialog_location_permission)
                         )
                     }
+
                     is MypageContract.MypageSideEffect.ClearPermissionData -> {
                         PermissionUtil.clearAllPermissionData(context)
                     }
@@ -173,11 +179,14 @@ fun MypageRoute(
                                 onAlarmSettingClick = {
                                     mypageViewModel.setEvent(MypageContract.MypageEvent.AlarmSettingClicked)
                                     if (!PermissionUtil.hasNotificationPermission(context)) {
-                                        dialogController.showSystemSettingsDialog(
+                                        dialogController.showAtchaSystemSettingAlert(
                                             context = context,
                                             message = context.getString(R.string.all_dialog_notification_permission),
                                             onConfirm = {
-                                                PermissionUtil.requestNotificationPermission(context, notificationPermissionLauncher)
+                                                PermissionUtil.requestNotificationPermission(
+                                                    context,
+                                                    notificationPermissionLauncher
+                                                )
                                             }
                                         )
                                     }
@@ -227,7 +236,11 @@ fun MypageRoute(
                                 },
                                 mapViewSelectButtonClicked = {
                                     mypageViewModel.updateUserLocation(context)
-                                    mypageViewModel.modifyUserAddress(context)
+                                    mypageViewModel.modifyUserAddress(callback = {
+                                        snackbarController.showSnackbar(
+                                            message = context.getString(R.string.mypage_change_home_toast_text)
+                                        )
+                                    })
                                     mypageViewModel.setEvent(
                                         MypageContract.MypageEvent.ChangeMapViewVisible(
                                             false
@@ -323,7 +336,8 @@ fun MypageScreen(
                     imageVector = ImageVector.vectorResource(R.drawable.ic_mypage_banner),
                     contentDescription = null,
                     tint = Color.Unspecified,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
                         .aspectRatio(328f / 88f)
                         .noRippleClickable { onBannerClicked() }
                         .padding(horizontal = 16.dp)
@@ -379,7 +393,8 @@ fun MypageScreen(
                 text = stringResource(R.string.itinerary_info_legs_data_source),
                 style = typography.detail1_R12,
                 color = colors.gray300,
-                modifier = Modifier.align(Alignment.BottomCenter)
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
                     .padding(bottom = 32.dp)
             )
         }

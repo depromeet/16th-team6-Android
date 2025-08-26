@@ -21,7 +21,7 @@ import com.depromeet.team6.presentation.util.modifier.roundedBackgroundWithPaddi
 import com.depromeet.team6.ui.theme.Team6Theme
 
 @Composable
-fun SystemSettingsDialog(
+fun AtchaCommonAlert(
     modifier: Modifier = Modifier,
     message: String,
     onConfirm: () -> Unit,
@@ -88,8 +88,8 @@ fun SystemSettingsDialog(
 
 @Preview
 @Composable
-private fun SystemSettingsDialogPreview() {
-    SystemSettingsDialog(
+private fun AtchaCommonAlertPreview() {
+    AtchaCommonAlert(
         message = "현위치를 찾을 수 없어요.\n" +
             "위치 권한을 허용해 주세요.",
         onConfirm = {},
