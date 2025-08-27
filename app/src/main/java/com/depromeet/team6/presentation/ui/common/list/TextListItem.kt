@@ -18,7 +18,7 @@ import com.depromeet.team6.ui.theme.defaultTeam6Typography
 @Composable
 fun TextListItem(
     modifier: Modifier = Modifier,
-    text: String,
+    text: String
 ) {
     Box(
         modifier = modifier

@@ -25,7 +25,7 @@ fun TextListItemButton(
     modifier: Modifier = Modifier,
     text: String,
     btnText: String,
-    onBtnClick: () -> Unit,
+    onBtnClick: () -> Unit
 ) {
     Box(
         modifier = modifier

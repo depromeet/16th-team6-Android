@@ -27,7 +27,7 @@ import com.depromeet.team6.ui.theme.defaultTeam6Typography
 fun TextListItemNavigate(
     modifier: Modifier = Modifier,
     text: String,
-    onArrowClick: () -> Unit,
+    onArrowClick: () -> Unit
 ) {
     Box(
         modifier = modifier.fillMaxWidth(),

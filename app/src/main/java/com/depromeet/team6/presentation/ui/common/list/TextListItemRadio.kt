@@ -26,7 +26,7 @@ import com.depromeet.team6.ui.theme.defaultTeam6Typography
 fun TextListItemRadio(
     modifier: Modifier = Modifier,
     text: String,
-    isSelected: Boolean,
+    isSelected: Boolean
 ) {
     Box(
         modifier = modifier
@@ -77,6 +77,6 @@ fun TextListItemRadioPreview() {
     TextListItemRadio(
         modifier = Modifier,
         text = "text list",
-        isSelected = true,
+        isSelected = true
     )
 }
