@@ -229,4 +229,9 @@
 
     <!-- TextField -->
     <string name="textfield_search_clear">텍스트 지우기 아이콘</string>
+
+    <!-- VolumeBottomSheet -->
+    <string name="volume_bottom_sheet_title_tv">소리 크기</string>
+    <string name="volume_bottom_sheet_setting_tv">설정한 크기로 알람이 울려요</string>
+    <string name="volume_bottom_sheet_setting_btn_tv">설정 완료</string>
 </resources>
