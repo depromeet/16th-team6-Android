@@ -27,7 +27,7 @@ private const val VOLUME_MAX = 100
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VolumeBar(
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
     val audio = remember(context) {
@@ -62,7 +62,7 @@ fun VolumeBar(
                 colors = SliderDefaults.colors(
                     thumbColor = LocalTeam6Colors.current.white,
                     activeTrackColor = LocalTeam6Colors.current.systemGreen,
-                    inactiveTrackColor = LocalTeam6Colors.current.gray200,
+                    inactiveTrackColor = LocalTeam6Colors.current.gray200
                 )
             )
         }

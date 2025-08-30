@@ -43,7 +43,7 @@ fun VolumeBottomSheet(
             Text(
                 text = stringResource(R.string.volume_bottom_sheet_title_tv),
                 style = defaultTeam6Typography.heading5SemiBold17,
-                color = LocalTeam6Colors.current.white,
+                color = LocalTeam6Colors.current.white
             )
 
             Spacer(modifier = Modifier.height(4.dp))
@@ -51,7 +51,7 @@ fun VolumeBottomSheet(
             Text(
                 text = stringResource(R.string.volume_bottom_sheet_setting_tv),
                 style = defaultTeam6Typography.bodyRegular14,
-                color = LocalTeam6Colors.current.gray200,
+                color = LocalTeam6Colors.current.gray200
             )
 
             Spacer(modifier = Modifier.height(24.dp))
