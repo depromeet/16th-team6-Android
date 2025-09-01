@@ -2,6 +2,7 @@ package com.depromeet.team6.data.mapper.todomain
 
 import com.depromeet.team6.data.dataremote.model.response.transits.BusServiceHour
 import com.depromeet.team6.data.dataremote.model.response.transits.ResponseBusOperationInfoDto
+import com.depromeet.team6.domain.model.BusDirection
 import com.depromeet.team6.domain.model.BusOperationInfo
 import com.depromeet.team6.presentation.util.BusOperationInfo.HOLIDAY
 import com.depromeet.team6.presentation.util.BusOperationInfo.HOLIDAY_KR
@@ -24,7 +25,7 @@ fun ResponseBusOperationInfoDto.toDomain(): BusOperationInfo {
 fun BusServiceHour.toDomain(): com.depromeet.team6.domain.model.BusServiceHour {
     return com.depromeet.team6.domain.model.BusServiceHour(
         dailyType = dailyTypeMapper(this.dailyType),
-        busDirection = this.busDirection.toString(),
+        busDirection = BusDirection.valueOf(this.busDirection.toString()),
         startTime = if (this.startTime != null) timeMapper(this.startTime) else null,
         endTime = if (this.endTime != null) timeMapper(this.endTime) else null,
         term = this.term

@@ -15,6 +15,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -23,6 +26,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.depromeet.team6.R
+import com.depromeet.team6.domain.model.BusDirection
 import com.depromeet.team6.domain.model.BusOperationInfo
 import com.depromeet.team6.domain.model.course.TransportType
 import com.depromeet.team6.presentation.ui.common.TransportVectorIconComposable
@@ -30,6 +34,7 @@ import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.ui.theme.LocalTeam6Colors
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.depromeet.team6.ui.theme.defaultTeam6Typography
+import com.google.accompanist.flowlayout.FlowRow
 
 @Composable
 fun BusOperationInfoView(
@@ -40,6 +45,16 @@ fun BusOperationInfoView(
     backButtonClicked: () -> Unit = {}
 ) {
     val horizontalModifier = Modifier.padding(horizontal = 16.dp)
+
+    val upList = busOperationInfo.serviceHours.filter { it.busDirection == BusDirection.UP }
+    val downList = busOperationInfo.serviceHours.filter { it.busDirection == BusDirection.DOWN }
+
+    val isOneWay by remember(upList, downList) {
+        derivedStateOf {
+            (upList.isEmpty() || downList.isEmpty())
+        }
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -111,7 +126,7 @@ fun BusOperationInfoView(
                 modifier = horizontalModifier
             )
         }
-        busOperationInfo.serviceHours.forEach { serviceHour ->
+        (upList + downList).forEach { serviceHour ->
             if (serviceHour.startTime == null || serviceHour.endTime == null) return@forEach
             Spacer(modifier = Modifier.height(6.dp))
             Row(modifier = horizontalModifier, verticalAlignment = Alignment.CenterVertically) {
@@ -122,7 +137,10 @@ fun BusOperationInfoView(
                 )
                 Spacer(modifier = Modifier.width(16.dp))
                 Text(
-                    text = "${serviceHour.startTime} ~ ${serviceHour.endTime}",
+                    text = buildString {
+                        append("${serviceHour.startTime} ~ ${serviceHour.endTime}")
+                        if (!isOneWay) append(" (${serviceHour.busDirection.text})")
+                    },
                     style = defaultTeam6Typography.bodyRegular14,
                     color = defaultTeam6Colors.white
                 )
@@ -136,26 +154,71 @@ fun BusOperationInfoView(
             modifier = horizontalModifier
         )
         Spacer(modifier = Modifier.height(6.dp))
+
         Row(
-            modifier = horizontalModifier,
-            verticalAlignment = Alignment.CenterVertically
+            modifier = horizontalModifier
         ) {
-            busOperationInfo.serviceHours.forEachIndexed { index, serviceHour ->
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        text = serviceHour.dailyType,
-                        style = defaultTeam6Typography.bodyRegular13,
-                        color = defaultTeam6Colors.gray200
-                    )
-                    Spacer(modifier = Modifier.width(6.dp))
-                    Text(
-                        text = "${serviceHour.term}분",
-                        style = defaultTeam6Typography.bodyRegular14,
-                        color = defaultTeam6Colors.white
-                    )
+            if (!isOneWay) {
+                Text(
+                    text = "상행",
+                    style = defaultTeam6Typography.bodyRegular14,
+                    color = defaultTeam6Colors.white
+                )
+                Spacer(modifier = Modifier.width(10.dp))
+            }
+
+            FlowRow(
+                mainAxisSpacing = 15.dp,
+                crossAxisSpacing = 8.dp
+            ) {
+                upList.forEach { serviceHour ->
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            text = serviceHour.dailyType,
+                            style = defaultTeam6Typography.bodyRegular13,
+                            color = defaultTeam6Colors.gray200
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = "${serviceHour.term}분",
+                            style = defaultTeam6Typography.bodyRegular14,
+                            color = defaultTeam6Colors.white
+                        )
+                    }
                 }
-                if (index != busOperationInfo.serviceHours.lastIndex) {
-                    Spacer(modifier = Modifier.width(15.dp))
+            }
+        }
+
+        Row(
+            modifier = horizontalModifier
+        ) {
+            if (!isOneWay) {
+                Text(
+                    text = "하행",
+                    style = defaultTeam6Typography.bodyRegular14,
+                    color = defaultTeam6Colors.white
+                )
+                Spacer(modifier = Modifier.width(10.dp))
+            }
+
+            FlowRow(
+                mainAxisSpacing = 15.dp,
+                crossAxisSpacing = 8.dp
+            ) {
+                downList.forEach { serviceHour ->
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            text = serviceHour.dailyType,
+                            style = defaultTeam6Typography.bodyRegular13,
+                            color = defaultTeam6Colors.gray200
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = "${serviceHour.term}분",
+                            style = defaultTeam6Typography.bodyRegular14,
+                            color = defaultTeam6Colors.white
+                        )
+                    }
                 }
             }
         }
@@ -169,7 +232,7 @@ fun BusOperationInfoView(
             )
             Spacer(modifier = Modifier.width(4.dp))
             Text(
-                text = "버스 정보는 운행상황 및 운수사의 정책에 따라 실제와 다를 수 있습니다.",
+                text = "운행상황 및 운수사의 정책에 따라 실제와 다를 수 있습니다.",
                 style = defaultTeam6Typography.bodyRegular11,
                 color = defaultTeam6Colors.gray200
             )
@@ -177,13 +240,13 @@ fun BusOperationInfoView(
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 private fun BusOperationInfoPreview() {
     BusOperationInfoView(
         busOperationInfo = BusOperationInfo(
-            startStationName = "복정역환승센터",
-            endStationName = "노들역",
+            startStationName = "수원버스터미널",
+            endStationName = "강남역나라빌딩앞",
             serviceHours = emptyList()
         ),
         busNumber = "350",
