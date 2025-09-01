@@ -18,6 +18,8 @@ import javax.net.ssl.SSLException
 class TimeoutInterceptor @Inject constructor(
     @ApplicationContext context: Context
 ) : Interceptor {
+
+    @Throws(ApiException.NetworkFailureException::class)
     override fun intercept(chain: Interceptor.Chain): Response {
         val originalRequest = chain.request()
         var retryCount = 0
@@ -25,9 +27,8 @@ class TimeoutInterceptor @Inject constructor(
             try {
                 return chain.proceed(originalRequest)
             } catch (e: IOException) {
-                Timber.e(e)
                 // 멱등하지 않은 요청에 대해서는 재시도 하지 않고 throw
-                if (isIdempotentMethod(originalRequest.method)) {
+                if (!isIdempotentMethod(originalRequest.method)) {
                     throw requestExceptionMapper(e)
                 }
                 // 재시도가 유효한 특정 예외에 대해서만 재시도 요청
@@ -47,7 +48,7 @@ class TimeoutInterceptor @Inject constructor(
         }
     }
 
-    // 멱등하지 않은 Http 메서드에 대해서만 재요청 처리하기 위함
+    // 멱등한 Http 메서드에 대해서만 재요청 처리하기 위함
     // 멱등하지 않은 Http 매서드의 경우 여러번 재요청할 시 서버에서 의도된 동작을 하지 않을 수 있습니다.
     private fun isIdempotentMethod(method: String): Boolean {
         return when (method) {
@@ -58,11 +59,9 @@ class TimeoutInterceptor @Inject constructor(
 
     private fun requestExceptionMapper(e: IOException): ApiException.NetworkFailureException {
         return when (e) {
-            is SocketTimeoutException -> ApiException.NetworkFailureException.Timeout
-            is ConnectException, is SocketException -> ApiException.NetworkFailureException.CannotFindHost
-            is SSLException -> ApiException.NetworkFailureException.CannotFindHost
+            is SocketTimeoutException, is InterruptedIOException -> ApiException.NetworkFailureException.Timeout
+            is ConnectException, is SocketException, is SSLException -> ApiException.NetworkFailureException.CannotFindHost
             is UnknownHostException -> ApiException.NetworkFailureException.NoConnection
-            is InterruptedIOException -> ApiException.NetworkFailureException.Timeout
             else -> ApiException.NetworkFailureException.CannotFindHost
         }
     }

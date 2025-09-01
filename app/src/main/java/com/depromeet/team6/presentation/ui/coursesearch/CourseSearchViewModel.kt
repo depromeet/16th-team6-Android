@@ -326,7 +326,7 @@ class CourseSearchViewModel @Inject constructor(
                     initAlarmUseCase(departureAddress, destinationAddress, registeredCourse!!, lastRouteId)
                     AlarmScheduler.scheduleLockScreenAlarm(
                         context = context,
-                        timeStamp = alarmTimeStamp
+                        alarmTimeStamp = alarmTimeStamp
                     )
                     postAdditionalAlarmSchedule(alarmTimeStamp)
                 }

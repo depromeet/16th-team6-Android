@@ -18,7 +18,7 @@ import com.depromeet.team6.domain.ToastMessage.API_ERROR_UNKNOWN
 import com.depromeet.team6.domain.model.BusArrival
 import com.depromeet.team6.domain.model.course.Station
 import com.depromeet.team6.domain.repository.TransitsRepository
-import com.depromeet.team6.domain.usecase.base.ApiRequestUseCase
+import com.depromeet.team6.domain.usecase.base.NetworkRequestUseCase
 import com.depromeet.team6.presentation.model.exception.ErrorControlFailureException
 import com.depromeet.team6.presentation.model.route.Route
 import javax.inject.Inject
@@ -27,7 +27,7 @@ import javax.inject.Singleton
 @Singleton
 class GetBusArrivalUseCase @Inject constructor(
     private val transitsRepository: TransitsRepository
-) : ApiRequestUseCase<GetBusArrivalUseCase.Params, BusArrival>() {
+) : NetworkRequestUseCase<GetBusArrivalUseCase.Params, BusArrival>() {
 
     data class Params(val routeName: String, val stationName: String, val lat: Double, val lon: Double, val passingStations: List<Station>)
 

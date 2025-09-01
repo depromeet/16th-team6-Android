@@ -8,7 +8,7 @@ import com.depromeet.team6.domain.ToastMessage.API_ERROR_LOGIN_TOKEN_EXPIRED
 import com.depromeet.team6.domain.ToastMessage.API_ERROR_NETWORK_FAILURE
 import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.repository.LocationsRepository
-import com.depromeet.team6.domain.usecase.base.ApiRequestUseCase
+import com.depromeet.team6.domain.usecase.base.NetworkRequestUseCase
 import com.depromeet.team6.presentation.model.exception.ErrorControlFailureException
 import com.depromeet.team6.presentation.model.route.Route
 import timber.log.Timber
@@ -18,7 +18,7 @@ import javax.inject.Singleton
 @Singleton
 class GetAddressFromCoordinatesUseCase @Inject constructor(
     private val locationsRepository: LocationsRepository
-) : ApiRequestUseCase<GetAddressFromCoordinatesUseCase.Params, Address>() {
+) : NetworkRequestUseCase<GetAddressFromCoordinatesUseCase.Params, Address>() {
 
     data class Params(val lat: Double, val lon: Double)
 

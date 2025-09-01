@@ -7,7 +7,7 @@ import com.depromeet.team6.domain.RequestFormat.REQ_001
 import com.depromeet.team6.domain.RequestFormat.REQ_002
 import com.depromeet.team6.domain.ToastMessage
 import com.depromeet.team6.domain.repository.AuthRepository
-import com.depromeet.team6.domain.usecase.base.ApiRequestUseCase
+import com.depromeet.team6.domain.usecase.base.NetworkRequestUseCase
 import com.depromeet.team6.presentation.model.exception.ErrorControlFailureException
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -15,7 +15,7 @@ import javax.inject.Singleton
 @Singleton
 class PostLogoutUseCase @Inject constructor(
     private val authRepository: AuthRepository
-) : ApiRequestUseCase<Unit, Unit>() {
+) : NetworkRequestUseCase<Unit, Unit>() {
 
     suspend operator fun invoke(): Result<Unit> = invoke(Unit)
 

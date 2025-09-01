@@ -8,7 +8,7 @@ import com.depromeet.team6.domain.Network.INTERNAL_SERVER_ERROR
 import com.depromeet.team6.domain.ToastMessage.API_ERROR_LOGIN_TOKEN_EXPIRED
 import com.depromeet.team6.domain.ToastMessage.API_ERROR_UNKNOWN
 import com.depromeet.team6.domain.model.GetUserInfo
-import com.depromeet.team6.domain.usecase.base.ApiRequestUseCase
+import com.depromeet.team6.domain.usecase.base.NetworkRequestUseCase
 import com.depromeet.team6.presentation.model.exception.ErrorControlFailureException
 import com.depromeet.team6.presentation.model.route.Route
 import javax.inject.Inject
@@ -17,7 +17,7 @@ import javax.inject.Singleton
 @Singleton
 class GetUserInfoUseCase @Inject constructor(
     private val authRepository: AuthRepositoryImpl
-) : ApiRequestUseCase<Unit, GetUserInfo>() {
+) : NetworkRequestUseCase<Unit, GetUserInfo>() {
 
     suspend operator fun invoke(): Result<GetUserInfo> =
         invoke(Unit)

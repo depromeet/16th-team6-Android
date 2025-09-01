@@ -17,9 +17,9 @@ object AlarmScheduler {
     private const val ALARM_START_ID = 2001
     private const val ALARM_AWARE_NOTIFICATION_ID = 2002
 
-    fun scheduleLockScreenAlarm(context: Context, timeStamp: String) {
+    fun scheduleLockScreenAlarm(context: Context, alarmTimeStamp: String) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val timeInMillis = if (BuildConfig.DEBUG) isoLocalDateTimeToMillis(timeStamp) - (60_000L * 2) else isoLocalDateTimeToMillis(timeStamp)
+        val alarmTimeInMillis = if (BuildConfig.DEBUG) isoLocalDateTimeToMillis(alarmTimeStamp) - (60_000L * 2) else isoLocalDateTimeToMillis(alarmTimeStamp)
 
         // 잠금화면 포그라운드 서비스 할당
         val intent = Intent(context, LockService::class.java)
@@ -34,13 +34,13 @@ object AlarmScheduler {
         if (exactSupported) {
             alarmManager.setExactAndAllowWhileIdle(
                 AlarmManager.RTC_WAKEUP,
-                timeInMillis,
+                alarmTimeInMillis,
                 pendingIntent
             )
         } else {
             alarmManager.setAndAllowWhileIdle(
                 AlarmManager.RTC_WAKEUP,
-                timeInMillis,
+                alarmTimeInMillis,
                 pendingIntent
             )
         }

@@ -8,14 +8,14 @@ import com.depromeet.team6.domain.ToastMessage
 import com.depromeet.team6.domain.ToastMessage.API_ERROR_LOGIN_TOKEN_EXPIRED
 import com.depromeet.team6.domain.model.SearchHistory
 import com.depromeet.team6.domain.repository.LocationsRepository
-import com.depromeet.team6.domain.usecase.base.ApiRequestUseCase
+import com.depromeet.team6.domain.usecase.base.NetworkRequestUseCase
 import com.depromeet.team6.presentation.model.exception.ErrorControlFailureException
 import com.depromeet.team6.presentation.model.route.Route
 import javax.inject.Inject
 
 class PostSearchHistoriesUseCase @Inject constructor(
     private val locationsRepository: LocationsRepository
-) : ApiRequestUseCase<PostSearchHistoriesUseCase.Params, Unit>() {
+) : NetworkRequestUseCase<PostSearchHistoriesUseCase.Params, Unit>() {
 
     data class Params(val searchHistory: SearchHistory)
 

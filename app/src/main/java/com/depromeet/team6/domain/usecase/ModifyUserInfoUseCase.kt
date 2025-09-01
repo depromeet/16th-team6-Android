@@ -12,14 +12,14 @@ import com.depromeet.team6.domain.ToastMessage.API_ERROR_INVALID_LOCATION
 import com.depromeet.team6.domain.ToastMessage.API_ERROR_LOGIN_TOKEN_EXPIRED
 import com.depromeet.team6.domain.ToastMessage.API_ERROR_UNKNOWN
 import com.depromeet.team6.domain.model.UserInfo
-import com.depromeet.team6.domain.usecase.base.ApiRequestUseCase
+import com.depromeet.team6.domain.usecase.base.NetworkRequestUseCase
 import com.depromeet.team6.presentation.model.exception.ErrorControlFailureException
 import com.depromeet.team6.presentation.model.route.Route
 import javax.inject.Inject
 
 class ModifyUserInfoUseCase @Inject constructor(
     private val authRepository: AuthRepositoryImpl
-) : ApiRequestUseCase<ModifyUserInfoUseCase.Params, UserInfo>() {
+) : NetworkRequestUseCase<ModifyUserInfoUseCase.Params, UserInfo>() {
     data class Params(val modifyUserInfoDto: RequestModifyUserInfoDto)
 
     suspend operator fun invoke(modifyUserInfoDto: RequestModifyUserInfoDto): Result<UserInfo> =

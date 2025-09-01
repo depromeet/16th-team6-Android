@@ -7,7 +7,7 @@ import com.depromeet.team6.domain.ToastMessage.API_ERROR_NETWORK_FAILURE
 import com.depromeet.team6.domain.ToastMessage.API_ERROR_UNKNOWN
 import com.depromeet.team6.domain.model.BusOperationInfo
 import com.depromeet.team6.domain.repository.TransitsRepository
-import com.depromeet.team6.domain.usecase.base.ApiRequestUseCase
+import com.depromeet.team6.domain.usecase.base.NetworkRequestUseCase
 import com.depromeet.team6.presentation.model.exception.ErrorControlFailureException
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -15,7 +15,7 @@ import javax.inject.Singleton
 @Singleton
 class GetBusOperationInfoUseCase @Inject constructor(
     private val transitsRepository: TransitsRepository
-) : ApiRequestUseCase<GetBusOperationInfoUseCase.Params, BusOperationInfo>() {
+) : NetworkRequestUseCase<GetBusOperationInfoUseCase.Params, BusOperationInfo>() {
 
     data class Params(val busRouteId: String, val routeName: String, val serviceRegion: String)
 
