@@ -1,4 +1,4 @@
-package com.depromeet.team6.presentation.ui.coursesearch.component
+package com.depromeet.team6.presentation.ui.common
 
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateDpAsState
@@ -35,24 +35,12 @@ import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.depromeet.team6.ui.theme.defaultTeam6Typography
 
 @Composable
-fun TransportTabRow(
+fun AtchaTabRow(
     tabs: List<String>,
     selectedTabIndex: Int,
     onTabClick: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    /**
-     *  TabRowMinTab0dp 에서 사용하는 코드
-     *  각 Tab에 포함된 텍스트의 길이만큼 동적으로 인디케이터 길이를 할당하기 위한 코드
-     */
-//    val density = LocalDensity.current
-//    val tabWidths = remember {
-//        val tabWidthStateList = mutableStateListOf<Dp>()
-//        repeat(tabs.size) {
-//            tabWidthStateList.add(0.dp)
-//        }
-//        tabWidthStateList
-//    }
     TabRow(
         selectedTabIndex = selectedTabIndex,
         contentColor = defaultTeam6Colors.white,
@@ -65,7 +53,7 @@ fun TransportTabRow(
                         currentTabPosition = tabPositions[selectedTabIndex],
                         tabWidth = tabPositions[selectedTabIndex].width
                     )
-                    .height(2.dp) // Indicator 높이 조절
+                    .height(1.dp) // Indicator 높이 조절
                     .background(color = defaultTeam6Colors.white)
             )
         }
@@ -84,25 +72,26 @@ fun TransportTabRow(
                     modifier = Modifier.fillMaxSize(), // Tab 전체 크기
                     contentAlignment = Alignment.Center // 중앙 정렬
                 ) {
+                    val textColor = if (selectedTabIndex == tabIndex) {
+                        defaultTeam6Colors.white
+                    } else {
+                        defaultTeam6Colors.gray400
+                    }
+                    val textStyle = if (selectedTabIndex == tabIndex) {
+                        defaultTeam6Typography.body5_B5SB14
+                    } else {
+                        defaultTeam6Typography.body4_B4R15
+                    }
                     Text(
                         modifier = Modifier
                             .wrapContentSize()
                             .padding(vertical = 6.dp, horizontal = 14.dp),
                         text = tabName,
-                        color = defaultTeam6Colors.white,
-                        style = defaultTeam6Typography.body5_B5SB14,
+                        color = textColor,
+                        style = textStyle,
                         textAlign = TextAlign.Center,
                         onTextLayout = { textLayoutResult ->
-                            /**
-                             *  TabRowMinTab0dp 에서 사용하는 코드
-                             *  각 Tab에 포함된 텍스트의 길이만큼 동적으로 인디케이터 길이를 할당하기 위한 코드
-                             */
-//                            tabWidths[tabIndex] =
-//                                with(density) {
-//                                    val textWidth = textLayoutResult.size.width.toDp()
-//                                    val padding = 14.dp
-//                                    textWidth + padding
-//                                }
+
                         }
                     )
                 }
@@ -139,11 +128,11 @@ fun Modifier.transportTabIndicatorOffset(
 
 @Preview
 @Composable
-fun TransportTabRowPreview() {
+fun AtchaTabRowPreview() {
     val tabs = listOf("전체", "버스", "지하철")
     var selectedTabIndex by remember { mutableStateOf(0) }
 
-    TransportTabRow(
+    AtchaTabRow(
         tabs = tabs,
         selectedTabIndex = selectedTabIndex,
         onTabClick = { tabIndex ->
