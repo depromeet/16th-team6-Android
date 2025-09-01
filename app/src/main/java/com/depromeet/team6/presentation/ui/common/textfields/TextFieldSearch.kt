@@ -63,14 +63,14 @@ fun TextFieldSearch(
                 keyboardActions = keyboardActions,
                 keyboardOptions = keyboardOptions,
                 visualTransformation = visualTransformation,
-                textStyle = defaultTeam6Typography.bodyRegular15.copy(color = defaultTeam6Colors.white),
+                textStyle = defaultTeam6Typography.body4_B4R15.copy(color = defaultTeam6Colors.white),
                 decorationBox = { innerTextField ->
                     innerTextField()
                     if (value.isEmpty()) {
                         Text(
                             text = hintText,
                             color = defaultTeam6Colors.gray400,
-                            style = defaultTeam6Typography.bodyRegular15
+                            style = defaultTeam6Typography.body4_B4R15
                         )
                     }
                 }

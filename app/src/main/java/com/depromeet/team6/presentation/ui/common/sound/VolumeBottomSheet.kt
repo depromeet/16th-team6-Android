@@ -42,7 +42,7 @@ fun VolumeBottomSheet(
         ) {
             Text(
                 text = stringResource(R.string.volume_bottom_sheet_title_tv),
-                style = defaultTeam6Typography.heading5SemiBold17,
+                style = defaultTeam6Typography.heading3_H3SB17,
                 color = LocalTeam6Colors.current.white
             )
 
@@ -50,7 +50,7 @@ fun VolumeBottomSheet(
 
             Text(
                 text = stringResource(R.string.volume_bottom_sheet_setting_tv),
-                style = defaultTeam6Typography.bodyRegular14,
+                style = defaultTeam6Typography.body6_B6R14,
                 color = LocalTeam6Colors.current.gray200
             )
 
