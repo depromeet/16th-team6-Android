@@ -14,7 +14,7 @@ data class BusServiceHour(
     val term: Int
 )
 
-enum class BusDirection(val text: String){
+enum class BusDirection(val text: String) {
     UP("상행"),
     DOWN("하행")
 }

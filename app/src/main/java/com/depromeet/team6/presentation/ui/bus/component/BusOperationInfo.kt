@@ -49,6 +49,14 @@ fun BusOperationInfoView(
     val upList = busOperationInfo.serviceHours.filter { it.busDirection == BusDirection.UP }
     val downList = busOperationInfo.serviceHours.filter { it.busDirection == BusDirection.DOWN }
 
+    val dailyTypeMap = remember(busOperationInfo) {
+        busOperationInfo.serviceHours
+            .filter { it.startTime != null && it.endTime != null }
+            .groupBy { it.dailyType }
+    }
+
+    val typeOrder = listOf("평일", "토요일", "공휴일")
+
     val isOneWay by remember(upList, downList) {
         derivedStateOf {
             (upList.isEmpty() || downList.isEmpty())
@@ -126,24 +134,35 @@ fun BusOperationInfoView(
                 modifier = horizontalModifier
             )
         }
-        (upList + downList).forEach { serviceHour ->
-            if (serviceHour.startTime == null || serviceHour.endTime == null) return@forEach
+        typeOrder.forEach { dailyType ->
+            val list = dailyTypeMap[dailyType].orEmpty()
+
+            val up = list.firstOrNull { it.busDirection == BusDirection.UP }
+            val down = list.firstOrNull { it.busDirection == BusDirection.DOWN }
+
+            if (up == null && down == null) return@forEach
+
             Spacer(modifier = Modifier.height(6.dp))
             Row(modifier = horizontalModifier, verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    text = serviceHour.dailyType,
+                    text = if (dailyType == "평일") "$dailyType  " else dailyType,
                     style = defaultTeam6Typography.bodyRegular13,
                     color = defaultTeam6Colors.gray200
                 )
                 Spacer(modifier = Modifier.width(16.dp))
-                Text(
-                    text = buildString {
-                        append("${serviceHour.startTime} ~ ${serviceHour.endTime}")
-                        if (!isOneWay) append(" (${serviceHour.busDirection.text})")
-                    },
-                    style = defaultTeam6Typography.bodyRegular14,
-                    color = defaultTeam6Colors.white
-                )
+                if (isOneWay) {
+                    Text(
+                        text = "${up?.startTime ?: "-"} ~ ${up?.endTime ?: "-"}",
+                        style = defaultTeam6Typography.bodyRegular14,
+                        color = defaultTeam6Colors.white
+                    )
+                } else {
+                    Text(
+                        text = "${BusDirection.UP.text} ${up?.startTime ?: "-"} ~ ${up?.endTime ?: "-"} / ${BusDirection.DOWN.text} ${down?.startTime ?: "-"} ~ ${down?.endTime ?: "-"}",
+                        style = defaultTeam6Typography.bodyRegular14,
+                        color = defaultTeam6Colors.white
+                    )
+                }
             }
         }
         Spacer(modifier = Modifier.height(32.dp))
@@ -155,69 +174,40 @@ fun BusOperationInfoView(
         )
         Spacer(modifier = Modifier.height(6.dp))
 
-        Row(
-            modifier = horizontalModifier
-        ) {
-            if (!isOneWay) {
-                Text(
-                    text = "상행",
-                    style = defaultTeam6Typography.bodyRegular14,
-                    color = defaultTeam6Colors.white
-                )
-                Spacer(modifier = Modifier.width(10.dp))
-            }
+        listOf(
+            BusDirection.UP to upList,
+            BusDirection.DOWN to downList
+        ).forEach { (busDirection, list) ->
+            if (list.isEmpty()) return@forEach
 
-            FlowRow(
-                mainAxisSpacing = 15.dp,
-                crossAxisSpacing = 8.dp
-            ) {
-                upList.forEach { serviceHour ->
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text(
-                            text = serviceHour.dailyType,
-                            style = defaultTeam6Typography.bodyRegular13,
-                            color = defaultTeam6Colors.gray200
-                        )
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text(
-                            text = "${serviceHour.term}분",
-                            style = defaultTeam6Typography.bodyRegular14,
-                            color = defaultTeam6Colors.white
-                        )
-                    }
+            Row(modifier = horizontalModifier) {
+                if (!isOneWay) {
+                    Text(
+                        text = busDirection.text,
+                        style = defaultTeam6Typography.bodyRegular14,
+                        color = defaultTeam6Colors.white
+                    )
+                    Spacer(Modifier.width(10.dp))
                 }
-            }
-        }
 
-        Row(
-            modifier = horizontalModifier
-        ) {
-            if (!isOneWay) {
-                Text(
-                    text = "하행",
-                    style = defaultTeam6Typography.bodyRegular14,
-                    color = defaultTeam6Colors.white
-                )
-                Spacer(modifier = Modifier.width(10.dp))
-            }
-
-            FlowRow(
-                mainAxisSpacing = 15.dp,
-                crossAxisSpacing = 8.dp
-            ) {
-                downList.forEach { serviceHour ->
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text(
-                            text = serviceHour.dailyType,
-                            style = defaultTeam6Typography.bodyRegular13,
-                            color = defaultTeam6Colors.gray200
-                        )
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text(
-                            text = "${serviceHour.term}분",
-                            style = defaultTeam6Typography.bodyRegular14,
-                            color = defaultTeam6Colors.white
-                        )
+                FlowRow(
+                    mainAxisSpacing = 15.dp,
+                    crossAxisSpacing = 8.dp
+                ) {
+                    list.forEach { serviceHour ->
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(
+                                text = serviceHour.dailyType,
+                                style = defaultTeam6Typography.bodyRegular13,
+                                color = defaultTeam6Colors.gray200
+                            )
+                            Spacer(Modifier.width(6.dp))
+                            Text(
+                                text = "${serviceHour.term}분",
+                                style = defaultTeam6Typography.bodyRegular14,
+                                color = defaultTeam6Colors.white
+                            )
+                        }
                     }
                 }
             }
