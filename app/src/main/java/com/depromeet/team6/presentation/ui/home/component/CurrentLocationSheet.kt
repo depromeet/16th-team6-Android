@@ -15,6 +15,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.depromeet.team6.R
+import com.depromeet.team6.presentation.ui.common.textfields.TextFieldLocation
 import com.depromeet.team6.ui.theme.LocalTeam6Colors
 
 @Composable
@@ -43,7 +44,7 @@ fun CurrentLocationSheet(
                 )
                 .padding(start = 16.dp, end = 16.dp, top = 24.dp, bottom = 20.dp)
         ) {
-            LocationText(
+            TextFieldLocation(
                 locationTitle = stringResource(R.string.home_current_location_text),
                 location = currentLocation,
                 textColor = colors.systemGreen,
@@ -54,7 +55,7 @@ fun CurrentLocationSheet(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            LocationText(
+            TextFieldLocation(
                 locationTitle = stringResource(R.string.home_destination_text),
                 location = destination,
                 textColor = colors.gray200,
