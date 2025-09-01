@@ -18,6 +18,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.depromeet.team6.R
 import com.depromeet.team6.domain.model.Location
+import com.depromeet.team6.presentation.ui.common.list.LocationListItemDeleteButton
 import com.depromeet.team6.presentation.ui.searchlocation.SearchLocationContract
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
@@ -62,8 +63,8 @@ fun SearchHistoryContainer(
 
         LazyColumn {
             items(uiState.recentSearches) { recentSearchLocation ->
-                SearchHistoryItem(
-                    homeSearchLocation = recentSearchLocation,
+                LocationListItemDeleteButton(
+                    location = recentSearchLocation,
                     deleteButtonClicked = { onDeleteButtonClicked(recentSearchLocation) },
                     selectItemClicked = { selectButtonClicked(recentSearchLocation) }
                 )

@@ -1,12 +1,10 @@
-package com.depromeet.team6.presentation.ui.home.component
+package com.depromeet.team6.presentation.ui.common.textfields
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -19,6 +17,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.depromeet.team6.R
@@ -27,7 +26,7 @@ import com.depromeet.team6.ui.theme.LocalTeam6Colors
 import com.depromeet.team6.ui.theme.LocalTeam6Typography
 
 @Composable
-fun LocationText(
+fun TextFieldLocation(
     locationTitle: String,
     location: String,
     textColor: Color,
@@ -39,18 +38,17 @@ fun LocationText(
 
     Box(
         modifier = modifier
-            .fillMaxWidth()
-            .height(48.dp),
+            .fillMaxWidth(),
         contentAlignment = Alignment.Center
     ) {
         Row(
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxWidth()
                 .background(
                     backgroundColor,
                     shape = RoundedCornerShape(10.dp)
                 )
-                .padding(16.dp)
+                .padding(horizontal = 16.dp, vertical = 14.dp)
                 .noRippleClickable { onClick() },
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -60,7 +58,7 @@ fun LocationText(
                 tint = textColor
             )
 
-            Spacer(modifier = Modifier.width(8.dp))
+            Spacer(modifier = Modifier.width(10.dp))
 
             Text(
                 text = locationTitle,
@@ -73,7 +71,9 @@ fun LocationText(
             Text(
                 text = location,
                 style = typography.body3_B3M15,
-                color = textColor
+                color = textColor,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
         }
     }
@@ -81,8 +81,8 @@ fun LocationText(
 
 @Preview
 @Composable
-fun LocationTextPreview() {
-    LocationText(
+fun TextFieldLocationPreview() {
+    TextFieldLocation(
         locationTitle = "현위치:",
         location = "중앙빌딩",
         textColor = LocalTeam6Colors.current.systemGreen,

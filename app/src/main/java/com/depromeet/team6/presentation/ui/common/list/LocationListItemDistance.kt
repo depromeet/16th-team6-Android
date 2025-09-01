@@ -1,4 +1,4 @@
-package com.depromeet.team6.presentation.ui.searchlocation.component
+package com.depromeet.team6.presentation.ui.common.list
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -25,8 +25,8 @@ import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.depromeet.team6.ui.theme.defaultTeam6Typography
 
 @Composable
-fun SearchLocationItem(
-    homeSearchLocation: Location,
+fun LocationListItemDistance(
+    location: Location,
     modifier: Modifier = Modifier,
     selectButtonClicked: (Location) -> Unit = {}
 ) {
@@ -35,15 +35,16 @@ fun SearchLocationItem(
             .fillMaxWidth()
             .padding(vertical = 19.dp, horizontal = 16.dp)
             .noRippleClickable {
-                selectButtonClicked(homeSearchLocation)
+                selectButtonClicked(location)
             },
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column(modifier = modifier.weight(1f)) {
             Text(
-                text = homeSearchLocation.name,
+                text = location.name,
                 color = defaultTeam6Colors.white,
                 style = defaultTeam6Typography.body4_B4R15,
+                maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
 
@@ -53,7 +54,7 @@ fun SearchLocationItem(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = homeSearchLocation.radius,
+                    text = location.radius,
                     style = defaultTeam6Typography.body6_B6R14,
                     color = defaultTeam6Colors.gray200,
                     overflow = TextOverflow.Ellipsis
@@ -70,9 +71,10 @@ fun SearchLocationItem(
                 Spacer(Modifier.width(6.dp))
 
                 Text(
-                    text = homeSearchLocation.address,
+                    text = location.address,
                     style = defaultTeam6Typography.body6_B6R14,
                     color = defaultTeam6Colors.gray200,
+                    maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
             }
@@ -84,10 +86,10 @@ fun SearchLocationItem(
 
 @Preview
 @Composable
-private fun SearchLocationItemPreview() {
-    SearchLocationItem(
-        homeSearchLocation = Location(
-            name = "60계 치킨 강남정",
+private fun LocationListItemDistancePreview() {
+    LocationListItemDistance(
+        location = Location(
+            name = "60계 치킨 강남점",
             lat = 0.0,
             lon = 0.0,
             radius = "1.9km",

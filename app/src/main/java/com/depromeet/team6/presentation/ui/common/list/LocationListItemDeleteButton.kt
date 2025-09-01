@@ -1,4 +1,4 @@
-package com.depromeet.team6.presentation.ui.searchlocation.component
+package com.depromeet.team6.presentation.ui.common.list
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -25,8 +25,8 @@ import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.depromeet.team6.ui.theme.defaultTeam6Typography
 
 @Composable
-fun SearchHistoryItem(
-    homeSearchLocation: Location,
+fun LocationListItemDeleteButton(
+    location: Location,
     modifier: Modifier = Modifier,
     deleteButtonClicked: (Location) -> Unit = {},
     selectItemClicked: (Location) -> Unit = {}
@@ -36,15 +36,16 @@ fun SearchHistoryItem(
             .fillMaxWidth()
             .padding(vertical = 19.dp, horizontal = 16.dp)
             .noRippleClickable {
-                selectItemClicked(homeSearchLocation)
+                selectItemClicked(location)
             },
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column(modifier = modifier.weight(1f)) {
             Text(
-                text = homeSearchLocation.name,
+                text = location.name,
                 color = defaultTeam6Colors.white,
                 style = defaultTeam6Typography.body4_B4R15,
+                maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
 
@@ -54,7 +55,7 @@ fun SearchHistoryItem(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = homeSearchLocation.radius,
+                    text = location.radius,
                     style = defaultTeam6Typography.body6_B6R14,
                     color = defaultTeam6Colors.gray200,
                     overflow = TextOverflow.Ellipsis
@@ -71,9 +72,10 @@ fun SearchHistoryItem(
                 Spacer(Modifier.width(6.dp))
 
                 Text(
-                    text = homeSearchLocation.address,
+                    text = location.address,
                     style = defaultTeam6Typography.body6_B6R14,
                     color = defaultTeam6Colors.gray200,
+                    maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
             }
@@ -86,7 +88,7 @@ fun SearchHistoryItem(
             contentDescription = stringResource(R.string.home_icon_search_text),
             tint = defaultTeam6Colors.gray400,
             modifier = Modifier.noRippleClickable {
-                deleteButtonClicked(homeSearchLocation)
+                deleteButtonClicked(location)
             }
         )
     }
@@ -94,10 +96,10 @@ fun SearchHistoryItem(
 
 @Preview
 @Composable
-fun SearchHistoryItemPreview() {
-    SearchHistoryItem(
-        homeSearchLocation = Location(
-            name = "60계 치킨 강남정",
+fun LocationListItemDeleteButtonPreview() {
+    LocationListItemDeleteButton(
+        location = Location(
+            name = "60계 치킨 강남점",
             lat = 0.0,
             lon = 0.0,
             radius = "1.9km",
