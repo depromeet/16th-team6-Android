@@ -25,9 +25,9 @@ import com.depromeet.team6.ui.theme.defaultTeam6Typography
 
 @Composable
 fun AtchaTextBox(
-    hintMessage : String,
-    modifier : Modifier = Modifier,
-    textState : TextFieldState = rememberTextFieldState()
+    hintMessage: String,
+    modifier: Modifier = Modifier,
+    textState: TextFieldState = rememberTextFieldState()
 ) {
     val scrollState = rememberScrollState()
 
@@ -38,7 +38,7 @@ fun AtchaTextBox(
                 backgroundColor = defaultTeam6Colors.gray940,
                 cornerRadius = 10.dp,
                 padding = PaddingValues(16.dp)
-            ),
+            )
     ) {
         BasicTextField(
             modifier = Modifier

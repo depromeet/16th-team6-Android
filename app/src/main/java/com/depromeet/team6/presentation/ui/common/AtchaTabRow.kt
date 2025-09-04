@@ -91,7 +91,6 @@ fun AtchaTabRow(
                         style = textStyle,
                         textAlign = TextAlign.Center,
                         onTextLayout = { textLayoutResult ->
-
                         }
                     )
                 }
