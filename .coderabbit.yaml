@@ -1,0 +1,38 @@
+language: "ko-KR" # 한국말로 설정
+
+# Set the tone of reviews and chat. Example: 'You must use talk like Mr. T. I pity the fool who doesn't!'
+# Default: ""
+tone_instructions: ""
+
+reviews:
+  profile: "assertive"
+  request_changes_workflow: true
+  high_level_summary: true
+  collapse_walkthrough: false
+  review_status: true
+  auto_review:
+    enabled: true
+    drafts: false
+  poem: false
+  ignore_title_keywords:
+    - "wip"
+    - "draft"
+tools:
+  eslint:
+    enabled: true
+  ruff:
+    enabled: true
+  gitleaks:
+    enabled: true
+  hadolint:
+    enabled: true
+
+chat:
+  auto_reply: true
+
+knowledge_base:
+code_guidelines:
+enabled: true
+filePatterns:
+  - "**/.cursorrules"
+  - "**/CODING_STANDARDS.md"
