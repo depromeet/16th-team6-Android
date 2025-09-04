@@ -71,7 +71,7 @@ fun VolumeBottomSheet(
                         padding = PaddingValues(vertical = 14.dp, horizontal = 28.dp)
                     ),
                 textAlign = TextAlign.Center,
-                style = defaultTeam6Typography.heading6Bold15,
+                style = defaultTeam6Typography.body2_B2SB15,
                 color = defaultTeam6Colors.black
             )
         }

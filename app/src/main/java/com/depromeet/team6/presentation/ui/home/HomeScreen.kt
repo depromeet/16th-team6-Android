@@ -54,7 +54,6 @@ import com.depromeet.team6.presentation.ui.home.component.AfterRegisterMap
 import com.depromeet.team6.presentation.ui.home.component.AfterRegisterSheet
 import com.depromeet.team6.presentation.ui.home.component.CurrentLocationSheet
 import com.depromeet.team6.presentation.ui.home.component.DeleteAlarmDialog
-import com.depromeet.team6.presentation.ui.home.component.HomeGreetBottomSheet
 import com.depromeet.team6.presentation.ui.home.component.TMapViewCompose
 import com.depromeet.team6.presentation.ui.home.component.UnifiedCharacterBubble
 import com.depromeet.team6.presentation.util.AmplitudeCommon.SCREEN_NAME
@@ -80,7 +79,6 @@ import com.depromeet.team6.presentation.util.permission.PermissionUtil
 import com.depromeet.team6.presentation.util.toast.atChaToastMessage
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.depromeet.team6.ui.theme.LocalTeam6Colors
-import com.depromeet.team6.ui.theme.Team6Theme
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.android.gms.maps.model.LatLng
@@ -168,7 +166,6 @@ fun HomeRoute(
     LaunchedEffect(Unit) {
         viewModel.loadAlarmAndCourseInfoFromPrefs()
         viewModel.loadUserDepartureState()
-        viewModel.setEvent(HomeContract.HomeEvent.ChangeGreetBottomSheetVisible(afterOnboarding))
     }
 
     // 화면이 다시 활성화될 때마다 사용자 출발 상태를 새로 로드
@@ -582,13 +579,6 @@ fun HomeRoute(
                             )
                         )
                     },
-                    greetBottomSheetButtonClicked = {
-                        viewModel.setEvent(
-                            HomeContract.HomeEvent.ChangeGreetBottomSheetVisible(
-                                false
-                            )
-                        )
-                    },
                     currentLocationClicked = {
                         viewModel.setState {
                             copy(
@@ -642,7 +632,6 @@ fun HomeScreen(
     deleteAlarmConfirmed: () -> Unit = {},
     dismissDialog: () -> Unit = {},
     navigateToSearchLocation: () -> Unit = {},
-    greetBottomSheetButtonClicked: () -> Unit = {},
     currentLocationClicked: () -> Unit = {},
     mapModified: () -> Unit = {}
 ) {
@@ -875,20 +864,6 @@ fun HomeScreen(
                         )
                     },
                     sortType = 1
-                )
-            }
-        }
-        if (homeUiState.greetBottomSheetVisible) {
-            Box(
-                modifier = modifier
-                    .fillMaxSize()
-                    .background(color = Team6Theme.colors.black.copy(alpha = 0.5f))
-                    .zIndex(Float.MAX_VALUE)
-            ) {
-                HomeGreetBottomSheet(
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter),
-                    buttonClicked = { greetBottomSheetButtonClicked() }
                 )
             }
         }

@@ -73,7 +73,6 @@ class HomeContract {
         val logoutState: Boolean = false,
         val taxiCost: Int = 0,
         val deleteAlarmDialogVisible: Boolean = false,
-        val greetBottomSheetVisible: Boolean = false,
         // 애니메이션
         val characterState: CharacterState = CharacterState()
     ) : UiState
@@ -110,7 +109,6 @@ class HomeContract {
         data object SetDestination : HomeEvent()
         data object AfterRegisterMapMarkerClick : HomeEvent()
         data class CourseDetailButtonClick(val clickEventKey: String) : HomeEvent()
-        data class ChangeGreetBottomSheetVisible(val visible: Boolean) : HomeEvent()
 
         // 애니메이션
         data object CharacterClicked : HomeEvent()
