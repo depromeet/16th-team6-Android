@@ -25,6 +25,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -35,15 +36,15 @@ import androidx.lifecycle.flowWithLifecycle
 import com.depromeet.team6.R
 import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.Location
+import com.depromeet.team6.presentation.ui.common.SearchBar
 import com.depromeet.team6.presentation.ui.common.list.LocationListItemDistance
+import com.depromeet.team6.presentation.ui.common.textfields.TextFieldLocation
 import com.depromeet.team6.presentation.ui.common.view.AtChaLoadingView
 import com.depromeet.team6.presentation.ui.home.HomeViewModel
 import com.depromeet.team6.presentation.ui.searchlocation.component.BackTopBar
-import com.depromeet.team6.presentation.ui.searchlocation.component.SearchDepartureTextField
 import com.depromeet.team6.presentation.ui.searchlocation.component.SearchHistoryContainer
 import com.depromeet.team6.presentation.ui.searchlocation.component.SearchHistoryEmptyContainer
 import com.depromeet.team6.presentation.ui.searchlocation.component.SearchLocationMapView
-import com.depromeet.team6.presentation.ui.searchlocation.component.SearchLocationTextField
 import com.depromeet.team6.presentation.util.DefaultLatLng.DEFAULT_LAT
 import com.depromeet.team6.presentation.util.DefaultLatLng.DEFAULT_LNG
 import com.depromeet.team6.presentation.util.base.ApiErrorSideEffect
@@ -51,6 +52,7 @@ import com.depromeet.team6.presentation.util.context.getUserLocation
 import com.depromeet.team6.presentation.util.dialog.LocalDialogController
 import com.depromeet.team6.presentation.util.permission.PermissionUtil
 import com.depromeet.team6.presentation.util.view.LoadState
+import com.depromeet.team6.ui.theme.LocalTeam6Colors
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.google.android.gms.maps.model.LatLng
 import com.google.gson.Gson
@@ -282,17 +284,25 @@ fun SearchLocationScreen(
                 modifier = Modifier
             )
 
-            SearchLocationTextField(
+            SearchBar(
                 value = searchText,
-                onValueChange = onSearchTextChange,
-                onTextClearButtonClicked = {
+                hintText = stringResource(R.string.home_search_departure_hint_text),
+                onSearchTextChange = onSearchTextChange,
+                onTextClearButtonClicked =  {
                     viewModel.setEvent(SearchLocationContract.SearchLocationEvent.ClearText)
                     viewModel.updateRecentSearches(location = location)
                 },
-                modifier = Modifier.fillMaxWidth()
+                onMapButtonClicked = {} // TODO : 지도 연결 필요
             )
 
-            SearchDepartureTextField()
+            TextFieldLocation(
+                locationTitle = stringResource(R.string.home_search_departure_text),
+                location = stringResource(R.string.home_search_departure_home_text),
+                textColor = LocalTeam6Colors.current.gray200,
+                backgroundColor = LocalTeam6Colors.current.gray950,
+                onClick = {},
+                modifier = Modifier
+            )
 
             HorizontalDivider(
                 modifier = Modifier.fillMaxWidth(),
