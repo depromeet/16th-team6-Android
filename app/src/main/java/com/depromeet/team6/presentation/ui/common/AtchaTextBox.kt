@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -17,12 +18,17 @@ import com.depromeet.team6.presentation.util.modifier.roundedBackgroundWithPaddi
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.depromeet.team6.ui.theme.defaultTeam6Typography
 
+/**
+ * @param hintMessage : text field가 비어있을 대 보이는 안내 메시지
+ * @param textState : 사용하려는 UI에서 textState를 선언해서 주입해주세요
+ */
+
 @Composable
 fun AtchaTextBox(
     hintMessage : String,
-    modifier : Modifier = Modifier
+    modifier : Modifier = Modifier,
+    textState : TextFieldState = rememberTextFieldState()
 ) {
-    val textState = rememberTextFieldState()
     val scrollState = rememberScrollState()
 
     Box(
@@ -42,6 +48,7 @@ fun AtchaTextBox(
             textStyle = defaultTeam6Typography.body6_B6R14.copy(
                 color = defaultTeam6Colors.white
             ),
+            scrollState = scrollState,
             decorator = { innerTextField ->
                 innerTextField()
                 if (textState.text.isEmpty()) {
