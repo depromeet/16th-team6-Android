@@ -36,8 +36,8 @@ fun SearchBar(
             modifier = Modifier.weight(1f),
             value = value,
             hintText = hintText,
-            onValueChange= onSearchTextChange,
-            onTextClearButtonClicked= onTextClearButtonClicked,
+            onValueChange = onSearchTextChange,
+            onTextClearButtonClicked = onTextClearButtonClicked
         )
 
         Spacer(modifier = Modifier.width(6.dp))

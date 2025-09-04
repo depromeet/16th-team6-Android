@@ -288,7 +288,7 @@ fun SearchLocationScreen(
                 value = searchText,
                 hintText = stringResource(R.string.home_search_departure_hint_text),
                 onSearchTextChange = onSearchTextChange,
-                onTextClearButtonClicked =  {
+                onTextClearButtonClicked = {
                     viewModel.setEvent(SearchLocationContract.SearchLocationEvent.ClearText)
                     viewModel.updateRecentSearches(location = location)
                 },
