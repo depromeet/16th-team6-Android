@@ -12,6 +12,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.depromeet.team6.R
+import com.depromeet.team6.presentation.ui.common.speechbubble.AtchaSpeechBubble
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 
 @Composable
@@ -27,7 +28,7 @@ fun CharacterSpeechBubble(
         modifier = modifier.noRippleClickable { onClick() }
     ) {
         if (showSpeechBubble) {
-            SpeechBubble(
+            AtchaSpeechBubble(
                 prefix = prefixText,
                 modifier = Modifier,
                 emphasisText = emphasisText,
