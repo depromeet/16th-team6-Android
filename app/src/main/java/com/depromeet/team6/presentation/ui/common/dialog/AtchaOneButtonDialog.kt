@@ -21,17 +21,17 @@ import com.depromeet.team6.presentation.util.modifier.roundedBackgroundWithPaddi
 import com.depromeet.team6.ui.theme.Team6Theme
 
 @Composable
-fun AtchaCommonAlert(
-    modifier: Modifier = Modifier,
+fun AtchaOneButtonDialog(
     message: String,
+    confirmButtonText:String,
     onConfirm: () -> Unit,
-    onDismiss: () -> Unit
+    modifier: Modifier = Modifier
 ) {
     Dialog(
-        onDismissRequest = onDismiss,
+        onDismissRequest = {},
         properties = DialogProperties(
-            dismissOnBackPress = true,
-            dismissOnClickOutside = true
+            dismissOnBackPress = false,
+            dismissOnClickOutside = false
         )
     ) {
         Column(
@@ -53,22 +53,7 @@ fun AtchaCommonAlert(
 
             Row(modifier = Modifier.fillMaxWidth()) {
                 Text(
-                    text = "닫기",
-                    textAlign = TextAlign.Center,
-                    style = Team6Theme.typography.bodySemiBold14,
-                    color = Team6Theme.colors.white,
-                    modifier = Modifier
-                        .weight(1f)
-                        .roundedBackgroundWithPadding(
-                            backgroundColor = Team6Theme.colors.gray910,
-                            cornerRadius = 8.dp,
-                            padding = PaddingValues(vertical = 13.dp)
-                        )
-                        .noRippleClickable(onDismiss)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = "설정하기",
+                    text = confirmButtonText,
                     textAlign = TextAlign.Center,
                     style = Team6Theme.typography.bodySemiBold14,
                     color = Team6Theme.colors.black,
@@ -88,11 +73,11 @@ fun AtchaCommonAlert(
 
 @Preview
 @Composable
-private fun AtchaCommonAlertPreview() {
-    AtchaCommonAlert(
-        message = "현위치를 찾을 수 없어요.\n" +
-            "위치 권한을 허용해 주세요.",
+private fun AtchaOneButtonDialogPreview() {
+    AtchaOneButtonDialog(
+        message = "더 좋아진 앗차를 사용하기 위해\n" +
+                "업데이트가 필요해요",
         onConfirm = {},
-        onDismiss = {}
+        confirmButtonText = "업데이트하기"
     )
 }
