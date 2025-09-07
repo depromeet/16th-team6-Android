@@ -37,7 +37,7 @@ fun GlobalDialogHandler(
             AtchaOneButtonDialog(
                 modifier = modifier,
                 message = state.message,
-                confirmButtonText = stringResource(R.string.all_dialog_setting_button_text),
+                confirmButtonText = state.confirmButtonText,
                 onConfirm = {
                     state.onConfirm()
                     controller.hideDialog()
@@ -49,7 +49,7 @@ fun GlobalDialogHandler(
             AtchaTwoButtonDialog(
                 modifier = modifier,
                 message = state.message,
-                confirmButtonText = stringResource(R.string.all_dialog_setting_button_text),
+                confirmButtonText = state.confirmButtonText,
                 onConfirm = {
                     state.onConfirm()
                     controller.hideDialog()
