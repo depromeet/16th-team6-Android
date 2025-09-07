@@ -41,10 +41,10 @@ fun GlobalDialogHandler(
                 onConfirm = {
                     state.onConfirm()
                     controller.hideDialog()
-                },
+                }
             )
         }
-        
+
         is DialogState.TwoButton -> {
             AtchaTwoButtonDialog(
                 modifier = modifier,

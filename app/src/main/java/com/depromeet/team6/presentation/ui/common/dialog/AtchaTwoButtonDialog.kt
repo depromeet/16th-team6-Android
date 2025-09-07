@@ -25,11 +25,11 @@ import com.depromeet.team6.ui.theme.Team6Theme
 @Composable
 fun AtchaTwoButtonDialog(
     message: String,
-    confirmButtonText:String,
+    confirmButtonText: String,
     onConfirm: () -> Unit,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
-    closeButtonText:String = stringResource(R.string.all_dialog_close_button_text)
+    closeButtonText: String = stringResource(R.string.all_dialog_close_button_text)
 ) {
     Dialog(
         onDismissRequest = onDismiss,

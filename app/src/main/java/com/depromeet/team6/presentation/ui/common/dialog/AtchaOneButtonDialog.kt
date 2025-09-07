@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -23,7 +22,7 @@ import com.depromeet.team6.ui.theme.Team6Theme
 @Composable
 fun AtchaOneButtonDialog(
     message: String,
-    confirmButtonText:String,
+    confirmButtonText: String,
     onConfirm: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -76,7 +75,7 @@ fun AtchaOneButtonDialog(
 private fun AtchaOneButtonDialogPreview() {
     AtchaOneButtonDialog(
         message = "더 좋아진 앗차를 사용하기 위해\n" +
-                "업데이트가 필요해요",
+            "업데이트가 필요해요",
         onConfirm = {},
         confirmButtonText = "업데이트하기"
     )

@@ -5,9 +5,6 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.staticCompositionLocalOf
-import androidx.compose.ui.res.stringResource
-import androidx.core.content.ContextCompat.getString
-import com.depromeet.team6.R
 import com.depromeet.team6.presentation.util.context.openAppSettings
 
 @Stable
@@ -35,8 +32,8 @@ class DialogController {
         message: String,
         onConfirm: () -> Unit = {},
         onDismiss: () -> Unit = {},
-        closeButtonText:String?,
-        confirmButtonText:String,
+        closeButtonText: String?,
+        confirmButtonText: String
     ) {
         _dialogState.value = DialogState.TwoButton(
             message = message,
@@ -50,9 +47,9 @@ class DialogController {
     fun showAtchaOneButtonAlert(
         message: String,
         onConfirm: () -> Unit = {},
-        confirmButtonText:String
+        confirmButtonText: String
 
-        ) {
+    ) {
         _dialogState.value = DialogState.OneButton(
             message = message,
             onConfirm = onConfirm,
@@ -76,15 +73,15 @@ sealed class DialogState {
         val message: String,
         val onConfirm: () -> Unit,
         val onDismiss: () -> Unit,
-        val closeButtonText:String?,
-        val confirmButtonText:String,
-        ) : DialogState()
+        val closeButtonText: String?,
+        val confirmButtonText: String
+    ) : DialogState()
 
     data class OneButton(
         val message: String,
         val onConfirm: () -> Unit,
-        val confirmButtonText:String,
-        ) : DialogState()
+        val confirmButtonText: String
+    ) : DialogState()
 }
 
 val LocalDialogController = staticCompositionLocalOf<DialogController> {
