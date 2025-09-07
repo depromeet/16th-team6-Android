@@ -33,7 +33,7 @@ fun OnboardingSearchLocationItem(
     val padding = if (onboardingSearchLocation.businessCategory.startsWith("지역")) {
         PaddingValues(vertical = 16.dp, horizontal = 16.dp)
     } else {
-        PaddingValues(vertical = 19.dp, horizontal = 16.dp)
+        PaddingValues(vertical = 18.dp, horizontal = 16.dp)
     }
     Column(
         modifier = modifier
