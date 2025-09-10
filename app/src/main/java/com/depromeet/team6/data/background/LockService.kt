@@ -86,22 +86,24 @@ class LockService : Service() {
                 .build()
 
             val audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
-            val alarmVolume = userInfoRepositoryImpl.getAlarmVolume()
+            val maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_ALARM)
+            val alarmVolume = userInfoRepositoryImpl.getAlarmVolume().coerceIn(0, maxVolume)
             originalAlarmVolume = audioManager.getStreamVolume(AudioManager.STREAM_ALARM)
 
             audioManager.setStreamVolume(AudioManager.STREAM_ALARM, alarmVolume, 0)
 
             val afd = resources.openRawResourceFd(R.raw.alarm_sound)
-            mediaPlayer?.release()
-            mediaPlayer = MediaPlayer().apply {
-                setAudioAttributes(audioAttr)
-                setDataSource(afd.fileDescriptor, afd.startOffset, afd.length)
-                isLooping = true
-                prepare()
-                setVolume(1.0f, 1.0f)
-                start()
+            afd.use {
+                mediaPlayer?.release()
+                mediaPlayer = MediaPlayer().apply {
+                    setAudioAttributes(audioAttr)
+                    setDataSource(afd.fileDescriptor, afd.startOffset, afd.length)
+                    isLooping = true
+                    setVolume(1.0f, 1.0f)
+                    setOnPreparedListener { it.start() }
+                    prepareAsync() // 메인 스레드 블로킹 방지
+                }
             }
-            afd.close()
         } catch (e: Exception) {
             Log.e("LockService", "알림음 재생 중 오류 발생: ${e.message}", e)
         }

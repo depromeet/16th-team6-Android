@@ -14,25 +14,17 @@ reviews:
     enabled: true
     drafts: false
   poem: false
-  ignore_title_keywords:
-    - "wip"
-    - "draft"
-tools:
-  eslint:
-    enabled: true
-  ruff:
-    enabled: true
-  gitleaks:
-    enabled: true
-  hadolint:
-    enabled: true
+  tools:
+    gitleaks:
+      enabled: true
+    detekt:
+      enabled: true
+    yamllint:
+      enabled: true
 
 chat:
   auto_reply: true
 
 knowledge_base:
-code_guidelines:
-enabled: true
-filePatterns:
-  - "**/.cursorrules"
-  - "**/CODING_STANDARDS.md"
+  code_guidelines:
+    enabled: true

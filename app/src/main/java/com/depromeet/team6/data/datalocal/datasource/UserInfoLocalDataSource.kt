@@ -51,7 +51,7 @@ class UserInfoLocalDataSource @Inject constructor(
         set(value) = setBooleanValue(ALARM_SOUND_SETTING, value)
 
     var alarmVolume: Int
-        get() = getIntValue(ALARM_VOLUME)
+        get() = getIntValue(ALARM_VOLUME, 1)
         set(value) = setIntValue(ALARM_VOLUME, value)
 
     var userHome: LatLng
