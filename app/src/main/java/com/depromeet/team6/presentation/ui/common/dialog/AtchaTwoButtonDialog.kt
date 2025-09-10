@@ -11,21 +11,25 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.depromeet.team6.R
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.presentation.util.modifier.roundedBackgroundWithPadding
 import com.depromeet.team6.ui.theme.Team6Theme
 
 @Composable
-fun AtchaCommonAlert(
-    modifier: Modifier = Modifier,
+fun AtchaTwoButtonDialog(
     message: String,
+    confirmButtonText: String,
     onConfirm: () -> Unit,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    modifier: Modifier = Modifier,
+    closeButtonText: String = stringResource(R.string.all_dialog_close_button_text)
 ) {
     Dialog(
         onDismissRequest = onDismiss,
@@ -53,7 +57,7 @@ fun AtchaCommonAlert(
 
             Row(modifier = Modifier.fillMaxWidth()) {
                 Text(
-                    text = "닫기",
+                    text = closeButtonText,
                     textAlign = TextAlign.Center,
                     style = Team6Theme.typography.body5_B5SB14,
                     color = Team6Theme.colors.white,
@@ -68,7 +72,7 @@ fun AtchaCommonAlert(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "설정하기",
+                    text = confirmButtonText,
                     textAlign = TextAlign.Center,
                     style = Team6Theme.typography.body5_B5SB14,
                     color = Team6Theme.colors.black,
@@ -88,11 +92,12 @@ fun AtchaCommonAlert(
 
 @Preview
 @Composable
-private fun AtchaCommonAlertPreview() {
-    AtchaCommonAlert(
+private fun AtchaTwoButtonDialogPreview() {
+    AtchaTwoButtonDialog(
         message = "현위치를 찾을 수 없어요.\n" +
             "위치 권한을 허용해 주세요.",
         onConfirm = {},
-        onDismiss = {}
+        onDismiss = {},
+        confirmButtonText = "설정하기"
     )
 }

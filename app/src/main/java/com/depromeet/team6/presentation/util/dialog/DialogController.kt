@@ -28,15 +28,32 @@ class DialogController {
         )
     }
 
-    fun showAtchaCommonAlert(
+    fun showAtchaTwoButtonAlert(
         message: String,
         onConfirm: () -> Unit = {},
-        onDismiss: () -> Unit = {}
+        onDismiss: () -> Unit = {},
+        closeButtonText: String?,
+        confirmButtonText: String
     ) {
-        _dialogState.value = DialogState.SystemSettings(
+        _dialogState.value = DialogState.TwoButton(
             message = message,
             onConfirm = onConfirm,
-            onDismiss = onDismiss
+            onDismiss = onDismiss,
+            closeButtonText = closeButtonText,
+            confirmButtonText = confirmButtonText
+        )
+    }
+
+    fun showAtchaOneButtonAlert(
+        message: String,
+        onConfirm: () -> Unit = {},
+        confirmButtonText: String
+
+    ) {
+        _dialogState.value = DialogState.OneButton(
+            message = message,
+            onConfirm = onConfirm,
+            confirmButtonText = confirmButtonText
         )
     }
 
@@ -50,6 +67,20 @@ sealed class DialogState {
         val message: String,
         val onConfirm: () -> Unit,
         val onDismiss: () -> Unit
+    ) : DialogState()
+
+    data class TwoButton(
+        val message: String,
+        val onConfirm: () -> Unit,
+        val onDismiss: () -> Unit,
+        val closeButtonText: String?,
+        val confirmButtonText: String
+    ) : DialogState()
+
+    data class OneButton(
+        val message: String,
+        val onConfirm: () -> Unit,
+        val confirmButtonText: String
     ) : DialogState()
 }
 
