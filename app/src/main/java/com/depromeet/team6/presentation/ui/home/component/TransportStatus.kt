@@ -47,7 +47,7 @@ fun TransportStatus(
 
         Text(
             text = transportationName,
-            style = typography.bodySemiBold13,
+            style = typography.body4_B4R15,
             color = colors.white,
             modifier = Modifier
                 .padding(horizontal = 4.dp)
@@ -65,7 +65,7 @@ fun TransportStatus(
 
             Text(
                 text = stopLeft.toString(),
-                style = typography.bodyRegular13,
+                style = typography.body4_B4R15,
                 color = colors.gray300,
                 modifier = Modifier
                     .padding(start = 4.dp)
@@ -73,7 +73,7 @@ fun TransportStatus(
 
             Text(
                 text = stopLeftText,
-                style = typography.bodyRegular13,
+                style = typography.body4_B4R15,
                 color = colors.gray300,
                 modifier = Modifier
                     .padding(horizontal = 2.dp)

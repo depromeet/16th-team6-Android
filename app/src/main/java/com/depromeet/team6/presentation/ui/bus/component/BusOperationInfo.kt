@@ -101,7 +101,7 @@ fun BusOperationInfoView(
         Spacer(modifier = Modifier.height(16.dp))
         Text(
             "운행지역",
-            style = defaultTeam6Typography.body3_B3M15,
+            style = defaultTeam6Typography.body6_B6R14,
             color = defaultTeam6Colors.white,
             modifier = horizontalModifier
         )
@@ -129,7 +129,7 @@ fun BusOperationInfoView(
             Spacer(modifier = Modifier.height(32.dp))
             Text(
                 "운행시간",
-                style = defaultTeam6Typography.body3_B3M15,
+                style = defaultTeam6Typography.body6_B6R14,
                 color = defaultTeam6Colors.white,
                 modifier = horizontalModifier
             )
@@ -146,7 +146,7 @@ fun BusOperationInfoView(
             Row(modifier = horizontalModifier, verticalAlignment = Alignment.CenterVertically) {
                 Text(
                     text = if (dailyType == "평일") "$dailyType  " else dailyType,
-                    style = defaultTeam6Typography.bodyRegular13,
+                    style = defaultTeam6Typography.body6_B6R14,
                     color = defaultTeam6Colors.gray200
                 )
                 Spacer(modifier = Modifier.width(16.dp))
@@ -168,7 +168,7 @@ fun BusOperationInfoView(
         Spacer(modifier = Modifier.height(32.dp))
         Text(
             "배차간격",
-            style = defaultTeam6Typography.body3_B3M15,
+            style = defaultTeam6Typography.body6_B6R14,
             color = defaultTeam6Colors.white,
             modifier = horizontalModifier
         )
@@ -198,7 +198,7 @@ fun BusOperationInfoView(
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Text(
                                 text = serviceHour.dailyType,
-                                style = defaultTeam6Typography.bodyRegular13,
+                                style = defaultTeam6Typography.body6_B6R14,
                                 color = defaultTeam6Colors.gray200
                             )
                             Spacer(Modifier.width(6.dp))
@@ -223,7 +223,7 @@ fun BusOperationInfoView(
             Spacer(modifier = Modifier.width(4.dp))
             Text(
                 text = "운행상황 및 운수사의 정책에 따라 실제와 다를 수 있습니다.",
-                style = defaultTeam6Typography.bodyRegular11,
+                style = defaultTeam6Typography.detail1_R12,
                 color = defaultTeam6Colors.gray200
             )
         }

@@ -52,13 +52,13 @@ fun BusStatusIcon(
         ) {
             Text(
                 text = busNumber,
-                style = defaultTeam6Typography.bodyRegular10,
+                style = defaultTeam6Typography.detail2_M11,
                 color = defaultTeam6Colors.gray200
             )
             Spacer(modifier = Modifier.width(2.dp))
             Text(
                 text = busCongestionInfo.label,
-                style = defaultTeam6Typography.bodyRegular10,
+                style = defaultTeam6Typography.detail2_M11,
                 color = busCongestionInfo.color
             )
         }

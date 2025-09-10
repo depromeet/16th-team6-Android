@@ -52,7 +52,7 @@ fun SearchLocationTextField(
             modifier = modifier
                 .weight(1f)
                 .roundedBackgroundWithPadding(
-                    backgroundColor = defaultTeam6Colors.gray700,
+                    backgroundColor = defaultTeam6Colors.gray930,
                     cornerRadius = 10.dp
                 )
                 .padding(horizontal = 16.dp),

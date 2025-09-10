@@ -80,7 +80,7 @@ fun DeleteAlarmDialog(
                     Text(
                         text = stringResource(R.string.dialog_finish_alarm_back_text),
                         color = colors.white,
-                        style = typography.bodyMedium14,
+                        style = typography.body6_B6R14,
                         modifier = Modifier.padding(vertical = 13.dp)
                     )
                 }

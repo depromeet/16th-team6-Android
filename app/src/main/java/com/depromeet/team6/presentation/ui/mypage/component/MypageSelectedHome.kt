@@ -44,19 +44,19 @@ fun MypageSelectedHome(
             if (homeLocation.name.isNotEmpty()) {
                 Text(
                     text = homeLocation.name,
-                    style = defaultTeam6Typography.heading6Bold15,
+                    style = defaultTeam6Typography.body2_B2SB15,
                     color = defaultTeam6Colors.white
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = homeLocation.address,
-                    style = defaultTeam6Typography.bodySemiBold13,
+                    style = defaultTeam6Typography.body6_B6R14,
                     color = defaultTeam6Colors.gray400
                 )
             } else {
                 Text(
                     text = homeLocation.address,
-                    style = defaultTeam6Typography.heading6Bold15,
+                    style = defaultTeam6Typography.body2_B2SB15,
                     color = defaultTeam6Colors.white
                 )
             }

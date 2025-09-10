@@ -261,7 +261,7 @@ private fun DetailLegsBus(
                     if (busArrivalStatus.busCongestion != BusCongestion.UNKNOWN) {
                         Text(
                             text = "(${busArrivalStatus.busCongestion.toInfo().label})",
-                            style = defaultTeam6Typography.bodyRegular13,
+                            style = defaultTeam6Typography.body6_B6R14,
                             color = defaultTeam6Colors.systemRed
                         )
                     }
@@ -648,7 +648,7 @@ private fun BusNumberButton(
             Text(
                 text = busNumber,
                 color = defaultTeam6Colors.white,
-                style = defaultTeam6Typography.bodySemiBold12
+                style = defaultTeam6Typography.body6_B6R14
             )
             // 오른쪽 화살표
             Image(

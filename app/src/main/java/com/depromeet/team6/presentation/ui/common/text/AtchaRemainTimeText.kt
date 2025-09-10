@@ -34,7 +34,7 @@ fun AtChaRemainTimeText(remainSecond: Int, busStatus: BusStatus, modifier: Modif
     Text(
         modifier = modifier,
         text = displayText,
-        style = defaultTeam6Typography.bodyRegular13,
+        style = defaultTeam6Typography.detail1_R12,
         color = defaultTeam6Colors.systemRed
     )
 }

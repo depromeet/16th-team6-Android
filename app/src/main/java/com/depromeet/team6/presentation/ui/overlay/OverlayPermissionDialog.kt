@@ -129,7 +129,7 @@ fun OverlayPermissionDialog(
                     Text(
                         text = stringResource(R.string.overlay_permission_close_text),
                         color = colors.white,
-                        style = typography.bodyMedium14,
+                        style = typography.body6_B6R14,
                         modifier = Modifier.padding(vertical = 13.dp)
                     )
                 }

@@ -131,7 +131,7 @@ fun AtchaSpeechBubble(
             Text(
                 text = prefix,
                 color = colors.gray100,
-                style = typography.bodyMedium12
+                style = typography.body7_B7M13
             )
 
             if (emphasisText != null) {
@@ -139,7 +139,7 @@ fun AtchaSpeechBubble(
                 Text(
                     text = emphasisText,
                     color = colors.white,
-                    style = typography.bodySemiBold12
+                    style = typography.body7_B7M13
                 )
             }
 
@@ -148,7 +148,7 @@ fun AtchaSpeechBubble(
                 Text(
                     text = suffix,
                     color = colors.gray100,
-                    style = typography.bodyMedium12
+                    style = typography.body7_B7M13
                 )
             }
         }
@@ -165,6 +165,7 @@ fun SpeechBubbleTailPreview() {
         tailExist = true
     )
 }
+
 @Preview(backgroundColor = 0xFFFFFF, showBackground = true)
 @Composable
 fun SpeechBubblePreview() {

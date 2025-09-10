@@ -235,7 +235,7 @@ fun LoginScreen(
             Spacer(modifier = Modifier.width(8.dp))
             Text(
                 text = "카카오 계정으로 시작하기",
-                style = defaultTeam6Typography.heading6Bold15
+                style = defaultTeam6Typography.body2_B2SB15
             )
         }
     }

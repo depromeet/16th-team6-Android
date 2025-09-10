@@ -55,7 +55,7 @@ fun CourseInfoDetailItem(
             )
             Text(
                 text = context.resources.getString(R.string.course_detail_info_walk),
-                style = defaultTeam6Typography.bodyRegular13,
+                style = defaultTeam6Typography.body7_B7M13,
                 color = defaultTeam6Colors.white
             )
             Text(
@@ -92,7 +92,7 @@ fun CourseInfoDetailItem(
             ) {
                 Text(
                     text = context.resources.getString(R.string.course_detail_info_boarding_point, boardingPoint),
-                    style = defaultTeam6Typography.bodyRegular13,
+                    style = defaultTeam6Typography.body7_B7M13,
                     color = defaultTeam6Colors.white
                 )
                 Spacer(modifier = Modifier.height(5.dp))
@@ -104,7 +104,7 @@ fun CourseInfoDetailItem(
                 Spacer(modifier = Modifier.height(14.dp))
                 Text(
                     text = context.resources.getString(R.string.course_detail_info_destination_point, destinationPoint),
-                    style = defaultTeam6Typography.bodyRegular13,
+                    style = defaultTeam6Typography.body7_B7M13,
                     color = defaultTeam6Colors.white
                 )
             }
