@@ -83,7 +83,7 @@ fun PermissionSnackbar(
                     R.string.overlay_permission_toast_message
                 ),
                 color = colors.white,
-                style = typography.bodyRegular15
+                style = typography.body4_B4R15
             )
 
             Spacer(modifier = Modifier.weight(1f))
@@ -91,7 +91,7 @@ fun PermissionSnackbar(
             Text(
                 text = stringResource(R.string.overlay_permission_go_setting_text),
                 color = colors.systemGreen,
-                style = typography.bodyRegular15,
+                style = typography.body4_B4R15,
                 modifier = Modifier
                     .noRippleClickable { onSettingsClick() }
             )

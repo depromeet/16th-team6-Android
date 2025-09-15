@@ -1,4 +1,4 @@
-package com.depromeet.team6.presentation.ui.home.component
+package com.depromeet.team6.presentation.ui.common.speechbubble
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -25,7 +25,7 @@ import com.depromeet.team6.ui.theme.LocalTeam6Colors
 import com.depromeet.team6.ui.theme.LocalTeam6Typography
 
 class SpeechBubbleShape(
-    private val cornerRadius: Dp = 16.dp,
+    private val cornerRadius: Dp = 10.dp,
     private val tailExist: Boolean
 ) : Shape {
     override fun createOutline(
@@ -45,8 +45,8 @@ class SpeechBubbleShape(
 
                 arcTo(
                     Rect(
-                        Offset(size.width - radius, 0f),
-                        Offset(size.width, radius)
+                        Offset(size.width - 2 * radius, 0f),
+                        Offset(size.width, 2 * radius)
                     ),
                     -90f,
                     90f,
@@ -55,7 +55,7 @@ class SpeechBubbleShape(
 
                 arcTo(
                     Rect(
-                        Offset(size.width - radius, size.height - radius - tailHeight),
+                        Offset(size.width - 2 * radius, size.height - 2 * radius - tailHeight),
                         Offset(size.width, size.height - tailHeight)
                     ),
                     0f,
@@ -81,8 +81,8 @@ class SpeechBubbleShape(
 
                 arcTo(
                     Rect(
-                        Offset(0f, size.height - radius - tailHeight),
-                        Offset(radius, size.height - tailHeight)
+                        Offset(0f, size.height - 2 * radius - tailHeight),
+                        Offset(2 * radius, size.height - tailHeight)
                     ),
                     90f,
                     90f,
@@ -92,7 +92,7 @@ class SpeechBubbleShape(
                 arcTo(
                     Rect(
                         Offset(0f, 0f),
-                        Offset(radius, radius)
+                        Offset(2 * radius, 2 * radius)
                     ),
                     180f,
                     90f,
@@ -106,7 +106,7 @@ class SpeechBubbleShape(
 }
 
 @Composable
-fun SpeechBubble(
+fun AtchaSpeechBubble(
     prefix: String,
     modifier: Modifier = Modifier,
     emphasisText: String? = null,
@@ -119,7 +119,7 @@ fun SpeechBubble(
     Box(
         modifier = modifier
             .background(
-                color = colors.gray940,
+                color = colors.gray950,
                 shape = SpeechBubbleShape(tailExist = tailExist)
             ),
         contentAlignment = Alignment.Center
@@ -131,7 +131,7 @@ fun SpeechBubble(
             Text(
                 text = prefix,
                 color = colors.gray100,
-                style = typography.bodyMedium12
+                style = typography.body7_B7M13
             )
 
             if (emphasisText != null) {
@@ -139,7 +139,7 @@ fun SpeechBubble(
                 Text(
                     text = emphasisText,
                     color = colors.white,
-                    style = typography.bodySemiBold12
+                    style = typography.body7_B7M13
                 )
             }
 
@@ -148,20 +148,31 @@ fun SpeechBubble(
                 Text(
                     text = suffix,
                     color = colors.gray100,
-                    style = typography.bodyMedium12
+                    style = typography.body7_B7M13
                 )
             }
         }
     }
 }
 
-@Preview
+@Preview(backgroundColor = 0xFFFFFF, showBackground = true)
 @Composable
-fun SpeechBubblePreview() {
-    SpeechBubble(
+fun SpeechBubbleTailPreview() {
+    AtchaSpeechBubble(
         prefix = "여기서 놓치면 택시비",
         emphasisText = "34,000원",
         modifier = Modifier,
         tailExist = true
+    )
+}
+
+@Preview(backgroundColor = 0xFFFFFF, showBackground = true)
+@Composable
+fun SpeechBubblePreview() {
+    AtchaSpeechBubble(
+        prefix = "여기서 놓치면 택시비",
+        emphasisText = "34,000원",
+        modifier = Modifier,
+        tailExist = false
     )
 }

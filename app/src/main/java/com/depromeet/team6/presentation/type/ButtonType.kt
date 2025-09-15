@@ -69,25 +69,25 @@ enum class ButtonSize(
     val textStyle: TextStyle
 ) {
     LARGE(
-        verticalPadding = 14.dp,
+        verticalPadding = 16.dp,
         roundPadding = 10.dp,
-        textStyle = defaultTeam6Typography.heading5SemiBold17
+        textStyle = defaultTeam6Typography.heading3_H3SB17
     ),
     MEDIUM(
         verticalPadding = 14.dp,
         roundPadding = 10.dp,
-        textStyle = defaultTeam6Typography.heading6SemiBold15
+        textStyle = defaultTeam6Typography.body2_B2SB15
 
     ),
     SMALL(
         verticalPadding = 13.dp,
         roundPadding = 10.dp,
-        textStyle = defaultTeam6Typography.bodySemiBold14
+        textStyle = defaultTeam6Typography.body5_B5SB14
 
     ),
     EXTRA_SMALL(
         verticalPadding = 8.dp,
         roundPadding = 8.dp,
-        textStyle = defaultTeam6Typography.bodySemiBold14
+        textStyle = defaultTeam6Typography.body5_B5SB14
     );
 }

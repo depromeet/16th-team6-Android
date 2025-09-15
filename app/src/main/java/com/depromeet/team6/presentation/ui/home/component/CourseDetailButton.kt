@@ -57,7 +57,7 @@ fun CourseDetailButton(
 
             Text(
                 text = text,
-                style = typography.bodyMedium15,
+                style = typography.body3_B3M15,
                 modifier = Modifier.padding(vertical = 14.dp)
             )
         }

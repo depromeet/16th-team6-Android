@@ -55,7 +55,7 @@ fun OnboardingPermissionBottomSheet(
             Text(
                 text = stringResource(R.string.onboarding_permission_bottom_sheet_title),
                 modifier = Modifier.fillMaxWidth(),
-                style = defaultTeam6Typography.heading4Bold20,
+                style = defaultTeam6Typography.heading2_H2B20,
                 color = defaultTeam6Colors.white
             )
             Spacer(modifier = Modifier.height(16.dp))
@@ -69,13 +69,13 @@ fun OnboardingPermissionBottomSheet(
                 Column {
                     Text(
                         text = stringResource(locationPermissionType.typeStringRes),
-                        style = defaultTeam6Typography.heading6SemiBold15,
+                        style = defaultTeam6Typography.body5_B5SB14,
                         color = defaultTeam6Colors.white
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         text = stringResource(locationPermissionType.subTitleStringRes),
-                        style = defaultTeam6Typography.bodyRegular13,
+                        style = defaultTeam6Typography.body6_B6R14,
                         color = defaultTeam6Colors.gray200
                     )
                 }
@@ -91,13 +91,13 @@ fun OnboardingPermissionBottomSheet(
                 Column {
                     Text(
                         text = stringResource(notificationPermissionType.typeStringRes),
-                        style = defaultTeam6Typography.heading6SemiBold15,
+                        style = defaultTeam6Typography.body5_B5SB14,
                         color = defaultTeam6Colors.white
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         text = stringResource(notificationPermissionType.subTitleStringRes),
-                        style = defaultTeam6Typography.bodyRegular13,
+                        style = defaultTeam6Typography.body6_B6R14,
                         color = defaultTeam6Colors.gray200
                     )
                 }
@@ -114,7 +114,7 @@ fun OnboardingPermissionBottomSheet(
                         padding = PaddingValues(vertical = 14.dp, horizontal = 28.dp)
                     ),
                 textAlign = TextAlign.Center,
-                style = defaultTeam6Typography.heading6Bold15,
+                style = defaultTeam6Typography.body2_B2SB15,
                 color = defaultTeam6Colors.black
             )
             Spacer(modifier = Modifier.height(20.dp))

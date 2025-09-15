@@ -36,7 +36,7 @@ fun TextListItem(
         ) {
             Text(
                 text = text,
-                style = defaultTeam6Typography.bodyRegular15,
+                style = defaultTeam6Typography.body4_B4R15,
                 color = LocalTeam6Colors.current.white,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis

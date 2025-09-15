@@ -83,23 +83,30 @@ fun SummaryBarChart(
                         .background(defaultTeam6Colors.gray800)
                         .align(Alignment.CenterVertically)
                 ) {
-                    Row(
+                    Text(
                         modifier = Modifier
                             .align(Alignment.Center),
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        Text(
-                            text = "${leg.sectionTime / 60}",
-                            color = defaultTeam6Colors.gray200,
-                            style = defaultTeam6Typography.bodySemiBold10
-                        )
-                        Text(
-                            text = "분",
-                            color = defaultTeam6Colors.gray200,
-                            style = defaultTeam6Typography.bodyMedium10,
-                            fontSize = 9.sp
-                        )
-                    }
+                        text = "${leg.sectionTime / 60}분",
+                        color = defaultTeam6Colors.gray200,
+                        style = defaultTeam6Typography.detail3_M9
+                    )
+//                    Row(
+//                        modifier = Modifier
+//                            .align(Alignment.Center),
+//                        horizontalArrangement = Arrangement.Center
+//                    ) {
+//                        Text(
+//                            text = "${leg.sectionTime / 60}",
+//                            color = defaultTeam6Colors.gray200,
+//                            style = defaultTeam6Typography.bodySemiBold10
+//                        )
+//                        Text(
+//                            text = "분",
+//                            color = defaultTeam6Colors.gray200,
+//                            style = defaultTeam6Typography.detail3_M9,
+//                            fontSize = 9.sp
+//                        )
+//                    }
                 }
             } else {
                 Box(
@@ -121,14 +128,9 @@ fun SummaryBarChart(
                         horizontalArrangement = Arrangement.Center
                     ) {
                         Text(
-                            text = "${leg.sectionTime / 60}",
+                            text = "${leg.sectionTime / 60}분",
                             color = defaultTeam6Colors.white,
-                            style = defaultTeam6Typography.bodySemiBold10
-                        )
-                        Text(
-                            text = "분",
-                            color = defaultTeam6Colors.white,
-                            style = defaultTeam6Typography.bodyMedium10,
+                            style = defaultTeam6Typography.detail3_M9,
                             fontSize = 9.sp
                         )
                     }

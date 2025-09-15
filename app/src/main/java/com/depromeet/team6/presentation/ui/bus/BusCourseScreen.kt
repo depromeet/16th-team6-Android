@@ -169,7 +169,7 @@ fun BusCourseScreen(
                     Spacer(modifier = Modifier.width(3.dp))
                     Text(
                         text = busNumber,
-                        style = defaultTeam6Typography.heading5SemiBold17,
+                        style = defaultTeam6Typography.heading3_H3SB17,
                         color = defaultTeam6Colors.white
                     )
                 }
@@ -182,7 +182,7 @@ fun BusCourseScreen(
             ) {
                 Text(
                     text = stringResource(R.string.bus_course_info),
-                    style = defaultTeam6Typography.bodyRegular14,
+                    style = defaultTeam6Typography.body6_B6R14,
                     color = defaultTeam6Colors.white,
                     modifier = Modifier.noRippleClickable { changeBusOperationInfoVisible() }
                 )
@@ -202,7 +202,7 @@ fun BusCourseScreen(
                         }
                         append(fullText.substring(numberEnd))
                     },
-                    style = defaultTeam6Typography.bodyRegular14.copy(color = defaultTeam6Colors.gray200)
+                    style = defaultTeam6Typography.body6_B6R14.copy(color = defaultTeam6Colors.gray200)
                 )
             }
             LazyColumn(

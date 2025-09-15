@@ -37,7 +37,7 @@ fun OnboardingButton(
     ) {
         Text(
             text = stringResource(id = R.string.onboarding_next_button),
-            style = defaultTeam6Typography.heading5SemiBold17,
+            style = defaultTeam6Typography.heading3_H3SB17,
             color = if (isEnabled) defaultTeam6Colors.black else defaultTeam6Colors.gray700
         )
     }

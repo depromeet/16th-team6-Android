@@ -29,19 +29,19 @@ fun OnboardingSelectedHome(
             if (onboardingSearchLocation.name.isNotEmpty()) {
                 Text(
                     text = onboardingSearchLocation.name,
-                    style = defaultTeam6Typography.heading6Bold15,
+                    style = defaultTeam6Typography.body4_B4R15,
                     color = defaultTeam6Colors.white
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = onboardingSearchLocation.address,
-                    style = defaultTeam6Typography.bodySemiBold13,
+                    style = defaultTeam6Typography.body6_B6R14,
                     color = defaultTeam6Colors.gray400
                 )
             } else {
                 Text(
                     text = onboardingSearchLocation.address,
-                    style = defaultTeam6Typography.heading6Bold15,
+                    style = defaultTeam6Typography.body4_B4R15,
                     color = defaultTeam6Colors.white
                 )
             }

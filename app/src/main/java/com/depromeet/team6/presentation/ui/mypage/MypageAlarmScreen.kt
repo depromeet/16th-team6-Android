@@ -109,7 +109,7 @@ fun MypageAlarmScreen(
                         Column(modifier = Modifier.fillMaxWidth()) {
                             Text(
                                 text = stringResource(R.string.mypage_alarm_info_text),
-                                style = typography.bodyRegular15,
+                                style = typography.body4_B4R15,
                                 color = colors.white,
                                 modifier = Modifier.padding(vertical = 24.dp, horizontal = 16.dp)
                             )
@@ -139,7 +139,7 @@ fun MypageAlarmScreen(
                         ) {
                             Text(
                                 text = stringResource(id = R.string.mypage_alarm_submit_text),
-                                style = defaultTeam6Typography.heading5SemiBold17,
+                                style = defaultTeam6Typography.heading3_H3SB17,
                                 color = defaultTeam6Colors.black
                             )
                         }

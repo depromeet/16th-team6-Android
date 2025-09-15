@@ -187,7 +187,7 @@ fun LockScreen(
             Text(
                 text = stringResource(R.string.lock_screen_taxi_text),
                 color = colors.white,
-                style = typography.heading3SemiBold22,
+                style = typography.heading1_H1B22,
                 modifier = Modifier.padding(vertical = 10.dp),
                 textAlign = TextAlign.Center
             )
@@ -195,7 +195,7 @@ fun LockScreen(
             Text(
                 text = "-$formattedCost",
                 color = colors.systemRed,
-                style = typography.heading1ExtraBold56,
+                style = typography.display1_D1EB56,
                 modifier = Modifier.padding(vertical = 6.dp)
             )
 
@@ -218,7 +218,7 @@ fun LockScreen(
                 Text(
                     text = stringResource(R.string.lock_screen_start_btn),
                     color = colors.black,
-                    style = typography.heading5Bold17,
+                    style = typography.heading3_H3SB17,
                     modifier = Modifier.padding(vertical = 14.dp)
                 )
             }

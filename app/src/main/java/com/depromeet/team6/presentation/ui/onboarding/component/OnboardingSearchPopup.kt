@@ -95,7 +95,7 @@ fun OnboardingSearchPopup(
                     Text(
                         modifier = Modifier.padding(start = 16.dp, top = 14.dp, bottom = 4.dp),
                         text = "주소 결과",
-                        style = defaultTeam6Typography.bodyRegular14,
+                        style = defaultTeam6Typography.body6_B6R14,
                         color = defaultTeam6Colors.gray400
                     )
                 }
@@ -119,7 +119,7 @@ fun OnboardingSearchPopup(
                     Text(
                         modifier = Modifier.padding(start = 16.dp, top = 14.dp, bottom = 4.dp),
                         text = "장소 결과",
-                        style = defaultTeam6Typography.bodyRegular14,
+                        style = defaultTeam6Typography.body6_B6R14,
                         color = defaultTeam6Colors.gray400
                     )
                 }

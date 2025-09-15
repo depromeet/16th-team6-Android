@@ -87,33 +87,33 @@ fun LastTimer(
         if (remainingTimeMillis >= 90000L) {
             Text(
                 text = String.format("%02d", remainingMinutes),
-                style = typography.extraBold44,
+                style = typography.display2_D2EB48,
                 color = textColor
             )
 
             Text(
                 text = "분",
-                style = typography.heading6Bold15,
+                style = typography.body1_B1R17,
                 color = textColor,
                 modifier = Modifier.padding(start = 4.dp, bottom = 8.dp, end = 12.dp)
             )
 
             Text(
                 text = String.format("%02d", remainingSeconds),
-                style = typography.extraBold44,
+                style = typography.display2_D2EB48,
                 color = textColor
             )
 
             Text(
                 text = "초",
-                style = typography.heading6Bold15,
+                style = typography.body1_B1R17,
                 color = textColor,
                 modifier = Modifier.padding(start = 4.dp, bottom = 8.dp)
             )
         } else {
             Text(
                 text = stringResource(R.string.home_timer_arrive_soon),
-                style = typography.extraBold44,
+                style = typography.display3_D3EB40,
                 color = textColor
             )
         }

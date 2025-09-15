@@ -61,7 +61,7 @@ fun SearchResultEmpty(
                 text = pageMessage,
                 textAlign = TextAlign.Center,
                 color = defaultTeam6Colors.gray400,
-                style = defaultTeam6Typography.bodyRegular15
+                style = defaultTeam6Typography.body4_B4R15
             )
         }
     }

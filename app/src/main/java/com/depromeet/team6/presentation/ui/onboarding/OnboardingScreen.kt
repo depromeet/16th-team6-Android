@@ -420,9 +420,9 @@ fun OnboardingRoute(
 @Composable
 fun OnboardingScreen(
     padding: PaddingValues,
+    modifier: Modifier = Modifier,
     context: Context = LocalContext.current,
     uiState: OnboardingContract.OnboardingUiState = OnboardingContract.OnboardingUiState(),
-    modifier: Modifier = Modifier,
     onSearchBoxClicked: () -> Unit = {},
     onNextButtonClicked: () -> Unit = {},
     onBackPressed: () -> Unit = {},

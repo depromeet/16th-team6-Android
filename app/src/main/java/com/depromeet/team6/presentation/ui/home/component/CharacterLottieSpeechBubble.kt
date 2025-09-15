@@ -1,6 +1,5 @@
 package com.depromeet.team6.presentation.ui.home.component
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Box
@@ -22,6 +21,7 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.depromeet.team6.R
+import com.depromeet.team6.presentation.ui.common.speechbubble.AtchaSpeechBubble
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import kotlinx.coroutines.delay
 
@@ -133,7 +133,7 @@ fun CharacterLottieSpeechBubble(
                     modifier = Modifier
                         .offset(y = 10.dp) // 캐릭터 상단 기준 아래로 10dp 간격
                 ) {
-                    SpeechBubble(
+                    AtchaSpeechBubble(
                         prefix = prefixText,
                         modifier = Modifier,
                         emphasisText = emphasisText,
@@ -151,7 +151,7 @@ fun CharacterLottieSpeechBubble(
                             .align(Alignment.TopStart)
                             .offset(y = (-26).dp) // 말풍선 높이 + 간격
                     ) {
-                        SpeechBubble(
+                        AtchaSpeechBubble(
                             prefix = topPrefixText ?: "",
                             modifier = Modifier,
                             emphasisText = topEmphasisText,

@@ -129,12 +129,12 @@ fun BusStationItem(
             Text(
                 text = busRouteStation.busStationName,
                 color = defaultTeam6Colors.white,
-                style = defaultTeam6Typography.bodyMedium14
+                style = defaultTeam6Typography.body6_B6R14
             )
             Spacer(modifier = Modifier.height(1.dp))
             Text(
                 text = busRouteStation.busStationNumber,
-                style = defaultTeam6Typography.bodyRegular13,
+                style = defaultTeam6Typography.detail1_R12,
                 color = defaultTeam6Colors.gray200
             )
             if (isCurrentStation && busRemainTime != null) {

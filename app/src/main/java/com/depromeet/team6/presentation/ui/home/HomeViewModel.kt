@@ -236,10 +236,6 @@ class HomeViewModel @Inject constructor(
                 )
             }
 
-            is HomeContract.HomeEvent.ChangeGreetBottomSheetVisible -> setState {
-                copy(greetBottomSheetVisible = event.visible)
-            }
-
             HomeContract.HomeEvent.CharacterClicked -> handleCharacterClick()
             // is HomeContract.HomeEvent.ComponentClicked -> handleComponentClick(event.componentType, event.data)
             is HomeContract.HomeEvent.ComponentClicked -> TODO()

@@ -41,7 +41,7 @@ fun TitleBar(
 
         Text(
             text = title,
-            style = typography.heading5SemiBold17,
+            style = typography.heading3_H3SB17,
             color = colors.white,
             modifier = Modifier
                 .align(Alignment.TopCenter)

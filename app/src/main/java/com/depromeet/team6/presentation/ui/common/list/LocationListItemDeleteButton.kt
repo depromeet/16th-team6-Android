@@ -44,7 +44,7 @@ fun LocationListItemDeleteButton(
             Text(
                 text = location.name,
                 color = defaultTeam6Colors.white,
-                style = defaultTeam6Typography.bodyRegular15,
+                style = defaultTeam6Typography.body4_B4R15,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
@@ -56,7 +56,7 @@ fun LocationListItemDeleteButton(
             ) {
                 Text(
                     text = location.radius,
-                    style = defaultTeam6Typography.bodyRegular14,
+                    style = defaultTeam6Typography.body6_B6R14,
                     color = defaultTeam6Colors.gray200,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -73,7 +73,7 @@ fun LocationListItemDeleteButton(
 
                 Text(
                     text = location.address,
-                    style = defaultTeam6Typography.bodyRegular14,
+                    style = defaultTeam6Typography.body6_B6R14,
                     color = defaultTeam6Colors.gray200,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis

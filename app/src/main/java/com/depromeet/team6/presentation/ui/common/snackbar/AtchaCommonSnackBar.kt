@@ -39,7 +39,7 @@ fun AtchaCommonSnackBar(
         Text(
             text = text,
             color = Color.White,
-            style = Team6Theme.typography.bodySemiBold14
+            style = Team6Theme.typography.body5_B5SB14
         )
 
         Spacer(modifier = Modifier.weight(1f))
@@ -48,7 +48,7 @@ fun AtchaCommonSnackBar(
             Text(
                 text = buttonText,
                 color = Team6Theme.colors.primaryMain,
-                style = Team6Theme.typography.bodySemiBold14
+                style = Team6Theme.typography.body5_B5SB14
             )
         }
     }

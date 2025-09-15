@@ -72,7 +72,7 @@ fun ItineraryInfoDetail(
                 .padding(top = 72.dp)
                 .align(Alignment.CenterHorizontally),
             text = stringResource(R.string.itinerary_info_legs_data_source),
-            style = defaultTeam6Typography.bodyRegular12,
+            style = defaultTeam6Typography.detail1_R12,
             color = defaultTeam6Colors.gray300
         )
     }
@@ -111,7 +111,7 @@ private fun ItineraryInfoSuffix(
                 .height(36.dp)
                 .wrapContentSize(Alignment.Center),
             text = name,
-            style = defaultTeam6Typography.bodySemiBold14,
+            style = defaultTeam6Typography.body5_B5SB14,
             color = defaultTeam6Colors.white
         )
     }

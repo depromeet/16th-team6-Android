@@ -63,7 +63,7 @@ fun AlarmRegisterButton(
 
                 Text(
                     text = text,
-                    style = typography.heading5Bold17
+                    style = typography.heading3_H3SB17
                 )
             }
         }

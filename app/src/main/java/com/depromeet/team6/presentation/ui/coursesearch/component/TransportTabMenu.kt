@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import com.depromeet.team6.R
 import com.depromeet.team6.domain.model.course.CourseInfo
 import com.depromeet.team6.domain.model.course.LegInfo
+import com.depromeet.team6.presentation.ui.common.AtchaTabRow
 import com.depromeet.team6.presentation.ui.coursesearch.CourseSearchContract
 import com.depromeet.team6.presentation.ui.itinerary.LegInfoDummyProvider
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
@@ -49,7 +50,7 @@ fun TransportTabMenu(
         val coroutineScope = rememberCoroutineScope()
 
         // TabRow
-        TransportTabRow(
+        AtchaTabRow(
             tabs = tabItems,
             selectedTabIndex = pagerState.currentPage,
             onTabClick = { tabIndex ->

@@ -21,7 +21,10 @@ import com.depromeet.team6.ui.theme.defaultTeam6Colors
 @Composable
 fun SearchBar(
     modifier: Modifier = Modifier,
-    hintText: String,
+    value: String = "",
+    hintText: String = "",
+    onSearchTextChange: (String) -> Unit = {},
+    onTextClearButtonClicked: () -> Unit = {},
     onMapButtonClicked: () -> Unit
 ) {
     Row(
@@ -31,7 +34,10 @@ fun SearchBar(
     ) {
         TextFieldSearchIcon(
             modifier = Modifier.weight(1f),
-            hintText = hintText
+            value = value,
+            hintText = hintText,
+            onValueChange = onSearchTextChange,
+            onTextClearButtonClicked = onTextClearButtonClicked
         )
 
         Spacer(modifier = Modifier.width(6.dp))

@@ -49,7 +49,7 @@ fun OnboardingAlarmSelectorItem(
     ) {
         Text(
             text = text,
-            style = defaultTeam6Typography.bodyRegular15,
+            style = defaultTeam6Typography.body4_B4R15,
             color = defaultTeam6Colors.white
         )
         Spacer(modifier = Modifier.weight(1f))
@@ -57,7 +57,7 @@ fun OnboardingAlarmSelectorItem(
             Text(
                 text = "1분 전 푸시 알림은 무조건 드려요",
                 color = defaultTeam6Colors.gray400,
-                style = defaultTeam6Typography.bodyRegular14
+                style = defaultTeam6Typography.body6_B6R14
             )
         } else {
             Icon(

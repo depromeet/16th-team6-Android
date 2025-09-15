@@ -66,7 +66,7 @@ fun AtChaTreeDotsLoadingView(
         Text(
             text = loadingText,
             color = Team6Theme.colors.white,
-            style = Team6Theme.typography.heading5Bold17
+            style = Team6Theme.typography.heading2_H2B20
         )
         Spacer(modifier = Modifier.height(20.dp))
 

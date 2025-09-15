@@ -93,14 +93,14 @@ fun OnboardingSearchTextField(
                 keyboardActions = keyboardActions,
                 keyboardOptions = keyboardOptions,
                 visualTransformation = visualTransformation,
-                textStyle = defaultTeam6Typography.bodyRegular15.copy(color = defaultTeam6Colors.white),
+                textStyle = defaultTeam6Typography.body4_B4R15.copy(color = defaultTeam6Colors.white),
                 decorationBox = { innerTextField ->
                     innerTextField()
                     if (value.isEmpty()) {
                         Text(
                             text = stringResource(R.string.onboarding_search_text_field_placeholder),
                             color = defaultTeam6Colors.gray400,
-                            style = defaultTeam6Typography.bodyMedium15
+                            style = defaultTeam6Typography.body3_B3M15
                         )
                     }
                 }

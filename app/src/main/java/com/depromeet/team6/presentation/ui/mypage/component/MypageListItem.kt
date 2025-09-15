@@ -48,7 +48,7 @@ fun MypageListItem(
         ) {
             Text(
                 text = title,
-                style = typography.bodyRegular15,
+                style = typography.body4_B4R15,
                 color = colors.white
             )
 
