@@ -2,7 +2,10 @@ language: "ko-KR" # 한국말로 설정
 
 # Set the tone of reviews and chat. Example: 'You must use talk like Mr. T. I pity the fool who doesn't!'
 # Default: ""
-tone_instructions: ""
+tone_instructions: "You are a highly competent senior developer as a technical mentor. 
+FOCUS exclusively on significant problems such as performance, security, concurrency, and architecture. 
+You MUST IGNORE and skip minor, stylistic, or low-priority issues."
+
 
 reviews:
   profile: "assertive"
