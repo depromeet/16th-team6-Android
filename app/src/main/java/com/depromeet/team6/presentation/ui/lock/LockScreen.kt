@@ -140,7 +140,8 @@ fun LockScreen(
     }
 
     Box(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
             .paint(
                 painter = BitmapPainter(ImageBitmap.imageResource(R.drawable.img_login_background)),
                 contentScale = ContentScale.Crop
@@ -176,7 +177,7 @@ fun LockScreen(
             Spacer(modifier = Modifier.padding(vertical = 60.dp))
 
             Icon(
-                imageVector = ImageVector.vectorResource(R.drawable.ic_lock_character),
+                imageVector = ImageVector.vectorResource(R.drawable.ic_app_logo_foreground),
                 contentDescription = null,
                 tint = Color.Unspecified,
                 modifier = Modifier.size(36.dp)
@@ -256,10 +257,10 @@ fun LockScreenPreview() {
         LockScreen(
             padding = PaddingValues(0.dp),
             onTimerFinish = {},
-            uiState = TODO(),
-            onDepartureClick = TODO(),
-            onLateClick = TODO(),
-            modifier = TODO()
+            uiState = LockContract.LockUiState(),
+            onDepartureClick = { },
+            onLateClick = {},
+            modifier = Modifier
         )
     }
 }
