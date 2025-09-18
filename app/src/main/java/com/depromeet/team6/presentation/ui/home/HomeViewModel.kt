@@ -67,13 +67,13 @@ class HomeViewModel @Inject constructor(
 
     init {
         showSpeechBubbleTemporarily()
+        setState { copy(loadState = LoadState.Loading) }
     }
 
     override fun createInitialState(): HomeContract.HomeUiState = HomeContract.HomeUiState()
 
     override suspend fun handleEvent(event: HomeContract.HomeEvent) {
         when (event) {
-            is HomeContract.HomeEvent.DummyEvent -> setState { copy(loadState = event.loadState) }
             is HomeContract.HomeEvent.UpdateAlarmRegistered -> setState { copy(isAlarmRegistered = event.isRegistered) }
             is HomeContract.HomeEvent.UpdateBusDeparted -> setState { copy(isBusDeparted = event.isBusDeparted) }
             is HomeContract.HomeEvent.UpdateSpeechBubbleVisibility -> setState {
@@ -376,6 +376,10 @@ class HomeViewModel @Inject constructor(
 
                     if (isAllNotDefault) {
                         getTaxiCost()
+                    }
+
+                    setState {
+                        copy(loadState = LoadState.Success)
                     }
                 }
                 .onFailure { exception ->

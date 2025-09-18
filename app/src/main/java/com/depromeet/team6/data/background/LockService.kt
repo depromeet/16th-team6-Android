@@ -193,7 +193,7 @@ class LockService : Service() {
         )
 
         return NotificationCompat.Builder(this, channelId)
-            .setSmallIcon(R.drawable.ic_app_logo_foreground)
+            .setSmallIcon(R.drawable.ic_atcha_logo)
             .setContentText(
                 getString(R.string.notification_content_text)
             )
@@ -255,7 +255,7 @@ class LockService : Service() {
                             R.string.notification_alarm_timeout_body
                         )
                     )
-                    .setSmallIcon(R.drawable.ic_app_logo_foreground)
+                    .setSmallIcon(R.drawable.ic_atcha_logo)
                     .setContentIntent(pendingIntent)
                     .setAutoCancel(true)
                     .build()

@@ -38,8 +38,6 @@ import com.google.android.gms.maps.model.LatLng
 import com.skt.tmap.TMapPoint
 import com.skt.tmap.TMapView
 import com.skt.tmap.overlay.TMapMarkerItem
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 @Composable
@@ -60,34 +58,50 @@ fun TMapViewCompose(
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
 
     // 현재 위치 변경될 때만 현위치 마커 갱신
-    LaunchedEffect(currentLocation, isMapReady) {
-        Timber.d("mapView Recomposed")
-        if (isMapReady) {
-            val tMapPoint = TMapPoint(currentLocation.latitude, currentLocation.longitude)
+//    LaunchedEffect(currentLocation, isMapReady) {
+//        if (isMapReady) {
+//            val tMapPoint = TMapPoint(currentLocation.latitude, currentLocation.longitude)
+//
+//            withContext(Dispatchers.Main) {
+//                tMapView.fitBounds(
+//                    tMapView.getBoundsFromPoints(
+//                        arrayListOf(tMapPoint)
+//                    )
+//                )
+////                tMapView.setCenterPoint(tMapPoint.latitude, tMapPoint.longitude)
+////                tMapView.fitBounds(tMapView.bounds)
+////                tMapView.zoomLevel = 18
+//
+//                val markerDrawable =
+//                    ContextCompat.getDrawable(context, R.drawable.ic_home_current_location)
+//                val markerBitmap = markerDrawable?.toBitmap()
+//
+//                val markerItem = TMapMarkerItem().apply {
+//                    id = "CurrentMarker"
+//                    name = "Current Location"
+//                    icon = markerBitmap
+//                    setTMapPoint(tMapPoint)
+//                }
+//
+//                tMapView.addTMapMarkerItem(markerItem)
+//            }
+//        }
+//    }
 
-            withContext(Dispatchers.Main) {
-                tMapView.fitBounds(
-                    tMapView.getBoundsFromPoints(
-                        arrayListOf(tMapPoint)
-                    )
+    // focus 버튼 누를때마다 해당 위치로 지도 focus 이동
+    LaunchedEffect(isMapFocused) {
+        if (isMapFocused && isMapReady) {
+            tMapView.setCenterPoint(currentLocation.latitude, currentLocation.longitude)
+//            getCenterLocation(LatLng(currentLocation.latitude, currentLocation.longitude))  // 필요없어보여서 주석처리 해뒀어요
+
+            AmplitudeUtils.trackEventWithProperties(
+                eventName = HOME_EVENT_COURSESEARCH_ENTERED,
+                mapOf(
+                    USER_ID to userId,
+                    SCREEN_NAME to HOME,
+                    HOME_COURSESEARCH_ENTERED_WITH_CURRENT_LOCATION to true
                 )
-//                tMapView.setCenterPoint(tMapPoint.latitude, tMapPoint.longitude)
-//                tMapView.fitBounds(tMapView.bounds)
-//                tMapView.zoomLevel = 18
-
-                val markerDrawable =
-                    ContextCompat.getDrawable(context, R.drawable.ic_home_current_location)
-                val markerBitmap = markerDrawable?.toBitmap()
-
-                val markerItem = TMapMarkerItem().apply {
-                    id = "CurrentMarker"
-                    name = "Current Location"
-                    icon = markerBitmap
-                    setTMapPoint(tMapPoint)
-                }
-
-                tMapView.addTMapMarkerItem(markerItem)
-            }
+            )
         }
     }
 
@@ -106,6 +120,12 @@ fun TMapViewCompose(
                     tMapView.mapType = TMapView.MapType.NIGHT
                     isMapReady = true
 
+                    val tMapPoint = TMapPoint(currentLocation.latitude, currentLocation.longitude)
+                    tMapView.fitBounds(
+                        tMapView.getBoundsFromPoints(
+                            arrayListOf(tMapPoint)
+                        )
+                    )
                     // 드래그 종료 시 지도 중심 좌표 업데이트
                     tMapView.setOnDisableScrollWithZoomLevelListener { _, _ ->
                         val centerLat = tMapView.centerPoint.latitude
@@ -136,25 +156,59 @@ fun TMapViewCompose(
                 }
             },
             update = { _ ->
-                // Update logic if needed (e.g., map settings)
+                if (isMapReady) {
+                    val tMapPoint = TMapPoint(currentLocation.latitude, currentLocation.longitude)
+//                    tMapView.fitBounds(
+//                        tMapView.getBoundsFromPoints(
+//                            arrayListOf(tMapPoint)
+//                        )
+//                    )
+
+                    val existingMarker = tMapView.getMarkerItemFromId("CurrentMarker")
+                    if (existingMarker == null) {
+                        val markerDrawable =
+                            ContextCompat.getDrawable(context, R.drawable.ic_home_current_location)
+                        val markerBitmap = markerDrawable?.toBitmap()
+
+                        val markerItem = TMapMarkerItem().apply {
+                            id = "CurrentMarker"
+                            name = "Current Location"
+                            icon = markerBitmap
+                            setTMapPoint(tMapPoint)
+                        }
+
+                        tMapView.addTMapMarkerItem(markerItem)
+                    } else {
+                        // 마커가 있으면 위치만 업데이트
+                        existingMarker.tMapPoint = tMapPoint
+                    }
+//                tMapView.setCenterPoint(tMapPoint.latitude, tMapPoint.longitude)
+//                tMapView.fitBounds(tMapView.bounds)
+//                tMapView.zoomLevel = 18
+//                    if (isMapFocused) {
+//                        tMapView.fitBounds(
+//                            tMapView.getBoundsFromPoints(
+//                                arrayListOf(tMapPoint)
+//                            )
+//                        )
+//                    }
+                }
             }
         )
 
-        if (isMapFocused && isMapReady) {
-            val tMapPoint =
-                TMapPoint(currentLocation.latitude, currentLocation.longitude)
-            tMapView.setCenterPoint(tMapPoint.latitude, tMapPoint.longitude)
-            getCenterLocation(LatLng(tMapPoint.latitude, tMapPoint.longitude))
-
-            AmplitudeUtils.trackEventWithProperties(
-                eventName = HOME_EVENT_COURSESEARCH_ENTERED,
-                mapOf(
-                    USER_ID to userId,
-                    SCREEN_NAME to HOME,
-                    HOME_COURSESEARCH_ENTERED_WITH_CURRENT_LOCATION to true
-                )
-            )
-        }
+//        if (isMapFocused && isMapReady) {
+//            tMapView.setCenterPoint(currentLocation.latitude, currentLocation.longitude)
+//            getCenterLocation(LatLng(currentLocation.latitude, currentLocation.longitude))
+//
+//            AmplitudeUtils.trackEventWithProperties(
+//                eventName = HOME_EVENT_COURSESEARCH_ENTERED,
+//                mapOf(
+//                    USER_ID to userId,
+//                    SCREEN_NAME to HOME,
+//                    HOME_COURSESEARCH_ENTERED_WITH_CURRENT_LOCATION to true
+//                )
+//            )
+//        }
 
         if (isMapReady) {
             // 출발 마커

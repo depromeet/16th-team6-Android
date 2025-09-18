@@ -69,7 +69,7 @@ class NotificationHelper @Inject constructor(
         }
         val notification = NotificationCompat.Builder(context, channelId)
             .setContentText(message)
-            .setSmallIcon(R.drawable.ic_app_logo_foreground)
+            .setSmallIcon(R.drawable.ic_atcha_logo)
             .setAutoCancel(true)
             .build()
 
@@ -92,7 +92,7 @@ class NotificationHelper @Inject constructor(
 
         val notification = NotificationCompat.Builder(context, channelId)
             .setContentText(getString(context, R.string.notification_ten_text))
-            .setSmallIcon(R.drawable.ic_app_logo_foreground)
+            .setSmallIcon(R.drawable.ic_atcha_logo)
             .setContentIntent(pendingIntent)
             .setAutoCancel(true)
             .build()

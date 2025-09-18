@@ -85,7 +85,6 @@ class HomeContract {
     }
 
     sealed class HomeEvent : UiEvent {
-        data class DummyEvent(val loadState: LoadState) : HomeEvent()
         data class UpdateAlarmRegistered(val isRegistered: Boolean) : HomeEvent()
         data class UpdateLastRouteId(val lastRouteId: String) : HomeEvent()
         data class UpdateDeparturePointName(val departurePointName: String) : HomeEvent()

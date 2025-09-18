@@ -488,118 +488,118 @@ fun HomeRoute(
     when (uiState.loadState) {
         LoadState.Idle, LoadState.Loading, LoadState.Success -> {
             Box {
-                HomeScreen(
-                    userLocation = LatLng(userLocation.latitude, userLocation.longitude),
-                    homeUiState = uiState,
-                    getUserId = { viewModel.getUserId() },
-                    getCenterLocation = { position ->
-                        viewModel.getCenterLocation(position)
-                    },
-                    updateCurrentLocation = { newLocation ->
-                        viewModel.updateCurrentLocation(newLocation)
-                    },
-                    onTimerFinished = { viewModel.onTimerFinished() },
-                    getDepartureTime = { viewModel.loadDepartureTime() },
-                    onCharacterClick = onCharacterClick,
-                    characterState = characterState,
-                    showTempMessage = ::showTempMessage,
-                    navigateToMypage = navigateToMypage,
-//                    navigateToItinerary = navigateToItinerary,
-                    modifier = modifier,
-                    padding = padding,
-                    afterRegisterMapMarkerClick = { focusedMarkerParemeter ->
-                        viewModel.setEvent(HomeContract.HomeEvent.AfterRegisterMapMarkerClick)
-                        navigateToItinerary(
-                            Gson().toJson(uiState.itineraryInfo),
-                            Gson().toJson(uiState.departurePoint),
-                            Gson().toJson(uiState.destinationPoint),
-                            focusedMarkerParemeter
-                        )
-                    },
-                    courseDetailBtnClick = { key ->
-                        viewModel.setEvent(HomeContract.HomeEvent.CourseDetailButtonClick(key))
-                        navigateToItinerary(
-                            Gson().toJson(uiState.itineraryInfo),
-                            Gson().toJson(uiState.departurePoint),
-                            Gson().toJson(uiState.destinationPoint),
-                            null
-                        )
-                    },
-                    onSearchClick = {
-                        val currentLocationJSON = Gson().toJson(uiState.markerPoint)
-                        val destinationPointJSON = Gson().toJson(uiState.destinationPoint)
-                        navigateToCourseSearch(
-                            currentLocationJSON,
-                            destinationPointJSON
-                        )
-
-                        AmplitudeUtils.trackEventWithProperties(
-                            eventName = HOME_EVENT_COURSESEARCH_ENTERED,
-                            mapOf(
-                                USER_ID to viewModel.getUserId(),
-                                SCREEN_NAME to HOME,
-                                HOME_COURSESEARCH_ENTERED_DIRECT to 1
-                            )
-                        )
-                    },
-                    onDestinationClick = {
-                        AmplitudeUtils.trackEventWithProperties(
-                            eventName = HOME_DESTINATION_CLICKED,
-                            mapOf(
-                                USER_ID to viewModel.getUserId(),
-                                SCREEN_NAME to HOME,
-                                HOME_DESTINATION_CLICKED to 1
-                            )
-                        )
-                    },
-                    onFinishClick = {
-                        viewModel.setEvent(HomeContract.HomeEvent.FinishAlarmClicked)
-//                viewModel.finishAlarm(context)
-                    },
-                    deleteAlarmConfirmed = {
-                        viewModel.setEvent(HomeContract.HomeEvent.DeleteAlarmConfirmed)
-                        viewModel.deleteAlarm(uiState.lastRouteId)
-                    },
-                    dismissDialog = {
-                        viewModel.setEvent(HomeContract.HomeEvent.DismissDialog)
-                    },
-                    onRefreshClick = {
-                    },
-                    navigateToSearchLocation = {
-                        navigateToSearchLocation(
-                            uiState.destinationPoint
-                        )
-
-                        AmplitudeUtils.trackEventWithProperties(
-                            eventName = HOME_EVENT_COURSESEARCH_ENTERED,
-                            mapOf(
-                                USER_ID to viewModel.getUserId(),
-                                SCREEN_NAME to HOME,
-                                HOME_COURSESEARCH_ENTERED_WITH_INPUT to 1
-                            )
-                        )
-                    },
-                    currentLocationClicked = {
-                        viewModel.setState {
-                            copy(
-                                isMapFocused = true
-                            )
-                        }
-                    },
-                    mapModified = {
-                        viewModel.setState {
-                            copy(
-                                isMapFocused = false
-                            )
-                        }
-                    }
-                )
-
                 if (uiState.loadState == LoadState.Loading ||
                     uiState.alarmCheckLoadState == LoadState.Loading ||
                     (uiState.isAlarmRegistered && uiState.afterRegisterDataLoadState == LoadState.Loading)
                 ) {
                     AtChaLoadingView()
+                } else {
+                    HomeScreen(
+                        userLocation = LatLng(userLocation.latitude, userLocation.longitude),
+                        homeUiState = uiState,
+                        getUserId = { viewModel.getUserId() },
+                        getCenterLocation = { position ->
+                            viewModel.getCenterLocation(position)
+                        },
+                        updateCurrentLocation = { newLocation ->
+                            viewModel.updateCurrentLocation(newLocation)
+                        },
+                        onTimerFinished = { viewModel.onTimerFinished() },
+                        getDepartureTime = { viewModel.loadDepartureTime() },
+                        onCharacterClick = onCharacterClick,
+                        characterState = characterState,
+                        showTempMessage = ::showTempMessage,
+                        navigateToMypage = navigateToMypage,
+//                    navigateToItinerary = navigateToItinerary,
+                        modifier = modifier,
+                        padding = padding,
+                        afterRegisterMapMarkerClick = { focusedMarkerParemeter ->
+                            viewModel.setEvent(HomeContract.HomeEvent.AfterRegisterMapMarkerClick)
+                            navigateToItinerary(
+                                Gson().toJson(uiState.itineraryInfo),
+                                Gson().toJson(uiState.departurePoint),
+                                Gson().toJson(uiState.destinationPoint),
+                                focusedMarkerParemeter
+                            )
+                        },
+                        courseDetailBtnClick = { key ->
+                            viewModel.setEvent(HomeContract.HomeEvent.CourseDetailButtonClick(key))
+                            navigateToItinerary(
+                                Gson().toJson(uiState.itineraryInfo),
+                                Gson().toJson(uiState.departurePoint),
+                                Gson().toJson(uiState.destinationPoint),
+                                null
+                            )
+                        },
+                        onSearchClick = {
+                            val currentLocationJSON = Gson().toJson(uiState.markerPoint)
+                            val destinationPointJSON = Gson().toJson(uiState.destinationPoint)
+                            navigateToCourseSearch(
+                                currentLocationJSON,
+                                destinationPointJSON
+                            )
+
+                            AmplitudeUtils.trackEventWithProperties(
+                                eventName = HOME_EVENT_COURSESEARCH_ENTERED,
+                                mapOf(
+                                    USER_ID to viewModel.getUserId(),
+                                    SCREEN_NAME to HOME,
+                                    HOME_COURSESEARCH_ENTERED_DIRECT to 1
+                                )
+                            )
+                        },
+                        onDestinationClick = {
+                            AmplitudeUtils.trackEventWithProperties(
+                                eventName = HOME_DESTINATION_CLICKED,
+                                mapOf(
+                                    USER_ID to viewModel.getUserId(),
+                                    SCREEN_NAME to HOME,
+                                    HOME_DESTINATION_CLICKED to 1
+                                )
+                            )
+                        },
+                        onFinishClick = {
+                            viewModel.setEvent(HomeContract.HomeEvent.FinishAlarmClicked)
+//                viewModel.finishAlarm(context)
+                        },
+                        deleteAlarmConfirmed = {
+                            viewModel.setEvent(HomeContract.HomeEvent.DeleteAlarmConfirmed)
+                            viewModel.deleteAlarm(uiState.lastRouteId)
+                        },
+                        dismissDialog = {
+                            viewModel.setEvent(HomeContract.HomeEvent.DismissDialog)
+                        },
+                        onRefreshClick = {
+                        },
+                        navigateToSearchLocation = {
+                            navigateToSearchLocation(
+                                uiState.destinationPoint
+                            )
+
+                            AmplitudeUtils.trackEventWithProperties(
+                                eventName = HOME_EVENT_COURSESEARCH_ENTERED,
+                                mapOf(
+                                    USER_ID to viewModel.getUserId(),
+                                    SCREEN_NAME to HOME,
+                                    HOME_COURSESEARCH_ENTERED_WITH_INPUT to 1
+                                )
+                            )
+                        },
+                        currentLocationClicked = {
+                            viewModel.setState {
+                                copy(
+                                    isMapFocused = true
+                                )
+                            }
+                        },
+                        mapModified = {
+                            viewModel.setState {
+                                copy(
+                                    isMapFocused = false
+                                )
+                            }
+                        }
+                    )
                 }
             }
         }
