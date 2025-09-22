@@ -30,6 +30,8 @@ import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -223,7 +225,8 @@ fun LoginScreen(
                     backgroundColor = defaultTeam6Colors.kakaoLoginButton,
                     cornerRadius = 8.dp
                 )
-                .noRippleClickable { onLoginClicked() },
+                .noRippleClickable { onLoginClicked() }
+                .semantics{ contentDescription = "kakao_login_button" },
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {

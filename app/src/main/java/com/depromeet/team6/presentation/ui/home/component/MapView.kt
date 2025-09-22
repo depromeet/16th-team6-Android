@@ -114,7 +114,6 @@ fun TMapViewCompose(
                 .height(screenHeight - 180.dp + padding.calculateTopPadding())
                 .align(Alignment.TopCenter),
             factory = { context ->
-
                 tMapView.setSKTMapApiKey(BuildConfig.TMAP_API_KEY)
                 tMapView.setOnMapReadyListener {
                     tMapView.mapType = TMapView.MapType.NIGHT
@@ -152,7 +151,9 @@ fun TMapViewCompose(
                 // FrameLayout을 직접 생성
                 FrameLayout(context).apply {
                     // TMapView를 FrameLayout에 추가
+                    this.contentDescription = "TMapViewContainer"
                     addView(tMapView)
+                    tMapView.contentDescription = "TMapView"
                 }
             },
             update = { _ ->

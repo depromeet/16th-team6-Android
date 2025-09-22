@@ -69,6 +69,12 @@ android {
             buildConfigField("String", "AMPLITUDE_API_KEY", properties["amplitude.dev.api.key"].toString())
             buildConfigField("String", "LAST_ROUTE", properties["LAST_ROUTE_V2"].toString())
         }
+        create("benchmark") {
+            initWith(buildTypes.getByName("release"))
+            signingConfig = signingConfigs.getByName("debug")
+            matchingFallbacks += listOf("release")
+            isDebuggable = false
+        }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
