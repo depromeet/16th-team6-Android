@@ -31,7 +31,6 @@ import com.depromeet.team6.R
 import com.depromeet.team6.presentation.ui.common.dialog.GlobalDialogHandler
 import com.depromeet.team6.presentation.ui.common.snackbar.GlobalSnackbarHandler
 import com.depromeet.team6.presentation.ui.common.snackbar.LocalSnackbarHostState
-import com.depromeet.team6.presentation.ui.coursesearch.component.SearchResultEmpty
 import com.depromeet.team6.presentation.ui.lock.LockScreenNavigator
 import com.depromeet.team6.presentation.ui.main.navigation.MainNavHost
 import com.depromeet.team6.presentation.ui.main.navigation.MainNavigator
@@ -109,52 +108,60 @@ class MainActivity : ComponentActivity() {
                     isAppearanceLightNavigationBars = false
                 }
             }
-            if (networkAvailability.value == NetworkState.Unavailable) {
-                SearchResultEmpty()
-            } else {
-                Team6Theme {
-                    CompositionLocalProvider(
-                        LocalDialogController provides dialogController,
-                        LocalSnackbarHostState provides snackbarHostState,
-                        LocalSnackbarController provides snackbarController
-                    ) {
-                        if (showSplash) {
-                            SplashScreen()
-                        } else {
-                            Box {
-                                Scaffold(
-                                    snackbarHost = {
-                                        SnackbarHost(hostState = snackbarHostState)
-                                    },
-                                    modifier = Modifier.fillMaxSize()
-                                ) { innerPadding ->
-                                    MainNavHost(
-                                        navigator = navigator,
-                                        padding = innerPadding
-                                    )
-
-                                    if (shouldNavigateToCourseSearch) {
-                                        LaunchedEffect(Unit) {
-                                            navigator.navigateToCourseSearch(
-                                                departure = departurePoint,
-                                                destination = destinationPoint,
-                                                fromLockScreen = fromLockScreen
-                                            )
-                                            shouldNavigateToCourseSearch = false
-                                        }
+            Team6Theme {
+                CompositionLocalProvider(
+                    LocalDialogController provides dialogController,
+                    LocalSnackbarHostState provides snackbarHostState,
+                    LocalSnackbarController provides snackbarController
+                ) {
+                    if (showSplash) {
+                        SplashScreen()
+                    } else {
+                        if (networkAvailability.value == NetworkState.Unavailable) {
+                            LocalDialogController.current.showAtchaOfflineAlert(
+                                onConfirm = {
+                                    if (networkAvailability.value == NetworkState.Unavailable) {
+                                        Toast.makeText(this, "인터넷 연결을 다시 확인해주세요", Toast.LENGTH_SHORT).show()
+                                    } else {
+                                        dialogController.hideDialog()
+                                        navigator.popBackStack()
                                     }
                                 }
-                                GlobalDialogHandler(
-                                    controller = dialogController,
-                                    modifier = Modifier
-                                        .fillMaxWidth()
+                            )
+                        }
+                        Box {
+                            Scaffold(
+                                snackbarHost = {
+                                    SnackbarHost(hostState = snackbarHostState)
+                                },
+                                modifier = Modifier.fillMaxSize()
+                            ) { innerPadding ->
+                                MainNavHost(
+                                    navigator = navigator,
+                                    padding = innerPadding
                                 )
 
-                                GlobalSnackbarHandler(
-                                    snackbarData = snackbarData.value,
-                                    onDismiss = { snackbarData.value = null }
-                                )
+                                if (shouldNavigateToCourseSearch) {
+                                    LaunchedEffect(Unit) {
+                                        navigator.navigateToCourseSearch(
+                                            departure = departurePoint,
+                                            destination = destinationPoint,
+                                            fromLockScreen = fromLockScreen
+                                        )
+                                        shouldNavigateToCourseSearch = false
+                                    }
+                                }
                             }
+                            GlobalDialogHandler(
+                                controller = dialogController,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                            )
+
+                            GlobalSnackbarHandler(
+                                snackbarData = snackbarData.value,
+                                onDismiss = { snackbarData.value = null }
+                            )
                         }
                     }
                 }

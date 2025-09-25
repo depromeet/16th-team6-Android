@@ -2,6 +2,8 @@
     <!-- common -->
     <string name="app_name">앗차!</string>
     <string name="toast_cannot_load_screen">화면을 로드하지 못했습니다.</string>
+    <string name="alert_offline_one_button_body">오프라인 상태입니다.\n네트워크 연결 상태 확인 후,\n다시 시도해주세요.</string>
+    <string name="alert_offline_one_button">재시도</string>
 
     <!-- vector node -->
     <string name="vector_builder_node_transport_marker_outline">M14.194,14m-11.444,0a11.444,11.444 0,1 1,22.889 0a11.444,11.444 0,1 1,-22.889 0</string>
