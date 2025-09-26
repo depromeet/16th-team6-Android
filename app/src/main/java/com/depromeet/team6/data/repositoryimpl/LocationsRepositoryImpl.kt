@@ -1,5 +1,6 @@
 package com.depromeet.team6.data.repositoryimpl
 
+import com.depromeet.team6.data.datalocal.datasource.GPSLocalDataSource
 import com.depromeet.team6.data.dataremote.datasource.LocationsRemoteDataSource
 import com.depromeet.team6.data.mapper.todata.toData
 import com.depromeet.team6.data.mapper.todomain.toDomain
@@ -7,10 +8,12 @@ import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.Location
 import com.depromeet.team6.domain.model.SearchHistory
 import com.depromeet.team6.domain.repository.LocationsRepository
+import com.google.android.gms.maps.model.LatLng
 import javax.inject.Inject
 
 class LocationsRepositoryImpl @Inject constructor(
-    private val locationsRemoteDataSource: LocationsRemoteDataSource
+    private val locationsRemoteDataSource: LocationsRemoteDataSource,
+    private val gpsLocalDataSource: GPSLocalDataSource
 ) : LocationsRepository {
     override suspend fun getLocations(
         keyword: String,
@@ -36,4 +39,7 @@ class LocationsRepositoryImpl @Inject constructor(
 
     override suspend fun deleteAllSearchHistory(): Result<Unit> =
         locationsRemoteDataSource.deleteAllSearchHistory()
+
+    override suspend fun getCurrentLatLng(): LatLng =
+        gpsLocalDataSource.getCurrentLatLng()
 }

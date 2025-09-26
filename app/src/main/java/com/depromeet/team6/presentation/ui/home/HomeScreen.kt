@@ -58,8 +58,6 @@ import com.depromeet.team6.presentation.ui.home.component.TMapViewCompose
 import com.depromeet.team6.presentation.ui.home.component.UnifiedCharacterBubble
 import com.depromeet.team6.presentation.util.AmplitudeCommon.SCREEN_NAME
 import com.depromeet.team6.presentation.util.AmplitudeCommon.USER_ID
-import com.depromeet.team6.presentation.util.DefaultLatLng.DEFAULT_LAT
-import com.depromeet.team6.presentation.util.DefaultLatLng.DEFAULT_LNG
 import com.depromeet.team6.presentation.util.HomeAmplitude.ALERT_END_POPUP_1
 import com.depromeet.team6.presentation.util.HomeAmplitude.HOME
 import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_COURSESEARCH_ENTERED_DIRECT
@@ -72,7 +70,6 @@ import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_ROUTE_CLICKED
 import com.depromeet.team6.presentation.util.HomeAmplitude.POPUP
 import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
 import com.depromeet.team6.presentation.util.base.ApiErrorSideEffect
-import com.depromeet.team6.presentation.util.context.getUserLocation
 import com.depromeet.team6.presentation.util.dialog.LocalDialogController
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.presentation.util.permission.PermissionUtil
@@ -111,7 +108,6 @@ fun HomeRoute(
 
     var permissionGranted by remember { mutableStateOf(PermissionUtil.hasLocationPermissions(context)) }
     val dialogController = LocalDialogController.current
-    var userLocation by remember { mutableStateOf(LatLng(DEFAULT_LAT, DEFAULT_LNG)) } // 서울시 기본 위치
 
     val locationPermissionsLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestMultiplePermissions(),
@@ -206,10 +202,7 @@ fun HomeRoute(
     }
 
     LaunchedEffect(permissionGranted) {
-        if (PermissionUtil.hasLocationPermissions(context)) { // 위치 권한이 있으면
-            val location = context.getUserLocation()
-            userLocation = location
-        } else {
+        if (!permissionGranted) { // 위치 권한이 있으면
             dialogController.showAtchaSystemSettingAlert(
                 context = context,
                 message = context.getString(R.string.all_dialog_location_permission),
@@ -217,10 +210,10 @@ fun HomeRoute(
                     PermissionUtil.requestLocationPermissions(context, locationPermissionsLauncher)
                 }
             )
-        }
 
-        viewModel.getCenterLocation(LatLng(userLocation.latitude, userLocation.longitude))
+//        viewModel.getCenterLocation(LatLng(userLocation.latitude, userLocation.longitude))
     }
+        }
 
     LaunchedEffect(Unit) {
         if (uiState.isAlarmRegistered) {
@@ -495,7 +488,6 @@ fun HomeRoute(
                     AtChaLoadingView()
                 } else {
                     HomeScreen(
-                        userLocation = LatLng(userLocation.latitude, userLocation.longitude),
                         homeUiState = uiState,
                         getUserId = { viewModel.getUserId() },
                         getCenterLocation = { position ->
@@ -611,7 +603,6 @@ fun HomeRoute(
 @Composable
 fun HomeScreen(
     padding: PaddingValues,
-    userLocation: LatLng,
     modifier: Modifier = Modifier,
     homeUiState: HomeContract.HomeUiState = HomeContract.HomeUiState(),
     getUserId: () -> Int,
@@ -663,7 +654,7 @@ fun HomeScreen(
         if (homeUiState.isAlarmRegistered) {
             AfterRegisterMap(
                 padding = padding,
-                currentLocation = userLocation,
+                currentLocation = homeUiState.currentLocation,
                 legs = homeUiState.itineraryInfo!!.legs,
                 isAlarmRegistered = homeUiState.isAlarmRegistered,
                 isMapFocused = homeUiState.isMapFocused,
@@ -681,7 +672,7 @@ fun HomeScreen(
         } else {
             TMapViewCompose(
                 padding = padding,
-                currentLocation = userLocation,
+                currentLocation = homeUiState.currentLocation,
                 isAlarmRegistered = homeUiState.isAlarmRegistered,
                 userId = getUserId(),
                 isMapFocused = homeUiState.isMapFocused,
@@ -1115,7 +1106,6 @@ data class CharacterTexts(
 private fun HomeScreenPreview() {
     HomeScreen(
         padding = PaddingValues(0.dp),
-        userLocation = LatLng(37.5665, 126.9780),
         getUserId = { 1 },
         characterState = CharacterState()
     )

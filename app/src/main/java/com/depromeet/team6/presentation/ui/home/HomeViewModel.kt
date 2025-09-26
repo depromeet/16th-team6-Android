@@ -14,6 +14,7 @@ import com.depromeet.team6.domain.usecase.GetAddressFromCoordinatesUseCase
 import com.depromeet.team6.domain.usecase.GetBusArrivalUseCase
 import com.depromeet.team6.domain.usecase.GetBusStartedUseCase
 import com.depromeet.team6.domain.usecase.GetCourseSearchResultsUseCase
+import com.depromeet.team6.domain.usecase.GetCurrentLatLngUseCase
 import com.depromeet.team6.domain.usecase.GetTaxiCostUseCase
 import com.depromeet.team6.domain.usecase.GetUserInfoUseCase
 import com.depromeet.team6.domain.usecase.RefreshAlarmTimerUseCase
@@ -39,6 +40,7 @@ import com.google.firebase.crashlytics.crashlytics
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -59,6 +61,7 @@ class HomeViewModel @Inject constructor(
     private val getBusArrivalUseCase: GetBusArrivalUseCase,
     private val deleteAlarmUseCase: DeleteAlarmUseCase,
     private val refreshAlarmTimerUseCase: RefreshAlarmTimerUseCase,
+    private val getCurrentLatLngUseCase: GetCurrentLatLngUseCase,
     @ApplicationContext private val context: Context
 ) : BaseViewModel<HomeContract.HomeUiState, HomeContract.HomeSideEffect, HomeContract.HomeEvent>() {
     private var speechBubbleJob: Job? = null
@@ -67,10 +70,39 @@ class HomeViewModel @Inject constructor(
 
     init {
         showSpeechBubbleTemporarily()
-        setState { copy(loadState = LoadState.Loading) }
+        loadInitialUiState()
     }
 
     override fun createInitialState(): HomeContract.HomeUiState = HomeContract.HomeUiState()
+
+    private fun loadInitialUiState() {
+        // 이미 로딩중이거나 로딩 완료상태면 스킵
+        if (currentState.loadState == LoadState.Loading || currentState.loadState == LoadState.Success) {
+            return
+        }
+
+        setState { copy(loadState = LoadState.Loading) }
+        viewModelScope.launch {
+            try {
+                val locationDeferred = async{ getCurrentLatLngUseCase() }
+
+                val locationLatLng = locationDeferred.await()
+
+                setState {
+                    copy(
+                        loadState = LoadState.Success,
+                        currentLocation = locationLatLng,
+                    )
+                }
+            } catch (e : Exception) {
+                setState {
+                    copy(
+                        loadState = LoadState.Error
+                    )
+                }
+            }
+        }
+    }
 
     override suspend fun handleEvent(event: HomeContract.HomeEvent) {
         when (event) {
@@ -376,10 +408,6 @@ class HomeViewModel @Inject constructor(
 
                     if (isAllNotDefault) {
                         getTaxiCost()
-                    }
-
-                    setState {
-                        copy(loadState = LoadState.Success)
                     }
                 }
                 .onFailure { exception ->
