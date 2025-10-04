@@ -89,6 +89,10 @@ android {
     }
 }
 
+composeCompiler {
+    enableStrongSkippingMode = true
+}
+
 dependencies {
 
     implementation(libs.androidx.core.ktx)
@@ -107,6 +111,7 @@ dependencies {
     implementation(libs.play.services.auth)
     implementation(libs.androidx.runtime.livedata)
     implementation(libs.accompanist.flowlayout)
+    implementation(libs.kotlinx.collections.immutable)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

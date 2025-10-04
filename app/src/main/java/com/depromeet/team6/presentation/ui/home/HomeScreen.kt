@@ -74,7 +74,6 @@ import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
 import com.depromeet.team6.presentation.util.base.ApiErrorSideEffect
 import com.depromeet.team6.presentation.util.context.getUserLocation
 import com.depromeet.team6.presentation.util.dialog.LocalDialogController
-import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.presentation.util.permission.PermissionUtil
 import com.depromeet.team6.presentation.util.toast.atChaToastMessage
 import com.depromeet.team6.presentation.util.view.LoadState
@@ -829,9 +828,8 @@ fun HomeScreen(
                     bottom = bottomSheetHeight + 16.dp,
                     end = 16.dp
                 )
-                .noRippleClickable {
-                    currentLocationClicked()
-                }
+//                .clickable(onClick = {})
+//                .noRippleClickable (onClick = currentLocationClicked)
         )
 
         if (homeUiState.deleteAlarmDialogVisible) {

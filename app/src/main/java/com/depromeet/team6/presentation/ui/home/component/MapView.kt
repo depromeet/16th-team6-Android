@@ -109,7 +109,7 @@ fun TMapViewCompose(
         modifier = modifier
     ) {
         AndroidView(
-            modifier = modifier
+            modifier = Modifier
                 .fillMaxWidth()
                 .height(screenHeight - 180.dp + padding.calculateTopPadding())
                 .align(Alignment.TopCenter),
@@ -119,12 +119,12 @@ fun TMapViewCompose(
                     tMapView.mapType = TMapView.MapType.NIGHT
                     isMapReady = true
 
-                    val tMapPoint = TMapPoint(currentLocation.latitude, currentLocation.longitude)
-                    tMapView.fitBounds(
-                        tMapView.getBoundsFromPoints(
-                            arrayListOf(tMapPoint)
-                        )
-                    )
+//                    val tMapPoint = TMapPoint(currentLocation.latitude, currentLocation.longitude)
+//                    tMapView.fitBounds(
+//                        tMapView.getBoundsFromPoints(
+//                            arrayListOf(tMapPoint)
+//                        )
+//                    )
                     // 드래그 종료 시 지도 중심 좌표 업데이트
                     tMapView.setOnDisableScrollWithZoomLevelListener { _, _ ->
                         val centerLat = tMapView.centerPoint.latitude
@@ -157,7 +157,7 @@ fun TMapViewCompose(
                 }
             },
             update = { _ ->
-                if (isMapReady) {
+                if (false) {
                     val tMapPoint = TMapPoint(currentLocation.latitude, currentLocation.longitude)
 //                    tMapView.fitBounds(
 //                        tMapView.getBoundsFromPoints(
