@@ -41,9 +41,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import com.depromeet.team6.R
 import com.depromeet.team6.presentation.type.LoginViewPagerType
+import com.depromeet.team6.presentation.ui.common.view.AtChaLoadingView
 import com.depromeet.team6.presentation.ui.common.view.AtChaTreeDotsLoadingView
 import com.depromeet.team6.presentation.ui.login.component.LoginIndicator
-import com.depromeet.team6.presentation.ui.splash.SplashScreen
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.presentation.util.modifier.roundedBackgroundWithPadding
 import com.depromeet.team6.presentation.util.view.LoadState
@@ -87,10 +87,7 @@ fun LoginRoute(
         }
     }
 
-    Timber.d("initial uiState : ${uiState.loadState}")
-
     LaunchedEffect(Unit) {
-        viewModel.checkAutoLogin()
         while (true) {
             delay(4000L)
 
@@ -155,7 +152,7 @@ fun LoginRoute(
             }
         }
         LoadState.Loading -> {
-            SplashScreen()
+            AtChaLoadingView()
         }
 
         LoadState.Success -> navigateToHome()

@@ -15,6 +15,7 @@ import com.depromeet.team6.presentation.ui.login.navigation.loginGraph
 import com.depromeet.team6.presentation.ui.mypage.navigation.mypageNavGraph
 import com.depromeet.team6.presentation.ui.onboarding.navigation.onboardingNavGraph
 import com.depromeet.team6.presentation.ui.searchlocation.navigation.searchLocationNavigation
+import com.depromeet.team6.presentation.ui.splash.navigation.splashNavGraph
 
 @Composable
 fun MainNavHost(
@@ -41,6 +42,11 @@ fun MainNavHost(
             EnterTransition.None
         }
     ) {
+        splashNavGraph(
+            navigateToLogin = navigator::navigateToLogin,
+            navigateToHome = navigator::navigateToHome
+        )
+
         homeNavGraph(
             padding = padding,
             navigateToLogin = navigator::navigateToLogin,

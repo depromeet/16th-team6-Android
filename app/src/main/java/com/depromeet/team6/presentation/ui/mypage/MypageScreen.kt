@@ -56,7 +56,7 @@ import com.depromeet.team6.ui.theme.LocalTeam6Colors
 import com.depromeet.team6.ui.theme.LocalTeam6Typography
 
 @Composable
-fun MypageRoute(
+fun MyPageRoute(
     navigateToLogin: () -> Unit,
     modifier: Modifier = Modifier,
     padding: PaddingValues = PaddingValues(0.dp),

@@ -485,10 +485,12 @@ fun HomeRoute(
     }
 
     when (uiState.loadState) {
-        LoadState.Idle, LoadState.Loading, LoadState.Success -> {
+        LoadState.Loading -> {
+            AtChaLoadingView()
+        }
+        LoadState.Idle, LoadState.Success -> {
             Box {
-                if (uiState.loadState == LoadState.Loading ||
-                    uiState.alarmCheckLoadState == LoadState.Loading ||
+                if (uiState.alarmCheckLoadState == LoadState.Loading ||
                     (uiState.isAlarmRegistered && uiState.afterRegisterDataLoadState == LoadState.Loading)
                 ) {
                     AtChaLoadingView()

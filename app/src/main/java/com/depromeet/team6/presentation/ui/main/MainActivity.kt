@@ -17,7 +17,6 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -36,7 +35,6 @@ import com.depromeet.team6.presentation.ui.lock.LockScreenNavigator
 import com.depromeet.team6.presentation.ui.main.navigation.MainNavHost
 import com.depromeet.team6.presentation.ui.main.navigation.MainNavigator
 import com.depromeet.team6.presentation.ui.main.navigation.rememberMainNavigator
-import com.depromeet.team6.presentation.ui.splash.SplashScreen
 import com.depromeet.team6.presentation.util.dialog.DialogController
 import com.depromeet.team6.presentation.util.dialog.LocalDialogController
 import com.depromeet.team6.presentation.util.snackbar.LocalSnackbarController
@@ -94,7 +92,6 @@ class MainActivity : ComponentActivity() {
         setContent {
             val viewModel: MainViewModel = hiltViewModel()
             val navigator: MainNavigator = rememberMainNavigator(firebaseAnalytics = firebaseAnalytics)
-            val showSplash by viewModel.showSplash.observeAsState(true)
             val dialogController = remember { DialogController() }
             val networkAvailability = viewModel.networkAvailability.collectAsStateWithLifecycle()
             val snackbarHostState = remember { SnackbarHostState() }
@@ -118,43 +115,39 @@ class MainActivity : ComponentActivity() {
                         LocalSnackbarHostState provides snackbarHostState,
                         LocalSnackbarController provides snackbarController
                     ) {
-                        if (showSplash) {
-                            SplashScreen()
-                        } else {
-                            Box {
-                                Scaffold(
-                                    snackbarHost = {
-                                        SnackbarHost(hostState = snackbarHostState)
-                                    },
-                                    modifier = Modifier.fillMaxSize()
-                                ) { innerPadding ->
-                                    MainNavHost(
-                                        navigator = navigator,
-                                        padding = innerPadding
-                                    )
+                        Box {
+                            Scaffold(
+                                snackbarHost = {
+                                    SnackbarHost(hostState = snackbarHostState)
+                                },
+                                modifier = Modifier.fillMaxSize()
+                            ) { innerPadding ->
+                                MainNavHost(
+                                    navigator = navigator,
+                                    padding = innerPadding
+                                )
 
-                                    if (shouldNavigateToCourseSearch) {
-                                        LaunchedEffect(Unit) {
-                                            navigator.navigateToCourseSearch(
-                                                departure = departurePoint,
-                                                destination = destinationPoint,
-                                                fromLockScreen = fromLockScreen
-                                            )
-                                            shouldNavigateToCourseSearch = false
-                                        }
+                                if (shouldNavigateToCourseSearch) {
+                                    LaunchedEffect(Unit) {
+                                        navigator.navigateToCourseSearch(
+                                            departure = departurePoint,
+                                            destination = destinationPoint,
+                                            fromLockScreen = fromLockScreen
+                                        )
+                                        shouldNavigateToCourseSearch = false
                                     }
                                 }
-                                GlobalDialogHandler(
-                                    controller = dialogController,
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                )
-
-                                GlobalSnackbarHandler(
-                                    snackbarData = snackbarData.value,
-                                    onDismiss = { snackbarData.value = null }
-                                )
                             }
+                            GlobalDialogHandler(
+                                controller = dialogController,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                            )
+
+                            GlobalSnackbarHandler(
+                                snackbarData = snackbarData.value,
+                                onDismiss = { snackbarData.value = null }
+                            )
                         }
                     }
                 }

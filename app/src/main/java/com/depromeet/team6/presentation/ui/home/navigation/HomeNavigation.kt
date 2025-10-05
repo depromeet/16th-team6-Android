@@ -11,7 +11,6 @@ import com.depromeet.team6.presentation.model.itinerary.FocusedMarkerParameter
 import com.depromeet.team6.presentation.ui.home.HomeRoute
 import com.depromeet.team6.presentation.ui.home.navigation.HomeRoute.ARGUMENT
 import com.depromeet.team6.presentation.ui.home.navigation.HomeRoute.ROUTE
-import timber.log.Timber
 
 fun NavController.navigationHome(afterOnboarding: Boolean = false) {
     navigate(
@@ -41,7 +40,6 @@ fun NavGraphBuilder.homeNavGraph(
     ) { backStackEntry ->
         val afterOnboarding = backStackEntry.arguments?.getBoolean(ARGUMENT) ?: false
 
-        Timber.d("homeRoute called!!")
         HomeRoute(
             padding = padding,
             afterOnboarding = afterOnboarding,
