@@ -39,8 +39,8 @@ android {
         applicationId = "com.depromeet.team6"
         minSdk = 26
         targetSdk = 35
-        versionCode = 19
-        versionName = "1.3.13"
+        versionCode = 20
+        versionName = "1.3.14"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "KAKAO_NATIVE_APP_KEY", properties["kakao.native.app.key"].toString())
@@ -143,8 +143,8 @@ dependencies {
     implementation(libs.androidx.security.crypto)
 
     // Tmap
-    implementation(files("libs/tmap-sdk-1.9.aar"))
-    implementation(files("libs/vsm-tmap-sdk-v2-android-1.7.23.aar"))
+    implementation(files("libs/tmap-sdk-3.0.aar"))
+    implementation(files("libs/vsm-tmap-sdk-v2-android-1.7.45.aar"))
     implementation(libs.flatbuffers.java)
 
     // Firebase
