@@ -2,7 +2,7 @@ package com.depromeet.team6.data.repositoryimpl
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.os.Looper
+import android.os.HandlerThread
 import com.depromeet.team6.data.dataremote.datasource.LocationsRemoteDataSource
 import com.depromeet.team6.data.mapper.todata.toData
 import com.depromeet.team6.data.mapper.todomain.toDomain
@@ -47,10 +47,14 @@ class LocationsRepositoryImpl @Inject constructor(
             }
         }
 
+        val handlerThread = HandlerThread("LocationThread")
+        handlerThread.start()
+        val looper = handlerThread.looper
+
         fusedLocationProviderClient.requestLocationUpdates(
             locationRequest,
             locationCallback,
-            Looper.getMainLooper()
+            looper
         )
 
         awaitClose { fusedLocationProviderClient.removeLocationUpdates(locationCallback) }
