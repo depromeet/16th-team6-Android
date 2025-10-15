@@ -114,17 +114,18 @@ fun TMapViewCompose(
                 .height(screenHeight - 180.dp + padding.calculateTopPadding())
                 .align(Alignment.TopCenter),
             factory = { context ->
+                Timber.d("current Location (factory) : ${currentLocation.latitude}, ${currentLocation.longitude}")
                 tMapView.setSKTMapApiKey(BuildConfig.TMAP_API_KEY)
+                tMapView.mapType = TMapView.MapType.NIGHT
                 tMapView.setOnMapReadyListener {
-                    tMapView.mapType = TMapView.MapType.NIGHT
                     isMapReady = true
 
-//                    val tMapPoint = TMapPoint(currentLocation.latitude, currentLocation.longitude)
-//                    tMapView.fitBounds(
-//                        tMapView.getBoundsFromPoints(
-//                            arrayListOf(tMapPoint)
-//                        )
-//                    )
+                    val tMapPoint = TMapPoint(currentLocation.latitude, currentLocation.longitude)
+                    tMapView.fitBounds(
+                        tMapView.getBoundsFromPoints(
+                            arrayListOf(tMapPoint)
+                        )
+                    )
                     // 드래그 종료 시 지도 중심 좌표 업데이트
                     tMapView.setOnDisableScrollWithZoomLevelListener { _, _ ->
                         val centerLat = tMapView.centerPoint.latitude
@@ -157,8 +158,9 @@ fun TMapViewCompose(
                 }
             },
             update = { _ ->
-                if (false) {
-                    val tMapPoint = TMapPoint(currentLocation.latitude, currentLocation.longitude)
+                if (isMapReady) {
+                    val currentPoint = TMapPoint(currentLocation.latitude, currentLocation.longitude)
+                    Timber.d("current Location : ${currentLocation.latitude}, ${currentLocation.longitude}")
 //                    tMapView.fitBounds(
 //                        tMapView.getBoundsFromPoints(
 //                            arrayListOf(tMapPoint)
@@ -175,13 +177,13 @@ fun TMapViewCompose(
                             id = "CurrentMarker"
                             name = "Current Location"
                             icon = markerBitmap
-                            setTMapPoint(tMapPoint)
+                            tMapPoint = currentPoint
                         }
 
                         tMapView.addTMapMarkerItem(markerItem)
                     } else {
                         // 마커가 있으면 위치만 업데이트
-                        existingMarker.tMapPoint = tMapPoint
+                        existingMarker.tMapPoint = currentPoint
                     }
 //                tMapView.setCenterPoint(tMapPoint.latitude, tMapPoint.longitude)
 //                tMapView.fitBounds(tMapView.bounds)
@@ -196,20 +198,6 @@ fun TMapViewCompose(
                 }
             }
         )
-
-//        if (isMapFocused && isMapReady) {
-//            tMapView.setCenterPoint(currentLocation.latitude, currentLocation.longitude)
-//            getCenterLocation(LatLng(currentLocation.latitude, currentLocation.longitude))
-//
-//            AmplitudeUtils.trackEventWithProperties(
-//                eventName = HOME_EVENT_COURSESEARCH_ENTERED,
-//                mapOf(
-//                    USER_ID to userId,
-//                    SCREEN_NAME to HOME,
-//                    HOME_COURSESEARCH_ENTERED_WITH_CURRENT_LOCATION to true
-//                )
-//            )
-//        }
 
         if (isMapReady) {
             // 출발 마커
