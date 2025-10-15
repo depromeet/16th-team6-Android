@@ -14,6 +14,7 @@ import com.depromeet.team6.domain.usecase.GetAddressFromCoordinatesUseCase
 import com.depromeet.team6.domain.usecase.GetBusArrivalUseCase
 import com.depromeet.team6.domain.usecase.GetBusStartedUseCase
 import com.depromeet.team6.domain.usecase.GetCourseSearchResultsUseCase
+import com.depromeet.team6.domain.usecase.GetRealtimeLocationUseCase
 import com.depromeet.team6.domain.usecase.GetTaxiCostUseCase
 import com.depromeet.team6.domain.usecase.GetUserInfoUseCase
 import com.depromeet.team6.domain.usecase.RefreshAlarmTimerUseCase
@@ -40,6 +41,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.time.Duration
@@ -59,6 +62,7 @@ class HomeViewModel @Inject constructor(
     private val getBusArrivalUseCase: GetBusArrivalUseCase,
     private val deleteAlarmUseCase: DeleteAlarmUseCase,
     private val refreshAlarmTimerUseCase: RefreshAlarmTimerUseCase,
+    private val getRealtimeLocationUseCase: GetRealtimeLocationUseCase,
     @ApplicationContext private val context: Context
 ) : BaseViewModel<HomeContract.HomeUiState, HomeContract.HomeSideEffect, HomeContract.HomeEvent>() {
     private var speechBubbleJob: Job? = null
@@ -236,7 +240,7 @@ class HomeViewModel @Inject constructor(
                 )
             }
 
-            HomeContract.HomeEvent.CharacterClicked -> handleCharacterClick()
+            is HomeContract.HomeEvent.CharacterClicked -> {}
             // is HomeContract.HomeEvent.ComponentClicked -> handleComponentClick(event.componentType, event.data)
             is HomeContract.HomeEvent.ComponentClicked -> TODO()
         }
@@ -680,41 +684,12 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun updateCurrentLocation(newLocation: LatLng) {
-        viewModelScope.launch {
-            setState {
-                copy(
-                    currentLocation = newLocation
-                )
+    fun startLocationUpdates() {
+        getRealtimeLocationUseCase()
+            .onEach { newLocation ->
+                setState { copy(currentLocation = newLocation) }
             }
-        }
-    }
-
-    private fun handleCharacterClick() {
-        val currentState = uiState.value.characterState
-        val speechTexts = currentState.speechTexts
-
-        if (speechTexts.size > 1) {
-            val nextIndex = (currentState.currentSpeechIndex + 1) % speechTexts.size
-            setState {
-                copy(
-                    characterState = currentState.copy(
-                        currentSpeechIndex = nextIndex,
-                        isAnimating = true,
-                        animationTrigger = currentState.animationTrigger + 1
-                    )
-                )
-            }
-        } else {
-            setState {
-                copy(
-                    characterState = currentState.copy(
-                        isAnimating = true,
-                        animationTrigger = currentState.animationTrigger + 1
-                    )
-                )
-            }
-        }
+            .launchIn(viewModelScope)
     }
 
     companion object {

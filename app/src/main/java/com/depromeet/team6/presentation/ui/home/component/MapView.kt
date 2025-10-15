@@ -114,7 +114,6 @@ fun TMapViewCompose(
                 .height(screenHeight - 180.dp + padding.calculateTopPadding())
                 .align(Alignment.TopCenter),
             factory = { context ->
-                Timber.d("current Location (factory) : ${currentLocation.latitude}, ${currentLocation.longitude}")
                 tMapView.setSKTMapApiKey(BuildConfig.TMAP_API_KEY)
                 tMapView.mapType = TMapView.MapType.NIGHT
                 tMapView.setOnMapReadyListener {
@@ -160,7 +159,6 @@ fun TMapViewCompose(
             update = { _ ->
                 if (isMapReady) {
                     val currentPoint = TMapPoint(currentLocation.latitude, currentLocation.longitude)
-                    Timber.d("current Location : ${currentLocation.latitude}, ${currentLocation.longitude}")
 //                    tMapView.fitBounds(
 //                        tMapView.getBoundsFromPoints(
 //                            arrayListOf(tMapPoint)
