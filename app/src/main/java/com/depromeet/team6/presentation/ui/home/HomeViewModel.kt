@@ -33,17 +33,20 @@ import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_EVENT_REGISTER_M
 import com.depromeet.team6.presentation.util.HomeAmplitude.REGISTER_MAP_MARKER_CLICKED
 import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
 import com.depromeet.team6.presentation.util.base.BaseViewModel
+import com.depromeet.team6.presentation.util.context.getUserLocation
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.Firebase
 import com.google.firebase.crashlytics.crashlytics
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.time.Duration
 import java.time.LocalDateTime
@@ -71,7 +74,18 @@ class HomeViewModel @Inject constructor(
 
     init {
         showSpeechBubbleTemporarily()
-        setState { copy(loadState = LoadState.Loading) }
+        viewModelScope.launch {
+            val currentLocation = withContext(Dispatchers.IO) {
+                context.getUserLocation()  // suspend 함수
+            }
+
+            setState {
+                copy(
+                    currentLocation = currentLocation,
+                    loadState = LoadState.Success
+                )
+            }
+        }
     }
 
     override fun createInitialState(): HomeContract.HomeUiState = HomeContract.HomeUiState()
@@ -380,10 +394,6 @@ class HomeViewModel @Inject constructor(
 
                     if (isAllNotDefault) {
                         getTaxiCost()
-                    }
-
-                    setState {
-                        copy(loadState = LoadState.Success)
                     }
                 }
                 .onFailure { exception ->
