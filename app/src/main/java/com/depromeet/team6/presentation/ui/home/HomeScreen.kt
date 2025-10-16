@@ -817,7 +817,7 @@ fun HomeScreen(
                     bottom = bottomSheetHeight + 16.dp,
                     end = 16.dp
                 )
-                .noRippleClickable (onClick = currentLocationClicked)
+                .noRippleClickable(onClick = currentLocationClicked)
         )
 
         if (homeUiState.deleteAlarmDialogVisible) {

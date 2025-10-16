@@ -76,7 +76,7 @@ class HomeViewModel @Inject constructor(
         showSpeechBubbleTemporarily()
         viewModelScope.launch {
             val currentLocation = withContext(Dispatchers.IO) {
-                context.getUserLocation()  // suspend 함수
+                context.getUserLocation() // suspend 함수
             }
 
             setState {

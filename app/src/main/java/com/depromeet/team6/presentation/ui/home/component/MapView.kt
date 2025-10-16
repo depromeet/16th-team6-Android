@@ -68,9 +68,9 @@ fun TMapViewCompose(
 //                        arrayListOf(tMapPoint)
 //                    )
 //                )
-////                tMapView.setCenterPoint(tMapPoint.latitude, tMapPoint.longitude)
-////                tMapView.fitBounds(tMapView.bounds)
-////                tMapView.zoomLevel = 18
+// //                tMapView.setCenterPoint(tMapPoint.latitude, tMapPoint.longitude)
+// //                tMapView.fitBounds(tMapView.bounds)
+// //                tMapView.zoomLevel = 18
 //
 //                val markerDrawable =
 //                    ContextCompat.getDrawable(context, R.drawable.ic_home_current_location)
@@ -92,7 +92,7 @@ fun TMapViewCompose(
     LaunchedEffect(isMapFocused) {
         if (isMapFocused && isMapReady) {
             tMapView.setCenterPoint(currentLocation.latitude, currentLocation.longitude)
-            getCenterLocation(LatLng(currentLocation.latitude, currentLocation.longitude))  // 필요없어보여서 주석처리 해뒀어요
+            getCenterLocation(LatLng(currentLocation.latitude, currentLocation.longitude)) // 필요없어보여서 주석처리 해뒀어요
 
             AmplitudeUtils.trackEventWithProperties(
                 eventName = HOME_EVENT_COURSESEARCH_ENTERED,

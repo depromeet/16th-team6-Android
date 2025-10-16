@@ -25,7 +25,7 @@ import com.depromeet.team6.ui.theme.Team6Theme
 fun SplashScreen(
     navigateToLogin: () -> Unit,
     navigateToHome: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     val activity = LocalActivity.current as MainActivity
     val viewModel: MainViewModel = hiltViewModel(activity)

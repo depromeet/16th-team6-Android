@@ -56,12 +56,11 @@ class MainViewModel @Inject constructor(
 
     override fun createInitialState(): MainContract.MainState = MainContract.MainState()
 
-
     override suspend fun handleEvent(event: MainContract.MainEvent) {
     }
 
     // Splash 화면에서 데이터 로드
-    private fun loadInitialData(){
+    private fun loadInitialData() {
         viewModelScope.launch {
             val checkAutoLoginDeferred = async { checkAutoLogin() }
             // 🔹 SplashScreen 2초 후 종료
@@ -134,7 +133,7 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    suspend fun checkAutoLogin() : Boolean {
+    suspend fun checkAutoLogin(): Boolean {
         return withContext(Dispatchers.IO) {
             userInfoRepository.getRefreshToken().isNotEmpty()
         }

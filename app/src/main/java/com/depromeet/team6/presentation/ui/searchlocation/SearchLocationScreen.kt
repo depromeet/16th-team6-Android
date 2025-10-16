@@ -323,7 +323,7 @@ fun SearchLocationScreen(
                 location = stringResource(R.string.home_search_departure_home_text),
                 textColor = LocalTeam6Colors.current.gray200,
                 backgroundColor = LocalTeam6Colors.current.gray950,
-                onClick = {},
+                onClick = {}
             )
 
             HorizontalDivider(

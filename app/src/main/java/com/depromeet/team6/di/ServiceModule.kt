@@ -28,6 +28,7 @@ object ServiceModule {
     fun provideFusedLocationProviderClient(@ApplicationContext context: Context): FusedLocationProviderClient {
         return LocationServices.getFusedLocationProviderClient(context)
     }
+
     @Provides
     @Singleton
     fun providesService(@Team6 retrofit: Retrofit): DummyService =

@@ -28,5 +28,4 @@ fun NavGraphBuilder.splashNavGraph(
 
 object SplashRoute {
     const val ROUTE = "splash"
-
 }

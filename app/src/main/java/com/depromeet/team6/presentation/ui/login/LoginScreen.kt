@@ -55,7 +55,6 @@ import com.google.accompanist.pager.HorizontalPager
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.user.UserApiClient
 import kotlinx.coroutines.delay
-import timber.log.Timber
 
 fun setLayoutLoginKakaoClickListener(
     context: Context,
@@ -223,7 +222,7 @@ fun LoginScreen(
                     cornerRadius = 8.dp
                 )
                 .noRippleClickable { onLoginClicked() }
-                .semantics{ contentDescription = "kakao_login_button" },
+                .semantics { contentDescription = "kakao_login_button" },
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {

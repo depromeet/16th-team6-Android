@@ -11,10 +11,7 @@ class MainContract {
         val autoLogin: Boolean = false
     ) : UiState
 
+    sealed interface MainSideEffect : UiSideEffect
 
-    sealed interface MainSideEffect : UiSideEffect {
-    }
-
-    sealed class MainEvent : UiEvent {
-    }
+    sealed class MainEvent : UiEvent
 }
