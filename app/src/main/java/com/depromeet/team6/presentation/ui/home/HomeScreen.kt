@@ -204,7 +204,6 @@ fun HomeRoute(
     LaunchedEffect(permissionGranted) {
         if (permissionGranted) { // 위치 권한이 있으면
             viewModel.startLocationUpdates()
-            viewModel.getCenterLocation(uiState.currentLocation)
         } else {
             dialogController.showAtchaSystemSettingAlert(
                 context = context,

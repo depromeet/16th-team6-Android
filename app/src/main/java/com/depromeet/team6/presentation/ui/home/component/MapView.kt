@@ -56,37 +56,6 @@ fun TMapViewCompose(
 
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
 
-    // 현재 위치 변경될 때만 현위치 마커 갱신
-//    LaunchedEffect(currentLocation, isMapReady) {
-//        if (isMapReady) {
-//            val tMapPoint = TMapPoint(currentLocation.latitude, currentLocation.longitude)
-//
-//            withContext(Dispatchers.Main) {
-//                tMapView.fitBounds(
-//                    tMapView.getBoundsFromPoints(
-//                        arrayListOf(tMapPoint)
-//                    )
-//                )
-// //                tMapView.setCenterPoint(tMapPoint.latitude, tMapPoint.longitude)
-// //                tMapView.fitBounds(tMapView.bounds)
-// //                tMapView.zoomLevel = 18
-//
-//                val markerDrawable =
-//                    ContextCompat.getDrawable(context, R.drawable.ic_home_current_location)
-//                val markerBitmap = markerDrawable?.toBitmap()
-//
-//                val markerItem = TMapMarkerItem().apply {
-//                    id = "CurrentMarker"
-//                    name = "Current Location"
-//                    icon = markerBitmap
-//                    setTMapPoint(tMapPoint)
-//                }
-//
-//                tMapView.addTMapMarkerItem(markerItem)
-//            }
-//        }
-//    }
-
     // focus 버튼 누를때마다 해당 위치로 지도 focus 이동
     LaunchedEffect(isMapFocused) {
         if (isMapFocused && isMapReady) {
@@ -116,7 +85,7 @@ fun TMapViewCompose(
                 tMapView.setSKTMapApiKey(BuildConfig.TMAP_API_KEY)
                 tMapView.mapType = TMapView.MapType.NIGHT
                 tMapView.setOnMapReadyListener {
-                    isMapReady = true
+                    getCenterLocation(currentLocation)
                     val currentPoint = TMapPoint(currentLocation.latitude, currentLocation.longitude)
                     tMapView.fitBounds(
                         tMapView.getBoundsFromPoints(
@@ -158,6 +127,7 @@ fun TMapViewCompose(
                     tMapView.setOnEnableScrollWithZoomLevelListener { _, _ ->
                         mapModified()
                     }
+                    isMapReady = true
                 }
 
                 tMapView
@@ -165,23 +135,8 @@ fun TMapViewCompose(
             update = { _ ->
                 if (isMapReady) {
                     val currentPoint = TMapPoint(currentLocation.latitude, currentLocation.longitude)
-//                    tMapView.fitBounds(
-//                        tMapView.getBoundsFromPoints(
-//                            arrayListOf(tMapPoint)
-//                        )
-//                    )
                     val existingMarker = tMapView.getMarkerItemFromId("CurrentMarker")
                     existingMarker.tMapPoint = currentPoint
-//                tMapView.setCenterPoint(tMapPoint.latitude, tMapPoint.longitude)
-//                tMapView.fitBounds(tMapView.bounds)
-//                tMapView.zoomLevel = 18
-//                    if (isMapFocused) {
-//                        tMapView.fitBounds(
-//                            tMapView.getBoundsFromPoints(
-//                                arrayListOf(tMapPoint)
-//                            )
-//                        )
-//                    }
                 }
             }
         )
@@ -196,7 +151,9 @@ fun TMapViewCompose(
                     .padding(bottom = 118.dp)
             )
         } else {
-            AtChaLoadingView()
+            AtChaLoadingView(
+                transparent = false
+            )
         }
     }
 
