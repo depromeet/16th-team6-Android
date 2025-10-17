@@ -81,7 +81,7 @@ class MypageContract {
         data object ChangeHomeClicked : MypageEvent()
         data object AlarmSettingClicked : MypageEvent()
         data class UpdateMyAddress(val myAddress: Address) : MypageEvent()
-        data class ChangeMapViewVisible(val mapViewVisible: Boolean, val selectedAddress : Address?) : MypageEvent()
+        data class ChangeMapViewVisible(val mapViewVisible: Boolean, val selectedAddress: Address?) : MypageEvent()
         data object ClearAddress : MypageEvent()
         data object ShowSearchPopup : MypageEvent()
         data object ClearText : MypageEvent()

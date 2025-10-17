@@ -29,7 +29,7 @@ fun MypageChangeHomeScreen(
     mapViewVisible: Boolean,
     myAddress: Address,
     selectedAddress: Address,
-    currentLocation : LatLng,
+    currentLocation: LatLng,
     onBackClick: () -> Unit = {},
     dismissDialog: () -> Unit = {},
     onModifyHomeButtonClick: () -> Unit = {},
