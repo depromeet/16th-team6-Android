@@ -220,7 +220,8 @@ fun MyPageRoute(
                             MypageChangeHomeScreen(
                                 padding = padding,
                                 modifier = modifier,
-                                mypageUiState = uiState,
+                                mapViewVisible = uiState.mapViewVisible,
+                                myAddress = uiState.myAddress,
                                 onBackClick = { mypageViewModel.setEvent(MypageContract.MypageEvent.BackPressed) },
                                 onModifyHomeButtonClick = {
                                     mypageViewModel.setEvent(MypageContract.MypageEvent.ShowSearchPopup)
