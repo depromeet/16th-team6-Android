@@ -143,7 +143,7 @@ dependencies {
     implementation(libs.androidx.security.crypto)
 
     // Tmap
-    implementation(files("libs/tmap-sdk-3.0.aar"))
+    implementation(files("libs/tmap-sdk-2.9.aar"))
     implementation(files("libs/vsm-tmap-sdk-v2-android-1.7.45.aar"))
     implementation(libs.flatbuffers.java)
 

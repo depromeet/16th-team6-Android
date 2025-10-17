@@ -1,6 +1,5 @@
 package com.depromeet.team6.presentation.ui.home.component
 
-import android.widget.FrameLayout
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -118,13 +117,26 @@ fun TMapViewCompose(
                 tMapView.mapType = TMapView.MapType.NIGHT
                 tMapView.setOnMapReadyListener {
                     isMapReady = true
-
-                    val tMapPoint = TMapPoint(currentLocation.latitude, currentLocation.longitude)
+                    val currentPoint = TMapPoint(currentLocation.latitude, currentLocation.longitude)
                     tMapView.fitBounds(
                         tMapView.getBoundsFromPoints(
-                            arrayListOf(tMapPoint)
+                            arrayListOf(currentPoint)
                         )
                     )
+
+                    // 현위치 마커
+                    val markerDrawable =
+                        ContextCompat.getDrawable(context, R.drawable.ic_home_current_location)
+                    val markerBitmap = markerDrawable?.toBitmap()
+
+                    val markerItem = TMapMarkerItem().apply {
+                        id = "CurrentMarker"
+                        name = "Current Location"
+                        icon = markerBitmap
+                        tMapPoint = currentPoint
+                    }
+                    tMapView.addTMapMarkerItem(markerItem)
+
                     // 드래그 종료 시 지도 중심 좌표 업데이트
                     tMapView.setOnDisableScrollWithZoomLevelListener { _, _ ->
                         val centerLat = tMapView.centerPoint.latitude
@@ -148,13 +160,7 @@ fun TMapViewCompose(
                     }
                 }
 
-                // FrameLayout을 직접 생성
-                FrameLayout(context).apply {
-                    // TMapView를 FrameLayout에 추가
-                    this.contentDescription = "TMapViewContainer"
-                    addView(tMapView)
-                    tMapView.contentDescription = "TMapView"
-                }
+                tMapView
             },
             update = { _ ->
                 if (isMapReady) {
@@ -164,25 +170,8 @@ fun TMapViewCompose(
 //                            arrayListOf(tMapPoint)
 //                        )
 //                    )
-
                     val existingMarker = tMapView.getMarkerItemFromId("CurrentMarker")
-                    if (existingMarker == null) {
-                        val markerDrawable =
-                            ContextCompat.getDrawable(context, R.drawable.ic_home_current_location)
-                        val markerBitmap = markerDrawable?.toBitmap()
-
-                        val markerItem = TMapMarkerItem().apply {
-                            id = "CurrentMarker"
-                            name = "Current Location"
-                            icon = markerBitmap
-                            tMapPoint = currentPoint
-                        }
-
-                        tMapView.addTMapMarkerItem(markerItem)
-                    } else {
-                        // 마커가 있으면 위치만 업데이트
-                        existingMarker.tMapPoint = currentPoint
-                    }
+                    existingMarker.tMapPoint = currentPoint
 //                tMapView.setCenterPoint(tMapPoint.latitude, tMapPoint.longitude)
 //                tMapView.fitBounds(tMapView.bounds)
 //                tMapView.zoomLevel = 18

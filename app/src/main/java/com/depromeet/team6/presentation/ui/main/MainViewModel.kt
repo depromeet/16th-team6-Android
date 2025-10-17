@@ -62,19 +62,29 @@ class MainViewModel @Inject constructor(
     // Splash 화면에서 데이터 로드
     private fun loadInitialData() {
         viewModelScope.launch {
-            val checkAutoLoginDeferred = async { checkAutoLogin() }
-            // 🔹 SplashScreen 2초 후 종료
-            val timerDeferred = launch { delay(SPLASH_SCREEN_DELAY) }
+            try {
+                val checkAutoLoginDeferred = async { checkAutoLogin() }
+                // 🔹 SplashScreen 2초 후 종료
+                val timerDeferred = launch { delay(SPLASH_SCREEN_DELAY) }
 
-            val isAutoLogin = checkAutoLoginDeferred.await()
-            timerDeferred.join()
+                val isAutoLogin = checkAutoLoginDeferred.await()
+                timerDeferred.join()
 
-            setState {
-                copy(
-                    splashState = LoadState.Success,
-                    autoLogin = isAutoLogin
-                )
+                setState {
+                    copy(
+                        splashState = LoadState.Success,
+                        autoLogin = isAutoLogin
+                    )
+                }
+            } catch (e : Exception) {
+                setState {
+                    copy(
+                        splashState = LoadState.Success,
+                        autoLogin = false
+                    )
+                }
             }
+
         }
     }
 

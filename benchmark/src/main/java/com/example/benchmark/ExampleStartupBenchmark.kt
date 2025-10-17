@@ -82,18 +82,15 @@ class TMapViewScrollBenchmark {
 
         // 3. 1단계에서 설정한 contentDescription으로 지도 뷰(FrameLayout)를 찾습니다.
         val mapContainer = device.findObject(By.desc("TMapViewContainer"))
+        if (!device.wait(Until.hasObject(By.desc("TMapView")), 15_000)) {
+            throw IllegalStateException("Map could not be loaded in time.")
+        }
         val mapView = device.findObject(By.desc("TMapView"))
         // 2. 자식 뷰가 있는지 확인합니다.
         val children = mapView.children
         if (children.isNullOrEmpty()) {
             throw AssertionError("TMapView has no children.")
         }
-
-        // 3. 자식 뷰들 중에서 '가장 큰 뷰'를 찾습니다.
-        val interactiveMapView = children.maxByOrNull {
-            val bounds = it.visibleBounds
-            bounds.width() * bounds.height()
-        } ?: throw AssertionError("Could not determine the largest child view.")
 
         device.waitForIdle()
 

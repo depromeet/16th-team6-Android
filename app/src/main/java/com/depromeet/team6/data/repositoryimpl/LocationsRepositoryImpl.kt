@@ -58,8 +58,12 @@ class LocationsRepositoryImpl @Inject constructor(
             looper
         )
 
-        awaitClose { fusedLocationProviderClient.removeLocationUpdates(locationCallback) }
+        awaitClose {
+            fusedLocationProviderClient.removeLocationUpdates(locationCallback)
+            handlerThread.quitSafely()
+        }
     }
+
     override suspend fun getLocations(
         keyword: String,
         lat: Double,

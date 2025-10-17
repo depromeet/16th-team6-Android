@@ -5,11 +5,11 @@ plugins {
 
 android {
     namespace = "com.example.benchmark"
-    compileSdk = 36
+    compileSdk = 35
 
     defaultConfig {
         minSdk = 26
-        targetSdk = 36
+        targetSdk = 35
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         testInstrumentationRunnerArguments["grant-permission"] = "android.permission.WRITE_EXTERNAL_STORAGE"
