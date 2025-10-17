@@ -1,6 +1,7 @@
 package com.depromeet.team6.presentation.ui.mypage.component
 
 import android.content.Context
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -65,6 +66,10 @@ fun MypageMapView(
     val offsetLat = 0.00005
     val coroutineScope = rememberCoroutineScope()
 
+    BackHandler {
+        backButtonClicked()
+    }
+
     // Lifecycle 제어: ON_START 이후에만 지도 초기화
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _: LifecycleOwner, event: Lifecycle.Event ->
@@ -122,32 +127,6 @@ fun MypageMapView(
                 }
 
                 tMapView
-//                    FrameLayout(context).apply {
-//                        addView(tMapView)
-//                        tMapView.post {
-//                            if (isFirstZoom) {
-//                                val lat = currentLocation.lat - offsetLat
-//                                val lon = currentLocation.lon
-//
-//                                tMapView.setCenterPoint(lat, lon, true)
-//                                tMapView.zoomLevel = 18
-//                                isFirstZoom = false
-//
-//                                val markerDrawable =
-//                                    ContextCompat.getDrawable(context, R.drawable.ic_home_current_location)
-//                                val markerBitmap = markerDrawable?.toBitmap()
-//
-//                                val markerItem = TMapMarkerItem().apply {
-//                                    id = "CurrentMarker"
-//                                    name = "Current Location"
-//                                    icon = markerBitmap
-//                                    setTMapPoint(TMapPoint(currentLocation.lat, currentLocation.lon))
-//                                }
-//
-//                                tMapView.addTMapMarkerItem(markerItem)
-//                            }
-//                        }
-//                    }
             }
         )
 
