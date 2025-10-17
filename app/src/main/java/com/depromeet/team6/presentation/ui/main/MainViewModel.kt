@@ -76,7 +76,7 @@ class MainViewModel @Inject constructor(
                         autoLogin = isAutoLogin
                     )
                 }
-            } catch (e : Exception) {
+            } catch (e: Exception) {
                 setState {
                     copy(
                         splashState = LoadState.Success,
@@ -84,7 +84,6 @@ class MainViewModel @Inject constructor(
                     )
                 }
             }
-
         }
     }
 

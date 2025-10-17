@@ -68,7 +68,6 @@ fun ItineraryMap(
     val destinationLocation = LatLng(destinationPoint.lat, destinationPoint.lon)
     val markerSizePx = 28.dp.toPx().toInt()
 
-
     // 목적지, 도착지 변경되면 지도 갱신
 //    LaunchedEffect(departLocation, destinationLocation, isMapReady) {
 //        if (isMapReady) {

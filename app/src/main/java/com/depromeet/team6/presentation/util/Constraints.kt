@@ -132,7 +132,7 @@ object BusAmplitude {
     const val BUS = "버스상세"
 }
 
-object LoginAmplitude{
+object LoginAmplitude {
     const val LOGIN = "로그인"
 }
 
