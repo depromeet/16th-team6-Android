@@ -50,8 +50,8 @@ import timber.log.Timber
 
 @Composable
 fun MypageMapView(
-    currentLocation: Address,
-    myAddress: Address,
+    currentLocation: LatLng,
+    selectedAddress: Address,
     context: Context,
     modifier: Modifier = Modifier,
     getCenterLocation: (LatLng) -> Unit = {},
@@ -104,8 +104,8 @@ fun MypageMapView(
                         )
                     }
 
-                    val lat = currentLocation.lat - offsetLat
-                    val lon = currentLocation.lon
+                    val lat = selectedAddress.lat - offsetLat
+                    val lon = selectedAddress.lon
 
                     tMapView.setCenterPoint(lat, lon, true)
                     tMapView.zoomLevel = 18
@@ -118,7 +118,7 @@ fun MypageMapView(
                         id = "CurrentMarker"
                         name = "Current Location"
                         icon = markerBitmap
-                        setTMapPoint(TMapPoint(currentLocation.lat, currentLocation.lon))
+                        setTMapPoint(TMapPoint(currentLocation.latitude, currentLocation.longitude))
                     }
 
                     tMapView.addTMapMarkerItem(markerItem)
@@ -169,7 +169,7 @@ fun MypageMapView(
                         .align(Alignment.BottomEnd)
                         .padding(end = 16.dp, bottom = 16.dp)
                         .clickable(enabled = isMapReady) {
-                            val tMapPoint = TMapPoint(currentLocation.lat, currentLocation.lon)
+                            val tMapPoint = TMapPoint(currentLocation.latitude, currentLocation.longitude)
                             tMapView.setCenterPoint(tMapPoint.latitude - offsetLat, tMapPoint.longitude)
                             tMapView.zoomLevel = 18
                             getCenterLocation(LatLng(tMapPoint.latitude, tMapPoint.longitude))
@@ -179,8 +179,8 @@ fun MypageMapView(
             }
 
             AtChaLocationSettingBottomSheet(
-                locationName = myAddress.name,
-                locationAddress = myAddress.address,
+                locationName = selectedAddress.name,
+                locationAddress = selectedAddress.address,
                 completeButtonText = "우리집 등록",
                 buttonClicked = buttonClicked
             )

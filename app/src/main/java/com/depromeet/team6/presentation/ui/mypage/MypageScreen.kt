@@ -120,6 +120,7 @@ fun MyPageRoute(
     LaunchedEffect(Unit) {
         if (!isInitialized["initialized"]!!) {
             mypageViewModel.getUserInfo()
+            mypageViewModel.updateUserLocation(context)
             isInitialized["initialized"] = true
         }
     }
@@ -141,13 +142,12 @@ fun MyPageRoute(
             },
             selectButtonClicked = { address ->
                 mypageViewModel.setEvent(
-                    MypageContract.MypageEvent.LocationSelectButtonClicked(
-                        address
-                    )
+                    MypageContract.MypageEvent.LocationSelectButtonClicked
                 )
                 mypageViewModel.setEvent(
                     MypageContract.MypageEvent.ChangeMapViewVisible(
-                        true
+                        true,
+                        address
                     )
                 )
             },
@@ -222,16 +222,19 @@ fun MyPageRoute(
                                 modifier = modifier,
                                 mapViewVisible = uiState.mapViewVisible,
                                 myAddress = uiState.myAddress,
+                                currentLocation = uiState.userCurrentLocation,
+                                selectedAddress = uiState.selectedAddress,
                                 onBackClick = { mypageViewModel.setEvent(MypageContract.MypageEvent.BackPressed) },
                                 onModifyHomeButtonClick = {
                                     mypageViewModel.setEvent(MypageContract.MypageEvent.ShowSearchPopup)
                                 },
                                 getCenterLocation = { mypageViewModel.getCenterLocation(it) },
                                 clearAddress = {
-                                    mypageViewModel.setEvent(MypageContract.MypageEvent.ClearAddress)
+//                                    mypageViewModel.setEvent(MypageContract.MypageEvent.ClearAddress)
                                     mypageViewModel.setEvent(
                                         MypageContract.MypageEvent.ChangeMapViewVisible(
-                                            mapViewVisible = false
+                                            mapViewVisible = false,
+                                            null
                                         )
                                     )
                                 },
@@ -244,7 +247,8 @@ fun MyPageRoute(
                                     })
                                     mypageViewModel.setEvent(
                                         MypageContract.MypageEvent.ChangeMapViewVisible(
-                                            false
+                                            false,
+                                            null
                                         )
                                     )
                                 }

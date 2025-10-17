@@ -7,9 +7,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -31,6 +28,8 @@ fun MypageChangeHomeScreen(
     padding: PaddingValues = PaddingValues(0.dp),
     mapViewVisible: Boolean,
     myAddress: Address,
+    selectedAddress: Address,
+    currentLocation : LatLng,
     onBackClick: () -> Unit = {},
     dismissDialog: () -> Unit = {},
     onModifyHomeButtonClick: () -> Unit = {},
@@ -65,10 +64,9 @@ fun MypageChangeHomeScreen(
         }
 
         if (mapViewVisible) {
-            val currentLocation by remember { mutableStateOf(myAddress) }
             MypageMapView(
                 context = context,
-                myAddress = myAddress,
+                selectedAddress = selectedAddress,
                 getCenterLocation = getCenterLocation,
                 currentLocation = currentLocation,
                 buttonClicked = mapViewSelectButtonClicked,
@@ -88,6 +86,13 @@ fun MypageChangeHomeScreenPreview() {
             lat = 37.49795,
             lon = 127.02761,
             address = "서울시 강남구 역삼동 818-3"
-        )
+        ),
+        selectedAddress = Address(
+            name = "서울시 강남구 역삼동",
+            lat = 37.49795,
+            lon = 127.02761,
+            address = "서울시 강남구 역삼동 818-3"
+        ),
+        currentLocation = LatLng(37.49795, 127.02761)
     )
 }
