@@ -34,7 +34,6 @@ fun MypageSelectedHome(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 20.dp)
-            .noRippleClickable { onClick() }
     ) {
         Column(
             modifier = Modifier
@@ -70,6 +69,7 @@ fun MypageSelectedHome(
                     color = defaultTeam6Colors.gray910,
                     shape = RoundedCornerShape(8.dp)
                 )
+                .noRippleClickable { onClick() }
                 .roundedBackgroundWithPadding(
                     cornerRadius = 8.dp,
                     padding = PaddingValues(vertical = 11.dp)

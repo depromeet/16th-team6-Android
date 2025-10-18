@@ -30,6 +30,8 @@ import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -39,9 +41,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import com.depromeet.team6.R
 import com.depromeet.team6.presentation.type.LoginViewPagerType
+import com.depromeet.team6.presentation.ui.common.view.AtChaLoadingView
 import com.depromeet.team6.presentation.ui.common.view.AtChaTreeDotsLoadingView
 import com.depromeet.team6.presentation.ui.login.component.LoginIndicator
-import com.depromeet.team6.presentation.ui.splash.SplashScreen
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.presentation.util.modifier.roundedBackgroundWithPadding
 import com.depromeet.team6.presentation.util.view.LoadState
@@ -53,7 +55,6 @@ import com.google.accompanist.pager.HorizontalPager
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.user.UserApiClient
 import kotlinx.coroutines.delay
-import timber.log.Timber
 
 fun setLayoutLoginKakaoClickListener(
     context: Context,
@@ -85,10 +86,7 @@ fun LoginRoute(
         }
     }
 
-    Timber.d("initial uiState : ${uiState.loadState}")
-
     LaunchedEffect(Unit) {
-        viewModel.checkAutoLogin()
         while (true) {
             delay(4000L)
 
@@ -153,7 +151,7 @@ fun LoginRoute(
             }
         }
         LoadState.Loading -> {
-            SplashScreen()
+            AtChaLoadingView()
         }
 
         LoadState.Success -> navigateToHome()
@@ -223,7 +221,8 @@ fun LoginScreen(
                     backgroundColor = defaultTeam6Colors.kakaoLoginButton,
                     cornerRadius = 8.dp
                 )
-                .noRippleClickable { onLoginClicked() },
+                .noRippleClickable { onLoginClicked() }
+                .semantics { contentDescription = "kakao_login_button" },
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {

@@ -202,7 +202,9 @@ fun HomeRoute(
     }
 
     LaunchedEffect(permissionGranted) {
-        if (!permissionGranted) { // 위치 권한이 있으면
+        if (permissionGranted) { // 위치 권한이 있으면
+            viewModel.startLocationUpdates()
+        } else {
             dialogController.showAtchaSystemSettingAlert(
                 context = context,
                 message = context.getString(R.string.all_dialog_location_permission),
@@ -210,10 +212,8 @@ fun HomeRoute(
                     PermissionUtil.requestLocationPermissions(context, locationPermissionsLauncher)
                 }
             )
-
-//        viewModel.getCenterLocation(LatLng(userLocation.latitude, userLocation.longitude))
-    }
         }
+    }
 
     LaunchedEffect(Unit) {
         if (uiState.isAlarmRegistered) {
@@ -479,10 +479,12 @@ fun HomeRoute(
     }
 
     when (uiState.loadState) {
-        LoadState.Idle, LoadState.Loading, LoadState.Success -> {
+        LoadState.Idle, LoadState.Loading -> {
+            AtChaLoadingView()
+        }
+        LoadState.Success -> {
             Box {
-                if (uiState.loadState == LoadState.Loading ||
-                    uiState.alarmCheckLoadState == LoadState.Loading ||
+                if (uiState.alarmCheckLoadState == LoadState.Loading ||
                     (uiState.isAlarmRegistered && uiState.afterRegisterDataLoadState == LoadState.Loading)
                 ) {
                     AtChaLoadingView()
@@ -492,9 +494,6 @@ fun HomeRoute(
                         getUserId = { viewModel.getUserId() },
                         getCenterLocation = { position ->
                             viewModel.getCenterLocation(position)
-                        },
-                        updateCurrentLocation = { newLocation ->
-                            viewModel.updateCurrentLocation(newLocation)
                         },
                         onTimerFinished = { viewModel.onTimerFinished() },
                         getDepartureTime = { viewModel.loadDepartureTime() },
@@ -607,7 +606,6 @@ fun HomeScreen(
     homeUiState: HomeContract.HomeUiState = HomeContract.HomeUiState(),
     getUserId: () -> Int,
     getCenterLocation: (LatLng) -> Unit = {},
-    updateCurrentLocation: (LatLng) -> Unit = {},
     onTimerFinished: () -> Unit = {},
     getDepartureTime: () -> Unit = {},
     onCharacterClick: () -> Unit = {},
@@ -662,9 +660,7 @@ fun HomeScreen(
                 getCenterLocation = {
                     getCenterLocation(it)
                 },
-                updateCurrentLocation = {
-                    updateCurrentLocation(it)
-                },
+                updateCurrentLocation = {},
                 onTransportMarkerClick = { markerParameter ->
                     afterRegisterMapMarkerClick(markerParameter)
                 }
@@ -820,9 +816,7 @@ fun HomeScreen(
                     bottom = bottomSheetHeight + 16.dp,
                     end = 16.dp
                 )
-                .noRippleClickable {
-                    currentLocationClicked()
-                }
+                .noRippleClickable(onClick = currentLocationClicked)
         )
 
         if (homeUiState.deleteAlarmDialogVisible) {

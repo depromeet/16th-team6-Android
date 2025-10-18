@@ -75,7 +75,16 @@ class MypageViewModel @Inject constructor(
             is MypageContract.MypageEvent.ChangeHomeClicked -> navigateToChangeHome()
             is MypageContract.MypageEvent.UpdateMyAddress -> getUserInfo()
             is MypageContract.MypageEvent.ChangeMapViewVisible -> setState {
-                copy(mapViewVisible = event.mapViewVisible)
+                if (event.selectedAddress != null) {
+                    copy(
+                        mapViewVisible = event.mapViewVisible,
+                        selectedAddress = event.selectedAddress
+                    )
+                } else {
+                    copy(
+                        mapViewVisible = event.mapViewVisible
+                    )
+                }
             }
 
             is MypageContract.MypageEvent.ClearAddress -> setState {
@@ -111,7 +120,6 @@ class MypageViewModel @Inject constructor(
             is MypageContract.MypageEvent.UpdateSearchText -> handleUpdateSearchText(event = event)
             is MypageContract.MypageEvent.LocationSelectButtonClicked -> setState {
                 copy(
-                    myAddress = event.mypageSearchLocation,
                     searchPopupVisible = false
                 )
             }
@@ -214,6 +222,11 @@ class MypageViewModel @Inject constructor(
     }
 
     fun modifyUserAddress(callback: () -> Unit = {}) {
+        setState {
+            copy(
+                myAddress = currentState.selectedAddress
+            )
+        }
         viewModelScope.launch {
             val currentAddress = currentState.myAddress
 

@@ -39,8 +39,8 @@ android {
         applicationId = "com.depromeet.team6"
         minSdk = 26
         targetSdk = 35
-        versionCode = 19
-        versionName = "1.3.13"
+        versionCode = 20
+        versionName = "1.3.14"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "KAKAO_NATIVE_APP_KEY", properties["kakao.native.app.key"].toString())
@@ -69,6 +69,12 @@ android {
             buildConfigField("String", "AMPLITUDE_API_KEY", properties["amplitude.dev.api.key"].toString())
             buildConfigField("String", "LAST_ROUTE", properties["LAST_ROUTE_V2"].toString())
         }
+        create("benchmark") {
+            initWith(buildTypes.getByName("release"))
+            signingConfig = signingConfigs.getByName("debug")
+            matchingFallbacks += listOf("release")
+            isDebuggable = false
+        }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -81,6 +87,10 @@ android {
         compose = true
         buildConfig = true
     }
+}
+
+composeCompiler {
+    enableStrongSkippingMode = true
 }
 
 dependencies {
@@ -101,6 +111,7 @@ dependencies {
     implementation(libs.play.services.auth)
     implementation(libs.androidx.runtime.livedata)
     implementation(libs.accompanist.flowlayout)
+    implementation(libs.kotlinx.collections.immutable)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -132,8 +143,8 @@ dependencies {
     implementation(libs.androidx.security.crypto)
 
     // Tmap
-    implementation(files("libs/tmap-sdk-1.9.aar"))
-    implementation(files("libs/vsm-tmap-sdk-v2-android-1.7.23.aar"))
+    implementation(files("libs/tmap-sdk-2.9.aar"))
+    implementation(files("libs/vsm-tmap-sdk-v2-android-1.7.45.aar"))
     implementation(libs.flatbuffers.java)
 
     // Firebase

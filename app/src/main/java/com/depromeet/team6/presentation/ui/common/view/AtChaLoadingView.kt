@@ -16,11 +16,18 @@ import com.depromeet.team6.R
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 
 @Composable
-fun AtChaLoadingView() {
+fun AtChaLoadingView(
+    transparent: Boolean = true
+) {
+    val backgroundColor = if (transparent) {
+        defaultTeam6Colors.gray950.copy(alpha = 0.6f)
+    } else {
+        defaultTeam6Colors.gray950
+    }
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(defaultTeam6Colors.gray950.copy(alpha = 0.6f)),
+            .background(backgroundColor),
         contentAlignment = Alignment.Center
     ) {
         val composition by rememberLottieComposition(

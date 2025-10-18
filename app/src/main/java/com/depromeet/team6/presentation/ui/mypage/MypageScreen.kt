@@ -56,7 +56,7 @@ import com.depromeet.team6.ui.theme.LocalTeam6Colors
 import com.depromeet.team6.ui.theme.LocalTeam6Typography
 
 @Composable
-fun MypageRoute(
+fun MyPageRoute(
     navigateToLogin: () -> Unit,
     modifier: Modifier = Modifier,
     padding: PaddingValues = PaddingValues(0.dp),
@@ -120,6 +120,7 @@ fun MypageRoute(
     LaunchedEffect(Unit) {
         if (!isInitialized["initialized"]!!) {
             mypageViewModel.getUserInfo()
+            mypageViewModel.updateUserLocation(context)
             isInitialized["initialized"] = true
         }
     }
@@ -141,13 +142,12 @@ fun MypageRoute(
             },
             selectButtonClicked = { address ->
                 mypageViewModel.setEvent(
-                    MypageContract.MypageEvent.LocationSelectButtonClicked(
-                        address
-                    )
+                    MypageContract.MypageEvent.LocationSelectButtonClicked
                 )
                 mypageViewModel.setEvent(
                     MypageContract.MypageEvent.ChangeMapViewVisible(
-                        true
+                        true,
+                        address
                     )
                 )
             },
@@ -220,17 +220,21 @@ fun MypageRoute(
                             MypageChangeHomeScreen(
                                 padding = padding,
                                 modifier = modifier,
-                                mypageUiState = uiState,
+                                mapViewVisible = uiState.mapViewVisible,
+                                myAddress = uiState.myAddress,
+                                currentLocation = uiState.userCurrentLocation,
+                                selectedAddress = uiState.selectedAddress,
                                 onBackClick = { mypageViewModel.setEvent(MypageContract.MypageEvent.BackPressed) },
                                 onModifyHomeButtonClick = {
                                     mypageViewModel.setEvent(MypageContract.MypageEvent.ShowSearchPopup)
                                 },
                                 getCenterLocation = { mypageViewModel.getCenterLocation(it) },
                                 clearAddress = {
-                                    mypageViewModel.setEvent(MypageContract.MypageEvent.ClearAddress)
+//                                    mypageViewModel.setEvent(MypageContract.MypageEvent.ClearAddress)
                                     mypageViewModel.setEvent(
                                         MypageContract.MypageEvent.ChangeMapViewVisible(
-                                            mapViewVisible = false
+                                            mapViewVisible = false,
+                                            null
                                         )
                                     )
                                 },
@@ -243,7 +247,8 @@ fun MypageRoute(
                                     })
                                     mypageViewModel.setEvent(
                                         MypageContract.MypageEvent.ChangeMapViewVisible(
-                                            false
+                                            false,
+                                            null
                                         )
                                     )
                                 }

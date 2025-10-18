@@ -82,7 +82,7 @@ class LockActivity : ComponentActivity() {
                             AmplitudeUtils.trackEventWithProperties(
                                 LOCK_ACTION_TAKEN,
                                 mapOf(
-                                    LOCK_ACTION_TAKEN to 'Y',
+                                    LOCK_ACTION_TAKEN to "Y",
                                     LOCK_ACTION_TAKEN_TIME to actionTime
                                 )
                             )

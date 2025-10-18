@@ -17,7 +17,6 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -31,11 +30,11 @@ import com.depromeet.team6.R
 import com.depromeet.team6.presentation.ui.common.dialog.GlobalDialogHandler
 import com.depromeet.team6.presentation.ui.common.snackbar.GlobalSnackbarHandler
 import com.depromeet.team6.presentation.ui.common.snackbar.LocalSnackbarHostState
+import com.depromeet.team6.presentation.ui.coursesearch.component.SearchResultEmpty
 import com.depromeet.team6.presentation.ui.lock.LockScreenNavigator
 import com.depromeet.team6.presentation.ui.main.navigation.MainNavHost
 import com.depromeet.team6.presentation.ui.main.navigation.MainNavigator
 import com.depromeet.team6.presentation.ui.main.navigation.rememberMainNavigator
-import com.depromeet.team6.presentation.ui.splash.SplashScreen
 import com.depromeet.team6.presentation.util.dialog.DialogController
 import com.depromeet.team6.presentation.util.dialog.LocalDialogController
 import com.depromeet.team6.presentation.util.snackbar.LocalSnackbarController
@@ -93,7 +92,6 @@ class MainActivity : ComponentActivity() {
         setContent {
             val viewModel: MainViewModel = hiltViewModel()
             val navigator: MainNavigator = rememberMainNavigator(firebaseAnalytics = firebaseAnalytics)
-            val showSplash by viewModel.showSplash.observeAsState(true)
             val dialogController = remember { DialogController() }
             val networkAvailability = viewModel.networkAvailability.collectAsStateWithLifecycle()
             val snackbarHostState = remember { SnackbarHostState() }
@@ -108,27 +106,15 @@ class MainActivity : ComponentActivity() {
                     isAppearanceLightNavigationBars = false
                 }
             }
-            Team6Theme {
-                CompositionLocalProvider(
-                    LocalDialogController provides dialogController,
-                    LocalSnackbarHostState provides snackbarHostState,
-                    LocalSnackbarController provides snackbarController
-                ) {
-                    if (showSplash) {
-                        SplashScreen()
-                    } else {
-                        if (networkAvailability.value == NetworkState.Unavailable) {
-                            LocalDialogController.current.showAtchaOfflineAlert(
-                                onConfirm = {
-                                    if (networkAvailability.value == NetworkState.Unavailable) {
-                                        Toast.makeText(this, "인터넷 연결을 다시 확인해주세요", Toast.LENGTH_SHORT).show()
-                                    } else {
-                                        dialogController.hideDialog()
-                                        navigator.popBackStack()
-                                    }
-                                }
-                            )
-                        }
+            if (networkAvailability.value == NetworkState.Unavailable) {
+                SearchResultEmpty()
+            } else {
+                Team6Theme {
+                    CompositionLocalProvider(
+                        LocalDialogController provides dialogController,
+                        LocalSnackbarHostState provides snackbarHostState,
+                        LocalSnackbarController provides snackbarController
+                    ) {
                         Box {
                             Scaffold(
                                 snackbarHost = {
