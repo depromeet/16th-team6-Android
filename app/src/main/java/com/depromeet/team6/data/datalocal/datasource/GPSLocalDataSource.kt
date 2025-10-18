@@ -18,7 +18,7 @@ import kotlin.coroutines.resumeWithException
 class GPSLocalDataSource @Inject constructor(
     @ApplicationContext private val context: Context
 ) {
-    suspend fun getCurrentLatLng() : LatLng{
+    suspend fun getCurrentLatLng(): LatLng {
         // 권한 체크는 UseCase나 ViewModel에서 미리 수행하는 것이 더 좋습니다.
         if (!PermissionUtil.hasLocationPermissions(context)) {
             return LatLng(DEFAULT_LAT, DEFAULT_LNG)
@@ -36,7 +36,6 @@ class GPSLocalDataSource @Inject constructor(
 
                             Timber.d("User_Location Lat: $latitude, Lon: $longitude")
                             continuation.resume(LatLng(latitude, longitude))
-
                         } else {
                             Timber.d("User_Location Failed to get location")
                             continuation.resume(LatLng(DEFAULT_LAT, DEFAULT_LNG)) // 위치 정보를 가져오지 못한 경우
@@ -48,7 +47,7 @@ class GPSLocalDataSource @Inject constructor(
                     }
             }
         } catch (e: SecurityException) {
-            Timber.e("User_Location Location permission not granted",)
+            Timber.e("User_Location Location permission not granted")
             LatLng(DEFAULT_LAT, DEFAULT_LNG)
         }
     }

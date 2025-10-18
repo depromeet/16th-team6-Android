@@ -1,8 +1,8 @@
 package com.depromeet.team6.domain.usecase
 
-//class GetCurrentLatLngUseCase @Inject constructor(
+// class GetCurrentLatLngUseCase @Inject constructor(
 //    private val repository : LocationsRepository
-//) {
+// ) {
 //    suspend operator fun invoke() : LatLng {
 //        val currentLatLng = repository.getCurrentLatLng()
 //        val latitude = currentLatLng.latitude
@@ -15,4 +15,4 @@ package com.depromeet.team6.domain.usecase
 //            return currentLatLng
 //        }
 //    }
-//}
+// }
