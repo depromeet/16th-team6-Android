@@ -1,14 +1,16 @@
 package com.depromeet.team6.presentation.ui.onboarding.component
 
 import android.content.Context
-import android.widget.FrameLayout
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -20,6 +22,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalLifecycleOwner
@@ -37,7 +40,10 @@ import com.depromeet.team6.BuildConfig
 import com.depromeet.team6.R
 import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.presentation.ui.common.bottomsheet.AtChaLocationSettingBottomSheet
+import com.depromeet.team6.presentation.ui.common.view.AtChaLoadingView
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
+import com.depromeet.team6.presentation.util.modifier.roundedBackgroundWithPadding
+import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.google.android.gms.maps.model.LatLng
 import com.skt.tmap.TMapPoint
 import com.skt.tmap.TMapView
@@ -61,9 +67,8 @@ fun OnboardingMapView(
     val keyboardController = LocalSoftwareKeyboardController.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
-    var isFirstZoom by remember { mutableStateOf(true) }
-    val tMapView = remember { TMapView(context) }
     var isMapReady by remember { mutableStateOf(false) }
+    var isMapFocused by remember { mutableStateOf(false) }
     val offsetLat = 0.00005
     val coroutineScope = rememberCoroutineScope()
 
@@ -75,21 +80,7 @@ fun OnboardingMapView(
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _: LifecycleOwner, event: Lifecycle.Event ->
             if (event == Lifecycle.Event.ON_START) {
-                Timber.d("TMapView - ON_START")
                 keyboardController?.hide()
-                tMapView.setSKTMapApiKey(BuildConfig.TMAP_API_KEY)
-                tMapView.setOnMapReadyListener {
-                    tMapView.mapType = TMapView.MapType.NIGHT
-                    isMapReady = true
-
-                    tMapView.setOnDisableScrollWithZoomLevelListener { _, _ ->
-                        startScrollIdleCheck(
-                            scope = coroutineScope,
-                            tMapView = tMapView,
-                            getCenterLocation = getCenterLocation
-                        )
-                    }
-                }
             }
         }
 
@@ -98,94 +89,134 @@ fun OnboardingMapView(
         onDispose {
             lifecycleOwner.lifecycle.removeObserver(observer)
             Timber.d("TMapViewCompose destroy!")
-            tMapView.onDestroy()
         }
     }
 
-    // 지도 준비된 후에만 AndroidView 추가
-    if (isMapReady) {
-        Box(modifier = modifier.fillMaxSize()) {
-            AndroidView(
-                modifier = Modifier.fillMaxSize(),
-                factory = {
-                    FrameLayout(context).apply {
-                        addView(tMapView)
-                        tMapView.post {
-                            if (isFirstZoom) {
-                                val lat = currentLocation.lat - offsetLat
-                                val lon = currentLocation.lon
+    Box(modifier = modifier.fillMaxSize()) {
+        AndroidView(
+            modifier = Modifier.fillMaxSize(),
+            factory = {
+                val tMapView = TMapView(context)
 
-//                                tMapView.setCenterPoint(lat, lon, true)
-                                tMapView.fitBounds(
-                                    tMapView.getBoundsFromPoints(arrayListOf(TMapPoint(lat, lon)))
-                                )
-                                tMapView.zoomLevel = 18
-                                isFirstZoom = false
+                tMapView.setSKTMapApiKey(BuildConfig.TMAP_API_KEY)
+                tMapView.setOnMapReadyListener {
+                    tMapView.mapType = TMapView.MapType.NIGHT
 
-                                val markerDrawable =
-                                    ContextCompat.getDrawable(context, R.drawable.ic_home_current_location)
-                                val markerBitmap = markerDrawable?.toBitmap()
+                    val lat = currentLocation.lat - offsetLat
+                    val lon = currentLocation.lon
 
-                                val markerItem = TMapMarkerItem().apply {
-                                    id = "CurrentMarker"
-                                    name = "Current Location"
-                                    icon = markerBitmap
-                                    setTMapPoint(TMapPoint(currentLocation.lat, currentLocation.lon))
-                                }
+                    tMapView.fitBounds(
+                        tMapView.getBoundsFromPoints(arrayListOf(TMapPoint(lat, lon)))
+                    )
+                    tMapView.zoomLevel = 18
 
-                                tMapView.addTMapMarkerItem(markerItem)
-                            }
-                        }
+                    val markerDrawable =
+                        ContextCompat.getDrawable(context, R.drawable.ic_home_current_location)
+                    val markerBitmap = markerDrawable?.toBitmap()
+
+                    val markerItem = TMapMarkerItem().apply {
+                        id = "CurrentMarker"
+                        name = "Current Location"
+                        icon = markerBitmap
+                        setTMapPoint(TMapPoint(currentLocation.lat, currentLocation.lon))
                     }
-                }
-            )
 
-            // 뒤로가기 아이콘
-            Icon(
-                modifier = Modifier
-                    .align(Alignment.TopStart)
-                    .noRippleClickable { backButtonClicked() }
-                    .padding(vertical = 16.dp, horizontal = 18.dp),
-                imageVector = ImageVector.vectorResource(R.drawable.ic_all_arrow_left_white),
-                tint = Color.Unspecified,
-                contentDescription = null
-            )
+                    tMapView.addTMapMarkerItem(markerItem)
 
-            // 하단 UI
-            Column(modifier = modifier.fillMaxSize()) {
-                Box(Modifier.fillMaxWidth().weight(1f)) {
-                    Icon(
-                        tint = Color.Unspecified,
-                        imageVector = ImageVector.vectorResource(id = R.drawable.ic_map_marker_setting),
-                        contentDescription = "Start Marker",
-                        modifier = Modifier.align(Alignment.Center)
-                    )
-
-                    Icon(
-                        tint = Color.Unspecified,
-                        imageVector = ImageVector.vectorResource(id = R.drawable.ic_all_current_location),
-                        contentDescription = stringResource(R.string.home_current_location_btn),
-                        modifier = Modifier
-                            .align(Alignment.BottomEnd)
-                            .padding(end = 16.dp, bottom = 16.dp)
-                            .clickable(enabled = isMapReady) {
-                                val tMapPoint = TMapPoint(currentLocation.lat, currentLocation.lon)
-                                tMapView.setCenterPoint(tMapPoint.latitude - offsetLat, tMapPoint.longitude)
-                                tMapView.zoomLevel = 18
-                                getCenterLocation(LatLng(tMapPoint.latitude, tMapPoint.longitude))
-                            }
-                            .graphicsLayer { alpha = if (isMapReady) 1f else 0.5f }
-                    )
+                    tMapView.setOnDisableScrollWithZoomLevelListener { _, _ ->
+                        startScrollIdleCheck(
+                            scope = coroutineScope,
+                            tMapView = tMapView,
+                            getCenterLocation = getCenterLocation
+                        )
+                        isMapFocused = false
+                    }
+                    isMapReady = true
                 }
 
-                AtChaLocationSettingBottomSheet(
-                    locationName = myAddress.name,
-                    locationAddress = myAddress.address,
-                    completeButtonText = "우리집 등록",
-                    buttonClicked = buttonClicked
+                tMapView
+            },
+            update = { tMapView ->
+                if (!isMapReady) return@AndroidView
+                if (isMapFocused) {
+                    val tMapPoint = TMapPoint(currentLocation.lat, currentLocation.lon)
+                    tMapView.setCenterPoint(tMapPoint.latitude - offsetLat, tMapPoint.longitude)
+                    tMapView.zoomLevel = 18
+                    getCenterLocation(LatLng(tMapPoint.latitude, tMapPoint.longitude))
+                }
+            }
+        )
+
+        if (!isMapReady) {
+            AtChaLoadingView(
+                transparent = false
+            )
+        }
+
+        // 뒤로가기 아이콘
+
+        CircleBtnBack(
+            modifier = Modifier
+                .size(36.dp)
+                .align(Alignment.TopStart)
+                .offset(x = 16.dp, y = 12.dp)
+                .noRippleClickable {
+                    backButtonClicked()
+                }
+        )
+
+        // 하단 UI
+        Column(modifier = modifier.fillMaxSize()) {
+            Box(Modifier.fillMaxWidth().weight(1f)) {
+                Icon(
+                    tint = Color.Unspecified,
+                    imageVector = ImageVector.vectorResource(id = R.drawable.ic_map_marker_setting),
+                    contentDescription = "Start Marker",
+                    modifier = Modifier.align(Alignment.Center)
+                )
+
+                Icon(
+                    tint = Color.Unspecified,
+                    imageVector = ImageVector.vectorResource(id = R.drawable.ic_all_current_location),
+                    contentDescription = stringResource(R.string.home_current_location_btn),
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .padding(end = 16.dp, bottom = 16.dp)
+                        .clickable(enabled = isMapReady) {
+                            isMapFocused = true
+                        }
+                        .graphicsLayer { alpha = if (isMapReady) 1f else 0.5f }
                 )
             }
+
+            AtChaLocationSettingBottomSheet(
+                locationName = myAddress.name,
+                locationAddress = myAddress.address,
+                completeButtonText = "우리집 등록",
+                buttonClicked = buttonClicked
+            )
         }
+    }
+}
+
+@Composable
+private fun CircleBtnBack(
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .roundedBackgroundWithPadding(
+                cornerRadius = 100.dp,
+                backgroundColor = defaultTeam6Colors.gray940
+            ),
+        contentAlignment = Alignment.Center
+    ) {
+        Image(
+            modifier = Modifier.size(20.dp),
+            imageVector = ImageVector.vectorResource(R.drawable.ic_all_arrow_left_grey),
+            colorFilter = ColorFilter.tint(defaultTeam6Colors.white),
+            contentDescription = "OnBoardingMapCircleBtnBack"
+        )
     }
 }
 
