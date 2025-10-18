@@ -7,8 +7,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,7 +35,6 @@ import com.google.android.gms.maps.model.LatLng
 import com.skt.tmap.TMapPoint
 import com.skt.tmap.TMapView
 import com.skt.tmap.overlay.TMapMarkerItem
-import timber.log.Timber
 
 @Composable
 fun TMapViewCompose(
@@ -51,27 +48,26 @@ fun TMapViewCompose(
     mapModified: () -> Unit
 ) {
     val context = LocalContext.current
-    val tMapView = remember { TMapView(context) }
     var isMapReady by remember { mutableStateOf(false) }
 
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
 
     // focus 버튼 누를때마다 해당 위치로 지도 focus 이동
-    LaunchedEffect(isMapFocused) {
-        if (isMapFocused && isMapReady) {
-            tMapView.setCenterPoint(currentLocation.latitude, currentLocation.longitude)
-            getCenterLocation(LatLng(currentLocation.latitude, currentLocation.longitude)) // 필요없어보여서 주석처리 해뒀어요
-
-            AmplitudeUtils.trackEventWithProperties(
-                eventName = HOME_EVENT_COURSESEARCH_ENTERED,
-                mapOf(
-                    USER_ID to userId,
-                    SCREEN_NAME to HOME,
-                    HOME_COURSESEARCH_ENTERED_WITH_CURRENT_LOCATION to true
-                )
-            )
-        }
-    }
+//    LaunchedEffect(isMapFocused) {
+//        if (isMapFocused && isMapReady) {
+//            tMapView.setCenterPoint(currentLocation.latitude, currentLocation.longitude)
+//            getCenterLocation(LatLng(currentLocation.latitude, currentLocation.longitude)) // 필요없어보여서 주석처리 해뒀어요
+//
+//            AmplitudeUtils.trackEventWithProperties(
+//                eventName = HOME_EVENT_COURSESEARCH_ENTERED,
+//                mapOf(
+//                    USER_ID to userId,
+//                    SCREEN_NAME to HOME,
+//                    HOME_COURSESEARCH_ENTERED_WITH_CURRENT_LOCATION to true
+//                )
+//            )
+//        }
+//    }
 
     Box(
         modifier = modifier
@@ -82,6 +78,8 @@ fun TMapViewCompose(
                 .height(screenHeight - 180.dp + padding.calculateTopPadding())
                 .align(Alignment.TopCenter),
             factory = { context ->
+                val tMapView = TMapView(context)
+
                 tMapView.setSKTMapApiKey(BuildConfig.TMAP_API_KEY)
                 tMapView.mapType = TMapView.MapType.NIGHT
                 tMapView.setOnMapReadyListener {
@@ -132,11 +130,26 @@ fun TMapViewCompose(
 
                 tMapView
             },
-            update = { _ ->
-                if (isMapReady) {
-                    val currentPoint = TMapPoint(currentLocation.latitude, currentLocation.longitude)
-                    val existingMarker = tMapView.getMarkerItemFromId("CurrentMarker")
-                    existingMarker.tMapPoint = currentPoint
+            update = { tMapView ->
+                // 지도 준비가 안된상태에서 리컴포즈 방지
+                if (!isMapReady) return@AndroidView
+
+                val currentPoint = TMapPoint(currentLocation.latitude, currentLocation.longitude)
+                val existingMarker = tMapView.getMarkerItemFromId("CurrentMarker")
+                existingMarker.tMapPoint = currentPoint
+
+                if (isMapFocused) {
+                    tMapView.setCenterPoint(currentLocation.latitude, currentLocation.longitude)
+                    getCenterLocation(LatLng(currentLocation.latitude, currentLocation.longitude)) // 필요없어보여서 주석처리 해뒀어요
+
+                    AmplitudeUtils.trackEventWithProperties(
+                        eventName = HOME_EVENT_COURSESEARCH_ENTERED,
+                        mapOf(
+                            USER_ID to userId,
+                            SCREEN_NAME to HOME,
+                            HOME_COURSESEARCH_ENTERED_WITH_CURRENT_LOCATION to true
+                        )
+                    )
                 }
             }
         )
@@ -154,13 +167,6 @@ fun TMapViewCompose(
             AtChaLoadingView(
                 transparent = false
             )
-        }
-    }
-
-    DisposableEffect(Unit) {
-        onDispose {
-            Timber.d("TMapViewCompose destroy!")
-            tMapView.onDestroy()
         }
     }
 }

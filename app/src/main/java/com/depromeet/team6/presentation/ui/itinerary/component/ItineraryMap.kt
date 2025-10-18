@@ -150,23 +150,25 @@ fun ItineraryMap(
                     }
 
                     // 마커 설정
-                    val marker = TMapMarkerItem()
-                    marker.id = "departPoint"
-                    marker.tMapPoint = departTMapPoint
-                    marker.icon = ContextCompat.getDrawable(context, R.drawable.map_marker_departure)?.toBitmap()
-                    tMapView.addTMapMarkerItem(marker)
+                    val departMarker = TMapMarkerItem()
+                    departMarker.id = "departPoint"
+                    departMarker.tMapPoint = departTMapPoint
+                    departMarker.icon = ContextCompat.getDrawable(context, R.drawable.map_marker_departure)?.toBitmap()
+                    tMapView.addTMapMarkerItem(departMarker)
 
-                    marker.id = "destinationPoint"
-                    marker.tMapPoint = destinationTMapPoint
-                    marker.icon = ContextCompat.getDrawable(context, R.drawable.map_marker_arrival)?.toBitmap()
-                    tMapView.addTMapMarkerItem(marker)
+                    val destinationMarker = TMapMarkerItem()
+                    destinationMarker.id = "destinationPoint"
+                    destinationMarker.tMapPoint = destinationTMapPoint
+                    destinationMarker.icon = ContextCompat.getDrawable(context, R.drawable.map_marker_arrival)?.toBitmap()
+                    tMapView.addTMapMarkerItem(destinationMarker)
 
+                    val currentMarker = TMapMarkerItem()
                     val currentPoint = TMapPoint(currentLocation.latitude, currentLocation.longitude)
-                    marker.id = "CurrentMarker"
-                    marker.name = "Current Location"
-                    marker.icon = ContextCompat.getDrawable(context, R.drawable.ic_home_current_location)?.toBitmap()
-                    marker.tMapPoint = currentPoint
-                    tMapView.addTMapMarkerItem(marker)
+                    currentMarker.id = "CurrentMarker"
+                    currentMarker.name = "Current Location"
+                    currentMarker.icon = ContextCompat.getDrawable(context, R.drawable.ic_home_current_location)?.toBitmap()
+                    currentMarker.tMapPoint = currentPoint
+                    tMapView.addTMapMarkerItem(currentMarker)
 
                     // 지도 위치 조정
                     val focusBound =
