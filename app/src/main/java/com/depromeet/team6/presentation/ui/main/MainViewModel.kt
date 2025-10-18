@@ -4,15 +4,16 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.depromeet.team6.domain.repository.UserInfoRepository
+import com.depromeet.team6.presentation.util.base.BaseViewModel
+import com.depromeet.team6.presentation.util.view.LoadState
 import com.depromeet.team6.presentation.util.view.NetworkState
 import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -22,6 +23,7 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -29,12 +31,9 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val userInfoRepository: UserInfoRepository,
     @ApplicationContext private val context: Context
-) : ViewModel() {
+) : BaseViewModel<MainContract.MainState, MainContract.MainSideEffect, MainContract.MainEvent>() {
 
     private var fcmToken: String? = null
-
-    private val _showSplash = MutableLiveData(true)
-    val showSplash: LiveData<Boolean> = _showSplash
 
     private val connectivityManager =
         context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -51,8 +50,41 @@ class MainViewModel @Inject constructor(
         )
 
     init {
-        startSplashTimer()
+        loadInitialData()
         fetchFcmToken()
+    }
+
+    override fun createInitialState(): MainContract.MainState = MainContract.MainState()
+
+    override suspend fun handleEvent(event: MainContract.MainEvent) {
+    }
+
+    // Splash 화면에서 데이터 로드
+    private fun loadInitialData() {
+        viewModelScope.launch {
+            try {
+                val checkAutoLoginDeferred = async { checkAutoLogin() }
+                // 🔹 SplashScreen 2초 후 종료
+                val timerDeferred = launch { delay(SPLASH_SCREEN_DELAY) }
+
+                val isAutoLogin = checkAutoLoginDeferred.await()
+                timerDeferred.join()
+
+                setState {
+                    copy(
+                        splashState = LoadState.Success,
+                        autoLogin = isAutoLogin
+                    )
+                }
+            } catch (e: Exception) {
+                setState {
+                    copy(
+                        splashState = LoadState.Success,
+                        autoLogin = false
+                    )
+                }
+            }
+        }
     }
 
     // 네트워크 상태를 Flow로 제공
@@ -110,13 +142,9 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    /**
-     * 🔹 SplashScreen 2초 후 종료
-     */
-    fun startSplashTimer() {
-        viewModelScope.launch {
-            delay(SPLASH_SCREEN_DELAY)
-            _showSplash.value = false
+    suspend fun checkAutoLogin(): Boolean {
+        return withContext(Dispatchers.IO) {
+            userInfoRepository.getRefreshToken().isNotEmpty()
         }
     }
 

@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -140,12 +141,12 @@ fun LockScreen(
     }
 
     Box(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
             .paint(
                 painter = BitmapPainter(ImageBitmap.imageResource(R.drawable.img_login_background)),
                 contentScale = ContentScale.Crop
             )
-            .padding(padding)
     ) {
         LottieAnimation(
             composition = composition,
@@ -173,16 +174,17 @@ fun LockScreen(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Spacer(modifier = Modifier.height(padding.calculateTopPadding()))
             Spacer(modifier = Modifier.padding(vertical = 60.dp))
 
             Icon(
-                imageVector = ImageVector.vectorResource(R.drawable.ic_lock_character),
+                imageVector = ImageVector.vectorResource(R.drawable.ic_atcha_logo),
                 contentDescription = null,
                 tint = Color.Unspecified,
                 modifier = Modifier.size(36.dp)
             )
 
-            Spacer(modifier = Modifier.padding(vertical = 8.dp))
+            Spacer(modifier = Modifier.height(28.dp))
 
             Text(
                 text = stringResource(R.string.lock_screen_taxi_text),
@@ -245,6 +247,8 @@ fun LockScreen(
 //                    modifier = Modifier.padding(vertical = 14.dp)
 //                )
 //            }
+
+            Spacer(modifier = Modifier.height(padding.calculateBottomPadding()))
         }
     }
 }
@@ -256,10 +260,10 @@ fun LockScreenPreview() {
         LockScreen(
             padding = PaddingValues(0.dp),
             onTimerFinish = {},
-            uiState = TODO(),
-            onDepartureClick = TODO(),
-            onLateClick = TODO(),
-            modifier = TODO()
+            uiState = LockContract.LockUiState(),
+            onDepartureClick = { },
+            onLateClick = {},
+            modifier = Modifier
         )
     }
 }

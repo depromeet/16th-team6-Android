@@ -104,15 +104,4 @@ class LoginViewModel @Inject constructor(
             }
         }
     }
-
-    fun checkAutoLogin() {
-        if (userInfoRepository.getRefreshToken()
-            .isNotEmpty()
-        ) {
-            setEvent(LoginContract.LoginEvent.GetLogin(LoadState.Success))
-        } else {
-            setState { copy(loadState = LoadState.Idle) }
-            Timber.d("Local Token is Empty")
-        }
-    }
 }

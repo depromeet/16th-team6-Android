@@ -15,7 +15,7 @@
     <!-- Onboarding -->
     <string name="onboarding_home_enroll_title">우리집을 등록해 보세요</string>
     <string name="onboarding_home_enroll_sub_title">출발지에서 우리집까지 빠르게 막차 찾을 수 있어요.</string>
-    <string name="onboarding_alarm_enroll_title">막차 알림을 설정해요</string>
+    <string name="onboarding_alarm_enroll_title">막차 알람을 설정해요</string>
     <string name="onboarding_alarm_enroll_sub_title">출발지에서 막차 타는 곳까지\n시간 내에 걸어갈 수 있게 알람 드려요.</string>
     <string name="onboarding_select_location_button_current_region">현 위치 찾기</string>
     <string name="onboarding_edit_location_button_current_region">수정하기</string>
@@ -25,8 +25,8 @@
     <string name="onboarding_location_permission_bottom_sheet_title">정확한 막차 경로 안내를 위해\n위치 접근을 허용해주세요</string>
     <string name="onboarding_location_permission_bottom_sheet_sub_title">현위치를 기준으로 빠르게 막차를 찾아요</string>
     <string name="onboarding_location_permission_bottom_sheet_type">위치</string>
-    <string name="onboarding_notification_permission_bottom_sheet_title">제때 막차 알림을 드리기 위해\n알림을 허용해주세요</string>
-    <string name="onboarding_notification_permission_bottom_sheet_sub_title">제시간에 막차를 탈 수 있게 알림을 드려요</string>
+    <string name="onboarding_notification_permission_bottom_sheet_title">제때 막차 알람을 드리기 위해\n알림을 허용해주세요</string>
+    <string name="onboarding_notification_permission_bottom_sheet_sub_title">제시간에 막차를 탈 수 있게 알람을 드려요</string>
     <string name="onboarding_notification_permission_bottom_sheet_type">알림</string>
     <string name="onboarding_location_permission_denied_dialog">위치 권한을 허용하지 않으면\n현위치의 막차를 확인할 수 없어요.</string>
     <string name="onboarding_notification_permission_denied_dialog">알림을 허용하지 않으면\n막차 알람이 울리지 못해요.</string>
@@ -34,31 +34,31 @@
 
 
     <!-- LockScreen -->
-    <string name="lock_screen_description">알림 잠금화면</string>
+    <string name="lock_screen_description">알람 잠금화면</string>
     <string name="lock_screen_start_btn">출발하기</string>
     <string name="lock_screen_late_btn">더 늦은 경로 확인하기</string>
     <string name="lock_screen_taxi_text">지금 안 일어나면\n 택시비</string>
 
     <string name="lock_service_start_text">잠금화면 서비스 시작됨</string>
     <string name="lock_screen_start_text">잠금화면 실행</string>
-    <string name="lock_screen_start_alarm_text">출발 알림</string>
+    <string name="lock_screen_start_alarm_text">출발 알람</string>
 
     <string name="notification_content_text">"지금 바로 출발하셔야 해요!"</string>
     <string name="notification_title_text">"앗차!"</string>
     <string name="notification_body_text">"막차 출발 시간을 확인해보세요!"</string>
-    <string name="notification_ten_text">"지금 밖이세요? 막차 알림 등록하고 편히 귀가하세요. \uD83C\uDFE0"</string>
+    <string name="notification_ten_text">"지금 밖이세요? 막차 알람 등록하고 편히 귀가하세요. \uD83C\uDFE0"</string>
     <string name="notification_head_up_channel_name">앗차 중요 알림</string>
-    <string name="notification_alarm_timeout_title">출발 알림이 자동 종료되었어요.</string>
+    <string name="notification_alarm_timeout_title">출발 알람이 자동 종료되었어요.</string>
     <string name="notification_alarm_timeout_body">클릭해서 경로 재탐색 하기</string>
 
-    <string name="dialog_finish_alarm_title">막차 알림을 종료할까요?</string>
+    <string name="dialog_finish_alarm_title">막차 알람을 종료할까요?</string>
     <string name="dialog_finish_alarm_back_text">돌아가기</string>
     <string name="dialog_finish_alarm_finish_text">종료하기</string>
 
-    <string name="dialog_change_alarm_title">기존 막차 알림을 종료하고\n선택한 알림으로 변경할까요?</string>
+    <string name="dialog_change_alarm_title">기존 막차 알람을 종료하고\n선택한 알람으로 변경할까요?</string>
 
     <!-- Overlay Permission -->
-    <string name="overlay_permission_content_text_start">막차 알림을 등록하려면\n</string>
+    <string name="overlay_permission_content_text_start">막차 알람을 등록하려면\n</string>
     <string name="overlay_permission_content_text_mid">"'다른 앱 위에 표시' "</string>
     <string name="overlay_permission_content_text_end">권한이 필요해요</string>
     <string name="overlay_permission_atcha_text">앗차</string>
@@ -67,10 +67,10 @@
     <string name="overlay_permission_toast_message">"'다른 앱 위에 표시'를 허용해주세요"</string>
 
     <!-- LoginScreen -->
-    <string name="login_pager_main_text_first">오후 10시에 미리\n막차알림 등록하세요</string>
-    <string name="login_pager_main_text_second">자리에서 떠나기 전에\n여러번 막차 알림 드려요</string>
+    <string name="login_pager_main_text_first">오후 10시에 미리\n막차알람 등록하세요</string>
+    <string name="login_pager_main_text_second">자리에서 떠나기 전에\n여러번 막차 알람 드려요</string>
     <string name="login_pager_main_text_third">탑승 하는 곳까지\n시간 확인하며 걸어가요</string>
-    <string name="login_pager_sub_text_first">막차를 미리 찾고 알림 설정할 수 있도록 노티드려요</string>
+    <string name="login_pager_sub_text_first">막차를 미리 찾고 알람 설정할 수 있도록 노티드려요</string>
     <string name="login_pager_sub_text_second">막차 까먹지 않게 푸시알림과 타이머를 제공해요</string>
     <string name="login_pager_sub_text_third">탑승하는 곳까지 타이머 보면서 시간맞춰 걸어가요</string>
 
@@ -93,12 +93,12 @@
     <string name="home_search_map_icon">지도 아이콘</string>
     <string name="home_search_recent_history_text">최근 내역</string>
     <string name="home_search_delete_all_text">전체 삭제</string>
-    <string name="home_alarm_finish_text">알림이 종료되었습니다</string>
+    <string name="home_alarm_finish_text">알람이 종료되었습니다</string>
     <string name="home_search_departure_hint_text">지번, 도로명, 건물명으로 검색</string>
 
     <string name="home_icon_location_text">위치 아이콘</string>
     <string name="home_icon_arrow_right_text">화살표 아이콘</string>
-    <string name="home_icon_bell_text">알림 종 아이콘</string>
+    <string name="home_icon_bell_text">알람 종 아이콘</string>
 
     <string name="home_bubble_map_text">지도를 움직여 출발지를 설정해 봐요</string>
     <string name="home_bubble_basic_text">여기서 막차 놓치면 택시비</string>
@@ -109,16 +109,16 @@
     <string name="home_bubble_before_bus_departure_text">버스가 출발하면 더 정확하게 알려드릴게요</string>
     <string name="home_bubble_expect_departure_time_clicked_text_1">타야될 버스가 아직 운행하지 않아 예상 시간으로 알려드려요</string>
     <string name="home_bubble_expect_departure_time_clicked_text_2">운행하면 더 정확하게 알려드릴게요</string>
-    <string name="home_bubble_location_clicked_text">위치를 변경하려면 알림을 종료하고 새로 등록해야 해요</string>
+    <string name="home_bubble_location_clicked_text">위치를 변경하려면 알람을 종료하고 새로 등록해야 해요</string>
 
     <string name="home_bubble_bus_departure_text_1">버스가 오고 있어요!</string>
-    <string name="home_bubble_bus_departure_text_2">출발해야 할 시간에 알림을 드릴게요</string>
+    <string name="home_bubble_bus_departure_text_2">출발해야 할 시간에 알람을 드릴게요</string>
     <string name="home_bubble_subway_departure_text_1">이때쯤 자리에서 출발하면 돼요</string>
-    <string name="home_bubble_subway_departure_text_2">시간에 맞춰 알림을 드릴게요</string>
+    <string name="home_bubble_subway_departure_text_2">시간에 맞춰 알람을 드릴게요</string>
 
     <string name="home_bubble_time_info_text_1">이때 출발하면 막차를 탈 수 있어요</string>
     <string name="home_bubble_departure_time_info_text_1">자리에서 출발해야 될 시간을 실시간으로 측정하고 있어요</string>
-    <string name="home_bubble_time_info_text_2">시간에 맞춰 알림을 드릴게요</string>
+    <string name="home_bubble_time_info_text_2">시간에 맞춰 알람을 드릴게요</string>
     <string name="home_bubble_departed_taxi_cost_text">출발지에서 막차 놓치면 택시비</string>
     <string name="home_bubble_trust_text_1">믿을 수 있는</string>
     <string name="home_bubble_trust_text_2">티맵 API와 공공 데이터를 활용해요</string>
@@ -148,13 +148,13 @@
     <string name="last_transport_info_remaining_time">%02d:%02d</string>
     <string name="last_transport_info_departure_time">출발</string>
     <string name="last_transport_info_boarding_time">탑승</string>
-    <string name="last_transport_info_set_notification">막차 알림 받기</string>
+    <string name="last_transport_info_set_notification">막차 알람 받기</string>
     <string name="course_detail_info_walk">걷기</string>
     <string name="course_detail_info_duration">%1d분</string>
     <string name="course_detail_info_boarding_point">%1s 승차</string>
     <string name="course_detail_info_destination_point">%1s 하차</string>
-    <string name="course_set_notification_snackbar">알림이 등록되었습니다</string>
-    <string name="course_set_notification_failed_snackbar">알림을 등록하는데 실패했어요</string>
+    <string name="course_set_notification_snackbar">알람이 등록되었습니다</string>
+    <string name="course_set_notification_failed_snackbar">알람을 등록하는데 실패했어요</string>
     <string name="notification_channel_name">앱 알림</string>
     <string name="notification_channel_description_text">앱 내부 알림 채널</string>
     <string name="course_search_failed_snackbar">경로를 조회하는데 실패했어요</string>
@@ -187,10 +187,10 @@
     <string name="mypage_icon_arrow_text">마이페이지 화살표</string>
     <string name="mypage_title_text">마이페이지</string>
     <string name="mypage_account_title_text">내 계정</string>
-    <string name="mypage_change_home_title_text">우리집 변경</string>
+    <string name="mypage_change_home_title_text">우리집 설정</string>
     <string name="mypage_change_home_toast_text">집 주소가 변경되었습니다.</string>
     <string name="mypage_change_home_button_text">다른 주소로 변경하기</string>
-    <string name="mypage_alarm_title_text">알림 설정</string>
+    <string name="mypage_alarm_title_text">알람 설정</string>
     <string name="mypage_alarm_sound_setting_text">진동/벨소리 설정</string>
     <string name="mypage_alarm_time_setting_text">푸시 알림 빈도 설정</string>
     <string name="mypage_alarm_info_text">출발지에서 막차 타는 곳까지 시간 내에 걸어갈 수 있게\n푸시 알림 받는 빈도를 설정해주세요.</string>

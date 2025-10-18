@@ -10,7 +10,7 @@ import com.google.accompanist.pager.PagerState
 class LoginContract {
     @OptIn(ExperimentalPagerApi::class)
     data class LoginUiState(
-        val loadState: LoadState = LoadState.Loading,
+        val loadState: LoadState = LoadState.Idle,
         val authTokenLoadState: LoadState = LoadState.Idle,
         val isUserRegisteredState: LoadState = LoadState.Idle,
         val pagerState: PagerState = PagerState(),

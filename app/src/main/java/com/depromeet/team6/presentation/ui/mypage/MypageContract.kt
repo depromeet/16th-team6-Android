@@ -40,6 +40,12 @@ class MypageContract {
             lon = 0.0,
             address = ""
         ),
+        val selectedAddress: Address = Address(
+            name = "",
+            lat = 0.0,
+            lon = 0.0,
+            address = ""
+        ),
         val userInfo: MypageUserInfo = MypageUserInfo(
             address = "",
             lat = 0.0,
@@ -75,13 +81,13 @@ class MypageContract {
         data object ChangeHomeClicked : MypageEvent()
         data object AlarmSettingClicked : MypageEvent()
         data class UpdateMyAddress(val myAddress: Address) : MypageEvent()
-        data class ChangeMapViewVisible(val mapViewVisible: Boolean) : MypageEvent()
+        data class ChangeMapViewVisible(val mapViewVisible: Boolean, val selectedAddress: Address?) : MypageEvent()
         data object ClearAddress : MypageEvent()
         data object ShowSearchPopup : MypageEvent()
         data object ClearText : MypageEvent()
         data class UpdateSearchText(val text: String) : MypageEvent()
         data object SearchPopUpBackPressed : MypageEvent()
-        data class LocationSelectButtonClicked(val mypageSearchLocation: Address) : MypageEvent()
+        data object LocationSelectButtonClicked : MypageEvent()
         data object SoundSettingClicked : MypageEvent()
         data object TimeSettingClicked : MypageEvent()
         data class AlarmTypeSelected(val type: AlarmType) : MypageEvent()

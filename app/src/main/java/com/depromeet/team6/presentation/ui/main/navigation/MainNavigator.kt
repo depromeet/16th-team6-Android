@@ -19,13 +19,19 @@ import com.depromeet.team6.presentation.ui.mypage.navigation.navigationMypage
 import com.depromeet.team6.presentation.ui.onboarding.navigation.OnboardingRoute
 import com.depromeet.team6.presentation.ui.onboarding.navigation.navigationOnboarding
 import com.depromeet.team6.presentation.ui.searchlocation.navigation.navigationSearchLocation
+import com.depromeet.team6.presentation.ui.splash.navigation.SplashRoute
+import com.depromeet.team6.presentation.ui.splash.navigation.navigateToSplash
 import com.google.firebase.analytics.FirebaseAnalytics
 
 class MainNavigator(
     val navHostController: NavHostController
 ) {
 
-    val startDestination = LoginRoute.ROUTE
+    val startDestination = SplashRoute.ROUTE
+
+    fun navigateToSplash() {
+        navHostController.navigateToSplash()
+    }
 
     fun navigateToOnboarding() {
         navigateAndClearLoginStack(OnboardingRoute.ROUTE) {

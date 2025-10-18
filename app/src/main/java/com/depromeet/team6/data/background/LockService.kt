@@ -62,6 +62,7 @@ class LockService : Service() {
     private var originalAlarmVolume: Int? = null
 
     private var fusedLocationClient: FusedLocationProviderClient? = null
+    private var wakeLock: PowerManager.WakeLock? = null
     private val notificationManager by lazy {
         getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     }
@@ -169,6 +170,7 @@ class LockService : Service() {
         super.onCreate()
         LockReceiver.initialize(lockScreenNavigator, taxiCostUseCase)
 
+        startLockReceiver()
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         startForeground(ALARM_NOTIFICATION_ID, createForegroundNotification())
     }
@@ -193,7 +195,7 @@ class LockService : Service() {
         )
 
         return NotificationCompat.Builder(this, channelId)
-            .setSmallIcon(R.drawable.ic_app_logo_foreground)
+            .setSmallIcon(R.drawable.ic_atcha_logo)
             .setContentText(
                 getString(R.string.notification_content_text)
             )
@@ -209,10 +211,9 @@ class LockService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.d("LockService", "onStartCommand 호출됨")
 
-        startLockReceiver()
         wakeLockAcquire()
 
-        CoroutineScope(Dispatchers.IO).launch {
+        timerScope.launch(Dispatchers.IO) {
             val taxiCost = taxiCostUseCase.getLastSavedTaxiCost()
 
             withContext(Dispatchers.Main) {
@@ -255,7 +256,7 @@ class LockService : Service() {
                             R.string.notification_alarm_timeout_body
                         )
                     )
-                    .setSmallIcon(R.drawable.ic_app_logo_foreground)
+                    .setSmallIcon(R.drawable.ic_atcha_logo)
                     .setContentIntent(pendingIntent)
                     .setAutoCancel(true)
                     .build()
@@ -277,6 +278,7 @@ class LockService : Service() {
         vibrationTimer?.cancel()
         vibrationTimer = null
         timerScope.cancel()
+        wakeLockRelease()
         super.onDestroy()
     }
 
@@ -294,15 +296,22 @@ class LockService : Service() {
     private fun wakeLockAcquire() {
         try {
             val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
-            val wakeLock = powerManager.newWakeLock(
+            wakeLock = powerManager.newWakeLock(
                 PowerManager.FULL_WAKE_LOCK or PowerManager.ACQUIRE_CAUSES_WAKEUP,
                 WAKE_LOCK_TAG
-            )
-
-            // 10초 동안 화면 유지
-            wakeLock.acquire(10 * 1000L)
+            ).apply {
+                // 10초 동안 화면 유지
+                acquire(10 * 1000L)
+            }
         } catch (e: Exception) {
             Log.e("FCM", "WakeLock error: ${e.message}")
+        }
+    }
+
+    private fun wakeLockRelease() {
+        if (wakeLock?.isHeld == true) {
+            wakeLock?.release()
+            wakeLock = null
         }
     }
     companion object {

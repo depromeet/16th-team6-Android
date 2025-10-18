@@ -47,12 +47,13 @@ object AmplitudeCommon {
 }
 
 object OnboardingAmplitude {
+    const val ONBOARDING = "온보딩"
     const val USER_PUSH_FREQUENCIES = "user_push_frequencies"
     const val HOME_REGISTER_LOCATION_PERMISSION_CHECK = "home_register_location_permission_clicked"
     const val HOME_REGISTER_COMPLETE_CLICKED = "home_register_complete_clicked"
     const val ALARM_SETTING_ALARM_PERMISSION_CLICKED = "alarm_setting_alarm_permission_clicked"
     const val HOME_REGISTER = "집 등록(온보딩)"
-    const val ALARM_REGISTER = "알림 등록(온보딩)"
+    const val ALARM_REGISTER = "알람 등록(온보딩)"
     const val ONBOARDING_NOTIFICATION_PERMISSION_SETTINGS_CLICKED = "onboarding_notification_permission_settings_clicked"
     const val ONBOARDING_LOCATION_PERMISSION_SETTINGS_CLICKED = "onboarding_location_permission_settings_clicked"
     const val SYSTEM_SETTING = "설정하기"
@@ -89,7 +90,7 @@ object HomeAmplitude {
 }
 
 object LockAmplitude {
-    const val LOCK = "잠금화면"
+    const val LOCK = "잠금화면 알람"
     const val LOCK_BUTTON = "lock_button"
     const val LOCK_BUTTON_START = "lock_button_start"
     const val LOCK_BUTTON_LATER_ROUTE = "lock_button_later_route"
@@ -98,7 +99,7 @@ object LockAmplitude {
 }
 
 object CourseSearchAmplitude {
-    const val COURSE_SEARCH = "경로 탐색"
+    const val COURSE_SEARCH = "경로검색"
     const val COURSE_SEARCH_EVENT_CARD_CLICKED = "courssesearch_card"
     const val COURSE_SEARCH_EVENT_ITEM_TOGGLED = "coursesearch_toggle"
     const val COURSE_SEARCH_EVENT_DURATION = "coursesearch_view_duration"
@@ -117,7 +118,7 @@ object CourseSearchAmplitude {
 }
 
 object ItineraryAmplitude {
-    const val ITINERARY = "상세경로"
+    const val ITINERARY = "경로상세"
     const val ITINERARY_EVENT_ALARM_REGISTERED_SCREEN = "alert_button"
     const val ITINERARY_ALARM_REGISTER_BTN_CLICKED = "alert_button"
 }
@@ -125,4 +126,16 @@ object ItineraryAmplitude {
 object MyPageAmplitude {
     const val MY_PAGE = "마이페이지"
     const val MYPAGE_BANNER_CLICKED = "mypage_banner_clicked"
+}
+
+object BusAmplitude {
+    const val BUS = "버스상세"
+}
+
+object LoginAmplitude {
+    const val LOGIN = "로그인"
+}
+
+object SearchLocationAmplitude {
+    const val SEARCH_LOCATION = "현위치 검색"
 }

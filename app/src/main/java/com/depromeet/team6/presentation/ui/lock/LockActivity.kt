@@ -9,7 +9,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.material3.Scaffold
 import androidx.lifecycle.lifecycleScope
 import com.depromeet.team6.data.background.LockService
 import com.depromeet.team6.presentation.util.AmplitudeCommon.SCREEN_NAME
@@ -61,64 +61,66 @@ class LockActivity : ComponentActivity() {
 
         setContent {
             Team6Theme {
-                LockRoute(
-                    padding = PaddingValues(),
-                    viewModel = viewModel,
-                    onTimerFinish = {
-                        stopLockServiceAndExit(this)
-                    },
-                    onDepartureClick = {
-                        viewModel.setEvent(LockContract.LockEvent.OnDepartureClick)
-                        AmplitudeUtils.trackEventWithProperties(
-                            LOCK_BUTTON,
-                            mapOf(
-                                SCREEN_NAME to LOCK,
-                                USER_ID to viewModel.getUserId(),
-                                LOCK_BUTTON_START to 1
+                Scaffold { innerPadding ->
+                    LockRoute(
+                        padding = innerPadding,
+                        viewModel = viewModel,
+                        onTimerFinish = {
+                            stopLockServiceAndExit(this)
+                        },
+                        onDepartureClick = {
+                            viewModel.setEvent(LockContract.LockEvent.OnDepartureClick)
+                            AmplitudeUtils.trackEventWithProperties(
+                                LOCK_BUTTON,
+                                mapOf(
+                                    SCREEN_NAME to LOCK,
+                                    USER_ID to viewModel.getUserId(),
+                                    LOCK_BUTTON_START to 1
+                                )
                             )
-                        )
-                        val actionTime = (System.currentTimeMillis() - alarmStartedTime) / 1000L
-                        AmplitudeUtils.trackEventWithProperties(
-                            LOCK_ACTION_TAKEN,
-                            mapOf(
-                                LOCK_ACTION_TAKEN to 'Y',
-                                LOCK_ACTION_TAKEN_TIME to actionTime
+                            val actionTime = (System.currentTimeMillis() - alarmStartedTime) / 1000L
+                            AmplitudeUtils.trackEventWithProperties(
+                                LOCK_ACTION_TAKEN,
+                                mapOf(
+                                    LOCK_ACTION_TAKEN to "Y",
+                                    LOCK_ACTION_TAKEN_TIME to actionTime
+                                )
                             )
-                        )
-                        lockScreenNavigator.navigateToSpecificScreen(this)
-                        finish()
-                    },
-                    onLateClick = {
-                        viewModel.setEvent(LockContract.LockEvent.OnLateClick)
-
-                        AmplitudeUtils.trackEventWithProperties(
-                            LOCK_BUTTON,
-                            mapOf(
-                                SCREEN_NAME to LOCK,
-                                USER_ID to viewModel.getUserId(),
-                                LOCK_BUTTON_LATER_ROUTE to 1
-                            )
-                        )
-
-                        try {
-                            val departurePoint = sharedPreferences.getString("departurePoint", "") ?: ""
-                            val destinationPoint = sharedPreferences.getString("destinationPoint", "") ?: ""
-
-                            val editor = sharedPreferences.edit()
-                            editor.putBoolean("fromLockScreen", true)
-                            editor.apply()
-
-                            Timber.d("LockActivity onLateClick: departurePoint=$departurePoint, destinationPoint=$destinationPoint")
-
-                            lockScreenNavigator.navigateToCourseSearch(this, departurePoint, destinationPoint)
-                        } catch (e: Exception) {
-                            Timber.e(e, "Error in onLateClick, navigating to home")
                             lockScreenNavigator.navigateToSpecificScreen(this)
-                        }
+                            finish()
+                        },
+                        onLateClick = {
+                            viewModel.setEvent(LockContract.LockEvent.OnLateClick)
 
-                        finish()
-                    }
-                )
+                            AmplitudeUtils.trackEventWithProperties(
+                                LOCK_BUTTON,
+                                mapOf(
+                                    SCREEN_NAME to LOCK,
+                                    USER_ID to viewModel.getUserId(),
+                                    LOCK_BUTTON_LATER_ROUTE to 1
+                                )
+                            )
+
+                            try {
+                                val departurePoint = sharedPreferences.getString("departurePoint", "") ?: ""
+                                val destinationPoint = sharedPreferences.getString("destinationPoint", "") ?: ""
+
+                                val editor = sharedPreferences.edit()
+                                editor.putBoolean("fromLockScreen", true)
+                                editor.apply()
+
+                                Timber.d("LockActivity onLateClick: departurePoint=$departurePoint, destinationPoint=$destinationPoint")
+
+                                lockScreenNavigator.navigateToCourseSearch(this, departurePoint, destinationPoint)
+                            } catch (e: Exception) {
+                                Timber.e(e, "Error in onLateClick, navigating to home")
+                                lockScreenNavigator.navigateToSpecificScreen(this)
+                            }
+
+                            finish()
+                        }
+                    )
+                }
             }
         }
     }

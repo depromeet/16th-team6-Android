@@ -1,7 +1,7 @@
 package com.depromeet.team6.presentation.ui.mypage.component
 
 import android.content.Context
-import android.widget.FrameLayout
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -36,6 +36,7 @@ import com.depromeet.team6.BuildConfig
 import com.depromeet.team6.R
 import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.presentation.ui.common.bottomsheet.AtChaLocationSettingBottomSheet
+import com.depromeet.team6.presentation.ui.common.view.AtChaLoadingView
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.google.android.gms.maps.model.LatLng
 import com.skt.tmap.TMapPoint
@@ -49,8 +50,8 @@ import timber.log.Timber
 
 @Composable
 fun MypageMapView(
-    currentLocation: Address,
-    myAddress: Address,
+    currentLocation: LatLng,
+    selectedAddress: Address,
     context: Context,
     modifier: Modifier = Modifier,
     getCenterLocation: (LatLng) -> Unit = {},
@@ -60,11 +61,14 @@ fun MypageMapView(
     val keyboardController = LocalSoftwareKeyboardController.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
-    var isFirstZoom by remember { mutableStateOf(true) }
     val tMapView = remember { TMapView(context) }
     var isMapReady by remember { mutableStateOf(false) }
     val offsetLat = 0.00005
     val coroutineScope = rememberCoroutineScope()
+
+    BackHandler {
+        backButtonClicked()
+    }
 
     // Lifecycle 제어: ON_START 이후에만 지도 초기화
     DisposableEffect(lifecycleOwner) {
@@ -72,19 +76,6 @@ fun MypageMapView(
             if (event == Lifecycle.Event.ON_START) {
                 Timber.d("TMapView - ON_START")
                 keyboardController?.hide()
-                tMapView.setSKTMapApiKey(BuildConfig.TMAP_API_KEY)
-                tMapView.setOnMapReadyListener {
-                    tMapView.mapType = TMapView.MapType.NIGHT
-                    isMapReady = true
-
-                    tMapView.setOnDisableScrollWithZoomLevelListener { _, _ ->
-                        startScrollIdleCheck(
-                            scope = coroutineScope,
-                            tMapView = tMapView,
-                            getCenterLocation = getCenterLocation
-                        )
-                    }
-                }
             }
         }
 
@@ -98,89 +89,101 @@ fun MypageMapView(
     }
 
     // 지도 준비된 후에만 AndroidView 추가
-    if (isMapReady) {
-        Box(modifier = modifier.fillMaxSize()) {
-            AndroidView(
-                modifier = Modifier.fillMaxSize(),
-                factory = {
-                    FrameLayout(context).apply {
-                        addView(tMapView)
-                        tMapView.post {
-                            if (isFirstZoom) {
-                                val lat = currentLocation.lat - offsetLat
-                                val lon = currentLocation.lon
-
-                                tMapView.setCenterPoint(lat, lon, true)
-                                tMapView.zoomLevel = 18
-                                isFirstZoom = false
-
-                                val markerDrawable =
-                                    ContextCompat.getDrawable(context, R.drawable.ic_home_current_location)
-                                val markerBitmap = markerDrawable?.toBitmap()
-
-                                val markerItem = TMapMarkerItem().apply {
-                                    id = "CurrentMarker"
-                                    name = "Current Location"
-                                    icon = markerBitmap
-                                    setTMapPoint(TMapPoint(currentLocation.lat, currentLocation.lon))
-                                }
-
-                                tMapView.addTMapMarkerItem(markerItem)
-                            }
-                        }
+    Box(modifier = modifier.fillMaxSize()) {
+        AndroidView(
+            modifier = Modifier.fillMaxSize(),
+            factory = {
+                tMapView.setSKTMapApiKey(BuildConfig.TMAP_API_KEY)
+                tMapView.mapType = TMapView.MapType.NIGHT
+                tMapView.setOnMapReadyListener {
+                    tMapView.setOnDisableScrollWithZoomLevelListener { _, _ ->
+                        startScrollIdleCheck(
+                            scope = coroutineScope,
+                            tMapView = tMapView,
+                            getCenterLocation = getCenterLocation
+                        )
                     }
-                }
-            )
 
-            // 뒤로가기 아이콘
-            Icon(
-                modifier = Modifier
-                    .align(Alignment.TopStart)
-                    .noRippleClickable { backButtonClicked() }
-                    .padding(vertical = 16.dp, horizontal = 18.dp),
-                imageVector = ImageVector.vectorResource(R.drawable.ic_all_arrow_left_white),
-                tint = Color.Unspecified,
-                contentDescription = null
-            )
+                    val lat = selectedAddress.lat - offsetLat
+                    val lon = selectedAddress.lon
 
-            // 하단 UI
-            Column(modifier = modifier.fillMaxSize()) {
-                Box(
-                    Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                ) {
-                    Icon(
-                        tint = Color.Unspecified,
-                        imageVector = ImageVector.vectorResource(id = R.drawable.ic_map_marker_setting),
-                        contentDescription = "Start Marker",
-                        modifier = Modifier.align(Alignment.Center)
-                    )
+                    tMapView.setCenterPoint(lat, lon, true)
+                    tMapView.zoomLevel = 18
 
-                    Icon(
-                        tint = Color.Unspecified,
-                        imageVector = ImageVector.vectorResource(id = R.drawable.ic_all_current_location),
-                        contentDescription = stringResource(R.string.home_current_location_btn),
-                        modifier = Modifier
-                            .align(Alignment.BottomEnd)
-                            .padding(end = 16.dp, bottom = 16.dp)
-                            .clickable(enabled = isMapReady) {
-                                val tMapPoint = TMapPoint(currentLocation.lat, currentLocation.lon)
-                                tMapView.setCenterPoint(tMapPoint.latitude - offsetLat, tMapPoint.longitude)
-                                tMapView.zoomLevel = 18
-                                getCenterLocation(LatLng(tMapPoint.latitude, tMapPoint.longitude))
-                            }
-                            .graphicsLayer { alpha = if (isMapReady) 1f else 0.5f }
-                    )
+                    val markerDrawable =
+                        ContextCompat.getDrawable(context, R.drawable.ic_home_current_location)
+                    val markerBitmap = markerDrawable?.toBitmap()
+
+                    val markerItem = TMapMarkerItem().apply {
+                        id = "CurrentMarker"
+                        name = "Current Location"
+                        icon = markerBitmap
+                        setTMapPoint(TMapPoint(currentLocation.latitude, currentLocation.longitude))
+                    }
+
+                    tMapView.addTMapMarkerItem(markerItem)
+
+                    isMapReady = true
                 }
 
-                AtChaLocationSettingBottomSheet(
-                    locationName = myAddress.name,
-                    locationAddress = myAddress.address,
-                    completeButtonText = "우리집 등록",
-                    buttonClicked = buttonClicked
+                tMapView
+            }
+        )
+
+        if (!isMapReady) {
+            AtChaLoadingView(
+                transparent = false
+            )
+        }
+
+        // 뒤로가기 아이콘
+        Icon(
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .noRippleClickable { backButtonClicked() }
+                .padding(vertical = 16.dp, horizontal = 18.dp),
+            imageVector = ImageVector.vectorResource(R.drawable.ic_all_arrow_left_white),
+            tint = Color.Unspecified,
+            contentDescription = null
+        )
+
+        // 하단 UI
+        Column(modifier = modifier.fillMaxSize()) {
+            Box(
+                Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+            ) {
+                Icon(
+                    tint = Color.Unspecified,
+                    imageVector = ImageVector.vectorResource(id = R.drawable.ic_map_marker_setting),
+                    contentDescription = "Start Marker",
+                    modifier = Modifier.align(Alignment.Center)
+                )
+
+                Icon(
+                    tint = Color.Unspecified,
+                    imageVector = ImageVector.vectorResource(id = R.drawable.ic_all_current_location),
+                    contentDescription = stringResource(R.string.home_current_location_btn),
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .padding(end = 16.dp, bottom = 16.dp)
+                        .clickable(enabled = isMapReady) {
+                            val tMapPoint = TMapPoint(currentLocation.latitude, currentLocation.longitude)
+                            tMapView.setCenterPoint(tMapPoint.latitude - offsetLat, tMapPoint.longitude)
+                            tMapView.zoomLevel = 18
+                            getCenterLocation(LatLng(tMapPoint.latitude, tMapPoint.longitude))
+                        }
+                        .graphicsLayer { alpha = if (isMapReady) 1f else 0.5f }
                 )
             }
+
+            AtChaLocationSettingBottomSheet(
+                locationName = selectedAddress.name,
+                locationAddress = selectedAddress.address,
+                completeButtonText = "우리집 등록",
+                buttonClicked = buttonClicked
+            )
         }
     }
 }
