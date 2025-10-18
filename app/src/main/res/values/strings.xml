@@ -34,7 +34,6 @@
     <string name="onboarding_notification_permission_denied_dialog">알림을 허용하지 않으면\n막차 알람이 울리지 못해요.</string>
 
 
-
     <!-- LockScreen -->
     <string name="lock_screen_description">알람 잠금화면</string>
     <string name="lock_screen_start_btn">출발하기</string>
@@ -69,13 +68,11 @@
     <string name="overlay_permission_toast_message">"'다른 앱 위에 표시'를 허용해주세요"</string>
 
     <!-- LoginScreen -->
-    <string name="login_pager_main_text_first">오후 10시에 미리\n막차알람 등록하세요</string>
-    <string name="login_pager_main_text_second">자리에서 떠나기 전에\n여러번 막차 알람 드려요</string>
-    <string name="login_pager_main_text_third">탑승 하는 곳까지\n시간 확인하며 걸어가요</string>
-    <string name="login_pager_sub_text_first">막차를 미리 찾고 알람 설정할 수 있도록 노티드려요</string>
-    <string name="login_pager_sub_text_second">막차 까먹지 않게 푸시알림과 타이머를 제공해요</string>
-    <string name="login_pager_sub_text_third">탑승하는 곳까지 타이머 보면서 시간맞춰 걸어가요</string>
-
+    <string name="login_pager_text_first"></string>
+    <string name="login_pager_text_second">우리집 미리 등록 해두고\n출발지만 선택해요</string>
+    <string name="login_pager_text_third">푸시 알림으로\n남은 시간 알려드릴게요</string>
+    <string name="login_pager_text_fourth">지금 몇시지? 하지 마세요\n출발 알림 받고 막차 타러 출발!</string>
+    <string name="login_pager_text_fifth">이제 경로만 따라가면 돼요\n안전하게 귀가해요</string>
 
     <!-- HomeScreen -->
     <string name="home_icon_search_text">경로 상세 아이콘</string>
