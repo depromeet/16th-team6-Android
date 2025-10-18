@@ -6,22 +6,27 @@ import com.depromeet.team6.R
 
 enum class LoginViewPagerType(
     @DrawableRes val imageRes: Int,
-    @StringRes val mainTextRes: Int,
-    @StringRes val subTextRes: Int
+    @StringRes val textRes: Int,
 ) {
     FIRST(
         imageRes = R.drawable.img_login_image1,
-        mainTextRes = R.string.login_pager_main_text_second,
-        subTextRes = R.string.login_pager_sub_text_first
+        textRes = R.string.login_pager_text_first,
     ),
     SECOND(
         imageRes = R.drawable.img_login_image2,
-        mainTextRes = R.string.login_pager_main_text_second,
-        subTextRes = R.string.login_pager_sub_text_second
+        textRes = R.string.login_pager_text_second,
     ),
     THIRD(
         imageRes = R.drawable.img_login_image3,
-        mainTextRes = R.string.login_pager_main_text_third,
-        subTextRes = R.string.login_pager_sub_text_third
+        textRes = R.string.login_pager_text_third,
+    ),
+
+    FOURTH(
+        imageRes = R.drawable.img_login_image4,
+        textRes = R.string.login_pager_text_fourth,
+    ),
+    FIFTH(
+        imageRes = R.drawable.img_login_image5,
+        textRes = R.string.login_pager_text_fifth,
     )
 }
