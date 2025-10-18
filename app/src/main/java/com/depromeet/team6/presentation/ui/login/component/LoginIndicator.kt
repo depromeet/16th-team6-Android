@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.depromeet.team6.presentation.type.LoginViewPagerType
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 
 @Composable
@@ -20,7 +21,7 @@ fun LoginIndicator(selectedIndex: Int, modifier: Modifier = Modifier) {
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.Bottom
     ) {
-        for (i in 0 until 3) {
+        for (i in 0 until LoginViewPagerType.entries.size) {
             val color = if (i == selectedIndex) defaultTeam6Colors.main else defaultTeam6Colors.gray300
             Box(
                 modifier = Modifier
