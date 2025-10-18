@@ -165,7 +165,7 @@ fun LoginScreen(
     padding: PaddingValues,
     modifier: Modifier = Modifier,
     uiState: LoginContract.LoginUiState = LoginContract.LoginUiState(),
-    onLoginClicked: () -> Unit = {},
+    onLoginClicked: () -> Unit = {}
 ) {
     Column(
         modifier = modifier
@@ -194,7 +194,6 @@ fun LoginScreen(
         ) { page ->
             val loginViewPagerType = LoginViewPagerType.entries[page]
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-
                 Spacer(modifier = Modifier.height(30.dp))
                 Text(
                     text = stringResource(loginViewPagerType.textRes),
@@ -223,7 +222,7 @@ fun LoginScreen(
                 )
                 .noRippleClickable { onLoginClicked() }
                 .semantics { contentDescription = "kakao_login_button" }
-                .padding(horizontal = 22.dp, vertical = 14.dp),
+                .padding(horizontal = 22.dp, vertical = 14.dp)
         ) {
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.ic_login_kakao),
@@ -236,7 +235,6 @@ fun LoginScreen(
                 modifier = Modifier.align(Alignment.Center)
             )
         }
-
     }
 }
 
