@@ -14,8 +14,6 @@ import timber.log.Timber
 
 object PermissionUtil {
     private const val PREFS_NAME = "PermissionPrefs"
-    private const val KEY_LOCATION_PERMISSION_REQUESTED = "location_permission_requested"
-    private const val KEY_NOTIFICATION_PERMISSION_REQUESTED = "notification_permission_requested"
     private const val KEY_OVERLAY_PERMISSION_REQUESTED = "overlay_permission_requested"
     private const val KEY_OVERLAY_DIALOG_SHOWN = "overlay_dialog_shown"
 
@@ -26,19 +24,6 @@ object PermissionUtil {
     private fun savePermissionRequested(context: Context, key: String) {
         Timber.d("king : $key")
         getPreferences(context).edit().putBoolean(key, true).apply()
-    }
-
-    fun isLocationPermissionRequested(context: Context): Boolean {
-        return getPreferences(context).getBoolean(KEY_LOCATION_PERMISSION_REQUESTED, false)
-    }
-
-    fun isNotificationPermissionRequested(context: Context): Boolean {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            return getPreferences(context).getBoolean(KEY_NOTIFICATION_PERMISSION_REQUESTED, false)
-        } else {
-            savePermissionRequested(context, KEY_NOTIFICATION_PERMISSION_REQUESTED)
-            return true
-        }
     }
 
     fun hasLocationPermissions(context: Context): Boolean {
@@ -67,7 +52,6 @@ object PermissionUtil {
         context: Context,
         locationPermissionLauncher: ManagedActivityResultLauncher<Array<String>, Map<String, Boolean>>
     ) {
-        savePermissionRequested(context, KEY_LOCATION_PERMISSION_REQUESTED)
         locationPermissionLauncher.launch(
             arrayOf(
                 Manifest.permission.ACCESS_FINE_LOCATION,
@@ -81,7 +65,6 @@ object PermissionUtil {
         notificationPermissionLauncher: ManagedActivityResultLauncher<String, Boolean>
     ) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            savePermissionRequested(context, KEY_NOTIFICATION_PERMISSION_REQUESTED)
             notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
         }
     }

@@ -57,6 +57,14 @@ class DialogController {
         )
     }
 
+    fun showAtchaOfflineAlert(
+        onConfirm: () -> Unit = {}
+    ) {
+        _dialogState.value = DialogState.OffLine(
+            onConfirm = onConfirm
+        )
+    }
+
     fun hideDialog() {
         _dialogState.value = null
     }
@@ -81,6 +89,10 @@ sealed class DialogState {
         val message: String,
         val onConfirm: () -> Unit,
         val confirmButtonText: String
+    ) : DialogState()
+
+    data class OffLine(
+        val onConfirm: () -> Unit
     ) : DialogState()
 }
 

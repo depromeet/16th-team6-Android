@@ -61,6 +61,15 @@ fun GlobalDialogHandler(
             )
         }
 
+        is DialogState.OffLine -> {
+            AtchaOfflineDialog(
+                modifier = modifier,
+                onConfirm = {
+                    state.onConfirm()
+                }
+            )
+        }
+
         null -> { /* 다이얼로그 없음 */
         }
     }
