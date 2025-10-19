@@ -151,7 +151,7 @@ fun SearchLocationRoute(
 
     when (uiState.loadState) {
         LoadState.Idle, LoadState.Loading, LoadState.Success -> {
-            when(uiState.currentScreen) {
+            when (uiState.currentScreen) {
                 SearchLocationContract.SearchLocationScreen.LISTVIEW -> {
                     SearchLocationScreen(
                         context = context,
@@ -245,7 +245,7 @@ fun SearchLocationRoute(
                             )
                         },
                         getCenterLocation = { viewModel.getCenterLocation(it) },
-                        onMapButtonClicked = { viewModel.setEvent(SearchLocationContract.SearchLocationEvent.ChangeSearchSelectMapViewVisible(true))}
+                        onMapButtonClicked = { viewModel.setEvent(SearchLocationContract.SearchLocationEvent.ChangeSearchSelectMapViewVisible(true)) }
                     )
                 }
 
