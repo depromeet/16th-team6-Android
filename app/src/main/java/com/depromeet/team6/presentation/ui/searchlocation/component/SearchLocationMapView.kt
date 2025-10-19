@@ -72,7 +72,7 @@ fun SearchLocationMapView(
 
     val tMapView = remember { TMapView(context) }
     var isMapReady by remember { mutableStateOf(false) }
-    val offsetLat = 0.00005
+    val offsetLat = 0.00009
     val coroutineScope = rememberCoroutineScope()
 
     // Lifecycle 제어: ON_START 이후에만 지도 초기화
@@ -112,10 +112,13 @@ fun SearchLocationMapView(
                     }
                 }
 
-                val lat = myAddress.lat - offsetLat
-                val lon = myAddress.lon
+                val tMapPoint = TMapPoint(currentLocation.latitude, currentLocation.longitude)
+                tMapView.setCenterPoint(
+                    tMapPoint.latitude - offsetLat,
+                    tMapPoint.longitude
+                )
+                getCenterLocation(LatLng(tMapPoint.latitude, tMapPoint.longitude))
 
-                tMapView.setCenterPoint(lat, lon, true)
                 tMapView.zoomLevel = 18
 
                 val markerDrawable =
@@ -149,11 +152,12 @@ fun SearchLocationMapView(
             )
         }
 
-        // 뒤로가기 아이콘
-        CircleBtnBack(
+        // 뒤로가기
+        Icon(
+            imageVector = ImageVector.vectorResource(R.drawable.ic_all_arrow_left_white),
+            contentDescription = stringResource(R.string.home_search_back_text),
+            tint = defaultTeam6Colors.gray300,
             modifier = Modifier
-                .size(36.dp)
-                .align(Alignment.TopStart)
                 .offset(x = 16.dp, y = 12.dp + marginTop)
                 .noRippleClickable {
                     backButtonClicked()
@@ -182,7 +186,8 @@ fun SearchLocationMapView(
                         .align(Alignment.BottomEnd)
                         .padding(end = 16.dp, bottom = 16.dp)
                         .clickable(enabled = isMapReady) {
-                            val tMapPoint = TMapPoint(currentLocation.latitude, currentLocation.longitude)
+                            val tMapPoint =
+                                TMapPoint(currentLocation.latitude, currentLocation.longitude)
                             tMapView.setCenterPoint(
                                 tMapPoint.latitude - offsetLat,
                                 tMapPoint.longitude
@@ -233,27 +238,6 @@ fun startScrollIdleCheck(
         }
 
         getCenterLocation(previousLatLng!!)
-    }
-}
-
-@Composable
-private fun CircleBtnBack(
-    modifier: Modifier = Modifier
-) {
-    Box(
-        modifier = modifier
-            .roundedBackgroundWithPadding(
-                cornerRadius = 100.dp,
-                backgroundColor = defaultTeam6Colors.gray940
-            ),
-        contentAlignment = Alignment.Center
-    ) {
-        Image(
-            modifier = Modifier.size(20.dp),
-            imageVector = ImageVector.vectorResource(R.drawable.ic_all_arrow_left_grey),
-            colorFilter = ColorFilter.tint(defaultTeam6Colors.white),
-            contentDescription = "ItineraryCircleBtnBack"
-        )
     }
 }
 
