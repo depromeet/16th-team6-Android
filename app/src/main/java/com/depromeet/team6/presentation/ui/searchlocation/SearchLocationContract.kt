@@ -9,8 +9,13 @@ import com.depromeet.team6.presentation.util.base.UiState
 import com.depromeet.team6.presentation.util.view.LoadState
 
 class SearchLocationContract {
+    enum class SearchLocationScreen {
+        LISTVIEW, MAPVIEW
+    }
+
     data class SearchLocationUiState(
         val loadState: LoadState = LoadState.Idle,
+        val currentScreen: SearchLocationScreen = SearchLocationScreen.LISTVIEW,
         val userLocation: LoadState = LoadState.Idle,
         val searchQuery: String = "",
         val searchResults: List<Location> = emptyList(),
