@@ -30,7 +30,6 @@ import com.depromeet.team6.R
 import com.depromeet.team6.presentation.ui.common.dialog.GlobalDialogHandler
 import com.depromeet.team6.presentation.ui.common.snackbar.GlobalSnackbarHandler
 import com.depromeet.team6.presentation.ui.common.snackbar.LocalSnackbarHostState
-import com.depromeet.team6.presentation.ui.coursesearch.component.SearchResultEmpty
 import com.depromeet.team6.presentation.ui.lock.LockScreenNavigator
 import com.depromeet.team6.presentation.ui.main.navigation.MainNavHost
 import com.depromeet.team6.presentation.ui.main.navigation.MainNavigator
@@ -107,48 +106,51 @@ class MainActivity : ComponentActivity() {
                 }
             }
             if (networkAvailability.value == NetworkState.Unavailable) {
-                SearchResultEmpty()
-            } else {
-                Team6Theme {
-                    CompositionLocalProvider(
-                        LocalDialogController provides dialogController,
-                        LocalSnackbarHostState provides snackbarHostState,
-                        LocalSnackbarController provides snackbarController
-                    ) {
-                        Box {
-                            Scaffold(
-                                snackbarHost = {
-                                    SnackbarHost(hostState = snackbarHostState)
-                                },
-                                modifier = Modifier.fillMaxSize()
-                            ) { innerPadding ->
-                                MainNavHost(
-                                    navigator = navigator,
-                                    padding = innerPadding
-                                )
+                dialogController.showAtchaOfflineAlert {
+                    if (networkAvailability.value == NetworkState.Available) {
+                        dialogController.hideDialog()
+                    }
+                }
+            }
+            Team6Theme {
+                CompositionLocalProvider(
+                    LocalDialogController provides dialogController,
+                    LocalSnackbarHostState provides snackbarHostState,
+                    LocalSnackbarController provides snackbarController
+                ) {
+                    Box {
+                        Scaffold(
+                            snackbarHost = {
+                                SnackbarHost(hostState = snackbarHostState)
+                            },
+                            modifier = Modifier.fillMaxSize()
+                        ) { innerPadding ->
+                            MainNavHost(
+                                navigator = navigator,
+                                padding = innerPadding
+                            )
 
-                                if (shouldNavigateToCourseSearch) {
-                                    LaunchedEffect(Unit) {
-                                        navigator.navigateToCourseSearch(
-                                            departure = departurePoint,
-                                            destination = destinationPoint,
-                                            fromLockScreen = fromLockScreen
-                                        )
-                                        shouldNavigateToCourseSearch = false
-                                    }
+                            if (shouldNavigateToCourseSearch) {
+                                LaunchedEffect(Unit) {
+                                    navigator.navigateToCourseSearch(
+                                        departure = departurePoint,
+                                        destination = destinationPoint,
+                                        fromLockScreen = fromLockScreen
+                                    )
+                                    shouldNavigateToCourseSearch = false
                                 }
                             }
-                            GlobalDialogHandler(
-                                controller = dialogController,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                            )
-
-                            GlobalSnackbarHandler(
-                                snackbarData = snackbarData.value,
-                                onDismiss = { snackbarData.value = null }
-                            )
                         }
+                        GlobalDialogHandler(
+                            controller = dialogController,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                        )
+
+                        GlobalSnackbarHandler(
+                            snackbarData = snackbarData.value,
+                            onDismiss = { snackbarData.value = null }
+                        )
                     }
                 }
             }
