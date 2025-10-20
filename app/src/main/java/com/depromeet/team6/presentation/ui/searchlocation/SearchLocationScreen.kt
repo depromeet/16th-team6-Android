@@ -1,6 +1,5 @@
 package com.depromeet.team6.presentation.ui.searchlocation
 
-import android.content.Context
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -154,7 +153,6 @@ fun SearchLocationRoute(
             when (uiState.currentScreen) {
                 SearchLocationContract.SearchLocationScreen.LISTVIEW -> {
                     SearchLocationScreen(
-                        context = context,
                         modifier = Modifier
                             .fillMaxSize()
                             .background(defaultTeam6Colors.gray950)
@@ -215,37 +213,16 @@ fun SearchLocationRoute(
                                 )
                             )
                             viewModel.setEvent(
-                                SearchLocationContract.SearchLocationEvent.ChangeSearchSelectMapViewVisible(
-                                    true
+                                SearchLocationContract.SearchLocationEvent.ChangeCurrentScreen(
+                                    SearchLocationContract.SearchLocationScreen.MAPVIEW
                                 )
                             )
                             // 최근 검색 내역 추가
                             viewModel.postSearchHistory(searchHistory)
                         },
-                        navigateToCourseSearch = {
-                            viewModel.setEvent(
-                                SearchLocationContract.SearchLocationEvent.ChangeSearchSelectMapViewVisible(
-                                    false
-                                )
-                            )
-
-                            val currentLocationJSON = Gson().toJson(uiState.selectLocation)
-                            val destinationPointJSON = Gson().toJson(destinationLocation)
-                            navigateToCourseSearch(
-                                currentLocationJSON,
-                                destinationPointJSON
-                            )
-                        },
-                        clearAddress = {
-                            viewModel.setEvent(SearchLocationContract.SearchLocationEvent.ClearText)
-                            viewModel.setEvent(
-                                SearchLocationContract.SearchLocationEvent.ChangeSearchSelectMapViewVisible(
-                                    searchSelectMapView = false
-                                )
-                            )
-                        },
-                        getCenterLocation = { viewModel.getCenterLocation(it) },
-                        onMapButtonClicked = { viewModel.setEvent(SearchLocationContract.SearchLocationEvent.ChangeSearchSelectMapViewVisible(true)) }
+                        onMapButtonClicked = { viewModel.setEvent(SearchLocationContract.SearchLocationEvent.ChangeCurrentScreen(
+                            SearchLocationContract.SearchLocationScreen.MAPVIEW
+                        )) }
                     )
                 }
 
@@ -258,8 +235,8 @@ fun SearchLocationRoute(
                         currentLocation = userLocation,
                         setDepartureButtonClicked = {
                             viewModel.setEvent(
-                                SearchLocationContract.SearchLocationEvent.ChangeSearchSelectMapViewVisible(
-                                    false
+                                SearchLocationContract.SearchLocationEvent.ChangeCurrentScreen(
+                                    SearchLocationContract.SearchLocationScreen.LISTVIEW
                                 )
                             )
 
@@ -273,8 +250,8 @@ fun SearchLocationRoute(
                         backButtonClicked = {
                             viewModel.setEvent(SearchLocationContract.SearchLocationEvent.ClearText)
                             viewModel.setEvent(
-                                SearchLocationContract.SearchLocationEvent.ChangeSearchSelectMapViewVisible(
-                                    searchSelectMapView = false
+                                SearchLocationContract.SearchLocationEvent.ChangeCurrentScreen(
+                                    SearchLocationContract.SearchLocationScreen.LISTVIEW
                                 )
                             )
                         }
@@ -294,7 +271,6 @@ fun SearchLocationRoute(
 @Composable
 fun SearchLocationScreen(
     marginTop: Dp,
-    context: Context = LocalContext.current,
     modifier: Modifier = Modifier,
     viewModel: SearchLocationViewModel = hiltViewModel(),
     backButtonClick: () -> Unit,
@@ -305,9 +281,6 @@ fun SearchLocationScreen(
     onDeleteButtonClicked: (Location) -> Unit = {},
     onDeleteAllButtonClicked: () -> Unit = {},
     selectButtonClicked: (Location) -> Unit = {},
-    navigateToCourseSearch: () -> Unit = {},
-    clearAddress: () -> Unit = {},
-    getCenterLocation: (LatLng) -> Unit = {},
     onMapButtonClicked: () -> Unit = {}
 ) {
     // 포커스를 제어하기 위한 focusManager
@@ -411,19 +384,6 @@ fun SearchLocationScreen(
                     }
                 }
             }
-        }
-
-        if (uiState.searchSelectMapView) {
-//            val currentLocation by remember { mutableStateOf(uiState.selectLocation) }
-            SearchLocationMapView(
-                marginTop = marginTop,
-                context = context,
-                myAddress = uiState.selectLocation,
-                getCenterLocation = getCenterLocation,
-                currentLocation = location,
-                setDepartureButtonClicked = navigateToCourseSearch,
-                backButtonClicked = clearAddress
-            )
         }
     }
 }
