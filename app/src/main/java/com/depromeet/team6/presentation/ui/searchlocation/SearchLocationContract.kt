@@ -20,7 +20,6 @@ class SearchLocationContract {
         val searchQuery: String = "",
         val searchResults: List<Location> = emptyList(),
         val recentSearches: List<Location> = emptyList(),
-        val searchSelectMapView: Boolean = false,
         val selectLocation: Address = Address(
             name = "",
             lat = 0.0,
@@ -58,6 +57,6 @@ class SearchLocationContract {
 
         data class UpdateUserLocationSate(val userLocation: LoadState) : SearchLocationEvent()
 
-        data class ChangeSearchSelectMapViewVisible(val searchSelectMapView: Boolean) : SearchLocationEvent()
+        data class ChangeCurrentScreen(val screen: SearchLocationScreen) : SearchLocationEvent()
     }
 }
