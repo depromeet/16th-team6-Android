@@ -108,12 +108,14 @@ fun SearchLocationMapView(
                     }
                 }
 
-                val tMapPoint = TMapPoint(currentLocation.latitude, currentLocation.longitude)
-                tMapView.setCenterPoint(
-                    tMapPoint.latitude - offsetLat,
-                    tMapPoint.longitude
-                )
-                getCenterLocation(LatLng(tMapPoint.latitude, tMapPoint.longitude))
+                val (lat, lon) = if (myAddress.lat == 0.0 && myAddress.lon == 0.0) {
+                    currentLocation.latitude - offsetLat to currentLocation.longitude
+                } else {
+                    myAddress.lat - offsetLat to myAddress.lon
+                }
+
+                tMapView.setCenterPoint(lat, lon, true)
+                getCenterLocation(LatLng(lat, lon))
 
                 tMapView.zoomLevel = 18
 
