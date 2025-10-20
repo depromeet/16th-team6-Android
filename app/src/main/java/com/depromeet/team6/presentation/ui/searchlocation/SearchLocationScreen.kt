@@ -220,9 +220,13 @@ fun SearchLocationRoute(
                             // 최근 검색 내역 추가
                             viewModel.postSearchHistory(searchHistory)
                         },
-                        onMapButtonClicked = { viewModel.setEvent(SearchLocationContract.SearchLocationEvent.ChangeCurrentScreen(
-                            SearchLocationContract.SearchLocationScreen.MAPVIEW
-                        )) }
+                        onMapButtonClicked = {
+                            viewModel.setEvent(
+                                SearchLocationContract.SearchLocationEvent.ChangeCurrentScreen(
+                                    SearchLocationContract.SearchLocationScreen.MAPVIEW
+                                )
+                            )
+                        }
                     )
                 }
 
