@@ -73,7 +73,7 @@ fun MypageAlarmScreen(
 
             TextListItemRadio(
                 modifier = Modifier
-                    .noRippleClickable{
+                    .noRippleClickable {
                         selectedMode = MypageContract.AlarmType.ALL
                     },
                 text = "소리/진동",
@@ -82,7 +82,7 @@ fun MypageAlarmScreen(
 
             TextListItemRadio(
                 modifier = Modifier
-                    .noRippleClickable{
+                    .noRippleClickable {
                         selectedMode = MypageContract.AlarmType.SOUND
                     },
                 text = "소리",
@@ -91,17 +91,16 @@ fun MypageAlarmScreen(
 
             TextListItemRadio(
                 modifier = Modifier
-                    .noRippleClickable{
+                    .noRippleClickable {
                         selectedMode = MypageContract.AlarmType.VIBRATION
                     },
                 text = "진동",
                 isSelected = selectedMode == MypageContract.AlarmType.VIBRATION
             )
-
         }
 
         if (selectedMode != MypageContract.AlarmType.VIBRATION) {
-            VolumeBottomSheet (
+            VolumeBottomSheet(
                 modifier = Modifier
                     .align(Alignment.BottomCenter),
                 currentVolume = mypageUiState.alarmVolume,
@@ -139,7 +138,7 @@ fun MypageAlarmScreenPreview_1() {
             selectedAlarmType = MypageContract.AlarmType.VIBRATION
         )
     MypageAlarmScreen(
-        mypageUiState = uiState,
+        mypageUiState = uiState
     )
 }
 

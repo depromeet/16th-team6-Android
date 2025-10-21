@@ -44,6 +44,7 @@ class MypageViewModel @Inject constructor(
     init {
         loadAlarmSettings()
     }
+
     // 주소 초기화 여부를 추적하는 플래그
     private var isAddressInitialized = false
 
@@ -408,7 +409,7 @@ class MypageViewModel @Inject constructor(
         }
     }
 
-    private fun saveAlarmVolume(volume : Int) {
+    private fun saveAlarmVolume(volume: Int) {
         viewModelScope.launch {
             userInfoRepositoryImpl.saveAlarmVolume(volume)
             setState {

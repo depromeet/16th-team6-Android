@@ -262,7 +262,7 @@ fun MyPageRoute(
                                 mypageUiState = uiState,
                                 onBackClick = { mypageViewModel.setEvent(MypageContract.MypageEvent.BackPressed) },
                                 onAlarmTypeModified = { mypageViewModel.setEvent(MypageContract.MypageEvent.AlarmTypeModified(it)) },
-                                onAlarmVolumeModified = { mypageViewModel.setEvent(MypageContract.MypageEvent.AlarmVolumeModified(it)) },
+                                onAlarmVolumeModified = { mypageViewModel.setEvent(MypageContract.MypageEvent.AlarmVolumeModified(it)) }
                             )
                         }
                     }
