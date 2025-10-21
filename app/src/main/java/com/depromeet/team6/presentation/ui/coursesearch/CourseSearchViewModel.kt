@@ -328,23 +328,10 @@ class CourseSearchViewModel @Inject constructor(
                         context = context,
                         alarmTimeStamp = alarmTimeStamp
                     )
-                    postAdditionalAlarmSchedule(alarmTimeStamp)
+                    AlarmScheduler.scheduleAdditionalPushAlarm(context, alarmTimeStamp)
                 }
                 .onFailure { exception ->
                     handleApiException(exception)
-                }
-        }
-    }
-
-    fun postAdditionalAlarmSchedule(alarmTime: String) {
-        viewModelScope.launch {
-            getUserInfoUseCase()
-                .onSuccess {
-                    val freq = it.alertFrequencies
-                    AlarmScheduler.scheduleAdditionalPushAlarm(context, alarmTime, freq)
-                }
-                .onFailure {
-                    handleApiException(it)
                 }
         }
     }

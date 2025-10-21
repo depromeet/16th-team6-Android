@@ -82,8 +82,7 @@ class FcmService : FirebaseMessagingService() {
                     CoroutineScope(Dispatchers.IO).launch {
                         authRemoteDataSource.getUserInfo()
                             .onSuccess {
-                                val pushIntervals = it.alertFrequencies
-                                AlarmScheduler.scheduleAdditionalPushAlarm(this@FcmService, timeStamp, pushIntervals)
+                                AlarmScheduler.scheduleAdditionalPushAlarm(this@FcmService, timeStamp)
                             }
                             .onFailure { }
                     }

@@ -70,10 +70,6 @@ class OnboardingViewModel @Inject constructor(
                 )
             }
 
-            is OnboardingContract.OnboardingEvent.UpdateAlertFrequencies -> setState {
-                copy(alertFrequencies = event.alertFrequencies)
-            }
-
             is OnboardingContract.OnboardingEvent.ChangePermissionBottomSheetVisible -> setState {
                 copy(permissionBottomSheetVisible = event.permissionBottomSheetVisible)
             }
@@ -138,7 +134,6 @@ class OnboardingViewModel @Inject constructor(
                     address = uiState.value.myAddress.name,
                     lat = uiState.value.myAddress.lat,
                     lon = uiState.value.myAddress.lon,
-                    alertFrequencies = uiState.value.alertFrequencies,
                     fcmToken = token
                 )
             ).onSuccess { auth ->
@@ -148,11 +143,11 @@ class OnboardingViewModel @Inject constructor(
                 userInfoRepository.setUserHome(auth.userHome)
                 userInfoRepository.setUserId(auth.id)
                 AmplitudeUtils.setUserId(userId = auth.id)
-                AmplitudeUtils.trackEventWithProperty(
-                    eventName = USER_PUSH_FREQUENCIES,
-                    propertyName = USER_PUSH_FREQUENCIES,
-                    propertyValue = uiState.value.alertFrequencies
-                )
+//                AmplitudeUtils.trackEventWithProperty(
+//                    eventName = USER_PUSH_FREQUENCIES,
+//                    propertyName = USER_PUSH_FREQUENCIES,
+//                    propertyValue = uiState.value.alertFrequencies
+//                )
             }.onFailure { exception ->
                 setEvent(OnboardingContract.OnboardingEvent.PostSignUp(loadState = LoadState.Error))
                 handleApiException(exception = exception)

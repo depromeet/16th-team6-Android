@@ -19,9 +19,6 @@ data class RequestSignUpDto(
     @SerialName("lon")
     val lon: Double,
 
-    @SerialName("alertFrequencies")
-    val alertFrequencies: Set<Int>,
-
     @SerialName(FCM_TOKEN)
     val fcmToken: String
 )

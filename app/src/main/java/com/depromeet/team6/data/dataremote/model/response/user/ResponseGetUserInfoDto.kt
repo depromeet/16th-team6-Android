@@ -17,8 +17,6 @@ data class ResponseGetUserInfoDto(
     val lat: Double,
     @SerialName("lon")
     val lon: Double,
-    @SerialName("alertFrequencies")
-    val alertFrequencies: Set<Int>,
     @SerialName("appVersion")
     val appVersion: String
 )

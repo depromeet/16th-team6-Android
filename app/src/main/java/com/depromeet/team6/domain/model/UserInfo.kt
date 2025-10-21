@@ -7,7 +7,6 @@ data class UserInfo(
     val providerId: String,
     val address: String,
     val userHome: LatLng,
-    val alertFrequencies: Set<Int>
 )
 
 data class GetUserInfo(
@@ -15,6 +14,5 @@ data class GetUserInfo(
     val providerId: String,
     val address: String,
     val userHome: LatLng,
-    val alertFrequencies: Set<Int>,
     val appVersion: String
 )

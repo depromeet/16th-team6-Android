@@ -138,7 +138,7 @@ class ItineraryViewModel @Inject constructor(
                         context = context,
                         alarmTimeStamp = alarmTimeStamp
                     )
-                    postAdditionalAlarmSchedule(alarmTimeStamp)
+                    AlarmScheduler.scheduleAdditionalPushAlarm(context, alarmTimeStamp)
                 }
                 .onFailure { exception ->
                     handleApiException(exception)
@@ -182,18 +182,18 @@ class ItineraryViewModel @Inject constructor(
         }
     }
 
-    fun postAdditionalAlarmSchedule(alarmTime: String) {
-        viewModelScope.launch {
-            getUserInfoUseCase()
-                .onSuccess {
-                    val freq = it.alertFrequencies
-                    AlarmScheduler.scheduleAdditionalPushAlarm(context, alarmTime, freq)
-                }
-                .onFailure {
-                    handleApiException(it)
-                }
-        }
-    }
+//    fun postAdditionalAlarmSchedule(alarmTime: String) {
+//        viewModelScope.launch {
+//            getUserInfoUseCase()
+//                .onSuccess {
+//                    val freq = it.alertFrequencies
+//                    AlarmScheduler.scheduleAdditionalPushAlarm(context, alarmTime)
+//                }
+//                .onFailure {
+//                    handleApiException(it)
+//                }
+//        }
+//    }
 
     private fun getRemainingBusArrivalTimes() {
         val newBusArrivalStatus = SparseArray<RealTimeBusArrival>()

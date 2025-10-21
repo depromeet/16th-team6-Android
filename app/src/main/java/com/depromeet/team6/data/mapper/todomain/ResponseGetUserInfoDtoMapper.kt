@@ -10,7 +10,6 @@ fun ResponseGetUserInfoDto.toDomain(): GetUserInfo {
         providerId = this.providerId,
         address = this.address,
         userHome = LatLng(this.lat, this.lon),
-        alertFrequencies = this.alertFrequencies,
         appVersion = this.appVersion
     )
 }

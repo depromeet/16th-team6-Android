@@ -46,11 +46,9 @@ class MypageContract {
             address = "",
             lat = 0.0,
             lon = 0.0,
-            alertFrequencies = emptySet(),
             fcmToken = "",
             appVersion = ""
         ),
-        val alertFrequencies: Set<Int> = setOf(1),
         val mapViewVisible: Boolean = false,
         val selectedAlarmType: AlarmType = AlarmType.SOUND,
         val alarmVolume: Int = 50

@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -21,10 +20,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -35,7 +31,6 @@ import com.depromeet.team6.R
 import com.depromeet.team6.presentation.type.OnboardingSelectLocationButtonType
 import com.depromeet.team6.presentation.type.OnboardingType
 import com.depromeet.team6.presentation.ui.onboarding.component.AlarmTime
-import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingAlarmSelector
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingButton
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingMapView
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingPermissionBottomSheet
@@ -59,7 +54,6 @@ import com.depromeet.team6.presentation.util.OnboardingAmplitude.ONBOARDING_NOTI
 import com.depromeet.team6.presentation.util.OnboardingAmplitude.SYSTEM_SETTING
 import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
 import com.depromeet.team6.presentation.util.dialog.LocalDialogController
-import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.presentation.util.permission.PermissionUtil
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
@@ -315,21 +309,21 @@ fun OnboardingRoute(
                         }
                     },
                     onBackPressed = { viewModel.setEvent(OnboardingContract.OnboardingEvent.BackPressed) },
-                    onAlarmTimeSelected = { alarmTime ->
-                        val timeValue = alarmTime.minutes
-                        if (timeValue != 1) {
-                            val newSelection = if (timeValue in uiState.alertFrequencies) {
-                                uiState.alertFrequencies - timeValue
-                            } else {
-                                uiState.alertFrequencies + timeValue
-                            }
-                            viewModel.setEvent(
-                                OnboardingContract.OnboardingEvent.UpdateAlertFrequencies(
-                                    newSelection
-                                )
-                            )
-                        }
-                    },
+//                    onAlarmTimeSelected = { alarmTime ->
+//                        val timeValue = alarmTime.minutes
+//                        if (timeValue != 1) {
+//                            val newSelection = if (timeValue in uiState.alertFrequencies) {
+//                                uiState.alertFrequencies - timeValue
+//                            } else {
+//                                uiState.alertFrequencies + timeValue
+//                            }
+//                            viewModel.setEvent(
+//                                OnboardingContract.OnboardingEvent.UpdateAlertFrequencies(
+//                                    newSelection
+//                                )
+//                            )
+//                        }
+//                    },
                     bottomSheetButtonClicked = {
                         viewModel.setEvent(
                             OnboardingContract.OnboardingEvent.ChangePermissionBottomSheetVisible(
@@ -463,33 +457,35 @@ fun OnboardingScreen(
                         onClick = onSearchBoxClicked
                     )
                 }
-            } else {
-                Icon(
-                    modifier = Modifier
-                        .padding(vertical = 18.dp, horizontal = 16.dp)
-                        .noRippleClickable { onBackPressed() },
-                    imageVector = ImageVector.vectorResource(R.drawable.ic_all_arrow_left_grey),
-                    contentDescription = null,
-                    tint = Color.Unspecified
-                )
-                Spacer(modifier = Modifier.height(12.dp))
-                OnboardingTitle(onboardingType = uiState.onboardingType)
-                Spacer(modifier = Modifier.height(68.dp))
-                OnboardingAlarmSelector(
-                    selectedItems = uiState.alertFrequencies.mapNotNull { timeValue ->
-                        AlarmTime.entries.find { it.minutes == timeValue }
-                    }.toSet(),
-                    onItemClick = onAlarmTimeSelected
-                )
             }
+//            } else {
+//                Icon(
+//                    modifier = Modifier
+//                        .padding(vertical = 18.dp, horizontal = 16.dp)
+//                        .noRippleClickable { onBackPressed() },
+//                    imageVector = ImageVector.vectorResource(R.drawable.ic_all_arrow_left_grey),
+//                    contentDescription = null,
+//                    tint = Color.Unspecified
+//                )
+//                Spacer(modifier = Modifier.height(12.dp))
+//                OnboardingTitle(onboardingType = uiState.onboardingType)
+//                Spacer(modifier = Modifier.height(68.dp))
+//                OnboardingAlarmSelector(
+//                    selectedItems = uiState.alertFrequencies.mapNotNull { timeValue ->
+//                        AlarmTime.entries.find { it.minutes == timeValue }
+//                    }.toSet(),
+//                    onItemClick = onAlarmTimeSelected
+//                )
+//            }
             Spacer(modifier = Modifier.weight(1f))
             OnboardingButton(
-                isEnabled =
-                if (uiState.onboardingType == OnboardingType.ALARM) {
-                    uiState.alertFrequencies.isNotEmpty()
-                } else {
-                    uiState.myAddress.address.isNotEmpty()
-                }
+//                isEnabled =
+//                if (uiState.onboardingType == OnboardingType.ALARM) {
+//                    uiState.alertFrequencies.isNotEmpty()
+//                } else {
+//                    uiState.myAddress.address.isNotEmpty()
+//                }
+                isEnabled = uiState.myAddress.address.isNotEmpty()
             ) { onNextButtonClicked() }
             Spacer(modifier = Modifier.height(20.dp))
         }

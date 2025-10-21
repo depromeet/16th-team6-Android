@@ -185,16 +185,9 @@ class MypageViewModel @Inject constructor(
                             address = userInfo.address,
                             lat = userInfo.userHome.latitude,
                             lon = userInfo.userHome.longitude,
-                            alertFrequencies = userInfo.alertFrequencies,
                             fcmToken = null,
                             appVersion = userInfo.appVersion
                         )
-                    )
-                }
-
-                setState {
-                    copy(
-                        alertFrequencies = userInfo.alertFrequencies
                     )
                 }
                 isAddressInitialized = true
