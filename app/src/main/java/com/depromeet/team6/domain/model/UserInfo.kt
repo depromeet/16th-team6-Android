@@ -6,7 +6,7 @@ data class UserInfo(
     val id: Int,
     val providerId: String,
     val address: String,
-    val userHome: LatLng,
+    val userHome: LatLng
 )
 
 data class GetUserInfo(

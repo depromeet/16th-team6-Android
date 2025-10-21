@@ -95,7 +95,7 @@ object AlarmScheduler {
         )
         try {
             alarmManager.cancel(lockAlarmPendingIntent)
-        } catch (e : Exception) {
+        } catch (e: Exception) {
             Firebase.crashlytics.recordException(RuntimeException("deleteAlarm 오류 : 알람취소를 눌렀지만 실제로 unschedule 로직이 실행되지 않음"))
         }
 
@@ -109,7 +109,7 @@ object AlarmScheduler {
         )
         try {
             alarmManager.cancel(pendingIntent)
-        } catch (e : Exception) {
+        } catch (e: Exception) {
             Firebase.crashlytics.recordException(RuntimeException("deleteAlarm 오류 : 알람취소를 눌렀지만 실제로 unschedule 로직이 실행되지 않음"))
         }
 

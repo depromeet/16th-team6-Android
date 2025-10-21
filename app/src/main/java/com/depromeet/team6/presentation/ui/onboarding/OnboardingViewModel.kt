@@ -10,7 +10,6 @@ import com.depromeet.team6.domain.usecase.GetLocationsUseCase
 import com.depromeet.team6.domain.usecase.PostSignUpUseCase
 import com.depromeet.team6.presentation.mapper.toPresentationList
 import com.depromeet.team6.presentation.type.OnboardingType
-import com.depromeet.team6.presentation.util.OnboardingAmplitude.USER_PUSH_FREQUENCIES
 import com.depromeet.team6.presentation.util.Provider.KAKAO
 import com.depromeet.team6.presentation.util.Token.BEARER
 import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
