@@ -69,7 +69,7 @@ class MypageContract {
         data object PolicyClicked : MypageEvent()
         data object PolicyClosed : MypageEvent()
         data object LogoutConfirmed : MypageEvent()
-        data object WithDrawConfirmed : MypageEvent()
+        data class WithDrawConfirmed(val reason: String) : MypageEvent()
         data object DismissDialog : MypageEvent()
         data object AccountClicked : MypageEvent()
         data object ChangeHomeClicked : MypageEvent()

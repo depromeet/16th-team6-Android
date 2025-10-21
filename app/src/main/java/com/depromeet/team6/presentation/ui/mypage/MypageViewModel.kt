@@ -63,7 +63,7 @@ class MypageViewModel @Inject constructor(
             is MypageContract.MypageEvent.PolicyClicked -> setState { copy(isWebViewOpened = true) }
             is MypageContract.MypageEvent.PolicyClosed -> setState { copy(isWebViewOpened = false) }
             is MypageContract.MypageEvent.LogoutConfirmed -> logout()
-            is MypageContract.MypageEvent.WithDrawConfirmed -> withDraw()
+            is MypageContract.MypageEvent.WithDrawConfirmed -> withDraw(event.reason)
             is MypageContract.MypageEvent.DismissDialog -> setState {
                 copy(
                     logoutDialogVisible = false,
@@ -412,9 +412,9 @@ class MypageViewModel @Inject constructor(
         }
     }
 
-    private fun withDraw() {
+    private fun withDraw(reason : String) {
         viewModelScope.launch {
-            deleteWithDrawUseCase().onSuccess {
+            deleteWithDrawUseCase(reason).onSuccess {
                 userInfoRepositoryImpl.clear()
                 setSideEffect(MypageContract.MypageSideEffect.ClearPermissionData)
                 homeRepository.clearAlarmData()

@@ -29,7 +29,7 @@ fun MypageAccountScreen(
     onBackClick: () -> Unit = {},
     moveToAccount: () -> Unit = {},
     logoutConfirmed: () -> Unit = {},
-    withDrawConfirmed: () -> Unit = {},
+    withDrawConfirmed: (String) -> Unit = {},
     dismissDialog: () -> Unit = {}
 ) {
     val colors = LocalTeam6Colors.current

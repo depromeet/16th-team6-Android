@@ -212,7 +212,7 @@ fun MyPageRoute(
                                 onBackClick = { mypageViewModel.setEvent(MypageContract.MypageEvent.BackPressed) },
                                 moveToAccount = { mypageViewModel.setEvent(MypageContract.MypageEvent.AccountClicked) },
                                 logoutConfirmed = { mypageViewModel.setEvent(MypageContract.MypageEvent.LogoutConfirmed) },
-                                withDrawConfirmed = { mypageViewModel.setEvent(MypageContract.MypageEvent.WithDrawConfirmed) },
+                                withDrawConfirmed = { mypageViewModel.setEvent(MypageContract.MypageEvent.WithDrawConfirmed(it)) },
                                 dismissDialog = { mypageViewModel.setEvent(MypageContract.MypageEvent.DismissDialog) }
                             )
                         }

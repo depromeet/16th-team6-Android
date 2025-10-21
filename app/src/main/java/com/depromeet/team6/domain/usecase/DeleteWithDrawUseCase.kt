@@ -18,12 +18,14 @@ import javax.inject.Singleton
 @Singleton
 class DeleteWithDrawUseCase @Inject constructor(
     private val authRepository: AuthRepository
-) : NetworkRequestUseCase<Unit, Unit>() {
+) : NetworkRequestUseCase<DeleteWithDrawUseCase.Params, Unit>() {
 
-    suspend operator fun invoke(): Result<Unit> = invoke(Unit)
+    data class Params(val reason: String)
 
-    override suspend fun apiCall(params: Unit): Result<Unit> =
-        authRepository.deleteWithDraw()
+    suspend operator fun invoke(reason : String): Result<Unit> = invoke(Params(reason))
+
+    override suspend fun apiCall(params: Params): Result<Unit> =
+        authRepository.deleteWithDraw(params.reason)
 
     override fun apiExceptionMapper(errorCode: String): ErrorControlFailureException = when (errorCode) {
         REQ_001, REQ_002 ->

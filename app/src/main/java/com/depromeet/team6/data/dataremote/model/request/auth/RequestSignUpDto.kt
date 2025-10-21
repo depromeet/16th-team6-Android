@@ -1,4 +1,4 @@
-package com.depromeet.team6.data.dataremote.model.request.signup
+package com.depromeet.team6.data.dataremote.model.request.auth
 
 import com.depromeet.team6.data.dataremote.util.ApiConstraints.FCM_TOKEN
 import com.depromeet.team6.data.dataremote.util.ApiConstraints.PROVIDER
