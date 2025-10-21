@@ -55,7 +55,7 @@ class MypageViewModel @Inject constructor(
             is MypageContract.MypageEvent.BackPressed -> navigateBack()
             is MypageContract.MypageEvent.LogoutClicked -> setState {
                 copy(
-                    logoutDialogVisible = true,
+                    logoutDialogVisible = true
                 )
             }
 
@@ -66,7 +66,7 @@ class MypageViewModel @Inject constructor(
             is MypageContract.MypageEvent.WithDrawConfirmed -> withDraw(event.reason)
             is MypageContract.MypageEvent.DismissDialog -> setState {
                 copy(
-                    logoutDialogVisible = false,
+                    logoutDialogVisible = false
                 )
             }
 
@@ -249,7 +249,6 @@ class MypageViewModel @Inject constructor(
         }
     }
 
-
     fun navigateToPlayStore(context: Context) {
         try {
             val intent = Intent(Intent.ACTION_VIEW).apply {
@@ -412,7 +411,7 @@ class MypageViewModel @Inject constructor(
         }
     }
 
-    private fun withDraw(reason : String) {
+    private fun withDraw(reason: String) {
         viewModelScope.launch {
             deleteWithDrawUseCase(reason).onSuccess {
                 userInfoRepositoryImpl.clear()

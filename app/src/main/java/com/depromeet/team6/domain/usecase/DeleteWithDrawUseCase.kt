@@ -22,7 +22,7 @@ class DeleteWithDrawUseCase @Inject constructor(
 
     data class Params(val reason: String)
 
-    suspend operator fun invoke(reason : String): Result<Unit> = invoke(Params(reason))
+    suspend operator fun invoke(reason: String): Result<Unit> = invoke(Params(reason))
 
     override suspend fun apiCall(params: Params): Result<Unit> =
         authRepository.deleteWithDraw(params.reason)

@@ -30,9 +30,9 @@ import com.depromeet.team6.ui.theme.defaultTeam6Colors
 
 @Composable
 fun MyPageWithdrawSelectScreen(
-    modifier : Modifier = Modifier,
-    moveToAccount : () -> Unit = {},
-    withDrawConfirmed : (String) -> Unit = {}
+    modifier: Modifier = Modifier,
+    moveToAccount: () -> Unit = {},
+    withDrawConfirmed: (String) -> Unit = {}
 ) {
     BackHandler {
         moveToAccount()
@@ -100,8 +100,8 @@ fun MyPageWithdrawSelectScreen(
                     confirmButtonText = context.getString(R.string.mypage_withdraw_dialog_confirm),
                     closeButtonText = context.getString(R.string.mypage_dialog_cancle),
                     onConfirm = {
-                        withDrawConfirmed( context.getString(reasons[selectedIdx]) )
-                    },
+                        withDrawConfirmed(context.getString(reasons[selectedIdx]))
+                    }
                 )
             }
         )
