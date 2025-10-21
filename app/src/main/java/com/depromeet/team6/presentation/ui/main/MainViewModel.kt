@@ -208,7 +208,6 @@ class MainViewModel @Inject constructor(
         }
     }
 
-
     suspend fun checkAutoLogin(): Boolean {
         return withContext(Dispatchers.IO) {
             userInfoRepository.getRefreshToken().isNotEmpty()

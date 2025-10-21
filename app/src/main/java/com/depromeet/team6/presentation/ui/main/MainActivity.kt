@@ -137,7 +137,6 @@ class MainActivity : ComponentActivity() {
             }
             val lifecycleOwner = LocalLifecycleOwner.current
 
-
             LaunchedEffect(viewModel.sideEffect, lifecycleOwner) {
                 viewModel.sideEffect.flowWithLifecycle(lifecycle = lifecycleOwner.lifecycle)
                     .collect { onboardingSideEffect ->

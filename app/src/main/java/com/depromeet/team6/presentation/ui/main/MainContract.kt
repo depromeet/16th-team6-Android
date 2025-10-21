@@ -14,7 +14,6 @@ class MainContract {
     sealed interface MainSideEffect : UiSideEffect {
         data object ShowUpdateRequiredDialog : MainSideEffect
         data object ShowUpdateOptionalDialog : MainSideEffect
-
     }
 
     sealed class MainEvent : UiEvent
