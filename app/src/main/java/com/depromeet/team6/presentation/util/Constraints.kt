@@ -20,7 +20,14 @@ object DefaultLatLng {
 object WebViewUrl {
     const val PRIVACY_POLICY_URL =
         "https://mammoth-cheese-88e.notion.site/1008a99e3bbe80e88468c11f09c5a2dc?pvs=4"
-    const val FEEDBACK_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSdmiwKHcZWEgv6O2B_34NxUsjSbsXHkct9Y19txUJvrwbOOxw/viewform"
+    const val FEEDBACK_FORM_URL =
+        "https://docs.google.com/forms/d/e/1FAIpQLSdmiwKHcZWEgv6O2B_34NxUsjSbsXHkct9Y19txUJvrwbOOxw/viewform"
+}
+
+object AppConstants {
+    const val PLAY_STORE_PACKAGE_NAME = "com.depromeet.team6"
+    const val PLAY_STORE_URL =
+        "https://play.google.com/store/apps/details?id=$PLAY_STORE_PACKAGE_NAME&hl=ko"
 }
 
 object BusOperationInfo {
@@ -54,7 +61,8 @@ object OnboardingAmplitude {
     const val ALARM_SETTING_ALARM_PERMISSION_CLICKED = "alarm_setting_alarm_permission_clicked"
     const val HOME_REGISTER = "집 등록(온보딩)"
     const val ALARM_REGISTER = "알람 등록(온보딩)"
-    const val ONBOARDING_NOTIFICATION_PERMISSION_SETTINGS_CLICKED = "onboarding_notification_permission_settings_clicked"
+    const val ONBOARDING_NOTIFICATION_PERMISSION_SETTINGS_CLICKED =
+        "onboarding_notification_permission_settings_clicked"
     const val ONBOARDING_LOCATION_PERMISSION_SETTINGS_CLICKED = "onboarding_location_permission_settings_clicked"
     const val SYSTEM_SETTING = "설정하기"
     const val DENIED = "허용안함"

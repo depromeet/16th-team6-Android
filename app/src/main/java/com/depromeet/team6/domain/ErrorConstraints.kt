@@ -62,4 +62,7 @@ object ToastMessage {
     const val API_ERROR_BUS_ARRIVAL_MISSING = "버스 도착정보를 알 수 없습니다."
 
     const val API_ERROR_ALARM_REFRESH_FAILED = "현재 출발시간을 갱신할 수 없습니다."
+
+    const val API_ERROR_INVALID_PLATFORM = "일치하는 플랫폼이 없습니다."
+
 }
