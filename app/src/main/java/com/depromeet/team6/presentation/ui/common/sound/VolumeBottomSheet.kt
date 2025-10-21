@@ -86,7 +86,7 @@ fun VolumeBottomSheet(
                 modifier = Modifier
                     .fillMaxWidth(),
                 buttonType = ButtonType.PRIMARY,
-                buttonSize = ButtonSize.LARGE,
+                buttonSize = ButtonSize.MEDIUM,
                 buttonText = stringResource(R.string.volume_bottom_sheet_setting_btn_tv),
                 onClick = {
                     onButtonClicked(current)

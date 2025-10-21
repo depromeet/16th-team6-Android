@@ -120,7 +120,7 @@ fun MypageAlarmScreen(
                     .padding(bottom = 20.dp, start = 16.dp, end = 16.dp)
                     .align(Alignment.BottomCenter),
                 buttonType = ButtonType.PRIMARY,
-                buttonSize = ButtonSize.LARGE,
+                buttonSize = ButtonSize.MEDIUM,
                 buttonText = stringResource(R.string.volume_bottom_sheet_setting_btn_tv),
                 onClick = {
                     onAlarmTypeModified(selectedMode)

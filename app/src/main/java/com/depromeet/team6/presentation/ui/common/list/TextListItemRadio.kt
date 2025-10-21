@@ -1,6 +1,5 @@
 package com.depromeet.team6.presentation.ui.common.list
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -36,9 +35,6 @@ fun TextListItemRadio(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(
-                    LocalTeam6Colors.current.gray950
-                )
                 .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {

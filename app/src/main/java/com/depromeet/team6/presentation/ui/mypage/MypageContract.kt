@@ -25,7 +25,7 @@ class MypageContract {
         val currentScreen: MypageScreen = MypageScreen.MAIN,
         val isWebViewOpened: Boolean = false,
         val logoutDialogVisible: Boolean = false,
-        val withDrawDialogVisible: Boolean = false,
+        val withDrawScreenVisible: Boolean = false,
         val searchText: String = "",
         val searchLocations: List<Location> = emptyList(),
         val searchPopupVisible: Boolean = false,

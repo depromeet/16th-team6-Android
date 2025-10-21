@@ -56,11 +56,10 @@ class MypageViewModel @Inject constructor(
             is MypageContract.MypageEvent.LogoutClicked -> setState {
                 copy(
                     logoutDialogVisible = true,
-                    withDrawDialogVisible = false
                 )
             }
 
-            is MypageContract.MypageEvent.WithDrawClicked -> setState { copy(withDrawDialogVisible = true) }
+            is MypageContract.MypageEvent.WithDrawClicked -> setState { copy(withDrawScreenVisible = true) }
             is MypageContract.MypageEvent.PolicyClicked -> setState { copy(isWebViewOpened = true) }
             is MypageContract.MypageEvent.PolicyClosed -> setState { copy(isWebViewOpened = false) }
             is MypageContract.MypageEvent.LogoutConfirmed -> logout()
@@ -68,7 +67,6 @@ class MypageViewModel @Inject constructor(
             is MypageContract.MypageEvent.DismissDialog -> setState {
                 copy(
                     logoutDialogVisible = false,
-                    withDrawDialogVisible = false
                 )
             }
 
@@ -126,27 +124,6 @@ class MypageViewModel @Inject constructor(
             }
 
             MypageContract.MypageEvent.AlarmSettingClicked -> navigateToAlarmSetting()
-//            is MypageContract.MypageEvent.AlarmTypeSelected -> {
-//                setState { copy(selectedAlarmType = event.type) }
-//                saveAlarmSettings(event.type)
-//            }
-
-//            MypageContract.MypageEvent.SoundSettingClicked -> {
-//                setState {
-//                    copy(alarmScreenState = MypageContract.AlarmScreenState.SOUND_SETTING)
-//                }
-//                loadAlarmSettings()
-//            }
-//
-//            MypageContract.MypageEvent.TimeSettingClicked -> {
-//                setState {
-//                    copy(alarmScreenState = MypageContract.AlarmScreenState.TIME_SETTING)
-//                }
-//            }
-
-//            is MypageContract.MypageEvent.UpdateAlertFrequencies -> setState {
-//                copy(alertFrequencies = event.alertFrequencies)
-//            }
 
             is MypageContract.MypageEvent.AlarmTypeModified -> {
                 saveAlarmType(event.type)
@@ -272,28 +249,6 @@ class MypageViewModel @Inject constructor(
         }
     }
 
-//    fun modifyAlarmFrequencies(context: Context) {
-//        viewModelScope.launch {
-//            val modifyUserInfoDto = RequestModifyUserInfoDto(
-//                alertFrequencies = currentState.alertFrequencies
-//            )
-//
-//            modifyUserInfoUseCase(modifyUserInfoDto = modifyUserInfoDto)
-//                .onSuccess { userInfo ->
-//                    setState {
-//                        copy(
-//                            userInfo = currentState.userInfo.copy(
-//                                alertFrequencies = userInfo.alertFrequencies
-//                            )
-//                        )
-//                    }
-//                    atChaToastMessage(context, R.string.mypage_change_alarm_time_toast_text, Toast.LENGTH_SHORT)
-//                }
-//                .onFailure { exception ->
-//                    handleApiException(exception)
-//                }
-//        }
-//    }
 
     fun navigateToPlayStore(context: Context) {
         try {
@@ -471,7 +426,12 @@ class MypageViewModel @Inject constructor(
     }
 
     private fun navigateToAccount() {
-        setState { copy(currentScreen = MypageContract.MypageScreen.ACCOUNT) }
+        setState {
+            copy(
+                currentScreen = MypageContract.MypageScreen.ACCOUNT,
+                withDrawScreenVisible = false
+            )
+        }
     }
 
     private fun navigateToChangeHome() {
