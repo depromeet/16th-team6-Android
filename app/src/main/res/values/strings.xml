@@ -234,7 +234,7 @@
     <!-- VolumeBottomSheet -->
     <string name="volume_bottom_sheet_title_tv">소리 크기</string>
     <string name="volume_bottom_sheet_setting_tv">설정한 크기로 알람이 울려요</string>
-    <string name="volume_bottom_sheet_setting_btn_tv">설정 완료</string>
+    <string name="volume_bottom_sheet_setting_btn_tv">설정 변경</string>
     <string name="all_dialog_close_button_text">닫기</string>
     <string name="all_dialog_setting_button_text">설정하기</string>
 </resources>

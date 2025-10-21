@@ -43,12 +43,12 @@ fun AtchaCommonButton(
                     Modifier
                 }
             )
+            .noRippleClickable(onClick)
             .roundedBackgroundWithPadding(
                 backgroundColor = buttonType.backGroundColor.copy(alpha = buttonType.backgroundAlpha),
                 cornerRadius = buttonSize.roundPadding,
                 padding = PaddingValues(vertical = buttonSize.verticalPadding)
-            )
-            .noRippleClickable(onClick),
+            ),
         contentAlignment = Alignment.Center
     ) {
         Text(

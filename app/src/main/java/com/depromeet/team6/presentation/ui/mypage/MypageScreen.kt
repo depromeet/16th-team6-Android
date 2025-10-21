@@ -261,29 +261,8 @@ fun MyPageRoute(
                                 modifier = modifier,
                                 mypageUiState = uiState,
                                 onBackClick = { mypageViewModel.setEvent(MypageContract.MypageEvent.BackPressed) },
-                                onAlarmTypeSelected = { type ->
-                                    mypageViewModel.setEvent(MypageContract.MypageEvent.AlarmTypeSelected(type))
-                                },
-                                onSoundSettingClick = { mypageViewModel.setEvent(MypageContract.MypageEvent.SoundSettingClicked) },
-                                onAlarmTimeSettingClick = { mypageViewModel.setEvent(MypageContract.MypageEvent.TimeSettingClicked) },
-                                onAlarmTimeSelected = { alarmTime ->
-                                    val timeValue = alarmTime.minutes
-                                    if (timeValue != 1) {
-                                        val newSelection = if (timeValue in uiState.alertFrequencies) {
-                                            uiState.alertFrequencies - timeValue
-                                        } else {
-                                            uiState.alertFrequencies + timeValue
-                                        }
-                                        mypageViewModel.setEvent(
-                                            MypageContract.MypageEvent.UpdateAlertFrequencies(
-                                                newSelection
-                                            )
-                                        )
-                                    }
-                                },
-                                onAlarmTimeSubmitSelected = {
-                                    mypageViewModel.modifyAlarmFrequencies(context)
-                                }
+                                onAlarmTypeModified = { mypageViewModel.setEvent(MypageContract.MypageEvent.AlarmTypeModified(it)) },
+                                onAlarmVolumeModified = { mypageViewModel.setEvent(MypageContract.MypageEvent.AlarmVolumeModified(it)) },
                             )
                         }
                     }

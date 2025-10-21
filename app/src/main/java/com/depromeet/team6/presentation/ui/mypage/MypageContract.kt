@@ -16,12 +16,8 @@ class MypageContract {
         MAIN, ACCOUNT, CHANGE_HOME, ALARM
     }
 
-    enum class AlarmScreenState {
-        MAIN, SOUND_SETTING, TIME_SETTING
-    }
-
     enum class AlarmType {
-        VIBRATION, SOUND
+        VIBRATION, SOUND, ALL
     }
 
     data class MypageUiState(
@@ -56,8 +52,8 @@ class MypageContract {
         ),
         val alertFrequencies: Set<Int> = setOf(1),
         val mapViewVisible: Boolean = false,
-        val alarmScreenState: AlarmScreenState = AlarmScreenState.MAIN,
-        val selectedAlarmType: AlarmType = AlarmType.SOUND
+        val selectedAlarmType: AlarmType = AlarmType.SOUND,
+        val alarmVolume: Int = 50
     ) : UiState
 
     sealed interface MypageSideEffect : UiSideEffect {
@@ -88,9 +84,7 @@ class MypageContract {
         data class UpdateSearchText(val text: String) : MypageEvent()
         data object SearchPopUpBackPressed : MypageEvent()
         data object LocationSelectButtonClicked : MypageEvent()
-        data object SoundSettingClicked : MypageEvent()
-        data object TimeSettingClicked : MypageEvent()
-        data class AlarmTypeSelected(val type: AlarmType) : MypageEvent()
-        data class UpdateAlertFrequencies(val alertFrequencies: Set<Int>) : MypageEvent()
+        data class AlarmTypeModified(val type: AlarmType) : MypageEvent()
+        data class AlarmVolumeModified(val volume: Int) : MypageEvent()
     }
 }

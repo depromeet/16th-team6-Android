@@ -28,6 +28,8 @@ interface UserInfoRepository {
     fun saveIsAlarmSound(isSound: Boolean)
 
     fun getIsAlarmSound(): Boolean
+    fun saveIsAlarmVibrate(isVibrate : Boolean)
+    fun getIsAlarmVibrate(): Boolean
 
     fun saveAlarmVolume(volume: Int)
 
