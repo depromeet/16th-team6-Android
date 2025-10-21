@@ -6,6 +6,7 @@ import android.net.Network
 import android.net.NetworkCapabilities
 import androidx.lifecycle.viewModelScope
 import com.depromeet.team6.domain.repository.UserInfoRepository
+import com.depromeet.team6.domain.usecase.GetAppVersionUseCase
 import com.depromeet.team6.presentation.util.base.BaseViewModel
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.depromeet.team6.presentation.util.view.NetworkState
@@ -30,6 +31,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val userInfoRepository: UserInfoRepository,
+    private val getAppVersionUseCase: GetAppVersionUseCase,
     @ApplicationContext private val context: Context
 ) : BaseViewModel<MainContract.MainState, MainContract.MainSideEffect, MainContract.MainEvent>() {
 
@@ -52,6 +54,7 @@ class MainViewModel @Inject constructor(
     init {
         loadInitialData()
         fetchFcmToken()
+        checkAppVersion()
     }
 
     override fun createInitialState(): MainContract.MainState = MainContract.MainState()
@@ -139,6 +142,69 @@ class MainViewModel @Inject constructor(
             } else {
                 Timber.e("Fetching FCM token failed")
             }
+        }
+    }
+
+    private fun checkAppVersion() {
+        val installedVersion = getCurrentVersionName()?.cleanVersion() ?: "0.0.0"
+        viewModelScope.launch {
+            getAppVersionUseCase().onSuccess { appVersion ->
+                val latestVersion = appVersion.removePrefix("Success(")
+                    .removePrefix("v")
+                    .removeSuffix(")")
+                    .cleanVersion()
+
+                Timber.d("latestVersion: $latestVersion, installedVersion: $installedVersion")
+
+                when (compareVersions(installedVersion, latestVersion)) {
+                    VersionResult.UPDATE_REQUIRED -> {
+                        setSideEffect(MainContract.MainSideEffect.ShowUpdateRequiredDialog)
+                    }
+
+                    VersionResult.UPDATE_OPTIONAL -> {
+                        setSideEffect(MainContract.MainSideEffect.ShowUpdateOptionalDialog)
+                    }
+
+                    VersionResult.UP_TO_DATE -> {
+                        Timber.d("최신 버전입니다")
+                    }
+                }
+            }.onFailure {
+                Timber.e(it, "앱 버전 확인 실패")
+            }
+        }
+    }
+
+    private fun String.cleanVersion(): String =
+        this.replace("[^0-9.]".toRegex(), "")
+
+    private fun compareVersions(installed: String, latest: String): VersionResult {
+        val installedParts = installed.split(".").map { it.toIntOrNull() ?: 0 }
+        val latestParts = latest.split(".").map { it.toIntOrNull() ?: 0 }
+
+        val (a1, b1, c1) = installedParts + List(3 - installedParts.size) { 0 }
+        val (a2, b2, c2) = latestParts + List(3 - latestParts.size) { 0 }
+
+        return when {
+            a1 < a2 || b1 < b2 -> VersionResult.UPDATE_REQUIRED
+            c1 < c2 -> VersionResult.UPDATE_OPTIONAL
+            else -> VersionResult.UP_TO_DATE
+        }
+    }
+
+    private enum class VersionResult {
+        UPDATE_REQUIRED,
+        UPDATE_OPTIONAL,
+        UP_TO_DATE
+    }
+
+    private fun getCurrentVersionName(): String? {
+        return try {
+            val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+            packageInfo.versionName
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to get app version name")
+            "0.0.0"
         }
     }
 

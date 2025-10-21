@@ -9,6 +9,7 @@ import com.depromeet.team6.data.dataremote.service.LocationsService
 import com.depromeet.team6.data.dataremote.service.TaxiCostService
 import com.depromeet.team6.data.dataremote.service.TimeLeftService
 import com.depromeet.team6.data.dataremote.service.TransitsService
+import com.depromeet.team6.data.dataremote.service.VersionService
 import com.depromeet.team6.di.qualifier.Team6
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -68,4 +69,9 @@ object ServiceModule {
     @Singleton
     fun providesCourseService(@Team6 retrofit: Retrofit): TransitsService =
         retrofit.create(TransitsService::class.java)
+
+    @Provides
+    @Singleton
+    fun providesVersionService(@Team6 retrofit: Retrofit): VersionService =
+        retrofit.create(VersionService::class.java)
 }
