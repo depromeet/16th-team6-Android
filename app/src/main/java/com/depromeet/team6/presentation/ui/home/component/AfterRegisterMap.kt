@@ -3,16 +3,12 @@ package com.depromeet.team6.presentation.ui.home.component
 import TransportVectorIconWithTextBitmap
 import android.graphics.PointF
 import android.location.Location
-import android.os.Looper
-import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,15 +33,11 @@ import com.depromeet.team6.presentation.ui.common.TransportVectorIconBitmap
 import com.depromeet.team6.presentation.ui.common.view.AtChaLoadingView
 import com.depromeet.team6.presentation.ui.itinerary.LegInfoDummyProvider
 import com.depromeet.team6.presentation.ui.itinerary.component.getWayPointList
-import com.depromeet.team6.presentation.util.permission.PermissionUtil
 import com.depromeet.team6.presentation.util.toast.atChaToastMessage
 import com.depromeet.team6.presentation.util.view.TransportTypeUiMapper
 import com.depromeet.team6.presentation.util.view.toPx
 import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
-import com.google.android.gms.location.LocationServices
-import com.google.android.gms.location.Priority
 import com.google.android.gms.maps.model.LatLng
 import com.skt.tmap.TMapPoint
 import com.skt.tmap.TMapView
@@ -53,8 +45,6 @@ import com.skt.tmap.TMapView.OnClickListenerCallback
 import com.skt.tmap.overlay.TMapMarkerItem
 import com.skt.tmap.overlay.TMapTrafficLine
 import com.skt.tmap.poi.TMapPOIItem
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import timber.log.Timber
 import kotlin.math.abs
 
@@ -67,7 +57,6 @@ fun AfterRegisterMap(
     isMapFocused: Boolean,
     modifier: Modifier = Modifier,
     mapModified: () -> Unit,
-    updateCurrentLocation: (LatLng) -> Unit,
     getCenterLocation: (LatLng) -> Unit,
     onTransportMarkerClick: (FocusedMarkerParameter) -> Unit = {}
 ) {
@@ -96,152 +85,9 @@ fun AfterRegisterMap(
 
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
 
-    LaunchedEffect(Unit) {
-        tMapView.setSKTMapApiKey(BuildConfig.TMAP_API_KEY)
-        tMapView.setOnMapReadyListener {
-            tMapView.mapType = TMapView.MapType.NIGHT
-            isMapReady = true
-
-            // 화면 스크롤 발생시 mapFocused 여부 변경
-            tMapView.setOnEnableScrollWithZoomLevelListener { _, _ ->
-                mapModified()
-            }
-        }
-    }
-
-    // 목적지, 도착지 변경되면 지도 갱신
-    LaunchedEffect(departLocation, destinationLocation, isMapReady) {
-        if (isMapReady) {
-            val departTMapPoint = TMapPoint(departLocation.latitude, departLocation.longitude)
-            val destinationTMapPoint = TMapPoint(destinationLocation.latitude, destinationLocation.longitude)
-
-            // 경로 그리기
-            for ((index, leg) in legs.withIndex()) {
-                // 라인 그리기
-                val lineWayPoints =
-                    getWayPointList(leg.passShape)
-                // TMapTrafficLine 객체 생성
-                val tmapTrafficLine = TMapTrafficLine("line_${leg.transportType}_${leg.sectionTime}")
-                // 교통 정보 표출 여부 설정
-                tmapTrafficLine.isShowTraffic = false
-                // 방향 인디케이터(화살표) 표시 설정
-                tmapTrafficLine.isShowIndicator = true
-                // 경로 선의 두께 설정
-                tmapTrafficLine.lineWidth = 9
-                // 경로 외곽선의 두께 설정
-                tmapTrafficLine.outLineWidth = 0
-
-                // TrafficLine 객체 생성 후 리스트에 추가
-                val trafficLine = TMapTrafficLine.TrafficLine(1, lineWayPoints)
-                tmapTrafficLine.basicColor = TransportTypeUiMapper.getColor(leg.transportType, leg.subTypeIdx).toArgb()
-                tmapTrafficLine.passedColor = TransportTypeUiMapper.getColor(leg.transportType, leg.subTypeIdx).toArgb()
-                tmapTrafficLine.trafficLineList.add(trafficLine)
-                tMapView.addTrafficLine(tmapTrafficLine)
-
-                // 마커 그리기
-                val marker = TMapMarkerItem()
-                marker.id = "marker_${leg.transportType}_${leg.subTypeIdx}_$index"
-
-                if ((leg.transportType == TransportType.WALK) && (lineWayPoints.isNotEmpty())) {
-                    marker.tMapPoint = lineWayPoints[0]
-                } else {
-                    marker.tMapPoint = TMapPoint(leg.startPoint.lat, leg.startPoint.lon)
-                }
-
-                if ((firstTransportationPoint == LatLng(leg.startPoint.lat, leg.startPoint.lon)) && (leg.transportType == TransportType.BUS)) {
-                    marker.icon = TransportVectorIconWithTextBitmap(
-                        type = leg.transportType,
-                        fillColor = TransportTypeUiMapper.getColor(
-                            leg.transportType,
-                            leg.subTypeIdx
-                        ),
-                        isMarker = true,
-                        context = context,
-                        iconSizePx = markerSizePx,
-                        name = markBusStationName,
-                        textPadding = 4
-                    )
-                } else {
-                    marker.icon = TransportVectorIconBitmap(
-                        type = leg.transportType,
-                        fillColor = TransportTypeUiMapper.getColor(
-                            leg.transportType,
-                            leg.subTypeIdx
-                        ),
-                        isMarker = true,
-                        sizePx = markerSizePx,
-                        context = context
-                    )
-                }
-
-                tMapView.addTMapMarkerItem(marker)
-            }
-
-            tMapView.setOnClickListenerCallback(object : OnClickListenerCallback {
-                override fun onPressDown(
-                    p0: ArrayList<TMapMarkerItem>?,
-                    p1: ArrayList<TMapPOIItem>?,
-                    p2: TMapPoint?,
-                    p3: PointF?
-                ) {
-                    Timber.d("on TMap Press Down : $p0 / $p1 / $p2 / $p3")
-                }
-
-                override fun onPressUp(
-                    markerItems: ArrayList<TMapMarkerItem>?,
-                    p1: ArrayList<TMapPOIItem>?,
-                    latLng: TMapPoint?,
-                    p3: PointF?
-                ) {
-                    if (markerItems?.isEmpty() == true) return
-
-                    val marker = markerItems!![0]
-                    val parts = marker.id.split("_")
-                    if (parts[0] == "departPoint" || parts[0] == "destinationPoint") return
-                    val transportTypeStr = parts[1]
-                    val subTypeIdx = parts[2].toInt()
-                    val transportType = enumValueOf<TransportType>(transportTypeStr)
-                    val legIndex = parts[3].toInt()
-
-                    if (transportType == TransportType.WALK) return
-                    onTransportMarkerClick(
-                        FocusedMarkerParameter(
-                            lat = latLng!!.latitude,
-                            lon = latLng.longitude,
-                            transportType = transportType,
-                            subTypeIdx = subTypeIdx,
-                            legIndex = legIndex
-                        )
-                    )
-                }
-            })
-
-            // 마커 설정
-            val marker = TMapMarkerItem()
-            marker.id = "departPoint"
-            marker.tMapPoint = departTMapPoint
-            marker.icon = ContextCompat.getDrawable(context, R.drawable.map_marker_departure)?.toBitmap()
-            tMapView.addTMapMarkerItem(marker)
-
-            marker.id = "destinationPoint"
-            marker.tMapPoint = destinationTMapPoint
-            marker.icon = ContextCompat.getDrawable(context, R.drawable.map_marker_arrival)?.toBitmap()
-            tMapView.addTMapMarkerItem(marker)
-
-            // 지도 위치 설정 - 출발지와 첫 대중교통의 중간 지점
-            val midPoint = getMidPoint(firstTransportationPoint, departLocation)
-            tMapView.setCenterPoint(midPoint.latitude, midPoint.longitude)
-
-            // 지도 Scale 조정 - 출발지와 첫 대중교통의 중간 지점 + 일정 값
-            val latSpan = abs(firstTransportationPoint.latitude - departLocation.latitude) + 0.01 // 0.01 or 0.001
-            val lonSpan = abs(firstTransportationPoint.longitude - departLocation.longitude) + 0.003
-            tMapView.zoomToSpan(latSpan, lonSpan)
-        }
-    }
-
-    val fusedLocationClient = remember {
-        LocationServices.getFusedLocationProviderClient(context)
-    }
+//    val fusedLocationClient = remember {
+//        LocationServices.getFusedLocationProviderClient(context)
+//    }
 
     val locationCallback = remember(firstTransportationPoint) {
         object : LocationCallback() {
@@ -268,59 +114,30 @@ fun AfterRegisterMap(
     }
 
     // 위치 업데이트 시작
-    LaunchedEffect(Unit) {
-        if (PermissionUtil.hasLocationPermissions(context)) {
-            val locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 3000)
-                .setMinUpdateIntervalMillis(1000)
-                .setMinUpdateDistanceMeters(1f)
-                .build()
+//    LaunchedEffect(Unit) {
+//        if (PermissionUtil.hasLocationPermissions(context)) {
+//            val locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 3000)
+//                .setMinUpdateIntervalMillis(1000)
+//                .setMinUpdateDistanceMeters(1f)
+//                .build()
+//
+//            try {
+//                fusedLocationClient.requestLocationUpdates(
+//                    locationRequest,
+//                    locationCallback,
+//                    Looper.getMainLooper()
+//                )
+//            } catch (e: SecurityException) {
+//                Timber.e("위치 권한 오류: ${e.message}")
+//            }
+//        }
+//    }
 
-            try {
-                fusedLocationClient.requestLocationUpdates(
-                    locationRequest,
-                    locationCallback,
-                    Looper.getMainLooper()
-                )
-            } catch (e: SecurityException) {
-                Timber.e("위치 권한 오류: ${e.message}")
-            }
-        }
-    }
-
-    DisposableEffect(Unit) {
-        onDispose {
-            fusedLocationClient.removeLocationUpdates(locationCallback)
-        }
-    }
-
-    // userLocation 또는 locationUpdateTrigger가 변경될 때마다 현재 위치 마커 업데이트
-    LaunchedEffect(userLocation, locationUpdateTrigger, isMapReady) {
-        if (isMapReady) {
-            val tMapPoint = TMapPoint(userLocation.latitude, userLocation.longitude)
-
-            withContext(Dispatchers.Main) {
-                try {
-                    tMapView.removeTMapMarkerItem("CurrentMarker")
-                } catch (e: Exception) {
-                }
-
-                val markerDrawable =
-                    ContextCompat.getDrawable(context, R.drawable.ic_home_current_location)
-                val markerBitmap = markerDrawable?.toBitmap()
-
-                val markerItem = TMapMarkerItem().apply {
-                    id = "CurrentMarker"
-                    name = "Current Location"
-                    icon = markerBitmap
-                    setTMapPoint(tMapPoint)
-                }
-
-                tMapView.addTMapMarkerItem(markerItem)
-
-                updateCurrentLocation(userLocation)
-            }
-        }
-    }
+//    DisposableEffect(Unit) {
+//        onDispose {
+//            fusedLocationClient.removeLocationUpdates(locationCallback)
+//        }
+//    }
 
     Box(
         modifier = modifier
@@ -334,14 +151,166 @@ fun AfterRegisterMap(
                     .height(screenHeight - 248.dp + padding.calculateBottomPadding())
                     .align(Alignment.TopCenter),
                 factory = { context ->
-                    // FrameLayout을 직접 생성
-                    FrameLayout(context).apply {
-                        // TMapView를 FrameLayout에 추가
-                        addView(tMapView)
+                    tMapView.setSKTMapApiKey(BuildConfig.TMAP_API_KEY)
+                    tMapView.setOnMapReadyListener {
+                        tMapView.mapType = TMapView.MapType.NIGHT
+                        isMapReady = true
+
+                        val departTMapPoint = TMapPoint(departLocation.latitude, departLocation.longitude)
+                        val destinationTMapPoint = TMapPoint(destinationLocation.latitude, destinationLocation.longitude)
+
+                        // 경로 그리기
+                        for ((index, leg) in legs.withIndex()) {
+                            // 라인 그리기
+                            val lineWayPoints =
+                                getWayPointList(leg.passShape)
+                            // TMapTrafficLine 객체 생성
+                            val tmapTrafficLine = TMapTrafficLine("line_${leg.transportType}_${leg.sectionTime}")
+                            // 교통 정보 표출 여부 설정
+                            tmapTrafficLine.isShowTraffic = false
+                            // 방향 인디케이터(화살표) 표시 설정
+                            tmapTrafficLine.isShowIndicator = true
+                            // 경로 선의 두께 설정
+                            tmapTrafficLine.lineWidth = 9
+                            // 경로 외곽선의 두께 설정
+                            tmapTrafficLine.outLineWidth = 0
+
+                            // TrafficLine 객체 생성 후 리스트에 추가
+                            val trafficLine = TMapTrafficLine.TrafficLine(1, lineWayPoints)
+                            tmapTrafficLine.basicColor = TransportTypeUiMapper.getColor(leg.transportType, leg.subTypeIdx).toArgb()
+                            tmapTrafficLine.passedColor = TransportTypeUiMapper.getColor(leg.transportType, leg.subTypeIdx).toArgb()
+                            tmapTrafficLine.trafficLineList.add(trafficLine)
+                            tMapView.addTrafficLine(tmapTrafficLine)
+
+                            // 마커 그리기
+                            val marker = TMapMarkerItem()
+                            marker.id = "marker_${leg.transportType}_${leg.subTypeIdx}_$index"
+
+                            if ((leg.transportType == TransportType.WALK) && (lineWayPoints.isNotEmpty())) {
+                                marker.tMapPoint = lineWayPoints[0]
+                            } else {
+                                marker.tMapPoint = TMapPoint(leg.startPoint.lat, leg.startPoint.lon)
+                            }
+
+                            if ((firstTransportationPoint == LatLng(leg.startPoint.lat, leg.startPoint.lon)) && (leg.transportType == TransportType.BUS)) {
+                                marker.icon = TransportVectorIconWithTextBitmap(
+                                    type = leg.transportType,
+                                    fillColor = TransportTypeUiMapper.getColor(
+                                        leg.transportType,
+                                        leg.subTypeIdx
+                                    ),
+                                    isMarker = true,
+                                    context = context,
+                                    iconSizePx = markerSizePx,
+                                    name = markBusStationName,
+                                    textPadding = 4
+                                )
+                            } else {
+                                marker.icon = TransportVectorIconBitmap(
+                                    type = leg.transportType,
+                                    fillColor = TransportTypeUiMapper.getColor(
+                                        leg.transportType,
+                                        leg.subTypeIdx
+                                    ),
+                                    isMarker = true,
+                                    sizePx = markerSizePx,
+                                    context = context
+                                )
+                            }
+
+                            tMapView.addTMapMarkerItem(marker)
+                        }
+
+                        tMapView.setOnClickListenerCallback(object : OnClickListenerCallback {
+                            override fun onPressDown(
+                                p0: ArrayList<TMapMarkerItem>?,
+                                p1: ArrayList<TMapPOIItem>?,
+                                p2: TMapPoint?,
+                                p3: PointF?
+                            ) {
+                                Timber.d("on TMap Press Down : $p0 / $p1 / $p2 / $p3")
+                            }
+
+                            override fun onPressUp(
+                                markerItems: ArrayList<TMapMarkerItem>?,
+                                p1: ArrayList<TMapPOIItem>?,
+                                latLng: TMapPoint?,
+                                p3: PointF?
+                            ) {
+                                if (markerItems?.isEmpty() == true) return
+
+                                val marker = markerItems!![0]
+                                val parts = marker.id.split("_")
+                                if (parts[0] == "departPoint" || parts[0] == "destinationPoint") return
+                                val transportTypeStr = parts[1]
+                                val subTypeIdx = parts[2].toInt()
+                                val transportType = enumValueOf<TransportType>(transportTypeStr)
+                                val legIndex = parts[3].toInt()
+
+                                if (transportType == TransportType.WALK) return
+                                onTransportMarkerClick(
+                                    FocusedMarkerParameter(
+                                        lat = latLng!!.latitude,
+                                        lon = latLng.longitude,
+                                        transportType = transportType,
+                                        subTypeIdx = subTypeIdx,
+                                        legIndex = legIndex
+                                    )
+                                )
+                            }
+                        })
+
+                        // 마커 설정
+                        val marker = TMapMarkerItem()
+                        marker.id = "departPoint"
+                        marker.tMapPoint = departTMapPoint
+                        marker.icon = ContextCompat.getDrawable(context, R.drawable.map_marker_departure)?.toBitmap()
+                        tMapView.addTMapMarkerItem(marker)
+
+                        marker.id = "destinationPoint"
+                        marker.tMapPoint = destinationTMapPoint
+                        marker.icon = ContextCompat.getDrawable(context, R.drawable.map_marker_arrival)?.toBitmap()
+                        tMapView.addTMapMarkerItem(marker)
+
+                        val currentMarkerDrawable =
+                            ContextCompat.getDrawable(context, R.drawable.ic_home_current_location)
+                        val markerBitmap = currentMarkerDrawable?.toBitmap()
+                        val currentPoint = TMapPoint(userLocation.latitude, userLocation.longitude)
+
+                        val currentMarker = TMapMarkerItem().apply {
+                            id = "CurrentMarker"
+                            name = "Current Location"
+                            icon = markerBitmap
+                            tMapPoint = currentPoint
+                        }
+                        tMapView.addTMapMarkerItem(currentMarker)
+
+                        // 지도 위치 설정 - 출발지와 첫 대중교통의 중간 지점
+                        val midPoint = getMidPoint(firstTransportationPoint, departLocation)
+                        tMapView.setCenterPoint(midPoint.latitude, midPoint.longitude)
+
+                        // 지도 Scale 조정 - 출발지와 첫 대중교통의 중간 지점 + 일정 값
+                        val latSpan = abs(firstTransportationPoint.latitude - departLocation.latitude) + 0.01 // 0.01 or 0.001
+                        val lonSpan = abs(firstTransportationPoint.longitude - departLocation.longitude) + 0.003
+                        tMapView.zoomToSpan(latSpan, lonSpan)
+
+                        // 화면 스크롤 발생시 mapFocused 여부 변경
+                        tMapView.setOnEnableScrollWithZoomLevelListener { _, _ ->
+                            mapModified()
+                        }
                     }
+
+                    isMapReady = true
+
+                    tMapView
                 },
-                update = { frameLayout ->
-                    // Update logic if needed (e.g., map settings)
+                update = { tMapView ->
+                    if (isMapReady) {
+                        val currentPoint = TMapPoint(userLocation.latitude, userLocation.longitude)
+
+                        val currentMarker = tMapView.getMarkerItemFromId("CurrentMarker")
+                        currentMarker.tMapPoint = currentPoint
+                    }
                 }
             )
 
@@ -403,7 +372,6 @@ fun AfterRegisterMapPreview(
         isAlarmRegistered = false,
         isMapFocused = true,
         getCenterLocation = {},
-        updateCurrentLocation = {},
         mapModified = {}
     )
 }

@@ -660,7 +660,6 @@ fun HomeScreen(
                 getCenterLocation = {
                     getCenterLocation(it)
                 },
-                updateCurrentLocation = {},
                 onTransportMarkerClick = { markerParameter ->
                     afterRegisterMapMarkerClick(markerParameter)
                 }
