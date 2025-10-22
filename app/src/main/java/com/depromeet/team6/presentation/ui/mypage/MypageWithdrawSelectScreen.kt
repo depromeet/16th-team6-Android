@@ -117,8 +117,7 @@ fun MyPageWithdrawSelectScreen(
                     snackBarController.showSnackbar(
                         message = context.getString(R.string.mypage_no_reason_alert)
                     )
-                }
-                else if (selectedIdx == 6 && reasonEtc.text.length < 5) {
+                } else if (selectedIdx == 6 && reasonEtc.text.length < 5) {
                     snackBarController.showSnackbar(
                         message = context.getString(R.string.mypage_short_reason_alert)
                     )
