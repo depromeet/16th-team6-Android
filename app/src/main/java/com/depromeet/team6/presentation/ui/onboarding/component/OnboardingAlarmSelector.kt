@@ -41,7 +41,7 @@ import kotlin.math.roundToInt
 fun OnboardingAlarmSelector(
     modifier: Modifier = Modifier,
     padding: PaddingValues = PaddingValues(0.dp),
-    onAlarmSelected: (OnboardingContract.AlarmType, Int) -> Unit = {a, b -> },
+    onAlarmSelected: (OnboardingContract.AlarmType, Int) -> Unit = { a, b -> }
 ) {
     val colors = LocalTeam6Colors.current
     val context = LocalContext.current

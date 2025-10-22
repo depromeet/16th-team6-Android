@@ -56,7 +56,7 @@ class OnboardingContract {
         data object ChangeOnboardingType : OnboardingEvent()
         data object BackPressed : OnboardingEvent()
         data class LocationSelectButtonClicked(val onboardingSearchLocation: Address) : OnboardingEvent()
-        data class UpdateAlarmSetup(val type : AlarmType, val volume : Int) : OnboardingEvent()
+        data class UpdateAlarmSetup(val type: AlarmType, val volume: Int) : OnboardingEvent()
         data class ChangePermissionBottomSheetVisible(val permissionBottomSheetVisible: Boolean) : OnboardingEvent()
         data class UpdateUserLocation(val context: Context) : OnboardingEvent()
         data object SearchPopUpBackPressed : OnboardingEvent()

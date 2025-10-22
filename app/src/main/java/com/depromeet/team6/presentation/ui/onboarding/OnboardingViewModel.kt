@@ -160,7 +160,7 @@ class OnboardingViewModel @Inject constructor(
         }
     }
 
-    private fun saveAlarmSetup(type : OnboardingContract.AlarmType, volume : Int) {
+    private fun saveAlarmSetup(type: OnboardingContract.AlarmType, volume: Int) {
         val isSound = type != OnboardingContract.AlarmType.VIBRATION
         val isVibrate = type != OnboardingContract.AlarmType.SOUND
         viewModelScope.launch {
