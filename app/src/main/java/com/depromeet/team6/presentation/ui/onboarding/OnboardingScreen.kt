@@ -3,6 +3,7 @@ package com.depromeet.team6.presentation.ui.onboarding
 import android.Manifest
 import android.content.Context
 import android.os.Build
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -30,7 +31,7 @@ import androidx.lifecycle.flowWithLifecycle
 import com.depromeet.team6.R
 import com.depromeet.team6.presentation.type.OnboardingSelectLocationButtonType
 import com.depromeet.team6.presentation.type.OnboardingType
-import com.depromeet.team6.presentation.ui.onboarding.component.AlarmTime
+import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingAlarmSelector
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingButton
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingMapView
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingPermissionBottomSheet
@@ -228,6 +229,10 @@ fun OnboardingRoute(
                             message = context.getString(R.string.onboarding_notification_permission_denied_dialog)
                         )
                     }
+
+                    is OnboardingContract.OnboardingSideEffect.ShowToast -> {
+                        Toast.makeText(context, onboardingSideEffect.message, Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
     }
@@ -297,16 +302,12 @@ fun OnboardingRoute(
                         viewModel.setEvent(OnboardingContract.OnboardingEvent.ShowSearchPopup)
                     },
                     onNextButtonClicked = {
-                        if (uiState.onboardingType == OnboardingType.HOME) {
-                            viewModel.setEvent(OnboardingContract.OnboardingEvent.ChangeOnboardingType)
-                            AmplitudeUtils.trackEventWithProperty(
-                                eventName = HOME_REGISTER_COMPLETE_CLICKED,
-                                propertyName = SCREEN_NAME,
-                                propertyValue = HOME_REGISTER
-                            )
-                        } else {
-                            viewModel.postSignUp()
-                        }
+                        viewModel.setEvent(OnboardingContract.OnboardingEvent.ChangeOnboardingType)
+                        AmplitudeUtils.trackEventWithProperty(
+                            eventName = HOME_REGISTER_COMPLETE_CLICKED,
+                            propertyName = SCREEN_NAME,
+                            propertyValue = HOME_REGISTER
+                        )
                     },
                     onBackPressed = { viewModel.setEvent(OnboardingContract.OnboardingEvent.BackPressed) },
 //                    onAlarmTimeSelected = { alarmTime ->
@@ -324,6 +325,9 @@ fun OnboardingRoute(
 //                            )
 //                        }
 //                    },
+                    onAlarmSelected = { type, volume ->
+                        viewModel.setEvent(OnboardingContract.OnboardingEvent.UpdateAlarmSetup(type, volume))
+                    },
                     bottomSheetButtonClicked = {
                         viewModel.setEvent(
                             OnboardingContract.OnboardingEvent.ChangePermissionBottomSheetVisible(
@@ -420,7 +424,7 @@ fun OnboardingScreen(
     onSearchBoxClicked: () -> Unit = {},
     onNextButtonClicked: () -> Unit = {},
     onBackPressed: () -> Unit = {},
-    onAlarmTimeSelected: (AlarmTime) -> Unit = {},
+    onAlarmSelected: (OnboardingContract.AlarmType, Int) -> Unit = { _, _ -> },
     onLocationButtonClicked: () -> Unit = {},
     bottomSheetButtonClicked: () -> Unit = {},
     getCenterLocation: (LatLng) -> Unit = {},
@@ -457,8 +461,12 @@ fun OnboardingScreen(
                         onClick = onSearchBoxClicked
                     )
                 }
-            }
-//            } else {
+                Spacer(modifier = Modifier.weight(1f))
+                OnboardingButton(
+                    isEnabled = uiState.myAddress.address.isNotEmpty()
+                ) { onNextButtonClicked() }
+                Spacer(modifier = Modifier.height(20.dp))
+            } else {
 //                Icon(
 //                    modifier = Modifier
 //                        .padding(vertical = 18.dp, horizontal = 16.dp)
@@ -470,24 +478,10 @@ fun OnboardingScreen(
 //                Spacer(modifier = Modifier.height(12.dp))
 //                OnboardingTitle(onboardingType = uiState.onboardingType)
 //                Spacer(modifier = Modifier.height(68.dp))
-//                OnboardingAlarmSelector(
-//                    selectedItems = uiState.alertFrequencies.mapNotNull { timeValue ->
-//                        AlarmTime.entries.find { it.minutes == timeValue }
-//                    }.toSet(),
-//                    onItemClick = onAlarmTimeSelected
-//                )
-//            }
-            Spacer(modifier = Modifier.weight(1f))
-            OnboardingButton(
-//                isEnabled =
-//                if (uiState.onboardingType == OnboardingType.ALARM) {
-//                    uiState.alertFrequencies.isNotEmpty()
-//                } else {
-//                    uiState.myAddress.address.isNotEmpty()
-//                }
-                isEnabled = uiState.myAddress.address.isNotEmpty()
-            ) { onNextButtonClicked() }
-            Spacer(modifier = Modifier.height(20.dp))
+                OnboardingAlarmSelector(
+                    onAlarmSelected = onAlarmSelected
+                )
+            }
         }
         if (uiState.mapViewVisible) {
             val currentLocation by remember { mutableStateOf(uiState.myAddress) }

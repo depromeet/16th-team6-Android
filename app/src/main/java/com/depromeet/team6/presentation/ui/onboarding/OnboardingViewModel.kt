@@ -94,6 +94,11 @@ class OnboardingViewModel @Inject constructor(
             is OnboardingContract.OnboardingEvent.ChangeMapViewVisible -> setState {
                 copy(mapViewVisible = event.mapViewVisible)
             }
+
+            is OnboardingContract.OnboardingEvent.UpdateAlarmSetup -> {
+                saveAlarmSetup(event.type, event.volume)
+                postSignUp()
+            }
         }
     }
 
@@ -124,7 +129,7 @@ class OnboardingViewModel @Inject constructor(
     }
 
     fun postSignUp() {
-        setEvent(OnboardingContract.OnboardingEvent.PostSignUp(loadState = LoadState.Loading))
+//        setEvent(OnboardingContract.OnboardingEvent.PostSignUp(loadState = LoadState.Loading))
         viewModelScope.launch {
             val token = getFcmTokenSafely()
             postSignUpUseCase(
@@ -148,9 +153,20 @@ class OnboardingViewModel @Inject constructor(
 //                    propertyValue = uiState.value.alertFrequencies
 //                )
             }.onFailure { exception ->
-                setEvent(OnboardingContract.OnboardingEvent.PostSignUp(loadState = LoadState.Error))
+//                setEvent(OnboardingContract.OnboardingEvent.PostSignUp(loadState = LoadState.Error))
+                setSideEffect(OnboardingContract.OnboardingSideEffect.ShowToast("회원가입에 실패했습니다. 다시 시도해주세요."))
                 handleApiException(exception = exception)
             }
+        }
+    }
+
+    private fun saveAlarmSetup(type : OnboardingContract.AlarmType, volume : Int) {
+        val isSound = type != OnboardingContract.AlarmType.VIBRATION
+        val isVibrate = type != OnboardingContract.AlarmType.SOUND
+        viewModelScope.launch {
+            userInfoRepository.saveAlarmVolume(volume)
+            userInfoRepository.saveIsAlarmSound(isSound)
+            userInfoRepository.saveIsAlarmVibrate(isVibrate)
         }
     }
 

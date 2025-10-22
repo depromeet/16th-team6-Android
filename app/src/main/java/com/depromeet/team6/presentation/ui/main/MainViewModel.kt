@@ -179,6 +179,8 @@ class MainViewModel @Inject constructor(
         this.replace("[^0-9.]".toRegex(), "")
 
     private fun compareVersions(installed: String, latest: String): VersionResult {
+        if (com.depromeet.team6.BuildConfig.DEBUG) return VersionResult.UP_TO_DATE
+
         val installedParts = installed.split(".").map { it.toIntOrNull() ?: 0 }
         val latestParts = latest.split(".").map { it.toIntOrNull() ?: 0 }
 
