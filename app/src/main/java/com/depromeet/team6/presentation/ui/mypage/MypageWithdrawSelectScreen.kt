@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -21,11 +22,13 @@ import androidx.compose.ui.unit.dp
 import com.depromeet.team6.R
 import com.depromeet.team6.presentation.type.ButtonSize
 import com.depromeet.team6.presentation.type.ButtonType
+import com.depromeet.team6.presentation.ui.common.AtchaTextBox
 import com.depromeet.team6.presentation.ui.common.button.AtchaCommonButton
 import com.depromeet.team6.presentation.ui.common.list.TextListItemRadio
 import com.depromeet.team6.presentation.ui.mypage.component.TitleBar
 import com.depromeet.team6.presentation.util.dialog.LocalDialogController
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
+import com.depromeet.team6.presentation.util.snackbar.LocalSnackbarController
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 
 @Composable
@@ -37,6 +40,10 @@ fun MyPageWithdrawSelectScreen(
     BackHandler {
         moveToAccount()
     }
+
+    val snackBarController = LocalSnackbarController.current
+    val dialogController = LocalDialogController.current
+    val context = LocalContext.current
 
     var selectedIdx by remember { mutableIntStateOf(-1) }
     val reasons = listOf(
@@ -57,8 +64,7 @@ fun MyPageWithdrawSelectScreen(
             }
         }
     }
-    val dialogController = LocalDialogController.current
-    val context = LocalContext.current
+    val reasonEtc = rememberTextFieldState()
 
     Column(
         modifier = modifier
@@ -81,6 +87,14 @@ fun MyPageWithdrawSelectScreen(
                 isSelected = selectedIdx == reasons.indexOf(reason)
             )
         }
+        if (selectedIdx == 6) {
+            AtchaTextBox(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp),
+                hintMessage = stringResource(R.string.mypage_withdraw_reason_7_hint),
+                textState = reasonEtc
+            )
+        }
 
         Spacer(
             modifier = Modifier
@@ -95,14 +109,34 @@ fun MyPageWithdrawSelectScreen(
             buttonType = confirmButtonType,
             buttonSize = ButtonSize.LARGE,
             onClick = {
-                dialogController.showAtchaTwoButtonAlert(
-                    message = context.getString(R.string.mypage_withdraw_dialog_title),
-                    confirmButtonText = context.getString(R.string.mypage_withdraw_dialog_confirm),
-                    closeButtonText = context.getString(R.string.mypage_dialog_cancle),
-                    onConfirm = {
-                        withDrawConfirmed(context.getString(reasons[selectedIdx]))
+                if (selectedIdx < 0) {
+                    snackBarController.showSnackbar(
+                        message = context.getString(R.string.mypage_not_selected_alert)
+                    )
+                } else if (selectedIdx == 6 && reasonEtc.text.isEmpty()) {
+                    snackBarController.showSnackbar(
+                        message = context.getString(R.string.mypage_no_reason_alert)
+                    )
+                }
+                else if (selectedIdx == 6 && reasonEtc.text.length < 5) {
+                    snackBarController.showSnackbar(
+                        message = context.getString(R.string.mypage_short_reason_alert)
+                    )
+                } else {
+                    val withDrawReason = if (selectedIdx == 6) {
+                        reasonEtc.text.toString()
+                    } else {
+                        context.getString(reasons[selectedIdx])
                     }
-                )
+                    dialogController.showAtchaTwoButtonAlert(
+                        message = context.getString(R.string.mypage_withdraw_dialog_title),
+                        confirmButtonText = context.getString(R.string.mypage_withdraw_dialog_confirm),
+                        closeButtonText = context.getString(R.string.mypage_dialog_cancle),
+                        onConfirm = {
+                            withDrawConfirmed(withDrawReason)
+                        }
+                    )
+                }
             }
         )
     }
