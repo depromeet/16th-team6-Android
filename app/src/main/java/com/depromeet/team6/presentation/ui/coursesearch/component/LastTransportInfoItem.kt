@@ -254,7 +254,7 @@ fun RemainingTimeHHmm(
     )
 }
 
-private fun hasLongTerm(legs: List<LegInfo>) : Boolean {
+private fun hasLongTerm(legs: List<LegInfo>): Boolean {
     for (leg in legs) {
         if (leg.targetBusTerm == null) continue
         if (leg.targetBusTerm > 40) return true

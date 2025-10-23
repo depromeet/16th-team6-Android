@@ -73,6 +73,6 @@ fun List<ResponseCourseSearchDto>.toDomain(): List<CourseInfo> = filter { respon
         totalTime = response.totalTime,
         departureTime = response.departureDateTime,
         boardingTime = boardingDateTime ?: response.departureDateTime,
-        legs = legInfo,
+        legs = legInfo
     )
 }

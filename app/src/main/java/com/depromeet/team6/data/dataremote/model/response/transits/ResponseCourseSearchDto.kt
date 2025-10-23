@@ -37,7 +37,7 @@ data class Leg(
     @SerialName("targetBusStation") val targetBusStation: TargetBusStation? = null,
     @SerialName("targetBusTerm") val targetBusTerm: Int? = null,
     @SerialName("isExpressSubway") val isExpressSubway: Boolean? = null,
-    @SerialName("isLastSubway") val isLastSubway: Boolean? = null,
+    @SerialName("isLastSubway") val isLastSubway: Boolean? = null
 
 )
 
@@ -73,5 +73,5 @@ data class Station(
 data class TargetBusStation(
     @SerialName("busStationId") val busStationId: Int,
     @SerialName("busStationNumber") val busStationNumber: String,
-    @SerialName("busStationName") val busStationName: String,
+    @SerialName("busStationName") val busStationName: String
 )
