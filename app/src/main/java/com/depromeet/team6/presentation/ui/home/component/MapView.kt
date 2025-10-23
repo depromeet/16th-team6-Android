@@ -35,6 +35,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.skt.tmap.TMapPoint
 import com.skt.tmap.TMapView
 import com.skt.tmap.overlay.TMapMarkerItem
+import timber.log.Timber
 
 @Composable
 fun TMapViewCompose(
@@ -137,6 +138,7 @@ fun TMapViewCompose(
                 val currentPoint = TMapPoint(currentLocation.latitude, currentLocation.longitude)
                 val existingMarker = tMapView.getMarkerItemFromId("CurrentMarker")
                 existingMarker.tMapPoint = currentPoint
+                Timber.d("existingMarker position : ${existingMarker.tMapPoint.latitude}, ${existingMarker.tMapPoint.longitude}")
 
                 if (isMapFocused) {
                     tMapView.setCenterPoint(currentLocation.latitude, currentLocation.longitude)
