@@ -150,6 +150,7 @@
     <string name="last_transport_info_departure_time">출발</string>
     <string name="last_transport_info_boarding_time">탑승</string>
     <string name="last_transport_info_set_notification">막차 알람 받기</string>
+    <string name="last_transport_info_set_notification_dialog">알람 받기</string>
     <string name="course_detail_info_walk">걷기</string>
     <string name="course_detail_info_duration">%1d분</string>
     <string name="course_detail_info_boarding_point">%1s 승차</string>
@@ -162,6 +163,7 @@
     <string name="course_detail_description">상세경로</string>
     <string name="course_search_result_empty">검색 가능한 막차가 없어요</string>
     <string name="course_search_result_midnight">24:00 ~ 05:00\n막차 검색을 할 수 없어요</string>
+    <string name="course_search_long_term_alert">배차 간격이 긴 버스가 포함되어\n환승 대기 시간이 길어질 수 있어요.\n막차 알람을 등록할까요?</string>
 
     <!-- Bus Course -->
     <string name="bus_course_info">운행정보</string>

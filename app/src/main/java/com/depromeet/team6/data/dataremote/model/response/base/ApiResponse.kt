@@ -19,7 +19,7 @@ data class ApiResponse<T>(
     @SerialName("message") val message: String? = null
 )
 
-@Deprecated("이 메서드 대신 Response.parse() 확장함수 사용하도록 전부 리팩토링 해주세요")
+//@Deprecated("이 메서드 대신 Response.parse() 확장함수 사용하도록 전부 리팩토링 해주세요")
 // fun <T> ApiResponse<T>.toResult(): Result<T> =
 //    when {
 //        this.result != null -> Result.success(this.result)

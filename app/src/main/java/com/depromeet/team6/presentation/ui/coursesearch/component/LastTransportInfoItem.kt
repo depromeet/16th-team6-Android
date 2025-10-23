@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -29,6 +30,7 @@ import com.depromeet.team6.R
 import com.depromeet.team6.domain.model.course.CourseInfo
 import com.depromeet.team6.domain.model.course.LegInfo
 import com.depromeet.team6.presentation.ui.itinerary.LegInfoDummyProvider
+import com.depromeet.team6.presentation.util.dialog.LocalDialogController
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.depromeet.team6.ui.theme.defaultTeam6Typography
@@ -43,6 +45,8 @@ fun LastTransportInfoItem(
     courseInfoToggleClick: () -> Unit = {},
     onItemClick: (String, Boolean) -> Unit = { _, _ -> }
 ) {
+    val dialogController = LocalDialogController.current
+    val context = LocalContext.current
     Column(
         modifier = modifier
             .clip(RoundedCornerShape(12.dp))
@@ -174,7 +178,18 @@ fun LastTransportInfoItem(
         // 막차 알림 받기 버튼
         SetNotificationButton(
             btnClickEvent = {
-                onRegisterAlarmBtnClick(courseSearchResult.routeId)
+                if (hasLongTerm(courseSearchResult.legs)) {
+                    dialogController.showAtchaTwoButtonAlert(
+                        message = context.getString(R.string.course_search_long_term_alert),
+                        onConfirm = {
+                            onRegisterAlarmBtnClick(courseSearchResult.routeId)
+                        },
+                        confirmButtonText = context.getString(R.string.last_transport_info_set_notification_dialog),
+                        closeButtonText = context.getString(R.string.dialog_finish_alarm_back_text)
+                    )
+                } else {
+                    onRegisterAlarmBtnClick(courseSearchResult.routeId)
+                }
             }
         )
     }
@@ -237,6 +252,14 @@ fun RemainingTimeHHmm(
         text = stringResource(R.string.last_transport_info_remaining_time, hour, minute),
         style = defaultTeam6Typography.body7_B7M13
     )
+}
+
+private fun hasLongTerm(legs: List<LegInfo>) : Boolean {
+    for (leg in legs) {
+        if (leg.targetBusTerm == null) continue
+        if (leg.targetBusTerm > 40) return true
+    }
+    return false
 }
 
 @Preview(name = "more than 1 hour", showBackground = true, backgroundColor = android.graphics.Color.BLACK.toLong())

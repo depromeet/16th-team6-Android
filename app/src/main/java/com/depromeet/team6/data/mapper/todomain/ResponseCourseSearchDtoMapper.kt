@@ -60,7 +60,8 @@ fun List<ResponseCourseSearchDto>.toDomain(): List<CourseInfo> = filter { respon
                     lon = it.lon,
                     lat = it.lat
                 )
-            } ?: emptyList()
+            } ?: emptyList(),
+            targetBusTerm = leg.targetBusTerm
         )
     }
 
@@ -72,6 +73,6 @@ fun List<ResponseCourseSearchDto>.toDomain(): List<CourseInfo> = filter { respon
         totalTime = response.totalTime,
         departureTime = response.departureDateTime,
         boardingTime = boardingDateTime ?: response.departureDateTime,
-        legs = legInfo
+        legs = legInfo,
     )
 }
