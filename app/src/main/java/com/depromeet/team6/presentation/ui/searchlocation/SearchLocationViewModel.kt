@@ -87,8 +87,8 @@ class SearchLocationViewModel @Inject constructor(
 
             is SearchLocationContract.SearchLocationEvent.UpdateUserLocationSate -> setState { copy(userLocation = event.userLocation) }
 
-            is SearchLocationContract.SearchLocationEvent.ChangeSearchSelectMapViewVisible -> setState {
-                copy(searchSelectMapView = event.searchSelectMapView)
+            is SearchLocationContract.SearchLocationEvent.ChangeCurrentScreen -> setState {
+                copy(currentScreen = event.screen)
             }
         }
     }

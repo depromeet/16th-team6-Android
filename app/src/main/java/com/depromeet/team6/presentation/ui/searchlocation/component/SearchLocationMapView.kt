@@ -1,7 +1,6 @@
 package com.depromeet.team6.presentation.ui.searchlocation.component
 
 import android.content.Context
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -21,7 +19,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
@@ -44,7 +41,6 @@ import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.presentation.ui.common.bottomsheet.AtChaLocationSettingBottomSheet
 import com.depromeet.team6.presentation.ui.common.view.AtChaLoadingView
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
-import com.depromeet.team6.presentation.util.modifier.roundedBackgroundWithPadding
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.google.android.gms.maps.model.LatLng
 import com.skt.tmap.TMapPoint
@@ -72,7 +68,7 @@ fun SearchLocationMapView(
 
     val tMapView = remember { TMapView(context) }
     var isMapReady by remember { mutableStateOf(false) }
-    val offsetLat = 0.00005
+    val offsetLat = 0.00009
     val coroutineScope = rememberCoroutineScope()
 
     // Lifecycle 제어: ON_START 이후에만 지도 초기화
@@ -112,10 +108,15 @@ fun SearchLocationMapView(
                     }
                 }
 
-                val lat = myAddress.lat - offsetLat
-                val lon = myAddress.lon
+                val (lat, lon) = if (myAddress.lat == 0.0 && myAddress.lon == 0.0) {
+                    currentLocation.latitude - offsetLat to currentLocation.longitude
+                } else {
+                    myAddress.lat - offsetLat to myAddress.lon
+                }
 
                 tMapView.setCenterPoint(lat, lon, true)
+                getCenterLocation(LatLng(lat, lon))
+
                 tMapView.zoomLevel = 18
 
                 val markerDrawable =
@@ -149,11 +150,12 @@ fun SearchLocationMapView(
             )
         }
 
-        // 뒤로가기 아이콘
-        CircleBtnBack(
+        // 뒤로가기
+        Icon(
+            imageVector = ImageVector.vectorResource(R.drawable.ic_all_arrow_left_white),
+            contentDescription = stringResource(R.string.home_search_back_text),
+            tint = defaultTeam6Colors.gray300,
             modifier = Modifier
-                .size(36.dp)
-                .align(Alignment.TopStart)
                 .offset(x = 16.dp, y = 12.dp + marginTop)
                 .noRippleClickable {
                     backButtonClicked()
@@ -182,7 +184,8 @@ fun SearchLocationMapView(
                         .align(Alignment.BottomEnd)
                         .padding(end = 16.dp, bottom = 16.dp)
                         .clickable(enabled = isMapReady) {
-                            val tMapPoint = TMapPoint(currentLocation.latitude, currentLocation.longitude)
+                            val tMapPoint =
+                                TMapPoint(currentLocation.latitude, currentLocation.longitude)
                             tMapView.setCenterPoint(
                                 tMapPoint.latitude - offsetLat,
                                 tMapPoint.longitude
@@ -233,27 +236,6 @@ fun startScrollIdleCheck(
         }
 
         getCenterLocation(previousLatLng!!)
-    }
-}
-
-@Composable
-private fun CircleBtnBack(
-    modifier: Modifier = Modifier
-) {
-    Box(
-        modifier = modifier
-            .roundedBackgroundWithPadding(
-                cornerRadius = 100.dp,
-                backgroundColor = defaultTeam6Colors.gray940
-            ),
-        contentAlignment = Alignment.Center
-    ) {
-        Image(
-            modifier = Modifier.size(20.dp),
-            imageVector = ImageVector.vectorResource(R.drawable.ic_all_arrow_left_grey),
-            colorFilter = ColorFilter.tint(defaultTeam6Colors.white),
-            contentDescription = "ItineraryCircleBtnBack"
-        )
     }
 }
 

@@ -63,7 +63,7 @@ fun MypageMapView(
 
     val tMapView = remember { TMapView(context) }
     var isMapReady by remember { mutableStateOf(false) }
-    val offsetLat = 0.00005
+    val offsetLat = 0.00009
     val coroutineScope = rememberCoroutineScope()
 
     BackHandler {
@@ -118,7 +118,7 @@ fun MypageMapView(
                         id = "CurrentMarker"
                         name = "Current Location"
                         icon = markerBitmap
-                        setTMapPoint(TMapPoint(currentLocation.latitude, currentLocation.longitude))
+                        tMapPoint = TMapPoint(currentLocation.latitude, currentLocation.longitude)
                     }
 
                     tMapView.addTMapMarkerItem(markerItem)
