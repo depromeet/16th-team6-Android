@@ -15,6 +15,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
+import com.depromeet.team6.BuildConfig
 import com.depromeet.team6.R
 import com.depromeet.team6.domain.model.course.CourseInfo
 import com.depromeet.team6.domain.model.course.LegInfo
@@ -114,7 +115,7 @@ fun TransportTabMenu(
 }
 
 private fun isMidNight(): Boolean {
-    return false
+    if (BuildConfig.DEBUG) return false
     val currentTime = LocalTime.now(ZoneId.systemDefault())
     val midnight = LocalTime.MIDNIGHT // 00:00:00
     val fiveAM = LocalTime.of(5, 0, 0) // 05:00:00

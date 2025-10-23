@@ -356,7 +356,7 @@ fun ItineraryScreen(
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
                     text = stringResource(R.string.last_transport_info_set_notification),
-                    style = defaultTeam6Typography.body6_B6R14,
+                    style = defaultTeam6Typography.heading3_H3SB17,
                     color = defaultTeam6Colors.black
                 )
             }
