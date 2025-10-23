@@ -114,6 +114,7 @@ fun TransportTabMenu(
 }
 
 private fun isMidNight(): Boolean {
+    return false
     val currentTime = LocalTime.now(ZoneId.systemDefault())
     val midnight = LocalTime.MIDNIGHT // 00:00:00
     val fiveAM = LocalTime.of(5, 0, 0) // 05:00:00

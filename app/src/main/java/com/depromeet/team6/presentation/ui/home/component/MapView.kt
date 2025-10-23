@@ -35,6 +35,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.skt.tmap.TMapPoint
 import com.skt.tmap.TMapView
 import com.skt.tmap.overlay.TMapMarkerItem
+import timber.log.Timber
 
 @Composable
 fun TMapViewCompose(
@@ -139,6 +140,7 @@ fun TMapViewCompose(
                 existingMarker.tMapPoint = currentPoint
 
                 if (isMapFocused) {
+                    Timber.d("currentLocation Changed : ${currentLocation.latitude}, ${currentLocation.longitude}")
                     tMapView.setCenterPoint(currentLocation.latitude, currentLocation.longitude)
                     getCenterLocation(LatLng(currentLocation.latitude, currentLocation.longitude)) // 필요없어보여서 주석처리 해뒀어요
                     tMapView.zoomLevel = 18
