@@ -37,7 +37,7 @@ class LocationsRepositoryImpl @Inject constructor(
 
         val locationRequest = LocationRequest.Builder(
             Priority.PRIORITY_HIGH_ACCURACY,
-            10000L
+            3000L
         ).build()
 
         val locationCallback = object : LocationCallback() {

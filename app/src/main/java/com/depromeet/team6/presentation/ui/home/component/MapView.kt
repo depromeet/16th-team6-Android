@@ -37,6 +37,7 @@ import com.skt.tmap.TMapView
 import com.skt.tmap.overlay.TMapMarkerItem
 import timber.log.Timber
 
+
 @Composable
 fun TMapViewCompose(
     padding: PaddingValues,
@@ -102,6 +103,7 @@ fun TMapViewCompose(
                         name = "Current Location"
                         icon = markerBitmap
                         tMapPoint = currentPoint
+                        isAnimation = true
                     }
                     tMapView.addTMapMarkerItem(markerItem)
 
@@ -136,8 +138,11 @@ fun TMapViewCompose(
                 if (!isMapReady) return@AndroidView
 
                 val currentPoint = TMapPoint(currentLocation.latitude, currentLocation.longitude)
+
                 val existingMarker = tMapView.getMarkerItemFromId("CurrentMarker")
                 existingMarker.tMapPoint = currentPoint
+                tMapView.addTMapMarkerItem(existingMarker)
+                tMapView.updateTMapMarkerItem(existingMarker)
 
                 if (isMapFocused) {
                     Timber.d("currentLocation Changed : ${currentLocation.latitude}, ${currentLocation.longitude}")
