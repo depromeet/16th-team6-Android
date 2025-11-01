@@ -1,6 +1,9 @@
 package com.depromeet.team6.presentation.ui.itinerary.component
 
 import android.util.SparseArray
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -25,7 +28,11 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -42,6 +49,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.depromeet.team6.R
 import com.depromeet.team6.domain.model.BusCongestion
@@ -51,76 +59,160 @@ import com.depromeet.team6.domain.model.course.LegInfo
 import com.depromeet.team6.domain.model.course.Station
 import com.depromeet.team6.domain.model.course.TransportType
 import com.depromeet.team6.domain.model.toInfo
+import com.depromeet.team6.domain.usecase.CalculateDistanceUseCase
 import com.depromeet.team6.presentation.model.bus.BusArrivalParameter
 import com.depromeet.team6.presentation.ui.common.text.AtChaRemainTimeText
 import com.depromeet.team6.presentation.ui.itinerary.LegInfoDummyProvider
 import com.depromeet.team6.presentation.util.Dimens
+import com.depromeet.team6.presentation.util.Dimens.WalkIconWithRippleSize
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.presentation.util.modifier.roundedBackgroundWithPadding
 import com.depromeet.team6.presentation.util.view.TransportTypeUiMapper
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.depromeet.team6.ui.theme.defaultTeam6Typography
+import com.google.android.gms.maps.model.LatLng
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import kotlin.math.max
+import kotlin.math.roundToInt
 
 @Composable
 fun ItineraryInfoDetailLegs(
+    currentLocation: LatLng,
     legs: List<LegInfo>,
     busArrivalStatus: SparseArray<RealTimeBusArrival>,
+    isAlarmRegistered: Boolean,
     modifier: Modifier = Modifier,
     onClickBusInfo: (BusArrivalParameter) -> Unit = {}
 ) {
-    Column {
-        for ((idx, leg) in legs.withIndex()) {
-            when (leg.transportType) {
-                TransportType.WALK -> {
-                    val verticalHeight = if (idx == 0 || idx == legs.size - 1) 48.dp else 60.dp
-                    DetailLegsWalk(
-                        boardingDateTime = leg.departureDateTime!!,
-                        timeMinute = leg.sectionTime / 60,
-                        distanceMeter = leg.distance,
-                        verticalHeight = verticalHeight
-                    )
+    // Column의 실제 높이(px)
+    var columnHeightPx by remember { mutableIntStateOf(0) }
+    val density = LocalDensity.current
+
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .wrapContentHeight() // Column의 실제 높이에 맞추고 싶다면 wrapContentHeight 유지
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .onGloballyPositioned { coords ->
+                    columnHeightPx = coords.size.height
                 }
-                TransportType.BUS -> {
-                    DetailLegsBus(
-                        busName = leg.routeName!!,
-                        subtypeIdx = leg.subTypeIdx,
-                        boardingStation = leg.startPoint.name,
-                        disembarkingStation = leg.endPoint.name,
-                        boardingDateTime = leg.departureDateTime!!,
-                        timeMinute = leg.sectionTime / 60,
-                        distanceMeter = leg.distance,
-                        busArrivalStatus = busArrivalStatus.get(idx),
-                        passStopList = leg.passStopList,
-                        onClickBusInfo = { routeName, stationName, subtypeIdx ->
-                            onClickBusInfo(
-                                BusArrivalParameter(
-                                    routeName = routeName,
-                                    stationName = stationName,
-                                    lat = leg.startPoint.lat,
-                                    lon = leg.startPoint.lon,
-                                    subtypeIdx = subtypeIdx,
-                                    passingStations = leg.passStopList
+        ) {
+            for ((idx, leg) in legs.withIndex()) {
+                when (leg.transportType) {
+                    TransportType.WALK -> {
+                        val verticalHeight = if (idx == 0 || idx == legs.size - 1) 48.dp else 60.dp
+                        DetailLegsWalk(
+                            boardingDateTime = leg.departureDateTime!!,
+                            timeMinute = leg.sectionTime / 60,
+                            distanceMeter = leg.distance,
+                            verticalHeight = verticalHeight
+                        )
+                    }
+                    TransportType.BUS -> {
+                        DetailLegsBus(
+                            busName = leg.routeName!!,
+                            subtypeIdx = leg.subTypeIdx,
+                            boardingStation = leg.startPoint.name,
+                            disembarkingStation = leg.endPoint.name,
+                            boardingDateTime = leg.departureDateTime!!,
+                            timeMinute = leg.sectionTime / 60,
+                            distanceMeter = leg.distance,
+                            busArrivalStatus = busArrivalStatus.get(idx),
+                            passStopList = leg.passStopList,
+                            onClickBusInfo = { routeName, stationName, subtypeIdx ->
+                                onClickBusInfo(
+                                    BusArrivalParameter(
+                                        routeName = routeName,
+                                        stationName = stationName,
+                                        lat = leg.startPoint.lat,
+                                        lon = leg.startPoint.lon,
+                                        subtypeIdx = subtypeIdx,
+                                        passingStations = leg.passStopList
+                                    )
                                 )
-                            )
-                        }
-                    )
+                            }
+                        )
+                    }
+                    TransportType.SUBWAY -> {
+                        DetailLegsSubway(
+                            subwayName = leg.routeName!!,
+                            subtypeIdx = leg.subTypeIdx,
+                            boardingStation = leg.startPoint.name,
+                            disembarkingStation = leg.endPoint.name,
+                            boardingDateTime = leg.departureDateTime!!,
+                            timeMinute = leg.sectionTime / 60,
+                            passStopList = leg.passStopList,
+                            distanceMeter = leg.distance
+                        )
+                    }
                 }
-                TransportType.SUBWAY -> {
-                    DetailLegsSubway(
-                        subwayName = leg.routeName!!,
-                        subtypeIdx = leg.subTypeIdx,
-                        boardingStation = leg.startPoint.name,
-                        disembarkingStation = leg.endPoint.name,
-                        boardingDateTime = leg.departureDateTime!!,
-                        timeMinute = leg.sectionTime / 60,
-                        passStopList = leg.passStopList,
-                        distanceMeter = leg.distance
+            }
+        }
+
+        // 출발한 경우 부왕부왕 아이콘 표시
+        if (isAlarmRegistered) {
+            val iconSizePx = with(density) { WalkIconWithRippleSize.toPx() }
+            // 현재위치와 경로의 직선거리를 통해 얼만큼 왔는지 비율 계산 (부왕부왕 마커 표시하기 위함)
+            val totalDistance by remember {
+                mutableFloatStateOf(
+                    CalculateDistanceUseCase().invoke(
+                        lat1 = legs[0].startPoint.lat,
+                        lon1 = legs[0].startPoint.lon,
+                        lat2 = legs.last().endPoint.lat,
+                        lon2 = legs.last().endPoint.lon
+                    )
+                )
+            }
+            val currentDistance by remember {
+                derivedStateOf {
+                    CalculateDistanceUseCase().invoke(
+                        lat1 = currentLocation.latitude,
+                        lon1 = currentLocation.longitude,
+                        lat2 = legs[0].endPoint.lat,
+                        lon2 = legs[0].endPoint.lon
                     )
                 }
             }
+            val currentPositionRatio by remember(currentDistance, totalDistance) {
+                derivedStateOf{currentDistance / totalDistance}
+            }
+            // 부왕부왕 마커 부드럽게 이동하기 위한 애니메이션 좌표값
+            val markerX = remember {
+                (with(density) { 20.dp.toPx() } - (iconSizePx / 2))
+            }
+            val animatedMarkerY = remember {
+                Animatable(
+                    0 - (iconSizePx / 2)
+                )
+            }
+            // 부왕부왕 마커가 실제로 표시되어야 하는 물리적 픽셀 좌표
+            val markerYPx by remember(columnHeightPx, iconSizePx) {
+                derivedStateOf {
+                    ((columnHeightPx * currentPositionRatio) - (iconSizePx / 2)).roundToInt()
+                }
+            }
+            LaunchedEffect(markerYPx) {
+                animatedMarkerY.animateTo(
+                    targetValue = markerYPx.toFloat(),
+                    animationSpec = tween(
+                        durationMillis = 300,
+                        easing = FastOutSlowInEasing
+                    )
+                )
+            }
+            WalkIconWithRipple(
+                modifier = Modifier
+                    .offset {
+                        IntOffset(
+                            x = markerX.roundToInt(),
+                            y = animatedMarkerY.value.roundToInt()
+                        )
+                    }
+            )
         }
     }
 }
@@ -668,33 +760,9 @@ fun ItineraryInfoDetailLegsPreview(
     @PreviewParameter(LegInfoDummyProvider::class) legs: List<LegInfo>
 ) {
     ItineraryInfoDetailLegs(
+        currentLocation = LatLng(0.0, 0.0),
         legs = legs,
+        isAlarmRegistered = true,
         busArrivalStatus = SparseArray<RealTimeBusArrival>()
     )
-
-//    Column(){
-//        DetailLegsWalk(
-//            boardingDateTime = "2023-06-06T00:00:00",
-//            timeMinute = 25,
-//            distanceMeter = 1000
-//        )
-//        DetailLegsBus(
-//            busName = "152",
-//            subtypeIdx = 2,
-//            boardingStation = "중앙빌딩",
-//            disembarkingStation = "우리집",
-//            boardingDateTime = "2023-06-06T00:00:00",
-//            timeMinute = 25,
-//            distanceMeter = 1000
-//        )
-//        DetailLegsSubway(
-//            subwayName = "성수(내선)행",
-//            subtypeIdx = 1,
-//            boardingStation = "중앙빌딩",
-//            disembarkingStation = "우리집",
-//            boardingDateTime = "2023-06-06T00:00:00",
-//            timeMinute = 25,
-//            distanceMeter = 1000
-//        )
-//    }
 }

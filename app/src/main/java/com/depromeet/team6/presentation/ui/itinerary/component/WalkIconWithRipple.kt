@@ -18,10 +18,12 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.depromeet.team6.domain.model.course.TransportType
 import com.depromeet.team6.presentation.ui.common.TransportVectorIconComposable
+import com.depromeet.team6.presentation.util.Dimens.WalkIconWithRippleSize
 import com.depromeet.team6.presentation.util.modifier.roundedBackgroundWithPadding
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import kotlinx.coroutines.CoroutineScope
@@ -32,9 +34,9 @@ import kotlinx.coroutines.launch
 @Composable
 fun WalkIconWithRipple(
     modifier: Modifier = Modifier,
-    // 파장의 최대 반경을 결정합니다.
-    maxRippleSize: Dp = 48.dp
+    iconVisible: Boolean = true
 ) {
+    val maxRippleSize: Dp = WalkIconWithRippleSize
     // 가장 큰 크기를 기준으로 Box를 설정합니다.
     Box(
         modifier = modifier.size(maxRippleSize), // 파장이 퍼질 공간 확보
@@ -50,22 +52,24 @@ fun WalkIconWithRipple(
             initialRadius = maxRippleSize / 4 // 파장이 시작할 때 배경 원 밖에서 시작하도록 설정
         )
 
-        Box(
-            modifier = Modifier
-                .size(28.dp)
-                .roundedBackgroundWithPadding(
-                    defaultTeam6Colors.gray600,
-                    cornerRadius = 100.dp
-                ),
-            contentAlignment = Alignment.Center
-        ) {
-            TransportVectorIconComposable(
-                type = TransportType.WALK,
-                color = Color.White,
-                isMarker = false,
+        if (iconVisible) {
+            Box(
                 modifier = Modifier
-                    .size(18.dp)
-            )
+                    .size(28.dp)
+                    .roundedBackgroundWithPadding(
+                        defaultTeam6Colors.gray600,
+                        cornerRadius = 100.dp
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                TransportVectorIconComposable(
+                    type = TransportType.WALK,
+                    color = Color.White,
+                    isMarker = false,
+                    modifier = Modifier
+                        .size(18.dp)
+                )
+            }
         }
     }
 }
@@ -105,7 +109,6 @@ fun RippleWaveAnimation(
     // 새로운 물결을 주기적으로 추가하는 LaunchedEffect
     LaunchedEffect(Unit) {
         while (isActive) {
-            // 현재 활성 상태인 물결이 waveCount보다 적을 때만 새로운 물결 추가
             ripples.add(
                 RippleState(
                     coroutineScope,
@@ -178,4 +181,10 @@ class RippleState(
             )
         }
     }
+}
+
+@Composable
+@Preview
+fun WalkIconWithRipplePreview() {
+    WalkIconWithRipple()
 }

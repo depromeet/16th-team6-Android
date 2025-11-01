@@ -2,8 +2,6 @@ package com.depromeet.team6.presentation.ui.home
 
 import android.content.Context
 import android.widget.Toast
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -70,9 +68,7 @@ import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_ROUTE_CLICKED
 import com.depromeet.team6.presentation.util.HomeAmplitude.POPUP
 import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
 import com.depromeet.team6.presentation.util.base.ApiErrorSideEffect
-import com.depromeet.team6.presentation.util.dialog.LocalDialogController
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
-import com.depromeet.team6.presentation.util.permission.PermissionUtil
 import com.depromeet.team6.presentation.util.toast.atChaToastMessage
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.depromeet.team6.ui.theme.LocalTeam6Colors
@@ -106,18 +102,6 @@ fun HomeRoute(
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
 
-    var permissionGranted by remember { mutableStateOf(PermissionUtil.hasLocationPermissions(context)) }
-    val dialogController = LocalDialogController.current
-
-    val locationPermissionsLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestMultiplePermissions(),
-        onResult = { permissions ->
-            permissionGranted = permissions.values.all { it }
-            if (permissionGranted) {
-                Timber.d("Location_Permission Has Granted")
-            }
-        }
-    )
 
     val systemUiController = rememberSystemUiController()
 
@@ -199,20 +183,6 @@ fun HomeRoute(
                         atChaToastMessage(context, R.string.home_alarm_finish_text, Toast.LENGTH_SHORT)
                 }
             }
-    }
-
-    LaunchedEffect(permissionGranted) {
-        if (permissionGranted) { // 위치 권한이 있으면
-            viewModel.startLocationUpdates()
-        } else {
-            dialogController.showAtchaSystemSettingAlert(
-                context = context,
-                message = context.getString(R.string.all_dialog_location_permission),
-                onConfirm = {
-                    PermissionUtil.requestLocationPermissions(context, locationPermissionsLauncher)
-                }
-            )
-        }
     }
 
     LaunchedEffect(Unit) {

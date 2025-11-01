@@ -147,7 +147,7 @@ fun CourseSearchRoute(
                 uiState = uiState,
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(defaultTeam6Colors.gray950)
+                    .background(defaultTeam6Colors.white)
                     .padding(padding),
                 navigateToItinerary = navigateToItinerary,
                 setNotification = { routeId ->

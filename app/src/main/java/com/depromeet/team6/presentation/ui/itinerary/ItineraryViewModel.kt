@@ -43,10 +43,18 @@ class ItineraryViewModel @Inject constructor(
     private val homeRepository: HomeRepository,
     private val getTaxiCostUseCase: GetTaxiCostUseCase,
     private val getUserInfoUseCase: GetUserInfoUseCase,
-    private val initAlarmUseCase: InitAlarmUseCase
+    private val initAlarmUseCase: InitAlarmUseCase,
 ) : BaseViewModel<ItineraryContract.ItineraryUiState, ItineraryContract.ItinerarySideEffect, ItineraryContract.ItineraryEvent>() {
     override fun createInitialState(): ItineraryContract.ItineraryUiState = ItineraryContract.ItineraryUiState()
 
+    init {
+        val isAlarmRegistered = homeRepository.isAlarmRegistered()
+        setState {
+            copy(
+                isAlarmRegistered = isAlarmRegistered
+            )
+        }
+    }
     private var hasShownOverlayDialog = false
 
     override suspend fun handleEvent(event: ItineraryContract.ItineraryEvent) {

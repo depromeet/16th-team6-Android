@@ -23,6 +23,7 @@ class ItineraryContract {
             DEFAULT_LAT,
             DEFAULT_LNG
         ),
+        val isAlarmRegistered: Boolean = true,
         val showOverlayPermissionDialog: Boolean = false,
         val showPermissionSnackbar: Boolean = false
     ) : UiState

@@ -41,8 +41,6 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
@@ -691,14 +689,6 @@ class HomeViewModel @Inject constructor(
                 handleApiException(exception = exception)
             }
         }
-    }
-
-    fun startLocationUpdates() {
-        getRealtimeLocationUseCase()
-            .onEach { newLocation ->
-                setState { copy(currentLocation = newLocation) }
-            }
-            .launchIn(viewModelScope)
     }
 
     companion object {

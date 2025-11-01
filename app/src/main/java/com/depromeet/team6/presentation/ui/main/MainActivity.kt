@@ -7,8 +7,10 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,6 +25,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.core.app.ActivityCompat
 import androidx.core.net.toUri
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
@@ -40,8 +43,10 @@ import com.depromeet.team6.presentation.ui.main.navigation.MainNavHost
 import com.depromeet.team6.presentation.ui.main.navigation.MainNavigator
 import com.depromeet.team6.presentation.ui.main.navigation.rememberMainNavigator
 import com.depromeet.team6.presentation.util.AppConstants
+import com.depromeet.team6.presentation.util.context.openAppSettings
 import com.depromeet.team6.presentation.util.dialog.DialogController
 import com.depromeet.team6.presentation.util.dialog.LocalDialogController
+import com.depromeet.team6.presentation.util.permission.PermissionUtil
 import com.depromeet.team6.presentation.util.snackbar.LocalSnackbarController
 import com.depromeet.team6.presentation.util.snackbar.rememberSnackbarController
 import com.depromeet.team6.presentation.util.view.NetworkState
@@ -50,6 +55,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.analytics
 import dagger.hilt.android.AndroidEntryPoint
+import kotlin.system.exitProcess
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -117,6 +123,8 @@ class MainActivity : ComponentActivity() {
         val destinationPoint = intent.getStringExtra(LockScreenNavigator.EXTRA_DESTINATION_POINT) ?: ""
         val fromLockScreen = intent.getBooleanExtra(LockScreenNavigator.EXTRA_FROM_LOCK_SCREEN, false)
 
+        val permissionGranted = PermissionUtil.hasLocationPermissions(this)
+
         setContent {
             val viewModel: MainViewModel = hiltViewModel()
             val navigator: MainNavigator = rememberMainNavigator(firebaseAnalytics = firebaseAnalytics)
@@ -158,6 +166,43 @@ class MainActivity : ComponentActivity() {
                             }
                         }
                     }
+            }
+            val locationPermissionsLauncher = rememberLauncherForActivityResult(
+                contract = ActivityResultContracts.RequestMultiplePermissions(),
+                onResult = { permissions ->
+                    if (permissions.values.all { it }) {
+                        snackbarController.showSnackbar(
+                            "위치 권한이 허용되었습니다."
+                        )
+                    } else {
+                        Toast.makeText(this@MainActivity, "앗차 앱을 사용하시기 전에 위치 권한을 허용해 주세요", Toast.LENGTH_SHORT).show()
+                        exitProcess(0)
+                    }
+                }
+            )
+
+            LaunchedEffect(PermissionUtil.hasLocationPermissions(this)) {
+                if (PermissionUtil.hasLocationPermissions(this@MainActivity)) { // 위치 권한이 있으면
+                    viewModel.startLocationUpdates()
+                } else {
+
+                    dialogController.showAtchaTwoButtonAlert(
+                        message = this@MainActivity.getString(R.string.all_dialog_location_permission),
+                        onConfirm = {
+                            if (ActivityCompat.shouldShowRequestPermissionRationale(this@MainActivity, android.Manifest.permission.ACCESS_FINE_LOCATION)) {
+                                this@MainActivity.openAppSettings()
+                            } else {
+                                PermissionUtil.requestLocationPermissions(this@MainActivity, locationPermissionsLauncher)
+                            }
+                        },
+                        onDismiss = {
+                            Toast.makeText(this@MainActivity, "앗차 앱을 사용하시기 전에 위치 권한을 허용해 주세요", Toast.LENGTH_SHORT).show()
+                            exitProcess(0)
+                        },
+                        closeButtonText = "닫기",
+                        confirmButtonText = "확인"
+                    )
+                }
             }
 
             if (networkAvailability.value == NetworkState.Unavailable) {
