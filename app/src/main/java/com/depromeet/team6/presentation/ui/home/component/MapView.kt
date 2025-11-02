@@ -37,7 +37,6 @@ import com.skt.tmap.TMapView
 import com.skt.tmap.overlay.TMapMarkerItem
 import timber.log.Timber
 
-
 @Composable
 fun TMapViewCompose(
     padding: PaddingValues,

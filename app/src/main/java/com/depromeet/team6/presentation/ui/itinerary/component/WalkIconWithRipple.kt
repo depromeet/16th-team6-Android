@@ -115,7 +115,7 @@ fun RippleWaveAnimation(
                     initialRadiusPx,
                     0.5f,
                     maxRadiusPx,
-                    waveDurationMillis,
+                    waveDurationMillis
                 )
             )
             delay(waveIntervalMillis.toLong())

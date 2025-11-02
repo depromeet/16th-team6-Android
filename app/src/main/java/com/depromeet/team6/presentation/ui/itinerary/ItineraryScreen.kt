@@ -306,7 +306,7 @@ fun ItineraryScreen(
                         departurePoint = uiState.departurePoint!!,
                         destinationPoint = uiState.destinationPoint!!,
                         isAlarmRegistered = uiState.isAlarmRegistered,
-                        onClickBusInfo = navigateToBusCourse,
+                        onClickBusInfo = navigateToBusCourse
                     )
                     Spacer(Modifier.height(marginBottom))
                 }
@@ -314,7 +314,6 @@ fun ItineraryScreen(
             sheetScrollState = sheetScrollState,
             marginBottom = marginBottom
         )
-
 
         // 막차알림 등록 되어 있으면 리프레시 버튼
         // 막차알림 등록 안되어 있으면 알림등록 버튼

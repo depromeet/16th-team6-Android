@@ -91,7 +91,7 @@ fun AtchaCommonBottomSheet(
                 modifier = Modifier
                     .fillMaxWidth()
                     .heightIn(max = maxSheetHeight) // 이 높이를 초과하여 확장되지 않도록 제한
-                //.height(maxSheetHeight) // 고정 높이 대신 heightIn을 사용해야 스크롤 가능
+                    // .height(maxSheetHeight) // 고정 높이 대신 heightIn을 사용해야 스크롤 가능
                     .nestedScroll(nestedScrollInterop)
             ) {
                 sheetContent()

@@ -185,7 +185,6 @@ class MainActivity : ComponentActivity() {
                 if (PermissionUtil.hasLocationPermissions(this@MainActivity)) { // 위치 권한이 있으면
                     viewModel.startLocationUpdates()
                 } else {
-
                     dialogController.showAtchaTwoButtonAlert(
                         message = this@MainActivity.getString(R.string.all_dialog_location_permission),
                         onConfirm = {

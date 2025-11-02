@@ -178,7 +178,7 @@ fun ItineraryInfoDetailLegs(
                 }
             }
             val currentPositionRatio by remember(currentDistance, totalDistance) {
-                derivedStateOf{currentDistance / totalDistance}
+                derivedStateOf { currentDistance / totalDistance }
             }
             // 부왕부왕 마커 부드럽게 이동하기 위한 애니메이션 좌표값
             val markerX = remember {

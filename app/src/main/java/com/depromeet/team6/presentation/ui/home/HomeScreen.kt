@@ -102,7 +102,6 @@ fun HomeRoute(
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
 
-
     val systemUiController = rememberSystemUiController()
 
     val characterTexts = CharacterTexts(
