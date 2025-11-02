@@ -1,4 +1,4 @@
-package com.depromeet.team6.data.dataremote.model.request.signup
+package com.depromeet.team6.data.dataremote.model.request.auth
 
 import com.depromeet.team6.data.dataremote.util.ApiConstraints.FCM_TOKEN
 import com.depromeet.team6.data.dataremote.util.ApiConstraints.PROVIDER
@@ -18,9 +18,6 @@ data class RequestSignUpDto(
 
     @SerialName("lon")
     val lon: Double,
-
-    @SerialName("alertFrequencies")
-    val alertFrequencies: Set<Int>,
 
     @SerialName(FCM_TOKEN)
     val fcmToken: String

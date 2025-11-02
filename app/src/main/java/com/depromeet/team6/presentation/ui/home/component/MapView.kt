@@ -35,6 +35,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.skt.tmap.TMapPoint
 import com.skt.tmap.TMapView
 import com.skt.tmap.overlay.TMapMarkerItem
+import timber.log.Timber
 
 @Composable
 fun TMapViewCompose(
@@ -101,6 +102,7 @@ fun TMapViewCompose(
                         name = "Current Location"
                         icon = markerBitmap
                         tMapPoint = currentPoint
+                        isAnimation = true
                     }
                     tMapView.addTMapMarkerItem(markerItem)
 
@@ -135,10 +137,14 @@ fun TMapViewCompose(
                 if (!isMapReady) return@AndroidView
 
                 val currentPoint = TMapPoint(currentLocation.latitude, currentLocation.longitude)
+
                 val existingMarker = tMapView.getMarkerItemFromId("CurrentMarker")
                 existingMarker.tMapPoint = currentPoint
+                tMapView.addTMapMarkerItem(existingMarker)
+                tMapView.updateTMapMarkerItem(existingMarker)
 
                 if (isMapFocused) {
+                    Timber.d("currentLocation Changed : ${currentLocation.latitude}, ${currentLocation.longitude}")
                     tMapView.setCenterPoint(currentLocation.latitude, currentLocation.longitude)
                     getCenterLocation(LatLng(currentLocation.latitude, currentLocation.longitude)) // 필요없어보여서 주석처리 해뒀어요
                     tMapView.zoomLevel = 18

@@ -13,7 +13,8 @@ data class LegInfo(
     val startPoint: Address,
     val endPoint: Address,
     val passShape: String,
-    val passStopList: List<Station> = emptyList()
+    val passStopList: List<Station> = emptyList(),
+    val targetBusTerm: Int? = null
 )
 
 @Serializable

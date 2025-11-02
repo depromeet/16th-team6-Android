@@ -47,6 +47,14 @@ class ItineraryViewModel @Inject constructor(
 ) : BaseViewModel<ItineraryContract.ItineraryUiState, ItineraryContract.ItinerarySideEffect, ItineraryContract.ItineraryEvent>() {
     override fun createInitialState(): ItineraryContract.ItineraryUiState = ItineraryContract.ItineraryUiState()
 
+    init {
+        val isAlarmRegistered = homeRepository.isAlarmRegistered()
+        setState {
+            copy(
+                isAlarmRegistered = isAlarmRegistered
+            )
+        }
+    }
     private var hasShownOverlayDialog = false
 
     override suspend fun handleEvent(event: ItineraryContract.ItineraryEvent) {
@@ -138,7 +146,7 @@ class ItineraryViewModel @Inject constructor(
                         context = context,
                         alarmTimeStamp = alarmTimeStamp
                     )
-                    postAdditionalAlarmSchedule(alarmTimeStamp)
+                    AlarmScheduler.scheduleAdditionalPushAlarm(context, alarmTimeStamp)
                 }
                 .onFailure { exception ->
                     handleApiException(exception)
@@ -182,18 +190,18 @@ class ItineraryViewModel @Inject constructor(
         }
     }
 
-    fun postAdditionalAlarmSchedule(alarmTime: String) {
-        viewModelScope.launch {
-            getUserInfoUseCase()
-                .onSuccess {
-                    val freq = it.alertFrequencies
-                    AlarmScheduler.scheduleAdditionalPushAlarm(context, alarmTime, freq)
-                }
-                .onFailure {
-                    handleApiException(it)
-                }
-        }
-    }
+//    fun postAdditionalAlarmSchedule(alarmTime: String) {
+//        viewModelScope.launch {
+//            getUserInfoUseCase()
+//                .onSuccess {
+//                    val freq = it.alertFrequencies
+//                    AlarmScheduler.scheduleAdditionalPushAlarm(context, alarmTime)
+//                }
+//                .onFailure {
+//                    handleApiException(it)
+//                }
+//        }
+//    }
 
     private fun getRemainingBusArrivalTimes() {
         val newBusArrivalStatus = SparseArray<RealTimeBusArrival>()

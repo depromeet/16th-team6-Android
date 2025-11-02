@@ -12,4 +12,5 @@ object Dimens {
     val LegDepartureTimeWidth = 38.dp
     val LegDetailVerticalLineWidth = 40.dp
     val LegDetailLineTextMargin = 17.dp
+    val WalkIconWithRippleSize = 48.dp
 }

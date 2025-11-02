@@ -210,8 +210,9 @@ fun MyPageRoute(
                                 logoutClicked = { mypageViewModel.setEvent(MypageContract.MypageEvent.LogoutClicked) },
                                 withDrawClicked = { mypageViewModel.setEvent(MypageContract.MypageEvent.WithDrawClicked) },
                                 onBackClick = { mypageViewModel.setEvent(MypageContract.MypageEvent.BackPressed) },
+                                moveToAccount = { mypageViewModel.setEvent(MypageContract.MypageEvent.AccountClicked) },
                                 logoutConfirmed = { mypageViewModel.setEvent(MypageContract.MypageEvent.LogoutConfirmed) },
-                                withDrawConfirmed = { mypageViewModel.setEvent(MypageContract.MypageEvent.WithDrawConfirmed) },
+                                withDrawConfirmed = { mypageViewModel.setEvent(MypageContract.MypageEvent.WithDrawConfirmed(it)) },
                                 dismissDialog = { mypageViewModel.setEvent(MypageContract.MypageEvent.DismissDialog) }
                             )
                         }
@@ -261,29 +262,8 @@ fun MyPageRoute(
                                 modifier = modifier,
                                 mypageUiState = uiState,
                                 onBackClick = { mypageViewModel.setEvent(MypageContract.MypageEvent.BackPressed) },
-                                onAlarmTypeSelected = { type ->
-                                    mypageViewModel.setEvent(MypageContract.MypageEvent.AlarmTypeSelected(type))
-                                },
-                                onSoundSettingClick = { mypageViewModel.setEvent(MypageContract.MypageEvent.SoundSettingClicked) },
-                                onAlarmTimeSettingClick = { mypageViewModel.setEvent(MypageContract.MypageEvent.TimeSettingClicked) },
-                                onAlarmTimeSelected = { alarmTime ->
-                                    val timeValue = alarmTime.minutes
-                                    if (timeValue != 1) {
-                                        val newSelection = if (timeValue in uiState.alertFrequencies) {
-                                            uiState.alertFrequencies - timeValue
-                                        } else {
-                                            uiState.alertFrequencies + timeValue
-                                        }
-                                        mypageViewModel.setEvent(
-                                            MypageContract.MypageEvent.UpdateAlertFrequencies(
-                                                newSelection
-                                            )
-                                        )
-                                    }
-                                },
-                                onAlarmTimeSubmitSelected = {
-                                    mypageViewModel.modifyAlarmFrequencies(context)
-                                }
+                                onAlarmTypeModified = { mypageViewModel.setEvent(MypageContract.MypageEvent.AlarmTypeModified(it)) },
+                                onAlarmVolumeModified = { mypageViewModel.setEvent(MypageContract.MypageEvent.AlarmVolumeModified(it)) }
                             )
                         }
                     }
@@ -382,15 +362,6 @@ fun MypageScreen(
                     confirmText = stringResource(R.string.mypage_logout_dialog_confirm),
                     onDismiss = dismissDialog,
                     onSuccess = logoutConfirmed
-                )
-            }
-            if (mypageUiState.withDrawDialogVisible) {
-                MyPageConfirmDialog(
-                    modifier = Modifier.align(Alignment.Center),
-                    title = stringResource(R.string.mypage_withdraw_dialog_title),
-                    confirmText = stringResource(R.string.mypage_withdraw_dialog_confirm),
-                    onDismiss = dismissDialog,
-                    onSuccess = withDrawConfirmed
                 )
             }
 

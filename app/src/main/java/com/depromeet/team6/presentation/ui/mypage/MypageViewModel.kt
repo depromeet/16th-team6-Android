@@ -4,9 +4,7 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.widget.Toast
 import androidx.lifecycle.viewModelScope
-import com.depromeet.team6.R
 import com.depromeet.team6.data.dataremote.model.request.user.RequestModifyUserInfoDto
 import com.depromeet.team6.data.repositoryimpl.UserInfoRepositoryImpl
 import com.depromeet.team6.domain.model.Address
@@ -22,7 +20,6 @@ import com.depromeet.team6.presentation.mapper.toPresentationList
 import com.depromeet.team6.presentation.util.base.BaseViewModel
 import com.depromeet.team6.presentation.util.context.getUserLocation
 import com.depromeet.team6.presentation.util.permission.PermissionUtil
-import com.depromeet.team6.presentation.util.toast.atChaToastMessage
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -44,6 +41,10 @@ class MypageViewModel @Inject constructor(
     private val modifyUserInfoUseCase: ModifyUserInfoUseCase
 ) : BaseViewModel<MypageContract.MypageUiState, MypageContract.MypageSideEffect, MypageContract.MypageEvent>() {
 
+    init {
+        loadAlarmSettings()
+    }
+
     // 주소 초기화 여부를 추적하는 플래그
     private var isAddressInitialized = false
 
@@ -54,20 +55,18 @@ class MypageViewModel @Inject constructor(
             is MypageContract.MypageEvent.BackPressed -> navigateBack()
             is MypageContract.MypageEvent.LogoutClicked -> setState {
                 copy(
-                    logoutDialogVisible = true,
-                    withDrawDialogVisible = false
+                    logoutDialogVisible = true
                 )
             }
 
-            is MypageContract.MypageEvent.WithDrawClicked -> setState { copy(withDrawDialogVisible = true) }
+            is MypageContract.MypageEvent.WithDrawClicked -> setState { copy(withDrawScreenVisible = true) }
             is MypageContract.MypageEvent.PolicyClicked -> setState { copy(isWebViewOpened = true) }
             is MypageContract.MypageEvent.PolicyClosed -> setState { copy(isWebViewOpened = false) }
             is MypageContract.MypageEvent.LogoutConfirmed -> logout()
-            is MypageContract.MypageEvent.WithDrawConfirmed -> withDraw()
+            is MypageContract.MypageEvent.WithDrawConfirmed -> withDraw(event.reason)
             is MypageContract.MypageEvent.DismissDialog -> setState {
                 copy(
-                    logoutDialogVisible = false,
-                    withDrawDialogVisible = false
+                    logoutDialogVisible = false
                 )
             }
 
@@ -125,26 +124,14 @@ class MypageViewModel @Inject constructor(
             }
 
             MypageContract.MypageEvent.AlarmSettingClicked -> navigateToAlarmSetting()
-            is MypageContract.MypageEvent.AlarmTypeSelected -> {
-                setState { copy(selectedAlarmType = event.type) }
-                saveAlarmSettings(event.type)
-            }
 
-            MypageContract.MypageEvent.SoundSettingClicked -> {
-                setState {
-                    copy(alarmScreenState = MypageContract.AlarmScreenState.SOUND_SETTING)
-                }
-                loadAlarmSettings()
+            is MypageContract.MypageEvent.AlarmTypeModified -> {
+                saveAlarmType(event.type)
+                navigateToMainSetting()
             }
-
-            MypageContract.MypageEvent.TimeSettingClicked -> {
-                setState {
-                    copy(alarmScreenState = MypageContract.AlarmScreenState.TIME_SETTING)
-                }
-            }
-
-            is MypageContract.MypageEvent.UpdateAlertFrequencies -> setState {
-                copy(alertFrequencies = event.alertFrequencies)
+            is MypageContract.MypageEvent.AlarmVolumeModified -> {
+                saveAlarmVolume(event.volume)
+                navigateToMainSetting()
             }
         }
     }
@@ -175,16 +162,9 @@ class MypageViewModel @Inject constructor(
                             address = userInfo.address,
                             lat = userInfo.userHome.latitude,
                             lon = userInfo.userHome.longitude,
-                            alertFrequencies = userInfo.alertFrequencies,
                             fcmToken = null,
                             appVersion = userInfo.appVersion
                         )
-                    )
-                }
-
-                setState {
-                    copy(
-                        alertFrequencies = userInfo.alertFrequencies
                     )
                 }
                 isAddressInitialized = true
@@ -262,29 +242,6 @@ class MypageViewModel @Inject constructor(
                     setState { copy(mapViewVisible = false) }
 
                     callback()
-                }
-                .onFailure { exception ->
-                    handleApiException(exception)
-                }
-        }
-    }
-
-    fun modifyAlarmFrequencies(context: Context) {
-        viewModelScope.launch {
-            val modifyUserInfoDto = RequestModifyUserInfoDto(
-                alertFrequencies = currentState.alertFrequencies
-            )
-
-            modifyUserInfoUseCase(modifyUserInfoDto = modifyUserInfoDto)
-                .onSuccess { userInfo ->
-                    setState {
-                        copy(
-                            userInfo = currentState.userInfo.copy(
-                                alertFrequencies = userInfo.alertFrequencies
-                            )
-                        )
-                    }
-                    atChaToastMessage(context, R.string.mypage_change_alarm_time_toast_text, Toast.LENGTH_SHORT)
                 }
                 .onFailure { exception ->
                     handleApiException(exception)
@@ -375,16 +332,37 @@ class MypageViewModel @Inject constructor(
         }
     }
 
-    private fun saveAlarmSettings(type: MypageContract.AlarmType) {
+    private fun saveAlarmType(type: MypageContract.AlarmType) {
         viewModelScope.launch {
             try {
                 val isSound = when (type) {
                     MypageContract.AlarmType.SOUND -> true
                     MypageContract.AlarmType.VIBRATION -> false
+                    MypageContract.AlarmType.ALL -> true
+                }
+                val isVibrate = when (type) {
+                    MypageContract.AlarmType.SOUND -> false
+                    MypageContract.AlarmType.VIBRATION -> true
+                    MypageContract.AlarmType.ALL -> true
                 }
                 userInfoRepositoryImpl.saveIsAlarmSound(isSound)
+                userInfoRepositoryImpl.saveIsAlarmVibrate(isVibrate)
+                setState {
+                    copy(selectedAlarmType = type)
+                }
             } catch (e: Exception) {
                 Timber.e("알람 설정 저장 실패: ${e.message}")
+            }
+        }
+    }
+
+    private fun saveAlarmVolume(volume: Int) {
+        viewModelScope.launch {
+            userInfoRepositoryImpl.saveAlarmVolume(volume)
+            setState {
+                copy(
+                    alarmVolume = volume
+                )
             }
         }
     }
@@ -393,15 +371,21 @@ class MypageViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val isSound = userInfoRepositoryImpl.getIsAlarmSound()
+                val isVibrate = userInfoRepositoryImpl.getIsAlarmVibrate()
+                val alarmVolume = userInfoRepositoryImpl.getAlarmVolume()
 
-                val alarmType = if (isSound) {
-                    MypageContract.AlarmType.SOUND
-                } else {
-                    MypageContract.AlarmType.VIBRATION
+                val alarmType = when {
+                    isSound && isVibrate -> MypageContract.AlarmType.ALL
+                    isSound -> MypageContract.AlarmType.SOUND
+                    isVibrate -> MypageContract.AlarmType.VIBRATION
+                    else -> MypageContract.AlarmType.ALL
                 }
 
                 setState {
-                    copy(selectedAlarmType = alarmType)
+                    copy(
+                        selectedAlarmType = alarmType,
+                        alarmVolume = alarmVolume
+                    )
                 }
             } catch (e: Exception) {
                 Timber.e("알람 설정 불러오기 실패: ${e.message}")
@@ -427,9 +411,9 @@ class MypageViewModel @Inject constructor(
         }
     }
 
-    private fun withDraw() {
+    private fun withDraw(reason: String) {
         viewModelScope.launch {
-            deleteWithDrawUseCase().onSuccess {
+            deleteWithDrawUseCase(reason).onSuccess {
                 userInfoRepositoryImpl.clear()
                 setSideEffect(MypageContract.MypageSideEffect.ClearPermissionData)
                 homeRepository.clearAlarmData()
@@ -441,7 +425,12 @@ class MypageViewModel @Inject constructor(
     }
 
     private fun navigateToAccount() {
-        setState { copy(currentScreen = MypageContract.MypageScreen.ACCOUNT) }
+        setState {
+            copy(
+                currentScreen = MypageContract.MypageScreen.ACCOUNT,
+                withDrawScreenVisible = false
+            )
+        }
     }
 
     private fun navigateToChangeHome() {
@@ -452,36 +441,33 @@ class MypageViewModel @Inject constructor(
         setState { copy(currentScreen = MypageContract.MypageScreen.ALARM) }
     }
 
+    private fun navigateToMainSetting() {
+        setState { copy(currentScreen = MypageContract.MypageScreen.MAIN) }
+    }
+
     private fun navigateBack() {
         val currentScreen = currentState.currentScreen
-        when (currentScreen) {
-            MypageContract.MypageScreen.MAIN -> {
-                setSideEffect(MypageContract.MypageSideEffect.NavigateBack)
-            }
-
-            MypageContract.MypageScreen.ACCOUNT -> {
-                setState { copy(currentScreen = MypageContract.MypageScreen.MAIN) }
-            }
-
-            MypageContract.MypageScreen.CHANGE_HOME -> {
-                setState { copy(currentScreen = MypageContract.MypageScreen.MAIN) }
-            }
-
-            MypageContract.MypageScreen.ALARM -> {
-                when (currentState.alarmScreenState) {
-                    MypageContract.AlarmScreenState.SOUND_SETTING -> {
-                        setState { copy(alarmScreenState = MypageContract.AlarmScreenState.MAIN) }
-                    }
-
-                    MypageContract.AlarmScreenState.TIME_SETTING -> {
-                        setState { copy(alarmScreenState = MypageContract.AlarmScreenState.MAIN) }
-                    }
-
-                    else -> {
-                        setState { copy(currentScreen = MypageContract.MypageScreen.MAIN) }
-                    }
-                }
-            }
+        if (currentScreen == MypageContract.MypageScreen.MAIN) {
+            setSideEffect(MypageContract.MypageSideEffect.NavigateBack)
+        } else {
+            navigateToMainSetting()
         }
+//        when (currentScreen) {
+//            MypageContract.MypageScreen.MAIN -> {
+//                setSideEffect(MypageContract.MypageSideEffect.NavigateBack)
+//            }
+//
+//            MypageContract.MypageScreen.ACCOUNT -> {
+//                navigateToMainSetting()
+//            }
+//
+//            MypageContract.MypageScreen.CHANGE_HOME -> {
+//                navigateToMainSetting()
+//            }
+//
+//            MypageContract.MypageScreen.ALARM -> {
+//                navigateToMainSetting()
+//            }
+//        }
     }
 }

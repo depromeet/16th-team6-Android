@@ -70,11 +70,12 @@ class LockService : Service() {
 
     private fun playAlarm() {
         val isSound = userInfoRepositoryImpl.getIsAlarmSound()
+        val isVibrate = userInfoRepositoryImpl.getIsAlarmVibrate()
 
         if (isSound) {
             playAlarmSound()
-            vibrate()
-        } else {
+        }
+        if (isVibrate) {
             vibrate()
         }
     }

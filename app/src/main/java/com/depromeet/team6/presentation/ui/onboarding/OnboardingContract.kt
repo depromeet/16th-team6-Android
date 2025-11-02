@@ -23,7 +23,6 @@ class OnboardingContract {
 
         val searchLocations: List<Location> = emptyList(),
         var userCurrentLocation: LatLng = LatLng(DEFAULT_LAT, DEFAULT_LNG),
-        val alertFrequencies: Set<Int> = setOf(1),
         var permissionBottomSheetVisible: Boolean = true,
         val myAddress: Address = Address(
             name = "",
@@ -34,12 +33,17 @@ class OnboardingContract {
         val mapViewVisible: Boolean = false
     ) : UiState
 
+    enum class AlarmType {
+        VIBRATION, SOUND, ALL
+    }
+
     sealed interface OnboardingSideEffect : UiSideEffect {
         data object RequestLocationPermission : OnboardingSideEffect
         data object RequestNotificationPermission : OnboardingSideEffect
         data object LocationPermissionDeniedDialog : OnboardingSideEffect
         data object LocationSettingDialog : OnboardingSideEffect
         data object NotificationPermissionDeniedDialog : OnboardingSideEffect
+        data class ShowToast(val message: String) : OnboardingSideEffect
     }
 
     sealed class OnboardingEvent : UiEvent {
@@ -51,10 +55,8 @@ class OnboardingContract {
 
         data object ChangeOnboardingType : OnboardingEvent()
         data object BackPressed : OnboardingEvent()
-        data class LocationSelectButtonClicked(val onboardingSearchLocation: Address) :
-            OnboardingEvent()
-
-        data class UpdateAlertFrequencies(val alertFrequencies: Set<Int>) : OnboardingEvent()
+        data class LocationSelectButtonClicked(val onboardingSearchLocation: Address) : OnboardingEvent()
+        data class UpdateAlarmSetup(val type: AlarmType, val volume: Int) : OnboardingEvent()
         data class ChangePermissionBottomSheetVisible(val permissionBottomSheetVisible: Boolean) : OnboardingEvent()
         data class UpdateUserLocation(val context: Context) : OnboardingEvent()
         data object SearchPopUpBackPressed : OnboardingEvent()

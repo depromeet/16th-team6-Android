@@ -1,6 +1,7 @@
 package com.depromeet.team6.data.dataremote.datasource
 
-import com.depromeet.team6.data.dataremote.model.request.signup.RequestSignUpDto
+import com.depromeet.team6.data.dataremote.model.request.auth.RequestSignUpDto
+import com.depromeet.team6.data.dataremote.model.request.auth.RequestWithDrawDto
 import com.depromeet.team6.data.dataremote.model.request.user.RequestModifyUserInfoDto
 import com.depromeet.team6.data.dataremote.model.response.base.parse
 import com.depromeet.team6.data.dataremote.model.response.user.ResponseAuthDto
@@ -25,8 +26,8 @@ class AuthRemoteDataSource @Inject constructor(
     suspend fun postLogout(): Result<Unit> =
         authService.postLogout().parse()
 
-    suspend fun deleteWithDraw(): Result<Unit> =
-        authService.deleteWithDraw().parse()
+    suspend fun deleteWithDraw(requestWithDrawDto: RequestWithDrawDto): Result<Unit> =
+        authService.deleteWithDraw(requestWithDrawDto).parse()
 
     suspend fun getUserInfo(): Result<ResponseGetUserInfoDto> {
         val response = authService.getUserInfo()

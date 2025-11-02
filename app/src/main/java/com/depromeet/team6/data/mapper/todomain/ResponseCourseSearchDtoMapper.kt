@@ -60,7 +60,8 @@ fun List<ResponseCourseSearchDto>.toDomain(): List<CourseInfo> = filter { respon
                     lon = it.lon,
                     lat = it.lat
                 )
-            } ?: emptyList()
+            } ?: emptyList(),
+            targetBusTerm = leg.targetBusTerm
         )
     }
 

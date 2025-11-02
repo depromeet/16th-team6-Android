@@ -6,6 +6,8 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import com.depromeet.team6.BuildConfig
+import com.google.firebase.Firebase
+import com.google.firebase.crashlytics.crashlytics
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -46,42 +48,42 @@ object AlarmScheduler {
         }
     }
 
-    fun scheduleAdditionalPushAlarm(context: Context, alarmTime: String, pushTimes: Set<Int>) {
+    fun scheduleAdditionalPushAlarm(context: Context, alarmTime: String) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val alarmTimeMillis = isoLocalDateTimeToMillis(alarmTime)
 
-        for (pushTime in pushTimes) {
-            val pushInterval = pushTime * 60_000L
-            val pushTimeMillis = alarmTimeMillis - pushInterval
+        // 10분 전 푸시알림
+        val pushTime = 10
+        val pushInterval = 10 * 60_000L
+        val pushTimeMillis = alarmTimeMillis - pushInterval
 
-            val intent = Intent(context, AlarmReceiver::class.java)
-            intent.putExtra("alarmTime", pushTime)
-            val pendingIntent = PendingIntent.getBroadcast(
-                context,
-                ALARM_AWARE_NOTIFICATION_ID + pushTime,
-                intent,
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        val intent = Intent(context, AlarmReceiver::class.java)
+        intent.putExtra("alarmTime", pushTime)
+        val pendingIntent = PendingIntent.getBroadcast(
+            context,
+            ALARM_AWARE_NOTIFICATION_ID + pushTime,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val exactSupported = Build.VERSION.SDK_INT < Build.VERSION_CODES.S || alarmManager.canScheduleExactAlarms()
+
+        if (exactSupported) {
+            alarmManager.setExactAndAllowWhileIdle(
+                AlarmManager.RTC_WAKEUP,
+                pushTimeMillis,
+                pendingIntent
             )
-
-            val exactSupported = Build.VERSION.SDK_INT < Build.VERSION_CODES.S || alarmManager.canScheduleExactAlarms()
-
-            if (exactSupported) {
-                alarmManager.setExactAndAllowWhileIdle(
-                    AlarmManager.RTC_WAKEUP,
-                    pushTimeMillis,
-                    pendingIntent
-                )
-            } else {
-                alarmManager.setAndAllowWhileIdle(
-                    AlarmManager.RTC_WAKEUP,
-                    pushTimeMillis,
-                    pendingIntent
-                )
-            }
+        } else {
+            alarmManager.setAndAllowWhileIdle(
+                AlarmManager.RTC_WAKEUP,
+                pushTimeMillis,
+                pendingIntent
+            )
         }
     }
 
-    fun unScheduleAllAlarms(context: Context, pushTimes: Set<Int>) {
+    fun unScheduleAllAlarms(context: Context) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         // 잠금화면 포그라운드 서비스 해제
         val lockAlarmIntent = Intent(context, LockService::class.java)
@@ -91,19 +93,37 @@ object AlarmScheduler {
             lockAlarmIntent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
-        alarmManager.cancel(lockAlarmPendingIntent)
+        try {
+            alarmManager.cancel(lockAlarmPendingIntent)
+        } catch (e: Exception) {
+            Firebase.crashlytics.recordException(RuntimeException("deleteAlarm 오류 : 알람취소를 눌렀지만 실제로 unschedule 로직이 실행되지 않음"))
+        }
+
+        val pushTime = 10
+        val intent = Intent(context, AlarmReceiver::class.java)
+        val pendingIntent = PendingIntent.getBroadcast(
+            context,
+            ALARM_AWARE_NOTIFICATION_ID + pushTime,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+        try {
+            alarmManager.cancel(pendingIntent)
+        } catch (e: Exception) {
+            Firebase.crashlytics.recordException(RuntimeException("deleteAlarm 오류 : 알람취소를 눌렀지만 실제로 unschedule 로직이 실행되지 않음"))
+        }
 
         // 5분, 10분 전 푸시알림 해제
-        for (pushTime in pushTimes) {
-            val intent = Intent(context, AlarmReceiver::class.java)
-            val pendingIntent = PendingIntent.getBroadcast(
-                context,
-                ALARM_AWARE_NOTIFICATION_ID + pushTime,
-                intent,
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-            )
-            alarmManager.cancel(pendingIntent)
-        }
+//        for (pushTime in pushTimes) {
+//            val intent = Intent(context, AlarmReceiver::class.java)
+//            val pendingIntent = PendingIntent.getBroadcast(
+//                context,
+//                ALARM_AWARE_NOTIFICATION_ID + pushTime,
+//                intent,
+//                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+//            )
+//            alarmManager.cancel(pendingIntent)
+//        }
     }
 
     fun scheduleLocationCheck(context: Context) {

@@ -32,6 +32,7 @@
     <string name="onboarding_notification_permission_bottom_sheet_type">알림</string>
     <string name="onboarding_location_permission_denied_dialog">위치 권한을 허용하지 않으면\n현위치의 막차를 확인할 수 없어요.</string>
     <string name="onboarding_notification_permission_denied_dialog">알림을 허용하지 않으면\n막차 알람이 울리지 못해요.</string>
+    <string name="onboarding_alarm_setting">출발 알람 받을 방법을\n설정해 주세요</string>
 
 
     <!-- LockScreen -->
@@ -140,6 +141,7 @@
 
     <!-- All -->
     <string name="all_atcha_character">앗차 캐릭터</string>
+    <string name="all_toast_exit_app">한 번 더 누르면 앱이 종료됩니다</string>
 
     <!-- Course -->
     <string name="last_transport_info_remaining_hour">%1d시간</string>
@@ -148,6 +150,7 @@
     <string name="last_transport_info_departure_time">출발</string>
     <string name="last_transport_info_boarding_time">탑승</string>
     <string name="last_transport_info_set_notification">막차 알람 받기</string>
+    <string name="last_transport_info_set_notification_dialog">알람 받기</string>
     <string name="course_detail_info_walk">걷기</string>
     <string name="course_detail_info_duration">%1d분</string>
     <string name="course_detail_info_boarding_point">%1s 승차</string>
@@ -160,6 +163,7 @@
     <string name="course_detail_description">상세경로</string>
     <string name="course_search_result_empty">검색 가능한 막차가 없어요</string>
     <string name="course_search_result_midnight">24:00 ~ 05:00\n막차 검색을 할 수 없어요</string>
+    <string name="course_search_long_term_alert">배차 간격이 긴 버스가 포함되어\n환승 대기 시간이 길어질 수 있어요.\n막차 알람을 등록할까요?</string>
 
     <!-- Bus Course -->
     <string name="bus_course_info">운행정보</string>
@@ -209,14 +213,24 @@
     <string name="home_icon_dot">홈 점 아이콘</string>
     <string name="home_final_departure_time_text">우리집 도착시간</string>
     <string name="mypage_logout_dialog_title">로그아웃하시겠어요?</string>
-    <string name="mypage_withdraw_dialog_title">탈퇴하시겠어요?</string>
+    <string name="mypage_withdraw_dialog_title">정말로 탈퇴하시겠어요?</string>
     <string name="mypage_logout_dialog_confirm">로그아웃</string>
     <string name="mypage_withdraw_dialog_confirm">탈퇴하기</string>
+    <string name="mypage_withdraw_reason_1">막차 시간이 안맞아요</string>
+    <string name="mypage_withdraw_reason_2">막차를 자주 안 타요</string>
+    <string name="mypage_withdraw_reason_3">잦은 에러를 겪었어요</string>
+    <string name="mypage_withdraw_reason_4">막차를 찾기가 번거로워요</string>
+    <string name="mypage_withdraw_reason_5">앱 사용법을 모르겠어요</string>
+    <string name="mypage_withdraw_reason_6">기존에 쓰던 지도 앱으로 충분해요</string>
+    <string name="mypage_withdraw_reason_7">기타</string>
+    <string name="mypage_withdraw_reason_7_hint">탈퇴 이유에 대해 자세히 알려주시면 서비스 개선에 큰 도움이 돼요.</string>
     <string name="mypage_dialog_cancle">취소</string>
     <string name="home_bubble_user_departure">출발~!</string>
     <string name="mypage_alarm_vibration_text">진동</string>
     <string name="mypage_alarm_sound_text">소리</string>
-    <string name="all_toast_exit_app">한 번 더 누르면 앱이 종료됩니다</string>
+    <string name="mypage_not_selected_alert">탈퇴 이유를 선택해주세요</string>
+    <string name="mypage_no_reason_alert">탈퇴 이유를 적어주세요</string>
+    <string name="mypage_short_reason_alert">최소 5글자 이상 입력해주세요</string>
 
     <!-- Dialog -->
     <string name="all_dialog_location_permission">현위치를 찾을 수 없어요.\n위치 권한을 허용해 주세요.</string>
@@ -234,7 +248,7 @@
     <!-- VolumeBottomSheet -->
     <string name="volume_bottom_sheet_title_tv">소리 크기</string>
     <string name="volume_bottom_sheet_setting_tv">설정한 크기로 알람이 울려요</string>
-    <string name="volume_bottom_sheet_setting_btn_tv">설정 완료</string>
+    <string name="volume_bottom_sheet_setting_btn_tv">설정 변경</string>
     <string name="all_dialog_close_button_text">닫기</string>
     <string name="all_dialog_setting_button_text">설정하기</string>
 </resources>

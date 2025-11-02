@@ -7,6 +7,7 @@ import android.net.NetworkCapabilities
 import androidx.lifecycle.viewModelScope
 import com.depromeet.team6.domain.repository.UserInfoRepository
 import com.depromeet.team6.domain.usecase.GetAppVersionUseCase
+import com.depromeet.team6.domain.usecase.GetRealtimeLocationUseCase
 import com.depromeet.team6.presentation.util.base.BaseViewModel
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.depromeet.team6.presentation.util.view.NetworkState
@@ -22,6 +23,8 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -32,6 +35,7 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val userInfoRepository: UserInfoRepository,
     private val getAppVersionUseCase: GetAppVersionUseCase,
+    private val getRealtimeLocationUseCase: GetRealtimeLocationUseCase,
     @ApplicationContext private val context: Context
 ) : BaseViewModel<MainContract.MainState, MainContract.MainSideEffect, MainContract.MainEvent>() {
 
@@ -129,6 +133,15 @@ class MainViewModel @Inject constructor(
         }
     }.distinctUntilChanged() // 연속으로 중복된 상태가 전송되는 것을 방지
 
+    // 실시간 현위치 트래킹
+    fun startLocationUpdates() {
+        getRealtimeLocationUseCase()
+            .onEach { newLocation ->
+                setState { copy(currentLocation = newLocation) }
+            }
+            .launchIn(viewModelScope)
+    }
+
     /**
      * 🔹 FCM 토큰 가져오기 & 저장
      */
@@ -179,6 +192,7 @@ class MainViewModel @Inject constructor(
         this.replace("[^0-9.]".toRegex(), "")
 
     private fun compareVersions(installed: String, latest: String): VersionResult {
+        return VersionResult.UP_TO_DATE
         val installedParts = installed.split(".").map { it.toIntOrNull() ?: 0 }
         val latestParts = latest.split(".").map { it.toIntOrNull() ?: 0 }
 

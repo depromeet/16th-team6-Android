@@ -3,11 +3,13 @@ package com.depromeet.team6.presentation.ui.common
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -32,8 +34,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.rememberNestedScrollInteropConnection
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -54,51 +58,9 @@ fun AtchaCommonBottomSheet(
 ) {
     val screenHeightPx = LocalConfiguration.current.screenHeightDp
     val sheetPeekHeight = (screenHeightPx / 2).dp + marginBottom
+    val maxSheetHeight = screenHeightPx.dp - 115.dp
+    val nestedScrollInterop = rememberNestedScrollInteropConnection()
 
-//    val coroutineScope = rememberCoroutineScope()
-//    val sheetState = rememberModalBottomSheetState(
-//        skipPartiallyExpanded = false,
-//        confirmValueChange = {
-//            // Hidden 상태로 못 내려가게 막기
-//            it != SheetValue.Hidden
-//        }
-//    )
-//    val showSheet = remember { mutableStateOf(true) }
-//
-//
-//    Box(
-//        modifier = modifier
-//    ) {
-//        // 메인 콘텐츠
-//        mainContent()
-//
-//        ModalBottomSheet(
-//            sheetState = sheetState,
-//            shape = RoundedCornerShape(
-//                topStart = Dimens.BottomSheetRoundCornerRadius,
-//                topEnd = Dimens.BottomSheetRoundCornerRadius
-//            ),
-//            containerColor = defaultTeam6Colors.greyWashBackground,
-//            dragHandle = {
-//                // 동일하게 DragHandle 사용 가능
-//                DragHandle {
-//                    coroutineScope.launch {
-//                        if (sheetState.currentValue == SheetValue.PartiallyExpanded) {
-//                            sheetState.expand()
-//                        } else {
-//                            sheetState.partialExpand()
-//                        }
-//                    }
-//                }
-//            },
-//            onDismissRequest = {
-// //                showSheet.value = false
-//            }
-//        ) {
-//            // 시트 내부 콘텐츠
-//            sheetContent()
-//        }
-//    }
     val scrollReachedBottom = remember {
         derivedStateOf {
             sheetScrollState.value == sheetScrollState.maxValue
@@ -125,7 +87,15 @@ fun AtchaCommonBottomSheet(
             .fillMaxHeight(),
         scaffoldState = scaffoldState,
         sheetContent = {
-            sheetContent()
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(max = maxSheetHeight) // 이 높이를 초과하여 확장되지 않도록 제한
+                    // .height(maxSheetHeight) // 고정 높이 대신 heightIn을 사용해야 스크롤 가능
+                    .nestedScroll(nestedScrollInterop)
+            ) {
+                sheetContent()
+            }
         },
         sheetPeekHeight = sheetPeekHeight, // 필요하면 기본 노출 높이 조정 가능
         sheetShape = RoundedCornerShape(

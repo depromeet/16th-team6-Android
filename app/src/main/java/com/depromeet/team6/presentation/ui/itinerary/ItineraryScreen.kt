@@ -300,10 +300,12 @@ fun ItineraryScreen(
                     ItineraryDetail(
                         modifier = Modifier
                             .padding(horizontal = 16.dp),
+                        currentLocation = uiState.currentLocation,
                         courseInfo = itineraryInfo,
                         busArrivalStatus = uiState.busArrivalStatus,
                         departurePoint = uiState.departurePoint!!,
                         destinationPoint = uiState.destinationPoint!!,
+                        isAlarmRegistered = uiState.isAlarmRegistered,
                         onClickBusInfo = navigateToBusCourse
                     )
                     Spacer(Modifier.height(marginBottom))
@@ -313,11 +315,9 @@ fun ItineraryScreen(
             marginBottom = marginBottom
         )
 
-        val prefs = context.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
-
         // 막차알림 등록 되어 있으면 리프레시 버튼
         // 막차알림 등록 안되어 있으면 알림등록 버튼
-        if (prefs.getBoolean("alarmRegistered", false)) {
+        if (uiState.isAlarmRegistered) {
             RefreshLottieButton(
                 modifier = Modifier
                     .size(48.dp)
@@ -356,7 +356,7 @@ fun ItineraryScreen(
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
                     text = stringResource(R.string.last_transport_info_set_notification),
-                    style = defaultTeam6Typography.body6_B6R14,
+                    style = defaultTeam6Typography.heading3_H3SB17,
                     color = defaultTeam6Colors.black
                 )
             }

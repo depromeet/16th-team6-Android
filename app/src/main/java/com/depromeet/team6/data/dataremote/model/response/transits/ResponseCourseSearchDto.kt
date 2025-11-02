@@ -31,7 +31,14 @@ data class Leg(
     @SerialName("end") val end: Location,
     @SerialName("passStopList") val passStopList: List<Station>? = null,
     @SerialName("step") val step: List<Step>? = null,
-    @SerialName("passShape") val passShape: String? = null
+    @SerialName("passShape") val passShape: String? = null,
+    @SerialName("subwayFinalStation") val subwayFinalStation: String? = null,
+    @SerialName("subwayDirection") val subwayDirection: String? = null,
+    @SerialName("targetBusStation") val targetBusStation: TargetBusStation? = null,
+    @SerialName("targetBusTerm") val targetBusTerm: Int? = null,
+    @SerialName("isExpressSubway") val isExpressSubway: Boolean? = null,
+    @SerialName("isLastSubway") val isLastSubway: Boolean? = null
+
 )
 
 @Keep
@@ -59,4 +66,12 @@ data class Station(
     @SerialName("stationName") val stationName: String = "",
     @SerialName("lon") val lon: String? = null,
     @SerialName("lat") val lat: String? = null
+)
+
+@Keep
+@Serializable
+data class TargetBusStation(
+    @SerialName("busStationId") val busStationId: Int,
+    @SerialName("busStationNumber") val busStationNumber: String,
+    @SerialName("busStationName") val busStationName: String
 )

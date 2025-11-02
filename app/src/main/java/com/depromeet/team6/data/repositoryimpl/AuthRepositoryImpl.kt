@@ -1,6 +1,7 @@
 package com.depromeet.team6.data.repositoryimpl
 
 import com.depromeet.team6.data.dataremote.datasource.AuthRemoteDataSource
+import com.depromeet.team6.data.dataremote.model.request.auth.RequestWithDrawDto
 import com.depromeet.team6.data.dataremote.model.request.user.RequestModifyUserInfoDto
 import com.depromeet.team6.data.mapper.todata.toData
 import com.depromeet.team6.data.mapper.todomain.toDomain
@@ -31,8 +32,8 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun postLogout(): Result<Unit> =
         authRemoteDataSource.postLogout()
 
-    override suspend fun deleteWithDraw(): Result<Unit> =
-        authRemoteDataSource.deleteWithDraw()
+    override suspend fun deleteWithDraw(reason: String): Result<Unit> =
+        authRemoteDataSource.deleteWithDraw(RequestWithDrawDto(reason))
 
     override suspend fun getUserInfo(): Result<GetUserInfo> =
         authRemoteDataSource.getUserInfo()

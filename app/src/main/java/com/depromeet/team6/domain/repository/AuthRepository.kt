@@ -15,7 +15,7 @@ interface AuthRepository {
 
     suspend fun postLogout(): Result<Unit>
 
-    suspend fun deleteWithDraw(): Result<Unit>
+    suspend fun deleteWithDraw(reason: String): Result<Unit>
 
     suspend fun getUserInfo(): Result<GetUserInfo>
 

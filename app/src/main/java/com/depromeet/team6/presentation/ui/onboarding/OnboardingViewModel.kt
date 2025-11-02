@@ -10,7 +10,6 @@ import com.depromeet.team6.domain.usecase.GetLocationsUseCase
 import com.depromeet.team6.domain.usecase.PostSignUpUseCase
 import com.depromeet.team6.presentation.mapper.toPresentationList
 import com.depromeet.team6.presentation.type.OnboardingType
-import com.depromeet.team6.presentation.util.OnboardingAmplitude.USER_PUSH_FREQUENCIES
 import com.depromeet.team6.presentation.util.Provider.KAKAO
 import com.depromeet.team6.presentation.util.Token.BEARER
 import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
@@ -70,10 +69,6 @@ class OnboardingViewModel @Inject constructor(
                 )
             }
 
-            is OnboardingContract.OnboardingEvent.UpdateAlertFrequencies -> setState {
-                copy(alertFrequencies = event.alertFrequencies)
-            }
-
             is OnboardingContract.OnboardingEvent.ChangePermissionBottomSheetVisible -> setState {
                 copy(permissionBottomSheetVisible = event.permissionBottomSheetVisible)
             }
@@ -98,6 +93,11 @@ class OnboardingViewModel @Inject constructor(
 
             is OnboardingContract.OnboardingEvent.ChangeMapViewVisible -> setState {
                 copy(mapViewVisible = event.mapViewVisible)
+            }
+
+            is OnboardingContract.OnboardingEvent.UpdateAlarmSetup -> {
+                saveAlarmSetup(event.type, event.volume)
+                postSignUp()
             }
         }
     }
@@ -129,7 +129,7 @@ class OnboardingViewModel @Inject constructor(
     }
 
     fun postSignUp() {
-        setEvent(OnboardingContract.OnboardingEvent.PostSignUp(loadState = LoadState.Loading))
+//        setEvent(OnboardingContract.OnboardingEvent.PostSignUp(loadState = LoadState.Loading))
         viewModelScope.launch {
             val token = getFcmTokenSafely()
             postSignUpUseCase(
@@ -138,7 +138,6 @@ class OnboardingViewModel @Inject constructor(
                     address = uiState.value.myAddress.name,
                     lat = uiState.value.myAddress.lat,
                     lon = uiState.value.myAddress.lon,
-                    alertFrequencies = uiState.value.alertFrequencies,
                     fcmToken = token
                 )
             ).onSuccess { auth ->
@@ -148,15 +147,26 @@ class OnboardingViewModel @Inject constructor(
                 userInfoRepository.setUserHome(auth.userHome)
                 userInfoRepository.setUserId(auth.id)
                 AmplitudeUtils.setUserId(userId = auth.id)
-                AmplitudeUtils.trackEventWithProperty(
-                    eventName = USER_PUSH_FREQUENCIES,
-                    propertyName = USER_PUSH_FREQUENCIES,
-                    propertyValue = uiState.value.alertFrequencies
-                )
+//                AmplitudeUtils.trackEventWithProperty(
+//                    eventName = USER_PUSH_FREQUENCIES,
+//                    propertyName = USER_PUSH_FREQUENCIES,
+//                    propertyValue = uiState.value.alertFrequencies
+//                )
             }.onFailure { exception ->
-                setEvent(OnboardingContract.OnboardingEvent.PostSignUp(loadState = LoadState.Error))
+//                setEvent(OnboardingContract.OnboardingEvent.PostSignUp(loadState = LoadState.Error))
+                setSideEffect(OnboardingContract.OnboardingSideEffect.ShowToast("회원가입에 실패했습니다. 다시 시도해주세요."))
                 handleApiException(exception = exception)
             }
+        }
+    }
+
+    private fun saveAlarmSetup(type: OnboardingContract.AlarmType, volume: Int) {
+        val isSound = type != OnboardingContract.AlarmType.VIBRATION
+        val isVibrate = type != OnboardingContract.AlarmType.SOUND
+        viewModelScope.launch {
+            userInfoRepository.saveAlarmVolume(volume)
+            userInfoRepository.saveIsAlarmSound(isSound)
+            userInfoRepository.saveIsAlarmVibrate(isVibrate)
         }
     }
 

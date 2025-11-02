@@ -15,9 +15,6 @@ data class RequestModifyUserInfoDto(
     @SerialName("lon")
     val lon: Double? = null,
 
-    @SerialName("alertFrequencies")
-    val alertFrequencies: Set<Int>? = null,
-
     @SerialName(FCM_TOKEN)
     val fcmToken: String? = null
 )

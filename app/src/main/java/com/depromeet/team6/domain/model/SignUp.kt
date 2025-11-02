@@ -5,6 +5,5 @@ data class SignUp(
     val address: String,
     val lat: Double,
     val lon: Double,
-    val alertFrequencies: Set<Int>,
     val fcmToken: String
 )
