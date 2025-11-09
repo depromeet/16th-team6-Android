@@ -613,8 +613,10 @@ class HomeViewModel @Inject constructor(
                     setState {
                         copy(
                             taxiCost = it,
-                            characterMessages = listOf(
-                                resultString
+                            characterMessages = HomeContract.SpeechRequest(
+                                listOf(
+                                    resultString
+                                )
                             )
                         )
                     }

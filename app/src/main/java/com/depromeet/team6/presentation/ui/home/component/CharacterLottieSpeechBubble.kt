@@ -3,7 +3,6 @@ package com.depromeet.team6.presentation.ui.home.component
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -17,7 +16,6 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.depromeet.team6.R
-import com.depromeet.team6.presentation.ui.common.speechbubble.AtchaSpeechCharacter
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import kotlinx.coroutines.delay
 
@@ -120,15 +118,15 @@ fun CharacterLottieSpeechBubble(
     Column(
         modifier = modifier.noRippleClickable { handleClick() }
     ) {
-        AtchaSpeechCharacter(
-            modifier = Modifier
-                        .offset(y = 10.dp),
-            messagesToAdd = listOf(
-                "테스트 테스트 야 야 야",
-                "두번째 테스트 호롤로",
-                "아라라라랄랄ㄹ라"
-            )
-        )
+//        AtchaSpeechCharacter(
+//            modifier = Modifier
+//                        .offset(y = 10.dp),
+//            messagesToAdd = listOf(
+//                "테스트 테스트 야 야 야",
+//                "두번째 테스트 호롤로",
+//                "아라라라랄랄ㄹ라"
+//            )
+//        )
 
 //        if (hasAnyText) {
 //            Box {

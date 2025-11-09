@@ -28,10 +28,13 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.rememberLottieAnimatable
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.depromeet.team6.R
+import com.depromeet.team6.presentation.ui.home.HomeContract
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 // 말풍선 데이터를 위한 데이터 클래스
 data class BubbleMessage(
@@ -49,12 +52,14 @@ data class BubbleMessage(
  */
 @Composable
 fun AtchaSpeechCharacter(
-    messagesToAdd: List<String>,
+    speechRequest: HomeContract.SpeechRequest,
     modifier : Modifier = Modifier,
     onCharacterClick : () -> Unit = {}
 ) {
+    Timber.d("resultString!!: ${speechRequest.messages}")
     val bubbles = remember { mutableStateListOf<BubbleMessage>() }
     val scope = rememberCoroutineScope()
+    var debouncing by remember { mutableStateOf(false) }
     val lottieResId = R.raw.character_alarm_not_registered
     val lottie = rememberLottieAnimatable()
 
@@ -74,15 +79,17 @@ fun AtchaSpeechCharacter(
         }
     }
 
-    // 이 LaunchedEffect 로직은 이미 훌륭합니다. (수정 불필요)
-    LaunchedEffect(messagesToAdd) {
+    LaunchedEffect(speechRequest) {
+        val messagesToAdd = speechRequest.messages
+
         // request가 null이거나 메시지가 비어있으면 아무것도 하지 않습니다.
         if (messagesToAdd == null || messagesToAdd.isEmpty()) {
             return@LaunchedEffect
         }
 
         speechJob = scope.launch {
-            // B. 말풍선 로직 (기존과 동일)
+            val removalJobs = mutableListOf<Job>()
+            // 말풍선 생성 로직
             messagesToAdd.forEach { messageText ->
                 // 부모 Job(speechJob)이 취소되면 delay에서 예외가 발생하며 중단됩니다.
                 delay(700L)
@@ -93,8 +100,8 @@ fun AtchaSpeechCharacter(
                 )
                 bubbles.add(newBubble)
 
-                // 개별 말풍선 제거 타이머 (기존 로직과 동일)
-                scope.launch {
+                // 개별 말풍선 제거 타이머
+                val removalJob = scope.launch {
                     delay(2000L)
                     val idx = bubbles.indexOfFirst { it.id == newBubble.id }
                     if (idx != -1) {
@@ -106,8 +113,10 @@ fun AtchaSpeechCharacter(
                         bubbles.removeAt(removeIdx)
                     }
                 }
+                removalJobs.add(removalJob)
             }
-            // --- 모든 말풍선이 추가되면 speechJob은 완료됩니다 (isActive = false) ---
+            // --- 모든 말풍선이 제거되면 speechJob 완료 -> 해당 라이프사이클 기준으로 쓰로틀링 ---
+            removalJobs.joinAll()
         }
     }
 
@@ -137,8 +146,13 @@ fun AtchaSpeechCharacter(
             progress = { lottie.progress },
             modifier = Modifier.noRippleClickable {
                 // 캐릭터 클릭시 애니메이션은 무조건 재생하되, API 호출만 throttling 처리
-                if (speechJob?.isActive == false) {
+                if (speechJob?.isActive == false && !debouncing) {
+                    debouncing = true
                     onCharacterClick()
+                    scope.launch {
+                        delay(1000)
+                        debouncing = false
+                    }
                 }
                 scope.launch {
                     // 매 클릭마다 0에서 1까지 1회 재생

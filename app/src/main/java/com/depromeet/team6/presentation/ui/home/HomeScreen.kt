@@ -797,7 +797,7 @@ fun HomeScreen(
                 modifier = Modifier
                     .align(Alignment.BottomStart)
                     .padding(start = 8.dp, bottom = 194.dp),
-                messagesToAdd = homeUiState.characterMessages,
+                speechRequest = homeUiState.characterMessages,
                 onCharacterClick = onCharacterClick
             )
         }

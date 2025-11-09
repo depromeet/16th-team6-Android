@@ -76,10 +76,17 @@ class HomeContract {
         val deleteAlarmDialogVisible: Boolean = false,
         // 애니메이션
         val characterState: CharacterState = CharacterState(),
-        val characterMessages: List<String> = listOf(
-            "지도를 움직여 출발지를 설정 봐요"
+        val characterMessages: SpeechRequest = SpeechRequest(
+            listOf(
+                "지도를 움직여 출발지를 설정 봐요"
+            )
         )
     ) : UiState
+
+    data class SpeechRequest(
+        val messages: List<String>,
+        val triggerId: Long = System.nanoTime()
+    )
 
     sealed interface HomeSideEffect : UiSideEffect {
         data object NavigateToMypage : HomeSideEffect
