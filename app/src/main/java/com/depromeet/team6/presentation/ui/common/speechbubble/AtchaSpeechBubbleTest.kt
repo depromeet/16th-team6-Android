@@ -25,7 +25,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
-import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieAnimatable
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.depromeet.team6.R
@@ -59,21 +58,21 @@ fun AtchaSpeechCharacter(
     val lottieResId = R.raw.character_alarm_not_registered
     val lottie = rememberLottieAnimatable()
 
-    var trigger by remember { mutableStateOf(0) }
     val composition by rememberLottieComposition(
         spec = LottieCompositionSpec.RawRes(lottieResId)
     )
 
-    var playAnimation by remember { mutableStateOf(true) }
-    val progress by animateLottieCompositionAsState(
-        composition = composition,
-        iterations = 1,
-        isPlaying = playAnimation,
-        restartOnPlay = true
-    )
-
-//    val progress = remember { Animatable(0f) }
     var speechJob by remember { mutableStateOf<Job?>(null) }
+
+    LaunchedEffect(composition) {
+        if (composition != null) {
+            lottie.animate(
+                composition = composition,
+                iterations = 1,
+                initialProgress = 0f
+            )
+        }
+    }
 
     // 이 LaunchedEffect 로직은 이미 훌륭합니다. (수정 불필요)
     LaunchedEffect(messagesToAdd) {

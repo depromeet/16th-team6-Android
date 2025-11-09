@@ -777,11 +777,7 @@ fun HomeScreen(
             modifier = Modifier
                 .align(Alignment.BottomStart)
                 .padding(start = 8.dp, bottom = characterState.bottomPadding),
-            messagesToAdd = listOf(
-                "테스트 테스트 야 야 야",
-                "두번째 테스트 호롤로",
-                "아라라라랄랄ㄹ라"
-            )
+            messagesToAdd = homeUiState.characterMessages
         )
 
         // 현위치 버튼

@@ -74,7 +74,10 @@ class HomeContract {
         val taxiCost: Int = 0,
         val deleteAlarmDialogVisible: Boolean = false,
         // 애니메이션
-        val characterState: CharacterState = CharacterState()
+        val characterState: CharacterState = CharacterState(),
+        val characterMessages: List<String> = listOf(
+            "지도를 움직여 출발지를 설정 봐요"
+        )
     ) : UiState
 
     sealed interface HomeSideEffect : UiSideEffect {
