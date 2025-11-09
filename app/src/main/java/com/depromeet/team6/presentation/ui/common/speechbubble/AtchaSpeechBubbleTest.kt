@@ -4,7 +4,6 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -27,8 +26,11 @@ import androidx.compose.ui.unit.dp
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieAnimatable
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.depromeet.team6.R
+import com.depromeet.team6.presentation.util.modifier.noRippleClickable
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -44,59 +46,69 @@ data class BubbleMessage(
  * 새로운 문자열이 주어지면 말풍선을 추가하고, 일정 시간 후 순차적으로 제거합니다.
  *
  * @param messagesToAdd 시뮬레이션을 위해 순서대로 추가할 문자열 목록
+ * @param onCharacterClick 뷰모델에서 필요한 API 호출 (여기에 throttling 걸어줘야 합니다)
  */
 @Composable
 fun AtchaSpeechCharacter(
     messagesToAdd: List<String>,
     modifier : Modifier = Modifier,
+    onCharacterClick : () -> Unit = {}
 ) {
     val bubbles = remember { mutableStateListOf<BubbleMessage>() }
     val scope = rememberCoroutineScope()
     val lottieResId = R.raw.character_alarm_not_registered
+    val lottie = rememberLottieAnimatable()
 
     var trigger by remember { mutableStateOf(0) }
     val composition by rememberLottieComposition(
         spec = LottieCompositionSpec.RawRes(lottieResId)
     )
-    val progress by key(trigger) {
-        animateLottieCompositionAsState(
-            composition = composition,
-            iterations = 1,
-            isPlaying = true,
-            restartOnPlay = true
-        )
-    }
+
+    var playAnimation by remember { mutableStateOf(true) }
+    val progress by animateLottieCompositionAsState(
+        composition = composition,
+        iterations = 1,
+        isPlaying = playAnimation,
+        restartOnPlay = true
+    )
+
+//    val progress = remember { Animatable(0f) }
+    var speechJob by remember { mutableStateOf<Job?>(null) }
 
     // 이 LaunchedEffect 로직은 이미 훌륭합니다. (수정 불필요)
     LaunchedEffect(messagesToAdd) {
-        messagesToAdd.forEach { messageText ->
-            delay(700L)
-            val newBubble = BubbleMessage(
-                id = System.nanoTime(),
-                text = messageText,
-                isVisible = true
-            )
+        // request가 null이거나 메시지가 비어있으면 아무것도 하지 않습니다.
+        if (messagesToAdd == null || messagesToAdd.isEmpty()) {
+            return@LaunchedEffect
+        }
 
-            bubbles.add(newBubble)
+        speechJob = scope.launch {
+            // B. 말풍선 로직 (기존과 동일)
+            messagesToAdd.forEach { messageText ->
+                // 부모 Job(speechJob)이 취소되면 delay에서 예외가 발생하며 중단됩니다.
+                delay(700L)
+                val newBubble = BubbleMessage(
+                    id = System.nanoTime(),
+                    text = messageText,
+                    isVisible = true
+                )
+                bubbles.add(newBubble)
 
-            // 2초 후 말풍선을 사라지게 하고 목록에서 제거하는 작업
-            scope.launch {
-                delay(2000L) // 2초 유지
-
-                // 1. isVisible = false로 변경 (애니메이션 시작 트리거)
-                val idx = bubbles.indexOfFirst { it.id == newBubble.id }
-                if (idx != -1) {
-                    bubbles[idx] = bubbles[idx].copy(isVisible = false)
-                }
-
-                delay(350) // exit 애니메이션 시간
-
-                // 2. 리스트에서 완전히 제거 (UI에서 사라짐)
-                val removeIdx = bubbles.indexOfFirst { it.id == newBubble.id }
-                if (removeIdx != -1) {
-                    bubbles.removeAt(removeIdx)
+                // 개별 말풍선 제거 타이머 (기존 로직과 동일)
+                scope.launch {
+                    delay(2000L)
+                    val idx = bubbles.indexOfFirst { it.id == newBubble.id }
+                    if (idx != -1) {
+                        bubbles[idx] = bubbles[idx].copy(isVisible = false)
+                    }
+                    delay(350)
+                    val removeIdx = bubbles.indexOfFirst { it.id == newBubble.id }
+                    if (removeIdx != -1) {
+                        bubbles.removeAt(removeIdx)
+                    }
                 }
             }
+            // --- 모든 말풍선이 추가되면 speechJob은 완료됩니다 (isActive = false) ---
         }
     }
 
@@ -123,9 +135,20 @@ fun AtchaSpeechCharacter(
         }
         LottieAnimation(
             composition = composition,
-            progress = { progress },
-            modifier = Modifier.clickable {
-                trigger++ // 클릭 시 trigger 값을 변경!
+            progress = { lottie.progress },
+            modifier = Modifier.noRippleClickable {
+                // 캐릭터 클릭시 애니메이션은 무조건 재생하되, API 호출만 throttling 처리
+                if (speechJob?.isActive == false) {
+                    onCharacterClick()
+                }
+                scope.launch {
+                    // 매 클릭마다 0에서 1까지 1회 재생
+                    lottie.animate(
+                        composition = composition,
+                        iterations = 1,
+                        initialProgress = 0f
+                    )
+                }
             }
         )
     }
