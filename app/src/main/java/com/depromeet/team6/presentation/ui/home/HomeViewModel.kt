@@ -2,6 +2,7 @@ package com.depromeet.team6.presentation.ui.home
 
 import android.content.Context
 import androidx.lifecycle.viewModelScope
+import com.depromeet.team6.R
 import com.depromeet.team6.data.background.AlarmScheduler
 import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.RouteLocation
@@ -105,6 +106,7 @@ class HomeViewModel @Inject constructor(
                         )
                     )
                 } else {
+                    getTaxiCost()
                     AmplitudeUtils.trackEventWithProperties(
                         eventName = HOME_EVENT_CHARACTER_CLICK_BEFORE_ALARM,
                         properties = mapOf(
@@ -604,9 +606,16 @@ class HomeViewModel @Inject constructor(
                 )
             )
                 .onSuccess {
+                    // 1. 숫자를 콤마가 포함된 문자열로 포매팅
+                    val formattedCost = String.format("%,d", it) // "34,200"
+                    val resultString = context.getString(R.string.home_taxi_cost_message, formattedCost)
+                    Timber.d("resultString: $resultString")
                     setState {
                         copy(
-                            taxiCost = it
+                            taxiCost = it,
+                            characterMessages = listOf(
+                                resultString
+                            )
                         )
                     }
                     getTaxiCostUseCase.saveTaxiCost(it)
