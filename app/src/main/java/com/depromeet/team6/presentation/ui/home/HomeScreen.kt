@@ -447,6 +447,17 @@ fun HomeRoute(
         }
     }
 
+    // 현재 화면이 사라질 때 isMapReady 상태 초기화
+    DisposableEffect(Unit) {
+        onDispose {
+            viewModel.setState {
+                copy(
+                    isMapReady = false
+                )
+            }
+        }
+    }
+
     when (uiState.loadState) {
         LoadState.Idle, LoadState.Loading -> {
             AtChaLoadingView()
@@ -558,6 +569,13 @@ fun HomeRoute(
                                     isMapFocused = false
                                 )
                             }
+                        },
+                        isMapReadyCallback = {
+                            viewModel.setState {
+                                copy(
+                                    isMapReady = true
+                                )
+                            }
                         }
                     )
                 }
@@ -591,7 +609,8 @@ fun HomeScreen(
     dismissDialog: () -> Unit = {},
     navigateToSearchLocation: () -> Unit = {},
     currentLocationClicked: () -> Unit = {},
-    mapModified: () -> Unit = {}
+    mapModified: () -> Unit = {},
+    isMapReadyCallback: () -> Unit = {}
 ) {
     val colors = LocalTeam6Colors.current
     var bottomSheetHeight by remember { mutableStateOf(0.dp) }
@@ -643,7 +662,8 @@ fun HomeScreen(
                 getCenterLocation = {
                     getCenterLocation(it)
                 },
-                mapModified = mapModified
+                mapModified = mapModified,
+                isMapReadyCallback = isMapReadyCallback
             ) // Replace with your actual API key
         }
 
@@ -773,12 +793,15 @@ fun HomeScreen(
 //                .padding(start = 8.dp, bottom = characterState.bottomPadding)
 //        )
 
-        AtchaSpeechCharacter(
-            modifier = Modifier
-                .align(Alignment.BottomStart)
-                .padding(start = 8.dp, bottom = characterState.bottomPadding),
-            messagesToAdd = homeUiState.characterMessages
-        )
+        Timber.d("isMapReady : ${homeUiState.isMapReady}")
+        if (homeUiState.isMapReady) {
+            AtchaSpeechCharacter(
+                modifier = Modifier
+                    .align(Alignment.BottomStart)
+                    .padding(start = 8.dp, bottom = characterState.bottomPadding),
+                messagesToAdd = homeUiState.characterMessages
+            )
+        }
 
         // 현위치 버튼
         Icon(
