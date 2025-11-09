@@ -47,13 +47,13 @@ import com.depromeet.team6.presentation.model.home.CharacterState
 import com.depromeet.team6.presentation.model.home.ComponentType
 import com.depromeet.team6.presentation.model.home.SpeechBubbleData
 import com.depromeet.team6.presentation.model.itinerary.FocusedMarkerParameter
+import com.depromeet.team6.presentation.ui.common.speechbubble.AtchaSpeechCharacter
 import com.depromeet.team6.presentation.ui.common.view.AtChaLoadingView
 import com.depromeet.team6.presentation.ui.home.component.AfterRegisterMap
 import com.depromeet.team6.presentation.ui.home.component.AfterRegisterSheet
 import com.depromeet.team6.presentation.ui.home.component.CurrentLocationSheet
 import com.depromeet.team6.presentation.ui.home.component.DeleteAlarmDialog
 import com.depromeet.team6.presentation.ui.home.component.TMapViewCompose
-import com.depromeet.team6.presentation.ui.home.component.UnifiedCharacterBubble
 import com.depromeet.team6.presentation.util.AmplitudeCommon.SCREEN_NAME
 import com.depromeet.team6.presentation.util.AmplitudeCommon.USER_ID
 import com.depromeet.team6.presentation.util.HomeAmplitude.ALERT_END_POPUP_1
@@ -765,12 +765,23 @@ fun HomeScreen(
             }
         }
 
-        UnifiedCharacterBubble(
-            characterState = characterState,
-            onCharacterClick = onCharacterClick,
+//        UnifiedCharacterBubble(
+//            characterState = characterState,
+//            onCharacterClick = onCharacterClick,
+//            modifier = Modifier
+//                .align(Alignment.BottomStart)
+//                .padding(start = 8.dp, bottom = characterState.bottomPadding)
+//        )
+
+        AtchaSpeechCharacter(
             modifier = Modifier
                 .align(Alignment.BottomStart)
-                .padding(start = 8.dp, bottom = characterState.bottomPadding)
+                .padding(start = 8.dp, bottom = characterState.bottomPadding),
+            messagesToAdd = listOf(
+                "테스트 테스트 야 야 야",
+                "두번째 테스트 호롤로",
+                "아라라라랄랄ㄹ라"
+            )
         )
 
         // 현위치 버튼
