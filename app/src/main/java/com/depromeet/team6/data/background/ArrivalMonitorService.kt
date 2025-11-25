@@ -14,7 +14,7 @@ import android.os.IBinder
 import android.os.Looper
 import android.os.VibrationEffect
 import android.os.Vibrator
-import androidx.core.app.ActivityCompat.*
+import androidx.core.app.ActivityCompat.checkSelfPermission
 import androidx.core.app.NotificationCompat
 import com.depromeet.team6.R
 import com.depromeet.team6.presentation.ui.main.MainActivity
