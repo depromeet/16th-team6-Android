@@ -1,6 +1,7 @@
 package com.depromeet.team6.presentation.ui.home
 
 import android.content.Context
+import android.content.Intent
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -34,6 +35,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
@@ -41,6 +43,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import com.depromeet.team6.R
+import com.depromeet.team6.data.background.ArrivalMonitorService
 import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.course.TransportType
 import com.depromeet.team6.presentation.model.home.CharacterState
@@ -619,6 +622,16 @@ fun HomeScreen(
         )
 
         if (homeUiState.isAlarmRegistered) {
+            val context = LocalContext.current
+            val destination = homeUiState.destinationPoint
+
+            Intent(context, ArrivalMonitorService::class.java).apply {
+                putExtra(ArrivalMonitorService.EXTRA_DEST_LAT, destination.lat)
+                putExtra(ArrivalMonitorService.EXTRA_DEST_LNG, destination.lon)
+            }.also {
+                ContextCompat.startForegroundService(context, it)
+            }
+
             AfterRegisterMap(
                 padding = padding,
                 currentLocation = homeUiState.currentLocation,
