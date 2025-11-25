@@ -251,4 +251,11 @@
     <string name="volume_bottom_sheet_setting_btn_tv">설정 변경</string>
     <string name="all_dialog_close_button_text">닫기</string>
     <string name="all_dialog_setting_button_text">설정하기</string>
+    
+    <string name="notification_arrival_monitor_start_text">목적지 도착 모니터링을 시작합니다</string>
+    <string name="notification_arrival_guide_finish_title">막차 안내 종료</string>
+    <string name="notification_arrival_near_destination_text">목적지 부근에 도착했어요</string>
+
+    <string name="arrival_guide_finish_dialog">목적지 부근에 도착해\n안내를 종료합니다</string>
+    <string name="confirm_dialog">확인</string>
 </resources>
