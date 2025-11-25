@@ -94,11 +94,15 @@ class ArrivalMonitorService : Service() {
 
     private fun startLocationTracking() {
         if (checkSelfPermission(
-                this, Manifest.permission.ACCESS_FINE_LOCATION
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(
-                this, Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) return
+                    this,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            return
+        }
 
         val request = LocationRequest.Builder(Priority.PRIORITY_LOW_POWER, 10_000L).build()
         fusedLocationClient?.requestLocationUpdates(
@@ -114,8 +118,10 @@ class ArrivalMonitorService : Service() {
 
         val results = FloatArray(1)
         Location.distanceBetween(
-            current.latitude, current.longitude,
-            dest.latitude, dest.longitude,
+            current.latitude,
+            current.longitude,
+            dest.latitude,
+            dest.longitude,
             results
         )
 
@@ -133,7 +139,9 @@ class ArrivalMonitorService : Service() {
         // 푸시 알림
         val notificationIntent = Intent(this, MainActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(
-            this, 0, notificationIntent,
+            this,
+            0,
+            notificationIntent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
