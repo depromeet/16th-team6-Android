@@ -1,7 +1,10 @@
 package com.depromeet.team6.presentation.ui.main
 
 import android.content.ActivityNotFoundException
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
@@ -18,6 +21,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
@@ -25,7 +29,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
@@ -35,6 +41,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import com.depromeet.team6.R
+import com.depromeet.team6.data.background.ArrivalMonitorService
 import com.depromeet.team6.presentation.ui.common.dialog.GlobalDialogHandler
 import com.depromeet.team6.presentation.ui.common.snackbar.GlobalSnackbarHandler
 import com.depromeet.team6.presentation.ui.common.snackbar.LocalSnackbarHostState
@@ -217,6 +224,35 @@ class MainActivity : ComponentActivity() {
                     LocalSnackbarHostState provides snackbarHostState,
                     LocalSnackbarController provides snackbarController
                 ) {
+                    val context = LocalContext.current
+
+                    // Arrival 이벤트 처리용 BroadcastReceiver
+                    val arrivalReceiver = remember {
+                        object : BroadcastReceiver() {
+                            override fun onReceive(context: Context?, intent: Intent?) {
+                                dialogController.showAtchaOneButtonAlert(
+                                    message = getString(R.string.arrival_guide_finish_dialog),
+                                    onConfirm = { },
+                                    confirmButtonText = getString(R.string.confirm_dialog)
+                                )
+                            }
+                        }
+                    }
+
+                    // Lifecycle-aware 등록/해제
+                    DisposableEffect(lifecycleOwner) {
+                        val filter = IntentFilter(ArrivalMonitorService.ACTION_ARRIVAL)
+                        ContextCompat.registerReceiver(
+                            context,
+                            arrivalReceiver,
+                            filter,
+                            ContextCompat.RECEIVER_NOT_EXPORTED
+                        )
+                        onDispose {
+                            context.unregisterReceiver(arrivalReceiver)
+                        }
+                    }
+
                     Box {
                         Scaffold(
                             snackbarHost = {
@@ -240,6 +276,7 @@ class MainActivity : ComponentActivity() {
                                 }
                             }
                         }
+
                         GlobalDialogHandler(
                             controller = dialogController,
                             modifier = Modifier
