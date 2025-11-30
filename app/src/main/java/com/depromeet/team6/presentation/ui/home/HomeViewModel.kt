@@ -399,10 +399,6 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun onCharacterClick() {
-        showSpeechBubbleTemporarily()
-    }
-
     fun getCenterLocation(location: LatLng) {
         viewModelScope.launch {
             getAddressFromCoordinatesUseCase(location.latitude, location.longitude)
@@ -414,19 +410,6 @@ class HomeViewModel @Inject constructor(
                     }
                     setState {
                         copy(markerPoint = newMarkerPoint)
-                    }
-
-                    val isAllNotDefault = (
-                        newMarkerPoint.lat != DEFAULT_MARKER_LAT &&
-                            newMarkerPoint.lon != DEFAULT_MARKER_LON
-                        ) &&
-                        (
-                            currentState.destinationPoint.lat != DEFAULT_DESTINATION_LAT &&
-                                currentState.destinationPoint.lon != DEFAULT_DESTINATION_LON
-                            )
-
-                    if (isAllNotDefault) {
-                        getTaxiCost()
                     }
                 }
                 .onFailure { exception ->
