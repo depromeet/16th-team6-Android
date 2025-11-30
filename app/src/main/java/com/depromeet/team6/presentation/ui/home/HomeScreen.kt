@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -104,7 +105,7 @@ fun HomeRoute(
     viewModel: HomeViewModel = hiltViewModel(),
     afterOnboarding: Boolean = false
 ) {
-    val mainViewModel: MainViewModel = hiltViewModel(LocalContext.current as ComponentActivity)
+    val mainViewModel: MainViewModel = hiltViewModel(LocalActivity.current as ComponentActivity)
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val currentLocation by mainViewModel.currentLocation.collectAsStateWithLifecycle()
@@ -492,6 +493,7 @@ fun HomeRoute(
                 } else {
                     HomeScreen(
                         homeUiState = uiState,
+                        currentLocation = currentLocation,
                         getUserId = { viewModel.getUserId() },
                         getCenterLocation = { position ->
                             viewModel.getCenterLocation(position)
@@ -616,6 +618,7 @@ fun HomeScreen(
     padding: PaddingValues,
     modifier: Modifier = Modifier,
     homeUiState: HomeContract.HomeUiState = HomeContract.HomeUiState(),
+    currentLocation: LatLng,
     getUserId: () -> Int,
     getCenterLocation: (LatLng) -> Unit = {},
     onTimerFinished: () -> Unit = {},
@@ -676,7 +679,7 @@ fun HomeScreen(
 
             AfterRegisterMap(
                 padding = padding,
-                currentLocation = homeUiState.currentLocation,
+                currentLocation = currentLocation,
                 legs = homeUiState.itineraryInfo!!.legs,
                 isAlarmRegistered = homeUiState.isAlarmRegistered,
                 isMapFocused = homeUiState.isMapFocused,
@@ -692,7 +695,7 @@ fun HomeScreen(
         } else {
             TMapViewCompose(
                 padding = padding,
-                currentLocation = homeUiState.currentLocation,
+                currentLocation = currentLocation,
                 isAlarmRegistered = homeUiState.isAlarmRegistered,
                 userId = getUserId(),
                 isMapFocused = homeUiState.isMapFocused,
@@ -1174,6 +1177,7 @@ data class CharacterTexts(
 private fun HomeScreenPreview() {
     HomeScreen(
         padding = PaddingValues(0.dp),
+        currentLocation = LatLng(0.0, 0.0),
         getUserId = { 1 }
     )
 }

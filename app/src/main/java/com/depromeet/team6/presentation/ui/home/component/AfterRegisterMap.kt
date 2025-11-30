@@ -298,16 +298,16 @@ fun AfterRegisterMap(
                 tMapView
             },
             update = { tMapView ->
-                if (isMapReady) {
-                    val currentPoint = TMapPoint(currentLocation.latitude, currentLocation.longitude)
+                if (!isMapReady) return@AndroidView
 
-                    val currentMarker = tMapView.getMarkerItemFromId("CurrentMarker")
-                    currentMarker.tMapPoint = currentPoint
+                val currentPoint = TMapPoint(currentLocation.latitude, currentLocation.longitude)
+                val existingMarker = tMapView.getMarkerItemFromId("CurrentMarker")
+                existingMarker.tMapPoint = currentPoint
+                tMapView.updateTMapMarkerItem(existingMarker)
 
-                    if (isMapFocused) {
-                        tMapView.setCenterPoint(currentPoint.latitude, currentPoint.longitude)
-                        getCenterLocation(LatLng(currentPoint.latitude, currentPoint.longitude))
-                    }
+                if (isMapFocused) {
+                    tMapView.setCenterPoint(currentPoint.latitude, currentPoint.longitude)
+                    getCenterLocation(LatLng(currentPoint.latitude, currentPoint.longitude))
                 }
             }
         )

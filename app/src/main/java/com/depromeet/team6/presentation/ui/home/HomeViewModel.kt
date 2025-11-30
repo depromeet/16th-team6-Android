@@ -97,7 +97,6 @@ class HomeViewModel @Inject constructor(
 
             setState {
                 copy(
-                    currentLocation = currentLocation,
                     loadState = LoadState.Success
                 )
             }

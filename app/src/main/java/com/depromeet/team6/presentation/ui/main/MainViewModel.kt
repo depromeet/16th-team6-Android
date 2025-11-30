@@ -140,7 +140,6 @@ class MainViewModel @Inject constructor(
         getRealtimeLocationUseCase()
             .onEach { newLocation ->
                 _currentLocation.value = newLocation
-                Timber.d("currentLocation Main : $newLocation")
             }
             .catch { e ->
                 // 위치 정보를 가져오는 중 에러 발생 시 처리 (예: 로그 남기기)
