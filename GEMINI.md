@@ -54,7 +54,7 @@
 
 - **빌드 시스템**: Gradle (Kotlin DSL - `build.gradle.kts`)
 - **CI/CD**: GitHub Actions (`.github/workflows/android_ci.yml`)를 통해 CI 파이프라인이 구축되어 있어 코드 통합 및 빌드 자동화를 수행합니다.
-- **코드 품질**: Ktlint 플러그인을 사용하여 코드 스타일을 일관되게 유지합니다.
+- **코드 품질**: Kt-lint 플러그인을 사용하여 코드 스타일을 일관되게 유지합니다.
 - **보안**: Proguard와 R8을 적용하여 릴리즈 빌드 시 코드를 난독화하고 최적화합니다.
 
 ## 6. Gemini 역할 및 활용 가이드

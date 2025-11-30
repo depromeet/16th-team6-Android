@@ -2,6 +2,7 @@ package com.depromeet.team6.presentation.ui.home
 
 import android.content.Context
 import androidx.lifecycle.viewModelScope
+import com.depromeet.team6.R
 import com.depromeet.team6.data.background.AlarmScheduler
 import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.RouteLocation
@@ -72,10 +73,26 @@ class HomeViewModel @Inject constructor(
 
     init {
         checkAppVersion()
-        showSpeechBubbleTemporarily()
+//        showSpeechBubbleTemporarily()
         viewModelScope.launch {
             val currentLocation = withContext(Dispatchers.IO) {
                 context.getUserLocation() // suspend 함수
+            }
+            loadAlarmAndCourseInfoFromPrefs()
+            val initialSpeech = if (loadUserDepartureState()) {
+                HomeContract.SpeechRequest(
+                    listOf(
+                        context.getString(R.string.home_bubble_map_text)
+                    )
+                )
+            } else {
+                val taxiCost = getTaxiCostUseCase.getLastSavedTaxiCost()
+                val formattedCost = String.format("%,d", taxiCost)
+                HomeContract.SpeechRequest(
+                    listOf(
+                        context.getString(R.string.home_bubble_taxi_cost_message, formattedCost)
+                    )
+                )
             }
 
             setState {
@@ -108,6 +125,7 @@ class HomeViewModel @Inject constructor(
                         )
                     )
                 } else {
+                    getTaxiCost()
                     AmplitudeUtils.trackEventWithProperties(
                         eventName = HOME_EVENT_CHARACTER_CLICK_BEFORE_ALARM,
                         properties = mapOf(
@@ -262,6 +280,15 @@ class HomeViewModel @Inject constructor(
             is HomeContract.HomeEvent.CharacterClicked -> {}
             // is HomeContract.HomeEvent.ComponentClicked -> handleComponentClick(event.componentType, event.data)
             is HomeContract.HomeEvent.ComponentClicked -> TODO()
+            is HomeContract.HomeEvent.RequestCharacterSpeech -> {
+                setState {
+                    copy(
+                        characterMessages = HomeContract.SpeechRequest(
+                            messages = event.messages
+                        )
+                    )
+                }
+            }
         }
     }
 
@@ -449,14 +476,14 @@ class HomeViewModel @Inject constructor(
 //        busStartedPollingJob = null
 //    }
 
-    fun loadUserDepartureState() {
-        viewModelScope.launch {
-            val userDeparture = homeRepository.isUserDeparted()
-            setEvent(HomeContract.HomeEvent.LoadUserDeparture(userDeparture))
-            if (userDeparture && currentState.firtTransportTation == TransportType.BUS) {
-                getBusArrival()
-            }
+    fun loadUserDepartureState(): Boolean {
+        val userDeparture = homeRepository.isUserDeparted()
+        setEvent(HomeContract.HomeEvent.LoadUserDeparture(userDeparture))
+        if (userDeparture && currentState.firtTransportTation == TransportType.BUS) {
+            getBusArrival()
         }
+
+        return userDeparture
     }
 
     fun loadDepartureTime() {
@@ -621,9 +648,18 @@ class HomeViewModel @Inject constructor(
                 )
             )
                 .onSuccess {
+                    // 1. 숫자를 콤마가 포함된 문자열로 포매팅
+                    val formattedCost = String.format("%,d", it) // "34,200"
+                    val resultString = context.getString(R.string.home_bubble_taxi_cost_message, formattedCost)
+                    Timber.d("resultString: $resultString")
                     setState {
                         copy(
-                            taxiCost = it
+                            taxiCost = it,
+                            characterMessages = HomeContract.SpeechRequest(
+                                listOf(
+                                    resultString
+                                )
+                            )
                         )
                     }
                     getTaxiCostUseCase.saveTaxiCost(it)

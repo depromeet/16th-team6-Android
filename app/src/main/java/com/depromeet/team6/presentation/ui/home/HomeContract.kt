@@ -27,6 +27,7 @@ class HomeContract {
         val locationAddress: String = "",
         val currentLocation: LatLng = LatLng(DEFAULT_LAT, DEFAULT_LNG),
         val isMapFocused: Boolean = true,
+        val isMapReady: Boolean = false,
         // 알림 등록 후 경로 표시
         val itineraryInfo: CourseInfo? = null,
         val courseDataLoadState: LoadState = LoadState.Idle,
@@ -74,8 +75,16 @@ class HomeContract {
         val taxiCost: Int = 0,
         val deleteAlarmDialogVisible: Boolean = false,
         // 애니메이션
-        val characterState: CharacterState = CharacterState()
+        val characterState: CharacterState = CharacterState(),
+        val characterMessages: SpeechRequest = SpeechRequest(
+            emptyList()
+        )
     ) : UiState
+
+    data class SpeechRequest(
+        val messages: List<String>,
+        val triggerId: Long = System.nanoTime()
+    )
 
     sealed interface HomeSideEffect : UiSideEffect {
         data object NavigateToMypage : HomeSideEffect
@@ -115,5 +124,6 @@ class HomeContract {
         // 애니메이션
         data object CharacterClicked : HomeEvent()
         data class ComponentClicked(val componentType: ComponentType, val data: Any? = null) : HomeEvent()
+        data class RequestCharacterSpeech(val messages: List<String>) : HomeEvent()
     }
 }

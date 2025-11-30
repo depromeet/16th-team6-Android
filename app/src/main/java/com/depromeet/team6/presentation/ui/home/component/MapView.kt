@@ -46,7 +46,8 @@ fun TMapViewCompose(
     userId: Int,
     modifier: Modifier = Modifier,
     getCenterLocation: (LatLng) -> Unit,
-    mapModified: () -> Unit
+    mapModified: () -> Unit,
+    isMapReadyCallback: () -> Unit
 ) {
     val context = LocalContext.current
     var isMapReady by remember { mutableStateOf(false) }
@@ -162,6 +163,7 @@ fun TMapViewCompose(
         )
 
         if (isMapReady) {
+            isMapReadyCallback()
             // 출발 마커
             Image(
                 imageVector = ImageVector.vectorResource(id = R.drawable.ic_home_dearture_marker),

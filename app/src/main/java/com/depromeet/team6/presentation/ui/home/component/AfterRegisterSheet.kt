@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -31,7 +30,6 @@ import com.depromeet.team6.R
 import com.depromeet.team6.domain.model.course.TransportType
 import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_ITINERARY_CLICKED_AFTER_DEPARTURE
 import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_ITINERARY_CLICKED_ARRIVAL
-import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_ITINERARY_CLICKED_SET_TIME
 import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_ITINERARY_CLICKED_SUGGESTED
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.ui.theme.LocalTeam6Colors
@@ -40,7 +38,7 @@ import com.depromeet.team6.ui.theme.LocalTeam6Typography
 @Composable
 fun AfterRegisterSheet(
     timerFinish: Boolean,
-    isConfirmed: Boolean,
+//    isConfirmed: Boolean,
     afterUserDeparted: Boolean,
     transportType: TransportType,
     transportationNumber: Int,
@@ -69,7 +67,7 @@ fun AfterRegisterSheet(
     var externalTriggerCount by remember { mutableStateOf(0) }
 
     var timeTextColor = colors.white
-    if (afterUserDeparted) timeTextColor = colors.systemRed
+//    if (afterUserDeparted) timeTextColor = colors.systemRed
 
     Box(
         modifier = modifier
@@ -100,20 +98,23 @@ fun AfterRegisterSheet(
                     modifier = Modifier
                         .align(Alignment.CenterStart)
                         .noRippleClickable {
-                            when {
-                                isConfirmed && !afterUserDeparted -> onHomeDepartureTimeClick()
-                                !isConfirmed && !afterUserDeparted -> onHomeExpectDepartureTimeClick()
-                            }
+                            onHomeDepartureTimeClick()
+//                            when {
+//                                isConfirmed && !afterUserDeparted -> onHomeDepartureTimeClick()
+//                                !isConfirmed && !afterUserDeparted -> onHomeExpectDepartureTimeClick()
+//                            }
                         }
                 ) {
-                    if (afterUserDeparted && !timerFinish) { // 사용자 출발 후
-                        TransportStatus(
-                            transportationType = transportType,
-                            transportationNumber = transportationNumber,
-                            transportationName = transportationName,
-                            stopLeft = busStationLeft
-                        )
-                    } else if (afterUserDeparted && timerFinish) {
+                    // 버스 + 남은 정류장 정보 표시
+//                    if (afterUserDeparted && !timerFinish) { // 사용자 출발 후
+//                        TransportStatus(
+//                            transportationType = transportType,
+//                            transportationNumber = transportationNumber,
+//                            transportationName = transportationName,
+//                            stopLeft = busStationLeft
+//                        )
+//                    } else if (afterUserDeparted && timerFinish) {
+                    if (afterUserDeparted) {
                         Text(
                             text = stringResource(R.string.home_final_departure_time_text),
                             style = typography.body7_B7M13,
@@ -127,49 +128,55 @@ fun AfterRegisterSheet(
                         )
                     }
 
-                    if (!afterUserDeparted) {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(R.drawable.ic_all_info_grey),
-                            contentDescription = stringResource(R.string.home_icon_info),
-                            modifier = Modifier
-                                .padding(horizontal = 5.dp)
-                                .clickable {
-                                    onIconClick()
-                                },
-                            tint = colors.gray300
-                        )
-                    }
+                    Icon(
+                        imageVector = ImageVector.vectorResource(R.drawable.ic_all_info_grey),
+                        contentDescription = stringResource(R.string.home_icon_info),
+                        modifier = Modifier
+                            .padding(horizontal = 6.dp)
+                            .clickable {
+                                onIconClick()
+                            },
+                        tint = colors.gray300
+                    )
                 }
 
                 // 새로고침 버튼 (조건부로 오른쪽에 표시)
-                if (!timerFinish) {
-                    RefreshLottieButton(
-                        onClick = onRefreshClick,
-                        tint = colors.white,
-                        modifier = Modifier
-                            .size(24.dp)
-                            .align(Alignment.CenterEnd) // Box 내부 오른쪽에 정렬
-                            .padding(end = 5.dp)
-                    )
-                }
+//                if (!timerFinish) {
+//                    RefreshLottieButton(
+//                        onClick = onRefreshClick,
+//                        tint = colors.white,
+//                        modifier = Modifier
+//                            .size(24.dp)
+//                            .align(Alignment.CenterEnd) // Box 내부 오른쪽에 정렬
+//                            .padding(end = 5.dp)
+//                    )
+//                }
             }
 
             // 사용자가 잠금화면 출발하기 버튼 눌러서 출발했을 때
             if (afterUserDeparted) {
-                if (!timerFinish) {
-                    LastTimer(
-                        departureTime = boardingTime,
-                        textColor = colors.systemRed,
-                        modifier = Modifier.padding(top = 8.dp, bottom = 4.dp),
-                        onTimerFinished = onTimerFinished
-                    )
-                } else {
+//                if (!timerFinish) {
+//                    LastTimer(
+//                        departureTime = boardingTime,
+//                        textColor = colors.systemRed,
+//                        modifier = Modifier.padding(top = 8.dp, bottom = 4.dp),
+//                        onTimerFinished = onTimerFinished
+//                    )
+//                } else {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .noRippleClickable {
+                            onHomeDepartureTimeClick()
+                        }
+                ) {
                     TimeText(
                         timeToLeave = homeArrivedTime,
                         textColor = colors.white,
                         modifier = Modifier.padding(top = 8.dp, bottom = 4.dp)
                     )
                 }
+//                }
             } else {
                 TimeText(
                     timeToLeave = timeToLeave,
@@ -195,8 +202,8 @@ fun AfterRegisterSheet(
                         onCourseDetailClick(HOME_ITINERARY_CLICKED_AFTER_DEPARTURE)
                     } else if (afterUserDeparted && timerFinish) {
                         onCourseDetailClick(HOME_ITINERARY_CLICKED_ARRIVAL)
-                    } else if (isConfirmed) {
-                        onCourseDetailClick(HOME_ITINERARY_CLICKED_SET_TIME)
+//                    } else if (isConfirmed) {
+//                        onCourseDetailClick(HOME_ITINERARY_CLICKED_SET_TIME)
                     } else {
                         onCourseDetailClick(HOME_ITINERARY_CLICKED_SUGGESTED)
                     }
@@ -223,7 +230,7 @@ fun AfterRegisterSheetPreview() {
         onCourseDetailClick = { },
         modifier = Modifier,
         onRefreshClick = { },
-        isConfirmed = false,
+//        isConfirmed = false,
         boardingTime = "15:30:00",
         deleteAlarmConfirmed = {},
         dismissDialog = {},

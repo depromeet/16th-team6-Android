@@ -3,9 +3,7 @@ package com.depromeet.team6.presentation.ui.common.speechbubble
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -23,6 +21,54 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.depromeet.team6.ui.theme.LocalTeam6Colors
 import com.depromeet.team6.ui.theme.LocalTeam6Typography
+
+@Composable
+fun AtchaSpeechBubble(
+    message: String,
+    modifier: Modifier = Modifier,
+    tailExist: Boolean
+) {
+    val colors = LocalTeam6Colors.current
+    val typography = LocalTeam6Typography.current
+
+    Box(
+        modifier = modifier
+            .background(
+                color = colors.gray950,
+                shape = SpeechBubbleShape(tailExist = tailExist)
+            ),
+        contentAlignment = Alignment.Center
+    ) {
+        Row(
+            modifier = Modifier
+                .padding(top = 10.dp, bottom = 16.dp, start = 12.dp, end = 12.dp)
+        ) {
+            Text(
+                text = message,
+                color = colors.gray100,
+                style = typography.body7_B7M13
+            )
+//
+//            if (emphasisText != null) {
+//                Spacer(modifier = Modifier.width(2.dp))
+//                Text(
+//                    text = emphasisText,
+//                    color = colors.white,
+//                    style = typography.body7_B7M13
+//                )
+//            }
+//
+//            if (suffix != null) {
+//                Spacer(modifier = Modifier.width(2.dp))
+//                Text(
+//                    text = suffix,
+//                    color = colors.gray100,
+//                    style = typography.body7_B7M13
+//                )
+//            }
+        }
+    }
+}
 
 class SpeechBubbleShape(
     private val cornerRadius: Dp = 10.dp,
@@ -105,62 +151,13 @@ class SpeechBubbleShape(
     }
 }
 
-@Composable
-fun AtchaSpeechBubble(
-    prefix: String,
-    modifier: Modifier = Modifier,
-    emphasisText: String? = null,
-    suffix: String? = null,
-    tailExist: Boolean
-) {
-    val colors = LocalTeam6Colors.current
-    val typography = LocalTeam6Typography.current
-
-    Box(
-        modifier = modifier
-            .background(
-                color = colors.gray950,
-                shape = SpeechBubbleShape(tailExist = tailExist)
-            ),
-        contentAlignment = Alignment.Center
-    ) {
-        Row(
-            modifier = Modifier
-                .padding(top = 10.dp, bottom = 16.dp, start = 12.dp, end = 12.dp)
-        ) {
-            Text(
-                text = prefix,
-                color = colors.gray100,
-                style = typography.body7_B7M13
-            )
-
-            if (emphasisText != null) {
-                Spacer(modifier = Modifier.width(2.dp))
-                Text(
-                    text = emphasisText,
-                    color = colors.white,
-                    style = typography.body7_B7M13
-                )
-            }
-
-            if (suffix != null) {
-                Spacer(modifier = Modifier.width(2.dp))
-                Text(
-                    text = suffix,
-                    color = colors.gray100,
-                    style = typography.body7_B7M13
-                )
-            }
-        }
-    }
-}
-
 @Preview(backgroundColor = 0xFFFFFF, showBackground = true)
 @Composable
 fun SpeechBubbleTailPreview() {
     AtchaSpeechBubble(
-        prefix = "여기서 놓치면 택시비",
-        emphasisText = "34,000원",
+        message = "여기서 놓치면 택시비 34.000원",
+//        prefix = "여기서 놓치면 택시비",
+//        emphasisText = "34,000원",
         modifier = Modifier,
         tailExist = true
     )
@@ -170,8 +167,9 @@ fun SpeechBubbleTailPreview() {
 @Composable
 fun SpeechBubblePreview() {
     AtchaSpeechBubble(
-        prefix = "여기서 놓치면 택시비",
-        emphasisText = "34,000원",
+        message = "여기서 놓치면 택시비 1억9천달러",
+//        prefix = "여기서 놓치면 택시비",
+//        emphasisText = "34,000원",
         modifier = Modifier,
         tailExist = false
     )
