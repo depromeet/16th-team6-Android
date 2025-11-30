@@ -7,9 +7,11 @@ import android.net.NetworkCapabilities
 import androidx.lifecycle.viewModelScope
 import com.depromeet.team6.domain.repository.UserInfoRepository
 import com.depromeet.team6.domain.usecase.GetRealtimeLocationUseCase
+import com.depromeet.team6.presentation.util.DefaultLatLng
 import com.depromeet.team6.presentation.util.base.BaseViewModel
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.depromeet.team6.presentation.util.view.NetworkState
+import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -18,9 +20,12 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -38,7 +43,8 @@ class MainViewModel @Inject constructor(
 ) : BaseViewModel<MainContract.MainState, MainContract.MainSideEffect, MainContract.MainEvent>() {
 
     private var fcmToken: String? = null
-
+    private val _currentLocation = MutableStateFlow(LatLng(DefaultLatLng.DEFAULT_LAT, DefaultLatLng.DEFAULT_LNG))
+    val currentLocation: StateFlow<LatLng> = _currentLocation.asStateFlow()
     private val connectivityManager =
         context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
@@ -130,13 +136,17 @@ class MainViewModel @Inject constructor(
         }
     }.distinctUntilChanged() // 연속으로 중복된 상태가 전송되는 것을 방지
 
-    // 실시간 현위치 트래킹
     fun startLocationUpdates() {
         getRealtimeLocationUseCase()
             .onEach { newLocation ->
-                setState { copy(currentLocation = newLocation) }
+                _currentLocation.value = newLocation
+                Timber.d("currentLocation Main : $newLocation")
             }
-            .launchIn(viewModelScope)
+            .catch { e ->
+                // 위치 정보를 가져오는 중 에러 발생 시 처리 (예: 로그 남기기)
+                Timber.e(e, "Error while collecting location updates : $e")
+            }
+            .launchIn(viewModelScope) // viewModelScope에서 Flow 수집 시작
     }
 
     /**

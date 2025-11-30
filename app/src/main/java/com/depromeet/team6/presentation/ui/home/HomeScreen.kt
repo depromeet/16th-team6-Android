@@ -4,6 +4,7 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.widget.Toast
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -59,6 +60,7 @@ import com.depromeet.team6.presentation.ui.home.component.AfterRegisterSheet
 import com.depromeet.team6.presentation.ui.home.component.CurrentLocationSheet
 import com.depromeet.team6.presentation.ui.home.component.DeleteAlarmDialog
 import com.depromeet.team6.presentation.ui.home.component.TMapViewCompose
+import com.depromeet.team6.presentation.ui.main.MainViewModel
 import com.depromeet.team6.presentation.util.AmplitudeCommon.SCREEN_NAME
 import com.depromeet.team6.presentation.util.AmplitudeCommon.USER_ID
 import com.depromeet.team6.presentation.util.AppConstants
@@ -102,7 +104,13 @@ fun HomeRoute(
     viewModel: HomeViewModel = hiltViewModel(),
     afterOnboarding: Boolean = false
 ) {
+    val mainViewModel: MainViewModel = hiltViewModel(LocalContext.current as ComponentActivity)
+
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val currentLocation by mainViewModel.currentLocation.collectAsStateWithLifecycle()
+    LaunchedEffect(currentLocation) {
+        Timber.d("currentLocation Home (from LaunchedEffect): $currentLocation")
+    }
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
 
