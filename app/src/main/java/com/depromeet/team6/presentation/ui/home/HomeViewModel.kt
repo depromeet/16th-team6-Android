@@ -11,6 +11,7 @@ import com.depromeet.team6.domain.repository.HomeRepository
 import com.depromeet.team6.domain.repository.UserInfoRepository
 import com.depromeet.team6.domain.usecase.DeleteAlarmUseCase
 import com.depromeet.team6.domain.usecase.GetAddressFromCoordinatesUseCase
+import com.depromeet.team6.domain.usecase.GetAppVersionUseCase
 import com.depromeet.team6.domain.usecase.GetBusArrivalUseCase
 import com.depromeet.team6.domain.usecase.GetBusStartedUseCase
 import com.depromeet.team6.domain.usecase.GetCourseSearchResultsUseCase
@@ -62,6 +63,7 @@ class HomeViewModel @Inject constructor(
     private val deleteAlarmUseCase: DeleteAlarmUseCase,
     private val refreshAlarmTimerUseCase: RefreshAlarmTimerUseCase,
     private val getRealtimeLocationUseCase: GetRealtimeLocationUseCase,
+    private val getAppVersionUseCase: GetAppVersionUseCase,
     @ApplicationContext private val context: Context
 ) : BaseViewModel<HomeContract.HomeUiState, HomeContract.HomeSideEffect, HomeContract.HomeEvent>() {
     private var speechBubbleJob: Job? = null
@@ -69,6 +71,7 @@ class HomeViewModel @Inject constructor(
     private var lastRouteId: String = ""
 
     init {
+        checkAppVersion()
         showSpeechBubbleTemporarily()
         viewModelScope.launch {
             val currentLocation = withContext(Dispatchers.IO) {
@@ -113,6 +116,7 @@ class HomeViewModel @Inject constructor(
                     )
                 }
             }
+
             is HomeContract.HomeEvent.SetDestination -> setDestination()
             is HomeContract.HomeEvent.LoadLegsResult -> {
                 setState {
@@ -122,6 +126,7 @@ class HomeViewModel @Inject constructor(
                     )
                 }
             }
+
             is HomeContract.HomeEvent.LoadDepartureDateTime -> {
                 setState {
                     copy(
@@ -193,16 +198,19 @@ class HomeViewModel @Inject constructor(
                     )
                 }
             }
+
             HomeContract.HomeEvent.DeleteAlarmConfirmed -> setState {
                 copy(
                     deleteAlarmDialogVisible = false
                 )
             }
+
             HomeContract.HomeEvent.DismissDialog -> setState {
                 copy(
                     deleteAlarmDialogVisible = false
                 )
             }
+
             HomeContract.HomeEvent.FinishAlarmClicked -> {
                 setState { copy(deleteAlarmDialogVisible = true) }
             }
@@ -239,6 +247,7 @@ class HomeViewModel @Inject constructor(
                     )
                 )
             }
+
             is HomeContract.HomeEvent.CourseDetailButtonClick -> {
                 AmplitudeUtils.trackEventWithProperties(
                     eventName = HOME_EVENT_ITINERARY_BTN_CLICK,
@@ -273,6 +282,7 @@ class HomeViewModel @Inject constructor(
                     currentState.firstTransportationName.isNotEmpty() &&
                     currentState.itineraryInfo != null
             }
+
             else -> false
         }
 
@@ -514,7 +524,14 @@ class HomeViewModel @Inject constructor(
                 setEvent(HomeContract.HomeEvent.LoadLegsResult(courseInfo))
                 setEvent(HomeContract.HomeEvent.LoadDepartureDateTime(courseInfo.departureTime))
                 setEvent(HomeContract.HomeEvent.LoadBoardingDateTime(courseInfo.boardingTime))
-                setEvent(HomeContract.HomeEvent.LoadHomeArrivedTime(calculateArrivalTime(courseInfo.departureTime, courseInfo.totalTime)))
+                setEvent(
+                    HomeContract.HomeEvent.LoadHomeArrivedTime(
+                        calculateArrivalTime(
+                            courseInfo.departureTime,
+                            courseInfo.totalTime
+                        )
+                    )
+                )
                 setEvent(HomeContract.HomeEvent.LoadFirstTransportation(getFirstTransportation(courseInfo.legs)))
                 setEvent(HomeContract.HomeEvent.LoadFirstTransportationNumber(getFirstTransportationNumber(courseInfo.legs)))
                 setEvent(HomeContract.HomeEvent.LoadFirstTransportationName(getFirstTransportationName(courseInfo.legs)))
@@ -688,6 +705,70 @@ class HomeViewModel @Inject constructor(
             }.onFailure { exception ->
                 handleApiException(exception = exception)
             }
+        }
+    }
+
+    private fun checkAppVersion() {
+        val installedVersion = getCurrentVersionName()?.cleanVersion() ?: "0.0.0"
+        viewModelScope.launch {
+            getAppVersionUseCase().onSuccess { appVersion ->
+                val latestVersion = appVersion.removePrefix("Success(")
+                    .removePrefix("v")
+                    .removeSuffix(")")
+                    .cleanVersion()
+
+                Timber.d("latestVersion: $latestVersion, installedVersion: $installedVersion")
+
+                when (compareVersions(installedVersion, latestVersion)) {
+                    VersionResult.UPDATE_REQUIRED -> {
+                        setSideEffect(HomeContract.HomeSideEffect.ShowUpdateRequiredDialog)
+                    }
+
+                    VersionResult.UPDATE_OPTIONAL -> {
+                        setSideEffect(HomeContract.HomeSideEffect.ShowUpdateOptionalDialog)
+                    }
+
+                    VersionResult.UP_TO_DATE -> {
+                        Timber.d("최신 버전입니다")
+                    }
+                }
+            }.onFailure {
+                Timber.e(it, "앱 버전 확인 실패")
+            }
+        }
+    }
+
+    private fun String.cleanVersion(): String =
+        this.replace("[^0-9.]".toRegex(), "")
+
+    private fun compareVersions(installed: String, latest: String): VersionResult {
+        val installedParts = installed.split(".").map { it.toIntOrNull() ?: 0 }
+        val latestParts = latest.split(".").map { it.toIntOrNull() ?: 0 }
+
+        val (a1, b1, c1) = installedParts + List(3 - installedParts.size) { 0 }
+        val (a2, b2, c2) = latestParts + List(3 - latestParts.size) { 0 }
+
+        return when {
+            a1 != a2 -> if (a1 < a2) VersionResult.UPDATE_REQUIRED else VersionResult.UP_TO_DATE
+            b1 != b2 -> if (b1 < b2) VersionResult.UPDATE_REQUIRED else VersionResult.UP_TO_DATE
+            c1 != c2 -> if (c1 < c2) VersionResult.UPDATE_OPTIONAL else VersionResult.UP_TO_DATE
+            else -> VersionResult.UP_TO_DATE
+        }
+    }
+
+    private enum class VersionResult {
+        UPDATE_REQUIRED,
+        UPDATE_OPTIONAL,
+        UP_TO_DATE
+    }
+
+    private fun getCurrentVersionName(): String? {
+        return try {
+            val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+            packageInfo.versionName
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to get app version name")
+            "0.0.0"
         }
     }
 
