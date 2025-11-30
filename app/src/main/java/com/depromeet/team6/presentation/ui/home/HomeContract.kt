@@ -91,6 +91,9 @@ class HomeContract {
         data class NavigateToItinerary(val markerParameter: FocusedMarkerParameter?) : HomeSideEffect
         data object ShowDeleteAlarmToast : HomeSideEffect
         data class ShowToast(val message: String) : HomeSideEffect
+
+        data object ShowUpdateRequiredDialog : HomeSideEffect
+        data object ShowUpdateOptionalDialog : HomeSideEffect
     }
 
     sealed class HomeEvent : UiEvent {

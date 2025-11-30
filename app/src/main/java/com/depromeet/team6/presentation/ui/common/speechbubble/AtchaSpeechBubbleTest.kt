@@ -51,8 +51,8 @@ data class BubbleMessage(
 @Composable
 fun AtchaSpeechCharacter(
     speechRequest: HomeContract.SpeechRequest,
-    modifier : Modifier = Modifier,
-    onCharacterClick : () -> Unit = {}
+    modifier: Modifier = Modifier,
+    onCharacterClick: () -> Unit = {}
 ) {
     Timber.d("resultString!!: ${speechRequest.messages}")
     val bubbles = remember { mutableStateListOf<BubbleMessage>() }

@@ -144,13 +144,13 @@ fun CharacterLottieSpeechBubble(
 //                            "아라라라랄랄ㄹ라"
 //                        )
 //                    )
-            //                    AtchaSpeechBubble(
-            //                        prefix = prefixText,
-            //                        modifier = Modifier,
-            //                        emphasisText = emphasisText,
-            //                        suffix = suffixText,
-            //                        tailExist = true
-            //                    )
+        //                    AtchaSpeechBubble(
+        //                        prefix = prefixText,
+        //                        modifier = Modifier,
+        //                        emphasisText = emphasisText,
+        //                        suffix = suffixText,
+        //                        tailExist = true
+        //                    )
 //                }
 
 //                if (lineCount == 2) {

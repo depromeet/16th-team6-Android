@@ -1,6 +1,8 @@
 package com.depromeet.team6.presentation.ui.home
 
+import android.content.ActivityNotFoundException
 import android.content.Context
+import android.content.Intent
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -34,6 +36,8 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
@@ -41,6 +45,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import com.depromeet.team6.R
+import com.depromeet.team6.data.background.ArrivalMonitorService
 import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.course.TransportType
 import com.depromeet.team6.presentation.model.home.CharacterState
@@ -56,6 +61,7 @@ import com.depromeet.team6.presentation.ui.home.component.DeleteAlarmDialog
 import com.depromeet.team6.presentation.ui.home.component.TMapViewCompose
 import com.depromeet.team6.presentation.util.AmplitudeCommon.SCREEN_NAME
 import com.depromeet.team6.presentation.util.AmplitudeCommon.USER_ID
+import com.depromeet.team6.presentation.util.AppConstants
 import com.depromeet.team6.presentation.util.HomeAmplitude.ALERT_END_POPUP_1
 import com.depromeet.team6.presentation.util.HomeAmplitude.HOME
 import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_COURSESEARCH_ENTERED_DIRECT
@@ -68,6 +74,7 @@ import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_ROUTE_CLICKED
 import com.depromeet.team6.presentation.util.HomeAmplitude.POPUP
 import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
 import com.depromeet.team6.presentation.util.base.ApiErrorSideEffect
+import com.depromeet.team6.presentation.util.dialog.DialogController
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.presentation.util.toast.atChaToastMessage
 import com.depromeet.team6.presentation.util.view.LoadState
@@ -86,20 +93,21 @@ import java.util.Locale
 @Composable
 fun HomeRoute(
     padding: PaddingValues,
-    afterOnboarding: Boolean = false,
     navigateToLogin: () -> Unit,
     navigateToCourseSearch: (String, String) -> Unit,
     navigateToMypage: () -> Unit,
     navigateToItinerary: (String, String, String, FocusedMarkerParameter?) -> Unit,
     navigateToSearchLocation: (Address) -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: HomeViewModel = hiltViewModel()
+    viewModel: HomeViewModel = hiltViewModel(),
+    afterOnboarding: Boolean = false
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
 
     val systemUiController = rememberSystemUiController()
+    val dialogController = remember { DialogController() }
 
 //    val characterTexts = CharacterTexts(
 //        taxiCostText = stringResource(R.string.home_bubble_basic_text),
@@ -162,6 +170,7 @@ fun HomeRoute(
                     is ApiErrorSideEffect.ShowToastSideEffect -> {
                         Toast.makeText(context, sideEffect.toastMessage, Toast.LENGTH_SHORT).show()
                     }
+
                     is ApiErrorSideEffect.NavigateToLoginSideEffect -> navigateToLogin()
                     is HomeContract.HomeSideEffect.NavigateToMypage -> navigateToMypage()
                     is HomeContract.HomeSideEffect.NavigateToItinerary -> navigateToItinerary(
@@ -170,8 +179,26 @@ fun HomeRoute(
                         Gson().toJson(uiState.destinationPoint),
                         sideEffect.markerParameter
                     )
+
                     is HomeContract.HomeSideEffect.ShowDeleteAlarmToast ->
                         atChaToastMessage(context, R.string.home_alarm_finish_text, Toast.LENGTH_SHORT)
+
+                    is HomeContract.HomeSideEffect.ShowUpdateRequiredDialog -> {
+                        dialogController.showAtchaOneButtonAlert(
+                            message = "더 좋아진 앗차를 사용하기 위해\n업데이트가 필요해요",
+                            onConfirm = { openPlayStoreForUpdate(context = context) },
+                            confirmButtonText = "업데이트 하기"
+                        )
+                    }
+
+                    is HomeContract.HomeSideEffect.ShowUpdateOptionalDialog -> {
+                        dialogController.showAtchaTwoButtonAlert(
+                            message = "더 좋아진 앗차를 사용하기 위해\n업데이트가 필요해요",
+                            onConfirm = { openPlayStoreForUpdate(context = context) },
+                            confirmButtonText = "업데이트 하기",
+                            closeButtonText = "닫기"
+                        )
+                    }
                 }
             }
     }
@@ -181,17 +208,6 @@ fun HomeRoute(
             viewModel.registerAlarm()
         }
     }
-
-//    SideEffect {
-//        if (!PermissionUtil.isLocationPermissionRequested(context) &&
-//            !PermissionUtil.hasLocationPermissions(context)
-//        ) {
-//            PermissionUtil.requestLocationPermissions(
-//                context = context,
-//                locationPermissionLauncher = locationPermissionsLauncher
-//            )
-//        }
-//    }
 
     LaunchedEffect(Unit) {
         viewModel.setEvent(HomeContract.HomeEvent.SetDestination)
@@ -252,6 +268,7 @@ fun HomeRoute(
             uiState.isAlarmRegistered && !uiState.userDeparture && !uiState.isBusDeparted -> {
                 "before_bus_arrived"
             }
+
             uiState.isAlarmRegistered && !uiState.userDeparture -> {
                 if (uiState.firtTransportTation == TransportType.SUBWAY) {
                     "after_subway_arrived"
@@ -259,10 +276,13 @@ fun HomeRoute(
                     "after_bus_arrived"
                 }
             }
+
             uiState.isAlarmRegistered && !uiState.timerFinish && uiState.firtTransportTation == TransportType.BUS ->
                 "after_user_departure_bus"
+
             uiState.isAlarmRegistered && !uiState.timerFinish && uiState.firtTransportTation == TransportType.SUBWAY ->
                 "after_user_departure_subway"
+
             else -> "none"
         }
     }
@@ -454,6 +474,7 @@ fun HomeRoute(
         LoadState.Idle, LoadState.Loading -> {
             AtChaLoadingView()
         }
+
         LoadState.Success -> {
             Box {
                 if (uiState.alarmCheckLoadState == LoadState.Loading ||
@@ -635,6 +656,16 @@ fun HomeScreen(
         )
 
         if (homeUiState.isAlarmRegistered) {
+            val context = LocalContext.current
+            val destination = homeUiState.destinationPoint
+
+            Intent(context, ArrivalMonitorService::class.java).apply {
+                putExtra(ArrivalMonitorService.EXTRA_DEST_LAT, destination.lat)
+                putExtra(ArrivalMonitorService.EXTRA_DEST_LNG, destination.lon)
+            }.also {
+                ContextCompat.startForegroundService(context, it)
+            }
+
             AfterRegisterMap(
                 padding = padding,
                 currentLocation = homeUiState.currentLocation,
@@ -1070,6 +1101,29 @@ private fun generateCharacterStateWithLaunchCount(
     }
 }
 
+private fun openPlayStoreForUpdate(context: Context) {
+    val packageName = AppConstants.PLAY_STORE_PACKAGE_NAME
+
+    try {
+        val intent = Intent(
+            Intent.ACTION_VIEW,
+            "market://details?id=$packageName".toUri()
+        ).apply {
+            setPackage("com.android.vending")
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        context.startActivity(intent)
+    } catch (_: ActivityNotFoundException) {
+        val webIntent = Intent(
+            Intent.ACTION_VIEW,
+            AppConstants.PLAY_STORE_URL.toUri()
+        ).apply {
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        context.startActivity(webIntent)
+    }
+}
+
 data class CharacterTexts(
     // 알림 등록 전
     val taxiCostText: String,
@@ -1112,6 +1166,6 @@ data class CharacterTexts(
 private fun HomeScreenPreview() {
     HomeScreen(
         padding = PaddingValues(0.dp),
-        getUserId = { 1 },
+        getUserId = { 1 }
     )
 }

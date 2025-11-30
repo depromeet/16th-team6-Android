@@ -1,7 +1,9 @@
 package com.depromeet.team6.presentation.ui.main
 
-import android.content.ActivityNotFoundException
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
@@ -18,6 +20,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
@@ -25,16 +28,17 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.core.app.ActivityCompat
-import androidx.core.net.toUri
+import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.flowWithLifecycle
 import com.depromeet.team6.R
+import com.depromeet.team6.data.background.ArrivalMonitorService
 import com.depromeet.team6.presentation.ui.common.dialog.GlobalDialogHandler
 import com.depromeet.team6.presentation.ui.common.snackbar.GlobalSnackbarHandler
 import com.depromeet.team6.presentation.ui.common.snackbar.LocalSnackbarHostState
@@ -42,7 +46,6 @@ import com.depromeet.team6.presentation.ui.lock.LockScreenNavigator
 import com.depromeet.team6.presentation.ui.main.navigation.MainNavHost
 import com.depromeet.team6.presentation.ui.main.navigation.MainNavigator
 import com.depromeet.team6.presentation.ui.main.navigation.rememberMainNavigator
-import com.depromeet.team6.presentation.util.AppConstants
 import com.depromeet.team6.presentation.util.context.openAppSettings
 import com.depromeet.team6.presentation.util.dialog.DialogController
 import com.depromeet.team6.presentation.util.dialog.LocalDialogController
@@ -62,29 +65,6 @@ class MainActivity : ComponentActivity() {
     private var backPressedTime = 0L
 
     private lateinit var firebaseAnalytics: FirebaseAnalytics
-
-    private fun openPlayStoreForUpdate() {
-        try {
-            startActivity(
-                Intent(
-                    Intent.ACTION_VIEW,
-                    "market://details?id=${AppConstants.PLAY_STORE_PACKAGE_NAME}".toUri()
-                ).apply {
-                    setPackage("com.android.vending")
-                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                }
-            )
-        } catch (_: ActivityNotFoundException) {
-            startActivity(
-                Intent(
-                    Intent.ACTION_VIEW,
-                    AppConstants.PLAY_STORE_URL.toUri()
-                ).apply {
-                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                }
-            )
-        }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -132,7 +112,7 @@ class MainActivity : ComponentActivity() {
             val networkAvailability = viewModel.networkAvailability.collectAsStateWithLifecycle()
             val snackbarHostState = remember { SnackbarHostState() }
             val (snackbarController, snackbarData) = rememberSnackbarController()
-
+            val lifecycleOwner = LocalLifecycleOwner.current
             var shouldNavigateToCourseSearch by remember { mutableStateOf(navigateToCourseSearch) }
 
             SideEffect {
@@ -142,31 +122,7 @@ class MainActivity : ComponentActivity() {
                     isAppearanceLightNavigationBars = false
                 }
             }
-            val lifecycleOwner = LocalLifecycleOwner.current
 
-            LaunchedEffect(viewModel.sideEffect, lifecycleOwner) {
-                viewModel.sideEffect.flowWithLifecycle(lifecycle = lifecycleOwner.lifecycle)
-                    .collect { onboardingSideEffect ->
-                        when (onboardingSideEffect) {
-                            is MainContract.MainSideEffect.ShowUpdateRequiredDialog -> {
-                                dialogController.showAtchaOneButtonAlert(
-                                    message = "더 좋아진 앗차를 사용하기 위해\n업데이트가 필요해요",
-                                    onConfirm = { openPlayStoreForUpdate() },
-                                    confirmButtonText = "업데이트 하기"
-                                )
-                            }
-
-                            is MainContract.MainSideEffect.ShowUpdateOptionalDialog -> {
-                                dialogController.showAtchaTwoButtonAlert(
-                                    message = "더 좋아진 앗차를 사용하기 위해\n업데이트가 필요해요",
-                                    onConfirm = { openPlayStoreForUpdate() },
-                                    confirmButtonText = "업데이트 하기",
-                                    closeButtonText = "닫기"
-                                )
-                            }
-                        }
-                    }
-            }
             val locationPermissionsLauncher = rememberLauncherForActivityResult(
                 contract = ActivityResultContracts.RequestMultiplePermissions(),
                 onResult = { permissions ->
@@ -188,14 +144,22 @@ class MainActivity : ComponentActivity() {
                     dialogController.showAtchaTwoButtonAlert(
                         message = this@MainActivity.getString(R.string.all_dialog_location_permission),
                         onConfirm = {
-                            if (ActivityCompat.shouldShowRequestPermissionRationale(this@MainActivity, android.Manifest.permission.ACCESS_FINE_LOCATION)) {
+                            if (ActivityCompat.shouldShowRequestPermissionRationale(
+                                    this@MainActivity,
+                                    android.Manifest.permission.ACCESS_FINE_LOCATION
+                                )
+                            ) {
                                 this@MainActivity.openAppSettings()
                             } else {
-                                PermissionUtil.requestLocationPermissions(this@MainActivity, locationPermissionsLauncher)
+                                PermissionUtil.requestLocationPermissions(
+                                    this@MainActivity,
+                                    locationPermissionsLauncher
+                                )
                             }
                         },
                         onDismiss = {
-                            Toast.makeText(this@MainActivity, "앗차 앱을 사용하시기 전에 위치 권한을 허용해 주세요", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this@MainActivity, "앗차 앱을 사용하시기 전에 위치 권한을 허용해 주세요", Toast.LENGTH_SHORT)
+                                .show()
                             exitProcess(0)
                         },
                         closeButtonText = "닫기",
@@ -217,6 +181,35 @@ class MainActivity : ComponentActivity() {
                     LocalSnackbarHostState provides snackbarHostState,
                     LocalSnackbarController provides snackbarController
                 ) {
+                    val context = LocalContext.current
+
+                    // Arrival 이벤트 처리용 BroadcastReceiver
+                    val arrivalReceiver = remember {
+                        object : BroadcastReceiver() {
+                            override fun onReceive(context: Context?, intent: Intent?) {
+                                dialogController.showAtchaOneButtonAlert(
+                                    message = getString(R.string.arrival_guide_finish_dialog),
+                                    onConfirm = { },
+                                    confirmButtonText = getString(R.string.confirm_dialog)
+                                )
+                            }
+                        }
+                    }
+
+                    // Lifecycle-aware 등록/해제
+                    DisposableEffect(Unit) {
+                        val filter = IntentFilter(ArrivalMonitorService.ACTION_ARRIVAL)
+                        ContextCompat.registerReceiver(
+                            context,
+                            arrivalReceiver,
+                            filter,
+                            ContextCompat.RECEIVER_NOT_EXPORTED
+                        )
+                        onDispose {
+                            context.unregisterReceiver(arrivalReceiver)
+                        }
+                    }
+
                     Box {
                         Scaffold(
                             snackbarHost = {
@@ -240,6 +233,7 @@ class MainActivity : ComponentActivity() {
                                 }
                             }
                         }
+
                         GlobalDialogHandler(
                             controller = dialogController,
                             modifier = Modifier

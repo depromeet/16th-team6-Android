@@ -166,7 +166,7 @@ fun AfterRegisterSheet(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .noRippleClickable{
+                        .noRippleClickable {
                             onHomeDepartureTimeClick()
                         }
                 ) {
