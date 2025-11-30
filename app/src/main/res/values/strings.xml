@@ -105,7 +105,7 @@
 <!--    <string name="home_bubble_user_departure_taxi_cost_text">막차 놓치면 택시비</string>-->
 <!--    <string name="home_bubble_least_text">약&#160;</string>-->
 <!--    <string name="home_bubble_won_text">원</string>-->
-    <string name="home_taxi_cost_message">여기서 막차 놓치면 택시비 약 %s원</string>
+    <string name="home_bubble_taxi_cost_message">여기서 막차 놓치면 택시비 약 %s원</string>
     <string name="home_bubble_alarm_prefix_text">차고지에서 출발하면</string>
     <string name="home_bubble_before_bus_departure_text">버스가 출발하면 더 정확하게 알려드릴게요</string>
     <string name="home_bubble_expect_departure_time_clicked_text_1">타야될 버스가 아직 운행하지 않아 예상 시간으로 알려드려요</string>
@@ -132,7 +132,6 @@
 
 
     <string name="home_bubble_alarm_emphasis_text">이때쯤 자리에서 출발하면 돼요</string>
-    <string name="home_move_set_destination">"지도를 움직여 출발지를 설정해 봐요"</string>
     <string name="home_bubble_alarm_suffix_text">알려드려요</string>
     <string name="home_bubble_alarm_departed_text">이때 출발해야 막차를 탈 수 있어요</string>
 
@@ -212,7 +211,7 @@
     <string name="home_course_detail_button_text">상세 경로</string>
     <string name="home_icon_transportation">홈 대중교통 아이콘</string>
     <string name="home_icon_dot">홈 점 아이콘</string>
-    <string name="home_final_departure_time_text">우리집 도착시간</string>
+    <string name="home_final_departure_time_text">우리집 도착 예정시간</string>
     <string name="mypage_logout_dialog_title">로그아웃하시겠어요?</string>
     <string name="mypage_withdraw_dialog_title">정말로 탈퇴하시겠어요?</string>
     <string name="mypage_logout_dialog_confirm">로그아웃</string>

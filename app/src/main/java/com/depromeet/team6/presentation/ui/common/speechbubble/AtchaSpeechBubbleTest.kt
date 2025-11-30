@@ -7,9 +7,7 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -87,6 +85,18 @@ fun AtchaSpeechCharacter(
             return@LaunchedEffect
         }
 
+        // 이미 말풍선 생성중이면 SpeechRequest가 들어와도 말풍선 만들지 않음
+        if (speechJob != null && speechJob!!.isActive) return@LaunchedEffect
+
+        // 말풍선 만들때 캐릭터 통통 튀기
+        scope.launch {
+            // 매 클릭마다 0에서 1까지 1회 재생
+            lottie.animate(
+                composition = composition,
+                iterations = 1,
+                initialProgress = 0f
+            )
+        }
         speechJob = scope.launch {
             val removalJobs = mutableListOf<Job>()
             // 말풍선 생성 로직
@@ -102,7 +112,7 @@ fun AtchaSpeechCharacter(
 
                 // 개별 말풍선 제거 타이머
                 val removalJob = scope.launch {
-                    delay(2000L)
+                    delay(2500L)
                     val idx = bubbles.indexOfFirst { it.id == newBubble.id }
                     if (idx != -1) {
                         bubbles[idx] = bubbles[idx].copy(isVisible = false)
@@ -137,7 +147,6 @@ fun AtchaSpeechCharacter(
                         isVisible = bubble.isVisible // 👈 4. 부모의 상태를 자식에게 전달
                         // onRemove 콜백은 이제 필요 없음
                     )
-                    Spacer(modifier = Modifier.height(8.dp))
                 }
             }
         }

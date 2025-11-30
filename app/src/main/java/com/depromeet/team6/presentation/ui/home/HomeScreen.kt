@@ -139,11 +139,6 @@ fun HomeRoute(
         )
     }
 
-    LaunchedEffect(Unit) {
-        viewModel.loadAlarmAndCourseInfoFromPrefs()
-        viewModel.loadUserDepartureState()
-    }
-
     // 화면이 다시 활성화될 때마다 사용자 출발 상태를 새로 로드
     DisposableEffect(lifecycleOwner) {
         val observer = object : DefaultLifecycleObserver {
@@ -478,6 +473,9 @@ fun HomeRoute(
 //                        characterState = characterState,
 //                        showTempMessage = ::showTempMessage,
                         showTempMessage = {},
+                        requestCharacterSpeech = { messages ->
+                            viewModel.setEvent(HomeContract.HomeEvent.RequestCharacterSpeech(messages))
+                        },
                         navigateToMypage = navigateToMypage,
 //                    navigateToItinerary = navigateToItinerary,
                         modifier = modifier,
@@ -596,6 +594,7 @@ fun HomeScreen(
     onCharacterClick: () -> Unit = {},
 //    characterState: CharacterState,
     showTempMessage: (ComponentType) -> Unit = {},
+    requestCharacterSpeech: (List<String>) -> Unit = {},
     onSearchClick: () -> Unit = {},
     onDestinationClick: () -> Unit = {},
     onFinishClick: () -> Unit = {},
@@ -648,7 +647,8 @@ fun HomeScreen(
                 },
                 onTransportMarkerClick = { markerParameter ->
                     afterRegisterMapMarkerClick(markerParameter)
-                }
+                },
+                isMapReadyCallback = isMapReadyCallback
             )
         } else {
             TMapViewCompose(
@@ -665,16 +665,16 @@ fun HomeScreen(
             ) // Replace with your actual API key
         }
 
-        var isConfirmed = false
+//        var isConfirmed = false
 
         val firstTransportation = homeUiState.firtTransportTation
-        if (firstTransportation == TransportType.SUBWAY) {
-            isConfirmed = true
-        }
-
-        if (homeUiState.isBusDeparted) {
-            isConfirmed = true
-        }
+//        if (firstTransportation == TransportType.SUBWAY) {
+//            isConfirmed = true
+//        }
+//
+//        if (homeUiState.isBusDeparted) {
+//            isConfirmed = true
+//        }
 
         when {
             homeUiState.alarmCheckLoadState == LoadState.Loading ||
@@ -686,7 +686,7 @@ fun HomeScreen(
                 AfterRegisterSheet(
                     timerFinish = homeUiState.timerFinish,
                     startLocation = homeUiState.departurePointName,
-                    isConfirmed = isConfirmed,
+//                    isConfirmed = isConfirmed,
                     afterUserDeparted = homeUiState.userDeparture,
                     transportType = homeUiState.firtTransportTation,
                     transportationNumber = homeUiState.firstTransportationNumber,
@@ -696,7 +696,11 @@ fun HomeScreen(
                     homeArrivedTime = homeUiState.homeArrivedTime,
                     destination = stringResource(R.string.home_my_home_text),
                     onCourseTextClick = {
-                        showTempMessage(ComponentType.ROUTE_TEXT_CLICKED)
+                        requestCharacterSpeech(
+                            listOf(
+                                "위치를 변경하려면 알림을 종료해야 해요"
+                            )
+                        )
                         AmplitudeUtils.trackEventWithProperties(
                             HOME_ROUTE_CLICKED,
                             mapOf(
@@ -730,7 +734,13 @@ fun HomeScreen(
                         }
                     },
                     onHomeDepartureTimeClick = {
-                        showTempMessage(ComponentType.DEPARTURE_TIME_CONFIRMED_CLICKED)
+//                        showTempMessage(ComponentType.DEPARTURE_TIME_CONFIRMED_CLICKED)
+                        requestCharacterSpeech(
+                            listOf(
+                                "이때 자리에서 출발하면 돼요",
+                                "교통 상황에 따라 시간이 달라질 수 있어요"
+                            )
+                        )
                         AmplitudeUtils.trackEventWithProperties(
                             HOME_DEPARTURE_TIME_CLICKED,
                             mapOf(
@@ -793,10 +803,15 @@ fun HomeScreen(
 
         Timber.d("isMapReady : ${homeUiState.isMapReady}")
         if (homeUiState.isMapReady) {
+            val bottomOffset = if (homeUiState.isAlarmRegistered) {
+                224.dp
+            } else {
+                194.dp
+            }
             AtchaSpeechCharacter(
                 modifier = Modifier
                     .align(Alignment.BottomStart)
-                    .padding(start = 8.dp, bottom = 194.dp),
+                    .padding(start = 8.dp, bottom = bottomOffset),
                 speechRequest = homeUiState.characterMessages,
                 onCharacterClick = onCharacterClick
             )

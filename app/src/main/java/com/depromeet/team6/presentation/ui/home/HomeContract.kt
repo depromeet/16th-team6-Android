@@ -77,9 +77,7 @@ class HomeContract {
         // 애니메이션
         val characterState: CharacterState = CharacterState(),
         val characterMessages: SpeechRequest = SpeechRequest(
-            listOf(
-                "지도를 움직여 출발지를 설정 봐요"
-            )
+            emptyList()
         )
     ) : UiState
 
@@ -123,5 +121,6 @@ class HomeContract {
         // 애니메이션
         data object CharacterClicked : HomeEvent()
         data class ComponentClicked(val componentType: ComponentType, val data: Any? = null) : HomeEvent()
+        data class RequestCharacterSpeech(val messages: List<String>) : HomeEvent()
     }
 }

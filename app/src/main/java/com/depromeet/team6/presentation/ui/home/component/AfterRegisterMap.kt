@@ -53,7 +53,8 @@ fun AfterRegisterMap(
     modifier: Modifier = Modifier,
     mapModified: () -> Unit,
     getCenterLocation: (LatLng) -> Unit,
-    onTransportMarkerClick: (FocusedMarkerParameter) -> Unit = {}
+    onTransportMarkerClick: (FocusedMarkerParameter) -> Unit = {},
+    isMapReadyCallback: () -> Unit = {}
 ) {
     var isMapReady by remember { mutableStateOf(false) }
 
@@ -233,7 +234,7 @@ fun AfterRegisterMap(
 
                             val marker = markerItems!![0]
                             val parts = marker.id.split("_")
-                            if (parts[0] == "departPoint" || parts[0] == "destinationPoint") return
+                            if (parts[0] == "departPoint" || parts[0] == "destinationPoint" || parts[0] == "CurrentMarker") return
                             val transportTypeStr = parts[1]
                             val subTypeIdx = parts[2].toInt()
                             val transportType = enumValueOf<TransportType>(transportTypeStr)
@@ -333,7 +334,9 @@ fun AfterRegisterMap(
 //                    .graphicsLayer { alpha = if (isMapReady) 1f else 0.5f } // 비활성화 시 투명도 조정
 //            )
 
-        if (!isMapReady) {
+        if (isMapReady) {
+            isMapReadyCallback()
+        } else {
             AtChaLoadingView(
                 transparent = false
             )
