@@ -15,10 +15,7 @@ class MainContract {
         val currentLocation: LatLng = LatLng(DEFAULT_LAT, DEFAULT_LNG)
     ) : UiState
 
-    sealed interface MainSideEffect : UiSideEffect {
-        data object ShowUpdateRequiredDialog : MainSideEffect
-        data object ShowUpdateOptionalDialog : MainSideEffect
-    }
+    sealed interface MainSideEffect : UiSideEffect
 
     sealed class MainEvent : UiEvent
 }
