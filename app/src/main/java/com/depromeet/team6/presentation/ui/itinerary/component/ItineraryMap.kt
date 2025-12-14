@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,8 +45,6 @@ import com.skt.tmap.TMapView
 import com.skt.tmap.overlay.TMapMarkerItem
 import com.skt.tmap.overlay.TMapTrafficLine
 import com.skt.tmap.overlay.TMapTrafficLine.TrafficLine
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 
 @Composable
 fun ItineraryMap(
@@ -59,37 +56,15 @@ fun ItineraryMap(
     marginTop: Dp,
     modifier: Modifier = Modifier,
     onBackPressed: () -> Unit,
-    currentLocationBtnClick: () -> Unit
 ) {
     val context = LocalContext.current
     var isMapReady by remember { mutableStateOf(false) }
+    var isMapFocused by remember { mutableStateOf(true) }
     val tMapView = remember { TMapView(context) }
 
     val departLocation = LatLng(departurePoint.lat, departurePoint.lon)
     val destinationLocation = LatLng(destinationPoint.lat, destinationPoint.lon)
     val markerSizePx = 28.dp.toPx().toInt()
-
-    // 현재 위치 변경될 때만 마커 갱신
-    LaunchedEffect(currentLocation, isMapReady) {
-        if (isMapReady) {
-            val tMapPoint = TMapPoint(currentLocation.latitude, currentLocation.longitude)
-
-            withContext(Dispatchers.Main) {
-                val markerDrawable =
-                    ContextCompat.getDrawable(context, R.drawable.ic_home_current_location)
-                val markerBitmap = markerDrawable?.toBitmap()
-
-                val markerItem = TMapMarkerItem().apply {
-                    id = "CurrentMarker"
-                    name = "Current Location"
-                    icon = markerBitmap
-                    setTMapPoint(tMapPoint)
-                }
-
-                tMapView.addTMapMarkerItem(markerItem)
-            }
-        }
-    }
 
     Box(
         modifier = modifier
@@ -195,10 +170,18 @@ fun ItineraryMap(
                 tMapView
             },
             update = { frameLayout ->
-                if (isMapReady) {
-                    val currentPoint = TMapPoint(currentLocation.latitude, currentLocation.longitude)
-                    val existingMarker = tMapView.getMarkerItemFromId("CurrentMarker")
-                    existingMarker.tMapPoint = currentPoint
+                // 지도 준비가 안된상태에서 리컴포즈 방지
+                if (!isMapReady) return@AndroidView
+
+                val currentPoint = TMapPoint(currentLocation.latitude, currentLocation.longitude)
+
+                val existingMarker = tMapView.getMarkerItemFromId("CurrentMarker")
+                existingMarker.tMapPoint = currentPoint
+                tMapView.updateTMapMarkerItem(existingMarker)
+
+                if (isMapFocused) {
+                    tMapView.setCenterPoint(currentLocation.latitude, currentLocation.longitude)
+                    tMapView.zoomLevel = 18
                 }
             }
         )
@@ -224,11 +207,7 @@ fun ItineraryMap(
                 .align(Alignment.BottomEnd)
                 .offset(x = (-16).dp, y = (-36).dp)
                 .noRippleClickable {
-                    currentLocationBtnClick()
-                    tMapView.setCenterPoint(
-                        currentLocation.latitude,
-                        currentLocation.longitude
-                    )
+                    isMapFocused = true
                 },
             imageVector = ImageVector.vectorResource(R.drawable.ic_all_current_location),
             contentDescription = "ItineraryCircleBtnBack"
@@ -300,6 +279,5 @@ fun ItineraryMapPreview(
         ),
         onBackPressed = { },
         focusedMarkerParameter = null,
-        currentLocationBtnClick = {}
     )
 }

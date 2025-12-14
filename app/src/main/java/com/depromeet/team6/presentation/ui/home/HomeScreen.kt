@@ -109,9 +109,6 @@ fun HomeRoute(
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val currentLocation by mainViewModel.currentLocation.collectAsStateWithLifecycle()
-    LaunchedEffect(currentLocation) {
-        Timber.d("currentLocation Home (from LaunchedEffect): $currentLocation")
-    }
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
 

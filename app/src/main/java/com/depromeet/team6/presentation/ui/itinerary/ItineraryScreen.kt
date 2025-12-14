@@ -2,6 +2,8 @@ package com.depromeet.team6.presentation.ui.itinerary
 
 import android.content.Context
 import android.widget.Toast
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -52,12 +54,10 @@ import com.depromeet.team6.presentation.ui.home.component.RefreshLottieButton
 import com.depromeet.team6.presentation.ui.itinerary.component.ItineraryDetail
 import com.depromeet.team6.presentation.ui.itinerary.component.ItineraryMap
 import com.depromeet.team6.presentation.ui.itinerary.component.ItinerarySummary
+import com.depromeet.team6.presentation.ui.main.MainViewModel
 import com.depromeet.team6.presentation.ui.overlay.OverlayPermissionDialog
 import com.depromeet.team6.presentation.ui.overlay.PermissionSnackbar
-import com.depromeet.team6.presentation.util.DefaultLatLng.DEFAULT_LAT
-import com.depromeet.team6.presentation.util.DefaultLatLng.DEFAULT_LNG
 import com.depromeet.team6.presentation.util.base.ApiErrorSideEffect
-import com.depromeet.team6.presentation.util.context.getUserLocation
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.presentation.util.modifier.roundedBackgroundWithPadding
 import com.depromeet.team6.presentation.util.permission.PermissionUtil
@@ -66,7 +66,6 @@ import com.depromeet.team6.presentation.util.view.LoadState
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.depromeet.team6.ui.theme.defaultTeam6Typography
 import com.google.android.gms.maps.model.LatLng
-import kotlinx.coroutines.launch
 
 @Composable
 fun ItineraryRoute(
@@ -81,19 +80,13 @@ fun ItineraryRoute(
     viewModel: ItineraryViewModel = hiltViewModel(),
     onBackPressed: () -> Unit
 ) {
+    val mainViewModel: MainViewModel = hiltViewModel(LocalActivity.current as ComponentActivity)
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val currentLocation by mainViewModel.currentLocation.collectAsStateWithLifecycle()
+
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     val lifecycleOwner = LocalLifecycleOwner.current
-
-    val getCurrentLocation: () -> Unit = {
-        coroutineScope.launch {
-            if (PermissionUtil.hasLocationPermissions(context)) { // 위치 권한이 있으면
-                val location = context.getUserLocation()
-                viewModel.setEvent(ItineraryContract.ItineraryEvent.CurrentLocationClicked(location))
-            }
-        }
-    }
 
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
@@ -119,19 +112,10 @@ fun ItineraryRoute(
 
     // SideEffect 감지
     LaunchedEffect(Unit) {
-        val location = if (PermissionUtil.hasLocationPermissions(context)) {
-            context.getUserLocation()
-        } else {
-            LatLng(
-                DEFAULT_LAT,
-                DEFAULT_LNG
-            )
-        }
         viewModel.initItineraryInfo(
             courseInfoJSON,
             departurePointJSON,
             destinationPointJSON,
-            location
         )
         viewModel.sideEffect.collect { sideEffect ->
             when (sideEffect) {
@@ -166,6 +150,7 @@ fun ItineraryRoute(
                 marginTop = padding.calculateTopPadding(),
                 marginBottom = padding.calculateBottomPadding(),
                 uiState = uiState,
+                currentLocation = currentLocation,
                 focusedMarkerParam = focusedMarkerParam,
                 onBackPressed = onBackPressed,
                 onRefreshButtonClick = { viewModel.setEvent(ItineraryContract.ItineraryEvent.RefreshButtonClicked) },
@@ -195,7 +180,6 @@ fun ItineraryRoute(
                     .padding(paddingValues = padding)
                     .background(defaultTeam6Colors.gray950),
                 navigateToBusCourse = navigateToBusCourse,
-                currentLocationBtnClick = getCurrentLocation
             )
             if (uiState.showPermissionSnackbar) {
                 Box(modifier = Modifier.fillMaxSize()) {
@@ -247,6 +231,7 @@ fun ItineraryRoute(
 fun ItineraryScreen(
     marginTop: Dp,
     marginBottom: Dp,
+    currentLocation: LatLng,
     modifier: Modifier = Modifier,
     uiState: ItineraryContract.ItineraryUiState = ItineraryContract.ItineraryUiState(),
     focusedMarkerParam: FocusedMarkerParameter? = null,
@@ -254,7 +239,6 @@ fun ItineraryScreen(
     onRefreshButtonClick: () -> Unit = {},
     registerAlarmButtonClick: (String) -> Unit = {},
     onBackPressed: () -> Unit = {},
-    currentLocationBtnClick: () -> Unit = {}
 ) {
     val sheetScrollState = rememberScrollState()
     val itineraryInfo = uiState.itineraryInfo!!
@@ -267,12 +251,11 @@ fun ItineraryScreen(
                 ItineraryMap(
                     marginTop = marginTop,
                     legs = itineraryInfo.legs,
-                    currentLocation = uiState.currentLocation,
+                    currentLocation = currentLocation,
                     departurePoint = uiState.departurePoint!!,
                     destinationPoint = uiState.destinationPoint!!,
                     onBackPressed = onBackPressed,
                     focusedMarkerParameter = focusedMarkerParam,
-                    currentLocationBtnClick = currentLocationBtnClick
                 )
             },
             sheetContent = {
@@ -300,7 +283,7 @@ fun ItineraryScreen(
                     ItineraryDetail(
                         modifier = Modifier
                             .padding(horizontal = 16.dp),
-                        currentLocation = uiState.currentLocation,
+                        currentLocation = currentLocation,
                         courseInfo = itineraryInfo,
                         busArrivalStatus = uiState.busArrivalStatus,
                         departurePoint = uiState.departurePoint!!,
@@ -371,6 +354,7 @@ fun ItineraryScreenPreview(
 ) {
     ItineraryScreen(
         marginTop = 10.dp,
-        marginBottom = 10.dp
+        marginBottom = 10.dp,
+        currentLocation = LatLng(37.5665, 126.9780),
     )
 }

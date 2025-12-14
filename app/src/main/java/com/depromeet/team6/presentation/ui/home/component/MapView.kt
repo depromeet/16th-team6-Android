@@ -53,23 +53,6 @@ fun TMapViewCompose(
 
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
 
-    // focus 버튼 누를때마다 해당 위치로 지도 focus 이동
-//    LaunchedEffect(isMapFocused) {
-//        if (isMapFocused && isMapReady) {
-//            tMapView.setCenterPoint(currentLocation.latitude, currentLocation.longitude)
-//            getCenterLocation(LatLng(currentLocation.latitude, currentLocation.longitude)) // 필요없어보여서 주석처리 해뒀어요
-//
-//            AmplitudeUtils.trackEventWithProperties(
-//                eventName = HOME_EVENT_COURSESEARCH_ENTERED,
-//                mapOf(
-//                    USER_ID to userId,
-//                    SCREEN_NAME to HOME,
-//                    HOME_COURSESEARCH_ENTERED_WITH_CURRENT_LOCATION to true
-//                )
-//            )
-//        }
-//    }
-
     Box(
         modifier = modifier
     ) {

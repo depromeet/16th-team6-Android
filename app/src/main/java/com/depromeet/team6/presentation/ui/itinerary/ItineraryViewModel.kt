@@ -24,7 +24,6 @@ import com.depromeet.team6.presentation.util.ItineraryAmplitude.ITINERARY_EVENT_
 import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
 import com.depromeet.team6.presentation.util.base.BaseViewModel
 import com.depromeet.team6.presentation.util.view.LoadState
-import com.google.android.gms.maps.model.LatLng
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -68,13 +67,6 @@ class ItineraryViewModel @Inject constructor(
                 }
             }
             is ItineraryContract.ItineraryEvent.RefreshButtonClicked -> getRemainingBusArrivalTimes()
-            is ItineraryContract.ItineraryEvent.CurrentLocationClicked -> {
-                setState {
-                    copy(
-                        currentLocation = event.location
-                    )
-                }
-            }
 
             is ItineraryContract.ItineraryEvent.RegisterAlarm -> {
                 postAlarm(
@@ -115,7 +107,7 @@ class ItineraryViewModel @Inject constructor(
         }
     }
 
-    fun initItineraryInfo(courseInfoJSON: String, departurePointJSON: String, destinationPointJSON: String, currentLocation: LatLng) {
+    fun initItineraryInfo(courseInfoJSON: String, departurePointJSON: String, destinationPointJSON: String) {
         val courseInfo = Gson().fromJson(courseInfoJSON, CourseInfo::class.java)
         val departurePoint = Gson().fromJson(departurePointJSON, Address::class.java)
         val destinationPoint = Gson().fromJson(destinationPointJSON, Address::class.java)
@@ -126,7 +118,6 @@ class ItineraryViewModel @Inject constructor(
                 departurePoint = departurePoint,
                 destinationPoint = destinationPoint,
                 itineraryInfo = courseInfo,
-                currentLocation = currentLocation
             )
         }
         getRemainingBusArrivalTimes()
