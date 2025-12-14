@@ -37,12 +37,12 @@ import com.google.android.gms.maps.model.LatLng
 fun ItineraryInfoDetail(
     currentLocation: LatLng,
     legs: List<LegInfo>,
+    userDeparted: Boolean,
     busArrivalStatus: SparseArray<RealTimeBusArrival>,
     departureTime: String,
     departureName: String,
     arrivalTime: String,
     arrivalName: String,
-    isAlarmRegistered: Boolean,
     modifier: Modifier = Modifier,
     onClickBusInfo: (BusArrivalParameter) -> Unit = {}
 ) {
@@ -60,10 +60,10 @@ fun ItineraryInfoDetail(
 
         ItineraryInfoDetailLegs(
             currentLocation = currentLocation,
+            userDeparted = userDeparted,
             legs = legs,
             onClickBusInfo = onClickBusInfo,
             busArrivalStatus = busArrivalStatus,
-            isAlarmRegistered = isAlarmRegistered
         )
 
         // 도착
@@ -132,11 +132,11 @@ fun ItineraryInfoDetailPreview(
     ItineraryInfoDetail(
         currentLocation = LatLng(DEFAULT_LAT, DEFAULT_LNG),
         legs = legs,
+        userDeparted = true,
         departureTime = "2025-03-11T22:12:00",
         departureName = "중앙빌딩",
         arrivalTime = "2025-03-11T00:21:00",
         arrivalName = "우리집",
-        isAlarmRegistered = true,
         busArrivalStatus = SparseArray()
     )
 }

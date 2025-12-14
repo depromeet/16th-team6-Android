@@ -285,10 +285,10 @@ fun ItineraryScreen(
                             .padding(horizontal = 16.dp),
                         currentLocation = currentLocation,
                         courseInfo = itineraryInfo,
+                        userDeparted = uiState.userDeparture,
                         busArrivalStatus = uiState.busArrivalStatus,
                         departurePoint = uiState.departurePoint!!,
                         destinationPoint = uiState.destinationPoint!!,
-                        isAlarmRegistered = uiState.isAlarmRegistered,
                         onClickBusInfo = navigateToBusCourse
                     )
                     Spacer(Modifier.height(marginBottom))

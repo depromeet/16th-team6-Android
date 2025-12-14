@@ -17,6 +17,7 @@ class ItineraryContract {
         val departurePoint: Address? = null,
         val destinationPoint: Address? = null,
         val isAlarmRegistered: Boolean = true,
+        val userDeparture: Boolean = false,
         val showOverlayPermissionDialog: Boolean = false,
         val showPermissionSnackbar: Boolean = false
     ) : UiState

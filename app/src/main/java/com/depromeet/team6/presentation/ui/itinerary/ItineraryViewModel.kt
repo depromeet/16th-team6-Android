@@ -48,9 +48,11 @@ class ItineraryViewModel @Inject constructor(
 
     init {
         val isAlarmRegistered = homeRepository.isAlarmRegistered()
+        val userDeparture = homeRepository.isUserDeparted()
         setState {
             copy(
-                isAlarmRegistered = isAlarmRegistered
+                isAlarmRegistered = isAlarmRegistered,
+                userDeparture = userDeparture
             )
         }
     }

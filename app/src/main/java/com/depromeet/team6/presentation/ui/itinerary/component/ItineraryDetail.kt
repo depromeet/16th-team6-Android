@@ -17,10 +17,10 @@ import java.time.LocalDateTime
 fun ItineraryDetail(
     currentLocation: LatLng,
     courseInfo: CourseInfo,
+    userDeparted: Boolean,
     busArrivalStatus: SparseArray<RealTimeBusArrival>,
     departurePoint: Address,
     destinationPoint: Address,
-    isAlarmRegistered: Boolean,
     modifier: Modifier = Modifier,
     onClickBusInfo: (BusArrivalParameter) -> Unit = {}
 ) {
@@ -32,12 +32,12 @@ fun ItineraryDetail(
         ItineraryInfoDetail(
             currentLocation = currentLocation,
             legs = courseInfo.legs,
+            userDeparted = userDeparted,
             busArrivalStatus = busArrivalStatus,
             departureTime = courseInfo.departureTime,
             departureName = departurePoint.name,
             arrivalTime = arrivalDateTime.toString(),
             arrivalName = destinationPoint.name,
-            isAlarmRegistered = isAlarmRegistered,
             modifier = Modifier,
             onClickBusInfo = onClickBusInfo
         )
