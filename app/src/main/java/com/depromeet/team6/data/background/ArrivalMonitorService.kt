@@ -10,10 +10,12 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
+import android.os.Build
 import android.os.IBinder
 import android.os.Looper
 import android.os.VibrationEffect
 import android.os.Vibrator
+import android.os.VibratorManager
 import androidx.core.app.ActivityCompat.checkSelfPermission
 import androidx.core.app.NotificationCompat
 import com.depromeet.team6.R
@@ -37,7 +39,7 @@ class ArrivalMonitorService : Service() {
     private val timerScope = CoroutineScope(Dispatchers.Default)
 
     private val notificationManager by lazy {
-        getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        getSystemService(NOTIFICATION_SERVICE) as NotificationManager
     }
 
     // Foreground Notification 생성
@@ -78,7 +80,14 @@ class ArrivalMonitorService : Service() {
     override fun onCreate() {
         super.onCreate()
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-        vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val vibratorManager =
+                getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
+            vibrator = vibratorManager.defaultVibrator
+        } else {
+            @Suppress("DEPRECATION")
+            vibrator = getSystemService(VIBRATOR_SERVICE) as Vibrator
+        }
 
         startForeground(ARRIVAL_NOTIFICATION_ID, createForegroundNotification())
     }
@@ -159,7 +168,10 @@ class ArrivalMonitorService : Service() {
 
         notificationManager.notify(ARRIVAL_NOTIFICATION_ID, notification)
 
-        sendBroadcast(Intent(ACTION_ARRIVAL)) // MainActivity 에서 수신
+        val intent = Intent(ACTION_ARRIVAL).apply {
+            `package` = packageName
+        }
+        sendBroadcast(intent) // MainActivity 에서 수신
 
         stopSelf()
     }
