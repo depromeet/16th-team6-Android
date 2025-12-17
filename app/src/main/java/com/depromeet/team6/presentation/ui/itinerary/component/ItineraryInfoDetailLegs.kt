@@ -79,9 +79,9 @@ import kotlin.math.roundToInt
 @Composable
 fun ItineraryInfoDetailLegs(
     currentLocation: LatLng,
+    userDeparted: Boolean,
     legs: List<LegInfo>,
     busArrivalStatus: SparseArray<RealTimeBusArrival>,
-    isAlarmRegistered: Boolean,
     modifier: Modifier = Modifier,
     onClickBusInfo: (BusArrivalParameter) -> Unit = {}
 ) {
@@ -154,7 +154,7 @@ fun ItineraryInfoDetailLegs(
         }
 
         // 출발한 경우 부왕부왕 아이콘 표시
-        if (isAlarmRegistered) {
+        if (userDeparted) {
             val iconSizePx = with(density) { WalkIconWithRippleSize.toPx() }
             // 현재위치와 경로의 직선거리를 통해 얼만큼 왔는지 비율 계산 (부왕부왕 마커 표시하기 위함)
             val totalDistance by remember {
@@ -762,7 +762,7 @@ fun ItineraryInfoDetailLegsPreview(
     ItineraryInfoDetailLegs(
         currentLocation = LatLng(0.0, 0.0),
         legs = legs,
-        isAlarmRegistered = true,
+        userDeparted = true,
         busArrivalStatus = SparseArray<RealTimeBusArrival>()
     )
 }

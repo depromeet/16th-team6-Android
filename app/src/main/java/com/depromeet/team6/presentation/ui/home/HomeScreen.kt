@@ -4,6 +4,8 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.widget.Toast
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -59,6 +61,7 @@ import com.depromeet.team6.presentation.ui.home.component.AfterRegisterSheet
 import com.depromeet.team6.presentation.ui.home.component.CurrentLocationSheet
 import com.depromeet.team6.presentation.ui.home.component.DeleteAlarmDialog
 import com.depromeet.team6.presentation.ui.home.component.TMapViewCompose
+import com.depromeet.team6.presentation.ui.main.MainViewModel
 import com.depromeet.team6.presentation.util.AmplitudeCommon.SCREEN_NAME
 import com.depromeet.team6.presentation.util.AmplitudeCommon.USER_ID
 import com.depromeet.team6.presentation.util.AppConstants
@@ -102,7 +105,10 @@ fun HomeRoute(
     viewModel: HomeViewModel = hiltViewModel(),
     afterOnboarding: Boolean = false
 ) {
+    val mainViewModel: MainViewModel = hiltViewModel(LocalActivity.current as ComponentActivity)
+
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val currentLocation by mainViewModel.currentLocation.collectAsStateWithLifecycle()
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
 
@@ -484,6 +490,7 @@ fun HomeRoute(
                 } else {
                     HomeScreen(
                         homeUiState = uiState,
+                        currentLocation = currentLocation,
                         getUserId = { viewModel.getUserId() },
                         getCenterLocation = { position ->
                             viewModel.getCenterLocation(position)
@@ -608,6 +615,7 @@ fun HomeScreen(
     padding: PaddingValues,
     modifier: Modifier = Modifier,
     homeUiState: HomeContract.HomeUiState = HomeContract.HomeUiState(),
+    currentLocation: LatLng,
     getUserId: () -> Int,
     getCenterLocation: (LatLng) -> Unit = {},
     onTimerFinished: () -> Unit = {},
@@ -668,7 +676,7 @@ fun HomeScreen(
 
             AfterRegisterMap(
                 padding = padding,
-                currentLocation = homeUiState.currentLocation,
+                currentLocation = currentLocation,
                 legs = homeUiState.itineraryInfo!!.legs,
                 isAlarmRegistered = homeUiState.isAlarmRegistered,
                 isMapFocused = homeUiState.isMapFocused,
@@ -684,7 +692,7 @@ fun HomeScreen(
         } else {
             TMapViewCompose(
                 padding = padding,
-                currentLocation = homeUiState.currentLocation,
+                currentLocation = currentLocation,
                 isAlarmRegistered = homeUiState.isAlarmRegistered,
                 userId = getUserId(),
                 isMapFocused = homeUiState.isMapFocused,
@@ -1166,6 +1174,7 @@ data class CharacterTexts(
 private fun HomeScreenPreview() {
     HomeScreen(
         padding = PaddingValues(0.dp),
+        currentLocation = LatLng(0.0, 0.0),
         getUserId = { 1 }
     )
 }

@@ -32,7 +32,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
 // 말풍선 데이터를 위한 데이터 클래스
 data class BubbleMessage(
@@ -54,7 +53,6 @@ fun AtchaSpeechCharacter(
     modifier: Modifier = Modifier,
     onCharacterClick: () -> Unit = {}
 ) {
-    Timber.d("resultString!!: ${speechRequest.messages}")
     val bubbles = remember { mutableStateListOf<BubbleMessage>() }
     val scope = rememberCoroutineScope()
     var debouncing by remember { mutableStateOf(false) }
@@ -66,6 +64,10 @@ fun AtchaSpeechCharacter(
     )
 
     var speechJob by remember { mutableStateOf<Job?>(null) }
+
+    LaunchedEffect(Unit) {
+        onCharacterClick()
+    }
 
     LaunchedEffect(composition) {
         if (composition != null) {
