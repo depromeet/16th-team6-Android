@@ -55,7 +55,7 @@ fun ItineraryMap(
     focusedMarkerParameter: FocusedMarkerParameter?,
     marginTop: Dp,
     modifier: Modifier = Modifier,
-    onBackPressed: () -> Unit,
+    onBackPressed: () -> Unit
 ) {
     val context = LocalContext.current
     var isMapReady by remember { mutableStateOf(false) }
@@ -278,6 +278,6 @@ fun ItineraryMapPreview(
             address = ""
         ),
         onBackPressed = { },
-        focusedMarkerParameter = null,
+        focusedMarkerParameter = null
     )
 }

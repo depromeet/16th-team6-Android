@@ -115,7 +115,7 @@ fun ItineraryRoute(
         viewModel.initItineraryInfo(
             courseInfoJSON,
             departurePointJSON,
-            destinationPointJSON,
+            destinationPointJSON
         )
         viewModel.sideEffect.collect { sideEffect ->
             when (sideEffect) {
@@ -179,7 +179,7 @@ fun ItineraryRoute(
                     .fillMaxSize()
                     .padding(paddingValues = padding)
                     .background(defaultTeam6Colors.gray950),
-                navigateToBusCourse = navigateToBusCourse,
+                navigateToBusCourse = navigateToBusCourse
             )
             if (uiState.showPermissionSnackbar) {
                 Box(modifier = Modifier.fillMaxSize()) {
@@ -238,7 +238,7 @@ fun ItineraryScreen(
     navigateToBusCourse: (BusArrivalParameter) -> Unit = {},
     onRefreshButtonClick: () -> Unit = {},
     registerAlarmButtonClick: (String) -> Unit = {},
-    onBackPressed: () -> Unit = {},
+    onBackPressed: () -> Unit = {}
 ) {
     val sheetScrollState = rememberScrollState()
     val itineraryInfo = uiState.itineraryInfo!!
@@ -255,7 +255,7 @@ fun ItineraryScreen(
                     departurePoint = uiState.departurePoint!!,
                     destinationPoint = uiState.destinationPoint!!,
                     onBackPressed = onBackPressed,
-                    focusedMarkerParameter = focusedMarkerParam,
+                    focusedMarkerParameter = focusedMarkerParam
                 )
             },
             sheetContent = {
@@ -355,6 +355,6 @@ fun ItineraryScreenPreview(
     ItineraryScreen(
         marginTop = 10.dp,
         marginBottom = 10.dp,
-        currentLocation = LatLng(37.5665, 126.9780),
+        currentLocation = LatLng(37.5665, 126.9780)
     )
 }

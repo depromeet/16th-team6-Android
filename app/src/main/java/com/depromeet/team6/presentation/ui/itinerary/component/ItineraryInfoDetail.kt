@@ -63,7 +63,7 @@ fun ItineraryInfoDetail(
             userDeparted = userDeparted,
             legs = legs,
             onClickBusInfo = onClickBusInfo,
-            busArrivalStatus = busArrivalStatus,
+            busArrivalStatus = busArrivalStatus
         )
 
         // 도착

@@ -119,7 +119,7 @@ class ItineraryViewModel @Inject constructor(
                 courseDataLoadState = LoadState.Success,
                 departurePoint = departurePoint,
                 destinationPoint = destinationPoint,
-                itineraryInfo = courseInfo,
+                itineraryInfo = courseInfo
             )
         }
         getRemainingBusArrivalTimes()
