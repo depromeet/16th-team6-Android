@@ -4,6 +4,8 @@ import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.course.CourseInfo
 import com.depromeet.team6.domain.model.course.TransportType
 import com.depromeet.team6.presentation.model.bus.BusArrivalParameter
+import com.depromeet.team6.presentation.model.home.CharacterState
+import com.depromeet.team6.presentation.model.home.ComponentType
 import com.depromeet.team6.presentation.model.itinerary.FocusedMarkerParameter
 import com.depromeet.team6.presentation.util.DefaultLatLng.DEFAULT_LAT
 import com.depromeet.team6.presentation.util.DefaultLatLng.DEFAULT_LNG
@@ -17,11 +19,15 @@ class HomeContract {
     data class HomeUiState(
         val loadState: LoadState = LoadState.Idle,
         val destinationState: LoadState = LoadState.Idle,
+        val afterRegisterDataLoadState: LoadState = LoadState.Idle,
+        val alarmCheckLoadState: LoadState = LoadState.Idle,
         val isAlarmRegistered: Boolean = false,
         val isBusDeparted: Boolean = false,
         val showSpeechBubble: Boolean = true,
         val locationAddress: String = "",
         val currentLocation: LatLng = LatLng(DEFAULT_LAT, DEFAULT_LNG),
+        val isMapFocused: Boolean = true,
+        val isMapReady: Boolean = false,
         // 알림 등록 후 경로 표시
         val itineraryInfo: CourseInfo? = null,
         val courseDataLoadState: LoadState = LoadState.Idle,
@@ -39,7 +45,8 @@ class HomeContract {
             stationName = "",
             lat = 0.0,
             lon = 0.0,
-            subtypeIdx = 0
+            subtypeIdx = 0,
+            passingStations = emptyList()
         ),
         // 사용자 출발 여부
         val userDeparture: Boolean = false,
@@ -47,13 +54,13 @@ class HomeContract {
         val timerFinish: Boolean = false,
         val departurePointName: String = "",
         val markerPoint: Address = Address(
-            name = "성균관대학교 자연과학캠퍼스",
+            name = "",
             lat = 37.303534788694,
             lon = 127.01085807594,
             address = ""
         ),
         val departurePoint: Address = Address(
-            name = "성균관대학교 자연과학캠퍼스",
+            name = "",
             lat = 37.303534788694,
             lon = 127.01085807594,
             address = ""
@@ -66,16 +73,30 @@ class HomeContract {
         ),
         val logoutState: Boolean = false,
         val taxiCost: Int = 0,
-        val deleteAlarmDialogVisible: Boolean = false
+        val deleteAlarmDialogVisible: Boolean = false,
+        // 애니메이션
+        val characterState: CharacterState = CharacterState(),
+        val characterMessages: SpeechRequest = SpeechRequest(
+            emptyList()
+        )
     ) : UiState
+
+    data class SpeechRequest(
+        val messages: List<String>,
+        val triggerId: Long = System.nanoTime()
+    )
 
     sealed interface HomeSideEffect : UiSideEffect {
         data object NavigateToMypage : HomeSideEffect
         data class NavigateToItinerary(val markerParameter: FocusedMarkerParameter?) : HomeSideEffect
+        data object ShowDeleteAlarmToast : HomeSideEffect
+        data class ShowToast(val message: String) : HomeSideEffect
+
+        data object ShowUpdateRequiredDialog : HomeSideEffect
+        data object ShowUpdateOptionalDialog : HomeSideEffect
     }
 
     sealed class HomeEvent : UiEvent {
-        data class DummyEvent(val loadState: LoadState) : HomeEvent()
         data class UpdateAlarmRegistered(val isRegistered: Boolean) : HomeEvent()
         data class UpdateLastRouteId(val lastRouteId: String) : HomeEvent()
         data class UpdateDeparturePointName(val departurePointName: String) : HomeEvent()
@@ -99,5 +120,10 @@ class HomeContract {
         data object SetDestination : HomeEvent()
         data object AfterRegisterMapMarkerClick : HomeEvent()
         data class CourseDetailButtonClick(val clickEventKey: String) : HomeEvent()
+
+        // 애니메이션
+        data object CharacterClicked : HomeEvent()
+        data class ComponentClicked(val componentType: ComponentType, val data: Any? = null) : HomeEvent()
+        data class RequestCharacterSpeech(val messages: List<String>) : HomeEvent()
     }
 }

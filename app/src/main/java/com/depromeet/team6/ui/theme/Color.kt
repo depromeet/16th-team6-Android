@@ -23,27 +23,21 @@ data class Team6Colors(
     val main: Color,
 
     // Text
-    val greyOneLabel: Color,
-    val greySecondaryLabel: Color,
-    val greyTertiaryLabel: Color,
-    val greyQuaternaryLabel: Color,
-    val greyLink: Color,
-    val greyDisabled: Color,
+    val gray100: Color,
+    val gray200: Color,
+    val gray400: Color,
+    val gray700: Color,
 
     // Background
-    val greyElevatedBackground: Color,
-    val greyWashBackground: Color,
-    val greyDivider: Color,
+    val gray950: Color,
 
     // Card
-    val greyCard: Color,
-    val greyElevatedCard: Color,
+    val gray940: Color,
+    val gray910: Color,
 
     // Button
-    val greyButtonOutline: Color,
+    val gray800: Color,
     val kakaoLoginButton: Color,
-    val greyDefaultButton: Color,
-    val greyButtonDisable: Color,
 
     val greenButtonOpacity: Color,
     val greenLockButton: Color,
@@ -54,12 +48,11 @@ data class Team6Colors(
     val systemBlue: Color,
 
     // System Grey
-    val systemGrey1: Color,
-    val systemGrey2: Color,
-    val systemGrey3: Color,
-    val systemGrey4: Color,
-    val systemGrey5: Color,
-    val systemGrey6: Color,
+    val gray300: Color,
+    val gray500: Color,
+    val gray600: Color,
+    val gray920: Color,
+    val gray930: Color,
 
     // TextField Cursor
     val textFieldCursor: Color,
@@ -124,26 +117,20 @@ val defaultTeam6Colors = Team6Colors(
     main = Color(0xFF99F977),
 
     // Text
-    greyOneLabel = Color(0xFFB9B9C2),
-    greySecondaryLabel = Color(0xFF999CA4),
-    greyTertiaryLabel = Color(0xFF666970),
-    greyQuaternaryLabel = Color(0xFF393C42),
-    greyLink = Color(0xFF4C4D53),
-    greyDisabled = Color(0xFF393C42),
+    gray100 = Color(0xFFB9B9C2),
+    gray200 = Color(0xFF999CA4),
+    gray400 = Color(0xFF666970),
+    gray700 = Color(0xFF393C42),
 
     // Background
-    greyElevatedBackground = Color(0xFF1C1C1D),
-    greyWashBackground = Color(0xFF131315),
-    greyDivider = Color(0xFF4D4D4D),
+    gray950 = Color(0xFF131315),
 
     // Card
-    greyCard = Color(0xFF1C1C1E),
-    greyElevatedCard = Color(0xFF2C2C2E),
+    gray940 = Color(0xFF1C1C1E),
+    gray910 = Color(0xFF2C2C2E),
 
     // Button
-    greyButtonOutline = Color(0xFF36363A),
-    greyDefaultButton = Color(0xFF2C2C30),
-    greyButtonDisable = Color(0x662C2C30),
+    gray800 = Color(0xFF36363A),
     kakaoLoginButton = Color(0xFFFAE100),
 
     greenButtonOpacity = Color(0x1F8AF265),
@@ -155,12 +142,11 @@ val defaultTeam6Colors = Team6Colors(
     systemBlue = Color(0xFF1777FF),
 
     // System Grey
-    systemGrey1 = Color(0xFF7E7E8A),
-    systemGrey2 = Color(0xFF5B5B63),
-    systemGrey3 = Color(0xFF424249),
-    systemGrey4 = Color(0xFF38383E),
-    systemGrey5 = Color(0xFF27272B),
-    systemGrey6 = Color(0xFF1F1F23),
+    gray300 = Color(0xFF7E7E8A),
+    gray500 = Color(0xFF5B5B63),
+    gray600 = Color(0xFF424249),
+    gray920 = Color(0xFF27272B),
+    gray930 = Color(0xFF1F1F23),
 
     // TextField Cursor
     textFieldCursor = Color(0xFF90E772),

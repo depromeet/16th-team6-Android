@@ -6,6 +6,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.presentation.ui.coursesearch.CourseSearchRoute
 
 fun NavController.navigateCourseSearch(departurePoint: String, destinationPoint: String, fromLockScreen: Boolean = false) {
@@ -20,10 +21,14 @@ fun NavController.navigateCourseSearch(departurePoint: String, destinationPoint:
 fun NavGraphBuilder.courseSearchNavGraph(
     padding: PaddingValues,
     navigateToHome: () -> Unit,
-    navigateToItinerary: (String, String, String) -> Unit
+    navigateToHomeAfterAlarmRegister: () -> Unit,
+    navigateToLogin: () -> Unit,
+    navigateToItinerary: (String, String, String) -> Unit,
+    navigateToSearchLocation: (Address, Address) -> Unit,
+    popBackStack: () -> Unit
 ) {
     composable(
-        route = "${CourseSearchRoute.ROUTE}/{departurePoint}/{destinationPoint}",
+        route = "${CourseSearchRoute.ROUTE}/{${CourseSearchRoute.DEPARTURE_POINT}}/{${CourseSearchRoute.DESTINATION_POINT}}",
         arguments = listOf(
             navArgument("departurePoint") { type = NavType.StringType },
             navArgument("destinationPoint") { type = NavType.StringType },
@@ -41,6 +46,10 @@ fun NavGraphBuilder.courseSearchNavGraph(
             padding = padding,
             navigateToItinerary = navigateToItinerary,
             navigateToHome = navigateToHome,
+            navigateToHomeAfterAlarmRegister = navigateToHomeAfterAlarmRegister,
+            navigateToLogin = navigateToLogin,
+            navigateToSearchLocation = navigateToSearchLocation,
+            popBackStack = popBackStack,
             departurePoint = departurePoint,
             destinationPoint = destinationPoint,
             fromLockScreen = fromLockScreen
@@ -50,4 +59,6 @@ fun NavGraphBuilder.courseSearchNavGraph(
 
 object CourseSearchRoute {
     const val ROUTE = "courseSearch"
+    const val DEPARTURE_POINT = "departurePoint"
+    const val DESTINATION_POINT = "destinationPoint"
 }

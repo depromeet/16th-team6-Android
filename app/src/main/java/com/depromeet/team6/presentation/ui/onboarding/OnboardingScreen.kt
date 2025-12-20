@@ -1,9 +1,8 @@
 package com.depromeet.team6.presentation.ui.onboarding
 
+import android.Manifest
 import android.content.Context
-import android.content.Intent
-import android.net.Uri
-import android.provider.Settings
+import android.os.Build
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -15,7 +14,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -23,24 +21,20 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.flowWithLifecycle
 import com.depromeet.team6.R
 import com.depromeet.team6.presentation.type.OnboardingSelectLocationButtonType
 import com.depromeet.team6.presentation.type.OnboardingType
-import com.depromeet.team6.presentation.type.toPermissionType
-import com.depromeet.team6.presentation.ui.onboarding.component.AlarmTime
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingAlarmSelector
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingButton
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingMapView
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingPermissionBottomSheet
-import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingPermissionDeniedBottomSheet
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingSearchContainer
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingSearchPopup
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingSelectLocationButton
@@ -49,13 +43,19 @@ import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingTitle
 import com.depromeet.team6.presentation.util.AmplitudeCommon.SCREEN_NAME
 import com.depromeet.team6.presentation.util.OnboardingAmplitude.ALARM_REGISTER
 import com.depromeet.team6.presentation.util.OnboardingAmplitude.ALARM_SETTING_ALARM_PERMISSION_CLICKED
+import com.depromeet.team6.presentation.util.OnboardingAmplitude.DENIED
+import com.depromeet.team6.presentation.util.OnboardingAmplitude.GRANT
 import com.depromeet.team6.presentation.util.OnboardingAmplitude.HOME_REGISTER
 import com.depromeet.team6.presentation.util.OnboardingAmplitude.HOME_REGISTER_COMPLETE_CLICKED
 import com.depromeet.team6.presentation.util.OnboardingAmplitude.HOME_REGISTER_LOCATION_PERMISSION_CHECK
+import com.depromeet.team6.presentation.util.OnboardingAmplitude.ONBOARDING_LOCATION_PERMISSION_CLICKED
+import com.depromeet.team6.presentation.util.OnboardingAmplitude.ONBOARDING_LOCATION_PERMISSION_SETTINGS_CLICKED
+import com.depromeet.team6.presentation.util.OnboardingAmplitude.ONBOARDING_NOTIFICATION_PERMISSION_CLICKED
+import com.depromeet.team6.presentation.util.OnboardingAmplitude.ONBOARDING_NOTIFICATION_PERMISSION_SETTINGS_CLICKED
+import com.depromeet.team6.presentation.util.OnboardingAmplitude.SYSTEM_SETTING
 import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
-import com.depromeet.team6.presentation.util.modifier.noRippleClickable
+import com.depromeet.team6.presentation.util.dialog.LocalDialogController
 import com.depromeet.team6.presentation.util.permission.PermissionUtil
-import com.depromeet.team6.presentation.util.toast.atChaToastMessage
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.google.android.gms.maps.model.LatLng
@@ -69,24 +69,71 @@ fun OnboardingRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val dialogController = LocalDialogController.current
 
-    val hasRequestedLocationPermission = remember { mutableStateOf(false) }
+    val allPermissionsLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestMultiplePermissions(),
+        onResult = { permissions ->
+            val fineLocationGranted = permissions[Manifest.permission.ACCESS_FINE_LOCATION] ?: false
+            val coarseLocationGranted = permissions[Manifest.permission.ACCESS_COARSE_LOCATION] ?: false
+
+            // 위치권한 허용여부 로깅
+            if (fineLocationGranted || coarseLocationGranted) {
+                AmplitudeUtils.trackEventWithProperty(
+                    eventName = ONBOARDING_LOCATION_PERMISSION_CLICKED,
+                    propertyName = ONBOARDING_LOCATION_PERMISSION_CLICKED,
+                    propertyValue = GRANT
+                )
+                Timber.d("Location_Permission Has Granted")
+            } else {
+                AmplitudeUtils.trackEventWithProperty(
+                    eventName = ONBOARDING_LOCATION_PERMISSION_CLICKED,
+                    propertyName = ONBOARDING_LOCATION_PERMISSION_CLICKED,
+                    propertyValue = DENIED
+                )
+                viewModel.setSideEffect(OnboardingContract.OnboardingSideEffect.LocationPermissionDeniedDialog)
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                val postNotificationsGranted = permissions[Manifest.permission.POST_NOTIFICATIONS] ?: false
+                if (postNotificationsGranted) {
+                    AmplitudeUtils.trackEventWithProperty(
+                        eventName = ONBOARDING_NOTIFICATION_PERMISSION_CLICKED,
+                        propertyName = ONBOARDING_NOTIFICATION_PERMISSION_CLICKED,
+                        propertyValue = GRANT
+                    )
+                    Timber.d("Notification_Permission Has Granted")
+                } else {
+                    AmplitudeUtils.trackEventWithProperty(
+                        eventName = ONBOARDING_NOTIFICATION_PERMISSION_CLICKED,
+                        propertyName = ONBOARDING_NOTIFICATION_PERMISSION_CLICKED,
+                        propertyValue = DENIED
+                    )
+                    viewModel.setSideEffect(OnboardingContract.OnboardingSideEffect.NotificationPermissionDeniedDialog)
+                }
+            }
+        }
+    )
 
     val locationPermissionsLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestMultiplePermissions(),
         onResult = { permissions ->
-            hasRequestedLocationPermission.value = true
-
             val anyDenied = permissions.any { !it.value }
 
             if (anyDenied) {
-                viewModel.setEvent(
-                    OnboardingContract.OnboardingEvent.ChangePermissionDeniedBottomSheetVisible(
-                        permissionDeniedBottomSheetVisible = true
-                    )
+                AmplitudeUtils.trackEventWithProperty(
+                    eventName = ONBOARDING_LOCATION_PERMISSION_CLICKED,
+                    propertyName = ONBOARDING_LOCATION_PERMISSION_CLICKED,
+                    propertyValue = DENIED
                 )
+                viewModel.setSideEffect(OnboardingContract.OnboardingSideEffect.LocationPermissionDeniedDialog)
             } else {
-                Timber.d("모든 권한 허용됨")
+                AmplitudeUtils.trackEventWithProperty(
+                    eventName = ONBOARDING_LOCATION_PERMISSION_CLICKED,
+                    propertyName = ONBOARDING_LOCATION_PERMISSION_CLICKED,
+                    propertyValue = GRANT
+                )
+                Timber.d("Location_Permission Has Granted")
             }
         }
     )
@@ -95,28 +142,104 @@ fun OnboardingRoute(
         contract = ActivityResultContracts.RequestPermission(),
         onResult = { granted ->
             if (granted) {
+                AmplitudeUtils.trackEventWithProperty(
+                    eventName = ONBOARDING_NOTIFICATION_PERMISSION_CLICKED,
+                    propertyName = ONBOARDING_NOTIFICATION_PERMISSION_CLICKED,
+                    propertyValue = GRANT
+                )
                 Timber.d("Notification_Permission Has Granted")
+            } else {
+                AmplitudeUtils.trackEventWithProperty(
+                    eventName = ONBOARDING_NOTIFICATION_PERMISSION_CLICKED,
+                    propertyName = ONBOARDING_NOTIFICATION_PERMISSION_CLICKED,
+                    propertyValue = DENIED
+                )
+                viewModel.setSideEffect(OnboardingContract.OnboardingSideEffect.NotificationPermissionDeniedDialog)
             }
         }
     )
 
     LaunchedEffect(Unit) {
-        Timber.d("Location Permission= ${PermissionUtil.hasLocationPermissions(context)}")
         viewModel.setEvent(OnboardingContract.OnboardingEvent.UpdateUserLocation(context = context))
+    }
+
+    LaunchedEffect(viewModel.sideEffect, lifecycleOwner) {
+        viewModel.sideEffect.flowWithLifecycle(lifecycle = lifecycleOwner.lifecycle)
+            .collect { onboardingSideEffect ->
+                when (onboardingSideEffect) {
+                    is OnboardingContract.OnboardingSideEffect.RequestLocationPermission -> {
+                        PermissionUtil.requestLocationPermissions(
+                            context = context,
+                            locationPermissionLauncher = locationPermissionsLauncher
+                        )
+                    }
+
+                    is OnboardingContract.OnboardingSideEffect.RequestNotificationPermission -> {
+                        PermissionUtil.requestNotificationPermission(
+                            context = context,
+                            notificationPermissionLauncher = notificationPermissionLauncher
+                        )
+                    }
+
+                    is OnboardingContract.OnboardingSideEffect.LocationSettingDialog -> {
+                        dialogController.showAtchaSystemSettingAlert(
+                            context = context,
+                            message = context.getString(R.string.all_dialog_location_permission)
+                        )
+                    }
+
+                    is OnboardingContract.OnboardingSideEffect.LocationPermissionDeniedDialog -> {
+                        dialogController.showAtchaSystemSettingAlert(
+                            context = context,
+                            onConfirm = {
+                                AmplitudeUtils.trackEventWithProperty(
+                                    eventName = ONBOARDING_LOCATION_PERMISSION_SETTINGS_CLICKED,
+                                    propertyName = ONBOARDING_LOCATION_PERMISSION_SETTINGS_CLICKED,
+                                    propertyValue = SYSTEM_SETTING
+                                )
+                            },
+                            onDismiss = {
+                                AmplitudeUtils.trackEventWithProperty(
+                                    eventName = ONBOARDING_LOCATION_PERMISSION_SETTINGS_CLICKED,
+                                    propertyName = ONBOARDING_LOCATION_PERMISSION_SETTINGS_CLICKED,
+                                    propertyValue = DENIED
+                                )
+                            },
+                            message = context.getString(R.string.onboarding_location_permission_denied_dialog)
+                        )
+                    }
+
+                    is OnboardingContract.OnboardingSideEffect.NotificationPermissionDeniedDialog -> {
+                        dialogController.showAtchaSystemSettingAlert(
+                            context = context,
+                            onConfirm = {
+                                AmplitudeUtils.trackEventWithProperty(
+                                    eventName = ONBOARDING_NOTIFICATION_PERMISSION_SETTINGS_CLICKED,
+                                    propertyName = ONBOARDING_NOTIFICATION_PERMISSION_SETTINGS_CLICKED,
+                                    propertyValue = SYSTEM_SETTING
+                                )
+                            },
+                            onDismiss = {
+                                AmplitudeUtils.trackEventWithProperty(
+                                    eventName = ONBOARDING_NOTIFICATION_PERMISSION_SETTINGS_CLICKED,
+                                    propertyName = ONBOARDING_NOTIFICATION_PERMISSION_SETTINGS_CLICKED,
+                                    propertyValue = DENIED
+                                )
+                            },
+                            message = context.getString(R.string.onboarding_notification_permission_denied_dialog)
+                        )
+                    }
+
+                    is OnboardingContract.OnboardingSideEffect.ShowToast -> {
+                        Toast.makeText(context, onboardingSideEffect.message, Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
     }
 
     LaunchedEffect(uiState.onboardingType) {
         when (uiState.onboardingType) {
             OnboardingType.HOME -> {
-                Timber.d(
-                    "isLocationPermissionRequested: ${
-                    PermissionUtil.isLocationPermissionRequested(
-                        context
-                    )
-                    }, hasLocationPermissions: ${
-                    PermissionUtil.hasLocationPermissions(context)
-                    }"
-                )
                 viewModel.setEvent(
                     OnboardingContract.OnboardingEvent.ChangePermissionBottomSheetVisible(
                         permissionBottomSheetVisible = true
@@ -127,7 +250,7 @@ fun OnboardingRoute(
             OnboardingType.ALARM -> {
                 viewModel.setEvent(
                     OnboardingContract.OnboardingEvent.ChangePermissionBottomSheetVisible(
-                        permissionBottomSheetVisible = true
+                        permissionBottomSheetVisible = false
                     )
                 )
             }
@@ -164,7 +287,8 @@ fun OnboardingRoute(
                 },
                 onTextClearButtonClicked = {
                     viewModel.setEvent(OnboardingContract.OnboardingEvent.ClearText)
-                }
+                },
+                settingDialog = { viewModel.setSideEffect(OnboardingContract.OnboardingSideEffect.LocationSettingDialog) }
             )
         }
 
@@ -178,32 +302,31 @@ fun OnboardingRoute(
                         viewModel.setEvent(OnboardingContract.OnboardingEvent.ShowSearchPopup)
                     },
                     onNextButtonClicked = {
-                        if (uiState.onboardingType == OnboardingType.HOME) {
-                            viewModel.setEvent(OnboardingContract.OnboardingEvent.ChangeOnboardingType)
-                            AmplitudeUtils.trackEventWithProperty(
-                                eventName = HOME_REGISTER_COMPLETE_CLICKED,
-                                propertyName = SCREEN_NAME,
-                                propertyValue = HOME_REGISTER
-                            )
-                        } else {
-                            viewModel.postSignUp()
-                        }
+                        viewModel.setEvent(OnboardingContract.OnboardingEvent.ChangeOnboardingType)
+                        AmplitudeUtils.trackEventWithProperty(
+                            eventName = HOME_REGISTER_COMPLETE_CLICKED,
+                            propertyName = SCREEN_NAME,
+                            propertyValue = HOME_REGISTER
+                        )
                     },
                     onBackPressed = { viewModel.setEvent(OnboardingContract.OnboardingEvent.BackPressed) },
-                    onAlarmTimeSelected = { alarmTime ->
-                        val timeValue = alarmTime.minutes
-                        if (timeValue != 1) {
-                            val newSelection = if (timeValue in uiState.alertFrequencies) {
-                                uiState.alertFrequencies - timeValue
-                            } else {
-                                uiState.alertFrequencies + timeValue
-                            }
-                            viewModel.setEvent(
-                                OnboardingContract.OnboardingEvent.UpdateAlertFrequencies(
-                                    newSelection
-                                )
-                            )
-                        }
+//                    onAlarmTimeSelected = { alarmTime ->
+//                        val timeValue = alarmTime.minutes
+//                        if (timeValue != 1) {
+//                            val newSelection = if (timeValue in uiState.alertFrequencies) {
+//                                uiState.alertFrequencies - timeValue
+//                            } else {
+//                                uiState.alertFrequencies + timeValue
+//                            }
+//                            viewModel.setEvent(
+//                                OnboardingContract.OnboardingEvent.UpdateAlertFrequencies(
+//                                    newSelection
+//                                )
+//                            )
+//                        }
+//                    },
+                    onAlarmSelected = { type, volume ->
+                        viewModel.setEvent(OnboardingContract.OnboardingEvent.UpdateAlarmSetup(type, volume))
                     },
                     bottomSheetButtonClicked = {
                         viewModel.setEvent(
@@ -211,40 +334,49 @@ fun OnboardingRoute(
                                 permissionBottomSheetVisible = false
                             )
                         )
-
-                        when (uiState.onboardingType) {
-                            OnboardingType.HOME -> {
-                                if (!PermissionUtil.isLocationPermissionRequested(context) &&
-                                    !PermissionUtil.hasLocationPermissions(context)
-                                ) {
-                                    PermissionUtil.requestLocationPermissions(
-                                        context = context,
-                                        locationPermissionLauncher = locationPermissionsLauncher
-                                    )
-                                }
-                                AmplitudeUtils.trackEventWithProperty(
-                                    eventName = HOME_REGISTER_LOCATION_PERMISSION_CHECK,
-                                    propertyName = SCREEN_NAME,
-                                    propertyValue = HOME_REGISTER
-                                )
-                            }
-
-                            OnboardingType.ALARM -> {
-                                if (!PermissionUtil.isNotificationPermissionRequested(context) &&
-                                    !PermissionUtil.hasNotificationPermission(context)
-                                ) {
-                                    PermissionUtil.requestNotificationPermission(
-                                        context = context,
-                                        notificationPermissionLauncher = notificationPermissionLauncher
-                                    )
-                                }
-                                AmplitudeUtils.trackEventWithProperty(
-                                    eventName = ALARM_SETTING_ALARM_PERMISSION_CLICKED,
-                                    propertyName = SCREEN_NAME,
-                                    propertyValue = ALARM_REGISTER
-                                )
-                            }
-                        }
+                        PermissionUtil.requestAllRequiredPermissions(
+                            allPermissionsLauncher
+                        )
+                        AmplitudeUtils.trackEventWithProperty(
+                            eventName = HOME_REGISTER_LOCATION_PERMISSION_CHECK,
+                            propertyName = SCREEN_NAME,
+                            propertyValue = HOME_REGISTER
+                        )
+                        AmplitudeUtils.trackEventWithProperty(
+                            eventName = ALARM_SETTING_ALARM_PERMISSION_CLICKED,
+                            propertyName = SCREEN_NAME,
+                            propertyValue = ALARM_REGISTER
+                        )
+//                        // 위치권한 요청
+//                        if (PermissionUtil.hasLocationPermissions(context)) {
+//                            Unit
+//                        } else if (PermissionUtil.isLocationPermissionRequested(context) &&
+//                                !ActivityCompat.shouldShowRequestPermissionRationale(
+//                                    context as Activity,
+//                                    Manifest.permission.ACCESS_FINE_LOCATION
+//                                )) {
+//                            viewModel.setSideEffect(OnboardingContract.OnboardingSideEffect.LocationPermissionDeniedDialog)
+//                        } else {
+//                            viewModel.setSideEffect(
+//                                OnboardingContract.OnboardingSideEffect.RequestLocationPermission
+//                            )
+//                        }
+//                        AmplitudeUtils.trackEventWithProperty(
+//                            eventName = HOME_REGISTER_LOCATION_PERMISSION_CHECK,
+//                            propertyName = SCREEN_NAME,
+//                            propertyValue = HOME_REGISTER
+//                        )
+//
+//                        // 알림권한 요청
+//                        if (!PermissionUtil.hasNotificationPermission(context)
+//                        ) {
+//                            viewModel.setSideEffect(OnboardingContract.OnboardingSideEffect.RequestNotificationPermission)
+//                        }
+//                        AmplitudeUtils.trackEventWithProperty(
+//                            eventName = ALARM_SETTING_ALARM_PERMISSION_CLICKED,
+//                            propertyName = SCREEN_NAME,
+//                            propertyValue = ALARM_REGISTER
+//                        )
                     },
                     onLocationButtonClicked = {
                         if (PermissionUtil.hasLocationPermissions(context = context)) {
@@ -256,25 +388,8 @@ fun OnboardingRoute(
                                 )
                             }
                         } else {
-                            atChaToastMessage(
-                                context = context,
-                                R.string.onboarding_location_no_permission_toast,
-                                length = Toast.LENGTH_SHORT
-                            )
+                            viewModel.setSideEffect(OnboardingContract.OnboardingSideEffect.LocationSettingDialog)
                         }
-                    },
-                    deniedBottomSheetCloseButtonClicked = {
-                        viewModel.setEvent(
-                            OnboardingContract.OnboardingEvent.ChangePermissionDeniedBottomSheetVisible(
-                                permissionDeniedBottomSheetVisible = false
-                            )
-                        )
-                    },
-                    deniedBottomSheetSettingButtonClicked = {
-                        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                            data = Uri.fromParts("package", context.packageName, null)
-                        }
-                        context.startActivity(intent)
                     },
                     getCenterLocation = { viewModel.getCenterLocation(it) },
                     clearAddress = {
@@ -287,11 +402,7 @@ fun OnboardingRoute(
                     },
                     mapViewSelectButtonClicked = {
                         viewModel.setEvent(
-                            (
-                                OnboardingContract.OnboardingEvent.ChangeMapViewVisible(
-                                    false
-                                )
-                                )
+                            (OnboardingContract.OnboardingEvent.ChangeMapViewVisible(false))
                         )
                     }
                 )
@@ -307,17 +418,15 @@ fun OnboardingRoute(
 @Composable
 fun OnboardingScreen(
     padding: PaddingValues,
+    modifier: Modifier = Modifier,
     context: Context = LocalContext.current,
     uiState: OnboardingContract.OnboardingUiState = OnboardingContract.OnboardingUiState(),
-    modifier: Modifier = Modifier,
     onSearchBoxClicked: () -> Unit = {},
     onNextButtonClicked: () -> Unit = {},
     onBackPressed: () -> Unit = {},
-    onAlarmTimeSelected: (AlarmTime) -> Unit = {},
+    onAlarmSelected: (OnboardingContract.AlarmType, Int) -> Unit = { _, _ -> },
     onLocationButtonClicked: () -> Unit = {},
     bottomSheetButtonClicked: () -> Unit = {},
-    deniedBottomSheetSettingButtonClicked: () -> Unit = {},
-    deniedBottomSheetCloseButtonClicked: () -> Unit = {},
     getCenterLocation: (LatLng) -> Unit = {},
     clearAddress: () -> Unit = {},
     mapViewSelectButtonClicked: () -> Unit = {}
@@ -325,7 +434,7 @@ fun OnboardingScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = defaultTeam6Colors.greyWashBackground)
+            .background(color = defaultTeam6Colors.gray950)
             .padding(padding)
     ) {
         Column(
@@ -352,35 +461,27 @@ fun OnboardingScreen(
                         onClick = onSearchBoxClicked
                     )
                 }
+                Spacer(modifier = Modifier.weight(1f))
+                OnboardingButton(
+                    isEnabled = uiState.myAddress.address.isNotEmpty()
+                ) { onNextButtonClicked() }
+                Spacer(modifier = Modifier.height(20.dp))
             } else {
-                Icon(
-                    modifier = Modifier
-                        .padding(vertical = 18.dp, horizontal = 16.dp)
-                        .noRippleClickable { onBackPressed() },
-                    imageVector = ImageVector.vectorResource(R.drawable.ic_all_arrow_left_grey),
-                    contentDescription = null,
-                    tint = Color.Unspecified
-                )
-                Spacer(modifier = Modifier.height(12.dp))
-                OnboardingTitle(onboardingType = uiState.onboardingType)
-                Spacer(modifier = Modifier.height(68.dp))
+//                Icon(
+//                    modifier = Modifier
+//                        .padding(vertical = 18.dp, horizontal = 16.dp)
+//                        .noRippleClickable { onBackPressed() },
+//                    imageVector = ImageVector.vectorResource(R.drawable.ic_all_arrow_left_grey),
+//                    contentDescription = null,
+//                    tint = Color.Unspecified
+//                )
+//                Spacer(modifier = Modifier.height(12.dp))
+//                OnboardingTitle(onboardingType = uiState.onboardingType)
+//                Spacer(modifier = Modifier.height(68.dp))
                 OnboardingAlarmSelector(
-                    selectedItems = uiState.alertFrequencies.mapNotNull { timeValue ->
-                        AlarmTime.entries.find { it.minutes == timeValue }
-                    }.toSet(),
-                    onItemClick = onAlarmTimeSelected
+                    onAlarmSelected = onAlarmSelected
                 )
             }
-            Spacer(modifier = Modifier.weight(1f))
-            OnboardingButton(
-                isEnabled =
-                if (uiState.onboardingType == OnboardingType.ALARM) {
-                    uiState.alertFrequencies.isNotEmpty()
-                } else {
-                    uiState.myAddress.address.isNotEmpty()
-                }
-            ) { onNextButtonClicked() }
-            Spacer(modifier = Modifier.height(20.dp))
         }
         if (uiState.mapViewVisible) {
             val currentLocation by remember { mutableStateOf(uiState.myAddress) }
@@ -395,15 +496,8 @@ fun OnboardingScreen(
         }
         OnboardingPermissionBottomSheet(
             modifier = Modifier.align(Alignment.BottomCenter),
-            onboardingPermissionType = uiState.onboardingType.toPermissionType(),
             bottomSheetVisible = uiState.permissionBottomSheetVisible,
             buttonClicked = bottomSheetButtonClicked
-        )
-        OnboardingPermissionDeniedBottomSheet(
-            modifier = Modifier.align(Alignment.BottomCenter),
-            bottomSheetVisible = uiState.permissionDeniedBottomSheetVisible,
-            completeButtonClicked = deniedBottomSheetCloseButtonClicked,
-            settingButtonClicked = deniedBottomSheetSettingButtonClicked
         )
     }
 }

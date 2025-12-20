@@ -1,15 +1,15 @@
 package com.depromeet.team6.presentation.ui.mypage
 
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.widget.Toast
 import androidx.lifecycle.viewModelScope
-import com.depromeet.team6.R
 import com.depromeet.team6.data.dataremote.model.request.user.RequestModifyUserInfoDto
 import com.depromeet.team6.data.repositoryimpl.UserInfoRepositoryImpl
 import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.MypageUserInfo
+import com.depromeet.team6.domain.repository.HomeRepository
 import com.depromeet.team6.domain.usecase.DeleteWithDrawUseCase
 import com.depromeet.team6.domain.usecase.GetAddressFromCoordinatesUseCase
 import com.depromeet.team6.domain.usecase.GetLocationsUseCase
@@ -20,7 +20,6 @@ import com.depromeet.team6.presentation.mapper.toPresentationList
 import com.depromeet.team6.presentation.util.base.BaseViewModel
 import com.depromeet.team6.presentation.util.context.getUserLocation
 import com.depromeet.team6.presentation.util.permission.PermissionUtil
-import com.depromeet.team6.presentation.util.toast.atChaToastMessage
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -33,6 +32,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MypageViewModel @Inject constructor(
     private val userInfoRepositoryImpl: UserInfoRepositoryImpl,
+    private val homeRepository: HomeRepository,
     private val postLogoutUseCase: PostLogoutUseCase,
     private val getLocationsUseCase: GetLocationsUseCase,
     private val getAddressFromCoordinatesUseCase: GetAddressFromCoordinatesUseCase,
@@ -40,6 +40,10 @@ class MypageViewModel @Inject constructor(
     private val getUserInfoUseCase: GetUserInfoUseCase,
     private val modifyUserInfoUseCase: ModifyUserInfoUseCase
 ) : BaseViewModel<MypageContract.MypageUiState, MypageContract.MypageSideEffect, MypageContract.MypageEvent>() {
+
+    init {
+        loadAlarmSettings()
+    }
 
     // 주소 초기화 여부를 추적하는 플래그
     private var isAddressInitialized = false
@@ -49,22 +53,42 @@ class MypageViewModel @Inject constructor(
     override suspend fun handleEvent(event: MypageContract.MypageEvent) {
         when (event) {
             is MypageContract.MypageEvent.BackPressed -> navigateBack()
-            is MypageContract.MypageEvent.LogoutClicked -> setState { copy(logoutDialogVisible = true, withDrawDialogVisible = false) }
-            is MypageContract.MypageEvent.WithDrawClicked -> setState { copy(withDrawDialogVisible = true) }
+            is MypageContract.MypageEvent.LogoutClicked -> setState {
+                copy(
+                    logoutDialogVisible = true
+                )
+            }
+
+            is MypageContract.MypageEvent.WithDrawClicked -> setState { copy(withDrawScreenVisible = true) }
             is MypageContract.MypageEvent.PolicyClicked -> setState { copy(isWebViewOpened = true) }
             is MypageContract.MypageEvent.PolicyClosed -> setState { copy(isWebViewOpened = false) }
             is MypageContract.MypageEvent.LogoutConfirmed -> logout()
-            is MypageContract.MypageEvent.WithDrawConfirmed -> withDraw()
-            is MypageContract.MypageEvent.DismissDialog -> setState { copy(logoutDialogVisible = false, withDrawDialogVisible = false) }
+            is MypageContract.MypageEvent.WithDrawConfirmed -> withDraw(event.reason)
+            is MypageContract.MypageEvent.DismissDialog -> setState {
+                copy(
+                    logoutDialogVisible = false
+                )
+            }
+
             is MypageContract.MypageEvent.AccountClicked -> navigateToAccount()
             is MypageContract.MypageEvent.ChangeHomeClicked -> navigateToChangeHome()
             is MypageContract.MypageEvent.UpdateMyAddress -> getUserInfo()
             is MypageContract.MypageEvent.ChangeMapViewVisible -> setState {
-                copy(mapViewVisible = event.mapViewVisible)
+                if (event.selectedAddress != null) {
+                    copy(
+                        mapViewVisible = event.mapViewVisible,
+                        selectedAddress = event.selectedAddress
+                    )
+                } else {
+                    copy(
+                        mapViewVisible = event.mapViewVisible
+                    )
+                }
             }
+
             is MypageContract.MypageEvent.ClearAddress -> setState {
                 copy(
-                    myAdress = Address(
+                    myAddress = Address(
                         name = "",
                         lat = 0.0,
                         lon = 0.0,
@@ -72,56 +96,48 @@ class MypageViewModel @Inject constructor(
                     )
                 )
             }
+
             is MypageContract.MypageEvent.ClearText -> setState {
                 copy(
                     searchText = "",
                     searchLocations = emptyList()
                 )
             }
+
             is MypageContract.MypageEvent.SearchPopUpBackPressed -> setState {
                 copy(
                     searchPopupVisible = false
                 )
             }
+
             is MypageContract.MypageEvent.ShowSearchPopup -> setState {
                 copy(
                     searchPopupVisible = true
                 )
             }
+
             is MypageContract.MypageEvent.UpdateSearchText -> handleUpdateSearchText(event = event)
             is MypageContract.MypageEvent.LocationSelectButtonClicked -> setState {
                 copy(
-                    myAdress = event.mypageSearchLocation,
                     searchPopupVisible = false
                 )
             }
 
             MypageContract.MypageEvent.AlarmSettingClicked -> navigateToAlarmSetting()
-            is MypageContract.MypageEvent.AlarmTypeSelected -> {
-                setState { copy(selectedAlarmType = event.type) }
-                saveAlarmSettings(event.type)
-            }
-            MypageContract.MypageEvent.SoundSettingClicked -> {
-                setState {
-                    copy(alarmScreenState = MypageContract.AlarmScreenState.SOUND_SETTING)
-                }
-                loadAlarmSettings()
-            }
 
-            MypageContract.MypageEvent.TimeSettingClicked -> {
-                setState {
-                    copy(alarmScreenState = MypageContract.AlarmScreenState.TIME_SETTING)
-                }
+            is MypageContract.MypageEvent.AlarmTypeModified -> {
+                saveAlarmType(event.type)
+                navigateToMainSetting()
             }
-
-            is MypageContract.MypageEvent.UpdateAlertFrequencies -> setState {
-                copy(alertFrequencies = event.alertFrequencies)
+            is MypageContract.MypageEvent.AlarmVolumeModified -> {
+                saveAlarmVolume(event.volume)
+                navigateToMainSetting()
             }
         }
     }
 
     fun getUserInfo() {
-        if (isAddressInitialized && currentState.myAdress.address.isNotEmpty()) {
+        if (isAddressInitialized && currentState.myAddress.address.isNotEmpty()) {
             Timber.d("주소가 이미 초기화되어 있어 getUserInfo에서 주소를 갱신하지 않습니다.")
             return
         }
@@ -131,11 +147,11 @@ class MypageViewModel @Inject constructor(
                 setLocationToHomeAddress(userInfo.userHome.latitude, userInfo.userHome.longitude)
                 setState {
                     copy(
-                        myAdress = Address(
+                        myAddress = Address(
                             name = userInfo.address,
                             lat = userInfo.userHome.latitude,
                             lon = userInfo.userHome.longitude,
-                            address = currentState.myAdress.address
+                            address = currentState.myAddress.address
                         )
                     )
                 }
@@ -143,24 +159,19 @@ class MypageViewModel @Inject constructor(
                 setState {
                     copy(
                         userInfo = MypageUserInfo(
-                            nickname = userInfo.nickname,
-                            profileImageUrl = userInfo.profileImageUrl,
                             address = userInfo.address,
                             lat = userInfo.userHome.latitude,
                             lon = userInfo.userHome.longitude,
-                            alertFrequencies = userInfo.alertFrequencies,
-                            fcmToken = null
+                            fcmToken = null,
+                            appVersion = userInfo.appVersion
                         )
-                    )
-                }
-
-                setState {
-                    copy(
-                        alertFrequencies = userInfo.alertFrequencies
                     )
                 }
                 isAddressInitialized = true
             }
+                .onFailure { exception ->
+                    handleApiException(exception)
+                }
         }
     }
 
@@ -182,90 +193,59 @@ class MypageViewModel @Inject constructor(
                             searchLocations = locations.toPresentationList()
                         )
                     }
-                }.onFailure {
+                }.onFailure { exception ->
                     setState { copy(searchLocations = emptyList()) }
+                    handleApiException(exception = exception)
                 }
             }
         }
     }
 
-    fun modifyUserAddress(context: Context) {
-        viewModelScope.launch {
-            try {
-                val currentAddress = currentState.myAdress
-
-                val modifyUserInfoDto = RequestModifyUserInfoDto(
-                    address = currentAddress.name,
-                    lat = currentAddress.lat,
-                    lon = currentAddress.lon
-                )
-
-                modifyUserInfoUseCase(modifyUserInfoDto = modifyUserInfoDto)
-                    .onSuccess { userInfo ->
-                        setState {
-                            copy(
-                                myAdress = Address(
-                                    name = currentAddress.name,
-                                    lat = userInfo.userHome.latitude,
-                                    lon = userInfo.userHome.longitude,
-                                    address = currentAddress.address
-                                )
-                            )
-                        }
-
-                        setState {
-                            copy(
-                                userInfo = currentState.userInfo.copy(
-                                    address = currentAddress.name,
-                                    lat = userInfo.userHome.latitude,
-                                    lon = userInfo.userHome.longitude
-                                )
-                            )
-                        }
-
-                        setState { copy(mapViewVisible = false) }
-
-                        atChaToastMessage(context, R.string.mypage_change_home_toast_text, Toast.LENGTH_SHORT)
-                    }
-                    .onFailure { error ->
-                        Timber.e("주소 업데이트 실패: ${error.message}")
-                        setState { copy(loadState = LoadState.Error) }
-                    }
-            } catch (e: Exception) {
-                Timber.e("주소 업데이트 중 예외 발생: ${e.message}")
-                e.printStackTrace()
-                setState { copy(loadState = LoadState.Error) }
-            }
+    fun modifyUserAddress(callback: () -> Unit = {}) {
+        setState {
+            copy(
+                myAddress = currentState.selectedAddress
+            )
         }
-    }
-
-    fun modifyAlarmFrequencies(context: Context) {
         viewModelScope.launch {
-            try {
-                val modifyUserInfoDto = RequestModifyUserInfoDto(
-                    alertFrequencies = currentState.alertFrequencies
-                )
+            val currentAddress = currentState.myAddress
 
-                modifyUserInfoUseCase(modifyUserInfoDto = modifyUserInfoDto)
-                    .onSuccess { userInfo ->
-                        setState {
-                            copy(
-                                userInfo = currentState.userInfo.copy(
-                                    alertFrequencies = userInfo.alertFrequencies
-                                )
+            val modifyUserInfoDto = RequestModifyUserInfoDto(
+                address = currentAddress.name,
+                lat = currentAddress.lat,
+                lon = currentAddress.lon
+            )
+
+            modifyUserInfoUseCase(modifyUserInfoDto = modifyUserInfoDto)
+                .onSuccess { userInfo ->
+                    setState {
+                        copy(
+                            myAddress = Address(
+                                name = currentAddress.name,
+                                lat = userInfo.userHome.latitude,
+                                lon = userInfo.userHome.longitude,
+                                address = currentAddress.address
                             )
-                        }
-                        atChaToastMessage(context, R.string.mypage_change_alarm_time_toast_text, Toast.LENGTH_SHORT)
+                        )
                     }
-                    .onFailure { error ->
-                        Timber.e("알림 설정 변경 실패: ${error.message}")
-                        setState { copy(loadState = LoadState.Error) }
+
+                    setState {
+                        copy(
+                            userInfo = currentState.userInfo.copy(
+                                address = currentAddress.name,
+                                lat = userInfo.userHome.latitude,
+                                lon = userInfo.userHome.longitude
+                            )
+                        )
                     }
-            } catch (e: Exception) {
-                Timber.e("알림 설정 중 예외 발생: ${e.message}")
-                e.printStackTrace()
-                setState { copy(loadState = LoadState.Error) }
-            }
+
+                    setState { copy(mapViewVisible = false) }
+
+                    callback()
+                }
+                .onFailure { exception ->
+                    handleApiException(exception)
+                }
         }
     }
 
@@ -276,7 +256,7 @@ class MypageViewModel @Inject constructor(
                 setPackage("com.android.vending")
             }
             context.startActivity(intent)
-        } catch (e: android.content.ActivityNotFoundException) {
+        } catch (e: ActivityNotFoundException) {
             val intent = Intent(Intent.ACTION_VIEW).apply {
                 data = Uri.parse("https://play.google.com/store/apps/details?id=${context.packageName}")
             }
@@ -289,18 +269,31 @@ class MypageViewModel @Inject constructor(
         lon: Double
     ) {
         viewModelScope.launch {
-            getAddressFromCoordinatesUseCase.invoke(lat, lon)
+            getAddressFromCoordinatesUseCase(lat, lon)
                 .onSuccess { address ->
                     setState {
                         copy(
-                            myAdress = myAdress.copy(
+                            myAddress = myAddress.copy(
                                 address = address.address
                             )
                         )
                     }
-                }.onFailure {
-                    Timber.e("주소 변환 실패: ${it.message}")
                 }
+                .onFailure { exception ->
+                    handleApiException(exception)
+                }
+//            getAddressFromCoordinatesUseCase.invoke(lat, lon)
+//                .onSuccess { address ->
+//                    setState {
+//                        copy(
+//                            myAdress = myAdress.copy(
+//                                address = address.address
+//                            )
+//                        )
+//                    }
+//                }.onFailure {
+//                    Timber.e("주소 변환 실패: ${it.message}")
+//                }
         }
     }
 
@@ -308,12 +301,21 @@ class MypageViewModel @Inject constructor(
         viewModelScope.launch {
             getAddressFromCoordinatesUseCase(location.latitude, location.longitude)
                 .onSuccess { address ->
-                    setState { copy(myAdress = address) }
+                    setState { copy(myAddress = address) }
                     onComplete(address)
                 }
-                .onFailure {
-                    Timber.e("주소 변환 실패: ${it.message}")
+                .onFailure { exception ->
+                    handleApiException(exception)
                 }
+
+//            getAddressFromCoordinatesUseCase(location.latitude, location.longitude)
+//                .onSuccess { address ->
+//                    setState { copy(myAdress = address) }
+//                    onComplete(address)
+//                }
+//                .onFailure {
+//                    Timber.e("주소 변환 실패: ${it.message}")
+//                }
         }
     }
 
@@ -330,16 +332,37 @@ class MypageViewModel @Inject constructor(
         }
     }
 
-    private fun saveAlarmSettings(type: MypageContract.AlarmType) {
+    private fun saveAlarmType(type: MypageContract.AlarmType) {
         viewModelScope.launch {
             try {
                 val isSound = when (type) {
                     MypageContract.AlarmType.SOUND -> true
                     MypageContract.AlarmType.VIBRATION -> false
+                    MypageContract.AlarmType.ALL -> true
                 }
-                userInfoRepositoryImpl.saveAlarmSound(isSound)
+                val isVibrate = when (type) {
+                    MypageContract.AlarmType.SOUND -> false
+                    MypageContract.AlarmType.VIBRATION -> true
+                    MypageContract.AlarmType.ALL -> true
+                }
+                userInfoRepositoryImpl.saveIsAlarmSound(isSound)
+                userInfoRepositoryImpl.saveIsAlarmVibrate(isVibrate)
+                setState {
+                    copy(selectedAlarmType = type)
+                }
             } catch (e: Exception) {
                 Timber.e("알람 설정 저장 실패: ${e.message}")
+            }
+        }
+    }
+
+    private fun saveAlarmVolume(volume: Int) {
+        viewModelScope.launch {
+            userInfoRepositoryImpl.saveAlarmVolume(volume)
+            setState {
+                copy(
+                    alarmVolume = volume
+                )
             }
         }
     }
@@ -347,16 +370,22 @@ class MypageViewModel @Inject constructor(
     private fun loadAlarmSettings() {
         viewModelScope.launch {
             try {
-                val isSound = userInfoRepositoryImpl.getAlarmSound()
+                val isSound = userInfoRepositoryImpl.getIsAlarmSound()
+                val isVibrate = userInfoRepositoryImpl.getIsAlarmVibrate()
+                val alarmVolume = userInfoRepositoryImpl.getAlarmVolume()
 
-                val alarmType = if (isSound) {
-                    MypageContract.AlarmType.SOUND
-                } else {
-                    MypageContract.AlarmType.VIBRATION
+                val alarmType = when {
+                    isSound && isVibrate -> MypageContract.AlarmType.ALL
+                    isSound -> MypageContract.AlarmType.SOUND
+                    isVibrate -> MypageContract.AlarmType.VIBRATION
+                    else -> MypageContract.AlarmType.ALL
                 }
 
                 setState {
-                    copy(selectedAlarmType = alarmType)
+                    copy(
+                        selectedAlarmType = alarmType,
+                        alarmVolume = alarmVolume
+                    )
                 }
             } catch (e: Exception) {
                 Timber.e("알람 설정 불러오기 실패: ${e.message}")
@@ -370,29 +399,38 @@ class MypageViewModel @Inject constructor(
     private fun logout() {
         userInfoRepositoryImpl.setAccessToken(userInfoRepositoryImpl.getRefreshToken())
         viewModelScope.launch {
-            if (postLogoutUseCase().isSuccessful) {
+            postLogoutUseCase().onSuccess {
                 setSideEffect(MypageContract.MypageSideEffect.NavigateToLogin)
                 setState { copy(loadState = LoadState.Error) }
                 userInfoRepositoryImpl.clear()
-            } else {
+                homeRepository.clearAlarmData()
+            }.onFailure { exception ->
                 setEvent(MypageContract.MypageEvent.LogoutClicked)
+                handleApiException(exception = exception)
             }
         }
     }
 
-    private fun withDraw() {
+    private fun withDraw(reason: String) {
         viewModelScope.launch {
-            if (deleteWithDrawUseCase().isSuccessful) {
+            deleteWithDrawUseCase(reason).onSuccess {
                 userInfoRepositoryImpl.clear()
+                setSideEffect(MypageContract.MypageSideEffect.ClearPermissionData)
+                homeRepository.clearAlarmData()
                 setSideEffect(MypageContract.MypageSideEffect.NavigateToLogin)
-            } else {
-                setEvent(MypageContract.MypageEvent.WithDrawClicked)
+            }.onFailure { exception ->
+                handleApiException(exception = exception)
             }
         }
     }
 
     private fun navigateToAccount() {
-        setState { copy(currentScreen = MypageContract.MypageScreen.ACCOUNT) }
+        setState {
+            copy(
+                currentScreen = MypageContract.MypageScreen.ACCOUNT,
+                withDrawScreenVisible = false
+            )
+        }
     }
 
     private fun navigateToChangeHome() {
@@ -403,22 +441,33 @@ class MypageViewModel @Inject constructor(
         setState { copy(currentScreen = MypageContract.MypageScreen.ALARM) }
     }
 
+    private fun navigateToMainSetting() {
+        setState { copy(currentScreen = MypageContract.MypageScreen.MAIN) }
+    }
+
     private fun navigateBack() {
         val currentScreen = currentState.currentScreen
         if (currentScreen == MypageContract.MypageScreen.MAIN) {
             setSideEffect(MypageContract.MypageSideEffect.NavigateBack)
-        } else if (currentScreen == MypageContract.MypageScreen.ACCOUNT) {
-            setState { copy(currentScreen = MypageContract.MypageScreen.MAIN) }
-        } else if (currentScreen == MypageContract.MypageScreen.CHANGE_HOME) {
-            setState { copy(currentScreen = MypageContract.MypageScreen.MAIN) }
-        } else if (currentScreen == MypageContract.MypageScreen.ALARM) {
-            if (currentState.alarmScreenState == MypageContract.AlarmScreenState.SOUND_SETTING) {
-                setState { copy(alarmScreenState = MypageContract.AlarmScreenState.MAIN) }
-            } else if (currentState.alarmScreenState == MypageContract.AlarmScreenState.TIME_SETTING) {
-                setState { copy(alarmScreenState = MypageContract.AlarmScreenState.MAIN) }
-            } else {
-                setState { copy(currentScreen = MypageContract.MypageScreen.MAIN) }
-            }
+        } else {
+            navigateToMainSetting()
         }
+//        when (currentScreen) {
+//            MypageContract.MypageScreen.MAIN -> {
+//                setSideEffect(MypageContract.MypageSideEffect.NavigateBack)
+//            }
+//
+//            MypageContract.MypageScreen.ACCOUNT -> {
+//                navigateToMainSetting()
+//            }
+//
+//            MypageContract.MypageScreen.CHANGE_HOME -> {
+//                navigateToMainSetting()
+//            }
+//
+//            MypageContract.MypageScreen.ALARM -> {
+//                navigateToMainSetting()
+//            }
+//        }
     }
 }

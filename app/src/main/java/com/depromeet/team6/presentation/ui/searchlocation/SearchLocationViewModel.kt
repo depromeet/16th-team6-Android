@@ -1,5 +1,6 @@
 package com.depromeet.team6.presentation.ui.searchlocation
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.Location
@@ -10,8 +11,10 @@ import com.depromeet.team6.domain.usecase.GetAddressFromCoordinatesUseCase
 import com.depromeet.team6.domain.usecase.GetLocationsUseCase
 import com.depromeet.team6.domain.usecase.GetSearchHistoriesUseCase
 import com.depromeet.team6.domain.usecase.PostSearchHistoriesUseCase
+import com.depromeet.team6.presentation.ui.searchlocation.navigation.SearchLocationRoute.DEPARTURE_LOCATION
 import com.depromeet.team6.presentation.util.base.BaseViewModel
 import com.google.android.gms.maps.model.LatLng
+import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -21,6 +24,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SearchLocationViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     private val getLocationsUseCase: GetLocationsUseCase,
     private val getSearchHistoriesUseCase: GetSearchHistoriesUseCase,
     private val postSearchHistoriesUseCase: PostSearchHistoriesUseCase,
@@ -29,6 +33,22 @@ class SearchLocationViewModel @Inject constructor(
     private val getAddressFromCoordinatesUseCase: GetAddressFromCoordinatesUseCase
 ) : BaseViewModel<SearchLocationContract.SearchLocationUiState, SearchLocationContract.SearchLocationSideEffect, SearchLocationContract.SearchLocationEvent>() {
 
+    init {
+        val departureLocationJSON: String? = savedStateHandle[DEPARTURE_LOCATION]
+        if (departureLocationJSON != null) {
+            val departureLocation = Gson().fromJson(departureLocationJSON, Address::class.java)
+            setState {
+                copy(searchQuery = departureLocation.name)
+            }
+            setEvent(
+                SearchLocationContract.SearchLocationEvent.UpdateSearchQuery(
+                    text = departureLocation.name,
+                    lat = departureLocation.lat,
+                    lon = departureLocation.lon
+                )
+            )
+        }
+    }
     override fun createInitialState(): SearchLocationContract.SearchLocationUiState =
         SearchLocationContract.SearchLocationUiState()
 
@@ -67,8 +87,8 @@ class SearchLocationViewModel @Inject constructor(
 
             is SearchLocationContract.SearchLocationEvent.UpdateUserLocationSate -> setState { copy(userLocation = event.userLocation) }
 
-            is SearchLocationContract.SearchLocationEvent.ChangeSearchSelectMapViewVisible -> setState {
-                copy(searchSelectMapView = event.searchSelectMapView)
+            is SearchLocationContract.SearchLocationEvent.ChangeCurrentScreen -> setState {
+                copy(currentScreen = event.screen)
             }
         }
     }
@@ -90,8 +110,9 @@ class SearchLocationViewModel @Inject constructor(
                         )
                     }
                 }
-                .onFailure {
+                .onFailure { exception ->
                     setState { copy(recentSearches = emptyList()) }
+                    handleApiException(exception)
                 }
         }
     }
@@ -113,17 +134,26 @@ class SearchLocationViewModel @Inject constructor(
         )
 
         viewModelScope.launch {
-            if (deleteSearchHistoryUseCase(searchHistory = convertedSearchHistory).isSuccessful) {
-                updateRecentSearches(location = LatLng(location.latitude, location.longitude))
+            deleteSearchHistoryUseCase(
+                name = searchHistory.name,
+                lat = searchHistory.lat,
+                lon = searchHistory.lon,
+                businessCategory = searchHistory.businessCategory,
+                address = searchHistory.address
+            )
+                .onSuccess {
+                    updateRecentSearches(location = LatLng(location.latitude, location.longitude))
 
-                setEvent(
-                    SearchLocationContract.SearchLocationEvent.DeleteSearchHistory(
-                        searchHistory = convertedSearchHistory
+                    setEvent(
+                        SearchLocationContract.SearchLocationEvent.DeleteSearchHistory(
+                            searchHistory = convertedSearchHistory
+                        )
                     )
-                )
-            } else {
-                Timber.e("deleteSearchHistory failure")
-            }
+                }
+                .onFailure { exception ->
+                    Timber.e("deleteSearchHistory failure")
+                    handleApiException(exception)
+                }
         }
     }
 
@@ -138,22 +168,25 @@ class SearchLocationViewModel @Inject constructor(
         )
 
         viewModelScope.launch {
-            if (postSearchHistoriesUseCase(searchHistory = convertedSearchHistory).isSuccessful) {
-                Timber.e("postSearchHistory Success")
-            } else {
-                Timber.e("postSearchHistory failure")
-            }
+            postSearchHistoriesUseCase(searchHistory = convertedSearchHistory)
+                .onSuccess {
+                    Timber.e("postSearchHistory Success")
+                }
+                .onFailure { exception ->
+                    handleApiException(exception)
+                }
         }
     }
 
     // 최근 검색 내역 전체 삭제
     fun deleteAllSearchHistory() {
         viewModelScope.launch {
-            if (deleteAllSearchHistoryUseCase().isSuccessful) {
+            deleteAllSearchHistoryUseCase().onSuccess {
                 setEvent(SearchLocationContract.SearchLocationEvent.ClearRecentSearches)
-            } else {
-                Timber.e("deleteAllSearchHistory failure")
             }
+                .onFailure { exception ->
+                    handleApiException(exception)
+                }
         }
     }
 
@@ -170,13 +203,17 @@ class SearchLocationViewModel @Inject constructor(
                     lat = event.lat,
                     lon = event.lon
                 ).onSuccess { locations ->
+                    if (locations.isEmpty()) {
+                        setSideEffect(SearchLocationContract.SearchLocationSideEffect.ShowToastSideEffect("검색 결과가 없습니다."))
+                    }
                     setState {
                         copy(
                             searchResults = locations
                         )
                     }
-                }.onFailure {
+                }.onFailure { exception ->
                     setState { copy(searchResults = emptyList()) }
+                    handleApiException(exception = exception)
                 }
             }
         }
@@ -190,7 +227,15 @@ class SearchLocationViewModel @Inject constructor(
                     onComplete(address)
                 }
                 .onFailure {
+                    handleApiException(it)
                 }
+//            getAddressFromCoordinatesUseCase(location.latitude, location.longitude)
+//                .onSuccess { address ->
+//                    setState { copy(selectLocation = address) }
+//                    onComplete(address)
+//                }
+//                .onFailure {
+//                }
         }
     }
 }

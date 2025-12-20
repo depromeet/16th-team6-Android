@@ -10,12 +10,14 @@ import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.RealTimeBusArrival
 import com.depromeet.team6.domain.model.course.CourseInfo
 import com.depromeet.team6.presentation.model.bus.BusArrivalParameter
-import timber.log.Timber
+import com.google.android.gms.maps.model.LatLng
 import java.time.LocalDateTime
 
 @Composable
 fun ItineraryDetail(
+    currentLocation: LatLng,
     courseInfo: CourseInfo,
+    userDeparted: Boolean,
     busArrivalStatus: SparseArray<RealTimeBusArrival>,
     departurePoint: Address,
     destinationPoint: Address,
@@ -23,13 +25,14 @@ fun ItineraryDetail(
     onClickBusInfo: (BusArrivalParameter) -> Unit = {}
 ) {
     val arrivalDateTime = LocalDateTime.parse(courseInfo.departureTime).plusSeconds(courseInfo.totalTime.toLong())
-    Timber.d("busArrivalStatus : $busArrivalStatus")
     Column(
         modifier = modifier
             .padding(vertical = 12.dp)
     ) {
         ItineraryInfoDetail(
+            currentLocation = currentLocation,
             legs = courseInfo.legs,
+            userDeparted = userDeparted,
             busArrivalStatus = busArrivalStatus,
             departureTime = courseInfo.departureTime,
             departureName = departurePoint.name,

@@ -55,13 +55,13 @@ fun CourseInfoDetailItem(
             )
             Text(
                 text = context.resources.getString(R.string.course_detail_info_walk),
-                style = defaultTeam6Typography.bodyRegular13,
+                style = defaultTeam6Typography.body7_B7M13,
                 color = defaultTeam6Colors.white
             )
             Text(
                 text = context.resources.getString(R.string.course_detail_info_duration, duration),
-                style = defaultTeam6Typography.bodyRegular12,
-                color = defaultTeam6Colors.greySecondaryLabel
+                style = defaultTeam6Typography.detail1_R12,
+                color = defaultTeam6Colors.gray200
             )
         }
     } else {
@@ -92,19 +92,19 @@ fun CourseInfoDetailItem(
             ) {
                 Text(
                     text = context.resources.getString(R.string.course_detail_info_boarding_point, boardingPoint),
-                    style = defaultTeam6Typography.bodyRegular13,
+                    style = defaultTeam6Typography.body7_B7M13,
                     color = defaultTeam6Colors.white
                 )
                 Spacer(modifier = Modifier.height(5.dp))
                 Text(
                     text = context.resources.getString(R.string.course_detail_info_duration, duration),
-                    style = defaultTeam6Typography.bodyRegular12,
-                    color = defaultTeam6Colors.greyTertiaryLabel
+                    style = defaultTeam6Typography.detail1_R12,
+                    color = defaultTeam6Colors.gray400
                 )
                 Spacer(modifier = Modifier.height(14.dp))
                 Text(
                     text = context.resources.getString(R.string.course_detail_info_destination_point, destinationPoint),
-                    style = defaultTeam6Typography.bodyRegular13,
+                    style = defaultTeam6Typography.body7_B7M13,
                     color = defaultTeam6Colors.white
                 )
             }
@@ -123,7 +123,7 @@ fun VerticalLine(
             .drawBehind {
                 val y = 0f
                 drawLine(
-                    color = defaultTeam6Colors.greyQuaternaryLabel,
+                    color = defaultTeam6Colors.gray700,
                     start = Offset(x = size.width / 2, y = y),
                     end = Offset(x = size.width / 2, y = y + size.height),
                     strokeWidth = 1.dp.toPx()

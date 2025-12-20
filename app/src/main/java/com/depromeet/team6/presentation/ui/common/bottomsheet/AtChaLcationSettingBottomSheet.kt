@@ -36,7 +36,7 @@ fun AtChaLocationSettingBottomSheet(
             .fillMaxWidth()
             .background(
                 shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
-                color = defaultTeam6Colors.greyElevatedBackground
+                color = defaultTeam6Colors.gray940
             )
             .padding(horizontal = 24.dp),
         verticalArrangement = Arrangement.Bottom
@@ -47,7 +47,7 @@ fun AtChaLocationSettingBottomSheet(
             Text(
                 text = locationName,
                 modifier = Modifier.fillMaxWidth(),
-                style = defaultTeam6Typography.heading5SemiBold17,
+                style = defaultTeam6Typography.heading3_H3SB17,
                 color = defaultTeam6Colors.white
             )
 
@@ -55,14 +55,14 @@ fun AtChaLocationSettingBottomSheet(
             Text(
                 text = locationAddress,
                 modifier = Modifier.fillMaxWidth(),
-                style = defaultTeam6Typography.bodyRegular14,
-                color = defaultTeam6Colors.greySecondaryLabel
+                style = defaultTeam6Typography.body6_B6R14,
+                color = defaultTeam6Colors.gray200
             )
         } else {
             Text(
                 text = locationAddress,
                 modifier = Modifier.fillMaxWidth(),
-                style = defaultTeam6Typography.heading5SemiBold17,
+                style = defaultTeam6Typography.heading3_H3SB17,
                 color = defaultTeam6Colors.white
             )
         }
@@ -79,7 +79,7 @@ fun AtChaLocationSettingBottomSheet(
                     padding = PaddingValues(vertical = 14.dp, horizontal = 28.dp)
                 ),
             textAlign = TextAlign.Center,
-            style = defaultTeam6Typography.heading6Bold15,
+            style = defaultTeam6Typography.body2_B2SB15,
             color = defaultTeam6Colors.black
         )
         Spacer(modifier = Modifier.height(20.dp))

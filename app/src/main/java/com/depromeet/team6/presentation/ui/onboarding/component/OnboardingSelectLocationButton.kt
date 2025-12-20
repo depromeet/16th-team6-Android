@@ -37,7 +37,7 @@ fun OnboardingSelectLocationButton(
             .fillMaxWidth()
             .border(
                 width = 1.dp,
-                color = defaultTeam6Colors.greyDefaultButton,
+                color = defaultTeam6Colors.gray910,
                 shape = RoundedCornerShape(8.dp)
             )
             .roundedBackgroundWithPadding(
@@ -66,7 +66,7 @@ fun OnboardingSelectLocationButton(
                     R.string.onboarding_edit_location_button_current_region
                 }
             ),
-            style = defaultTeam6Typography.bodyRegular14,
+            style = defaultTeam6Typography.body6_B6R14,
             color = defaultTeam6Colors.white
         )
     }

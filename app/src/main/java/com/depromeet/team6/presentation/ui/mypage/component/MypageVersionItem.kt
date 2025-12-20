@@ -27,6 +27,7 @@ import com.depromeet.team6.ui.theme.defaultTeam6Typography
 fun MypageVersionItem(
     title: String,
     onClick: () -> Unit,
+    updateBtnVisibility: Boolean,
     modifier: Modifier = Modifier
 ) {
     val typography = LocalTeam6Typography.current
@@ -38,7 +39,7 @@ fun MypageVersionItem(
         modifier = modifier
             .fillMaxWidth()
             .background(
-                colors.greyWashBackground
+                colors.gray950
             )
     ) {
         Row(
@@ -50,27 +51,29 @@ fun MypageVersionItem(
         ) {
             Text(
                 text = title + currentVersion,
-                style = typography.bodyRegular15,
+                style = typography.body4_B4R15,
                 color = colors.white
             )
 
-            Row(
-                modifier = modifier
-                    .roundedBackgroundWithPadding(
-                        backgroundColor = colors.greyDefaultButton,
-                        cornerRadius = 8.dp,
-                        padding = PaddingValues(vertical = 8.dp, horizontal = 12.dp)
+            if (updateBtnVisibility) {
+                Row(
+                    modifier = modifier
+                        .roundedBackgroundWithPadding(
+                            backgroundColor = colors.gray910,
+                            cornerRadius = 8.dp,
+                            padding = PaddingValues(vertical = 8.dp, horizontal = 12.dp)
+                        )
+                        .noRippleClickable {
+                            onClick()
+                        },
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.mypage_version_update_text),
+                        style = defaultTeam6Typography.body7_B7M13,
+                        color = defaultTeam6Colors.white
                     )
-                    .noRippleClickable {
-                        onClick()
-                    },
-                horizontalArrangement = Arrangement.End
-            ) {
-                Text(
-                    text = stringResource(id = R.string.mypage_version_update_text),
-                    style = defaultTeam6Typography.bodyMedium13,
-                    color = defaultTeam6Colors.white
-                )
+                }
             }
         }
     }
@@ -82,6 +85,7 @@ fun MypageVersionItemPreview() {
     MypageVersionItem(
         title = "내 계정",
         onClick = {},
-        modifier = Modifier
+        modifier = Modifier,
+        updateBtnVisibility = true
     )
 }

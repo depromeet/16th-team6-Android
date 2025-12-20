@@ -4,7 +4,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import com.depromeet.team6.presentation.ui.mypage.MypageRoute
+import com.depromeet.team6.presentation.ui.mypage.MyPageRoute
 
 fun NavController.navigationMypage() {
     navigate(
@@ -21,7 +21,7 @@ fun NavGraphBuilder.mypageNavGraph(
     popBackStack: () -> Unit
 ) {
     composable(route = MypageRoute.ROUTE) {
-        MypageRoute(
+        MyPageRoute(
             padding = padding,
             navigateBack = popBackStack,
             navigateToLogin = navigateToLogin

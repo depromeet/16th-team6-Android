@@ -1,21 +1,22 @@
 package com.depromeet.team6.data.repositoryimpl
 
 import com.depromeet.team6.data.dataremote.datasource.AuthRemoteDataSource
+import com.depromeet.team6.data.dataremote.model.request.auth.RequestWithDrawDto
 import com.depromeet.team6.data.dataremote.model.request.user.RequestModifyUserInfoDto
 import com.depromeet.team6.data.mapper.todata.toData
 import com.depromeet.team6.data.mapper.todomain.toDomain
 import com.depromeet.team6.domain.model.Auth
+import com.depromeet.team6.domain.model.GetUserInfo
 import com.depromeet.team6.domain.model.SignUp
 import com.depromeet.team6.domain.model.UserInfo
 import com.depromeet.team6.domain.repository.AuthRepository
-import retrofit2.Response
 import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor(
     private val authRemoteDataSource: AuthRemoteDataSource
 ) : AuthRepository {
     override suspend fun getCheck(authorization: String, provider: Int): Result<Boolean> =
-        authRemoteDataSource.getCheck(authorization = authorization, provider = provider)
+        authRemoteDataSource.getCheck(provider = provider)
             .mapCatching { it.toDomain() }
 
     override suspend fun postSignUp(signUp: SignUp): Result<Auth> =
@@ -28,13 +29,13 @@ class AuthRepositoryImpl @Inject constructor(
                 it.toDomain()
             }
 
-    override suspend fun postLogout(): Response<Unit> =
+    override suspend fun postLogout(): Result<Unit> =
         authRemoteDataSource.postLogout()
 
-    override suspend fun deleteWithDraw(): Response<Unit> =
-        authRemoteDataSource.deleteWithDraw()
+    override suspend fun deleteWithDraw(reason: String): Result<Unit> =
+        authRemoteDataSource.deleteWithDraw(RequestWithDrawDto(reason))
 
-    override suspend fun getUserInfo(): Result<UserInfo> =
+    override suspend fun getUserInfo(): Result<GetUserInfo> =
         authRemoteDataSource.getUserInfo()
             .mapCatching { it.toDomain() }
 

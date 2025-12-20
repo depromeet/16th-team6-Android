@@ -22,6 +22,7 @@ import okhttp3.Request
 import okhttp3.Response
 import okhttp3.ResponseBody.Companion.toResponseBody
 import timber.log.Timber
+import java.net.HttpURLConnection.HTTP_UNAUTHORIZED
 import javax.inject.Inject
 
 class AuthInterceptor @Inject constructor(
@@ -38,9 +39,9 @@ class AuthInterceptor @Inject constructor(
             if (localStorage.accessToken.isNotBlank()) originalRequest.newAuthBuilder() else originalRequest
         var response = chain.proceed(authRequest)
 
-        Timber.d("API_REQUEST : $originalRequest")
+        Timber.d("API_REQUEST : $authRequest")
         Timber.d("API_RESPONSE : $response")
-        if (response.code == HTTP_BAD_REQUEST) {
+        if (response.code == HTTP_UNAUTHORIZED) {
             // errorBody를 문자열로 읽어 소비합니다. (더이상 response를 사용할 수 없게 되기에 복제해야함)
             val errorBodyString = response.body?.string()
             // errorBody 복제를 위해 기존의 ContentType을 가져옵니다.
@@ -76,6 +77,7 @@ class AuthInterceptor @Inject constructor(
 
         return this.newBuilder()
             .addHeader(AUTHORIZATION, formattedToken)
+            .addHeader(X_PLATFORM, "Android")
             .build()
     }
 
@@ -135,6 +137,7 @@ class AuthInterceptor @Inject constructor(
             .get()
             .url("${BuildConfig.BASE_URL}$API/$AUTH/$REISSUE")
             .addHeader(AUTHORIZATION, BEARER + refreshToken)
+            .addHeader(X_PLATFORM, "Android")
             .build()
     )
 
@@ -178,9 +181,9 @@ class AuthInterceptor @Inject constructor(
     }
 
     companion object {
-        const val HTTP_BAD_REQUEST = 400
         const val CODE_TOKEN_EXPIRE = "TOK_001"
         const val AUTHORIZATION = "Authorization"
+        const val X_PLATFORM = "X-Platform"
         const val BEARER = "Bearer "
     }
 }

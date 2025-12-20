@@ -44,7 +44,7 @@ fun atChaToastMessage(
     }
 
     layout.postDelayed({
-        val slideUp = TranslateAnimation(0f, 0f, 0f, -layout.height.toFloat()).apply {
+        val slideUp = TranslateAnimation(0f, 0f, 0f, -(layout.height + yOffsetPx).toFloat()).apply {
             duration = 500L
             fillAfter = true
         }

@@ -30,26 +30,26 @@ fun TimeText(
     ) {
         Text(
             text = hour,
-            style = typography.extraBold44,
+            style = typography.display2_D2EB48,
             color = textColor
         )
 
         Text(
             text = "시",
-            style = typography.heading6Bold15,
+            style = typography.body1_B1R17,
             color = textColor,
             modifier = Modifier.padding(start = 4.dp, bottom = 8.dp, end = 12.dp)
         )
 
         Text(
             text = minute,
-            style = typography.extraBold44,
+            style = typography.display2_D2EB48,
             color = textColor
         )
 
         Text(
             text = "분",
-            style = typography.heading6Bold15,
+            style = typography.body1_B1R17,
             color = textColor,
             modifier = Modifier.padding(start = 4.dp, bottom = 8.dp)
         )

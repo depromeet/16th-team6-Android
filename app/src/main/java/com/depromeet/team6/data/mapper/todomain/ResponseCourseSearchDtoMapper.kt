@@ -60,7 +60,8 @@ fun List<ResponseCourseSearchDto>.toDomain(): List<CourseInfo> = filter { respon
                     lon = it.lon,
                     lat = it.lat
                 )
-            } ?: emptyList()
+            } ?: emptyList(),
+            targetBusTerm = leg.targetBusTerm
         )
     }
 
@@ -71,7 +72,7 @@ fun List<ResponseCourseSearchDto>.toDomain(): List<CourseInfo> = filter { respon
         filterCategory = (3 - response.pathType) % 3, // 1 지하철, 2 버스, 3 전체 ->  0 : 전체,  1: 버스,  2: 지하철
         totalTime = response.totalTime,
         departureTime = response.departureDateTime,
-        boardingTime = boardingDateTime ?: "1999-06-06T00:00:00",
+        boardingTime = boardingDateTime ?: response.departureDateTime,
         legs = legInfo
     )
 }

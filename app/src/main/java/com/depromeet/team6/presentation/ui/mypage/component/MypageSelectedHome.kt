@@ -34,7 +34,6 @@ fun MypageSelectedHome(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 20.dp)
-            .noRippleClickable { onClick() }
     ) {
         Column(
             modifier = Modifier
@@ -44,19 +43,19 @@ fun MypageSelectedHome(
             if (homeLocation.name.isNotEmpty()) {
                 Text(
                     text = homeLocation.name,
-                    style = defaultTeam6Typography.heading6Bold15,
+                    style = defaultTeam6Typography.body2_B2SB15,
                     color = defaultTeam6Colors.white
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = homeLocation.address,
-                    style = defaultTeam6Typography.bodySemiBold13,
-                    color = defaultTeam6Colors.greyTertiaryLabel
+                    style = defaultTeam6Typography.body6_B6R14,
+                    color = defaultTeam6Colors.gray400
                 )
             } else {
                 Text(
                     text = homeLocation.address,
-                    style = defaultTeam6Typography.heading6Bold15,
+                    style = defaultTeam6Typography.body2_B2SB15,
                     color = defaultTeam6Colors.white
                 )
             }
@@ -67,9 +66,10 @@ fun MypageSelectedHome(
                 .fillMaxWidth()
                 .border(
                     width = 1.dp,
-                    color = defaultTeam6Colors.greyDefaultButton,
+                    color = defaultTeam6Colors.gray910,
                     shape = RoundedCornerShape(8.dp)
                 )
+                .noRippleClickable { onClick() }
                 .roundedBackgroundWithPadding(
                     cornerRadius = 8.dp,
                     padding = PaddingValues(vertical = 11.dp)
@@ -79,7 +79,7 @@ fun MypageSelectedHome(
         ) {
             Text(
                 text = stringResource(R.string.mypage_change_home_button_text),
-                style = defaultTeam6Typography.bodyRegular14,
+                style = defaultTeam6Typography.body6_B6R14,
                 color = defaultTeam6Colors.white
             )
         }

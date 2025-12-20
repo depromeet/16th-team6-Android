@@ -46,9 +46,17 @@ class UserInfoLocalDataSource @Inject constructor(
         get() = getValue(FCM_TOKEN)
         set(value) = setValue(FCM_TOKEN, value)
 
-    var alarmSound: Boolean
+    var isAlarmSound: Boolean
         get() = getBooleanValue(ALARM_SOUND_SETTING, true)
         set(value) = setBooleanValue(ALARM_SOUND_SETTING, value)
+
+    var isAlarmVibrate: Boolean
+        get() = getBooleanValue(ALARM_VIBRATION_SETTING, false)
+        set(value) = setBooleanValue(ALARM_VIBRATION_SETTING, value)
+
+    var alarmVolume: Int
+        get() = getIntValue(ALARM_VOLUME, 1)
+        set(value) = setIntValue(ALARM_VOLUME, value)
 
     var userHome: LatLng
         get() {
@@ -72,10 +80,7 @@ class UserInfoLocalDataSource @Inject constructor(
         set(value) = setIntValue(USER_ID, value)
 
     fun clear() {
-        setValue(REFRESH_TOKEN, "")
-        setValue(ACCESS_TOKEN, "")
-        setValue(FCM_TOKEN, "")
-        setIntValue(USER_ID, INITIAL_INT)
+        sharedPreferences.edit().clear().apply()
         AmplitudeUtils.resetUserId()
     }
 
@@ -103,6 +108,8 @@ class UserInfoLocalDataSource @Inject constructor(
         private const val FCM_TOKEN = "fcm_token"
         private const val USER_HOME = "user_home"
         private const val ALARM_SOUND_SETTING = "alarm_sound_setting"
+        private const val ALARM_VIBRATION_SETTING = "alarm_vibration_setting"
+        private const val ALARM_VOLUME = "alarm_volume"
         private const val USER_ID = "user_id"
         private const val INITIAL_INT = -1
     }

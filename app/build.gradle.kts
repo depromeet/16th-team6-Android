@@ -9,6 +9,8 @@ plugins {
     alias(libs.plugins.dagger.hilt)
     alias(libs.plugins.kotlin.kapt)
     id("com.google.gms.google-services")
+    // Firebase Crashlytics
+    id("com.google.firebase.crashlytics")
 }
 
 val properties = Properties().apply {
@@ -36,9 +38,9 @@ android {
     defaultConfig {
         applicationId = "com.depromeet.team6"
         minSdk = 26
-        targetSdk = 34
-        versionCode = 13
-        versionName = "1.2.2"
+        targetSdk = 35
+        versionCode = 22
+        versionName = "1.3.3"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "KAKAO_NATIVE_APP_KEY", properties["kakao.native.app.key"].toString())
@@ -52,6 +54,7 @@ android {
             isShrinkResources = true
             buildConfigField("String", "BASE_URL", properties["release.base.url"].toString())
             buildConfigField("String", "AMPLITUDE_API_KEY", properties["amplitude.prod.api.key"].toString())
+            buildConfigField("String", "LAST_ROUTE", properties["LAST_ROUTE"].toString())
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -61,8 +64,16 @@ android {
         debug {
             isMinifyEnabled = false
             isDebuggable = true
+            versionNameSuffix = "-DEBUG"
             buildConfigField("String", "BASE_URL", properties["dev.base.url"].toString())
             buildConfigField("String", "AMPLITUDE_API_KEY", properties["amplitude.dev.api.key"].toString())
+            buildConfigField("String", "LAST_ROUTE", properties["LAST_ROUTE_V2"].toString())
+        }
+        create("benchmark") {
+            initWith(buildTypes.getByName("release"))
+            signingConfig = signingConfigs.getByName("debug")
+            matchingFallbacks += listOf("release")
+            isDebuggable = false
         }
     }
     compileOptions {
@@ -76,6 +87,10 @@ android {
         compose = true
         buildConfig = true
     }
+}
+
+composeCompiler {
+    enableStrongSkippingMode = true
 }
 
 dependencies {
@@ -95,6 +110,8 @@ dependencies {
     implementation(libs.play.services.location)
     implementation(libs.play.services.auth)
     implementation(libs.androidx.runtime.livedata)
+    implementation(libs.accompanist.flowlayout)
+    implementation(libs.kotlinx.collections.immutable)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -126,13 +143,16 @@ dependencies {
     implementation(libs.androidx.security.crypto)
 
     // Tmap
-    implementation(files("libs/tmap-sdk-1.9.aar"))
-    implementation(files("libs/vsm-tmap-sdk-v2-android-1.7.23.aar"))
+    implementation(files("libs/tmap-sdk-2.9.aar"))
+    implementation(files("libs/vsm-tmap-sdk-v2-android-1.7.45.aar"))
     implementation(libs.flatbuffers.java)
 
     // Firebase
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
+    // Firebase Crashlytics
+    implementation(libs.firebase.crashlytics)
+    implementation(libs.google.firebase.analytics)
 
     // WebView
     implementation(libs.accompanist.webview)

@@ -37,7 +37,7 @@ fun OnboardingSearchContainer(
             modifier = Modifier
                 .fillMaxWidth()
                 .roundedBackgroundWithPadding(
-                    backgroundColor = defaultTeam6Colors.systemGrey6,
+                    backgroundColor = defaultTeam6Colors.gray930,
                     cornerRadius = 8.dp
                 )
                 .padding(horizontal = 16.dp, vertical = 12.dp)
@@ -47,8 +47,8 @@ fun OnboardingSearchContainer(
         ) {
             Text(
                 text = stringResource(R.string.onboarding_search_text_field_placeholder),
-                color = defaultTeam6Colors.greyTertiaryLabel,
-                style = defaultTeam6Typography.bodyRegular17
+                color = defaultTeam6Colors.gray400,
+                style = defaultTeam6Typography.body1_B1R17
             )
         }
         Spacer(modifier = Modifier.height(16.dp))

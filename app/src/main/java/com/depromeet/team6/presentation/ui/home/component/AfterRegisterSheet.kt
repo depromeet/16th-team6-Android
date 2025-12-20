@@ -7,11 +7,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -32,7 +30,6 @@ import com.depromeet.team6.R
 import com.depromeet.team6.domain.model.course.TransportType
 import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_ITINERARY_CLICKED_AFTER_DEPARTURE
 import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_ITINERARY_CLICKED_ARRIVAL
-import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_ITINERARY_CLICKED_SET_TIME
 import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_ITINERARY_CLICKED_SUGGESTED
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.ui.theme.LocalTeam6Colors
@@ -41,7 +38,7 @@ import com.depromeet.team6.ui.theme.LocalTeam6Typography
 @Composable
 fun AfterRegisterSheet(
     timerFinish: Boolean,
-    isConfirmed: Boolean,
+//    isConfirmed: Boolean,
     afterUserDeparted: Boolean,
     transportType: TransportType,
     transportationNumber: Int,
@@ -69,22 +66,21 @@ fun AfterRegisterSheet(
 
     var externalTriggerCount by remember { mutableStateOf(0) }
 
-    var timeTextColor = colors.systemGrey1
-    if (isConfirmed) timeTextColor = colors.white
-    if (afterUserDeparted) timeTextColor = colors.systemRed
+    var timeTextColor = colors.white
+//    if (afterUserDeparted) timeTextColor = colors.systemRed
 
     Box(
-        modifier = Modifier
-            .fillMaxSize()
+        modifier = modifier
+            .fillMaxWidth()
             .height(248.dp)
             .zIndex(1f),
         contentAlignment = Alignment.BottomCenter
     ) {
         Column(
-            modifier = modifier
+            modifier = Modifier
                 .fillMaxWidth()
                 .background(
-                    colors.greyWashBackground,
+                    colors.gray950,
                     shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)
                 )
                 .padding(horizontal = 16.dp, vertical = 20.dp)
@@ -102,82 +98,85 @@ fun AfterRegisterSheet(
                     modifier = Modifier
                         .align(Alignment.CenterStart)
                         .noRippleClickable {
-                            when {
-                                isConfirmed && !afterUserDeparted -> onHomeDepartureTimeClick()
-                                !isConfirmed && !afterUserDeparted -> onHomeExpectDepartureTimeClick()
-                            }
+                            onHomeDepartureTimeClick()
+//                            when {
+//                                isConfirmed && !afterUserDeparted -> onHomeDepartureTimeClick()
+//                                !isConfirmed && !afterUserDeparted -> onHomeExpectDepartureTimeClick()
+//                            }
                         }
                 ) {
-                    if (afterUserDeparted && !timerFinish) { // 사용자 출발 후
-                        TransportStatus(
-                            transportationType = transportType,
-                            transportationNumber = transportationNumber,
-                            transportationName = transportationName,
-                            stopLeft = busStationLeft
-                        )
-                    } else if (afterUserDeparted && timerFinish) {
+                    // 버스 + 남은 정류장 정보 표시
+//                    if (afterUserDeparted && !timerFinish) { // 사용자 출발 후
+//                        TransportStatus(
+//                            transportationType = transportType,
+//                            transportationNumber = transportationNumber,
+//                            transportationName = transportationName,
+//                            stopLeft = busStationLeft
+//                        )
+//                    } else if (afterUserDeparted && timerFinish) {
+                    if (afterUserDeparted) {
                         Text(
                             text = stringResource(R.string.home_final_departure_time_text),
-                            style = typography.bodyMedium13,
-                            color = colors.white
-                        )
-                    } else if (isConfirmed) {
-                        Text(
-                            text = stringResource(R.string.home_start_time_text),
-                            style = typography.bodyMedium13,
+                            style = typography.body7_B7M13,
                             color = colors.white
                         )
                     } else {
                         Text(
-                            text = stringResource(R.string.home_expect_start_time_text),
-                            style = typography.bodyMedium13,
+                            text = stringResource(R.string.home_start_time_text),
+                            style = typography.body7_B7M13,
                             color = colors.white
                         )
                     }
 
-                    if (!afterUserDeparted) {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(R.drawable.ic_all_info_grey),
-                            contentDescription = stringResource(R.string.home_icon_info),
-                            modifier = Modifier
-                                .padding(horizontal = 5.dp)
-                                .clickable {
-                                    onIconClick()
-                                },
-                            tint = colors.systemGrey1
-                        )
-                    }
+                    Icon(
+                        imageVector = ImageVector.vectorResource(R.drawable.ic_all_info_grey),
+                        contentDescription = stringResource(R.string.home_icon_info),
+                        modifier = Modifier
+                            .padding(horizontal = 6.dp)
+                            .clickable {
+                                onIconClick()
+                            },
+                        tint = colors.gray300
+                    )
                 }
 
                 // 새로고침 버튼 (조건부로 오른쪽에 표시)
-                if ((isConfirmed || afterUserDeparted) && !timerFinish) {
-                    RefreshLottieButton(
-                        onClick = onRefreshClick,
-                        tint = colors.white,
-                        modifier = Modifier
-                            .size(24.dp)
-                            .align(Alignment.CenterEnd) // Box 내부 오른쪽에 정렬
-                            .padding(end = 5.dp)
-                    )
-                }
+//                if (!timerFinish) {
+//                    RefreshLottieButton(
+//                        onClick = onRefreshClick,
+//                        tint = colors.white,
+//                        modifier = Modifier
+//                            .size(24.dp)
+//                            .align(Alignment.CenterEnd) // Box 내부 오른쪽에 정렬
+//                            .padding(end = 5.dp)
+//                    )
+//                }
             }
 
             // 사용자가 잠금화면 출발하기 버튼 눌러서 출발했을 때
             if (afterUserDeparted) {
-                if (!timerFinish) {
-                    LastTimer(
-                        departureTime = boardingTime,
-                        textColor = colors.systemRed,
-                        modifier = Modifier.padding(top = 8.dp, bottom = 4.dp),
-                        onTimerFinished = onTimerFinished
-                    )
-                } else {
+//                if (!timerFinish) {
+//                    LastTimer(
+//                        departureTime = boardingTime,
+//                        textColor = colors.systemRed,
+//                        modifier = Modifier.padding(top = 8.dp, bottom = 4.dp),
+//                        onTimerFinished = onTimerFinished
+//                    )
+//                } else {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .noRippleClickable {
+                            onHomeDepartureTimeClick()
+                        }
+                ) {
                     TimeText(
                         timeToLeave = homeArrivedTime,
                         textColor = colors.white,
                         modifier = Modifier.padding(top = 8.dp, bottom = 4.dp)
                     )
                 }
+//                }
             } else {
                 TimeText(
                     timeToLeave = timeToLeave,
@@ -189,11 +188,10 @@ fun AfterRegisterSheet(
             CourseTextButton(
                 startLocation = startLocation,
                 destination = destination,
-                onClick = onCourseTextClick,
-                modifier = modifier
+                onClick = onCourseTextClick
             )
 
-            Spacer(modifier = modifier.height(26.dp))
+            Spacer(modifier = Modifier.height(26.dp))
 
             FinishCourseDetailButton(
                 onFinishClick = {
@@ -204,13 +202,12 @@ fun AfterRegisterSheet(
                         onCourseDetailClick(HOME_ITINERARY_CLICKED_AFTER_DEPARTURE)
                     } else if (afterUserDeparted && timerFinish) {
                         onCourseDetailClick(HOME_ITINERARY_CLICKED_ARRIVAL)
-                    } else if (isConfirmed) {
-                        onCourseDetailClick(HOME_ITINERARY_CLICKED_SET_TIME)
+//                    } else if (isConfirmed) {
+//                        onCourseDetailClick(HOME_ITINERARY_CLICKED_SET_TIME)
                     } else {
                         onCourseDetailClick(HOME_ITINERARY_CLICKED_SUGGESTED)
                     }
-                },
-                modifier = modifier
+                }
             )
         }
     }
@@ -233,7 +230,7 @@ fun AfterRegisterSheetPreview() {
         onCourseDetailClick = { },
         modifier = Modifier,
         onRefreshClick = { },
-        isConfirmed = false,
+//        isConfirmed = false,
         boardingTime = "15:30:00",
         deleteAlarmConfirmed = {},
         dismissDialog = {},

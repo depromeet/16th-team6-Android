@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -16,6 +15,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.depromeet.team6.R
+import com.depromeet.team6.presentation.ui.common.textfields.TextFieldLocation
 import com.depromeet.team6.ui.theme.LocalTeam6Colors
 
 @Composable
@@ -31,7 +31,7 @@ fun CurrentLocationSheet(
 
     Box(
         modifier = modifier
-            .fillMaxSize()
+            .fillMaxWidth()
             .height(220.dp),
         contentAlignment = Alignment.BottomCenter
     ) {
@@ -39,27 +39,27 @@ fun CurrentLocationSheet(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(
-                    colors.greyWashBackground,
+                    colors.gray950,
                     shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)
                 )
                 .padding(start = 16.dp, end = 16.dp, top = 24.dp, bottom = 20.dp)
         ) {
-            LocationText(
+            TextFieldLocation(
                 locationTitle = stringResource(R.string.home_current_location_text),
                 location = currentLocation,
                 textColor = colors.systemGreen,
-                backgroundColor = colors.systemGrey6,
+                backgroundColor = colors.gray930,
                 modifier = Modifier,
                 onClick = { onSearchLocationClick() }
             )
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            LocationText(
+            TextFieldLocation(
                 locationTitle = stringResource(R.string.home_destination_text),
                 location = destination,
-                textColor = colors.greySecondaryLabel,
-                backgroundColor = colors.greyWashBackground,
+                textColor = colors.gray200,
+                backgroundColor = colors.gray950,
                 onClick = { onDestinationClick() },
                 modifier = Modifier
             )

@@ -25,14 +25,14 @@ fun OnboardingTitle(onboardingType: OnboardingType, modifier: Modifier = Modifie
     ) {
         Text(
             text = stringResource(id = onboardingType.titleStringRes),
-            style = defaultTeam6Typography.heading2Bold26,
+            style = defaultTeam6Typography.heading1_H1B22,
             color = defaultTeam6Colors.white
         )
         Spacer(modifier = Modifier.height(12.dp))
         Text(
             text = stringResource(id = onboardingType.subTitleStringRes),
-            style = defaultTeam6Typography.bodyRegular15,
-            color = defaultTeam6Colors.greySecondaryLabel
+            style = defaultTeam6Typography.body4_B4R15,
+            color = defaultTeam6Colors.gray200
         )
     }
 }

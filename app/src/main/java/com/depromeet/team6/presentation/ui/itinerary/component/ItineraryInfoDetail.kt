@@ -26,13 +26,18 @@ import com.depromeet.team6.domain.model.RealTimeBusArrival
 import com.depromeet.team6.domain.model.course.LegInfo
 import com.depromeet.team6.presentation.model.bus.BusArrivalParameter
 import com.depromeet.team6.presentation.ui.itinerary.LegInfoDummyProvider
+import com.depromeet.team6.presentation.util.DefaultLatLng.DEFAULT_LAT
+import com.depromeet.team6.presentation.util.DefaultLatLng.DEFAULT_LNG
 import com.depromeet.team6.presentation.util.Dimens
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.depromeet.team6.ui.theme.defaultTeam6Typography
+import com.google.android.gms.maps.model.LatLng
 
 @Composable
 fun ItineraryInfoDetail(
+    currentLocation: LatLng,
     legs: List<LegInfo>,
+    userDeparted: Boolean,
     busArrivalStatus: SparseArray<RealTimeBusArrival>,
     departureTime: String,
     departureName: String,
@@ -54,6 +59,8 @@ fun ItineraryInfoDetail(
         )
 
         ItineraryInfoDetailLegs(
+            currentLocation = currentLocation,
+            userDeparted = userDeparted,
             legs = legs,
             onClickBusInfo = onClickBusInfo,
             busArrivalStatus = busArrivalStatus
@@ -72,8 +79,8 @@ fun ItineraryInfoDetail(
                 .padding(top = 72.dp)
                 .align(Alignment.CenterHorizontally),
             text = stringResource(R.string.itinerary_info_legs_data_source),
-            style = defaultTeam6Typography.bodyRegular12,
-            color = defaultTeam6Colors.systemGrey1
+            style = defaultTeam6Typography.detail1_R12,
+            color = defaultTeam6Colors.gray300
         )
     }
 }
@@ -111,7 +118,7 @@ private fun ItineraryInfoSuffix(
                 .height(36.dp)
                 .wrapContentSize(Alignment.Center),
             text = name,
-            style = defaultTeam6Typography.bodySemiBold14,
+            style = defaultTeam6Typography.body5_B5SB14,
             color = defaultTeam6Colors.white
         )
     }
@@ -123,7 +130,9 @@ fun ItineraryInfoDetailPreview(
     @PreviewParameter(LegInfoDummyProvider::class) legs: List<LegInfo>
 ) {
     ItineraryInfoDetail(
+        currentLocation = LatLng(DEFAULT_LAT, DEFAULT_LNG),
         legs = legs,
+        userDeparted = true,
         departureTime = "2025-03-11T22:12:00",
         departureName = "중앙빌딩",
         arrivalTime = "2025-03-11T00:21:00",

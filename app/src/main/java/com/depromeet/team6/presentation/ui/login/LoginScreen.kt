@@ -2,16 +2,16 @@ package com.depromeet.team6.presentation.ui.login
 
 import android.content.Context
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,16 +19,16 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.paint
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.painter.BitmapPainter
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -38,9 +38,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import com.depromeet.team6.R
 import com.depromeet.team6.presentation.type.LoginViewPagerType
+import com.depromeet.team6.presentation.ui.common.view.AtChaLoadingView
+import com.depromeet.team6.presentation.ui.common.view.AtChaTreeDotsLoadingView
 import com.depromeet.team6.presentation.ui.login.component.LoginIndicator
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
-import com.depromeet.team6.presentation.util.modifier.roundedBackgroundWithPadding
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.depromeet.team6.ui.theme.Team6Theme
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
@@ -82,7 +83,6 @@ fun LoginRoute(
     }
 
     LaunchedEffect(Unit) {
-        viewModel.checkAutoLogin()
         while (true) {
             delay(4000L)
 
@@ -117,6 +117,7 @@ fun LoginRoute(
             }
 
             LoadState.Error -> {
+                viewModel.setEvent(LoginContract.LoginEvent.SetLoadingState(isLoading = false))
                 navigateToOnboarding()
             }
 
@@ -126,14 +127,30 @@ fun LoginRoute(
 
     when (uiState.loadState) {
         LoadState.Idle -> {
-            LoginScreen(
-                padding = padding,
-                uiState = uiState,
-                onSignInClicked = {
-                    setLayoutLoginKakaoClickListener(context = context, callback = callback)
-                },
-                modifier = modifier
-            )
+            Box(modifier = modifier.fillMaxSize()) {
+                LoginScreen(
+                    padding = padding,
+                    uiState = uiState,
+                    onLoginClicked = {
+                        viewModel.setEvent(LoginContract.LoginEvent.SetLoadingState(isLoading = true))
+                        setLayoutLoginKakaoClickListener(context = context, callback = callback)
+                    },
+                    modifier = modifier
+                )
+                if (uiState.isLoading) {
+                    AtChaTreeDotsLoadingView(
+                        isLoading = uiState.isLoading,
+                        loadingText = "로그인 중",
+                        modifier = Modifier
+                            .padding(horizontal = 36.dp)
+                            .align(Alignment.Center)
+                    )
+                }
+            }
+        }
+
+        LoadState.Loading -> {
+            AtChaLoadingView()
         }
 
         LoadState.Success -> navigateToHome()
@@ -146,18 +163,28 @@ fun LoginRoute(
 @Composable
 fun LoginScreen(
     padding: PaddingValues,
+    modifier: Modifier = Modifier,
     uiState: LoginContract.LoginUiState = LoginContract.LoginUiState(),
-    onSignInClicked: () -> Unit = {},
-    modifier: Modifier = Modifier
+    onLoginClicked: () -> Unit = {}
 ) {
     Column(
         modifier = modifier
             .fillMaxSize()
-            .paint(
-                painter = BitmapPainter(ImageBitmap.imageResource(R.drawable.img_login_background)),
-                contentScale = ContentScale.Crop
-            ).padding(padding)
+            .background(
+                brush = Brush.verticalGradient(
+                    colors = listOf(
+                        Color(0xFF121212),
+                        Color(0xFF262626)
+                    )
+                )
+            )
+            .padding(padding)
     ) {
+        Spacer(modifier = Modifier.height(56.dp))
+        LoginIndicator(
+            selectedIndex = uiState.pagerState.currentPage,
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+        )
         HorizontalPager(
             count = LoginViewPagerType.entries.size,
             state = uiState.pagerState,
@@ -167,6 +194,13 @@ fun LoginScreen(
         ) { page ->
             val loginViewPagerType = LoginViewPagerType.entries[page]
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Spacer(modifier = Modifier.height(30.dp))
+                Text(
+                    text = stringResource(loginViewPagerType.textRes),
+                    style = defaultTeam6Typography.heading1_H1B22,
+                    color = defaultTeam6Colors.white,
+                    textAlign = TextAlign.Center
+                )
                 Spacer(modifier = Modifier.weight(1f))
                 Image(
                     painter = painterResource(id = loginViewPagerType.imageRes),
@@ -175,47 +209,30 @@ fun LoginScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                 )
-                Spacer(modifier = Modifier.weight(1f))
-                Text(
-                    text = stringResource(loginViewPagerType.mainTextRes),
-                    style = defaultTeam6Typography.heading2Bold26,
-                    color = defaultTeam6Colors.white,
-                    textAlign = TextAlign.Center
-                )
-                Spacer(Modifier.height(12.dp))
-                Text(
-                    text = stringResource(loginViewPagerType.subTextRes),
-                    style = defaultTeam6Typography.bodyRegular14,
-                    color = defaultTeam6Colors.greySecondaryLabel
-                )
+                Spacer(modifier = Modifier.height(60.dp))
             }
         }
-        Spacer(modifier = Modifier.height(28.dp))
-        LoginIndicator(
-            selectedIndex = uiState.pagerState.currentPage,
-            modifier = Modifier.align(Alignment.CenterHorizontally)
-        )
-        Row(
+        Box(
             modifier = Modifier
                 .padding(start = 24.dp, top = 28.dp, end = 24.dp, bottom = 20.dp)
                 .fillMaxWidth()
-                .roundedBackgroundWithPadding(
-                    backgroundColor = defaultTeam6Colors.kakaoLoginButton,
-                    cornerRadius = 8.dp
+                .background(
+                    color = defaultTeam6Colors.kakaoLoginButton,
+                    shape = RoundedCornerShape(8.dp)
                 )
-                .noRippleClickable { onSignInClicked() },
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
+                .noRippleClickable { onLoginClicked() }
+                .semantics { contentDescription = "kakao_login_button" }
+                .padding(horizontal = 22.dp, vertical = 14.dp)
         ) {
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.ic_login_kakao),
                 contentDescription = null,
-                modifier = Modifier.padding(vertical = 16.dp)
+                modifier = Modifier.align(Alignment.CenterStart)
             )
-            Spacer(modifier = Modifier.width(8.dp))
             Text(
-                text = "카카오 계정으로 시작하기",
-                style = defaultTeam6Typography.heading6Bold15
+                text = "카카오 계정으로 계속하기",
+                style = defaultTeam6Typography.body2_B2SB15,
+                modifier = Modifier.align(Alignment.Center)
             )
         }
     }

@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -29,6 +30,7 @@ import com.depromeet.team6.R
 import com.depromeet.team6.domain.model.course.CourseInfo
 import com.depromeet.team6.domain.model.course.LegInfo
 import com.depromeet.team6.presentation.ui.itinerary.LegInfoDummyProvider
+import com.depromeet.team6.presentation.util.dialog.LocalDialogController
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.depromeet.team6.ui.theme.defaultTeam6Typography
@@ -43,10 +45,12 @@ fun LastTransportInfoItem(
     courseInfoToggleClick: () -> Unit = {},
     onItemClick: (String, Boolean) -> Unit = { _, _ -> }
 ) {
+    val dialogController = LocalDialogController.current
+    val context = LocalContext.current
     Column(
         modifier = modifier
             .clip(RoundedCornerShape(12.dp))
-            .background(defaultTeam6Colors.greyCard)
+            .background(defaultTeam6Colors.gray940)
             .padding(vertical = 20.dp, horizontal = 16.dp)
             .clickable {
                 onItemClick(
@@ -66,7 +70,7 @@ fun LastTransportInfoItem(
                         id = R.string.last_transport_info_remaining_hour,
                         remainingHour
                     ),
-                    style = defaultTeam6Typography.heading3Bold22,
+                    style = defaultTeam6Typography.heading1_H1B22,
                     color = defaultTeam6Colors.white
                 )
                 Spacer(
@@ -79,7 +83,7 @@ fun LastTransportInfoItem(
                         id = R.string.last_transport_info_remaining_minute,
                         remainingMinute
                     ),
-                    style = defaultTeam6Typography.heading3Bold22,
+                    style = defaultTeam6Typography.heading1_H1B22,
                     color = defaultTeam6Colors.white
                 )
             }
@@ -100,8 +104,8 @@ fun LastTransportInfoItem(
                 text = stringResource(
                     id = R.string.course_detail_description
                 ),
-                style = defaultTeam6Typography.bodyRegular12,
-                color = defaultTeam6Colors.greySecondaryLabel
+                style = defaultTeam6Typography.detail1_R12,
+                color = defaultTeam6Colors.gray200
             )
             Image(
                 modifier = Modifier
@@ -137,8 +141,8 @@ fun LastTransportInfoItem(
                 isDeparture = true
             )
             Text(
-                style = defaultTeam6Typography.bodyRegular13,
-                color = defaultTeam6Colors.greySecondaryLabel,
+                style = defaultTeam6Typography.body7_B7M13,
+                color = defaultTeam6Colors.gray200,
                 text = stringResource(R.string.last_transport_info_departure_time)
             )
             RemainingTimeHHmm(
@@ -147,8 +151,8 @@ fun LastTransportInfoItem(
                 isDeparture = false
             )
             Text(
-                style = defaultTeam6Typography.bodyRegular13,
-                color = defaultTeam6Colors.greySecondaryLabel,
+                style = defaultTeam6Typography.body7_B7M13,
+                color = defaultTeam6Colors.gray200,
                 text = stringResource(R.string.last_transport_info_boarding_time)
             )
         }
@@ -174,7 +178,18 @@ fun LastTransportInfoItem(
         // 막차 알림 받기 버튼
         SetNotificationButton(
             btnClickEvent = {
-                onRegisterAlarmBtnClick(courseSearchResult.routeId)
+                if (hasLongTerm(courseSearchResult.legs)) {
+                    dialogController.showAtchaTwoButtonAlert(
+                        message = context.getString(R.string.course_search_long_term_alert),
+                        onConfirm = {
+                            onRegisterAlarmBtnClick(courseSearchResult.routeId)
+                        },
+                        confirmButtonText = context.getString(R.string.last_transport_info_set_notification_dialog),
+                        closeButtonText = context.getString(R.string.dialog_finish_alarm_back_text)
+                    )
+                } else {
+                    onRegisterAlarmBtnClick(courseSearchResult.routeId)
+                }
             }
         )
     }
@@ -188,12 +203,12 @@ fun SetNotificationButton(
     Row(
         modifier = Modifier
             .clip(RoundedCornerShape(8.dp))
-            .background(color = defaultTeam6Colors.greyDefaultButton)
-            .padding(vertical = 13.dp, horizontal = 28.dp)
-            .fillMaxWidth()
+            .background(color = defaultTeam6Colors.gray910)
             .noRippleClickable {
                 btnClickEvent()
-            },
+            }
+            .padding(vertical = 13.dp, horizontal = 28.dp)
+            .fillMaxWidth(),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -208,7 +223,7 @@ fun SetNotificationButton(
             modifier = Modifier.width(4.dp)
         )
         Text(
-            style = defaultTeam6Typography.bodyMedium14,
+            style = defaultTeam6Typography.body6_B6R14,
             color = defaultTeam6Colors.white,
             text = stringResource(R.string.last_transport_info_set_notification)
         )
@@ -231,12 +246,20 @@ fun RemainingTimeHHmm(
     Text(
         modifier = Modifier
             .clip(RoundedCornerShape(20.dp))
-            .background(defaultTeam6Colors.greyDefaultButton)
+            .background(defaultTeam6Colors.gray910)
             .padding(vertical = 4.dp, horizontal = 8.dp),
         color = color,
         text = stringResource(R.string.last_transport_info_remaining_time, hour, minute),
-        style = defaultTeam6Typography.bodySemiBold12
+        style = defaultTeam6Typography.body7_B7M13
     )
+}
+
+private fun hasLongTerm(legs: List<LegInfo>): Boolean {
+    for (leg in legs) {
+        if (leg.targetBusTerm == null) continue
+        if (leg.targetBusTerm > 40) return true
+    }
+    return false
 }
 
 @Preview(name = "more than 1 hour", showBackground = true, backgroundColor = android.graphics.Color.BLACK.toLong())

@@ -27,20 +27,20 @@ fun CharacterSpeechBubble(
         modifier = modifier.noRippleClickable { onClick() }
     ) {
         if (showSpeechBubble) {
-            SpeechBubble(
-                prefix = prefixText,
-                modifier = Modifier,
-                emphasisText = emphasisText,
-                suffix = suffixText,
-                tailExist = true
-            )
+//            AtchaSpeechBubble(
+//                prefix = prefixText,
+//                modifier = Modifier,
+//                emphasisText = emphasisText,
+//                suffix = suffixText,
+//                tailExist = true
+//            )
 
             Spacer(modifier = Modifier.height(2.dp))
         }
 
         Image(
-            imageVector = ImageVector.vectorResource(R.drawable.ic_all_acha_character),
-            contentDescription = stringResource(R.string.all_acha_character)
+            imageVector = ImageVector.vectorResource(R.drawable.ic_all_atcha_character),
+            contentDescription = stringResource(R.string.all_atcha_character)
         )
     }
 }

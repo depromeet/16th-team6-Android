@@ -1,5 +1,6 @@
 package com.depromeet.team6.di
 
+import android.content.Context
 import com.depromeet.team6.data.dataremote.service.AlarmService
 import com.depromeet.team6.data.dataremote.service.AuthService
 import com.depromeet.team6.data.dataremote.service.DummyService
@@ -8,10 +9,14 @@ import com.depromeet.team6.data.dataremote.service.LocationsService
 import com.depromeet.team6.data.dataremote.service.TaxiCostService
 import com.depromeet.team6.data.dataremote.service.TimeLeftService
 import com.depromeet.team6.data.dataremote.service.TransitsService
+import com.depromeet.team6.data.dataremote.service.VersionService
 import com.depromeet.team6.di.qualifier.Team6
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
 import javax.inject.Singleton
@@ -19,6 +24,12 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object ServiceModule {
+    @Provides
+    @Singleton
+    fun provideFusedLocationProviderClient(@ApplicationContext context: Context): FusedLocationProviderClient {
+        return LocationServices.getFusedLocationProviderClient(context)
+    }
+
     @Provides
     @Singleton
     fun providesService(@Team6 retrofit: Retrofit): DummyService =
@@ -58,4 +69,9 @@ object ServiceModule {
     @Singleton
     fun providesCourseService(@Team6 retrofit: Retrofit): TransitsService =
         retrofit.create(TransitsService::class.java)
+
+    @Provides
+    @Singleton
+    fun providesVersionService(@Team6 retrofit: Retrofit): VersionService =
+        retrofit.create(VersionService::class.java)
 }

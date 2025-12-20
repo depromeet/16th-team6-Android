@@ -10,10 +10,6 @@ import com.depromeet.team6.domain.usecase.GetLocationsUseCase
 import com.depromeet.team6.domain.usecase.PostSignUpUseCase
 import com.depromeet.team6.presentation.mapper.toPresentationList
 import com.depromeet.team6.presentation.type.OnboardingType
-import com.depromeet.team6.presentation.util.AmplitudeCommon.SCREEN_NAME
-import com.depromeet.team6.presentation.util.AmplitudeCommon.USER_ID
-import com.depromeet.team6.presentation.util.OnboardingAmplitude.ALARM_REGISTER
-import com.depromeet.team6.presentation.util.OnboardingAmplitude.USER_ALARM_FREQUENCIES
 import com.depromeet.team6.presentation.util.Provider.KAKAO
 import com.depromeet.team6.presentation.util.Token.BEARER
 import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
@@ -73,10 +69,6 @@ class OnboardingViewModel @Inject constructor(
                 )
             }
 
-            is OnboardingContract.OnboardingEvent.UpdateAlertFrequencies -> setState {
-                copy(alertFrequencies = event.alertFrequencies)
-            }
-
             is OnboardingContract.OnboardingEvent.ChangePermissionBottomSheetVisible -> setState {
                 copy(permissionBottomSheetVisible = event.permissionBottomSheetVisible)
             }
@@ -86,10 +78,6 @@ class OnboardingViewModel @Inject constructor(
                 copy(
                     searchPopupVisible = false
                 )
-            }
-
-            is OnboardingContract.OnboardingEvent.ChangePermissionDeniedBottomSheetVisible -> setState {
-                copy(permissionDeniedBottomSheetVisible = event.permissionDeniedBottomSheetVisible)
             }
 
             is OnboardingContract.OnboardingEvent.ClearAddress -> setState {
@@ -105,6 +93,11 @@ class OnboardingViewModel @Inject constructor(
 
             is OnboardingContract.OnboardingEvent.ChangeMapViewVisible -> setState {
                 copy(mapViewVisible = event.mapViewVisible)
+            }
+
+            is OnboardingContract.OnboardingEvent.UpdateAlarmSetup -> {
+                saveAlarmSetup(event.type, event.volume)
+                postSignUp()
             }
         }
     }
@@ -127,24 +120,24 @@ class OnboardingViewModel @Inject constructor(
                             searchLocations = locations.toPresentationList()
                         )
                     }
-                }.onFailure {
+                }.onFailure { exception ->
                     setState { copy(searchLocations = emptyList()) }
+                    handleApiException(exception = exception)
                 }
             }
         }
     }
 
     fun postSignUp() {
-        setEvent(OnboardingContract.OnboardingEvent.PostSignUp(loadState = LoadState.Loading))
+//        setEvent(OnboardingContract.OnboardingEvent.PostSignUp(loadState = LoadState.Loading))
         viewModelScope.launch {
             val token = getFcmTokenSafely()
             postSignUpUseCase(
-                signUp = SignUp(
+                params = SignUp(
                     provider = KAKAO,
                     address = uiState.value.myAddress.name,
                     lat = uiState.value.myAddress.lat,
                     lon = uiState.value.myAddress.lon,
-                    alertFrequencies = uiState.value.alertFrequencies,
                     fcmToken = token
                 )
             ).onSuccess { auth ->
@@ -154,17 +147,26 @@ class OnboardingViewModel @Inject constructor(
                 userInfoRepository.setUserHome(auth.userHome)
                 userInfoRepository.setUserId(auth.id)
                 AmplitudeUtils.setUserId(userId = auth.id)
-                AmplitudeUtils.trackEventWithProperties(
-                    eventName = USER_ALARM_FREQUENCIES,
-                    mapOf(
-                        USER_ID to auth.id,
-                        SCREEN_NAME to ALARM_REGISTER,
-                        USER_ALARM_FREQUENCIES to uiState.value.alertFrequencies
-                    )
-                )
-            }.onFailure {
-                setEvent(OnboardingContract.OnboardingEvent.PostSignUp(loadState = LoadState.Error))
+//                AmplitudeUtils.trackEventWithProperty(
+//                    eventName = USER_PUSH_FREQUENCIES,
+//                    propertyName = USER_PUSH_FREQUENCIES,
+//                    propertyValue = uiState.value.alertFrequencies
+//                )
+            }.onFailure { exception ->
+//                setEvent(OnboardingContract.OnboardingEvent.PostSignUp(loadState = LoadState.Error))
+                setSideEffect(OnboardingContract.OnboardingSideEffect.ShowToast("회원가입에 실패했습니다. 다시 시도해주세요."))
+                handleApiException(exception = exception)
             }
+        }
+    }
+
+    private fun saveAlarmSetup(type: OnboardingContract.AlarmType, volume: Int) {
+        val isSound = type != OnboardingContract.AlarmType.VIBRATION
+        val isVibrate = type != OnboardingContract.AlarmType.SOUND
+        viewModelScope.launch {
+            userInfoRepository.saveAlarmVolume(volume)
+            userInfoRepository.saveIsAlarmSound(isSound)
+            userInfoRepository.saveIsAlarmVibrate(isVibrate)
         }
     }
 
@@ -189,7 +191,15 @@ class OnboardingViewModel @Inject constructor(
                     onComplete(address)
                 }
                 .onFailure {
+                    handleApiException(it)
                 }
+//            getAddressFromCoordinatesUseCase(location.latitude, location.longitude)
+//                .onSuccess { address ->
+//                    setState { copy(myAddress = address) }
+//                    onComplete(address)
+//                }
+//                .onFailure {
+//                }
         }
     }
 
@@ -201,13 +211,21 @@ class OnboardingViewModel @Inject constructor(
             val location = context.getUserLocation()
             setState { copy(userCurrentLocation = location) }
 
-            getAddressFromCoordinatesUseCase.invoke(location.latitude, location.longitude)
+            getAddressFromCoordinatesUseCase(location.latitude, location.longitude)
                 .onSuccess { address ->
                     setState { copy(myAddress = address) }
                     onSuccess.invoke(address)
-                }.onFailure {
-                    Timber.e("주소 변환 실패: ${it.message}")
                 }
+                .onFailure { exception ->
+                    handleApiException(exception)
+                }
+//            getAddressFromCoordinatesUseCase.invoke(location.latitude, location.longitude)
+//                .onSuccess { address ->
+//                    setState { copy(myAddress = address) }
+//                    onSuccess.invoke(address)
+//                }.onFailure {
+//                    Timber.e("주소 변환 실패: ${it.message}")
+//                }
         }
     }
 

@@ -6,12 +6,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class RequestModifyUserInfoDto(
-    @SerialName("nickname")
-    val nickname: String? = null,
-
-    @SerialName("profileImageUrl")
-    val profileImageUrl: String? = null,
-
     @SerialName("address")
     val address: String? = null,
 
@@ -20,9 +14,6 @@ data class RequestModifyUserInfoDto(
 
     @SerialName("lon")
     val lon: Double? = null,
-
-    @SerialName("alertFrequencies")
-    val alertFrequencies: Set<Int>? = null,
 
     @SerialName(FCM_TOKEN)
     val fcmToken: String? = null

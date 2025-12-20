@@ -1,36 +1,41 @@
 package com.depromeet.team6.data.dataremote.datasource
 
-import com.depromeet.team6.data.dataremote.model.request.signup.RequestSignUpDto
+import com.depromeet.team6.data.dataremote.model.request.auth.RequestSignUpDto
+import com.depromeet.team6.data.dataremote.model.request.auth.RequestWithDrawDto
 import com.depromeet.team6.data.dataremote.model.request.user.RequestModifyUserInfoDto
-import com.depromeet.team6.data.dataremote.model.response.base.toResult
+import com.depromeet.team6.data.dataremote.model.response.base.parse
 import com.depromeet.team6.data.dataremote.model.response.user.ResponseAuthDto
 import com.depromeet.team6.data.dataremote.model.response.user.ResponseCheckDto
+import com.depromeet.team6.data.dataremote.model.response.user.ResponseGetUserInfoDto
 import com.depromeet.team6.data.dataremote.model.response.user.ResponseUserInfoDto
 import com.depromeet.team6.data.dataremote.service.AuthService
-import retrofit2.Response
 import javax.inject.Inject
 
 class AuthRemoteDataSource @Inject constructor(
     private val authService: AuthService
 ) {
-    suspend fun getCheck(authorization: String, provider: Int): Result<ResponseCheckDto> =
-        authService.getCheck(provider = provider).toResult()
+    suspend fun getCheck(provider: Int): Result<ResponseCheckDto> =
+        authService.getCheck(provider = provider).parse()
 
     suspend fun postSignUp(requestSignUpDto: RequestSignUpDto): Result<ResponseAuthDto> =
-        authService.postSignUp(requestSignUpDto = requestSignUpDto).toResult()
+        authService.postSignUp(requestSignUpDto = requestSignUpDto).parse()
 
     suspend fun getLogin(provider: Int, fcmToken: String): Result<ResponseAuthDto> =
-        authService.getLogin(provider = provider, fcmToken = fcmToken).toResult()
+        authService.getLogin(provider = provider, fcmToken = fcmToken).parse()
 
-    suspend fun postLogout(): Response<Unit> =
-        authService.postLogout()
+    suspend fun postLogout(): Result<Unit> =
+        authService.postLogout().parse()
 
-    suspend fun deleteWithDraw(): Response<Unit> =
-        authService.deleteWithDraw()
+    suspend fun deleteWithDraw(requestWithDrawDto: RequestWithDrawDto): Result<Unit> =
+        authService.deleteWithDraw(requestWithDrawDto).parse()
 
-    suspend fun getUserInfo(): Result<ResponseUserInfoDto> =
-        authService.getUserInfo().toResult()
+    suspend fun getUserInfo(): Result<ResponseGetUserInfoDto> {
+        val response = authService.getUserInfo()
+        return response.parse()
+    }
 
-    suspend fun modifyUserInfo(requestModifyUserInfoDto: RequestModifyUserInfoDto): Result<ResponseUserInfoDto> =
-        authService.modifyUserInfo(requestModifyUserInfoDto = requestModifyUserInfoDto).toResult()
+    suspend fun modifyUserInfo(requestModifyUserInfoDto: RequestModifyUserInfoDto): Result<ResponseUserInfoDto> {
+        val response = authService.modifyUserInfo(requestModifyUserInfoDto = requestModifyUserInfoDto)
+        return response.parse()
+    }
 }

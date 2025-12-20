@@ -11,45 +11,29 @@ import com.depromeet.team6.R
 @Immutable
 data class Team6Typography(
 
+    // Display
+    val display1_D1EB56: TextStyle,
+    val display2_D2EB48: TextStyle,
+    val display3_D3EB40: TextStyle,
+    val display4_D4SB28: TextStyle,
+
     // Heading
-    val heading1Bold34: TextStyle,
-    val heading1SemiBold34: TextStyle,
-    val heading1ExtraBold56: TextStyle,
-    val heading2Bold26: TextStyle,
-    val heading2SemiBold26: TextStyle,
-    val heading3Bold22: TextStyle,
-    val heading3SemiBold22: TextStyle,
-    val heading4Bold20: TextStyle,
-    val heading4SemiBold20: TextStyle,
-    val heading4Medium20: TextStyle,
-    val heading5Bold17: TextStyle,
-    val heading5SemiBold17: TextStyle,
-    val heading6Bold15: TextStyle,
-    val heading6SemiBold15: TextStyle,
+    val heading1_H1B22: TextStyle,
+    val heading2_H2B20: TextStyle,
+    val heading3_H3SB17: TextStyle,
 
     // Body
-    val bodyMedium17: TextStyle,
-    val bodyRegular17: TextStyle,
-    val bodyMedium15: TextStyle,
-    val bodyRegular15: TextStyle,
-    val bodySemiBold14: TextStyle,
-    val bodyMedium14: TextStyle,
-    val bodyRegular14: TextStyle,
-    val bodySemiBold13: TextStyle,
-    val bodyMedium13: TextStyle,
-    val bodyRegular13: TextStyle,
-    val bodySemiBold12: TextStyle,
-    val bodyMedium12: TextStyle,
-    val bodyRegular12: TextStyle,
-    val bodySemiBold11: TextStyle,
-    val bodyMedium11: TextStyle,
-    val bodyRegular11: TextStyle,
-    val bodySemiBold10: TextStyle,
-    val bodyMedium10: TextStyle,
-    val bodyRegular10: TextStyle,
+    val body1_B1R17: TextStyle,
+    val body2_B2SB15: TextStyle,
+    val body3_B3M15: TextStyle,
+    val body4_B4R15: TextStyle,
+    val body5_B5SB14: TextStyle,
+    val body6_B6R14: TextStyle,
+    val body7_B7M13: TextStyle,
+    val detail1_R12: TextStyle,
+    val detail2_M11: TextStyle,
+    val detail3_M9: TextStyle
 
-    // Extra
-    val extraBold44: TextStyle
 )
 
 // Pretendard FontFamilies (예: bold, semibold, etc.)
@@ -61,179 +45,93 @@ private val pretendardExtraBold = FontFamily(Font(R.font.pretendard_extrabold))
 
 val defaultTeam6Typography = Team6Typography(
     // Heading
-    heading1Bold34 = TextStyle(
-        fontFamily = pretendardBold,
-        fontSize = 34.sp,
-        lineHeight = 41.sp
-    ),
-    heading1SemiBold34 = TextStyle(
-        fontFamily = pretendardSemiBold,
-        fontSize = 34.sp,
-        lineHeight = 41.sp
-    ),
-    heading1ExtraBold56 = TextStyle(
+    display1_D1EB56 = TextStyle(
         fontFamily = pretendardExtraBold,
         fontSize = 56.sp,
         lineHeight = 67.sp
     ),
-    heading2Bold26 = TextStyle(
-        fontFamily = pretendardBold,
-        fontSize = 26.sp,
-        lineHeight = 34.sp
+    display2_D2EB48 = TextStyle(
+        fontFamily = pretendardExtraBold,
+        fontSize = 48.sp,
+        lineHeight = 54.sp
     ),
-    heading2SemiBold26 = TextStyle(
+    display3_D3EB40 = TextStyle(
+        fontFamily = pretendardExtraBold,
+        fontSize = 40.sp,
+        lineHeight = 42.sp
+    ),
+    display4_D4SB28 = TextStyle(
         fontFamily = pretendardSemiBold,
-        fontSize = 26.sp,
+        fontSize = 28.sp,
         lineHeight = 34.sp
     ),
-    heading3Bold22 = TextStyle(
+    heading1_H1B22 = TextStyle(
         fontFamily = pretendardBold,
         fontSize = 22.sp,
         lineHeight = 28.sp
     ),
-    heading3SemiBold22 = TextStyle(
-        fontFamily = pretendardSemiBold,
-        fontSize = 22.sp,
-        lineHeight = 28.sp
-    ),
-    heading4Bold20 = TextStyle(
+    heading2_H2B20 = TextStyle(
         fontFamily = pretendardBold,
         fontSize = 20.sp,
         lineHeight = 25.sp
     ),
-    heading4SemiBold20 = TextStyle(
-        fontFamily = pretendardSemiBold,
-        fontSize = 20.sp,
-        lineHeight = 25.sp
-    ),
-    heading4Medium20 = TextStyle(
-        fontFamily = pretendardMedium,
-        fontSize = 20.sp,
-        lineHeight = 25.sp
-    ),
-    heading5Bold17 = TextStyle(
-        fontFamily = pretendardBold,
-        fontSize = 17.sp,
-        lineHeight = 24.sp
-    ),
-    heading5SemiBold17 = TextStyle(
+    heading3_H3SB17 = TextStyle(
         fontFamily = pretendardSemiBold,
         fontSize = 17.sp,
         lineHeight = 24.sp
     ),
-    heading6Bold15 = TextStyle(
-        fontFamily = pretendardBold,
-        fontSize = 15.sp,
-        lineHeight = 20.sp
-    ),
-    heading6SemiBold15 = TextStyle(
+
+    body2_B2SB15 = TextStyle(
         fontFamily = pretendardSemiBold,
         fontSize = 15.sp,
         lineHeight = 20.sp
     ),
 
     // Body
-    bodyMedium17 = TextStyle(
-        fontFamily = pretendardMedium,
-        fontSize = 17.sp,
-        lineHeight = 24.sp
-    ),
-    bodyRegular17 = TextStyle(
+    body1_B1R17 = TextStyle(
         fontFamily = pretendardRegular,
         fontSize = 17.sp,
         lineHeight = 24.sp
     ),
-    bodyMedium15 = TextStyle(
+    body3_B3M15 = TextStyle(
         fontFamily = pretendardMedium,
         fontSize = 15.sp,
         lineHeight = 20.sp
     ),
-    bodyRegular15 = TextStyle(
+    body4_B4R15 = TextStyle(
         fontFamily = pretendardRegular,
         fontSize = 15.sp,
         lineHeight = 20.sp
     ),
-    bodySemiBold14 = TextStyle(
+    body5_B5SB14 = TextStyle(
         fontFamily = pretendardSemiBold,
         fontSize = 14.sp,
         lineHeight = 18.sp
     ),
-    bodyMedium14 = TextStyle(
-        fontFamily = pretendardMedium,
-        fontSize = 14.sp,
-        lineHeight = 18.sp
-    ),
-    bodyRegular14 = TextStyle(
+    body6_B6R14 = TextStyle(
         fontFamily = pretendardRegular,
         fontSize = 14.sp,
         lineHeight = 18.sp
     ),
-    bodySemiBold13 = TextStyle(
-        fontFamily = pretendardSemiBold,
-        fontSize = 13.sp,
-        lineHeight = 16.sp
-    ),
-    bodyMedium13 = TextStyle(
+    body7_B7M13 = TextStyle(
         fontFamily = pretendardMedium,
         fontSize = 13.sp,
         lineHeight = 16.sp
     ),
-    bodyRegular13 = TextStyle(
-        fontFamily = pretendardRegular,
-        fontSize = 13.sp,
-        lineHeight = 16.sp
-    ),
-    bodySemiBold12 = TextStyle(
-        fontFamily = pretendardSemiBold,
-        fontSize = 12.sp,
-        lineHeight = 14.sp
-    ),
-    bodyMedium12 = TextStyle(
-        fontFamily = pretendardMedium,
-        fontSize = 12.sp,
-        lineHeight = 14.sp
-    ),
-    bodyRegular12 = TextStyle(
+    detail1_R12 = TextStyle(
         fontFamily = pretendardRegular,
         fontSize = 12.sp,
         lineHeight = 14.sp
     ),
-    bodySemiBold11 = TextStyle(
-        fontFamily = pretendardSemiBold,
-        fontSize = 11.sp,
-        lineHeight = 13.sp
-    ),
-    bodyMedium11 = TextStyle(
+    detail2_M11 = TextStyle(
         fontFamily = pretendardMedium,
         fontSize = 11.sp,
         lineHeight = 13.sp
     ),
-    bodyRegular11 = TextStyle(
-        fontFamily = pretendardRegular,
-        fontSize = 11.sp,
-        lineHeight = 13.sp
-    ),
-    bodySemiBold10 = TextStyle(
-        fontFamily = pretendardSemiBold,
-        fontSize = 10.sp,
-        lineHeight = 12.sp
-    ),
-    bodyMedium10 = TextStyle(
+    detail3_M9 = TextStyle(
         fontFamily = pretendardMedium,
         fontSize = 10.sp,
         lineHeight = 12.sp
-    ),
-    bodyRegular10 = TextStyle(
-        fontFamily = pretendardRegular,
-        fontSize = 10.sp,
-        lineHeight = 12.sp
-    ),
-
-    // Extra
-    extraBold44 = TextStyle(
-        fontFamily = pretendardExtraBold,
-        fontSize = 44.sp,
-        lineHeight = 54.sp
     )
 )
 

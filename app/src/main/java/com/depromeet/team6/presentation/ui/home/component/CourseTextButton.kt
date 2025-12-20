@@ -31,8 +31,8 @@ fun CourseTextButton(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 12.dp)
-            .noRippleClickable(onClick = onClick),
+            .noRippleClickable(onClick = onClick)
+            .padding(vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
@@ -45,8 +45,8 @@ fun CourseTextButton(
 
         Text(
             text = startLocation,
-            style = typography.bodyRegular15,
-            color = colors.systemGrey1
+            style = typography.body4_B4R15,
+            color = colors.gray300
         )
 
         Icon(
@@ -54,13 +54,13 @@ fun CourseTextButton(
             contentDescription = stringResource(R.string.home_icon_arrow_right_text),
             modifier = Modifier
                 .padding(horizontal = 8.dp),
-            tint = colors.systemGrey1
+            tint = colors.gray300
         )
 
         Text(
             text = destination,
-            style = typography.bodyRegular15,
-            color = colors.systemGrey1
+            style = typography.body4_B4R15,
+            color = colors.gray300
         )
     }
 }

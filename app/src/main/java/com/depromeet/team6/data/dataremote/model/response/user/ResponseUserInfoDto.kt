@@ -10,17 +10,11 @@ data class ResponseUserInfoDto(
     @SerialName("id")
     val id: Int,
     @SerialName("providerId")
-    val providerId: Long,
-    @SerialName("nickname")
-    val nickname: String,
-    @SerialName("profileImageUrl")
-    val profileImageUrl: String,
+    val providerId: String,
     @SerialName("address")
     val address: String,
     @SerialName("lat")
     val lat: Double,
     @SerialName("lon")
-    val lon: Double,
-    @SerialName("alertFrequencies")
-    val alertFrequencies: Set<Int>
+    val lon: Double
 )

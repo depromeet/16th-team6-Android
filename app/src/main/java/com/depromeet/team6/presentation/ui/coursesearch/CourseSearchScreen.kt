@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -25,22 +24,28 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.depromeet.team6.R
+import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.course.LegInfo
+import com.depromeet.team6.presentation.ui.common.view.AtChaLoadingView
 import com.depromeet.team6.presentation.ui.coursesearch.component.CourseAppBar
 import com.depromeet.team6.presentation.ui.coursesearch.component.DestinationSearchBar
 import com.depromeet.team6.presentation.ui.coursesearch.component.TransportTabMenu
 import com.depromeet.team6.presentation.ui.home.component.DeleteAlarmDialog
 import com.depromeet.team6.presentation.ui.itinerary.LegInfoDummyProvider
+import com.depromeet.team6.presentation.ui.overlay.OverlayPermissionDialog
+import com.depromeet.team6.presentation.ui.overlay.PermissionSnackbar
 import com.depromeet.team6.presentation.util.AmplitudeCommon.SCREEN_NAME
 import com.depromeet.team6.presentation.util.AmplitudeCommon.USER_ID
 import com.depromeet.team6.presentation.util.HomeAmplitude.ALERT_END_POPUP_2
 import com.depromeet.team6.presentation.util.HomeAmplitude.POPUP
 import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
+import com.depromeet.team6.presentation.util.base.ApiErrorSideEffect
+import com.depromeet.team6.presentation.util.modifier.noRippleClickable
+import com.depromeet.team6.presentation.util.permission.PermissionUtil
 import com.depromeet.team6.presentation.util.toast.atChaToastMessage
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.google.gson.Gson
-import timber.log.Timber
 
 @Composable
 fun CourseSearchRoute(
@@ -49,6 +54,10 @@ fun CourseSearchRoute(
     destinationPoint: String,
     navigateToItinerary: (String, String, String) -> Unit,
     navigateToHome: () -> Unit,
+    navigateToHomeAfterAlarmRegister: () -> Unit,
+    navigateToLogin: () -> Unit,
+    navigateToSearchLocation: (Address, Address) -> Unit,
+    popBackStack: () -> Unit,
     fromLockScreen: Boolean = false,
     viewModel: CourseSearchViewModel = hiltViewModel()
 ) {
@@ -59,7 +68,12 @@ fun CourseSearchRoute(
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             when (event) {
-                Lifecycle.Event.ON_RESUME -> viewModel.setEvent(CourseSearchContract.CourseEvent.OnEnter)
+                Lifecycle.Event.ON_RESUME -> {
+                    viewModel.setEvent(CourseSearchContract.CourseEvent.OnEnter)
+
+                    viewModel.checkOverlayPermissionOnResume()
+                }
+
                 Lifecycle.Event.ON_PAUSE -> viewModel.setEvent(CourseSearchContract.CourseEvent.OnExit)
                 else -> {}
             }
@@ -86,8 +100,20 @@ fun CourseSearchRoute(
     LaunchedEffect(Unit) {
         viewModel.sideEffect.collect { sideEffect ->
             when (sideEffect) {
-                is CourseSearchContract.CourseSideEffect.ShowNotificationToast -> {
-                    Toast.makeText(context, context.getString(R.string.course_set_notification_snackbar), Toast.LENGTH_SHORT).show()
+                is ApiErrorSideEffect.ShowToastSideEffect -> {
+                    Toast.makeText(context, sideEffect.toastMessage, Toast.LENGTH_SHORT).show()
+                }
+
+                is ApiErrorSideEffect.NavigateToHomeSideEffect -> {
+                    navigateToHome()
+                }
+
+                is ApiErrorSideEffect.NavigateToBackSideEffect -> {
+                    popBackStack()
+                }
+
+                is ApiErrorSideEffect.NavigateToLoginSideEffect -> {
+                    navigateToLogin()
                 }
 
                 is CourseSearchContract.CourseSideEffect.ShowSearchFailedToast -> {
@@ -95,69 +121,115 @@ fun CourseSearchRoute(
                 }
 
                 is CourseSearchContract.CourseSideEffect.NavigateHomeWithToast -> {
-                    navigateToHome()
+                    navigateToHomeAfterAlarmRegister()
                     atChaToastMessage(context, R.string.course_set_notification_snackbar, Toast.LENGTH_SHORT)
                 }
             }
         }
     }
 
-    // UI state 초기화
-    LaunchedEffect(Unit) {
-        viewModel.setEvent(CourseSearchContract.CourseEvent.InitUiState(departurePoint, destinationPoint))
-    }
-
-    when (uiState.courseDataLoadState) {
+    when (uiState.courseUiLoadState) {
         LoadState.Loading -> {
             CourseSearchScreen(
                 uiState = uiState,
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(defaultTeam6Colors.greyWashBackground)
+                    .background(defaultTeam6Colors.gray950)
                     .padding(padding)
             )
             Box(modifier = Modifier.fillMaxSize()) {
-                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                AtChaLoadingView()
             }
         }
+
         LoadState.Success -> {
             CourseSearchScreen(
                 uiState = uiState,
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(defaultTeam6Colors.greyWashBackground)
+                    .background(defaultTeam6Colors.gray950)
                     .padding(padding),
                 navigateToItinerary = navigateToItinerary,
                 setNotification = { routeId ->
-                    if (uiState.sortType == 1) {
-                        // 기존 코드 유지 - sortType이 1일 때 알림 등록
-                        val sharedPreferences = context.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
-                        val editor = sharedPreferences.edit()
-
+                    if (PermissionUtil.needsOverlayPermission(context)) {
+                        if (viewModel.shouldShowOverlayDialog()) {
+                            viewModel.showOverlayPermissionDialog()
+                        } else {
+                            viewModel.showPermissionSnackbar()
+                        }
+                    } else {
                         val registeredCourse = uiState.courseData.find { it.routeId == routeId }
 
                         if (registeredCourse != null) {
-                            val courseJson = Gson().toJson(registeredCourse)
-                            editor.putString("departurePoint", departurePoint) // 출발지
-                            editor.putString("destinationPoint", destinationPoint) // 도착지
-                            editor.putBoolean("alarmRegistered", true) // 알람 등록 여부
-                            editor.putString("lastRouteId", routeId) // 막차 경로 Id
-                            editor.putString("lastCourseInfo", courseJson) // 막차 경로
-                            editor.apply()
-
-                            viewModel.postAlarm(lastRouteId = routeId)
+                            viewModel.postAlarm(
+                                departurePoint = departurePoint,
+                                destinationPoint = destinationPoint,
+                                lastRouteId = routeId,
+                                alarmTimeStamp = registeredCourse.departureTime
+                            )
                         } else {
                             atChaToastMessage(context, R.string.course_set_notification_failed_snackbar)
                         }
-                    } else if (uiState.sortType == 2) {
-                        // 다이얼로그 표시
-                        viewModel.showDeleteAlarmDialog(routeId)
                     }
                 },
                 backButtonClicked = { navigateToHome() },
                 courseInfoToggleClick = { viewModel.setEvent(CourseSearchContract.CourseEvent.ItemCourseDetailToggleClick) },
-                itemCardClick = { viewModel.setEvent(CourseSearchContract.CourseEvent.ItemCardClick(isTextClicked = it)) }
+                itemCardClick = {
+                    viewModel.setEvent(
+                        CourseSearchContract.CourseEvent.ItemCardClick(
+                            isTextClicked = it
+                        )
+                    )
+                },
+                searchBarClick = {
+                    navigateToSearchLocation(
+                        uiState.destinationPoint!!,
+                        uiState.startingPoint!!
+                    )
+                }
             )
+            if (uiState.showPermissionSnackbar) {
+                Box(modifier = Modifier.fillMaxSize()) {
+                    PermissionSnackbar(
+                        onSettingsClick = {
+                            viewModel.dismissPermissionSnackbar()
+                            PermissionUtil.openOverlayPermissionSettings(context)
+                        },
+                        onDismiss = {
+                            viewModel.dismissPermissionSnackbar()
+                        },
+                        modifier = Modifier
+                            .align(Alignment.TopCenter)
+                            .padding(top = 40.dp)
+                    )
+                }
+            }
+
+            if (uiState.showOverlayPermissionDialog) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(color = defaultTeam6Colors.black.copy(alpha = 0.76f))
+                ) {
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        OverlayPermissionDialog(
+                            onDismiss = {
+                                viewModel.dismissOverlayPermissionDialog()
+                                viewModel.markOverlayDialogAsShow()
+                                viewModel.showPermissionSnackbar()
+                            },
+                            onSettingClicked = {
+                                viewModel.dismissOverlayPermissionDialog()
+                                viewModel.markOverlayDialogAsShow()
+                                PermissionUtil.openOverlayPermissionSettings(context)
+                            }
+                        )
+                    }
+                }
+            }
 
             // 다이얼로그 표시
             if (uiState.showDeleteAlarmDialog) {
@@ -175,7 +247,6 @@ fun CourseSearchRoute(
                                 viewModel.dismissDeleteAlarmDialog()
                             },
                             onSuccess = {
-                                Timber.e("여기 앰플 왜안됨요 ??????????????")
                                 AmplitudeUtils.trackEventWithProperties(
                                     ALERT_END_POPUP_2,
                                     mapOf(
@@ -207,7 +278,12 @@ fun CourseSearchRoute(
                                     editor.putString("lastCourseInfo", courseJson) // 막차 경로
                                     editor.apply()
 
-                                    viewModel.postAlarm(lastRouteId = uiState.selectedRouteId)
+                                    viewModel.updateAlarm(
+                                        departurePoint = departurePoint,
+                                        destinationPoint = destinationPoint,
+                                        lastRouteId = uiState.selectedRouteId,
+                                        alarmTimeStamp = registeredCourse.departureTime
+                                    )
                                     viewModel.dismissDeleteAlarmDialog()
                                 } else {
                                     atChaToastMessage(context, R.string.course_set_notification_failed_snackbar)
@@ -237,11 +313,12 @@ fun CourseSearchScreen(
     setNotification: (String) -> Unit = {},
     backButtonClicked: () -> Unit = {},
     courseInfoToggleClick: () -> Unit = {},
-    itemCardClick: (Boolean) -> Unit = {}
+    itemCardClick: (Boolean) -> Unit = {},
+    searchBarClick: () -> Unit = {}
 ) {
     Column(
         modifier = modifier
-            .background(defaultTeam6Colors.greyWashBackground)
+            .background(defaultTeam6Colors.gray950)
     ) {
         CourseAppBar(backButtonClicked = backButtonClicked)
         DestinationSearchBar(
@@ -249,11 +326,15 @@ fun CourseSearchScreen(
             destination = "우리집",
             modifier = Modifier
                 .padding(top = 6.dp, start = 16.dp, end = 16.dp, bottom = 10.dp)
+                .noRippleClickable {
+                    searchBarClick()
+                }
         )
 
         TransportTabMenu(
             availableCourses = uiState.courseData,
-            isLoaded = uiState.courseDataLoadState == LoadState.Success,
+            isLoaded = uiState.courseUiLoadState == LoadState.Success,
+            courseSearchDataState = uiState.courseSearchDataLoadState,
             onItemClick = { courseInfoJson, isTextClicked ->
                 itemCardClick(isTextClicked)
                 navigateToItinerary(

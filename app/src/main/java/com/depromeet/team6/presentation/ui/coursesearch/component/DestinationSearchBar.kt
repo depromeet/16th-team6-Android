@@ -36,7 +36,7 @@ fun DestinationSearchBar(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(
-                    color = defaultTeam6Colors.greyElevatedCard,
+                    color = defaultTeam6Colors.gray910,
                     shape = RoundedCornerShape(12.dp)
                 )
                 .padding(16.dp),
@@ -48,7 +48,7 @@ fun DestinationSearchBar(
                     .wrapContentWidth()
                     .weight(1f, fill = false),
                 text = startingPoint,
-                style = defaultTeam6Typography.bodyRegular15,
+                style = defaultTeam6Typography.body4_B4R15,
                 color = defaultTeam6Colors.white,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
@@ -62,7 +62,7 @@ fun DestinationSearchBar(
 
             Text(
                 text = destination,
-                style = defaultTeam6Typography.bodyRegular15,
+                style = defaultTeam6Typography.body4_B4R15,
                 color = defaultTeam6Colors.white
             )
         }

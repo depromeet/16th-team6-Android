@@ -1,10 +1,12 @@
 package com.depromeet.team6.data.dataremote.service
 
-import com.depromeet.team6.data.dataremote.model.request.signup.RequestSignUpDto
+import com.depromeet.team6.data.dataremote.model.request.auth.RequestSignUpDto
+import com.depromeet.team6.data.dataremote.model.request.auth.RequestWithDrawDto
 import com.depromeet.team6.data.dataremote.model.request.user.RequestModifyUserInfoDto
-import com.depromeet.team6.data.dataremote.model.response.base.ApiResponse
+import com.depromeet.team6.data.dataremote.model.response.base.BaseResponse
 import com.depromeet.team6.data.dataremote.model.response.user.ResponseAuthDto
 import com.depromeet.team6.data.dataremote.model.response.user.ResponseCheckDto
+import com.depromeet.team6.data.dataremote.model.response.user.ResponseGetUserInfoDto
 import com.depromeet.team6.data.dataremote.model.response.user.ResponseUserInfoDto
 import com.depromeet.team6.data.dataremote.util.ApiConstraints.API
 import com.depromeet.team6.data.dataremote.util.ApiConstraints.AUTH
@@ -16,10 +18,9 @@ import com.depromeet.team6.data.dataremote.util.ApiConstraints.ME
 import com.depromeet.team6.data.dataremote.util.ApiConstraints.MEMBERS
 import com.depromeet.team6.data.dataremote.util.ApiConstraints.PROVIDER
 import com.depromeet.team6.data.dataremote.util.ApiConstraints.SIGNUP
-import retrofit2.Response
 import retrofit2.http.Body
-import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.HTTP
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Query
@@ -28,30 +29,33 @@ interface AuthService {
     @GET("$API/$AUTH/$CHECK")
     suspend fun getCheck(
         @Query(PROVIDER) provider: Int
-    ): ApiResponse<ResponseCheckDto>
+    ): BaseResponse<ResponseCheckDto>
 
     @POST("$API/$AUTH/$SIGNUP")
     suspend fun postSignUp(
         @Body requestSignUpDto: RequestSignUpDto
-    ): ApiResponse<ResponseAuthDto>
+    ): BaseResponse<ResponseAuthDto>
 
     @GET("$API/$AUTH/$LOGIN")
     suspend fun getLogin(
         @Query(PROVIDER) provider: Int,
         @Query(FCM_TOKEN) fcmToken: String
-    ): ApiResponse<ResponseAuthDto>
+    ): BaseResponse<ResponseAuthDto>
 
     @POST("$API/$AUTH/$LOGOUT")
-    suspend fun postLogout(): Response<Unit>
+    suspend fun postLogout(): BaseResponse<Unit>
 
-    @DELETE("$API/$MEMBERS/$ME")
-    suspend fun deleteWithDraw(): Response<Unit>
+//    @DELETE("$API/$MEMBERS/$ME")
+    @HTTP(method = "DELETE", path = "$API/$MEMBERS/$ME", hasBody = true)
+    suspend fun deleteWithDraw(
+        @Body requestWithDrawDto: RequestWithDrawDto
+    ): BaseResponse<Unit>
 
     @GET("$API/$MEMBERS/$ME")
-    suspend fun getUserInfo(): ApiResponse<ResponseUserInfoDto>
+    suspend fun getUserInfo(): BaseResponse<ResponseGetUserInfoDto>
 
     @PUT("$API/$MEMBERS/$ME")
     suspend fun modifyUserInfo(
         @Body requestModifyUserInfoDto: RequestModifyUserInfoDto
-    ): ApiResponse<ResponseUserInfoDto>
+    ): BaseResponse<ResponseUserInfoDto>
 }

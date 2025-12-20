@@ -9,6 +9,7 @@ import com.depromeet.team6.data.repositoryimpl.TaxiCostRepositoryImpl
 import com.depromeet.team6.data.repositoryimpl.TimeLeftRepositoryImpl
 import com.depromeet.team6.data.repositoryimpl.TransitsRepositoryImpl
 import com.depromeet.team6.data.repositoryimpl.UserInfoRepositoryImpl
+import com.depromeet.team6.data.repositoryimpl.VersionRepositoryImpl
 import com.depromeet.team6.domain.repository.AlarmRepository
 import com.depromeet.team6.domain.repository.AuthRepository
 import com.depromeet.team6.domain.repository.DummyRepository
@@ -18,6 +19,7 @@ import com.depromeet.team6.domain.repository.TaxiCostRepository
 import com.depromeet.team6.domain.repository.TimeLeftRepository
 import com.depromeet.team6.domain.repository.TransitsRepository
 import com.depromeet.team6.domain.repository.UserInfoRepository
+import com.depromeet.team6.domain.repository.VersionRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -62,4 +64,8 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindTimeLeftRepository(timeLeftRepository: TimeLeftRepositoryImpl): TimeLeftRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindVersionRepository(versionRepository: VersionRepositoryImpl): VersionRepository
 }

@@ -9,17 +9,27 @@ import com.depromeet.team6.presentation.util.view.LoadState
 
 class CourseSearchContract {
     data class CourseUiState(
-        val courseDataLoadState: LoadState = LoadState.Idle,
+        val courseUiLoadState: LoadState = LoadState.Idle,
+        val courseSearchDataLoadState: CourseSearchDataState = CourseSearchDataState.Idle,
         val startingPoint: Address? = null,
         val destinationPoint: Address? = null,
         val courseData: List<CourseInfo> = emptyList(),
         val sortType: Int = 1,
         val showDeleteAlarmDialog: Boolean = false,
+        val showOverlayPermissionDialog: Boolean = false,
+        val showPermissionSnackbar: Boolean = false,
         val selectedRouteId: String = ""
     ) : UiState
 
+    enum class CourseSearchDataState {
+        Idle,
+        Loading,
+        Success,
+        NoResult, // 막차 검색정보가 없음
+        ServiceEnded // 시간이 늦어서 막차가 없음
+    }
+
     sealed interface CourseSideEffect : UiSideEffect {
-        data object ShowNotificationToast : CourseSideEffect
         data class ShowSearchFailedToast(val message: String) : CourseSideEffect
         data object NavigateHomeWithToast : CourseSideEffect
     }
@@ -35,5 +45,9 @@ class CourseSearchContract {
         data class ItemCardClick(val isTextClicked: Boolean) : CourseEvent()
         data class ShowDeleteAlarmDialog(val routeId: String) : CourseEvent()
         data object DismissDeleteAlarmDialog : CourseEvent()
+        data object ShowOverlayPermissionDialog : CourseEvent()
+        data object DismissOverlayPermissionDialog : CourseEvent()
+        data object ShowPermissionSnackbar : CourseEvent()
+        data object DismissPermissionSnackbar : CourseEvent()
     }
 }

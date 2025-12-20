@@ -1,7 +1,6 @@
 package com.depromeet.team6.presentation.ui.home.component
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -49,10 +48,10 @@ fun FinishCourseDetailButton(
             contentPadding = PaddingValues(0.dp),
             border = BorderStroke(
                 width = 1.dp,
-                color = colors.systemGrey6
+                color = colors.gray930
             ),
             colors = ButtonDefaults.buttonColors(
-                containerColor = colors.greyWashBackground,
+                containerColor = colors.gray950,
                 contentColor = colors.white
             ),
             shape = RoundedCornerShape(10.dp),
@@ -60,7 +59,7 @@ fun FinishCourseDetailButton(
         ) {
             Text(
                 text = stringResource(R.string.home_finish_button_text),
-                style = typography.bodyMedium15,
+                style = typography.body3_B3M15,
                 modifier = Modifier.padding(vertical = 14.dp)
             )
         }

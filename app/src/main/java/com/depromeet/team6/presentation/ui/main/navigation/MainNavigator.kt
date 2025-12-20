@@ -1,5 +1,6 @@
 package com.depromeet.team6.presentation.ui.main.navigation
 
+import android.os.Bundle
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
@@ -18,21 +19,41 @@ import com.depromeet.team6.presentation.ui.mypage.navigation.navigationMypage
 import com.depromeet.team6.presentation.ui.onboarding.navigation.OnboardingRoute
 import com.depromeet.team6.presentation.ui.onboarding.navigation.navigationOnboarding
 import com.depromeet.team6.presentation.ui.searchlocation.navigation.navigationSearchLocation
+import com.depromeet.team6.presentation.ui.splash.navigation.SplashRoute
+import com.depromeet.team6.presentation.ui.splash.navigation.navigateToSplash
+import com.google.firebase.analytics.FirebaseAnalytics
 
 class MainNavigator(
     val navHostController: NavHostController
 ) {
 
-    val startDestination = LoginRoute.ROUTE
+    val startDestination = SplashRoute.ROUTE
+
+    fun navigateToSplash() {
+        navHostController.navigateToSplash()
+    }
 
     fun navigateToOnboarding() {
-        clearBackStackTo(OnboardingRoute.ROUTE)
-        navHostController.navigationOnboarding()
+        navigateAndClearLoginStack(OnboardingRoute.ROUTE) {
+            navHostController.navigationOnboarding()
+        }
     }
 
     fun navigateToHome() {
-        clearBackStackTo(HomeRoute.ROUTE)
         navHostController.navigationHome()
+    }
+
+    fun navigateToHomeAfterOnboarding() {
+        navHostController.navigate("${HomeRoute.ROUTE}?${HomeRoute.ARGUMENT}=true") {
+            popUpTo(0) { inclusive = true }
+            launchSingleTop = true
+        }
+    }
+
+    fun navigateToHomeAfterAlarmRegister() {
+        navHostController.navigate(HomeRoute.ROUTE) {
+            popUpTo(0) { inclusive = true }
+        }
     }
 
     fun navigateToLogin() {
@@ -70,8 +91,11 @@ class MainNavigator(
         navHostController.navigationMypage()
     }
 
-    fun navigateToSearchLocation(destinationLocation: Address) {
-        navHostController.navigationSearchLocation(destinationLocation = destinationLocation)
+    fun navigateToSearchLocation(destinationLocation: Address, departureLocation: Address? = null) {
+        navHostController.navigationSearchLocation(
+            destinationLocation = destinationLocation,
+            departureLocation = departureLocation
+        )
     }
 
     fun navigateToBusCourse(busArrivalParameter: BusArrivalParameter) {
@@ -90,11 +114,25 @@ class MainNavigator(
             inclusive = false
         )
     }
+
+    private fun navigateAndClearLoginStack(route: String, navigate: () -> Unit) {
+        navHostController.navigate(route) {
+            popUpTo(LoginRoute.ROUTE) { inclusive = true }
+            launchSingleTop = true
+        }
+    }
 }
 
 @Composable
 fun rememberMainNavigator(
-    navHostController: NavHostController = rememberNavController()
+    navHostController: NavHostController = rememberNavController(),
+    firebaseAnalytics: FirebaseAnalytics
 ): MainNavigator = remember(navHostController) {
+    // Firebase Analytics 에 화면 이동 정보 로깅
+    navHostController.addOnDestinationChangedListener { _, destination, _ ->
+        val params = Bundle()
+        params.putString(FirebaseAnalytics.Param.SCREEN_NAME, destination.route)
+        firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW, params)
+    }
     MainNavigator(navHostController = navHostController)
 }

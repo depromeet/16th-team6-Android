@@ -8,10 +8,7 @@ fun ResponseUserInfoDto.toDomain(): UserInfo {
     return UserInfo(
         id = this.id,
         providerId = this.providerId,
-        nickname = this.nickname,
-        profileImageUrl = this.profileImageUrl,
         address = this.address,
-        userHome = LatLng(this.lat, this.lon),
-        alertFrequencies = this.alertFrequencies
+        userHome = LatLng(this.lat, this.lon)
     )
 }

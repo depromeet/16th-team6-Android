@@ -31,6 +31,7 @@ import com.depromeet.team6.domain.model.BusStatus
 import com.depromeet.team6.domain.model.course.TransportType
 import com.depromeet.team6.presentation.ui.common.text.AtChaRemainTimeText
 import com.depromeet.team6.presentation.util.view.TransportTypeUiMapper
+import com.depromeet.team6.ui.theme.Team6Theme
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.depromeet.team6.ui.theme.defaultTeam6Typography
 
@@ -56,8 +57,15 @@ fun BusStationItem(
         afterTurnPoint -> 0.3f to 0.3f
         else -> 1f to 1f
     }
+    val backgroundModifier = if (isCurrentStation) {
+        modifier.background(
+            color = Team6Theme.colors.gray930
+        )
+    } else {
+        modifier
+    }
     Row(
-        modifier = modifier
+        modifier = backgroundModifier
             .fillMaxWidth()
             .height(IntrinsicSize.Min),
         verticalAlignment = Alignment.CenterVertically
@@ -121,13 +129,13 @@ fun BusStationItem(
             Text(
                 text = busRouteStation.busStationName,
                 color = defaultTeam6Colors.white,
-                style = defaultTeam6Typography.bodyMedium14
+                style = defaultTeam6Typography.body6_B6R14
             )
             Spacer(modifier = Modifier.height(1.dp))
             Text(
                 text = busRouteStation.busStationNumber,
-                style = defaultTeam6Typography.bodyRegular13,
-                color = defaultTeam6Colors.greySecondaryLabel
+                style = defaultTeam6Typography.detail1_R12,
+                color = defaultTeam6Colors.gray200
             )
             if (isCurrentStation && busRemainTime != null) {
                 Spacer(modifier = Modifier.height(5.dp))

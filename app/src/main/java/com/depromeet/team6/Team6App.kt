@@ -6,6 +6,7 @@ import android.os.Build
 import android.util.Base64
 import androidx.appcompat.app.AppCompatDelegate
 import com.depromeet.team6.BuildConfig.KAKAO_NATIVE_APP_KEY
+import com.depromeet.team6.data.background.AlarmScheduler
 import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils.initAmplitude
 import com.kakao.sdk.common.KakaoSdk
 import com.kakao.sdk.common.util.Utility
@@ -16,12 +17,14 @@ import java.security.NoSuchAlgorithmException
 
 @HiltAndroidApp
 class Team6App : Application() {
+
     override fun onCreate() {
         super.onCreate()
         setDarkMode()
         setKakao()
         setTimber()
         initAmplitude(applicationContext)
+        AlarmScheduler.scheduleLocationCheck(this)
     }
 
     private fun setDarkMode() {

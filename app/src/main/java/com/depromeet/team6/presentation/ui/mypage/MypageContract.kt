@@ -16,12 +16,8 @@ class MypageContract {
         MAIN, ACCOUNT, CHANGE_HOME, ALARM
     }
 
-    enum class AlarmScreenState {
-        MAIN, SOUND_SETTING, TIME_SETTING
-    }
-
     enum class AlarmType {
-        VIBRATION, SOUND
+        VIBRATION, SOUND, ALL
     }
 
     data class MypageUiState(
@@ -29,35 +25,41 @@ class MypageContract {
         val currentScreen: MypageScreen = MypageScreen.MAIN,
         val isWebViewOpened: Boolean = false,
         val logoutDialogVisible: Boolean = false,
-        val withDrawDialogVisible: Boolean = false,
+        val withDrawScreenVisible: Boolean = false,
         val searchText: String = "",
         val searchLocations: List<Location> = emptyList(),
         val searchPopupVisible: Boolean = false,
         val userCurrentLocation: LatLng = LatLng(DEFAULT_LAT, DEFAULT_LNG),
-        val myAdress: Address = Address(
+        val myAddress: Address = Address(
+            name = "",
+            lat = 0.0,
+            lon = 0.0,
+            address = ""
+        ),
+        val selectedAddress: Address = Address(
             name = "",
             lat = 0.0,
             lon = 0.0,
             address = ""
         ),
         val userInfo: MypageUserInfo = MypageUserInfo(
-            nickname = "",
-            profileImageUrl = "",
             address = "",
             lat = 0.0,
             lon = 0.0,
-            alertFrequencies = emptySet(),
-            fcmToken = ""
+            fcmToken = "",
+            appVersion = ""
         ),
-        val alertFrequencies: Set<Int> = setOf(1),
         val mapViewVisible: Boolean = false,
-        val alarmScreenState: AlarmScreenState = AlarmScreenState.MAIN,
-        val selectedAlarmType: AlarmType = AlarmType.SOUND
+        val selectedAlarmType: AlarmType = AlarmType.SOUND,
+        val alarmVolume: Int = 50
     ) : UiState
 
     sealed interface MypageSideEffect : UiSideEffect {
         data object NavigateBack : MypageSideEffect
         data object NavigateToLogin : MypageSideEffect
+        data object NavigateToFeedbackForm : MypageSideEffect
+        data object SettingDialog : MypageSideEffect
+        data object ClearPermissionData : MypageSideEffect
     }
 
     sealed class MypageEvent : UiEvent {
@@ -67,22 +69,20 @@ class MypageContract {
         data object PolicyClicked : MypageEvent()
         data object PolicyClosed : MypageEvent()
         data object LogoutConfirmed : MypageEvent()
-        data object WithDrawConfirmed : MypageEvent()
+        data class WithDrawConfirmed(val reason: String) : MypageEvent()
         data object DismissDialog : MypageEvent()
         data object AccountClicked : MypageEvent()
         data object ChangeHomeClicked : MypageEvent()
         data object AlarmSettingClicked : MypageEvent()
-        data class UpdateMyAddress(val myAdress: Address) : MypageEvent()
-        data class ChangeMapViewVisible(val mapViewVisible: Boolean) : MypageEvent()
+        data class UpdateMyAddress(val myAddress: Address) : MypageEvent()
+        data class ChangeMapViewVisible(val mapViewVisible: Boolean, val selectedAddress: Address?) : MypageEvent()
         data object ClearAddress : MypageEvent()
         data object ShowSearchPopup : MypageEvent()
         data object ClearText : MypageEvent()
         data class UpdateSearchText(val text: String) : MypageEvent()
         data object SearchPopUpBackPressed : MypageEvent()
-        data class LocationSelectButtonClicked(val mypageSearchLocation: Address) : MypageEvent()
-        data object SoundSettingClicked : MypageEvent()
-        data object TimeSettingClicked : MypageEvent()
-        data class AlarmTypeSelected(val type: AlarmType) : MypageEvent()
-        data class UpdateAlertFrequencies(val alertFrequencies: Set<Int>) : MypageEvent()
+        data object LocationSelectButtonClicked : MypageEvent()
+        data class AlarmTypeModified(val type: AlarmType) : MypageEvent()
+        data class AlarmVolumeModified(val volume: Int) : MypageEvent()
     }
 }

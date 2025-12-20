@@ -1,6 +1,7 @@
 package com.depromeet.team6.domain.model.course
 
 import com.depromeet.team6.domain.model.Address
+import kotlinx.serialization.Serializable
 
 data class LegInfo(
     val transportType: TransportType,
@@ -12,9 +13,11 @@ data class LegInfo(
     val startPoint: Address,
     val endPoint: Address,
     val passShape: String,
-    val passStopList: List<Station> = emptyList()
+    val passStopList: List<Station> = emptyList(),
+    val targetBusTerm: Int? = null
 )
 
+@Serializable
 data class Station(
     val index: Int,
     val stationName: String = "(알 수 없음)",

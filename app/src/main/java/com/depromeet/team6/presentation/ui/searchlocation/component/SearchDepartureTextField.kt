@@ -29,7 +29,7 @@ fun SearchDepartureTextField(
         modifier = modifier
             .fillMaxWidth()
             .background(
-                color = defaultTeam6Colors.greyWashBackground
+                color = defaultTeam6Colors.gray950
             )
             .padding(horizontal = 16.dp)
     ) {
@@ -49,7 +49,7 @@ fun SearchDepartureTextField(
             Text(
                 text = stringResource(R.string.home_search_departure_home_text),
                 color = defaultTeam6Colors.white,
-                style = defaultTeam6Typography.bodyRegular17
+                style = defaultTeam6Typography.body1_B1R17
             )
         }
     }

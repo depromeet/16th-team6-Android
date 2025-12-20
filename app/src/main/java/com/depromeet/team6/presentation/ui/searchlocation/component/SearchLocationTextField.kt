@@ -52,8 +52,8 @@ fun SearchLocationTextField(
             modifier = modifier
                 .weight(1f)
                 .roundedBackgroundWithPadding(
-                    backgroundColor = defaultTeam6Colors.greyQuaternaryLabel,
-                    cornerRadius = 8.dp
+                    backgroundColor = defaultTeam6Colors.gray930,
+                    cornerRadius = 10.dp
                 )
                 .padding(horizontal = 16.dp),
             verticalAlignment = Alignment.CenterVertically
@@ -76,19 +76,19 @@ fun SearchLocationTextField(
                         onValueChange(it)
                     }
                 },
-                cursorBrush = SolidColor(defaultTeam6Colors.greyTertiaryLabel),
+                cursorBrush = SolidColor(defaultTeam6Colors.gray400),
                 singleLine = true,
                 keyboardActions = keyboardActions,
                 keyboardOptions = keyboardOptions,
                 visualTransformation = visualTransformation,
-                textStyle = defaultTeam6Typography.bodyRegular17.copy(color = defaultTeam6Colors.white),
+                textStyle = defaultTeam6Typography.body1_B1R17.copy(color = defaultTeam6Colors.white),
                 decorationBox = { innerTextField ->
                     innerTextField()
                     if (value.isEmpty()) {
                         Text(
                             text = stringResource(R.string.home_search_location_search_text),
-                            color = defaultTeam6Colors.greySecondaryLabel,
-                            style = defaultTeam6Typography.bodyRegular17
+                            color = defaultTeam6Colors.gray200,
+                            style = defaultTeam6Typography.body1_B1R17
                         )
                     }
                 }
@@ -99,7 +99,7 @@ fun SearchLocationTextField(
             Icon(
                 modifier = Modifier.noRippleClickable { onTextClearButtonClicked() },
                 imageVector = ImageVector.vectorResource(R.drawable.ic_search_circle_close),
-                tint = defaultTeam6Colors.greySecondaryLabel,
+                tint = defaultTeam6Colors.gray200,
                 contentDescription = null
             )
         }

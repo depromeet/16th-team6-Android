@@ -42,9 +42,21 @@ class UserInfoRepositoryImpl @Inject constructor(
         userInfoLocalDataSource.clear()
     }
 
-    override fun saveAlarmSound(isSound: Boolean) {
-        userInfoLocalDataSource.alarmSound = isSound
+    override fun saveIsAlarmSound(isSound: Boolean) {
+        userInfoLocalDataSource.isAlarmSound = isSound
     }
 
-    override fun getAlarmSound(): Boolean = userInfoLocalDataSource.alarmSound
+    override fun getIsAlarmSound(): Boolean = userInfoLocalDataSource.isAlarmSound
+
+    override fun saveIsAlarmVibrate(isVibrate: Boolean) {
+        userInfoLocalDataSource.isAlarmVibrate = isVibrate
+    }
+
+    override fun getIsAlarmVibrate(): Boolean = userInfoLocalDataSource.isAlarmVibrate
+
+    override fun saveAlarmVolume(volume: Int) {
+        userInfoLocalDataSource.alarmVolume = volume
+    }
+
+    override fun getAlarmVolume(): Int = userInfoLocalDataSource.alarmVolume
 }

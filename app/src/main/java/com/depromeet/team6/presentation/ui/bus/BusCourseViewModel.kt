@@ -18,8 +18,7 @@ class BusCourseViewModel @Inject constructor(
     private val getBusPositionsUseCase: GetBusPositionsUseCase,
     private val getBusOperationInfoUseCase: GetBusOperationInfoUseCase
 ) : BaseViewModel<BusCourseContract.BusCourseUiState, BusCourseContract.BusCourseSideEffect, BusCourseContract.BusCourseEvent>() {
-    override fun createInitialState(): BusCourseContract.BusCourseUiState =
-        BusCourseContract.BusCourseUiState()
+    override fun createInitialState(): BusCourseContract.BusCourseUiState = BusCourseContract.BusCourseUiState()
 
     override suspend fun handleEvent(event: BusCourseContract.BusCourseEvent) {
         when (event) {
@@ -50,7 +49,8 @@ class BusCourseViewModel @Inject constructor(
                 routeName = currentState.busArrivalParameter.routeName,
                 stationName = busArrivalParameter.stationName,
                 lat = busArrivalParameter.lat,
-                lon = busArrivalParameter.lon
+                lon = busArrivalParameter.lon,
+                passingStations = busArrivalParameter.passingStations
             ).onSuccess { busArrival ->
                 getBusPositions(
                     busRouteId = busArrival.busRouteId,
@@ -83,8 +83,9 @@ class BusCourseViewModel @Inject constructor(
                         busRouteName = busArrival.routeName
                     )
                 }
-            }.onFailure {
+            }.onFailure { exception ->
                 setEvent(BusCourseContract.BusCourseEvent.SetScreenLoadState(loadState = LoadState.Error))
+                handleApiException(exception = exception)
             }
         }
     }
@@ -108,8 +109,9 @@ class BusCourseViewModel @Inject constructor(
                     )
                 }
                 setEvent(BusCourseContract.BusCourseEvent.SetScreenLoadState(loadState = LoadState.Success))
-            }.onFailure {
+            }.onFailure { exception ->
                 setEvent(BusCourseContract.BusCourseEvent.SetScreenLoadState(loadState = LoadState.Error))
+                handleApiException(exception = exception)
             }
         }
     }
@@ -130,6 +132,8 @@ class BusCourseViewModel @Inject constructor(
                         busOperationInfo = busOperationInfo
                     )
                 }
+            }.onFailure { exception ->
+                handleApiException(exception = exception)
             }
         }
     }

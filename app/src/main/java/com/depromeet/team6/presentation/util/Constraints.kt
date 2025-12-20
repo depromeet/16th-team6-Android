@@ -20,6 +20,14 @@ object DefaultLatLng {
 object WebViewUrl {
     const val PRIVACY_POLICY_URL =
         "https://mammoth-cheese-88e.notion.site/1008a99e3bbe80e88468c11f09c5a2dc?pvs=4"
+    const val FEEDBACK_FORM_URL =
+        "https://docs.google.com/forms/d/e/1FAIpQLSdmiwKHcZWEgv6O2B_34NxUsjSbsXHkct9Y19txUJvrwbOOxw/viewform"
+}
+
+object AppConstants {
+    const val PLAY_STORE_PACKAGE_NAME = "com.depromeet.team6"
+    const val PLAY_STORE_URL =
+        "https://play.google.com/store/apps/details?id=$PLAY_STORE_PACKAGE_NAME&hl=ko"
 }
 
 object BusOperationInfo {
@@ -33,24 +41,42 @@ object BusOperationInfo {
     const val UNKNOWN_KR = "알 수 없음"
 }
 
+object DefaultMarkerDestination {
+    const val DEFAULT_MARKER_LAT = 37.303534788694
+    const val DEFAULT_MARKER_LON = 127.01085807594
+    const val DEFAULT_DESTINATION_LAT = 37.296391553347
+    const val DEFAULT_DESTINATION_LON = 126.97755824522
+}
+
 object AmplitudeCommon {
     const val SCREEN_NAME = "screen_name"
     const val USER_ID = "USER_ID"
 }
 
 object OnboardingAmplitude {
-    const val USER_ALARM_FREQUENCIES = "user_alarm_frequencies"
+    const val ONBOARDING = "온보딩"
+    const val USER_PUSH_FREQUENCIES = "user_push_frequencies"
     const val HOME_REGISTER_LOCATION_PERMISSION_CHECK = "home_register_location_permission_clicked"
     const val HOME_REGISTER_COMPLETE_CLICKED = "home_register_complete_clicked"
     const val ALARM_SETTING_ALARM_PERMISSION_CLICKED = "alarm_setting_alarm_permission_clicked"
     const val HOME_REGISTER = "집 등록(온보딩)"
-    const val ALARM_REGISTER = "알림 등록(온보딩)"
+    const val ALARM_REGISTER = "알람 등록(온보딩)"
+    const val ONBOARDING_NOTIFICATION_PERMISSION_SETTINGS_CLICKED =
+        "onboarding_notification_permission_settings_clicked"
+    const val ONBOARDING_LOCATION_PERMISSION_SETTINGS_CLICKED = "onboarding_location_permission_settings_clicked"
+    const val SYSTEM_SETTING = "설정하기"
+    const val DENIED = "허용안함"
+    const val GRANT = "허용"
+    const val ONBOARDING_LOCATION_PERMISSION_CLICKED = "onboarding_location_permission_clicked"
+    const val ONBOARDING_NOTIFICATION_PERMISSION_CLICKED = "onboarding_notification_permission_clicked"
+    const val ONBOARDING_COMPLETE = "onboarding_complete"
 }
 
 object HomeAmplitude {
     const val HOME = "홈"
     const val HOME_EVENT_REGISTER_MAP_MARKER_CLICK = "home_transit_icon_clicked"
     const val HOME_EVENT_ITINERARY_BTN_CLICK = "home_itinerary_clicked"
+    const val HOME_EVENT_COURSESEARCH_ENTERED = "home_coursesearch_entered"
     const val HOME_COURSESEARCH_ENTERED_DIRECT = "home_coursesearch_entered_direct"
     const val HOME_COURSESEARCH_ENTERED_WITH_MAP_DRAG = "home_coursesearch_entered_with_map_drag"
     const val HOME_COURSESEARCH_ENTERED_WITH_CURRENT_LOCATION = "home_coursesearch_entered_with_current_location"
@@ -60,6 +86,8 @@ object HomeAmplitude {
     const val HOME_DEPARTURE_TIME_SUGGESTION_CLICKED = "home_departure_time_suggestion_clicked"
     const val HOME_ROUTE_CLICKED = "home_route_clicked"
     const val POPUP = "팝업"
+    const val HOME_EVENT_CHARACTER_CLICK_AFTER_ALARM = "character_clicked_after_alarm"
+    const val HOME_EVENT_CHARACTER_CLICK_BEFORE_ALARM = "character_clicked_before_alarm"
     const val ALERT_END_POPUP_1 = "alert_end_popup_1"
     const val ALERT_END_POPUP_2 = "alert_end_popup_2"
     const val REGISTER_MAP_MARKER_CLICKED = "home_transit_icon_clicked"
@@ -70,27 +98,52 @@ object HomeAmplitude {
 }
 
 object LockAmplitude {
-    const val LOCK = "잠금화면"
+    const val LOCK = "잠금화면 알람"
     const val LOCK_BUTTON = "lock_button"
     const val LOCK_BUTTON_START = "lock_button_start"
     const val LOCK_BUTTON_LATER_ROUTE = "lock_button_later_route"
+    const val LOCK_ACTION_TAKEN = "lock_action_taken"
+    const val LOCK_ACTION_TAKEN_TIME = "lock_action_taken_time"
 }
 
 object CourseSearchAmplitude {
-    const val COURSE_SEARCH = "경로 탐색"
+    const val COURSE_SEARCH = "경로검색"
     const val COURSE_SEARCH_EVENT_CARD_CLICKED = "courssesearch_card"
     const val COURSE_SEARCH_EVENT_ITEM_TOGGLED = "coursesearch_toggle"
     const val COURSE_SEARCH_EVENT_DURATION = "coursesearch_view_duration"
-    const val COURSE_SEARCH_EVENT_ALARM_REGISTERED = "alert_button"
+    const val COURSE_SEARCH_EVENT_ALARM_REGISTERED_SCREEN = "alert_button"
+    const val COURSE_SEARCH_EVENT_ALARM_REGISTERED_DATA = "alarm_registered"
+
     const val COURSE_SEARCH_TOGGLE_DISABLED = "coursesearch_toggle"
     const val COURSE_SEARCH_ITEM_CARD_CLICKED = "courssesearch_card_expand"
     const val COURSE_SEARCH_ITEM_DETAIL_TEXT_CLICKED = "courssesearch_card_viewdetails"
     const val COURSE_SEARCH_STAY_TIME = "coursesearch_view_duration"
     const val COURSE_SEARCH_ALARM_REGISTERED = "alert_button"
+    const val COURSE_SEARCH_ALARM_DEPARTURE_TIME_RANK = "later_departure_time_rank"
+    const val COURSE_SEARCH_ALARM_MIN_WALK_RANK = "minimal_walk_rank"
+    const val COURSE_SEARCH_ALARM_MIN_TOTAL_TIME_RANK = "minimal_total_time_rank"
+    const val COURSE_SEARCH_ALARM_TRANSFER_COUNT = "transfer_count"
 }
 
 object ItineraryAmplitude {
-    const val ITINERARY = "상세경로"
-    const val ITINERARY_EVENT_ALARM_REGISTERED = "alert_button"
+    const val ITINERARY = "경로상세"
+    const val ITINERARY_EVENT_ALARM_REGISTERED_SCREEN = "alert_button"
     const val ITINERARY_ALARM_REGISTER_BTN_CLICKED = "alert_button"
+}
+
+object MyPageAmplitude {
+    const val MY_PAGE = "마이페이지"
+    const val MYPAGE_BANNER_CLICKED = "mypage_banner_clicked"
+}
+
+object BusAmplitude {
+    const val BUS = "버스상세"
+}
+
+object LoginAmplitude {
+    const val LOGIN = "로그인"
+}
+
+object SearchLocationAmplitude {
+    const val SEARCH_LOCATION = "현위치 검색"
 }

@@ -1,7 +1,7 @@
 package com.depromeet.team6.presentation.ui.onboarding.component
 
 import android.content.Context
-import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -15,9 +15,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalContext
@@ -25,15 +23,15 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.depromeet.team6.R
 import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.presentation.mapper.toAddress
 import com.depromeet.team6.presentation.model.location.Location
 import com.depromeet.team6.presentation.ui.onboarding.OnboardingViewModel
 import com.depromeet.team6.presentation.util.modifier.addFocusCleaner
+import com.depromeet.team6.presentation.util.modifier.advancedImePadding
 import com.depromeet.team6.presentation.util.permission.PermissionUtil
-import com.depromeet.team6.presentation.util.toast.atChaToastMessage
 import com.depromeet.team6.presentation.util.view.partitionByAddressCategory
+import com.depromeet.team6.ui.theme.Team6Theme
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.depromeet.team6.ui.theme.defaultTeam6Typography
 
@@ -48,19 +46,25 @@ fun OnboardingSearchPopup(
     onSearchTextChange: (String) -> Unit = {},
     onBackButtonClicked: () -> Unit = {},
     onTextClearButtonClicked: () -> Unit = {},
-    selectButtonClicked: (Address) -> Unit = {}
+    selectButtonClicked: (Address) -> Unit = {},
+    settingDialog: () -> Unit
 ) {
     val focusManager = LocalFocusManager.current
     val focusRequester = remember { FocusRequester() }
 
     val (addressLocations, placeLocations) = searchLocations.partitionByAddressCategory()
 
+    BackHandler {
+        onBackButtonClicked()
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
             .addFocusCleaner(focusManager)
-            .background(color = defaultTeam6Colors.greyWashBackground)
+            .background(color = defaultTeam6Colors.gray950)
             .padding(padding)
+            .advancedImePadding()
     ) {
         OnboardingSearchTextField(
             value = searchText,
@@ -73,11 +77,7 @@ fun OnboardingSearchPopup(
                         selectButtonClicked(address)
                     }
                 } else {
-                    atChaToastMessage(
-                        context = context,
-                        R.string.onboarding_location_no_permission_toast,
-                        length = Toast.LENGTH_SHORT
-                    )
+                    settingDialog()
                 }
             },
             focusRequester = focusRequester
@@ -95,8 +95,8 @@ fun OnboardingSearchPopup(
                     Text(
                         modifier = Modifier.padding(start = 16.dp, top = 14.dp, bottom = 4.dp),
                         text = "주소 결과",
-                        style = defaultTeam6Typography.bodyRegular14,
-                        color = defaultTeam6Colors.greyTertiaryLabel
+                        style = defaultTeam6Typography.body6_B6R14,
+                        color = defaultTeam6Colors.gray400
                     )
                 }
                 items(addressLocations) { location ->
@@ -119,8 +119,8 @@ fun OnboardingSearchPopup(
                     Text(
                         modifier = Modifier.padding(start = 16.dp, top = 14.dp, bottom = 4.dp),
                         text = "장소 결과",
-                        style = defaultTeam6Typography.bodyRegular14,
-                        color = defaultTeam6Colors.greyTertiaryLabel
+                        style = defaultTeam6Typography.body6_B6R14,
+                        color = defaultTeam6Colors.gray400
                     )
                 }
                 items(placeLocations) { location ->
@@ -142,5 +142,10 @@ fun OnboardingSearchPopup(
 @Preview
 @Composable
 private fun OnboardingSearchPopupPreview() {
-    OnboardingSearchPopup(padding = PaddingValues(0.dp))
+    Team6Theme {
+        OnboardingSearchPopup(
+            padding = PaddingValues(0.dp),
+            settingDialog = {}
+        )
+    }
 }

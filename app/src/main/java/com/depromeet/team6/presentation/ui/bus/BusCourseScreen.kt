@@ -1,5 +1,6 @@
 package com.depromeet.team6.presentation.ui.bus
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -24,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.SpanStyle
@@ -42,7 +44,9 @@ import com.depromeet.team6.presentation.ui.bus.component.BusOperationInfoView
 import com.depromeet.team6.presentation.ui.bus.component.BusStationItem
 import com.depromeet.team6.presentation.ui.common.TransportVectorIconComposable
 import com.depromeet.team6.presentation.ui.common.view.AtChaLoadingView
+import com.depromeet.team6.presentation.util.base.ApiErrorSideEffect
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
+import com.depromeet.team6.presentation.util.toast.atChaToastMessage
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.depromeet.team6.presentation.util.view.TransportTypeUiMapper
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
@@ -58,11 +62,14 @@ fun BusCourseRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     val lifecycleOwner = LocalLifecycleOwner.current
+    val context = LocalContext.current
 
     LaunchedEffect(viewModel.sideEffect, lifecycleOwner) {
         viewModel.sideEffect.flowWithLifecycle(lifecycle = lifecycleOwner.lifecycle)
             .collect { sideEffect ->
                 when (sideEffect) {
+                    is ApiErrorSideEffect.ShowToastSideEffect -> Toast.makeText(context, sideEffect.toastMessage, Toast.LENGTH_SHORT)
+                    is ApiErrorSideEffect.NavigateToBackSideEffect -> navigateToBackStack()
                     is BusCourseContract.BusCourseSideEffect.NavigateToBackStack -> navigateToBackStack()
                 }
             }
@@ -73,6 +80,7 @@ fun BusCourseRoute(
     }
 
     when (uiState.loadState) {
+        LoadState.Idle -> Unit
         LoadState.Loading, LoadState.Success -> {
             Box {
                 BusCourseScreen(
@@ -89,7 +97,10 @@ fun BusCourseRoute(
             }
         }
 
-        else -> Unit
+        else -> {
+            atChaToastMessage(context, R.string.toast_cannot_load_screen, Toast.LENGTH_SHORT)
+            navigateToBackStack()
+        }
     }
 }
 
@@ -112,10 +123,10 @@ fun BusCourseScreen(
 
     val listState = rememberLazyListState()
     val currentIndex = uiState.busRouteStationList.indexOfFirst {
-        it.busStationNumber == uiState.currentBusStationId
+        it.busStationId == uiState.currentBusStationId
     }
 
-    val targetIndex = maxOf(currentIndex - 3, 0)
+    val targetIndex = maxOf(currentIndex - 4, 0)
 
     LaunchedEffect(currentIndex) {
         if (currentIndex != -1) {
@@ -126,7 +137,7 @@ fun BusCourseScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(color = defaultTeam6Colors.greyElevatedBackground)
+            .background(color = defaultTeam6Colors.gray940)
             .padding(padding)
     ) {
         Column(
@@ -158,7 +169,7 @@ fun BusCourseScreen(
                     Spacer(modifier = Modifier.width(3.dp))
                     Text(
                         text = busNumber,
-                        style = defaultTeam6Typography.heading5SemiBold17,
+                        style = defaultTeam6Typography.heading3_H3SB17,
                         color = defaultTeam6Colors.white
                     )
                 }
@@ -171,7 +182,7 @@ fun BusCourseScreen(
             ) {
                 Text(
                     text = stringResource(R.string.bus_course_info),
-                    style = defaultTeam6Typography.bodyRegular14,
+                    style = defaultTeam6Typography.body6_B6R14,
                     color = defaultTeam6Colors.white,
                     modifier = Modifier.noRippleClickable { changeBusOperationInfoVisible() }
                 )
@@ -179,7 +190,8 @@ fun BusCourseScreen(
                 Icon(
                     imageVector = ImageVector.vectorResource(R.drawable.ic_bus_course_info_12),
                     contentDescription = null,
-                    tint = Color.Unspecified
+                    tint = Color.Unspecified,
+                    modifier = Modifier.noRippleClickable { changeBusOperationInfoVisible() }
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 Text(
@@ -190,13 +202,13 @@ fun BusCourseScreen(
                         }
                         append(fullText.substring(numberEnd))
                     },
-                    style = defaultTeam6Typography.bodyRegular14.copy(color = defaultTeam6Colors.greySecondaryLabel)
+                    style = defaultTeam6Typography.body6_B6R14.copy(color = defaultTeam6Colors.gray200)
                 )
             }
             LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(color = defaultTeam6Colors.greyWashBackground),
+                    .background(color = defaultTeam6Colors.gray950),
                 state = listState
             ) {
                 items(uiState.busRouteStationList) { busRouteStation ->
@@ -207,7 +219,7 @@ fun BusCourseScreen(
                         busSubtypeIdx = uiState.busArrivalParameter.subtypeIdx,
                         isTurnPoint = (busRouteStation.order == uiState.turnPoint),
                         afterTurnPoint = (busRouteStation.order > uiState.turnPoint),
-                        isCurrentStation = (busRouteStation.busStationNumber == uiState.currentBusStationId),
+                        isCurrentStation = (busRouteStation.busStationId == uiState.currentBusStationId),
                         busRemainTime = uiState.remainingTime,
                         busStatus = uiState.busStatus,
                         busPosition = uiState.busPositions.find {

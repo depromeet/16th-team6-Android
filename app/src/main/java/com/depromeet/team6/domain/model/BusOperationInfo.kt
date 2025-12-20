@@ -8,8 +8,13 @@ data class BusOperationInfo(
 
 data class BusServiceHour(
     val dailyType: String,
-    val busDirection: String,
-    val startTime: String,
-    val endTime: String,
+    val busDirection: BusDirection,
+    val startTime: String?,
+    val endTime: String?,
     val term: Int
 )
+
+enum class BusDirection(val text: String) {
+    UP("상행"),
+    DOWN("하행")
+}

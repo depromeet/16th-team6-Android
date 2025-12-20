@@ -1,6 +1,9 @@
 package com.depromeet.team6.presentation.util.context
 
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import android.provider.Settings
 import com.depromeet.team6.presentation.util.DefaultLatLng.DEFAULT_LAT
 import com.depromeet.team6.presentation.util.DefaultLatLng.DEFAULT_LNG
 import com.google.android.gms.location.LocationServices
@@ -18,10 +21,18 @@ suspend fun Context.getUserLocation(): LatLng {
             fusedLocationClient.lastLocation
                 .addOnSuccessListener { location ->
                     if (location != null) {
-                        Timber.d(
-                            "User_Location Lat: ${location.latitude}, Lon: ${location.longitude}"
-                        )
-                        continuation.resume(LatLng(location.latitude, location.longitude))
+                        val latitude = location.latitude
+                        val longitude = location.longitude
+
+                        Timber.d("User_Location Lat: $latitude, Lon: $longitude")
+
+                        // 위도 또는 경도가 비정상일 경우 기본 위치로 설정
+                        if (latitude <= 0 || longitude <= 0) {
+                            Timber.d("위도, 경도가 0보다 작음")
+                            continuation.resume(LatLng(DEFAULT_LAT, DEFAULT_LNG))
+                        } else {
+                            continuation.resume(LatLng(latitude, longitude))
+                        }
                     } else {
                         Timber.d("User_Location Failed to get location")
                         continuation.resume(LatLng(DEFAULT_LAT, DEFAULT_LNG)) // 위치 정보를 가져오지 못한 경우
@@ -36,4 +47,11 @@ suspend fun Context.getUserLocation(): LatLng {
         Timber.e("User_Location Location permission not granted", e)
         LatLng(DEFAULT_LAT, DEFAULT_LNG)
     }
+}
+
+fun Context.openAppSettings() {
+    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+        data = Uri.fromParts("package", packageName, null)
+    }
+    startActivity(intent)
 }

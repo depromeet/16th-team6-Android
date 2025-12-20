@@ -33,7 +33,7 @@ fun OnboardingSearchLocationItem(
     val padding = if (onboardingSearchLocation.businessCategory.startsWith("지역")) {
         PaddingValues(vertical = 16.dp, horizontal = 16.dp)
     } else {
-        PaddingValues(vertical = 19.dp, horizontal = 16.dp)
+        PaddingValues(vertical = 18.dp, horizontal = 16.dp)
     }
     Column(
         modifier = modifier
@@ -44,7 +44,7 @@ fun OnboardingSearchLocationItem(
         Text(
             text = onboardingSearchLocation.name,
             color = defaultTeam6Colors.white,
-            style = defaultTeam6Typography.bodyRegular15,
+            style = defaultTeam6Typography.body4_B4R15,
             overflow = TextOverflow.Ellipsis
         )
         if (!onboardingSearchLocation.businessCategory.startsWith("지역")) {
@@ -53,8 +53,8 @@ fun OnboardingSearchLocationItem(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
                     text = onboardingSearchLocation.radius,
-                    style = defaultTeam6Typography.bodyRegular14,
-                    color = defaultTeam6Colors.greySecondaryLabel
+                    style = defaultTeam6Typography.body6_B6R14,
+                    color = defaultTeam6Colors.gray200
                 )
                 Icon(
                     modifier = Modifier.padding(horizontal = 6.dp),
@@ -64,8 +64,8 @@ fun OnboardingSearchLocationItem(
                 )
                 Text(
                     text = onboardingSearchLocation.address,
-                    style = defaultTeam6Typography.bodyRegular14,
-                    color = defaultTeam6Colors.greySecondaryLabel,
+                    style = defaultTeam6Typography.body6_B6R14,
+                    color = defaultTeam6Colors.gray200,
                     overflow = TextOverflow.Ellipsis
                 )
             }

@@ -1,5 +1,6 @@
 package com.depromeet.team6.presentation.ui.mypage
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -7,15 +8,14 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.depromeet.team6.R
-import com.depromeet.team6.presentation.ui.mypage.component.MyPageConfirmDialog
 import com.depromeet.team6.presentation.ui.mypage.component.MypageListItem
 import com.depromeet.team6.presentation.ui.mypage.component.TitleBar
+import com.depromeet.team6.presentation.util.dialog.LocalDialogController
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.ui.theme.LocalTeam6Colors
 
@@ -27,16 +27,22 @@ fun MypageAccountScreen(
     logoutClicked: () -> Unit = {},
     withDrawClicked: () -> Unit = {},
     onBackClick: () -> Unit = {},
+    moveToAccount: () -> Unit = {},
     logoutConfirmed: () -> Unit = {},
-    withDrawConfirmed: () -> Unit = {},
+    withDrawConfirmed: (String) -> Unit = {},
     dismissDialog: () -> Unit = {}
 ) {
     val colors = LocalTeam6Colors.current
+    val dialogController = LocalDialogController.current
+
+    BackHandler(enabled = mypageUiState.logoutDialogVisible) {
+        dismissDialog()
+    }
 
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(colors.greyWashBackground)
+            .background(colors.gray950)
             .padding(padding)
     ) {
         Column(
@@ -64,22 +70,20 @@ fun MypageAccountScreen(
 
         // 다이얼로그 표시
         if (mypageUiState.logoutDialogVisible) {
-            MyPageConfirmDialog(
-                modifier = Modifier.align(Alignment.Center),
-                title = stringResource(R.string.mypage_logout_dialog_title),
-                confirmText = stringResource(R.string.mypage_logout_dialog_confirm),
-                onDismiss = dismissDialog,
-                onSuccess = logoutConfirmed
+            dialogController.showAtchaTwoButtonAlert(
+                message = stringResource(R.string.mypage_logout_dialog_title),
+                confirmButtonText = stringResource(R.string.mypage_logout_dialog_confirm),
+                closeButtonText = stringResource(R.string.mypage_dialog_cancle),
+                onConfirm = logoutConfirmed,
+                onDismiss = dismissDialog
             )
         }
 
-        if (mypageUiState.withDrawDialogVisible) {
-            MyPageConfirmDialog(
-                modifier = Modifier.align(Alignment.Center),
-                title = stringResource(R.string.mypage_withdraw_dialog_title),
-                confirmText = stringResource(R.string.mypage_withdraw_dialog_confirm),
-                onDismiss = dismissDialog,
-                onSuccess = withDrawConfirmed
+        if (mypageUiState.withDrawScreenVisible) {
+            MyPageWithdrawSelectScreen(
+                modifier = Modifier,
+                moveToAccount = moveToAccount,
+                withDrawConfirmed = withDrawConfirmed
             )
         }
     }

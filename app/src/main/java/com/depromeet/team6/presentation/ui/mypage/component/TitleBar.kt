@@ -33,7 +33,7 @@ fun TitleBar(
         Icon(
             imageVector = ImageVector.vectorResource(R.drawable.ic_all_arrow_left_grey),
             contentDescription = stringResource(R.string.mypage_icon_arrow_text),
-            tint = colors.systemGrey1,
+            tint = colors.gray300,
             modifier = modifier
                 .padding(vertical = 18.dp, horizontal = 16.dp)
                 .clickable { onBackClick() }
@@ -41,7 +41,7 @@ fun TitleBar(
 
         Text(
             text = title,
-            style = typography.heading5SemiBold17,
+            style = typography.heading3_H3SB17,
             color = colors.white,
             modifier = Modifier
                 .align(Alignment.TopCenter)

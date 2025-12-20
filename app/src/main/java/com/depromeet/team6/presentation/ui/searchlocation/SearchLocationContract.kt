@@ -9,13 +9,17 @@ import com.depromeet.team6.presentation.util.base.UiState
 import com.depromeet.team6.presentation.util.view.LoadState
 
 class SearchLocationContract {
+    enum class SearchLocationScreen {
+        LISTVIEW, MAPVIEW
+    }
+
     data class SearchLocationUiState(
         val loadState: LoadState = LoadState.Idle,
+        val currentScreen: SearchLocationScreen = SearchLocationScreen.LISTVIEW,
         val userLocation: LoadState = LoadState.Idle,
         val searchQuery: String = "",
         val searchResults: List<Location> = emptyList(),
         val recentSearches: List<Location> = emptyList(),
-        val searchSelectMapView: Boolean = false,
         val selectLocation: Address = Address(
             name = "",
             lat = 0.0,
@@ -32,6 +36,7 @@ class SearchLocationContract {
 
     sealed interface SearchLocationSideEffect : UiSideEffect {
         data object NavigateBack : SearchLocationSideEffect
+        data class ShowToastSideEffect(val message: String) : SearchLocationSideEffect
     }
 
     sealed class SearchLocationEvent : UiEvent {
@@ -52,6 +57,6 @@ class SearchLocationContract {
 
         data class UpdateUserLocationSate(val userLocation: LoadState) : SearchLocationEvent()
 
-        data class ChangeSearchSelectMapViewVisible(val searchSelectMapView: Boolean) : SearchLocationEvent()
+        data class ChangeCurrentScreen(val screen: SearchLocationScreen) : SearchLocationEvent()
     }
 }

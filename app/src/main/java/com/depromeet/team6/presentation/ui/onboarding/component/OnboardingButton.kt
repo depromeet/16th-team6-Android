@@ -28,7 +28,7 @@ fun OnboardingButton(
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
             .roundedBackgroundWithPadding(
-                backgroundColor = if (isEnabled) defaultTeam6Colors.main else defaultTeam6Colors.greyDefaultButton,
+                backgroundColor = if (isEnabled) defaultTeam6Colors.main else defaultTeam6Colors.gray910,
                 cornerRadius = 8.dp,
                 padding = PaddingValues(vertical = 14.dp)
             )
@@ -37,8 +37,8 @@ fun OnboardingButton(
     ) {
         Text(
             text = stringResource(id = R.string.onboarding_next_button),
-            style = defaultTeam6Typography.heading5SemiBold17,
-            color = if (isEnabled) defaultTeam6Colors.black else defaultTeam6Colors.greyQuaternaryLabel
+            style = defaultTeam6Typography.heading3_H3SB17,
+            color = if (isEnabled) defaultTeam6Colors.black else defaultTeam6Colors.gray700
         )
     }
 }
