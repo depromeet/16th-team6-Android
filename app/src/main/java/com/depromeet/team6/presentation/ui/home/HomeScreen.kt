@@ -51,7 +51,6 @@ import com.depromeet.team6.data.background.ArrivalMonitorService
 import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.course.TransportType
 import com.depromeet.team6.presentation.model.home.CharacterState
-import com.depromeet.team6.presentation.model.home.ComponentType
 import com.depromeet.team6.presentation.model.home.SpeechBubbleData
 import com.depromeet.team6.presentation.model.itinerary.FocusedMarkerParameter
 import com.depromeet.team6.presentation.ui.common.speechbubble.AtchaSpeechCharacter
@@ -497,10 +496,9 @@ fun HomeRoute(
                         },
                         onTimerFinished = { viewModel.onTimerFinished() },
                         getDepartureTime = { viewModel.loadDepartureTime() },
-                        onCharacterClick = onCharacterClick,
+                        onCharacterClick = { viewModel.setEvent(HomeContract.HomeEvent.OnCharacterClick) },
 //                        characterState = characterState,
 //                        showTempMessage = ::showTempMessage,
-                        showTempMessage = {},
                         requestCharacterSpeech = { messages ->
                             viewModel.setEvent(HomeContract.HomeEvent.RequestCharacterSpeech(messages))
                         },
@@ -622,7 +620,6 @@ fun HomeScreen(
     getDepartureTime: () -> Unit = {},
     onCharacterClick: () -> Unit = {},
 //    characterState: CharacterState,
-    showTempMessage: (ComponentType) -> Unit = {},
     requestCharacterSpeech: (List<String>) -> Unit = {},
     onSearchClick: () -> Unit = {},
     onDestinationClick: () -> Unit = {},
@@ -765,13 +762,6 @@ fun HomeScreen(
                             getDepartureTime()
                         }
                     },
-                    onIconClick = {
-                        if (homeUiState.isBusDeparted) {
-                            showTempMessage(ComponentType.DEPARTURE_TIME_CONFIRMED_CLICKED)
-                        } else {
-                            showTempMessage(ComponentType.DEPARTURE_TIME_NOT_CONFIRMED_CLICKED)
-                        }
-                    },
                     onHomeDepartureTimeClick = {
 //                        showTempMessage(ComponentType.DEPARTURE_TIME_CONFIRMED_CLICKED)
                         requestCharacterSpeech(
@@ -790,7 +780,6 @@ fun HomeScreen(
                         )
                     },
                     onHomeExpectDepartureTimeClick = {
-                        showTempMessage(ComponentType.DEPARTURE_TIME_NOT_CONFIRMED_CLICKED)
                         AmplitudeUtils.trackEventWithProperties(
                             HOME_DEPARTURE_TIME_CLICKED,
                             mapOf(

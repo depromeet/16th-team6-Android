@@ -4,11 +4,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -20,7 +16,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.rememberLottieAnimatable
@@ -137,8 +132,7 @@ fun AtchaSpeechCharacter(
     ) {
         // 말풍선들을 아래에서 위로 쌓아 올리는 UI
         Column(
-            modifier = Modifier
-                .padding(16.dp),
+            modifier = Modifier,
             horizontalAlignment = Alignment.Start
         ) {
             bubbles.forEachIndexed { index, bubble ->
@@ -202,14 +196,9 @@ fun BubbleItem(
             animationSpec = tween(durationMillis = 300)
         )
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Start
-        ) {
-            AtchaSpeechBubble(
-                message = text,
-                tailExist = showTail
-            )
-        }
+        AtchaSpeechBubble(
+            message = text,
+            tailExist = showTail
+        )
     }
 }

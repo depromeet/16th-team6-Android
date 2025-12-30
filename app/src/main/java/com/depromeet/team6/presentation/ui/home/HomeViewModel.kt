@@ -42,7 +42,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
@@ -67,13 +66,25 @@ class HomeViewModel @Inject constructor(
     private val getAppVersionUseCase: GetAppVersionUseCase,
     @ApplicationContext private val context: Context
 ) : BaseViewModel<HomeContract.HomeUiState, HomeContract.HomeSideEffect, HomeContract.HomeEvent>() {
-    private var speechBubbleJob: Job? = null
     private var busStartedPollingJob: Job? = null
     private var lastRouteId: String = ""
 
+    private val beforeDepartMessages = listOf(
+        "막차 놓치면 택시비 약 34,000원",
+        "시간에 맞춰 알림을 드릴게요",
+        "교통 상황에 따라 시간이 달라질 수 있어요"
+    )
+
+    private val afterDepartMessages = listOf(
+        "교통 상황에 따라 시간이 달라질 수 있어요",
+        "믿을 수 있는 공공 데이터를 활용하고 있어요",
+        "막차 놓치면 택시비 약 34,000원"
+    )
+
+    private var messageIdx = 0
+
     init {
         checkAppVersion()
-//        showSpeechBubbleTemporarily()
         viewModelScope.launch {
             val currentLocation = withContext(Dispatchers.IO) {
                 context.getUserLocation() // suspend 함수
@@ -82,7 +93,7 @@ class HomeViewModel @Inject constructor(
             val initialSpeech = if (loadUserDepartureState()) {
                 HomeContract.SpeechRequest(
                     listOf(
-                        context.getString(R.string.home_bubble_map_text)
+                        "교통 상황에 따라 시간이 달라질 수 있어요"
                     )
                 )
             } else {
@@ -97,7 +108,8 @@ class HomeViewModel @Inject constructor(
 
             setState {
                 copy(
-                    loadState = LoadState.Success
+                    loadState = LoadState.Success,
+                    characterMessages = initialSpeech
                 )
             }
         }
@@ -117,6 +129,7 @@ class HomeViewModel @Inject constructor(
 
             is HomeContract.HomeEvent.OnCharacterClick -> {
                 if (currentState.isAlarmRegistered) {
+                    requestSpeechAfterRegisterAlarm()
                     AmplitudeUtils.trackEventWithProperties(
                         eventName = HOME_EVENT_CHARACTER_CLICK_AFTER_ALARM,
                         properties = mapOf(
@@ -389,16 +402,6 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun showSpeechBubbleTemporarily() {
-        speechBubbleJob?.cancel()
-
-        speechBubbleJob = viewModelScope.launch {
-            setEvent(HomeContract.HomeEvent.UpdateSpeechBubbleVisibility(true))
-            delay(2500)
-            setEvent(HomeContract.HomeEvent.UpdateSpeechBubbleVisibility(false))
-        }
-    }
-
     fun getCenterLocation(location: LatLng) {
         viewModelScope.launch {
             getAddressFromCoordinatesUseCase(location.latitude, location.longitude)
@@ -460,7 +463,11 @@ class HomeViewModel @Inject constructor(
 
     fun loadUserDepartureState(): Boolean {
         val userDeparture = homeRepository.isUserDeparted()
-        setEvent(HomeContract.HomeEvent.LoadUserDeparture(userDeparture))
+        setState {
+            copy(
+                userDeparture = userDeparture
+            )
+        }
         if (userDeparture && currentState.firtTransportTation == TransportType.BUS) {
             getBusArrival()
         }
@@ -652,6 +659,26 @@ class HomeViewModel @Inject constructor(
                         )
                     }
                 }
+        }
+    }
+
+    private fun requestSpeechAfterRegisterAlarm() {
+        val message = if (currentState.userDeparture) {
+            afterDepartMessages[messageIdx]
+        } else {
+            beforeDepartMessages[messageIdx]
+        }
+        setState {
+            copy(
+                characterMessages = HomeContract.SpeechRequest(
+                    messages = listOf(message)
+                )
+            )
+        }
+        messageIdx = if (currentState.userDeparture) {
+            (messageIdx + 1) % afterDepartMessages.size
+        } else {
+            (messageIdx + 1) % beforeDepartMessages.size
         }
     }
 
