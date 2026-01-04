@@ -79,12 +79,14 @@ class FcmService : FirebaseMessagingService() {
                 if (timeStamp != null) {
                     AlarmScheduler.scheduleLockScreenAlarm(this, timeStamp)
                     updateDepartureTime(timeStamp)
-                    CoroutineScope(Dispatchers.IO).launch {
-                        authRemoteDataSource.getUserInfo()
-                            .onSuccess {
-                                AlarmScheduler.scheduleAdditionalPushAlarm(this@FcmService, timeStamp)
-                            }
-                            .onFailure { }
+                    if (message.data["isReal"] == "true") {
+                        CoroutineScope(Dispatchers.IO).launch {
+                            authRemoteDataSource.getUserInfo()
+                                .onSuccess {
+                                    AlarmScheduler.scheduleAdditionalPushAlarm(this@FcmService, timeStamp)
+                                }
+                                .onFailure { }
+                        }
                     }
                 }
             } else {

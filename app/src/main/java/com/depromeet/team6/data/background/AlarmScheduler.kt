@@ -20,6 +20,7 @@ object AlarmScheduler {
     private const val ALARM_AWARE_NOTIFICATION_ID = 2002
 
     fun scheduleLockScreenAlarm(context: Context, alarmTimeStamp: String) {
+        unScheduleLockAlarm(context)
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         // 디버그 모드에서는 알람설정 후 10초뒤 바로 울림
         val alarmTimeInMillis = if (BuildConfig.DEBUG) isoLocalDateTimeToMillis(alarmTimeStamp) - (60_000L * 6 - 10_000L) else isoLocalDateTimeToMillis(alarmTimeStamp)
@@ -81,6 +82,23 @@ object AlarmScheduler {
                 pushTimeMillis,
                 pendingIntent
             )
+        }
+    }
+
+    fun unScheduleLockAlarm(context: Context) {
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        // 잠금화면 포그라운드 서비스 해제
+        val lockAlarmIntent = Intent(context, LockService::class.java)
+        val lockAlarmPendingIntent = PendingIntent.getForegroundService(
+            context,
+            ALARM_START_ID,
+            lockAlarmIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+        try {
+            alarmManager.cancel(lockAlarmPendingIntent)
+        } catch (e: Exception) {
+            Firebase.crashlytics.recordException(RuntimeException("deleteAlarm 오류 : 알람취소를 눌렀지만 실제로 unschedule 로직이 실행되지 않음"))
         }
     }
 
