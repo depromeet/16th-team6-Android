@@ -5,6 +5,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.offset
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -16,6 +17,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.rememberLottieAnimatable
@@ -138,6 +140,8 @@ fun AtchaSpeechCharacter(
             bubbles.forEachIndexed { index, bubble ->
                 key(bubble.id) {
                     BubbleItem(
+                        modifier = Modifier
+                            .offset(y = 10.dp),
                         text = bubble.text,
                         showTail = index == bubbles.lastIndex,
                         isVisible = bubble.isVisible // 👈 4. 부모의 상태를 자식에게 전달
@@ -183,10 +187,12 @@ fun AtchaSpeechCharacter(
 fun BubbleItem(
     text: String,
     showTail: Boolean,
-    isVisible: Boolean // 👈 1. 부모로부터 가시성 상태를 받음
+    isVisible: Boolean, // 👈 1. 부모로부터 가시성 상태를 받음
+    modifier: Modifier = Modifier
 ) {
     // 2. 내부 상태 (isVisible), LaunchedEffect, onRemove 콜백 모두 제거
     AnimatedVisibility(
+        modifier = modifier,
         visible = isVisible, // 👈 3. 전달받은 isVisible 상태를 직접 사용
         enter = slideInVertically(
             initialOffsetY = { fullHeight -> fullHeight },
