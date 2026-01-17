@@ -6,6 +6,7 @@ import com.depromeet.team6.domain.model.course.TransportType
 import com.depromeet.team6.presentation.model.bus.BusArrivalParameter
 import com.depromeet.team6.presentation.model.home.CharacterState
 import com.depromeet.team6.presentation.model.home.ComponentType
+import com.depromeet.team6.presentation.model.home.MapFocusState
 import com.depromeet.team6.presentation.model.itinerary.FocusedMarkerParameter
 import com.depromeet.team6.presentation.util.DefaultLatLng.DEFAULT_LAT
 import com.depromeet.team6.presentation.util.DefaultLatLng.DEFAULT_LNG
@@ -26,7 +27,7 @@ class HomeContract {
         val showSpeechBubble: Boolean = true,
         val locationAddress: String = "",
         val currentLocation: LatLng = LatLng(DEFAULT_LAT, DEFAULT_LNG),
-        val isMapFocused: Boolean = true,
+        val isMapFocused: MapFocusState = MapFocusState.Departure,
         val isMapReady: Boolean = false,
         // 알림 등록 후 경로 표시
         val itineraryInfo: CourseInfo? = null,
