@@ -52,6 +52,7 @@ import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.course.TransportType
 import com.depromeet.team6.presentation.model.home.CharacterState
 import com.depromeet.team6.presentation.model.home.ComponentType
+import com.depromeet.team6.presentation.model.home.MapFocusState
 import com.depromeet.team6.presentation.model.home.SpeechBubbleData
 import com.depromeet.team6.presentation.model.itinerary.FocusedMarkerParameter
 import com.depromeet.team6.presentation.ui.common.speechbubble.AtchaSpeechCharacter
@@ -583,14 +584,14 @@ fun HomeRoute(
                         currentLocationClicked = {
                             viewModel.setState {
                                 copy(
-                                    isMapFocused = true
+                                    isMapFocused = MapFocusState.Current
                                 )
                             }
                         },
                         mapModified = {
                             viewModel.setState {
                                 copy(
-                                    isMapFocused = false
+                                    isMapFocused = MapFocusState.Modify
                                 )
                             }
                         },
@@ -680,6 +681,7 @@ fun HomeScreen(
                 legs = homeUiState.itineraryInfo!!.legs,
                 isAlarmRegistered = homeUiState.isAlarmRegistered,
                 isMapFocused = homeUiState.isMapFocused,
+                initialMapFocus = MapFocusState.Departure,
                 mapModified = mapModified,
                 getCenterLocation = {
                     getCenterLocation(it)
