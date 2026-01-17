@@ -83,7 +83,8 @@ class HomeContract {
 
     data class SpeechRequest(
         val messages: List<String>,
-        val triggerId: Long = System.nanoTime()
+        val triggerId: Long = System.nanoTime(),
+        val persistentMessage: Boolean = false
     )
 
     sealed interface HomeSideEffect : UiSideEffect {

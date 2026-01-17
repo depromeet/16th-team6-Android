@@ -48,6 +48,7 @@ import timber.log.Timber
 import java.time.Duration
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
@@ -98,11 +99,12 @@ class HomeViewModel @Inject constructor(
                 )
             } else {
                 val taxiCost = getTaxiCostUseCase.getLastSavedTaxiCost()
-                val formattedCost = String.format("%,d", taxiCost)
+                val formattedCost = String.format(Locale.KOREA, "%,d", taxiCost)
                 HomeContract.SpeechRequest(
-                    listOf(
+                    messages = listOf(
                         context.getString(R.string.home_bubble_taxi_cost_message, formattedCost)
-                    )
+                    ),
+                    persistentMessage = true
                 )
             }
 
@@ -137,7 +139,7 @@ class HomeViewModel @Inject constructor(
                         )
                     )
                 } else {
-                    getTaxiCost()
+//                    getTaxiCost()
                     AmplitudeUtils.trackEventWithProperties(
                         eventName = HOME_EVENT_CHARACTER_CLICK_BEFORE_ALARM,
                         properties = mapOf(
@@ -414,6 +416,9 @@ class HomeViewModel @Inject constructor(
                     setState {
                         copy(markerPoint = newMarkerPoint)
                     }
+                    if (!currentState.userDeparture) {
+                        getTaxiCost()
+                    }
                 }
                 .onFailure { exception ->
                     handleApiException(exception)
@@ -638,16 +643,16 @@ class HomeViewModel @Inject constructor(
             )
                 .onSuccess {
                     // 1. 숫자를 콤마가 포함된 문자열로 포매팅
-                    val formattedCost = String.format("%,d", it) // "34,200"
+                    val formattedCost = String.format(Locale.KOREA, "%,d", it) // "34,200"
                     val resultString = context.getString(R.string.home_bubble_taxi_cost_message, formattedCost)
-                    Timber.d("resultString: $resultString")
                     setState {
                         copy(
                             taxiCost = it,
                             characterMessages = HomeContract.SpeechRequest(
-                                listOf(
+                                messages = listOf(
                                     resultString
-                                )
+                                ),
+                                persistentMessage = true
                             )
                         )
                     }
