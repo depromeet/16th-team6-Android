@@ -26,6 +26,7 @@ import com.depromeet.team6.BuildConfig
 import com.depromeet.team6.R
 import com.depromeet.team6.domain.model.course.LegInfo
 import com.depromeet.team6.domain.model.course.TransportType
+import com.depromeet.team6.presentation.model.home.MapFocusState
 import com.depromeet.team6.presentation.model.itinerary.FocusedMarkerParameter
 import com.depromeet.team6.presentation.ui.common.TransportVectorIconBitmap
 import com.depromeet.team6.presentation.ui.common.view.AtChaLoadingView
@@ -49,7 +50,8 @@ fun AfterRegisterMap(
     currentLocation: LatLng,
     legs: List<LegInfo>,
     isAlarmRegistered: Boolean,
-    isMapFocused: Boolean,
+    isMapFocused: MapFocusState,
+    initialMapFocus: MapFocusState,
     modifier: Modifier = Modifier,
     mapModified: () -> Unit,
     getCenterLocation: (LatLng) -> Unit,
@@ -57,6 +59,7 @@ fun AfterRegisterMap(
     isMapReadyCallback: () -> Unit = {}
 ) {
     var isMapReady by remember { mutableStateOf(false) }
+    var hasAppliedInitialFocus by remember { mutableStateOf(false) }
 
     var locationUpdateTrigger by remember { mutableStateOf(0) }
 
@@ -278,9 +281,9 @@ fun AfterRegisterMap(
                     }
                     tMapView.addTMapMarkerItem(currentMarker)
 
-                    // 지도 위치 설정 - 출발지와 첫 대중교통의 중간 지점
-                    val midPoint = getMidPoint(firstTransportationPoint, departLocation)
-                    tMapView.setCenterPoint(midPoint.latitude, midPoint.longitude)
+                    tMapView.isTrackingMode = false
+                    tMapView.setSightVisible(false)
+                    tMapView.isCompassMode = false
 
                     // 지도 Scale 조정 - 출발지와 첫 대중교통의 중간 지점 + 일정 값
                     val latSpan = abs(firstTransportationPoint.latitude - departLocation.latitude) + 0.01 // 0.01 or 0.001
@@ -305,9 +308,35 @@ fun AfterRegisterMap(
                 existingMarker.tMapPoint = currentPoint
                 tMapView.updateTMapMarkerItem(existingMarker)
 
-                if (isMapFocused) {
-                    tMapView.setCenterPoint(currentPoint.latitude, currentPoint.longitude)
-                    getCenterLocation(LatLng(currentPoint.latitude, currentPoint.longitude))
+                if (!hasAppliedInitialFocus) {
+                    // 지도 Focus에 따른 위치 설정
+                    when (initialMapFocus) {
+                        MapFocusState.Departure -> {
+                            tMapView.setCenterPoint(
+                                departLocation.latitude,
+                                departLocation.longitude
+                            )
+                        }
+
+                        MapFocusState.Current -> {
+                            tMapView.setCenterPoint(
+                                currentLocation.latitude,
+                                currentLocation.longitude
+                            )
+                        }
+
+                        MapFocusState.Modify -> Unit
+                    }
+
+                    hasAppliedInitialFocus = true
+                    return@AndroidView
+                }
+
+                if (isMapFocused == MapFocusState.Current) {
+                    tMapView.setCenterPoint(
+                        currentLocation.latitude,
+                        currentLocation.longitude
+                    )
                 }
             }
         )
@@ -366,7 +395,8 @@ fun AfterRegisterMapPreview(
         legs = legs,
         currentLocation = LatLng(37.5665, 126.9780),
         isAlarmRegistered = false,
-        isMapFocused = true,
+        isMapFocused = MapFocusState.Departure,
+        initialMapFocus = MapFocusState.Departure,
         getCenterLocation = {},
         mapModified = {}
     )
