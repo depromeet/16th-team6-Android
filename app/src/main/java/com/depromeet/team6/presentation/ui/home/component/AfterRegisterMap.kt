@@ -311,10 +311,12 @@ fun AfterRegisterMap(
                 if (!hasAppliedInitialFocus) {
                     // 지도 Focus에 따른 위치 설정
                     when (initialMapFocus) {
+                        // 지도 위치 설정 - 출발지와 첫 대중교통의 중간 지점
                         MapFocusState.Departure -> {
+                            val midPoint = getMidPoint(firstTransportationPoint, departLocation)
                             tMapView.setCenterPoint(
-                                departLocation.latitude,
-                                departLocation.longitude
+                                midPoint.latitude,
+                                midPoint.longitude
                             )
                         }
 
