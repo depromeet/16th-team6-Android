@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import com.depromeet.team6.presentation.ui.main.MainActivity
-import com.google.gson.Gson
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -80,7 +79,6 @@ class LockScreenNavigator @Inject constructor() {
         const val EXTRA_DEPARTURE_POINT = "extra_departure_point"
         const val EXTRA_DESTINATION_POINT = "extra_destination_point"
         const val EXTRA_FROM_LOCK_SCREEN = "extra_from_lock_screen"
-        const val EXTRA_NAVIGATE_TO_ITINERARY = "extra_navigate_to_itinerary"
         const val EXTRA_ITINERARY_INFO = "extra_itinerary_info"
     }
 }

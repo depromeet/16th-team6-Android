@@ -140,9 +140,6 @@ class MainActivity : ComponentActivity() {
                 }
             )
 
-            var shouldNavigateToCourseSearch by remember { mutableStateOf(navigateToCourseSearch) }
-            var shouldNavigateToItinerary by remember { mutableStateOf(navigateToItinerary) }
-
             LaunchedEffect(PermissionUtil.hasLocationPermissions(this)) {
                 if (PermissionUtil.hasLocationPermissions(this@MainActivity)) { // 위치 권한이 있으면
                     viewModel.startLocationUpdates()

@@ -120,11 +120,11 @@ fun HomeRoute(
         if (uiState.isAlarmRegistered && uiState.afterRegisterDataLoadState == LoadState.Success) {
             val sharedPreferences = context.getSharedPreferences("MyPreferences", android.content.Context.MODE_PRIVATE)
             val fromLockScreenDeparture = sharedPreferences.getBoolean("fromLockScreenDeparture", false)
-            
+
             if (fromLockScreenDeparture) {
                 // 플래그 초기화
                 sharedPreferences.edit().putBoolean("fromLockScreenDeparture", false).apply()
-                
+
                 // 상세경로 화면으로 이동
                 navigateToItinerary(
                     com.google.gson.Gson().toJson(uiState.itineraryInfo),
