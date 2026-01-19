@@ -5,6 +5,9 @@ import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
 import androidx.lifecycle.viewModelScope
+import com.depromeet.team6.domain.model.Address
+import com.depromeet.team6.domain.model.course.CourseInfo
+import com.depromeet.team6.domain.repository.HomeRepository
 import com.depromeet.team6.domain.repository.UserInfoRepository
 import com.depromeet.team6.domain.usecase.GetRealtimeLocationUseCase
 import com.depromeet.team6.presentation.util.DefaultLatLng
@@ -38,6 +41,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val userInfoRepository: UserInfoRepository,
+    private val homeRepository: HomeRepository,
     private val getRealtimeLocationUseCase: GetRealtimeLocationUseCase,
     @ApplicationContext private val context: Context
 ) : BaseViewModel<MainContract.MainState, MainContract.MainSideEffect, MainContract.MainEvent>() {
@@ -168,6 +172,16 @@ class MainViewModel @Inject constructor(
         return withContext(Dispatchers.IO) {
             userInfoRepository.getRefreshToken().isNotEmpty()
         }
+    }
+
+    fun getLastCourseInfo(): CourseInfo? = homeRepository.getLastCourseInfo()
+
+    fun getDeparturePoint(): Address? = homeRepository.getDeparturePoint()
+
+    fun getDestinationPoint(): Address? = homeRepository.getDestinationPoint()
+
+    fun setUserDeparture(isDeparted: Boolean) {
+        homeRepository.setUserDeparture(isDeparted)
     }
 
     companion object {

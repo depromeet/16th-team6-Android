@@ -57,6 +57,7 @@ import com.depromeet.team6.ui.theme.Team6Theme
 import com.google.firebase.Firebase
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.analytics
+import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 import kotlin.system.exitProcess
 
@@ -99,6 +100,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         val navigateToCourseSearch = intent.getBooleanExtra(LockScreenNavigator.EXTRA_NAVIGATE_TO_COURSE_SEARCH, false)
+        val navigateToItinerary = intent.getBooleanExtra(LockScreenNavigator.EXTRA_NAVIGATE_TO_ITINERARY, false)
         val departurePoint = intent.getStringExtra(LockScreenNavigator.EXTRA_DEPARTURE_POINT) ?: ""
         val destinationPoint = intent.getStringExtra(LockScreenNavigator.EXTRA_DESTINATION_POINT) ?: ""
         val fromLockScreen = intent.getBooleanExtra(LockScreenNavigator.EXTRA_FROM_LOCK_SCREEN, false)
@@ -114,6 +116,7 @@ class MainActivity : ComponentActivity() {
             val (snackbarController, snackbarData) = rememberSnackbarController()
             val lifecycleOwner = LocalLifecycleOwner.current
             var shouldNavigateToCourseSearch by remember { mutableStateOf(navigateToCourseSearch) }
+            var shouldNavigateToItinerary by remember { mutableStateOf(navigateToItinerary) }
 
             SideEffect {
                 WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = false
@@ -233,6 +236,24 @@ class MainActivity : ComponentActivity() {
                                         fromLockScreen = fromLockScreen
                                     )
                                     shouldNavigateToCourseSearch = false
+                                }
+                            }
+
+                            if (shouldNavigateToItinerary) {
+                                LaunchedEffect(Unit) {
+                                    val courseInfo = viewModel.getLastCourseInfo()
+                                    val depPoint = viewModel.getDeparturePoint()
+                                    val destPoint = viewModel.getDestinationPoint()
+
+                                    if (courseInfo != null && depPoint != null && destPoint != null) {
+                                        viewModel.setUserDeparture(true)
+                                        navigator.navigateToItinerary(
+                                            courseInfoJSON = Gson().toJson(courseInfo),
+                                            departurePointJSON = Gson().toJson(depPoint),
+                                            destinationPointJSON = Gson().toJson(destPoint)
+                                        )
+                                    }
+                                    shouldNavigateToItinerary = false
                                 }
                             }
                         }

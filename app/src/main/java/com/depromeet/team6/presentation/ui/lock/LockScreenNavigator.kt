@@ -60,9 +60,23 @@ class LockScreenNavigator @Inject constructor() {
         }
     }
 
+    fun navigateToItineraryFromLockScreen(context: Context) {
+        try {
+            val intent = Intent(context, MainActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                putExtra(EXTRA_NAVIGATE_TO_ITINERARY, true)
+            }
+            context.startActivity(intent)
+        } catch (e: Exception) {
+            Timber.e(e, "Error in navigateToItineraryFromLockScreen, navigating to home")
+            navigateToSpecificScreen(context)
+        }
+    }
+
     companion object {
         const val EXTRA_TAXI_COST = "extra_taxi_cost"
         const val EXTRA_NAVIGATE_TO_COURSE_SEARCH = "extra_navigate_to_course_search"
+        const val EXTRA_NAVIGATE_TO_ITINERARY = "extra_navigate_to_itinerary"
         const val EXTRA_DEPARTURE_POINT = "extra_departure_point"
         const val EXTRA_DESTINATION_POINT = "extra_destination_point"
         const val EXTRA_FROM_LOCK_SCREEN = "extra_from_lock_screen"
