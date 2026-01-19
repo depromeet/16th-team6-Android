@@ -86,7 +86,8 @@ class LockActivity : ComponentActivity() {
                                     LOCK_ACTION_TAKEN_TIME to actionTime
                                 )
                             )
-                            lockScreenNavigator.navigateToSpecificScreen(this)
+
+                            lockScreenNavigator.navigateToCourseSearchFromLockScreen(this, sharedPreferences)
                             finish()
                         },
                         onLateClick = {
