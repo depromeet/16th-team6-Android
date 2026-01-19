@@ -115,6 +115,27 @@ fun HomeRoute(
     val systemUiController = rememberSystemUiController()
     val dialogController = remember { DialogController() }
 
+    // LockScreen에서 출발하기 클릭 시 처리
+    LaunchedEffect(uiState.isAlarmRegistered && uiState.afterRegisterDataLoadState == LoadState.Success) {
+        if (uiState.isAlarmRegistered && uiState.afterRegisterDataLoadState == LoadState.Success) {
+            val sharedPreferences = context.getSharedPreferences("MyPreferences", android.content.Context.MODE_PRIVATE)
+            val fromLockScreenDeparture = sharedPreferences.getBoolean("fromLockScreenDeparture", false)
+            
+            if (fromLockScreenDeparture) {
+                // 플래그 초기화
+                sharedPreferences.edit().putBoolean("fromLockScreenDeparture", false).apply()
+                
+                // 상세경로 화면으로 이동
+                navigateToItinerary(
+                    com.google.gson.Gson().toJson(uiState.itineraryInfo),
+                    com.google.gson.Gson().toJson(uiState.departurePoint),
+                    com.google.gson.Gson().toJson(uiState.destinationPoint),
+                    null
+                )
+            }
+        }
+    }
+
 //    val characterTexts = CharacterTexts(
 //        taxiCostText = stringResource(R.string.home_bubble_basic_text),
 //        aboutText = stringResource(R.string.home_bubble_least_text),

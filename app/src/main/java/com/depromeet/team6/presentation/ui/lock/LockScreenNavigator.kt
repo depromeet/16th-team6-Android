@@ -45,32 +45,15 @@ class LockScreenNavigator @Inject constructor() {
 
     fun navigateToCourseSearchFromLockScreen(context: Context, sharedPreferences: SharedPreferences) {
         try {
-            val itineraryInfo = sharedPreferences.getString("itineraryInfo", "") ?: ""
-            val departurePoint = sharedPreferences.getString("departurePoint", "") ?: ""
-            val destinationPoint = sharedPreferences.getString("destinationPoint", "") ?: ""
-
-            // 데이터가 없으면 홈으로 이동
-            if (itineraryInfo.isEmpty() || departurePoint.isEmpty() || destinationPoint.isEmpty()) {
-                Timber.d("LockScreenNavigator navigateToCourseSearchFromLockScreen: empty data, navigating to home")
-                navigateToSpecificScreen(context)
-                return
-            }
-
+            // "출발하기"를 누른 상태를 표시
             val editor = sharedPreferences.edit()
-            editor.putBoolean("fromLockScreen", true)
+            editor.putBoolean("fromLockScreenDeparture", true)
             editor.apply()
 
-            Timber.d("LockScreenNavigator navigateToCourseSearchFromLockScreen: navigating to itinerary")
+            Timber.d("LockScreenNavigator navigateToCourseSearchFromLockScreen: navigating to home with departure flag")
 
-            // ItineraryScreen으로 이동
-            val intent = Intent(context, MainActivity::class.java).apply {
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                putExtra(EXTRA_NAVIGATE_TO_ITINERARY, true)
-                putExtra(EXTRA_ITINERARY_INFO, itineraryInfo)
-                putExtra(EXTRA_DEPARTURE_POINT, departurePoint)
-                putExtra(EXTRA_DESTINATION_POINT, destinationPoint)
-            }
-            context.startActivity(intent)
+            // 홈으로 이동
+            navigateToSpecificScreen(context)
         } catch (e: Exception) {
             Timber.e(e, "Error in navigateToCourseSearchFromLockScreen, navigating to home")
             navigateToSpecificScreen(context)

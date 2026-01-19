@@ -102,9 +102,6 @@ class MainActivity : ComponentActivity() {
         val departurePoint = intent.getStringExtra(LockScreenNavigator.EXTRA_DEPARTURE_POINT) ?: ""
         val destinationPoint = intent.getStringExtra(LockScreenNavigator.EXTRA_DESTINATION_POINT) ?: ""
         val fromLockScreen = intent.getBooleanExtra(LockScreenNavigator.EXTRA_FROM_LOCK_SCREEN, false)
-        
-        val navigateToItinerary = intent.getBooleanExtra(LockScreenNavigator.EXTRA_NAVIGATE_TO_ITINERARY, false)
-        val itineraryInfo = intent.getStringExtra(LockScreenNavigator.EXTRA_ITINERARY_INFO) ?: ""
 
         val permissionGranted = PermissionUtil.hasLocationPermissions(this)
 
@@ -140,7 +137,11 @@ class MainActivity : ComponentActivity() {
                 }
             )
 
-            LaunchedEffect(PermissionUtil.hasLocationPermissions(this)) {            var shouldNavigateToItinerary by remember { mutableStateOf(navigateToItinerary) }                if (PermissionUtil.hasLocationPermissions(this@MainActivity)) { // 위치 권한이 있으면
+            var shouldNavigateToCourseSearch by remember { mutableStateOf(navigateToCourseSearch) }
+            var shouldNavigateToItinerary by remember { mutableStateOf(navigateToItinerary) }
+
+            LaunchedEffect(PermissionUtil.hasLocationPermissions(this)) {
+                if (PermissionUtil.hasLocationPermissions(this@MainActivity)) { // 위치 권한이 있으면
                     viewModel.startLocationUpdates()
                 } else {
                     dialogController.showAtchaTwoButtonAlert(
@@ -232,18 +233,6 @@ class MainActivity : ComponentActivity() {
                                         fromLockScreen = fromLockScreen
                                     )
                                     shouldNavigateToCourseSearch = false
-                                }
-                            }
-
-                            if (shouldNavigateToItinerary) {
-                                LaunchedEffect(Unit) {
-                                    navigator.navigateToItinerary(
-                                        courseInfoJSON = itineraryInfo,
-                                        departurePointJSON = departurePoint,
-                                        destinationPointJSON = destinationPoint,
-                                        focusedMarkerParameter = null
-                                    )
-                                    shouldNavigateToItinerary = false
                                 }
                             }
                         }
