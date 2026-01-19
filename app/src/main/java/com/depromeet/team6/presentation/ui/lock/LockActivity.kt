@@ -87,7 +87,7 @@ class LockActivity : ComponentActivity() {
                                 )
                             )
 
-                            lockScreenNavigator.navigateToCourseSearchFromLockScreen(this, sharedPreferences)
+                            lockScreenNavigator.navigateToItineraryFromLockScreen(this)
                             finish()
                         },
                         onLateClick = {
