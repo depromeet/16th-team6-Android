@@ -41,6 +41,24 @@ class LockScreenNavigator @Inject constructor() {
         }
     }
 
+    fun navigateToCourseSearchFromLockScreen(context: Context, sharedPreferences: android.content.SharedPreferences) {
+        try {
+            val departurePoint = sharedPreferences.getString("departurePoint", "") ?: ""
+            val destinationPoint = sharedPreferences.getString("destinationPoint", "") ?: ""
+
+            val editor = sharedPreferences.edit()
+            editor.putBoolean("fromLockScreen", true)
+            editor.apply()
+
+            Timber.d("LockScreenNavigator navigateToCourseSearchFromLockScreen: departurePoint=$departurePoint, destinationPoint=$destinationPoint")
+
+            navigateToCourseSearch(context, departurePoint, destinationPoint)
+        } catch (e: Exception) {
+            Timber.e(e, "Error in navigateToCourseSearchFromLockScreen, navigating to home")
+            navigateToSpecificScreen(context)
+        }
+    }
+
     companion object {
         const val EXTRA_TAXI_COST = "extra_taxi_cost"
         const val EXTRA_NAVIGATE_TO_COURSE_SEARCH = "extra_navigate_to_course_search"
