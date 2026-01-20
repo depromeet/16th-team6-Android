@@ -39,8 +39,8 @@ android {
         applicationId = "com.depromeet.team6"
         minSdk = 26
         targetSdk = 35
-        versionCode = 23
-        versionName = "1.3.4"
+        versionCode = 24
+        versionName = "1.3.41"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "KAKAO_NATIVE_APP_KEY", properties["kakao.native.app.key"].toString())
