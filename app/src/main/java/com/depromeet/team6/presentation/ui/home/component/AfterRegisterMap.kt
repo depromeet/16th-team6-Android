@@ -81,60 +81,6 @@ fun AfterRegisterMap(
 
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
 
-//    val fusedLocationClient = remember {
-//        LocationServices.getFusedLocationProviderClient(context)
-//    }
-
-//    val locationCallback = remember(firstTransportationPoint) {
-//        object : LocationCallback() {
-//            override fun onLocationResult(locationResult: LocationResult) {
-//                locationResult.lastLocation?.let { location ->
-//                    val newLocation = LatLng(location.latitude, location.longitude)
-//                    userLocation = newLocation
-//                    locationUpdateTrigger++
-//
-//                    val distance = calculateDistance(
-//                        newLocation.latitude,
-//                        newLocation.longitude,
-//                        firstTransportationPoint.latitude,
-//                        firstTransportationPoint.longitude
-//                    )
-//
-//                    if (distance <= 50f && !hasShownToast) {
-//                        atChaToastMessage(context, R.string.home_arrive_station_toast_text, Toast.LENGTH_LONG)
-//                        hasShownToast = true
-//                    }
-//                }
-//            }
-//        }
-//    }
-
-    // 위치 업데이트 시작
-//    LaunchedEffect(Unit) {
-//        if (PermissionUtil.hasLocationPermissions(context)) {
-//            val locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 3000)
-//                .setMinUpdateIntervalMillis(1000)
-//                .setMinUpdateDistanceMeters(1f)
-//                .build()
-//
-//            try {
-//                fusedLocationClient.requestLocationUpdates(
-//                    locationRequest,
-//                    locationCallback,
-//                    Looper.getMainLooper()
-//                )
-//            } catch (e: SecurityException) {
-//                Timber.e("위치 권한 오류: ${e.message}")
-//            }
-//        }
-//    }
-
-//    DisposableEffect(Unit) {
-//        onDispose {
-//            fusedLocationClient.removeLocationUpdates(locationCallback)
-//        }
-//    }
-
     Box(
         modifier = modifier
     ) {
@@ -342,28 +288,6 @@ fun AfterRegisterMap(
                 }
             }
         )
-
-        // 현위치 버튼
-//            Image(
-//                imageVector = ImageVector.vectorResource(id = R.drawable.ic_all_current_location),
-//                contentDescription = stringResource(R.string.home_current_location_btn),
-//                modifier = Modifier
-//                    .align(Alignment.BottomEnd)
-//                    .then(
-//                        if (isAlarmRegistered) {
-//                            Modifier.padding(bottom = 25.dp, end = 16.dp)
-//                        } else {
-//                            Modifier.padding(bottom = 25.dp, end = 16.dp)
-//                        }
-//                    )
-//                    .clickable(enabled = isMapReady) {
-//                        val tMapPoint = TMapPoint(userLocation.latitude, userLocation.longitude)
-//                        tMapView.setCenterPoint(tMapPoint.latitude, tMapPoint.longitude)
-//
-//                        getCenterLocation(LatLng(tMapPoint.latitude, tMapPoint.longitude))
-//                    }
-//                    .graphicsLayer { alpha = if (isMapReady) 1f else 0.5f } // 비활성화 시 투명도 조정
-//            )
 
         if (isMapReady) {
             isMapReadyCallback()
