@@ -148,6 +148,7 @@ fun AfterRegisterMap(
                 tMapView.setSKTMapApiKey(BuildConfig.TMAP_API_KEY)
                 tMapView.setOnMapReadyListener {
                     tMapView.mapType = TMapView.MapType.NIGHT
+                    tMapView.isCompassMode = true
 
                     val departTMapPoint = TMapPoint(departLocation.latitude, departLocation.longitude)
                     val destinationTMapPoint = TMapPoint(destinationLocation.latitude, destinationLocation.longitude)

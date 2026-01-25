@@ -80,7 +80,6 @@ fun TMapViewCompose(
                             arrayListOf(currentPoint)
                         )
                     )
-
                     // 현위치 마커
                     val markerDrawable =
                         ContextCompat.getDrawable(context, R.drawable.ic_home_current_location)
