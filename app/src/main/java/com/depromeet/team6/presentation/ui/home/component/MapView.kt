@@ -23,6 +23,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
 import com.depromeet.team6.BuildConfig
 import com.depromeet.team6.R
+import com.depromeet.team6.presentation.model.home.MapFocusState
 import com.depromeet.team6.presentation.ui.common.view.AtChaLoadingView
 import com.depromeet.team6.presentation.util.AmplitudeCommon.SCREEN_NAME
 import com.depromeet.team6.presentation.util.AmplitudeCommon.USER_ID
@@ -46,7 +47,7 @@ fun TMapViewCompose(
     padding: PaddingValues,
     currentLocation: LatLng,
     isAlarmRegistered: Boolean,
-    isMapFocused: Boolean,
+    isMapFocused: MapFocusState,
     userId: Int,
     modifier: Modifier = Modifier,
     getCenterLocation: (LatLng) -> Unit,
@@ -136,7 +137,7 @@ fun TMapViewCompose(
                 existingMarker.tMapPoint = currentPoint
                 tMapView.updateTMapMarkerItem(existingMarker)
 
-                if (isMapFocused) {
+                if (isMapFocused == MapFocusState.Current) {
                     tMapView.setCenterPoint(currentLocation.latitude, currentLocation.longitude)
                     getCenterLocation(LatLng(currentLocation.latitude, currentLocation.longitude)) // 필요없어보여서 주석처리 해뒀어요
                     tMapView.zoomLevel = 18

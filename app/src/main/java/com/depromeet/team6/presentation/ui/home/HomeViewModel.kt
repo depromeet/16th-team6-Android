@@ -21,6 +21,7 @@ import com.depromeet.team6.domain.usecase.GetTaxiCostUseCase
 import com.depromeet.team6.domain.usecase.GetUserInfoUseCase
 import com.depromeet.team6.domain.usecase.RefreshAlarmTimerUseCase
 import com.depromeet.team6.presentation.model.bus.BusArrivalParameter
+import com.depromeet.team6.presentation.model.home.MapFocusState
 import com.depromeet.team6.presentation.util.AmplitudeCommon.SCREEN_NAME
 import com.depromeet.team6.presentation.util.AmplitudeCommon.USER_ID
 import com.depromeet.team6.presentation.util.DefaultMarkerDestination.DEFAULT_DESTINATION_LAT
@@ -121,7 +122,17 @@ class HomeViewModel @Inject constructor(
 
     override suspend fun handleEvent(event: HomeContract.HomeEvent) {
         when (event) {
-            is HomeContract.HomeEvent.UpdateAlarmRegistered -> setState { copy(isAlarmRegistered = event.isRegistered) }
+            is HomeContract.HomeEvent.UpdateAlarmRegistered ->
+                setState {
+                    copy(
+                        isAlarmRegistered = event.isRegistered,
+                        isMapFocused = if (event.isRegistered) {
+                            MapFocusState.Departure
+                        } else {
+                            isMapFocused
+                        }
+                    )
+                }
             is HomeContract.HomeEvent.UpdateBusDeparted -> setState { copy(isBusDeparted = event.isBusDeparted) }
             is HomeContract.HomeEvent.UpdateSpeechBubbleVisibility -> setState {
                 copy(
