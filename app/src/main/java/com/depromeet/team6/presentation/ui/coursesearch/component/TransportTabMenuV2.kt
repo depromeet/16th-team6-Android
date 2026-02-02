@@ -5,6 +5,8 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -19,7 +21,7 @@ import com.depromeet.team6.BuildConfig
 import com.depromeet.team6.R
 import com.depromeet.team6.domain.model.course.CourseInfo
 import com.depromeet.team6.domain.model.course.LegInfo
-import com.depromeet.team6.presentation.ui.common.AtchaTabRow
+import com.depromeet.team6.presentation.ui.common.AtchaTabRowV2
 import com.depromeet.team6.presentation.ui.coursesearch.CourseSearchContract
 import com.depromeet.team6.presentation.ui.itinerary.LegInfoDummyProvider
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
@@ -50,23 +52,28 @@ fun TransportTabMenuV2(
         }
         val coroutineScope = rememberCoroutineScope()
 
-        // TabRow
-        AtchaTabRow(
-            tabs = tabItems,
-            selectedTabIndex = pagerState.currentPage,
-            onTabClick = { tabIndex ->
-                coroutineScope.launch {
-                    pagerState.animateScrollToPage(
-                        page = tabIndex,
-                        animationSpec = tween(
-                            durationMillis = 500,
-                            delayMillis = 0,
-                            easing = FastOutSlowInEasing
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+        ) {
+            // TabRow
+            AtchaTabRowV2(
+                tabs = tabItems,
+                selectedTabIndex = pagerState.currentPage,
+                onTabClick = { tabIndex ->
+                    coroutineScope.launch {
+                        pagerState.animateScrollToPage(
+                            page = tabIndex,
+                            animationSpec = tween(
+                                durationMillis = 500,
+                                delayMillis = 0,
+                                easing = FastOutSlowInEasing
+                            )
                         )
-                    )
+                    }
                 }
-            }
-        )
+            )
+        }
 
         // Tab Content
         HorizontalPager(state = pagerState) { page ->
