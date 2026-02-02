@@ -139,7 +139,7 @@ fun TMapViewCompose(
 
                 if (isMapFocused == MapFocusState.Current) {
                     tMapView.setCenterPoint(currentLocation.latitude, currentLocation.longitude)
-                    getCenterLocation(LatLng(currentLocation.latitude, currentLocation.longitude)) // 필요없어보여서 주석처리 해뒀어요
+                    getCenterLocation(LatLng(currentLocation.latitude, currentLocation.longitude))
                     tMapView.zoomLevel = 18
 
                     AmplitudeUtils.trackEventWithProperties(

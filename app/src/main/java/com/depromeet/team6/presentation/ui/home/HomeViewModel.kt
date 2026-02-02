@@ -36,15 +36,11 @@ import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_EVENT_REGISTER_M
 import com.depromeet.team6.presentation.util.HomeAmplitude.REGISTER_MAP_MARKER_CLICKED
 import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
 import com.depromeet.team6.presentation.util.base.BaseViewModel
-import com.depromeet.team6.presentation.util.context.getUserLocation
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.time.Duration
 import java.time.LocalDateTime
@@ -68,7 +64,6 @@ class HomeViewModel @Inject constructor(
     private val getAppVersionUseCase: GetAppVersionUseCase,
     @ApplicationContext private val context: Context
 ) : BaseViewModel<HomeContract.HomeUiState, HomeContract.HomeSideEffect, HomeContract.HomeEvent>() {
-    private var busStartedPollingJob: Job? = null
     private var lastRouteId: String = ""
 
     private val beforeDepartMessages = listOf(
@@ -88,9 +83,6 @@ class HomeViewModel @Inject constructor(
     init {
         checkAppVersion()
         viewModelScope.launch {
-            val currentLocation = withContext(Dispatchers.IO) {
-                context.getUserLocation() // suspend 함수
-            }
             loadAlarmAndCourseInfoFromPrefs()
             val initialSpeech = if (loadUserDepartureState()) {
                 HomeContract.SpeechRequest(
@@ -108,11 +100,17 @@ class HomeViewModel @Inject constructor(
                     persistentMessage = true
                 )
             }
+            val focusState = if (homeRepository.isAlarmRegistered()) {
+                MapFocusState.Departure
+            } else {
+                MapFocusState.Current
+            }
 
             setState {
                 copy(
                     loadState = LoadState.Success,
-                    characterMessages = initialSpeech
+                    characterMessages = initialSpeech,
+                    isMapFocused = focusState
                 )
             }
         }
@@ -302,9 +300,6 @@ class HomeViewModel @Inject constructor(
                 )
             }
 
-            is HomeContract.HomeEvent.CharacterClicked -> {}
-            // is HomeContract.HomeEvent.ComponentClicked -> handleComponentClick(event.componentType, event.data)
-            is HomeContract.HomeEvent.ComponentClicked -> TODO()
             is HomeContract.HomeEvent.RequestCharacterSpeech -> {
                 setState {
                     copy(
