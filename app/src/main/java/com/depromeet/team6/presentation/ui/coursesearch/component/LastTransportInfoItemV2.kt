@@ -131,7 +131,7 @@ fun LastTransportInfoItemV2(
 
         // 막차 경로 상세 정보
         TransportCourseInfo(
-            legsInfo = courseSearchResult.legs,
+            legsInfo = courseSearchResult.legs
         )
 
         Spacer(

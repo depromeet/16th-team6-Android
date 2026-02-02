@@ -37,7 +37,7 @@ import com.depromeet.team6.ui.theme.defaultTeam6Typography
 @Composable
 fun TransportCourseInfo(
     legsInfo: List<LegInfo>,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     // 대중교통 타입 + 마지막 종착역 정보만 필터링 해서 표시
     val displayableLegs = legsInfo.filter { it.transportType != TransportType.WALK }
@@ -57,19 +57,18 @@ fun TransportCourseInfo(
     }
 }
 
-
 @Composable
 private fun TimelineItem(
     courseInfo: LegInfo,
     isLast: Boolean = false, // 마지막 항목은 아래로 가는 선을 그리지 않음
-    isFirst: Boolean = false  // 첫 항목은 위로 가는 선을 그리지 않음
+    isFirst: Boolean = false // 첫 항목은 위로 가는 선을 그리지 않음
 ) {
     val title = if (isLast) courseInfo.endPoint.name else courseInfo.startPoint.name
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .height(IntrinsicSize.Min), // 💡 중요: Row의 높이를 내부 콘텐츠(텍스트)에 맞춤
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         // 왼쪽 아이콘 및 세로선 영역
         Box(
@@ -110,7 +109,7 @@ private fun TimelineItem(
                         .background(
                             color = defaultTeam6Colors.gray910,
                             shape = RoundedCornerShape(999.dp)
-                        ),
+                        )
                 )
             } else {
                 Image(
@@ -123,7 +122,7 @@ private fun TimelineItem(
         }
 
         // 오른쪽 텍스트 영역
-        Column (
+        Column(
             modifier = Modifier
                 .fillMaxHeight()
                 .padding(bottom = 10.dp, top = 2.dp),
@@ -159,27 +158,27 @@ private fun TimelineItem(
 fun TimeLineItemPreview() {
     TimelineItem(
         courseInfo =
-            LegInfo(
-                transportType = TransportType.SUBWAY,
-                subTypeIdx = 109,
-                routeName = "경기 : 302",
-                sectionTime = 7,
-                departureDateTime = "2023-06-06T23:17:00",
-                startPoint = Address(
-                    name = "신논현역",
-                    lat = 0.1,
-                    lon = 0.1,
-                    address = ""
-                ),
-                endPoint = Address(
-                    name = "지하철2호선방배역",
-                    lat = 0.0,
-                    lon = 0.0,
-                    address = ""
-                ),
-                distance = 10,
-                passShape = "127.02481,37.504562 127.024666,37.50452"
+        LegInfo(
+            transportType = TransportType.SUBWAY,
+            subTypeIdx = 109,
+            routeName = "경기 : 302",
+            sectionTime = 7,
+            departureDateTime = "2023-06-06T23:17:00",
+            startPoint = Address(
+                name = "신논현역",
+                lat = 0.1,
+                lon = 0.1,
+                address = ""
             ),
+            endPoint = Address(
+                name = "지하철2호선방배역",
+                lat = 0.0,
+                lon = 0.0,
+                address = ""
+            ),
+            distance = 10,
+            passShape = "127.02481,37.504562 127.024666,37.50452"
+        ),
         isFirst = true
     )
 }
@@ -189,27 +188,27 @@ fun TimeLineItemPreview() {
 fun TimeLineItemPreview2() {
     TimelineItem(
         courseInfo =
-            LegInfo(
-                transportType = TransportType.BUS,
-                subTypeIdx = 11,
-                routeName = "경기 : 302",
-                sectionTime = 7,
-                departureDateTime = "2023-06-06T23:17:00",
-                startPoint = Address(
-                    name = "중간 역",
-                    lat = 0.1,
-                    lon = 0.1,
-                    address = ""
-                ),
-                endPoint = Address(
-                    name = "지하철2호선방배역",
-                    lat = 0.0,
-                    lon = 0.0,
-                    address = ""
-                ),
-                distance = 10,
-                passShape = "127.02481,37.504562 127.024666,37.50452"
+        LegInfo(
+            transportType = TransportType.BUS,
+            subTypeIdx = 11,
+            routeName = "경기 : 302",
+            sectionTime = 7,
+            departureDateTime = "2023-06-06T23:17:00",
+            startPoint = Address(
+                name = "중간 역",
+                lat = 0.1,
+                lon = 0.1,
+                address = ""
             ),
+            endPoint = Address(
+                name = "지하철2호선방배역",
+                lat = 0.0,
+                lon = 0.0,
+                address = ""
+            ),
+            distance = 10,
+            passShape = "127.02481,37.504562 127.024666,37.50452"
+        ),
         isFirst = false
     )
 }
@@ -219,27 +218,27 @@ fun TimeLineItemPreview2() {
 fun TimeLineItemPreview3() {
     TimelineItem(
         courseInfo =
-            LegInfo(
-                transportType = TransportType.BUS,
-                subTypeIdx = 11,
-                routeName = "경기 : 302",
-                sectionTime = 7,
-                departureDateTime = "2023-06-06T23:17:00",
-                startPoint = Address(
-                    name = "종착 역",
-                    lat = 0.1,
-                    lon = 0.1,
-                    address = ""
-                ),
-                endPoint = Address(
-                    name = "지하철2호선방배역",
-                    lat = 0.0,
-                    lon = 0.0,
-                    address = ""
-                ),
-                distance = 10,
-                passShape = "127.02481,37.504562 127.024666,37.50452"
+        LegInfo(
+            transportType = TransportType.BUS,
+            subTypeIdx = 11,
+            routeName = "경기 : 302",
+            sectionTime = 7,
+            departureDateTime = "2023-06-06T23:17:00",
+            startPoint = Address(
+                name = "종착 역",
+                lat = 0.1,
+                lon = 0.1,
+                address = ""
             ),
+            endPoint = Address(
+                name = "지하철2호선방배역",
+                lat = 0.0,
+                lon = 0.0,
+                address = ""
+            ),
+            distance = 10,
+            passShape = "127.02481,37.504562 127.024666,37.50452"
+        ),
         isFirst = false,
         isLast = true
     )

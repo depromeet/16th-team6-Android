@@ -28,7 +28,7 @@ fun LastTransportInfoListV2(
         modifier = modifier
             .fillMaxSize()
             .background(defaultTeam6Colors.black),
-        verticalArrangement = Arrangement.spacedBy(6.dp),
+        verticalArrangement = Arrangement.spacedBy(6.dp)
     ) {
         items(listData.size) { index ->
             LastTransportInfoItemV2(
@@ -37,7 +37,7 @@ fun LastTransportInfoListV2(
                 courseSearchResult = listData[index],
                 onRegisterAlarmBtnClick = { routeId ->
                     onRegisterAlarmBtnClick(routeId)
-                },
+                }
             )
 
             if (index == listData.size - 1) {

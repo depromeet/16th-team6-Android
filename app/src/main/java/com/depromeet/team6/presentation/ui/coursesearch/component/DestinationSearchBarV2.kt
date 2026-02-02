@@ -39,7 +39,6 @@ fun DestinationSearchBar(
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-
         Row(
             modifier = Modifier
                 .weight(1f)
