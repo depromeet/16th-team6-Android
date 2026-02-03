@@ -20,7 +20,7 @@ class SoundSamplePlayer(
             RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
         )
 
-    //볼륨 샘플용 시스템 톤 (슬라이더 선택 시)
+    // 볼륨 샘플용 시스템 톤 (슬라이더 선택 시)
     private var toneGenerator = ToneGenerator(
         AudioManager.STREAM_NOTIFICATION,
         100 // 실제 볼륨은 playWithVolume에서 조절
