@@ -34,6 +34,7 @@ import kotlin.math.ceil
 fun VolumeBottomSheet(
     modifier: Modifier = Modifier,
     currentVolume: Int,
+    onVolumeChanged: (Int) -> Unit,
     onButtonClicked: (Int) -> Unit
 ) {
     val context = LocalContext.current
@@ -75,8 +76,9 @@ fun VolumeBottomSheet(
 
             VolumeBar(
                 currentVolume = current,
-                onVolumeChanged = {
-                    current = it
+                onVolumeChanged = { newValue ->
+                    current = newValue
+                    onVolumeChanged(newValue)
                 }
             )
 
@@ -101,6 +103,7 @@ fun VolumeBottomSheet(
 fun VolumeBottomSheetPreview() {
     VolumeBottomSheet(
         currentVolume = 1,
+        onVolumeChanged = {},
         onButtonClicked = {}
     )
 }
