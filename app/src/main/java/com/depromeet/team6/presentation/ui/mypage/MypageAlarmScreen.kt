@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -56,6 +57,16 @@ fun MypageAlarmScreen(
         mutableStateOf(mypageUiState.selectedAlarmType)
     }
 
+    val soundSamplePlayer = remember {
+        SoundSamplePlayer(context)
+    }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            soundSamplePlayer.release()
+        }
+    }
+
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -75,6 +86,8 @@ fun MypageAlarmScreen(
                 modifier = Modifier
                     .noRippleClickable {
                         selectedMode = MypageContract.AlarmType.ALL
+                        soundSamplePlayer.vibrateSample(context)
+                        soundSamplePlayer.playNotificationSample()
                     },
                 text = "소리/진동",
                 isSelected = selectedMode == MypageContract.AlarmType.ALL
@@ -84,6 +97,7 @@ fun MypageAlarmScreen(
                 modifier = Modifier
                     .noRippleClickable {
                         selectedMode = MypageContract.AlarmType.SOUND
+                        soundSamplePlayer.playNotificationSample()
                     },
                 text = "소리",
                 isSelected = selectedMode == MypageContract.AlarmType.SOUND
@@ -93,6 +107,7 @@ fun MypageAlarmScreen(
                 modifier = Modifier
                     .noRippleClickable {
                         selectedMode = MypageContract.AlarmType.VIBRATION
+                        soundSamplePlayer.vibrateSample(context)
                     },
                 text = "진동",
                 isSelected = selectedMode == MypageContract.AlarmType.VIBRATION
@@ -104,6 +119,10 @@ fun MypageAlarmScreen(
                 modifier = Modifier
                     .align(Alignment.BottomCenter),
                 currentVolume = mypageUiState.alarmVolume,
+                onVolumeChanged = { volume ->
+                    val normalized = volume / 100f
+                    soundSamplePlayer.playVolumeSample(normalized)
+                },
                 onButtonClicked = { volume ->
                     val mapped = (volume / 100f * systemMax).roundToInt()
                     val systemVolume = mapped.coerceAtLeast(systemMin) // 최소 10%
