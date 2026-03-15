@@ -29,15 +29,14 @@ import com.depromeet.team6.presentation.type.ButtonSize
 import com.depromeet.team6.presentation.type.ButtonType
 import com.depromeet.team6.presentation.ui.common.button.AtchaCommonButton
 import com.depromeet.team6.presentation.ui.common.list.TextListItemRadio
+import com.depromeet.team6.presentation.ui.common.sound.AlarmVolumeMapper
+import com.depromeet.team6.presentation.ui.common.sound.SoundSamplePlayer
 import com.depromeet.team6.presentation.ui.common.sound.VolumeBottomSheet
-import com.depromeet.team6.presentation.ui.mypage.SoundSamplePlayer
 import com.depromeet.team6.presentation.ui.onboarding.OnboardingContract
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.ui.theme.LocalTeam6Colors
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.depromeet.team6.ui.theme.defaultTeam6Typography
-import kotlin.math.ceil
-import kotlin.math.roundToInt
 
 @Composable
 fun OnboardingAlarmSelector(
@@ -50,11 +49,7 @@ fun OnboardingAlarmSelector(
     val audio = remember(context) {
         context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
     }
-    val systemMax =
-        remember { audio.getStreamMaxVolume(AudioManager.STREAM_MUSIC).coerceAtLeast(1) }
-    val systemMin = remember(systemMax) {
-        ceil(systemMax * 0.10f).toInt().coerceAtLeast(1)
-    }
+    val systemMax = remember { audio.getStreamMaxVolume(AudioManager.STREAM_ALARM).coerceAtLeast(1) }
 
     var selectedMode by remember {
         mutableStateOf(OnboardingContract.AlarmType.ALL)
@@ -97,8 +92,7 @@ fun OnboardingAlarmSelector(
                 modifier = Modifier
                     .noRippleClickable {
                         selectedMode = OnboardingContract.AlarmType.ALL
-                        soundSamplePlayer.vibrateSample(context)
-                        soundSamplePlayer.playNotificationSample()
+                        soundSamplePlayer.playCombinedSample()
                     },
                 text = "소리/진동",
                 isSelected = selectedMode == OnboardingContract.AlarmType.ALL
@@ -108,7 +102,7 @@ fun OnboardingAlarmSelector(
                 modifier = Modifier
                     .noRippleClickable {
                         selectedMode = OnboardingContract.AlarmType.SOUND
-                        soundSamplePlayer.playNotificationSample()
+                        soundSamplePlayer.playAlarmSample()
                     },
                 text = "소리",
                 isSelected = selectedMode == OnboardingContract.AlarmType.SOUND
@@ -118,7 +112,7 @@ fun OnboardingAlarmSelector(
                 modifier = Modifier
                     .noRippleClickable {
                         selectedMode = OnboardingContract.AlarmType.VIBRATION
-                        soundSamplePlayer.vibrateSample(context)
+                        soundSamplePlayer.vibrateSample()
                     },
                 text = "진동",
                 isSelected = selectedMode == OnboardingContract.AlarmType.VIBRATION
@@ -135,8 +129,10 @@ fun OnboardingAlarmSelector(
                     soundSamplePlayer.playVolumeSample(normalized)
                 },
                 onButtonClicked = { volume ->
-                    val mapped = (volume / 100f * systemMax).roundToInt()
-                    val systemVolume = mapped.coerceAtLeast(systemMin) // 최소 10%
+                    val systemVolume = AlarmVolumeMapper.percentToSystem(
+                        volumePercent = volume,
+                        maxVolume = systemMax
+                    )
 
                     onAlarmSelected(selectedMode, systemVolume)
                 }
