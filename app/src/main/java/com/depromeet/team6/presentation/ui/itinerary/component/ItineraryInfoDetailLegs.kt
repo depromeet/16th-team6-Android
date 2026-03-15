@@ -84,7 +84,6 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import kotlin.math.max
 import kotlin.math.roundToInt
-import androidx.compose.foundation.layout.Box as LayoutBox
 
 @Composable
 fun ItineraryInfoDetailLegs(
@@ -274,6 +273,8 @@ private fun DetailLegsBus(
         .plusMinutes(timeMinute.toLong())
         .format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
     val timelineAxisOffset = timelineTimeSlotWidth + timelineTimeIconGap + (timelineIconSize / 2)
+    val disembarkingMarkerSize = timelineIconSize * (14f / 26f)
+    val disembarkingMarkerOffset = (timelineIconSize - disembarkingMarkerSize) / 2
 
     Row(
         modifier = modifier
@@ -310,7 +311,7 @@ private fun DetailLegsBus(
                     modifier = Modifier.wrapContentWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    LayoutBox(modifier = Modifier.width(timelineTimeSlotWidth)) {
+                    Box(modifier = Modifier.width(timelineTimeSlotWidth)) {
                         BoardingTime(
                             boardingDateTime = boardingDateTime,
                             modifier = Modifier.align(Alignment.CenterStart)
@@ -330,7 +331,7 @@ private fun DetailLegsBus(
                     modifier = Modifier.wrapContentWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    LayoutBox(modifier = Modifier.width(timelineTimeSlotWidth)) {
+                    Box(modifier = Modifier.width(timelineTimeSlotWidth)) {
                         BoardingTime(
                             boardingDateTime = disembarkingDateTime,
                             modifier = Modifier.align(Alignment.CenterStart)
@@ -339,8 +340,8 @@ private fun DetailLegsBus(
                     Spacer(modifier = Modifier.width(timelineTimeIconGap))
                     Box(
                         modifier = Modifier
-                            .size(14.dp)
-                            .offset(x = 6.dp)
+                            .size(disembarkingMarkerSize)
+                            .offset(x = disembarkingMarkerOffset)
                             .clip(CircleShape)
                             .background(busColor)
                     )
@@ -489,6 +490,8 @@ private fun DetailLegsSubway(
         .plusMinutes(timeMinute.toLong())
         .format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
     val timelineAxisOffset = timelineTimeSlotWidth + timelineTimeIconGap + (timelineIconSize / 2)
+    val disembarkingMarkerSize = timelineIconSize * (14f / 26f)
+    val disembarkingMarkerOffset = (timelineIconSize - disembarkingMarkerSize) / 2
 
     Row(
         modifier = modifier
@@ -525,7 +528,7 @@ private fun DetailLegsSubway(
                     modifier = Modifier.wrapContentWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    LayoutBox(modifier = Modifier.width(timelineTimeSlotWidth)) {
+                    Box(modifier = Modifier.width(timelineTimeSlotWidth)) {
                         BoardingTime(
                             boardingDateTime = boardingDateTime,
                             modifier = Modifier.align(Alignment.CenterStart)
@@ -545,7 +548,7 @@ private fun DetailLegsSubway(
                     modifier = Modifier.wrapContentWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    LayoutBox(modifier = Modifier.width(timelineTimeSlotWidth)) {
+                    Box(modifier = Modifier.width(timelineTimeSlotWidth)) {
                         BoardingTime(
                             boardingDateTime = disembarkingDateTime,
                             modifier = Modifier.align(Alignment.CenterStart)
@@ -554,8 +557,8 @@ private fun DetailLegsSubway(
                     Spacer(modifier = Modifier.width(timelineTimeIconGap))
                     Box(
                         modifier = Modifier
-                            .size(14.dp)
-                            .offset(x = 6.dp)
+                            .size(disembarkingMarkerSize)
+                            .offset(x = disembarkingMarkerOffset)
                             .clip(CircleShape)
                             .background(subwayColor)
                     )
@@ -797,12 +800,16 @@ private fun DisembarkingStationText(
             maxLines = 1
         ).size.width
 
-        val stationLayout = textMeasurer.measure(
-            text = stationName,
+        val combinedLayout = textMeasurer.measure(
+            text = buildAnnotatedString {
+                append(stationName)
+                append(" ")
+                append(suffixText)
+            },
             style = stationStyle,
             constraints = Constraints(maxWidth = maxWidthPx)
         )
-        val useCompactSingleLine = stationLayout.lineCount > 2
+        val useCompactSingleLine = combinedLayout.lineCount > 2
 
         if (useCompactSingleLine) {
             val stationMaxWidthDp = with(density) {
