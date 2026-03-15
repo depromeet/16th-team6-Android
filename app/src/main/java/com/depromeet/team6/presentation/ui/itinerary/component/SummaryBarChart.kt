@@ -169,10 +169,10 @@ private fun calculateFinalWidths(
 
     // 남은 아이템에 대해 남은 너비를 비율로 분배
     val remainingWidth = totalWidthValue - totalMinWidth
-    val remainingTimeSum = legs.sumOf { it.sectionTime }.coerceAtLeast(1)
+    val remainingTimeSum = legs.sumOf { it.sectionTime.coerceAtLeast(0) }.coerceAtLeast(1)
     val finalWidths = MutableList(legs.size) { minBarWidth }
     legs.forEachIndexed { index, leg ->
-        val allocated = remainingWidth * (leg.sectionTime / remainingTimeSum.toFloat())
+        val allocated = remainingWidth * (leg.sectionTime.coerceAtLeast(0) / remainingTimeSum.toFloat())
         finalWidths[index] = (minWidthValue + allocated).dp
     }
 
