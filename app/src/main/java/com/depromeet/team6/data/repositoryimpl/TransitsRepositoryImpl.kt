@@ -9,19 +9,39 @@ import com.depromeet.team6.domain.model.BusOperationInfo
 import com.depromeet.team6.domain.model.BusPositions
 import com.depromeet.team6.domain.model.course.CourseInfo
 import com.depromeet.team6.domain.repository.TransitsRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class TransitsRepositoryImpl @Inject constructor(
     private val transitsRemoteDataSource: TransitsRemoteDataSource
 ) : TransitsRepository {
 
-    override suspend fun getAvailableCourses(startPosition: Address, endPosition: Address, sortType: Int): Result<List<CourseInfo>> =
+    override suspend fun getAvailableCourses(
+        startPosition: Address,
+        endPosition: Address,
+        sortType: Int
+    ): Result<List<CourseInfo>> =
         transitsRemoteDataSource.getAvailableCourses(
             startLat = startPosition.lat.toString(),
             startLon = startPosition.lon.toString(),
             endLat = endPosition.lat.toString(),
             endLon = endPosition.lon.toString(),
             sortType = sortType
+        ).map {
+            it.toDomain()
+        }
+
+    override suspend fun getAvailableCoursesStream(
+        startPosition: Address,
+        endPosition: Address,
+        sortType: Int
+    ): Flow<CourseInfo> =
+        transitsRemoteDataSource.getAvailableCoursesV3(
+            startLat = startPosition.lat.toString(),
+            startLon = startPosition.lon.toString(),
+            endLat = endPosition.lat.toString(),
+            endLon = endPosition.lon.toString(),
         ).map {
             it.toDomain()
         }

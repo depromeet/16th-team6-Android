@@ -35,6 +35,8 @@ import com.depromeet.team6.presentation.util.view.LoadState
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -195,24 +197,24 @@ class CourseSearchViewModel @Inject constructor(
     private fun getSearchResults() {
         setState {
             copy(
-                courseUiLoadState = LoadState.Loading
+                courseUiLoadState = LoadState.Loading,
+                courseData = emptyList()
             )
         }
         viewModelScope.launch {
-            loadSearchResult(
+            loadSearchResult.invoke(
                 startPoint = uiState.value.startingPoint!!,
                 endPoint = uiState.value.destinationPoint!!,
                 sortType = uiState.value.sortType
             )
-                .onSuccess {
-                    setEvent(CourseSearchContract.CourseEvent.LoadCourseSearchResult(it))
+                .onStart {
                     setState {
                         copy(
-                            courseSearchDataLoadState = CourseSearchContract.CourseSearchDataState.Success
+                            courseSearchDataLoadState = CourseSearchContract.CourseSearchDataState.Loading
                         )
                     }
                 }
-                .onFailure { exception ->
+                .catch { exception ->
                     handleApiException(exception) { errorCode ->
                         when (errorCode) {
                             "LRT_003" -> {
@@ -227,6 +229,15 @@ class CourseSearchViewModel @Inject constructor(
                             }
                             else -> currentState
                         }
+                    }
+                }
+                .collect { courseInfo ->
+                    setState {
+                        copy(
+                            courseUiLoadState = LoadState.Success,
+                            courseSearchDataLoadState = CourseSearchContract.CourseSearchDataState.Success,
+                            courseData = courseData + courseInfo
+                        )
                     }
                 }
         }
