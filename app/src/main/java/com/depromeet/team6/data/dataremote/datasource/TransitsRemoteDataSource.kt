@@ -10,6 +10,7 @@ import com.depromeet.team6.data.dataremote.model.response.transits.ResponseCours
 import com.depromeet.team6.data.dataremote.model.response.transits.Station
 import com.depromeet.team6.data.dataremote.service.TransitsService
 import com.google.gson.Gson
+import com.google.gson.JsonParser
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -43,7 +44,6 @@ class TransitsRemoteDataSource @Inject constructor(
         endLat: String,
         endLon: String
     ): Flow<ResponseCourseSearchDto> = flow {
-        var a = 0
         val response = transitsService.getAvailableCoursesV3(
             startLat = startLat,
             startLon = startLon,
@@ -72,10 +72,25 @@ class TransitsRemoteDataSource @Inject constructor(
                     if (line?.startsWith("data:") == true) {
                         val jsonString = line.substringAfter("data:").trim()
                         if (jsonString.isNotEmpty()) {
-                            val result = gson.fromJson(jsonString, ResponseCourseSearchDto::class.java)
-                            a += 1
-                            Timber.d("arararara: $a -> $result")
-                            emit(result)
+                            val jsonElement = JsonParser.parseString(jsonString).asJsonObject
+
+                            when {
+                                jsonElement.has("responseCode") -> {
+                                    val errorCode = jsonElement.get("responseCode").asString
+                                    val message = jsonElement.get("message")?.asString ?: "Unknown error"
+                                    throw ApiException.ApiRequestFailureException(errorCode, message)
+                                }
+
+                                jsonElement.has("routeId") -> {
+                                    val result = gson.fromJson(jsonElement, ResponseCourseSearchDto::class.java)
+                                    emit(result)
+                                }
+
+                                else -> {
+                                    Timber.e("Unknown streaming data format: $jsonString")
+                                    throw ApiException.NetworkFailureException.UnknownFailure("Unknown streaming data format: $jsonString")
+                                }
+                            }
                         }
                     }
                 }
