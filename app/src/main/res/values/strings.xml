@@ -162,6 +162,7 @@
     <string name="course_search_failed_snackbar">경로를 조회하는데 실패했어요</string>
     <string name="course_detail_description">상세경로</string>
     <string name="course_search_result_empty">검색 가능한 막차가 없어요</string>
+    <string name="course_search_result_unknown">알 수 없는 오류가 발생했어요.\n잠시 후 다시 시도해 주세요.</string>
     <string name="course_search_result_midnight">24:00 ~ 05:00\n막차 검색을 할 수 없어요</string>
     <string name="course_search_long_term_alert">배차 간격이 긴 버스가 포함되어\n환승 대기 시간이 길어질 수 있어요.\n막차 알람을 등록할까요?</string>
 

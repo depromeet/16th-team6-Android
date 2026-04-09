@@ -52,11 +52,18 @@ class TransitsRemoteDataSource @Inject constructor(
         )
 
         if (!response.isSuccessful) {
-            val apiException = ApiException.ApiRequestFailureException(
-                "GET_COURSES_FAILURE",
-                response.errorBody()?.string() ?: "Unknown error"
-            )
-            throw apiException
+            val errorBodyString = response.errorBody()?.string() ?: ""
+            val (errorCode, message) = try {
+                val json = JsonParser.parseString(errorBodyString).asJsonObject
+                Timber.d("Response body asdrasdr : ${json}")
+                val code = json.get("responseCode")?.asString ?: "GET_COURSES_FAILURE"
+                val msg = json.get("message")?.asString ?: "Unknown error"
+                code to msg
+            } catch (e: Exception) {
+                Timber.d("Response body asdrasdr : $e")
+                "GET_COURSES_FAILURE" to errorBodyString.ifEmpty { "Unknown error" }
+            }
+            throw ApiException.ApiRequestFailureException(errorCode, message)
         }
 
         val responseBody = response.body() ?: run {
@@ -75,12 +82,6 @@ class TransitsRemoteDataSource @Inject constructor(
                             val jsonElement = JsonParser.parseString(jsonString).asJsonObject
 
                             when {
-                                jsonElement.has("responseCode") -> {
-                                    val errorCode = jsonElement.get("responseCode").asString
-                                    val message = jsonElement.get("message")?.asString ?: "Unknown error"
-                                    throw ApiException.ApiRequestFailureException(errorCode, message)
-                                }
-
                                 jsonElement.has("routeId") -> {
                                     val result = gson.fromJson(jsonElement, ResponseCourseSearchDto::class.java)
                                     emit(result)

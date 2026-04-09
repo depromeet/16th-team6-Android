@@ -26,7 +26,8 @@ class CourseSearchContract {
         Loading,
         Success,
         NoResult, // 막차 검색정보가 없음
-        ServiceEnded // 시간이 늦어서 막차가 없음
+        ServiceEnded, // 시간이 늦어서 막차가 없음
+        Unknown
     }
 
     sealed interface CourseSideEffect : UiSideEffect {

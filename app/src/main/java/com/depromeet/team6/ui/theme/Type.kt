@@ -136,7 +136,7 @@ val defaultTeam6Typography = Team6Typography(
     ),
     detail3_M9 = TextStyle(
         fontFamily = pretendardMedium,
-        fontSize = 10.sp,
+        fontSize = 9.sp,
         lineHeight = 12.sp
     )
 )
