@@ -65,6 +65,20 @@ class DialogController {
         )
     }
 
+    fun showAtchaBottomSheet(
+        locationName: String = "",
+        locationAddress: String,
+        confirmButtonText: String,
+        onConfirm: () -> Unit = {}
+    ) {
+        _dialogState.value = DialogState.BottomSheet(
+            locationName = locationName,
+            locationAddress = locationAddress,
+            confirmButtonText = confirmButtonText,
+            onConfirm = onConfirm
+        )
+    }
+
     fun hideDialog() {
         _dialogState.value = null
     }
@@ -92,6 +106,13 @@ sealed class DialogState {
     ) : DialogState()
 
     data class OffLine(
+        val onConfirm: () -> Unit
+    ) : DialogState()
+
+    data class BottomSheet(
+        val locationName: String,
+        val locationAddress: String,
+        val confirmButtonText: String,
         val onConfirm: () -> Unit
     ) : DialogState()
 }

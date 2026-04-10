@@ -309,6 +309,20 @@ class HomeViewModel @Inject constructor(
                     )
                 }
             }
+
+            is HomeContract.HomeEvent.OnSearchClick -> {
+                val distance = calculateDistance(
+                    lat1 = currentState.markerPoint.lat,
+                    lon1 = currentState.markerPoint.lon,
+                    lat2 = currentState.destinationPoint.lat,
+                    lon2 = currentState.destinationPoint.lon
+                )
+                if (distance <= 800.0) {
+                    setSideEffect(HomeContract.HomeSideEffect.ShowTooCloseDialog)
+                } else {
+                    setSideEffect(HomeContract.HomeSideEffect.NavigateToCourseSearch)
+                }
+            }
         }
     }
 
@@ -816,6 +830,18 @@ class HomeViewModel @Inject constructor(
         UPDATE_REQUIRED,
         UPDATE_OPTIONAL,
         UP_TO_DATE
+    }
+
+    private fun calculateDistance(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Double {
+        val r = 6371000.0
+        val dLat = Math.toRadians(lat2 - lat1)
+        val dLon = Math.toRadians(lon2 - lon1)
+        val φ1 = Math.toRadians(lat1)
+        val φ2 = Math.toRadians(lat2)
+        val a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(φ1) * Math.cos(φ2) *
+            Math.sin(dLon / 2) * Math.sin(dLon / 2)
+        return 2 * r * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
     }
 
     private fun getCurrentVersionName(): String? {
