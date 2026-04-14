@@ -92,6 +92,7 @@ class HomeContract {
         data object ShowUpdateRequiredDialog : HomeSideEffect
         data object ShowUpdateOptionalDialog : HomeSideEffect
         data object ShowTooCloseDialog : HomeSideEffect
+        data object ShowOutOfServiceRegionBottomSheet : HomeSideEffect
         data object NavigateToCourseSearch : HomeSideEffect
     }
 

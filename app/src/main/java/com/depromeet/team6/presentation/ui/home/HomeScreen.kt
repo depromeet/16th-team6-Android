@@ -202,6 +202,14 @@ fun HomeRoute(
                         )
                     }
 
+                    is HomeContract.HomeSideEffect.ShowOutOfServiceRegionBottomSheet -> {
+                        dialogController.showAtchaBottomSheet(
+                            locationName = "출발지가 서비스 지역을 벗어났어요",
+                            locationAddress = "출발지가 수도권을 벗어났습니다. 출발지를 다시 선택해 주세요.",
+                            confirmButtonText = "확인"
+                        )
+                    }
+
                     is HomeContract.HomeSideEffect.NavigateToCourseSearch -> {
                         navigateToCourseSearch(
                             Gson().toJson(uiState.markerPoint),

@@ -13,6 +13,7 @@ import com.depromeet.team6.domain.repository.UserInfoRepository
 import com.depromeet.team6.domain.usecase.DeleteAlarmUseCase
 import com.depromeet.team6.domain.usecase.GetAddressFromCoordinatesUseCase
 import com.depromeet.team6.domain.usecase.GetAppVersionUseCase
+import com.depromeet.team6.domain.usecase.GetIsServiceRegionUseCase
 import com.depromeet.team6.domain.usecase.GetBusArrivalUseCase
 import com.depromeet.team6.domain.usecase.GetBusStartedUseCase
 import com.depromeet.team6.domain.usecase.GetCourseSearchResultsUseCase
@@ -62,6 +63,7 @@ class HomeViewModel @Inject constructor(
     private val refreshAlarmTimerUseCase: RefreshAlarmTimerUseCase,
     private val getRealtimeLocationUseCase: GetRealtimeLocationUseCase,
     private val getAppVersionUseCase: GetAppVersionUseCase,
+    private val getIsServiceRegionUseCase: GetIsServiceRegionUseCase,
     @ApplicationContext private val context: Context
 ) : BaseViewModel<HomeContract.HomeUiState, HomeContract.HomeSideEffect, HomeContract.HomeEvent>() {
     private var lastRouteId: String = ""
@@ -320,7 +322,18 @@ class HomeViewModel @Inject constructor(
                 if (distance <= 800.0) {
                     setSideEffect(HomeContract.HomeSideEffect.ShowTooCloseDialog)
                 } else {
-                    setSideEffect(HomeContract.HomeSideEffect.NavigateToCourseSearch)
+                    getIsServiceRegionUseCase(
+                        lat = currentState.markerPoint.lat,
+                        lon = currentState.markerPoint.lon
+                    ).onSuccess { isServiceRegion ->
+                        if (isServiceRegion) {
+                            setSideEffect(HomeContract.HomeSideEffect.NavigateToCourseSearch)
+                        } else {
+                            setSideEffect(HomeContract.HomeSideEffect.ShowOutOfServiceRegionBottomSheet)
+                        }
+                    }.onFailure {
+                        setSideEffect(HomeContract.HomeSideEffect.ShowOutOfServiceRegionBottomSheet)
+                    }
                 }
             }
         }
