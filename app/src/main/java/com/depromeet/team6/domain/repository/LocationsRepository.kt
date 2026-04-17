@@ -19,4 +19,6 @@ interface LocationsRepository {
     suspend fun deleteSearchHistory(name: String, lat: Double, lon: Double, businessCategory: String, address: String): Result<Unit>
 
     suspend fun deleteAllSearchHistory(): Result<Unit>
+
+    suspend fun getIsServiceRegion(lat: Double, lon: Double): Result<Boolean>
 }

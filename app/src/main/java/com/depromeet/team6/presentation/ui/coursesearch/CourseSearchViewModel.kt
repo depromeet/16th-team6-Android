@@ -5,7 +5,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.depromeet.team6.data.background.AlarmScheduler
-import com.depromeet.team6.data.dataremote.model.response.base.ApiException
 import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.RouteLocation
 import com.depromeet.team6.domain.model.course.CourseInfo
@@ -17,6 +16,7 @@ import com.depromeet.team6.domain.usecase.GetTaxiCostUseCase
 import com.depromeet.team6.domain.usecase.GetUserInfoUseCase
 import com.depromeet.team6.domain.usecase.InitAlarmUseCase
 import com.depromeet.team6.domain.usecase.PostAlarmUseCase
+import com.depromeet.team6.presentation.model.exception.ErrorControlFailureException
 import com.depromeet.team6.presentation.ui.coursesearch.navigation.CourseSearchRoute
 import com.depromeet.team6.presentation.util.AmplitudeCommon.SCREEN_NAME
 import com.depromeet.team6.presentation.util.AmplitudeCommon.USER_ID
@@ -216,35 +216,25 @@ class CourseSearchViewModel @Inject constructor(
                     }
                 }
                 .catch { exception ->
-                    if (exception is ApiException.ApiRequestFailureException) {
-                        exception.errorCode.let { errorCode ->
-                            when (errorCode) {
-                                "LRT_003" -> {
-                                    setState {
-                                        currentState.copy(
-                                            courseUiLoadState = LoadState.Success,
-                                            courseSearchDataLoadState = CourseSearchContract.CourseSearchDataState.NoResult
-                                        )
-                                    }
-                                }
-                                "LRT_004" -> {
-                                    setState {
-                                        currentState.copy(
-                                            courseUiLoadState = LoadState.Success,
-                                            courseSearchDataLoadState = CourseSearchContract.CourseSearchDataState.ServiceEnded
-                                        )
-                                    }
-                                }
-                                else -> {
-                                    setState {
-                                        currentState.copy(
-                                            courseUiLoadState = LoadState.Success,
-                                            courseSearchDataLoadState = CourseSearchContract.CourseSearchDataState.Unknown
-                                        )
-                                    }
-                                }
+                    val dataState = when {
+                        exception is ErrorControlFailureException.SetUIStateException -> {
+                            when (exception.errorCode) {
+                                "LRT_003" -> CourseSearchContract.CourseSearchDataState.NoResult
+                                "LRT_004" -> CourseSearchContract.CourseSearchDataState.ServiceEnded
+                                else -> CourseSearchContract.CourseSearchDataState.Unknown
                             }
                         }
+                        exception is ErrorControlFailureException.ShowToastException -> {
+                            setSideEffect(CourseSearchContract.CourseSideEffect.ShowSearchFailedToast(exception.toastMessage))
+                            CourseSearchContract.CourseSearchDataState.Unknown
+                        }
+                        else -> CourseSearchContract.CourseSearchDataState.Unknown
+                    }
+                    setState {
+                        currentState.copy(
+                            courseUiLoadState = LoadState.Success,
+                            courseSearchDataLoadState = dataState
+                        )
                     }
                 }
                 .collect { courseInfo ->

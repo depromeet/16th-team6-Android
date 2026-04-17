@@ -16,6 +16,7 @@ import com.depromeet.team6.domain.usecase.GetAppVersionUseCase
 import com.depromeet.team6.domain.usecase.GetBusArrivalUseCase
 import com.depromeet.team6.domain.usecase.GetBusStartedUseCase
 import com.depromeet.team6.domain.usecase.GetCourseSearchResultsUseCase
+import com.depromeet.team6.domain.usecase.GetIsServiceRegionUseCase
 import com.depromeet.team6.domain.usecase.GetRealtimeLocationUseCase
 import com.depromeet.team6.domain.usecase.GetTaxiCostUseCase
 import com.depromeet.team6.domain.usecase.GetUserInfoUseCase
@@ -62,6 +63,7 @@ class HomeViewModel @Inject constructor(
     private val refreshAlarmTimerUseCase: RefreshAlarmTimerUseCase,
     private val getRealtimeLocationUseCase: GetRealtimeLocationUseCase,
     private val getAppVersionUseCase: GetAppVersionUseCase,
+    private val getIsServiceRegionUseCase: GetIsServiceRegionUseCase,
     @ApplicationContext private val context: Context
 ) : BaseViewModel<HomeContract.HomeUiState, HomeContract.HomeSideEffect, HomeContract.HomeEvent>() {
     private var lastRouteId: String = ""
@@ -307,6 +309,31 @@ class HomeViewModel @Inject constructor(
                             messages = event.messages
                         )
                     )
+                }
+            }
+
+            is HomeContract.HomeEvent.OnSearchClick -> {
+                val distance = calculateDistance(
+                    lat1 = currentState.markerPoint.lat,
+                    lon1 = currentState.markerPoint.lon,
+                    lat2 = currentState.destinationPoint.lat,
+                    lon2 = currentState.destinationPoint.lon
+                )
+                if (distance <= 800.0) {
+                    setSideEffect(HomeContract.HomeSideEffect.ShowTooCloseDialog)
+                } else {
+                    getIsServiceRegionUseCase(
+                        lat = currentState.markerPoint.lat,
+                        lon = currentState.markerPoint.lon
+                    ).onSuccess { isServiceRegion ->
+                        if (isServiceRegion) {
+                            setSideEffect(HomeContract.HomeSideEffect.NavigateToCourseSearch)
+                        } else {
+                            setSideEffect(HomeContract.HomeSideEffect.ShowOutOfServiceRegionBottomSheet)
+                        }
+                    }.onFailure {
+                        setSideEffect(HomeContract.HomeSideEffect.ShowOutOfServiceRegionBottomSheet)
+                    }
                 }
             }
         }
@@ -816,6 +843,18 @@ class HomeViewModel @Inject constructor(
         UPDATE_REQUIRED,
         UPDATE_OPTIONAL,
         UP_TO_DATE
+    }
+
+    private fun calculateDistance(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Double {
+        val r = 6371000.0
+        val dLat = Math.toRadians(lat2 - lat1)
+        val dLon = Math.toRadians(lon2 - lon1)
+        val φ1 = Math.toRadians(lat1)
+        val φ2 = Math.toRadians(lat2)
+        val a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(φ1) * Math.cos(φ2) *
+            Math.sin(dLon / 2) * Math.sin(dLon / 2)
+        return 2 * r * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
     }
 
     private fun getCurrentVersionName(): String? {
