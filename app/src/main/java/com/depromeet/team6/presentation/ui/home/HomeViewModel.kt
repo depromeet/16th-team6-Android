@@ -13,10 +13,10 @@ import com.depromeet.team6.domain.repository.UserInfoRepository
 import com.depromeet.team6.domain.usecase.DeleteAlarmUseCase
 import com.depromeet.team6.domain.usecase.GetAddressFromCoordinatesUseCase
 import com.depromeet.team6.domain.usecase.GetAppVersionUseCase
-import com.depromeet.team6.domain.usecase.GetIsServiceRegionUseCase
 import com.depromeet.team6.domain.usecase.GetBusArrivalUseCase
 import com.depromeet.team6.domain.usecase.GetBusStartedUseCase
 import com.depromeet.team6.domain.usecase.GetCourseSearchResultsUseCase
+import com.depromeet.team6.domain.usecase.GetIsServiceRegionUseCase
 import com.depromeet.team6.domain.usecase.GetRealtimeLocationUseCase
 import com.depromeet.team6.domain.usecase.GetTaxiCostUseCase
 import com.depromeet.team6.domain.usecase.GetUserInfoUseCase

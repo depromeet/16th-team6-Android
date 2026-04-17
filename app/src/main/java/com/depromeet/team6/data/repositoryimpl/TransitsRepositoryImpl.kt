@@ -41,7 +41,7 @@ class TransitsRepositoryImpl @Inject constructor(
             startLat = startPosition.lat.toString(),
             startLon = startPosition.lon.toString(),
             endLat = endPosition.lat.toString(),
-            endLon = endPosition.lon.toString(),
+            endLon = endPosition.lon.toString()
         ).map {
             it.toDomain()
         }
