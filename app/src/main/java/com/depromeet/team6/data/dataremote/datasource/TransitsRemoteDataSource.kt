@@ -48,14 +48,14 @@ class TransitsRemoteDataSource @Inject constructor(
             startLat = startLat,
             startLon = startLon,
             endLat = endLat,
-            endLon = endLon,
+            endLon = endLon
         )
 
         if (!response.isSuccessful) {
             val errorBodyString = response.errorBody()?.string() ?: ""
             val (errorCode, message) = try {
                 val json = JsonParser.parseString(errorBodyString).asJsonObject
-                Timber.d("Response body asdrasdr : ${json}")
+                Timber.d("Response body asdrasdr : $json")
                 val code = json.get("responseCode")?.asString ?: "GET_COURSES_FAILURE"
                 val msg = json.get("message")?.asString ?: "Unknown error"
                 code to msg

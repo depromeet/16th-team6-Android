@@ -39,7 +39,7 @@ interface TransitsService {
         @Query("startLat") startLat: String,
         @Query("startLon") startLon: String,
         @Query("endLat") endLat: String,
-        @Query("endLon") endLon: String,
+        @Query("endLon") endLon: String
     ): Response<ResponseBody>
 
     @POST("$API/$TRANSITS/bus-arrival")
