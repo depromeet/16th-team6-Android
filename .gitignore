@@ -1,5 +1,6 @@
 ### harness ###
 /harness/task_state.json
+/harness/task_state.json.*
 
 ### Android ###
 # Gradle files
