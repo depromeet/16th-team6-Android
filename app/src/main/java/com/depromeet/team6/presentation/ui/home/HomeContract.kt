@@ -91,6 +91,9 @@ class HomeContract {
 
         data object ShowUpdateRequiredDialog : HomeSideEffect
         data object ShowUpdateOptionalDialog : HomeSideEffect
+        data object ShowTooCloseDialog : HomeSideEffect
+        data object ShowOutOfServiceRegionBottomSheet : HomeSideEffect
+        data object NavigateToCourseSearch : HomeSideEffect
     }
 
     sealed class HomeEvent : UiEvent {
@@ -117,6 +120,7 @@ class HomeContract {
         data object SetDestination : HomeEvent()
         data object AfterRegisterMapMarkerClick : HomeEvent()
         data class CourseDetailButtonClick(val clickEventKey: String) : HomeEvent()
+        data object OnSearchClick : HomeEvent()
 
         // 애니메이션
         data class RequestCharacterSpeech(val messages: List<String>) : HomeEvent()

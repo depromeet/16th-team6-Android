@@ -20,6 +20,7 @@ object ApiConstraints {
 
     // Locations
     const val LOCATIONS = "locations"
+    const val IS_SERVICE_REGION = "is-service-region"
 
     // Provider
     const val PROVIDER = "provider"

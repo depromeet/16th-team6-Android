@@ -77,7 +77,7 @@ import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_ROUTE_CLICKED
 import com.depromeet.team6.presentation.util.HomeAmplitude.POPUP
 import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
 import com.depromeet.team6.presentation.util.base.ApiErrorSideEffect
-import com.depromeet.team6.presentation.util.dialog.DialogController
+import com.depromeet.team6.presentation.util.dialog.LocalDialogController
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.presentation.util.toast.atChaToastMessage
 import com.depromeet.team6.presentation.util.view.LoadState
@@ -112,7 +112,7 @@ fun HomeRoute(
     val context = LocalContext.current
 
     val systemUiController = rememberSystemUiController()
-    val dialogController = remember { DialogController() }
+    val dialogController = LocalDialogController.current
 
     // LockScreen에서 출발하기 클릭 시 처리
     LaunchedEffect(uiState.isAlarmRegistered && uiState.afterRegisterDataLoadState == LoadState.Success) {
@@ -193,6 +193,37 @@ fun HomeRoute(
                             closeButtonText = "닫기"
                         )
                     }
+
+                    is HomeContract.HomeSideEffect.ShowTooCloseDialog -> {
+                        dialogController.showAtchaBottomSheet(
+                            locationName = "이동하려는 거리가 매우 가까워요",
+                            locationAddress = "출발지를 확인한 후 다시 검색해 주세요.",
+                            confirmButtonText = "확인"
+                        )
+                    }
+
+                    is HomeContract.HomeSideEffect.ShowOutOfServiceRegionBottomSheet -> {
+                        dialogController.showAtchaBottomSheet(
+                            locationName = "서울, 경기, 인천 내에서만 사용할 수 있어요",
+                            locationAddress = "출발지를 확인한 후 다시 검색해 주세요",
+                            confirmButtonText = "확인"
+                        )
+                    }
+
+                    is HomeContract.HomeSideEffect.NavigateToCourseSearch -> {
+                        navigateToCourseSearch(
+                            Gson().toJson(uiState.markerPoint),
+                            Gson().toJson(uiState.destinationPoint)
+                        )
+                        AmplitudeUtils.trackEventWithProperties(
+                            eventName = HOME_EVENT_COURSESEARCH_ENTERED,
+                            mapOf(
+                                USER_ID to viewModel.getUserId(),
+                                SCREEN_NAME to HOME,
+                                HOME_COURSESEARCH_ENTERED_DIRECT to 1
+                            )
+                        )
+                    }
                 }
             }
     }
@@ -268,21 +299,7 @@ fun HomeRoute(
                             )
                         },
                         onSearchClick = {
-                            val currentLocationJSON = Gson().toJson(uiState.markerPoint)
-                            val destinationPointJSON = Gson().toJson(uiState.destinationPoint)
-                            navigateToCourseSearch(
-                                currentLocationJSON,
-                                destinationPointJSON
-                            )
-
-                            AmplitudeUtils.trackEventWithProperties(
-                                eventName = HOME_EVENT_COURSESEARCH_ENTERED,
-                                mapOf(
-                                    USER_ID to viewModel.getUserId(),
-                                    SCREEN_NAME to HOME,
-                                    HOME_COURSESEARCH_ENTERED_DIRECT to 1
-                                )
-                            )
+                            viewModel.setEvent(HomeContract.HomeEvent.OnSearchClick)
                         },
                         onDestinationClick = {
                             AmplitudeUtils.trackEventWithProperties(

@@ -1,0 +1,1 @@
+터미널에서 `bash harness/harness.sh $ARGUMENTS`를 실행한다.

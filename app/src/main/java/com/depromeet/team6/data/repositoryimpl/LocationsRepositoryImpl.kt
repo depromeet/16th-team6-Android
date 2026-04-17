@@ -88,4 +88,7 @@ class LocationsRepositoryImpl @Inject constructor(
 
     override suspend fun deleteAllSearchHistory(): Result<Unit> =
         locationsRemoteDataSource.deleteAllSearchHistory()
+
+    override suspend fun getIsServiceRegion(lat: Double, lon: Double): Result<Boolean> =
+        locationsRemoteDataSource.getIsServiceRegion(lat = lat, lon = lon)
 }
