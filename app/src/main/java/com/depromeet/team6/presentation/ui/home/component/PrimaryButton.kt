@@ -37,7 +37,7 @@ fun PrimaryButton(
     Button(
         onClick = onClick,
         colors = ButtonDefaults.buttonColors(
-            containerColor = colors.systemGreen,
+            containerColor = colors.primaryMain,
             contentColor = colors.black
         ),
         shape = RoundedCornerShape(10.dp),

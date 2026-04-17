@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -30,6 +31,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -177,7 +179,6 @@ fun ItineraryRoute(
                 },
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(paddingValues = padding)
                     .background(defaultTeam6Colors.gray950),
                 navigateToBusCourse = navigateToBusCourse
             )
@@ -312,11 +313,26 @@ fun ItineraryScreen(
                 onClick = onRefreshButtonClick
             )
         } else {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .fillMaxWidth()
+                    .height(200.dp)
+                    .background(
+                        brush = Brush.verticalGradient(
+                            // 0.0f는 상단(0%), 0.2f는 20% 지점입니다.
+                            0.0f to defaultTeam6Colors.gray950.copy(alpha = 0f),
+                            0.2f to defaultTeam6Colors.gray950.copy(alpha = 0.5f),
+                            1.0f to defaultTeam6Colors.gray950.copy(alpha = 1f)
+                        )
+                    )
+            )
             Row(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
-                    .offset(y = -60.dp)
                     .fillMaxWidth()
+                    .navigationBarsPadding()
+                    .offset(y = (-20).dp)
                     .padding(horizontal = 16.dp)
                     .roundedBackgroundWithPadding(
                         backgroundColor = defaultTeam6Colors.main,

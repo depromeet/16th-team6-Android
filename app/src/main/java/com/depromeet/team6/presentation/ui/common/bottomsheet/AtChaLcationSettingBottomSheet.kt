@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
@@ -38,7 +39,8 @@ fun AtChaLocationSettingBottomSheet(
                 shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
                 color = defaultTeam6Colors.gray940
             )
-            .padding(horizontal = 24.dp),
+            .padding(horizontal = 24.dp)
+            .navigationBarsPadding(),
         verticalArrangement = Arrangement.Bottom
     ) {
         Spacer(modifier = Modifier.height(32.dp))

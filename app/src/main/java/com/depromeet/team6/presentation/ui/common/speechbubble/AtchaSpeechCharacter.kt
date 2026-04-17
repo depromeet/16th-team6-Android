@@ -4,11 +4,8 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.offset
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -29,6 +26,7 @@ import com.depromeet.team6.R
 import com.depromeet.team6.presentation.ui.home.HomeContract
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
@@ -87,18 +85,24 @@ fun AtchaSpeechCharacter(
             return@LaunchedEffect
         }
 
+        // persistentMessage 인 경우 기존 말풍선 전부 없애고 새로들어온 말풍선 그리기
         // 이미 말풍선 생성중이면 SpeechRequest가 들어와도 말풍선 만들지 않음
-        if (speechJob != null && speechJob!!.isActive) return@LaunchedEffect
+        if (speechRequest.persistentMessage) {
+            bubbles.clear()
+            speechJob?.cancelAndJoin()
+        } else {
+            if (speechJob != null && speechJob!!.isActive) return@LaunchedEffect
+        }
 
         // 말풍선 만들때 캐릭터 통통 튀기
-        scope.launch {
-            // 매 클릭마다 0에서 1까지 1회 재생
-            lottie.animate(
-                composition = composition,
-                iterations = 1,
-                initialProgress = 0f
-            )
-        }
+//        scope.launch {
+//            // 매 클릭마다 0에서 1까지 1회 재생
+//            lottie.animate(
+//                composition = composition,
+//                iterations = 1,
+//                initialProgress = 0f
+//            )
+//        }
         speechJob = scope.launch {
             val removalJobs = mutableListOf<Job>()
             // 말풍선 생성 로직
@@ -113,19 +117,21 @@ fun AtchaSpeechCharacter(
                 bubbles.add(newBubble)
 
                 // 개별 말풍선 제거 타이머
-                val removalJob = scope.launch {
-                    delay(2500L)
-                    val idx = bubbles.indexOfFirst { it.id == newBubble.id }
-                    if (idx != -1) {
-                        bubbles[idx] = bubbles[idx].copy(isVisible = false)
+                if (!speechRequest.persistentMessage) {
+                    val removalJob = scope.launch {
+                        delay(2500L)
+                        val idx = bubbles.indexOfFirst { it.id == newBubble.id }
+                        if (idx != -1) {
+                            bubbles[idx] = bubbles[idx].copy(isVisible = false)
+                        }
+                        delay(350)
+                        val removeIdx = bubbles.indexOfFirst { it.id == newBubble.id }
+                        if (removeIdx != -1) {
+                            bubbles.removeAt(removeIdx)
+                        }
                     }
-                    delay(350)
-                    val removeIdx = bubbles.indexOfFirst { it.id == newBubble.id }
-                    if (removeIdx != -1) {
-                        bubbles.removeAt(removeIdx)
-                    }
+                    removalJobs.add(removalJob)
                 }
-                removalJobs.add(removalJob)
             }
             // --- 모든 말풍선이 제거되면 speechJob 완료 -> 해당 라이프사이클 기준으로 쓰로틀링 ---
             removalJobs.joinAll()
@@ -137,13 +143,14 @@ fun AtchaSpeechCharacter(
     ) {
         // 말풍선들을 아래에서 위로 쌓아 올리는 UI
         Column(
-            modifier = Modifier
-                .padding(16.dp),
+            modifier = Modifier,
             horizontalAlignment = Alignment.Start
         ) {
             bubbles.forEachIndexed { index, bubble ->
                 key(bubble.id) {
                     BubbleItem(
+                        modifier = Modifier
+                            .offset(y = 10.dp),
                         text = bubble.text,
                         showTail = index == bubbles.lastIndex,
                         isVisible = bubble.isVisible // 👈 4. 부모의 상태를 자식에게 전달
@@ -189,10 +196,12 @@ fun AtchaSpeechCharacter(
 fun BubbleItem(
     text: String,
     showTail: Boolean,
-    isVisible: Boolean // 👈 1. 부모로부터 가시성 상태를 받음
+    isVisible: Boolean, // 👈 1. 부모로부터 가시성 상태를 받음
+    modifier: Modifier = Modifier
 ) {
     // 2. 내부 상태 (isVisible), LaunchedEffect, onRemove 콜백 모두 제거
     AnimatedVisibility(
+        modifier = modifier,
         visible = isVisible, // 👈 3. 전달받은 isVisible 상태를 직접 사용
         enter = slideInVertically(
             initialOffsetY = { fullHeight -> fullHeight },
@@ -202,14 +211,9 @@ fun BubbleItem(
             animationSpec = tween(durationMillis = 300)
         )
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Start
-        ) {
-            AtchaSpeechBubble(
-                message = text,
-                tailExist = showTail
-            )
-        }
+        AtchaSpeechBubble(
+            message = text,
+            tailExist = showTail
+        )
     }
 }

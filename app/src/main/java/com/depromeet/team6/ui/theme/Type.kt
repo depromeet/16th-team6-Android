@@ -30,6 +30,7 @@ data class Team6Typography(
     val body5_B5SB14: TextStyle,
     val body6_B6R14: TextStyle,
     val body7_B7M13: TextStyle,
+    val body8_B8R13: TextStyle,
     val detail1_R12: TextStyle,
     val detail2_M11: TextStyle,
     val detail3_M9: TextStyle
@@ -118,6 +119,11 @@ val defaultTeam6Typography = Team6Typography(
         fontSize = 13.sp,
         lineHeight = 16.sp
     ),
+    body8_B8R13 = TextStyle(
+        fontFamily = pretendardRegular,
+        fontSize = 13.sp,
+        lineHeight = 15.sp
+    ),
     detail1_R12 = TextStyle(
         fontFamily = pretendardRegular,
         fontSize = 12.sp,
@@ -130,7 +136,7 @@ val defaultTeam6Typography = Team6Typography(
     ),
     detail3_M9 = TextStyle(
         fontFamily = pretendardMedium,
-        fontSize = 10.sp,
+        fontSize = 9.sp,
         lineHeight = 12.sp
     )
 )

@@ -36,6 +36,9 @@ fun SearchResultEmpty(
         CourseSearchContract.CourseSearchDataState.ServiceEnded -> {
             stringResource(R.string.course_search_result_empty)
         }
+        CourseSearchContract.CourseSearchDataState.Unknown -> {
+            stringResource(R.string.course_search_result_unknown)
+        }
         else -> ""
     }
     if (isMidNight) pageMessage = stringResource(R.string.course_search_result_midnight)

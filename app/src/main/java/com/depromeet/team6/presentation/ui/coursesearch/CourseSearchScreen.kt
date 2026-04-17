@@ -130,7 +130,7 @@ fun CourseSearchRoute(
 
     when (uiState.courseUiLoadState) {
         LoadState.Loading -> {
-            CourseSearchScreen(
+            CourseSearchScreenV2(
                 uiState = uiState,
                 modifier = Modifier
                     .fillMaxSize()
@@ -143,7 +143,7 @@ fun CourseSearchRoute(
         }
 
         LoadState.Success -> {
-            CourseSearchScreen(
+            CourseSearchScreenV2(
                 uiState = uiState,
                 modifier = Modifier
                     .fillMaxSize()
@@ -172,7 +172,7 @@ fun CourseSearchRoute(
                         }
                     }
                 },
-                backButtonClicked = { navigateToHome() },
+                backButtonClicked = { popBackStack() },
                 courseInfoToggleClick = { viewModel.setEvent(CourseSearchContract.CourseEvent.ItemCourseDetailToggleClick) },
                 itemCardClick = {
                     viewModel.setEvent(

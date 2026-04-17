@@ -4,7 +4,11 @@ import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -20,12 +24,15 @@ import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.debugInspectorInfo
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -99,6 +106,73 @@ fun AtchaTabRow(
     }
 }
 
+@Composable
+fun AtchaTabRowV2(
+    tabs: List<String>,
+    selectedTabIndex: Int,
+    onTabClick: (Int) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(defaultTeam6Colors.gray950)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 16.dp, end = 16.dp, top = 12.dp), // 전체 시작 여백
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            tabs.forEachIndexed { index, title ->
+                val isSelected = selectedTabIndex == index
+                val textColor = if (isSelected) {
+                    defaultTeam6Colors.white
+                } else {
+                    defaultTeam6Colors.gray400
+                }
+                val textStyle = if (isSelected) {
+                    defaultTeam6Typography.body5_B5SB14
+                } else {
+                    defaultTeam6Typography.body4_B4R15
+                }
+
+                Column(
+                    modifier = Modifier
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null // 클릭 시 물결 효과 제거 (깔끔하게)
+                        ) { onTabClick(index) },
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        modifier = Modifier
+                            .wrapContentSize()
+                            .drawBehind {
+                                if (!isSelected) return@drawBehind
+                                val strokeWidth = 1.dp.toPx()
+                                val y = size.height - strokeWidth / 2
+                                drawLine(
+                                    color = defaultTeam6Colors.white, // 줄의 색상
+                                    start = Offset(0f, y),
+                                    end = Offset(size.width, y),
+                                    strokeWidth = strokeWidth
+                                )
+                            }
+                            .padding(vertical = 6.dp, horizontal = 14.dp),
+                        text = title,
+                        color = textColor,
+                        style = textStyle,
+                        textAlign = TextAlign.Center,
+                        onTextLayout = { textLayoutResult ->
+                        }
+                    )
+                }
+            }
+        }
+    }
+}
+
 fun Modifier.transportTabIndicatorOffset(
     currentTabPosition: TabPosition,
     tabWidth: Dp
@@ -138,4 +212,21 @@ fun AtchaTabRowPreview() {
             selectedTabIndex = tabIndex
         }
     )
+}
+
+@Preview
+@Composable
+fun AtchaTabRowPreview2() {
+    val tabs = listOf("전체", "버스", "지하철")
+    var selectedTabIndex by remember { mutableIntStateOf(0) }
+
+    Box() {
+        AtchaTabRowV2(
+            tabs = tabs,
+            selectedTabIndex = selectedTabIndex,
+            onTabClick = { tabIndex ->
+                selectedTabIndex = tabIndex
+            }
+        )
+    }
 }

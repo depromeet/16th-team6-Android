@@ -5,16 +5,12 @@ import com.depromeet.team6.domain.model.course.CourseInfo
 import com.depromeet.team6.domain.model.course.TransportType
 import com.depromeet.team6.presentation.model.bus.BusArrivalParameter
 import com.depromeet.team6.presentation.model.home.CharacterState
-import com.depromeet.team6.presentation.model.home.ComponentType
 import com.depromeet.team6.presentation.model.home.MapFocusState
 import com.depromeet.team6.presentation.model.itinerary.FocusedMarkerParameter
-import com.depromeet.team6.presentation.util.DefaultLatLng.DEFAULT_LAT
-import com.depromeet.team6.presentation.util.DefaultLatLng.DEFAULT_LNG
 import com.depromeet.team6.presentation.util.base.UiEvent
 import com.depromeet.team6.presentation.util.base.UiSideEffect
 import com.depromeet.team6.presentation.util.base.UiState
 import com.depromeet.team6.presentation.util.view.LoadState
-import com.google.android.gms.maps.model.LatLng
 
 class HomeContract {
     data class HomeUiState(
@@ -26,8 +22,7 @@ class HomeContract {
         val isBusDeparted: Boolean = false,
         val showSpeechBubble: Boolean = true,
         val locationAddress: String = "",
-        val currentLocation: LatLng = LatLng(DEFAULT_LAT, DEFAULT_LNG),
-        val isMapFocused: MapFocusState = MapFocusState.Departure,
+        val isMapFocused: MapFocusState = MapFocusState.Current,
         val isMapReady: Boolean = false,
         // 알림 등록 후 경로 표시
         val itineraryInfo: CourseInfo? = null,
@@ -84,7 +79,8 @@ class HomeContract {
 
     data class SpeechRequest(
         val messages: List<String>,
-        val triggerId: Long = System.nanoTime()
+        val triggerId: Long = System.nanoTime(),
+        val persistentMessage: Boolean = false
     )
 
     sealed interface HomeSideEffect : UiSideEffect {
@@ -95,6 +91,9 @@ class HomeContract {
 
         data object ShowUpdateRequiredDialog : HomeSideEffect
         data object ShowUpdateOptionalDialog : HomeSideEffect
+        data object ShowTooCloseDialog : HomeSideEffect
+        data object ShowOutOfServiceRegionBottomSheet : HomeSideEffect
+        data object NavigateToCourseSearch : HomeSideEffect
     }
 
     sealed class HomeEvent : UiEvent {
@@ -121,10 +120,9 @@ class HomeContract {
         data object SetDestination : HomeEvent()
         data object AfterRegisterMapMarkerClick : HomeEvent()
         data class CourseDetailButtonClick(val clickEventKey: String) : HomeEvent()
+        data object OnSearchClick : HomeEvent()
 
         // 애니메이션
-        data object CharacterClicked : HomeEvent()
-        data class ComponentClicked(val componentType: ComponentType, val data: Any? = null) : HomeEvent()
         data class RequestCharacterSpeech(val messages: List<String>) : HomeEvent()
     }
 }

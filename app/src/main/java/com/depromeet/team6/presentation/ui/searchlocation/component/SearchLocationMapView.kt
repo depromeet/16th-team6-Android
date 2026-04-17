@@ -200,7 +200,7 @@ fun SearchLocationMapView(
             AtChaLocationSettingBottomSheet(
                 locationName = myAddress.name,
                 locationAddress = myAddress.address,
-                completeButtonText = "출발지로 설정",
+                completeButtonText = "  출발지로 설정",
                 buttonClicked = setDepartureButtonClicked
             )
         }

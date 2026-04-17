@@ -24,6 +24,15 @@ class LocationsRemoteDataSource @Inject constructor(
 //        locationsService.getAddressFromCoordinates(lat = lat, lon = lon).toResult()
     }
 
+    suspend fun getIsServiceRegion(lat: Double, lon: Double): Result<Boolean> {
+        val response = locationsService.getIsServiceRegion(lat = lat, lon = lon)
+        return if (response.isSuccessful) {
+            Result.success(response.body()?.result ?: false)
+        } else {
+            Result.failure(Exception("Not in service region"))
+        }
+    }
+
     suspend fun getSearchHistories(lat: Double, lon: Double): Result<List<ResponseLocationsDto>> {
         val response = locationsService.getSearchHistories(lat = lat, lon = lon)
         return response.parse()

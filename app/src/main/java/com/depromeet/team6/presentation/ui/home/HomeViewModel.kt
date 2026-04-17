@@ -16,6 +16,7 @@ import com.depromeet.team6.domain.usecase.GetAppVersionUseCase
 import com.depromeet.team6.domain.usecase.GetBusArrivalUseCase
 import com.depromeet.team6.domain.usecase.GetBusStartedUseCase
 import com.depromeet.team6.domain.usecase.GetCourseSearchResultsUseCase
+import com.depromeet.team6.domain.usecase.GetIsServiceRegionUseCase
 import com.depromeet.team6.domain.usecase.GetRealtimeLocationUseCase
 import com.depromeet.team6.domain.usecase.GetTaxiCostUseCase
 import com.depromeet.team6.domain.usecase.GetUserInfoUseCase
@@ -36,20 +37,16 @@ import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_EVENT_REGISTER_M
 import com.depromeet.team6.presentation.util.HomeAmplitude.REGISTER_MAP_MARKER_CLICKED
 import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
 import com.depromeet.team6.presentation.util.base.BaseViewModel
-import com.depromeet.team6.presentation.util.context.getUserLocation
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.time.Duration
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
@@ -66,39 +63,56 @@ class HomeViewModel @Inject constructor(
     private val refreshAlarmTimerUseCase: RefreshAlarmTimerUseCase,
     private val getRealtimeLocationUseCase: GetRealtimeLocationUseCase,
     private val getAppVersionUseCase: GetAppVersionUseCase,
+    private val getIsServiceRegionUseCase: GetIsServiceRegionUseCase,
     @ApplicationContext private val context: Context
 ) : BaseViewModel<HomeContract.HomeUiState, HomeContract.HomeSideEffect, HomeContract.HomeEvent>() {
-    private var speechBubbleJob: Job? = null
-    private var busStartedPollingJob: Job? = null
     private var lastRouteId: String = ""
+
+    private val beforeDepartMessages = listOf(
+        "막차 놓치면 택시비 약 34,000원",
+        "시간에 맞춰 알림을 드릴게요",
+        "교통 상황에 따라 시간이 달라질 수 있어요"
+    )
+
+    private val afterDepartMessages = listOf(
+        "교통 상황에 따라 시간이 달라질 수 있어요",
+        "믿을 수 있는 공공 데이터를 활용하고 있어요",
+        "막차 놓치면 택시비 약 34,000원"
+    )
+
+    private var messageIdx = 0
 
     init {
         checkAppVersion()
-//        showSpeechBubbleTemporarily()
         viewModelScope.launch {
-            val currentLocation = withContext(Dispatchers.IO) {
-                context.getUserLocation() // suspend 함수
-            }
             loadAlarmAndCourseInfoFromPrefs()
             val initialSpeech = if (loadUserDepartureState()) {
                 HomeContract.SpeechRequest(
                     listOf(
-                        context.getString(R.string.home_bubble_map_text)
+                        "교통 상황에 따라 시간이 달라질 수 있어요"
                     )
                 )
             } else {
                 val taxiCost = getTaxiCostUseCase.getLastSavedTaxiCost()
-                val formattedCost = String.format("%,d", taxiCost)
+                val formattedCost = String.format(Locale.KOREA, "%,d", taxiCost)
                 HomeContract.SpeechRequest(
-                    listOf(
+                    messages = listOf(
                         context.getString(R.string.home_bubble_taxi_cost_message, formattedCost)
-                    )
+                    ),
+                    persistentMessage = true
                 )
+            }
+            val focusState = if (homeRepository.isAlarmRegistered()) {
+                MapFocusState.Departure
+            } else {
+                MapFocusState.Current
             }
 
             setState {
                 copy(
-                    loadState = LoadState.Success
+                    loadState = LoadState.Success,
+                    characterMessages = initialSpeech,
+                    isMapFocused = focusState
                 )
             }
         }
@@ -128,6 +142,7 @@ class HomeViewModel @Inject constructor(
 
             is HomeContract.HomeEvent.OnCharacterClick -> {
                 if (currentState.isAlarmRegistered) {
+                    requestSpeechAfterRegisterAlarm()
                     AmplitudeUtils.trackEventWithProperties(
                         eventName = HOME_EVENT_CHARACTER_CLICK_AFTER_ALARM,
                         properties = mapOf(
@@ -135,7 +150,7 @@ class HomeViewModel @Inject constructor(
                         )
                     )
                 } else {
-                    getTaxiCost()
+//                    getTaxiCost()
                     AmplitudeUtils.trackEventWithProperties(
                         eventName = HOME_EVENT_CHARACTER_CLICK_BEFORE_ALARM,
                         properties = mapOf(
@@ -287,9 +302,6 @@ class HomeViewModel @Inject constructor(
                 )
             }
 
-            is HomeContract.HomeEvent.CharacterClicked -> {}
-            // is HomeContract.HomeEvent.ComponentClicked -> handleComponentClick(event.componentType, event.data)
-            is HomeContract.HomeEvent.ComponentClicked -> TODO()
             is HomeContract.HomeEvent.RequestCharacterSpeech -> {
                 setState {
                     copy(
@@ -297,6 +309,31 @@ class HomeViewModel @Inject constructor(
                             messages = event.messages
                         )
                     )
+                }
+            }
+
+            is HomeContract.HomeEvent.OnSearchClick -> {
+                val distance = calculateDistance(
+                    lat1 = currentState.markerPoint.lat,
+                    lon1 = currentState.markerPoint.lon,
+                    lat2 = currentState.destinationPoint.lat,
+                    lon2 = currentState.destinationPoint.lon
+                )
+                if (distance <= 800.0) {
+                    setSideEffect(HomeContract.HomeSideEffect.ShowTooCloseDialog)
+                } else {
+                    getIsServiceRegionUseCase(
+                        lat = currentState.markerPoint.lat,
+                        lon = currentState.markerPoint.lon
+                    ).onSuccess { isServiceRegion ->
+                        if (isServiceRegion) {
+                            setSideEffect(HomeContract.HomeSideEffect.NavigateToCourseSearch)
+                        } else {
+                            setSideEffect(HomeContract.HomeSideEffect.ShowOutOfServiceRegionBottomSheet)
+                        }
+                    }.onFailure {
+                        setSideEffect(HomeContract.HomeSideEffect.ShowOutOfServiceRegionBottomSheet)
+                    }
                 }
             }
         }
@@ -400,16 +437,6 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun showSpeechBubbleTemporarily() {
-        speechBubbleJob?.cancel()
-
-        speechBubbleJob = viewModelScope.launch {
-            setEvent(HomeContract.HomeEvent.UpdateSpeechBubbleVisibility(true))
-            delay(2500)
-            setEvent(HomeContract.HomeEvent.UpdateSpeechBubbleVisibility(false))
-        }
-    }
-
     fun getCenterLocation(location: LatLng) {
         viewModelScope.launch {
             getAddressFromCoordinatesUseCase(location.latitude, location.longitude)
@@ -421,6 +448,9 @@ class HomeViewModel @Inject constructor(
                     }
                     setState {
                         copy(markerPoint = newMarkerPoint)
+                    }
+                    if (!currentState.userDeparture) {
+                        getTaxiCost()
                     }
                 }
                 .onFailure { exception ->
@@ -471,7 +501,11 @@ class HomeViewModel @Inject constructor(
 
     fun loadUserDepartureState(): Boolean {
         val userDeparture = homeRepository.isUserDeparted()
-        setEvent(HomeContract.HomeEvent.LoadUserDeparture(userDeparture))
+        setState {
+            copy(
+                userDeparture = userDeparture
+            )
+        }
         if (userDeparture && currentState.firtTransportTation == TransportType.BUS) {
             getBusArrival()
         }
@@ -642,16 +676,16 @@ class HomeViewModel @Inject constructor(
             )
                 .onSuccess {
                     // 1. 숫자를 콤마가 포함된 문자열로 포매팅
-                    val formattedCost = String.format("%,d", it) // "34,200"
+                    val formattedCost = String.format(Locale.KOREA, "%,d", it) // "34,200"
                     val resultString = context.getString(R.string.home_bubble_taxi_cost_message, formattedCost)
-                    Timber.d("resultString: $resultString")
                     setState {
                         copy(
                             taxiCost = it,
                             characterMessages = HomeContract.SpeechRequest(
-                                listOf(
+                                messages = listOf(
                                     resultString
-                                )
+                                ),
+                                persistentMessage = true
                             )
                         )
                     }
@@ -663,6 +697,26 @@ class HomeViewModel @Inject constructor(
                         )
                     }
                 }
+        }
+    }
+
+    private fun requestSpeechAfterRegisterAlarm() {
+        val message = if (currentState.userDeparture) {
+            afterDepartMessages[messageIdx]
+        } else {
+            beforeDepartMessages[messageIdx]
+        }
+        setState {
+            copy(
+                characterMessages = HomeContract.SpeechRequest(
+                    messages = listOf(message)
+                )
+            )
+        }
+        messageIdx = if (currentState.userDeparture) {
+            (messageIdx + 1) % afterDepartMessages.size
+        } else {
+            (messageIdx + 1) % beforeDepartMessages.size
         }
     }
 
@@ -789,6 +843,18 @@ class HomeViewModel @Inject constructor(
         UPDATE_REQUIRED,
         UPDATE_OPTIONAL,
         UP_TO_DATE
+    }
+
+    private fun calculateDistance(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Double {
+        val r = 6371000.0
+        val dLat = Math.toRadians(lat2 - lat1)
+        val dLon = Math.toRadians(lon2 - lon1)
+        val φ1 = Math.toRadians(lat1)
+        val φ2 = Math.toRadians(lat2)
+        val a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(φ1) * Math.cos(φ2) *
+            Math.sin(dLon / 2) * Math.sin(dLon / 2)
+        return 2 * r * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
     }
 
     private fun getCurrentVersionName(): String? {
