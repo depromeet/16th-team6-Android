@@ -40,6 +40,7 @@ import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.depromeet.team6.ui.theme.defaultTeam6Typography
 import com.google.gson.Gson
+import timber.log.Timber
 import java.time.LocalDateTime
 
 @Composable
@@ -51,6 +52,17 @@ fun LastTransportInfoItemV2(
 ) {
     val dialogController = LocalDialogController.current
     val context = LocalContext.current
+
+    val times = runCatching {
+        val departureDateTime = LocalDateTime.parse(courseSearchResult.departureTime)
+        val boardingDateTime = LocalDateTime.parse(courseSearchResult.boardingTime)
+        departureDateTime to boardingDateTime
+    }.onFailure {
+        Timber.e(it, "Failed to parse time in LastTransportInfoItemV2 for routeId: ${courseSearchResult.routeId}")
+    }.getOrNull() ?: return
+
+    val (departureDateTime, boardingDateTime) = times
+
     Column(
         modifier = modifier
             .background(defaultTeam6Colors.gray950)
@@ -96,11 +108,7 @@ fun LastTransportInfoItemV2(
             horizontalArrangement = Arrangement.spacedBy(5.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            val departureDateTime = LocalDateTime
-                .parse(courseSearchResult.departureTime)
             val (departHour, departMinute) = departureDateTime.let { it.hour to it.minute }
-            val boardingDateTime = LocalDateTime
-                .parse(courseSearchResult.boardingTime)
             val (boardingHour, boardingMinute) = boardingDateTime.let { it.hour to it.minute }
 
             RemainingTimeHHmmV2(

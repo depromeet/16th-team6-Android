@@ -2,6 +2,10 @@
 
 이 프로젝트에서 Gemini CLI는 다음 원칙을 반드시 준수합니다.
 
+0. **가장 중요**: 기능추가 및 개선과 같이 소스코드 수정이 필요한 작업의 경우 반드시 `run_shell_command`를 사용하여 `harness/harness.sh`를 실행합니다.
+   - 명령어 형식: `bash harness/harness.sh "<사용자 요청 및 분석된 컨텍스트>"`
+   - 이 스크립트는 `task_state.json`을 생성하고 Claude Code를 호출하여 작업을 수행합니다.
+
 1. **직접 수정 금지**: Gemini는 소스 코드를 직접 수정하지 않습니다.
 2. **Claude 위임**: 모든 코드 수정 작업은 Claude Code가 수행합니다.
 3. **역할 분담**: Gemini의 역할은 Planning 및 Review에 한정됩니다.

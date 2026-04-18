@@ -32,7 +32,7 @@ class TransitsRepositoryImpl @Inject constructor(
             it.toDomain()
         }
 
-    override suspend fun getAvailableCoursesStream(
+    override fun getAvailableCoursesStream(
         startPosition: Address,
         endPosition: Address,
         sortType: Int

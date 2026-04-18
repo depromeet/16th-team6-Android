@@ -648,7 +648,10 @@ class HomeViewModel @Inject constructor(
         for (leg in legs) {
             if (leg.transportType != TransportType.WALK) {
                 if (leg.transportType == TransportType.BUS) {
-                    firstTransportationName = leg.routeName.toString().split(":")[1]
+                    firstTransportationName = leg.routeName
+                        ?.substringAfter(":", missingDelimiterValue = leg.routeName.orEmpty())
+                        ?.trim()
+                        .orEmpty()
                     getBusArrivalParameter(leg)
                 } else if (leg.transportType == TransportType.SUBWAY) {
                     firstTransportationName = leg.startPoint.name + "역"

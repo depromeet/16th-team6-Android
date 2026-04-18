@@ -12,6 +12,8 @@ import com.depromeet.team6.data.dataremote.service.TransitsService
 import com.google.gson.Gson
 import com.google.gson.JsonParser
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
@@ -66,16 +68,12 @@ class TransitsRemoteDataSource @Inject constructor(
             throw ApiException.ApiRequestFailureException(errorCode, message)
         }
 
-        val responseBody = response.body() ?: run {
-            Timber.e("Response body is null")
-            return@flow
-        }
-
-        val gson = Gson()
-        try {
+        response.body()?.use { responseBody ->
+            val gson = Gson()
             responseBody.byteStream().bufferedReader().use { reader ->
                 var line: String?
                 while (reader.readLine().also { line = it } != null) {
+                    currentCoroutineContext().ensureActive()
                     if (line?.startsWith("data:") == true) {
                         val jsonString = line.substringAfter("data:").trim()
                         if (jsonString.isNotEmpty()) {
@@ -96,8 +94,8 @@ class TransitsRemoteDataSource @Inject constructor(
                     }
                 }
             }
-        } catch (e: Exception) {
-            throw e
+        } ?: run {
+            Timber.e("Response body is null")
         }
     }.flowOn(Dispatchers.IO)
 

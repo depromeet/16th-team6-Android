@@ -69,7 +69,7 @@ fun ResponseCourseSearchDto.toDomain(): CourseInfo {
         )
     }
 
-    val boardingDateTime = this.legs.first { it.mode != TransportType.WALK.name }.departureDateTime
+    val boardingDateTime = this.legs.firstOrNull { it.mode != TransportType.WALK.name }?.departureDateTime
 
     return CourseInfo(
         routeId = this.routeId,

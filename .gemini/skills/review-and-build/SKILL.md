@@ -1,30 +1,31 @@
 ---
 name: review-and-build
-description: Autonomous workflow for code review, direct fixing, building, and testing in Android projects using Gradle. Use when you need to ensure code quality and stability after modifications or before delivery.
+description: Android 프로젝트의 빌드 및 테스트를 통해 변경 사항을 검증하고, 오류 발생 시 Claude를 위한 수정 지침을 생성합니다.
 ---
+# Instructions
 
-## 절차
+이 스킬은 `harness.sh`의 `REVIEW_REQUIRED` 단계에서 호출되어, Claude가 수정한 코드가 정상적으로 빌드되고 작동하는지 검증합니다. **절대로 직접 코드를 수정하지 않습니다.**
 
-이 스킬은 코드 변경 사항이 발생한 후 또는 정기적으로 프로젝트의 품질과 안정성을 확보하기 위해 사용됩니다. 모든 과정은 자율적으로 진행되며, 실패 시 스스로 원인을 파악하여 수정을 시도합니다.
+## Workflow
 
-1. **코드 리뷰 및 자동 수정**
-   - 대상 파일 및 관련 코드의 보안 취약점, 아키텍처(MVI, Clean Architecture) 준수 여부, 코드 품질을 검토합니다.
-   - 발견된 문제는 사용자에게 묻지 않고 직접 수정합니다. (예: `ktlint` 스타일 위반, 메모리 누수 위험, 잘못된 Flow 처리 등)
+### 1. Build & Test Execution
+- `./gradlew assembleDebug` 와 `./gradlew test`를 실행하여 빌드 및 유닛 테스트를 수행합니다.
+- 특정 화면 수정 시 관련 테스트 케이스가 있다면 이를 우선적으로 실행합니다.
 
-2. **빌드 검증 (Build Verification)**
-   - `./gradlew assembleDebug` 명령을 실행하여 프로젝트가 정상적으로 컴파일되는지 확인합니다.
-   - 빌드 실패 시 에러 로그를 분석하여 원인(종속성 문제, 컴파일 에러 등)을 파악하고 코드를 수정한 뒤 재빌드합니다. (최대 3회 재시도)
+### 2. Error Analysis (Failure Case)
+- 빌드 또는 테스트 실패 시, 로그를 분석하여 원인이 된 파일, 라인, 오류 메시지를 파악합니다.
+- **수정 지시 생성**: 분석된 내용을 바탕으로 Claude가 즉시 수정에 착수할 수 있도록 구체적인 English Instruction을 생성합니다.
+- **harness 피드백**: 생성된 지침을 `task_state.json`의 `feedback` 필드에 기록하고, `phase`를 `REPLANNING`으로 변경하도록 제안합니다.
 
-3. **테스트 및 정적 분석 (Test & Static Analysis)**
-   - 유닛 테스트(`./gradlew testDebugUnitTest`)를 실행합니다.
-   - 코드 스타일 및 린트 검사(`./gradlew ktlintCheck`)를 실행합니다.
-   - 테스트나 린트 실패 시 원인을 분석하여 수정 후 재실행합니다. (최대 3회 재시도)
+### 3. Approval (Success Case)
+- 빌드 및 테스트가 모두 통과하면 변경 사항의 안정성을 선언합니다.
+- `task_state.json`의 `phase`를 `COMPLETED`로 변경하도록 제안합니다.
 
-4. **최종 보고 (Completion Report)**
-   - 수정된 내용에 대한 요약(보안, 품질, 아키텍처 측면)을 제공합니다.
-   - 빌드 및 테스트 결과(성공 여부, 통과한 테스트 수 등)를 리포트합니다.
+## Constraints
+- **수정 금지**: 어떤 경우에도 `replace`나 `write_file` 등을 사용하여 소스 코드를 직접 수정하지 않습니다.
+- **Claude 위임**: 모든 수정 작업은 오직 Claude(android-executor)만이 수행해야 하며, Gemini는 지시자 역할을 유지합니다.
+- **로그 요약**: 방대한 빌드 로그 전체를 전달하기보다, 핵심 오류 메시지와 컨텍스트 위주로 요약하여 전달합니다.
 
-## 원칙
-- **자율성**: 각 단계에서 발생하는 문제는 스스로 해결책을 찾아 적용합니다. 사용자에게 허락을 구하지 않고 수정을 진행합니다.
-- **최대 재시도**: 한 단계에서 3회 이상 해결에 실패할 경우에만 사용자에게 보고하고 가이드를 요청합니다.
-- **안정성 우선**: 빌드가 깨진 상태로 작업을 종료하지 않습니다.
+## 피드백 예시 (To Claude)
+- "Build failed in CourseSearchViewModel.kt:125. Unresolved reference 'ErrorType'. Please import com.depromeet.team6.presentation.model.ErrorType."
+- "Unit test 'getSearchResults_success' failed. Expected NoResult state but got Loading. Check the flow emission timing in GetCourseSearchResultsUseCase."
