@@ -9,7 +9,7 @@ description: Android 프로젝트의 빌드 및 테스트를 통해 변경 사�
 ## Workflow
 
 ### 1. Build & Test Execution
-- `./gradlew assembleDebug` 와 `./gradlew test`를 실행하여 빌드 및 유닛 테스트를 수행합니다.
+- `./gradlew assembleDebug` 를 실행하여 빌드 및 유닛 테스트를 수행합니다.
 - 특정 화면 수정 시 관련 테스트 케이스가 있다면 이를 우선적으로 실행합니다.
 
 ### 2. Error Analysis (Failure Case)

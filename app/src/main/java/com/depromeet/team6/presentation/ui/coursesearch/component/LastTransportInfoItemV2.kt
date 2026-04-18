@@ -53,15 +53,17 @@ fun LastTransportInfoItemV2(
     val dialogController = LocalDialogController.current
     val context = LocalContext.current
 
-    val times = runCatching {
-        val departureDateTime = LocalDateTime.parse(courseSearchResult.departureTime)
-        val boardingDateTime = LocalDateTime.parse(courseSearchResult.boardingTime)
-        departureDateTime to boardingDateTime
+    val departureDateTime = runCatching {
+        LocalDateTime.parse(courseSearchResult.departureTime)
     }.onFailure {
-        Timber.e(it, "Failed to parse time in LastTransportInfoItemV2 for routeId: ${courseSearchResult.routeId}")
-    }.getOrNull() ?: return
+        Timber.e(it, "Failed to parse departureTime in LastTransportInfoItemV2 for routeId: ${courseSearchResult.routeId}")
+    }.getOrNull()
 
-    val (departureDateTime, boardingDateTime) = times
+    val boardingDateTime = runCatching {
+        LocalDateTime.parse(courseSearchResult.boardingTime)
+    }.onFailure {
+        Timber.e(it, "Failed to parse boardingTime in LastTransportInfoItemV2 for routeId: ${courseSearchResult.routeId}")
+    }.getOrNull()
 
     Column(
         modifier = modifier
@@ -108,8 +110,7 @@ fun LastTransportInfoItemV2(
             horizontalArrangement = Arrangement.spacedBy(5.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            val (departHour, departMinute) = departureDateTime.let { it.hour to it.minute }
-            val (boardingHour, boardingMinute) = boardingDateTime.let { it.hour to it.minute }
+            val (departHour, departMinute) = departureDateTime?.let { it.hour to it.minute } ?: (null to null)
 
             RemainingTimeHHmmV2(
                 hour = departHour,
@@ -205,11 +206,16 @@ fun SetNotificationButtonV2(
 
 @Composable
 fun RemainingTimeHHmmV2(
-    hour: Int,
-    minute: Int,
+    hour: Int?,
+    minute: Int?,
     isDeparture: Boolean,
     modifier: Modifier = Modifier
 ) {
+    val timeText = if (hour != null && minute != null) {
+        stringResource(R.string.last_transport_info_remaining_time, hour, minute)
+    } else {
+        "--:--"
+    }
     Text(
         modifier = Modifier
             .border(
@@ -225,7 +231,7 @@ fun RemainingTimeHHmmV2(
             )
             .padding(vertical = 4.dp, horizontal = 6.dp),
         color = defaultTeam6Colors.white,
-        text = stringResource(R.string.last_transport_info_remaining_time, hour, minute),
+        text = timeText,
         style = defaultTeam6Typography.body8_B8R13
     )
 }
