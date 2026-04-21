@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,12 +26,12 @@ import com.depromeet.team6.presentation.type.ButtonSize
 import com.depromeet.team6.presentation.type.ButtonType
 import com.depromeet.team6.presentation.ui.common.button.AtchaCommonButton
 import com.depromeet.team6.presentation.ui.common.list.TextListItemRadio
+import com.depromeet.team6.presentation.ui.common.sound.AlarmVolumeMapper
+import com.depromeet.team6.presentation.ui.common.sound.SoundSamplePlayer
 import com.depromeet.team6.presentation.ui.common.sound.VolumeBottomSheet
 import com.depromeet.team6.presentation.ui.mypage.component.TitleBar
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.ui.theme.LocalTeam6Colors
-import kotlin.math.ceil
-import kotlin.math.roundToInt
 
 @Composable
 fun MypageAlarmScreen(
@@ -46,14 +47,20 @@ fun MypageAlarmScreen(
     val audio = remember(context) {
         context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
     }
-    val systemMax =
-        remember { audio.getStreamMaxVolume(AudioManager.STREAM_MUSIC).coerceAtLeast(1) }
-    val systemMin = remember(systemMax) {
-        ceil(systemMax * 0.10f).toInt().coerceAtLeast(1)
-    }
+    val systemMax = remember { audio.getStreamMaxVolume(AudioManager.STREAM_ALARM).coerceAtLeast(1) }
 
     var selectedMode by remember {
         mutableStateOf(mypageUiState.selectedAlarmType)
+    }
+
+    val soundSamplePlayer = remember {
+        SoundSamplePlayer(context)
+    }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            soundSamplePlayer.release()
+        }
     }
 
     Box(
@@ -75,6 +82,7 @@ fun MypageAlarmScreen(
                 modifier = Modifier
                     .noRippleClickable {
                         selectedMode = MypageContract.AlarmType.ALL
+                        soundSamplePlayer.playCombinedSample()
                     },
                 text = "소리/진동",
                 isSelected = selectedMode == MypageContract.AlarmType.ALL
@@ -84,6 +92,7 @@ fun MypageAlarmScreen(
                 modifier = Modifier
                     .noRippleClickable {
                         selectedMode = MypageContract.AlarmType.SOUND
+                        soundSamplePlayer.playAlarmSample()
                     },
                 text = "소리",
                 isSelected = selectedMode == MypageContract.AlarmType.SOUND
@@ -93,6 +102,7 @@ fun MypageAlarmScreen(
                 modifier = Modifier
                     .noRippleClickable {
                         selectedMode = MypageContract.AlarmType.VIBRATION
+                        soundSamplePlayer.vibrateSample()
                     },
                 text = "진동",
                 isSelected = selectedMode == MypageContract.AlarmType.VIBRATION
@@ -104,9 +114,15 @@ fun MypageAlarmScreen(
                 modifier = Modifier
                     .align(Alignment.BottomCenter),
                 currentVolume = mypageUiState.alarmVolume,
+                onVolumeChanged = { volume ->
+                    val normalized = volume / 100f
+                    soundSamplePlayer.playVolumeSample(normalized)
+                },
                 onButtonClicked = { volume ->
-                    val mapped = (volume / 100f * systemMax).roundToInt()
-                    val systemVolume = mapped.coerceAtLeast(systemMin) // 최소 10%
+                    val systemVolume = AlarmVolumeMapper.percentToSystem(
+                        volumePercent = volume,
+                        maxVolume = systemMax
+                    )
 //                    audio.setStreamVolume(AudioManager.STREAM_MUSIC, systemVolume, 0)
 
                     onAlarmTypeModified(selectedMode)
