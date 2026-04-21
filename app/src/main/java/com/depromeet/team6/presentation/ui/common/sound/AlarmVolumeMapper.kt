@@ -11,18 +11,20 @@ object AlarmVolumeMapper {
 
     fun systemToPercent(systemVolume: Int, maxVolume: Int): Int {
         val safeMaxVolume = maxVolume.coerceAtLeast(1)
+        val clampedVolume = systemVolume.coerceIn(0, safeMaxVolume)
         val minimumPercent = minimumSystemVolume(safeMaxVolume)
 
-        return (systemVolume * 100f / safeMaxVolume).roundToInt()
-            .coerceAtLeast(minimumPercent)
+        return (clampedVolume * 100f / safeMaxVolume).roundToInt()
+            .coerceIn(minimumPercent, 100)
     }
 
     fun percentToSystem(volumePercent: Int, maxVolume: Int): Int {
         val safeMaxVolume = maxVolume.coerceAtLeast(1)
+        val clampedPercent = volumePercent.coerceIn(0, 100)
         val minimumVolume = minimumSystemVolume(safeMaxVolume)
 
-        return (volumePercent / 100f * safeMaxVolume).roundToInt()
-            .coerceAtLeast(minimumVolume)
+        return (clampedPercent / 100f * safeMaxVolume).roundToInt()
+            .coerceIn(minimumVolume, safeMaxVolume)
     }
 
     private const val MIN_VOLUME_RATIO = 0.10f
