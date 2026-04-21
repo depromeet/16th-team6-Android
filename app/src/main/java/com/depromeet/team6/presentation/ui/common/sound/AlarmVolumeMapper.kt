@@ -12,7 +12,8 @@ object AlarmVolumeMapper {
     fun systemToPercent(systemVolume: Int, maxVolume: Int): Int {
         val safeMaxVolume = maxVolume.coerceAtLeast(1)
         val clampedVolume = systemVolume.coerceIn(0, safeMaxVolume)
-        val minimumPercent = minimumSystemVolume(safeMaxVolume)
+        val minimumVolume = minimumSystemVolume(safeMaxVolume)
+        val minimumPercent = (minimumVolume * 100f / safeMaxVolume).roundToInt()
 
         return (clampedVolume * 100f / safeMaxVolume).roundToInt()
             .coerceIn(minimumPercent, 100)
