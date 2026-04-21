@@ -40,9 +40,7 @@ class SoundSamplePlayer(
                 val audio = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
                 val systemMax = audio.getStreamMaxVolume(AudioManager.STREAM_ALARM).coerceAtLeast(1)
                 val currentRatio = audio.getStreamVolume(AudioManager.STREAM_ALARM) / systemMax.toFloat()
-                if (currentRatio < MIN_SLIDER_VOLUME_RATIO) {
-                    ringtone.volume = MIN_SLIDER_VOLUME_RATIO
-                }
+                ringtone.volume = currentRatio.coerceAtLeast(MIN_SLIDER_VOLUME_RATIO)
             }
             ringtone.play()
         }
