@@ -36,6 +36,14 @@ class SoundSamplePlayer(
             if (ringtone.isPlaying) {
                 ringtone.stop()
             }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                val audio = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+                val systemMax = audio.getStreamMaxVolume(AudioManager.STREAM_ALARM).coerceAtLeast(1)
+                val currentRatio = audio.getStreamVolume(AudioManager.STREAM_ALARM) / systemMax.toFloat()
+                if (currentRatio < MIN_SLIDER_VOLUME_RATIO) {
+                    ringtone.volume = MIN_SLIDER_VOLUME_RATIO
+                }
+            }
             ringtone.play()
         }
     }
@@ -75,6 +83,7 @@ class SoundSamplePlayer(
     }
 
     fun vibrateSample() {
+        stopAlarmSample()
         val vibrator = getVibrator()
         if (!vibrator.hasVibrator()) return
 
@@ -88,7 +97,9 @@ class SoundSamplePlayer(
 
     private fun recreateToneGenerator(volume: Int) {
         toneGenerator?.release()
-        toneGenerator = ToneGenerator(AudioManager.STREAM_ALARM, volume)
+        toneGenerator = runCatching {
+            ToneGenerator(AudioManager.STREAM_ALARM, volume)
+        }.getOrNull()
         currentToneVolume = volume
     }
 
