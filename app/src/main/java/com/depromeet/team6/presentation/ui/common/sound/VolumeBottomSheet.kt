@@ -37,7 +37,7 @@ fun VolumeBottomSheet(
     onButtonClicked: (Int) -> Unit
 ) {
     val context = LocalContext.current
-    var current by remember {
+    var current by remember(currentVolume) {
         val audio = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
         val systemMax = audio.getStreamMaxVolume(AudioManager.STREAM_ALARM)
         val volumeScale = AlarmVolumeMapper.systemToPercent(
