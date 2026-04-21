@@ -45,9 +45,8 @@ fun SummaryBarChart(
     modifier: Modifier = Modifier,
     legs: List<LegInfo>
 ) {
-    val total = legs.sumOf { it.sectionTime }.toFloat()
     var rowWidthPx by remember { mutableStateOf(0f) } // Row의 너비를 저장할 변수
-    val minBarWidth = 25.dp
+    val minBarWidth = 18.dp
 
     val density = LocalDensity.current
     var finalWidths by remember { mutableStateOf(emptyList<Dp>()) }
@@ -156,19 +155,25 @@ private fun calculateFinalWidths(
     minBarWidth: Dp
 ): List<Dp> {
     // 임시 데이터 구조: (인덱스, 해당 leg의 sectionTime)
-    val remainingLegs = legs.mapIndexed { index, leg ->
-        index to leg.sectionTime
-    }.toMutableList()
+    if (legs.isEmpty()) return emptyList()
 
     // 최소너비 미리 세팅해두고, 그만큼을 전체너비에서 제외
-    val finalWidths = MutableList(legs.size) { minBarWidth }
-    var remainingWidth = totalWidth.value - (minBarWidth.value * finalWidths.size) // dp 단위의 Float 값으로 사용
+    val totalWidthValue = totalWidth.value
+    val minWidthValue = minBarWidth.value
+    val totalMinWidth = minWidthValue * legs.size
+
+    if (totalMinWidth >= totalWidthValue) {
+        val average = totalWidthValue / legs.size
+        return List(legs.size) { average.dp }
+    }
 
     // 남은 아이템에 대해 남은 너비를 비율로 분배
-    val remainingTimeSum = remainingLegs.sumOf { it.second }
-    remainingLegs.forEach { (index, time) ->
-        val allocated = if (remainingTimeSum > 0) remainingWidth * (time / remainingTimeSum.toFloat()) else 0f
-        finalWidths[index] += allocated.dp
+    val remainingWidth = totalWidthValue - totalMinWidth
+    val remainingTimeSum = legs.sumOf { it.sectionTime.coerceAtLeast(0) }.coerceAtLeast(1)
+    val finalWidths = MutableList(legs.size) { minBarWidth }
+    legs.forEachIndexed { index, leg ->
+        val allocated = remainingWidth * (leg.sectionTime.coerceAtLeast(0) / remainingTimeSum.toFloat())
+        finalWidths[index] = (minWidthValue + allocated).dp
     }
 
     return finalWidths

@@ -1,6 +1,5 @@
 package com.depromeet.team6.presentation.ui.itinerary.component
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -39,14 +38,13 @@ fun ItinerarySummary(
 //    )
     Column(
         modifier = modifier
-            .background(defaultTeam6Colors.gray950)
     ) {
         // 남은 시간
         if (durationHour > 0) {
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 8.dp),
+                    .padding(top = 2.dp, bottom = 8.dp),
                 text = stringResource(R.string.itinerary_summary_duration_time, durationHour, durationMinute),
                 style = defaultTeam6Typography.display4_D4SB28,
                 fontSize = 28.sp,
@@ -56,7 +54,7 @@ fun ItinerarySummary(
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 8.dp),
+                    .padding(top = 2.dp, bottom = 8.dp),
                 text = stringResource(R.string.itinerary_summary_duration_minute, durationMinute),
                 style = defaultTeam6Typography.display4_D4SB28,
                 fontSize = 28.sp,
@@ -83,7 +81,7 @@ fun ItinerarySummary(
         // 대중교통 정보 요약
         SummaryBarChart(
             modifier = Modifier
-                .padding(vertical = 16.dp),
+                .padding(top = 14.dp, bottom = 10.dp),
             legs = legs
         )
 
