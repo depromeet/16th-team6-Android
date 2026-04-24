@@ -14,12 +14,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import com.depromeet.team6.domain.model.course.CourseInfo
-import java.time.LocalDateTime
 import com.depromeet.team6.domain.model.course.LegInfo
 import com.depromeet.team6.presentation.ui.itinerary.LegInfoDummyProvider
 import com.depromeet.team6.presentation.util.dialog.DialogController
 import com.depromeet.team6.presentation.util.dialog.LocalDialogController
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
+import java.time.LocalDateTime
 
 @Composable
 fun LastTransportInfoListV2(
