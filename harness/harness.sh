@@ -181,14 +181,16 @@ while true; do
       RESULT=$(call_gemini "$PROMPT")
       if save_state_safely "$RESULT"; then
         if [ "$(jq -r '.phase' "$STATE_FILE")" == "COMPLETED" ]; then
-          log_success "🎉 모든 작업이 승인되었습니다!"
+          log_success "🎉 모든 작업이 승인되었습니다! 안드로이드 스튜디오를 엽니다."
+          studio . &
           exit 0
         fi
       fi
       ;;
 
     "COMPLETED")
-      log_success "작업이 이미 완료되었습니다."
+      log_success "작업이 이미 완료되었습니다. 안드로이드 스튜디오를 엽니다."
+      studio . &
       exit 0
       ;;
 
