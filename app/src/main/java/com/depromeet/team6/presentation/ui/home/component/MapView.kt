@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -36,8 +37,6 @@ import com.google.android.gms.maps.model.LatLng
 import com.skt.tmap.TMapPoint
 import com.skt.tmap.TMapView
 import com.skt.tmap.overlay.TMapMarkerItem
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -55,6 +54,7 @@ fun TMapViewCompose(
     isMapReadyCallback: () -> Unit
 ) {
     val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
     var isMapReady by remember { mutableStateOf(false) }
 
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
@@ -99,7 +99,7 @@ fun TMapViewCompose(
                     tMapView.setOnDisableScrollWithZoomLevelListener { _, _ ->
                         debounceJob?.cancel()
 
-                        debounceJob = CoroutineScope(Dispatchers.Default).launch {
+                        debounceJob = coroutineScope.launch {
                             delay(1000L) // 1초 동안 추가 움직임이 없으면 아래 로직 실행
 
                             val centerLat = tMapView.centerPoint.latitude

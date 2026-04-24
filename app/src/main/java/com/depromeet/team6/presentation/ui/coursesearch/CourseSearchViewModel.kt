@@ -216,25 +216,24 @@ class CourseSearchViewModel @Inject constructor(
                     }
                 }
                 .catch { exception ->
-                    val dataState = when {
-                        exception is ErrorControlFailureException.SetUIStateException -> {
-                            when (exception.errorCode) {
-                                "LRT_003" -> CourseSearchContract.CourseSearchDataState.NoResult
-                                "LRT_004" -> CourseSearchContract.CourseSearchDataState.ServiceEnded
-                                else -> CourseSearchContract.CourseSearchDataState.Unknown
-                            }
+                    handleApiException(exception) { errorCode ->
+                        val dataState = when (errorCode) {
+                            "LRT_003" -> CourseSearchContract.CourseSearchDataState.NoResult
+                            "LRT_004" -> CourseSearchContract.CourseSearchDataState.ServiceEnded
+                            else -> CourseSearchContract.CourseSearchDataState.Unknown
                         }
-                        exception is ErrorControlFailureException.ShowToastException -> {
-                            setSideEffect(CourseSearchContract.CourseSideEffect.ShowSearchFailedToast(exception.toastMessage))
-                            CourseSearchContract.CourseSearchDataState.Unknown
-                        }
-                        else -> CourseSearchContract.CourseSearchDataState.Unknown
-                    }
-                    setState {
                         currentState.copy(
                             courseUiLoadState = LoadState.Success,
                             courseSearchDataLoadState = dataState
                         )
+                    }
+                    if (exception !is ErrorControlFailureException.SetUIStateException) {
+                        setState {
+                            copy(
+                                courseUiLoadState = LoadState.Success,
+                                courseSearchDataLoadState = CourseSearchContract.CourseSearchDataState.Unknown
+                            )
+                        }
                     }
                 }
                 .collect { courseInfo ->

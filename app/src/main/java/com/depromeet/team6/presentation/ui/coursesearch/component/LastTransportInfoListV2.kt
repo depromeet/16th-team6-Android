@@ -74,7 +74,7 @@ fun LastTransportInfoListPreview2(
         mockData,
         mockData
     )
-    LastTransportInfoList(
+    LastTransportInfoListV2(
         listData = mockDataList
     )
 }

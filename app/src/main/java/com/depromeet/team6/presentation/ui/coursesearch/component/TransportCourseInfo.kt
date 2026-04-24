@@ -144,7 +144,10 @@ private fun TimelineItem(
                             shape = RoundedCornerShape(6.dp)
                         )
                         .padding(horizontal = 8.dp, vertical = 4.dp),
-                    text = courseInfo.routeName.toString().split(":")[1].trim(),
+                    text = courseInfo.routeName
+                        ?.substringAfter(":", missingDelimiterValue = courseInfo.routeName.orEmpty())
+                        ?.trim()
+                        .orEmpty(),
                     style = defaultTeam6Typography.body2_B2SB15.copy(fontSize = 12.sp),
                     color = defaultTeam6Colors.white
                 )
