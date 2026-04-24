@@ -47,6 +47,7 @@ import java.time.LocalDateTime
 fun LastTransportInfoItemV2(
     courseSearchResult: CourseInfo,
     modifier: Modifier = Modifier,
+    isLatest: Boolean = false,
     onRegisterAlarmBtnClick: (lastRouteId: String) -> Unit = {},
     onItemClick: (String, Boolean) -> Unit = { _, _ -> }
 ) {
@@ -76,6 +77,11 @@ fun LastTransportInfoItemV2(
                 )
             }
     ) {
+        if (isLatest) {
+            LatestCourseMarker()
+            Spacer(modifier = Modifier.height(4.dp))
+        }
+
         // 남은 시간
         val remainingHour = courseSearchResult.totalTime / 60 / 60
         val remainingMinute = courseSearchResult.totalTime / 60 % 60
@@ -239,13 +245,9 @@ fun RemainingTimeHHmmV2(
 @Composable
 private fun LatestCourseMarker() {
     Text(
-        modifier = Modifier
-            .background(
-                color = defaultTeam6Colors.greenButtonOpacity.copy(alpha = 0.08f),
-                shape = RoundedCornerShape(16.dp)
-            )
-            .padding(vertical = 16.dp, horizontal = 12.dp),
+        modifier = Modifier,
         text = "가장 늦은 막차",
+        style = defaultTeam6Typography.detail1_R12,
         color = defaultTeam6Colors.main
     )
 }
@@ -293,7 +295,8 @@ fun LastTransportInfoItemPreview2V2(
             legs = courseInfo
         )
         LastTransportInfoItemV2(
-            courseSearchResult = mockData
+            courseSearchResult = mockData,
+            isLatest = true
         )
     }
 }

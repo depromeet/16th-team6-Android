@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -14,6 +15,8 @@ import androidx.compose.ui.unit.dp
 import com.depromeet.team6.domain.model.course.CourseInfo
 import com.depromeet.team6.domain.model.course.LegInfo
 import com.depromeet.team6.presentation.ui.itinerary.LegInfoDummyProvider
+import com.depromeet.team6.presentation.util.dialog.DialogController
+import com.depromeet.team6.presentation.util.dialog.LocalDialogController
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 
 @Composable
@@ -33,6 +36,8 @@ fun LastTransportInfoListV2(
         listState.animateScrollToItem(0)
     }
 
+    val latestRouteId = listData.maxByOrNull { it.departureTime }?.routeId
+
     LazyColumn(
         state = listState,
         modifier = modifier
@@ -45,6 +50,7 @@ fun LastTransportInfoListV2(
                 modifier = Modifier.animateItem(),
                 onItemClick = onItemClick,
                 courseSearchResult = listData[index],
+                isLatest = listData[index].routeId == latestRouteId,
                 onRegisterAlarmBtnClick = { routeId ->
                     onRegisterAlarmBtnClick(routeId)
                 }
@@ -58,23 +64,26 @@ fun LastTransportInfoListV2(
 fun LastTransportInfoListPreview2(
     @PreviewParameter(LegInfoDummyProvider::class) legs: List<LegInfo>
 ) {
-    val mockData = CourseInfo(
-        routeId = "123",
-        filterCategory = 0,
-        totalTime = 23 * 60,
-        departureTime = "2025-03-11T23:12:00",
-        boardingTime = "2025-03-11T23:21:00",
-        legs = legs
-    )
-    val mockDataList = listOf(
-        mockData,
-        mockData,
-        mockData,
-        mockData,
-        mockData,
-        mockData
-    )
-    LastTransportInfoListV2(
-        listData = mockDataList
-    )
+    CompositionLocalProvider(
+        LocalDialogController provides DialogController()
+    ) {
+        val mockData = CourseInfo(
+            routeId = "123",
+            filterCategory = 0,
+            totalTime = 23 * 60,
+            departureTime = "2025-03-11T23:12:00",
+            boardingTime = "2025-03-11T23:21:00",
+            legs = legs
+        )
+        val mockDataList = listOf(
+            mockData,
+            mockData.copy(routeId = "124"),
+            mockData.copy(routeId = "125"),
+            mockData.copy(routeId = "126"),
+            mockData.copy(routeId = "127")
+        )
+        LastTransportInfoListV2(
+            listData = mockDataList
+        )
+    }
 }
