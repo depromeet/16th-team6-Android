@@ -1,0 +1,1 @@
+@harness/CLAUDE.md

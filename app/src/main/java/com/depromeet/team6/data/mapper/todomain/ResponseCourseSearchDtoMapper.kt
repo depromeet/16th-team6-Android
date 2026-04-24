@@ -12,7 +12,11 @@ fun List<ResponseCourseSearchDto>.toDomain(): List<CourseInfo> = filter { respon
 //        response.legs.first().departureDateTime != null &&
 //        response.legs.all { it.passShape != null }      // passShape 이 하나라도 없으면 제거
 }.map { response ->
-    val legInfo = response.legs.map { leg ->
+    response.toDomain()
+}
+
+fun ResponseCourseSearchDto.toDomain(): CourseInfo {
+    val legInfo = this.legs.map { leg ->
         val passShape = if (leg.mode == TransportType.WALK.name) {
             // WALK 모드일 경우, step을 이어서 leg.passShape 생성
             if (leg.step == null) {
@@ -65,14 +69,14 @@ fun List<ResponseCourseSearchDto>.toDomain(): List<CourseInfo> = filter { respon
         )
     }
 
-    val boardingDateTime = response.legs.first { it.mode != TransportType.WALK.name }.departureDateTime
+    val boardingDateTime = this.legs.firstOrNull { it.mode != TransportType.WALK.name }?.departureDateTime
 
-    CourseInfo(
-        routeId = response.routeId,
-        filterCategory = (3 - response.pathType) % 3, // 1 지하철, 2 버스, 3 전체 ->  0 : 전체,  1: 버스,  2: 지하철
-        totalTime = response.totalTime,
-        departureTime = response.departureDateTime,
-        boardingTime = boardingDateTime ?: response.departureDateTime,
+    return CourseInfo(
+        routeId = this.routeId,
+        filterCategory = (3 - this.pathType) % 3, // 1 지하철, 2 버스, 3 전체 ->  0 : 전체,  1: 버스,  2: 지하철
+        totalTime = this.totalTime,
+        departureTime = this.departureDateTime,
+        boardingTime = boardingDateTime ?: this.departureDateTime,
         legs = legInfo
     )
 }

@@ -48,24 +48,6 @@ fun AtchaSpeechBubble(
                 color = colors.gray100,
                 style = typography.body7_B7M13
             )
-//
-//            if (emphasisText != null) {
-//                Spacer(modifier = Modifier.width(2.dp))
-//                Text(
-//                    text = emphasisText,
-//                    color = colors.white,
-//                    style = typography.body7_B7M13
-//                )
-//            }
-//
-//            if (suffix != null) {
-//                Spacer(modifier = Modifier.width(2.dp))
-//                Text(
-//                    text = suffix,
-//                    color = colors.gray100,
-//                    style = typography.body7_B7M13
-//                )
-//            }
         }
     }
 }

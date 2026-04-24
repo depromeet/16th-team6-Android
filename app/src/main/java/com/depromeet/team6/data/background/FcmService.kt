@@ -20,6 +20,8 @@ import com.google.firebase.messaging.RemoteMessage
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -30,8 +32,16 @@ class FcmService : FirebaseMessagingService() {
     @Inject lateinit var homeRepository: HomeRepository
 
     @Inject lateinit var authRemoteDataSource: AuthRemoteDataSource
+
+    private val serviceScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+
     private lateinit var body: String
     private lateinit var title: String
+
+    override fun onDestroy() {
+        super.onDestroy()
+        serviceScope.cancel()
+    }
 
     override fun onNewToken(token: String) {
         super.onNewToken(token)
@@ -79,12 +89,14 @@ class FcmService : FirebaseMessagingService() {
                 if (timeStamp != null) {
                     AlarmScheduler.scheduleLockScreenAlarm(this, timeStamp)
                     updateDepartureTime(timeStamp)
-                    CoroutineScope(Dispatchers.IO).launch {
-                        authRemoteDataSource.getUserInfo()
-                            .onSuccess {
-                                AlarmScheduler.scheduleAdditionalPushAlarm(this@FcmService, timeStamp)
-                            }
-                            .onFailure { }
+                    if (message.data["isReal"] == "true") {
+                        serviceScope.launch {
+                            authRemoteDataSource.getUserInfo()
+                                .onSuccess {
+                                    AlarmScheduler.scheduleAdditionalPushAlarm(this@FcmService, timeStamp)
+                                }
+                                .onFailure { }
+                        }
                     }
                 }
             } else {

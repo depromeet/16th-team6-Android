@@ -3,9 +3,11 @@ package com.depromeet.team6.presentation.ui.coursesearch
 import android.content.Context
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import com.depromeet.team6.data.background.AlarmScheduler
 import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.RouteLocation
+import com.depromeet.team6.domain.model.course.CourseInfo
 import com.depromeet.team6.domain.repository.HomeRepository
 import com.depromeet.team6.domain.repository.UserInfoRepository
 import com.depromeet.team6.domain.usecase.DeleteAlarmUseCase
@@ -14,8 +16,8 @@ import com.depromeet.team6.domain.usecase.GetTaxiCostUseCase
 import com.depromeet.team6.domain.usecase.GetUserInfoUseCase
 import com.depromeet.team6.domain.usecase.InitAlarmUseCase
 import com.depromeet.team6.domain.usecase.PostAlarmUseCase
-import com.depromeet.team6.presentation.ui.coursesearch.navigation.CourseSearchRoute.DEPARTURE_POINT
-import com.depromeet.team6.presentation.ui.coursesearch.navigation.CourseSearchRoute.DESTINATION_POINT
+import com.depromeet.team6.presentation.model.exception.ErrorControlFailureException
+import com.depromeet.team6.presentation.ui.coursesearch.navigation.CourseSearchRoute
 import com.depromeet.team6.presentation.util.AmplitudeCommon.SCREEN_NAME
 import com.depromeet.team6.presentation.util.AmplitudeCommon.USER_ID
 import com.depromeet.team6.presentation.util.CourseSearchAmplitude.COURSE_SEARCH
@@ -35,6 +37,8 @@ import com.depromeet.team6.presentation.util.view.LoadState
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -53,9 +57,8 @@ class CourseSearchViewModel @Inject constructor(
 ) : BaseViewModel<CourseSearchContract.CourseUiState, CourseSearchContract.CourseSideEffect, CourseSearchContract.CourseEvent>() {
 
     init {
-        val departurePointJSON: String = savedStateHandle[DEPARTURE_POINT] ?: "알 수 없음"
-        val destinationPointJSON: String = savedStateHandle[DESTINATION_POINT] ?: "알 수 없음"
-        setEvent(CourseSearchContract.CourseEvent.InitUiState(departurePointJSON, destinationPointJSON))
+        val route = savedStateHandle.toRoute<CourseSearchRoute>()
+        setEvent(CourseSearchContract.CourseEvent.InitUiState(route.departurePoint, route.destinationPoint))
     }
 
     private var hasShownOverlayDialog = false
@@ -195,38 +198,55 @@ class CourseSearchViewModel @Inject constructor(
     private fun getSearchResults() {
         setState {
             copy(
-                courseUiLoadState = LoadState.Loading
+                courseUiLoadState = LoadState.Loading,
+                courseData = emptyList()
             )
         }
         viewModelScope.launch {
-            loadSearchResult(
+            loadSearchResult.invoke(
                 startPoint = uiState.value.startingPoint!!,
                 endPoint = uiState.value.destinationPoint!!,
                 sortType = uiState.value.sortType
             )
-                .onSuccess {
-                    setEvent(CourseSearchContract.CourseEvent.LoadCourseSearchResult(it))
+                .onStart {
                     setState {
                         copy(
-                            courseSearchDataLoadState = CourseSearchContract.CourseSearchDataState.Success
+                            courseSearchDataLoadState = CourseSearchContract.CourseSearchDataState.Loading
                         )
                     }
                 }
-                .onFailure { exception ->
+                .catch { exception ->
                     handleApiException(exception) { errorCode ->
-                        when (errorCode) {
-                            "LRT_003" -> {
-                                currentState.copy(
-                                    courseSearchDataLoadState = CourseSearchContract.CourseSearchDataState.NoResult
-                                )
-                            }
-                            "LRT_004" -> {
-                                currentState.copy(
-                                    courseSearchDataLoadState = CourseSearchContract.CourseSearchDataState.ServiceEnded
-                                )
-                            }
-                            else -> currentState
+                        val dataState = when (errorCode) {
+                            "LRT_003" -> CourseSearchContract.CourseSearchDataState.NoResult
+                            "LRT_004" -> CourseSearchContract.CourseSearchDataState.ServiceEnded
+                            else -> CourseSearchContract.CourseSearchDataState.Unknown
                         }
+                        currentState.copy(
+                            courseUiLoadState = LoadState.Success,
+                            courseSearchDataLoadState = dataState
+                        )
+                    }
+                    if (exception !is ErrorControlFailureException.SetUIStateException) {
+                        setState {
+                            copy(
+                                courseUiLoadState = LoadState.Success,
+                                courseSearchDataLoadState = CourseSearchContract.CourseSearchDataState.Unknown
+                            )
+                        }
+                    }
+                }
+                .collect { courseInfo ->
+                    setState {
+                        copy(
+                            courseUiLoadState = LoadState.Success,
+                            courseSearchDataLoadState = CourseSearchContract.CourseSearchDataState.Success,
+                            courseData = (courseData + courseInfo)
+                                .sortedWith(
+                                    compareByDescending<CourseInfo> { it.departureTime }
+                                        .thenBy { it.legs.size }
+                                )
+                        )
                     }
                 }
         }

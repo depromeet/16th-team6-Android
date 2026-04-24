@@ -37,7 +37,7 @@ class LocationsRepositoryImpl @Inject constructor(
 
         val locationRequest = LocationRequest.Builder(
             Priority.PRIORITY_HIGH_ACCURACY,
-            3000L
+            1000L
         ).build()
 
         val locationCallback = object : LocationCallback() {
@@ -88,4 +88,7 @@ class LocationsRepositoryImpl @Inject constructor(
 
     override suspend fun deleteAllSearchHistory(): Result<Unit> =
         locationsRemoteDataSource.deleteAllSearchHistory()
+
+    override suspend fun getIsServiceRegion(lat: Double, lon: Double): Result<Boolean> =
+        locationsRemoteDataSource.getIsServiceRegion(lat = lat, lon = lon)
 }

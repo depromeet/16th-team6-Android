@@ -2,6 +2,8 @@ package com.depromeet.team6.presentation.ui.itinerary
 
 import android.content.Context
 import android.widget.Toast
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -13,6 +15,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -28,6 +31,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -52,12 +56,10 @@ import com.depromeet.team6.presentation.ui.home.component.RefreshLottieButton
 import com.depromeet.team6.presentation.ui.itinerary.component.ItineraryDetail
 import com.depromeet.team6.presentation.ui.itinerary.component.ItineraryMap
 import com.depromeet.team6.presentation.ui.itinerary.component.ItinerarySummary
+import com.depromeet.team6.presentation.ui.main.MainViewModel
 import com.depromeet.team6.presentation.ui.overlay.OverlayPermissionDialog
 import com.depromeet.team6.presentation.ui.overlay.PermissionSnackbar
-import com.depromeet.team6.presentation.util.DefaultLatLng.DEFAULT_LAT
-import com.depromeet.team6.presentation.util.DefaultLatLng.DEFAULT_LNG
 import com.depromeet.team6.presentation.util.base.ApiErrorSideEffect
-import com.depromeet.team6.presentation.util.context.getUserLocation
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.presentation.util.modifier.roundedBackgroundWithPadding
 import com.depromeet.team6.presentation.util.permission.PermissionUtil
@@ -66,7 +68,6 @@ import com.depromeet.team6.presentation.util.view.LoadState
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.depromeet.team6.ui.theme.defaultTeam6Typography
 import com.google.android.gms.maps.model.LatLng
-import kotlinx.coroutines.launch
 
 @Composable
 fun ItineraryRoute(
@@ -81,19 +82,13 @@ fun ItineraryRoute(
     viewModel: ItineraryViewModel = hiltViewModel(),
     onBackPressed: () -> Unit
 ) {
+    val mainViewModel: MainViewModel = hiltViewModel(LocalActivity.current as ComponentActivity)
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val currentLocation by mainViewModel.currentLocation.collectAsStateWithLifecycle()
+
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     val lifecycleOwner = LocalLifecycleOwner.current
-
-    val getCurrentLocation: () -> Unit = {
-        coroutineScope.launch {
-            if (PermissionUtil.hasLocationPermissions(context)) { // 위치 권한이 있으면
-                val location = context.getUserLocation()
-                viewModel.setEvent(ItineraryContract.ItineraryEvent.CurrentLocationClicked(location))
-            }
-        }
-    }
 
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
@@ -119,19 +114,10 @@ fun ItineraryRoute(
 
     // SideEffect 감지
     LaunchedEffect(Unit) {
-        val location = if (PermissionUtil.hasLocationPermissions(context)) {
-            context.getUserLocation()
-        } else {
-            LatLng(
-                DEFAULT_LAT,
-                DEFAULT_LNG
-            )
-        }
         viewModel.initItineraryInfo(
             courseInfoJSON,
             departurePointJSON,
-            destinationPointJSON,
-            location
+            destinationPointJSON
         )
         viewModel.sideEffect.collect { sideEffect ->
             when (sideEffect) {
@@ -166,6 +152,7 @@ fun ItineraryRoute(
                 marginTop = padding.calculateTopPadding(),
                 marginBottom = padding.calculateBottomPadding(),
                 uiState = uiState,
+                currentLocation = currentLocation,
                 focusedMarkerParam = focusedMarkerParam,
                 onBackPressed = onBackPressed,
                 onRefreshButtonClick = { viewModel.setEvent(ItineraryContract.ItineraryEvent.RefreshButtonClicked) },
@@ -192,10 +179,8 @@ fun ItineraryRoute(
                 },
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(paddingValues = padding)
                     .background(defaultTeam6Colors.gray950),
-                navigateToBusCourse = navigateToBusCourse,
-                currentLocationBtnClick = getCurrentLocation
+                navigateToBusCourse = navigateToBusCourse
             )
             if (uiState.showPermissionSnackbar) {
                 Box(modifier = Modifier.fillMaxSize()) {
@@ -247,14 +232,14 @@ fun ItineraryRoute(
 fun ItineraryScreen(
     marginTop: Dp,
     marginBottom: Dp,
+    currentLocation: LatLng,
     modifier: Modifier = Modifier,
     uiState: ItineraryContract.ItineraryUiState = ItineraryContract.ItineraryUiState(),
     focusedMarkerParam: FocusedMarkerParameter? = null,
     navigateToBusCourse: (BusArrivalParameter) -> Unit = {},
     onRefreshButtonClick: () -> Unit = {},
     registerAlarmButtonClick: (String) -> Unit = {},
-    onBackPressed: () -> Unit = {},
-    currentLocationBtnClick: () -> Unit = {}
+    onBackPressed: () -> Unit = {}
 ) {
     val sheetScrollState = rememberScrollState()
     val itineraryInfo = uiState.itineraryInfo!!
@@ -267,12 +252,11 @@ fun ItineraryScreen(
                 ItineraryMap(
                     marginTop = marginTop,
                     legs = itineraryInfo.legs,
-                    currentLocation = uiState.currentLocation,
+                    currentLocation = currentLocation,
                     departurePoint = uiState.departurePoint!!,
                     destinationPoint = uiState.destinationPoint!!,
                     onBackPressed = onBackPressed,
-                    focusedMarkerParameter = focusedMarkerParam,
-                    currentLocationBtnClick = currentLocationBtnClick
+                    focusedMarkerParameter = focusedMarkerParam
                 )
             },
             sheetContent = {
@@ -300,12 +284,12 @@ fun ItineraryScreen(
                     ItineraryDetail(
                         modifier = Modifier
                             .padding(horizontal = 16.dp),
-                        currentLocation = uiState.currentLocation,
+                        currentLocation = currentLocation,
                         courseInfo = itineraryInfo,
+                        userDeparted = uiState.userDeparture,
                         busArrivalStatus = uiState.busArrivalStatus,
                         departurePoint = uiState.departurePoint!!,
                         destinationPoint = uiState.destinationPoint!!,
-                        isAlarmRegistered = uiState.isAlarmRegistered,
                         onClickBusInfo = navigateToBusCourse
                     )
                     Spacer(Modifier.height(marginBottom))
@@ -329,11 +313,26 @@ fun ItineraryScreen(
                 onClick = onRefreshButtonClick
             )
         } else {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .fillMaxWidth()
+                    .height(200.dp)
+                    .background(
+                        brush = Brush.verticalGradient(
+                            // 0.0f는 상단(0%), 0.2f는 20% 지점입니다.
+                            0.0f to defaultTeam6Colors.gray950.copy(alpha = 0f),
+                            0.2f to defaultTeam6Colors.gray950.copy(alpha = 0.5f),
+                            1.0f to defaultTeam6Colors.gray950.copy(alpha = 1f)
+                        )
+                    )
+            )
             Row(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
-                    .offset(y = -60.dp)
                     .fillMaxWidth()
+                    .navigationBarsPadding()
+                    .offset(y = (-20).dp)
                     .padding(horizontal = 16.dp)
                     .roundedBackgroundWithPadding(
                         backgroundColor = defaultTeam6Colors.main,
@@ -371,6 +370,7 @@ fun ItineraryScreenPreview(
 ) {
     ItineraryScreen(
         marginTop = 10.dp,
-        marginBottom = 10.dp
+        marginBottom = 10.dp,
+        currentLocation = LatLng(37.5665, 126.9780)
     )
 }

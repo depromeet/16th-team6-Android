@@ -5,6 +5,7 @@ import com.depromeet.team6.data.dataremote.model.response.base.BaseResponse
 import com.depromeet.team6.data.dataremote.model.response.locations.ResponseAddressDto
 import com.depromeet.team6.data.dataremote.model.response.locations.ResponseLocationsDto
 import com.depromeet.team6.data.dataremote.util.ApiConstraints.API
+import com.depromeet.team6.data.dataremote.util.ApiConstraints.IS_SERVICE_REGION
 import com.depromeet.team6.data.dataremote.util.ApiConstraints.LOCATIONS
 import retrofit2.Response
 import retrofit2.http.Body
@@ -20,6 +21,12 @@ interface LocationsService {
         @Query("lat") lat: Double,
         @Query("lon") lon: Double
     ): BaseResponse<List<ResponseLocationsDto>>
+
+    @GET("$API/$LOCATIONS/$IS_SERVICE_REGION")
+    suspend fun getIsServiceRegion(
+        @Query("lat") lat: Double,
+        @Query("lon") lon: Double
+    ): BaseResponse<Boolean>
 
     @GET("$API/$LOCATIONS/rgeo")
     suspend fun getAddressFromCoordinates(

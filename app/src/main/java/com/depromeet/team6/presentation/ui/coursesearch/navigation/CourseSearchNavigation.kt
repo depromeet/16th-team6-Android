@@ -3,19 +3,25 @@ package com.depromeet.team6.presentation.ui.coursesearch.navigation
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavType
 import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
+import androidx.navigation.toRoute
 import com.depromeet.team6.domain.model.Address
-import com.depromeet.team6.presentation.ui.coursesearch.CourseSearchRoute
+import kotlinx.serialization.Serializable
+import com.depromeet.team6.presentation.ui.coursesearch.CourseSearchRoute as CourseSearchComposable
 
-fun NavController.navigateCourseSearch(departurePoint: String, destinationPoint: String, fromLockScreen: Boolean = false) {
-    navigate(
-        route = "${CourseSearchRoute.ROUTE}/$departurePoint/$destinationPoint"
-    ) {
-//        popUpTo(graph.startDestinationId) { inclusive = true }
-//        launchSingleTop = true
-    }
+@Serializable
+data class CourseSearchRoute(
+    val departurePoint: String,
+    val destinationPoint: String,
+    val fromLockScreen: Boolean = false
+)
+
+fun NavController.navigateCourseSearch(
+    departurePoint: String,
+    destinationPoint: String,
+    fromLockScreen: Boolean = false
+) {
+    navigate(CourseSearchRoute(departurePoint, destinationPoint, fromLockScreen))
 }
 
 fun NavGraphBuilder.courseSearchNavGraph(
@@ -27,22 +33,9 @@ fun NavGraphBuilder.courseSearchNavGraph(
     navigateToSearchLocation: (Address, Address) -> Unit,
     popBackStack: () -> Unit
 ) {
-    composable(
-        route = "${CourseSearchRoute.ROUTE}/{${CourseSearchRoute.DEPARTURE_POINT}}/{${CourseSearchRoute.DESTINATION_POINT}}",
-        arguments = listOf(
-            navArgument("departurePoint") { type = NavType.StringType },
-            navArgument("destinationPoint") { type = NavType.StringType },
-            navArgument("fromLockScreen") {
-                type = NavType.BoolType
-                defaultValue = false
-            }
-        )
-    ) { backStackEntry ->
-        val departurePoint = backStackEntry.arguments?.getString("departurePoint") ?: ""
-        val destinationPoint = backStackEntry.arguments?.getString("destinationPoint") ?: ""
-        val fromLockScreen = backStackEntry.arguments?.getBoolean("fromLockScreen") ?: false
-
-        CourseSearchRoute(
+    composable<CourseSearchRoute> { backStackEntry ->
+        val route = backStackEntry.toRoute<CourseSearchRoute>()
+        CourseSearchComposable(
             padding = padding,
             navigateToItinerary = navigateToItinerary,
             navigateToHome = navigateToHome,
@@ -50,15 +43,9 @@ fun NavGraphBuilder.courseSearchNavGraph(
             navigateToLogin = navigateToLogin,
             navigateToSearchLocation = navigateToSearchLocation,
             popBackStack = popBackStack,
-            departurePoint = departurePoint,
-            destinationPoint = destinationPoint,
-            fromLockScreen = fromLockScreen
+            departurePoint = route.departurePoint,
+            destinationPoint = route.destinationPoint,
+            fromLockScreen = route.fromLockScreen
         )
     }
-}
-
-object CourseSearchRoute {
-    const val ROUTE = "courseSearch"
-    const val DEPARTURE_POINT = "departurePoint"
-    const val DESTINATION_POINT = "destinationPoint"
 }

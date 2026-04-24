@@ -8,7 +8,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -26,7 +28,16 @@ fun LastTransportInfoList(
     courseInfoToggleClick: () -> Unit = {},
     onItemClick: (String, Boolean) -> Unit = { _, _ -> }
 ) {
+    val listState = rememberLazyListState()
+
+    LaunchedEffect(listData.size) {
+        if (listState.firstVisibleItemIndex == 0) {
+            listState.scrollToItem(0)
+        }
+    }
+
     LazyColumn(
+        state = listState,
         modifier = modifier
             .fillMaxSize()
             .background(defaultTeam6Colors.black)
@@ -34,9 +45,9 @@ fun LastTransportInfoList(
         verticalArrangement = Arrangement.spacedBy(14.dp),
         contentPadding = PaddingValues(vertical = 16.dp)
     ) {
-        items(listData.size) { index ->
+        items(count = listData.size, key = { listData[it].routeId }) { index ->
             LastTransportInfoItem(
-                modifier = Modifier,
+                modifier = Modifier.animateItem(),
                 onItemClick = onItemClick,
                 courseSearchResult = listData[index],
                 onRegisterAlarmBtnClick = { routeId ->
@@ -44,12 +55,9 @@ fun LastTransportInfoList(
                 },
                 courseInfoToggleClick = courseInfoToggleClick
             )
-
-            if (index == listData.size - 1) {
-                Spacer(
-                    modifier = Modifier.height(70.dp)
-                )
-            }
+        }
+        item {
+            Spacer(modifier = Modifier.height(70.dp))
         }
     }
 }

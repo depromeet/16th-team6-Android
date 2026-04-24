@@ -1,7 +1,6 @@
 package com.depromeet.team6.presentation.ui.home.component
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -56,7 +55,6 @@ fun AfterRegisterSheet(
     onCourseDetailClick: (String) -> Unit,
     onRefreshClick: () -> Unit,
     onTimerFinished: () -> Unit = {},
-    onIconClick: () -> Unit = {},
     onHomeDepartureTimeClick: () -> Unit = {},
     onHomeExpectDepartureTimeClick: () -> Unit = {},
     modifier: Modifier = Modifier
@@ -132,10 +130,7 @@ fun AfterRegisterSheet(
                         imageVector = ImageVector.vectorResource(R.drawable.ic_all_info_grey),
                         contentDescription = stringResource(R.string.home_icon_info),
                         modifier = Modifier
-                            .padding(horizontal = 6.dp)
-                            .clickable {
-                                onIconClick()
-                            },
+                            .padding(horizontal = 6.dp),
                         tint = colors.gray300
                     )
                 }
@@ -236,7 +231,6 @@ fun AfterRegisterSheetPreview() {
         dismissDialog = {},
         onTimerFinished = {},
         homeArrivedTime = "15:30:00",
-        onIconClick = {},
         busStationLeft = 14
     )
 }

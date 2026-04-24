@@ -26,6 +26,7 @@ import com.depromeet.team6.BuildConfig
 import com.depromeet.team6.R
 import com.depromeet.team6.domain.model.course.LegInfo
 import com.depromeet.team6.domain.model.course.TransportType
+import com.depromeet.team6.presentation.model.home.MapFocusState
 import com.depromeet.team6.presentation.model.itinerary.FocusedMarkerParameter
 import com.depromeet.team6.presentation.ui.common.TransportVectorIconBitmap
 import com.depromeet.team6.presentation.ui.common.view.AtChaLoadingView
@@ -49,7 +50,8 @@ fun AfterRegisterMap(
     currentLocation: LatLng,
     legs: List<LegInfo>,
     isAlarmRegistered: Boolean,
-    isMapFocused: Boolean,
+    isMapFocused: MapFocusState,
+    initialMapFocus: MapFocusState,
     modifier: Modifier = Modifier,
     mapModified: () -> Unit,
     getCenterLocation: (LatLng) -> Unit,
@@ -57,6 +59,7 @@ fun AfterRegisterMap(
     isMapReadyCallback: () -> Unit = {}
 ) {
     var isMapReady by remember { mutableStateOf(false) }
+    var hasAppliedInitialFocus by remember { mutableStateOf(false) }
 
     var locationUpdateTrigger by remember { mutableStateOf(0) }
 
@@ -78,60 +81,6 @@ fun AfterRegisterMap(
 
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
 
-//    val fusedLocationClient = remember {
-//        LocationServices.getFusedLocationProviderClient(context)
-//    }
-
-//    val locationCallback = remember(firstTransportationPoint) {
-//        object : LocationCallback() {
-//            override fun onLocationResult(locationResult: LocationResult) {
-//                locationResult.lastLocation?.let { location ->
-//                    val newLocation = LatLng(location.latitude, location.longitude)
-//                    userLocation = newLocation
-//                    locationUpdateTrigger++
-//
-//                    val distance = calculateDistance(
-//                        newLocation.latitude,
-//                        newLocation.longitude,
-//                        firstTransportationPoint.latitude,
-//                        firstTransportationPoint.longitude
-//                    )
-//
-//                    if (distance <= 50f && !hasShownToast) {
-//                        atChaToastMessage(context, R.string.home_arrive_station_toast_text, Toast.LENGTH_LONG)
-//                        hasShownToast = true
-//                    }
-//                }
-//            }
-//        }
-//    }
-
-    // 위치 업데이트 시작
-//    LaunchedEffect(Unit) {
-//        if (PermissionUtil.hasLocationPermissions(context)) {
-//            val locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 3000)
-//                .setMinUpdateIntervalMillis(1000)
-//                .setMinUpdateDistanceMeters(1f)
-//                .build()
-//
-//            try {
-//                fusedLocationClient.requestLocationUpdates(
-//                    locationRequest,
-//                    locationCallback,
-//                    Looper.getMainLooper()
-//                )
-//            } catch (e: SecurityException) {
-//                Timber.e("위치 권한 오류: ${e.message}")
-//            }
-//        }
-//    }
-
-//    DisposableEffect(Unit) {
-//        onDispose {
-//            fusedLocationClient.removeLocationUpdates(locationCallback)
-//        }
-//    }
-
     Box(
         modifier = modifier
     ) {
@@ -148,6 +97,7 @@ fun AfterRegisterMap(
                 tMapView.setSKTMapApiKey(BuildConfig.TMAP_API_KEY)
                 tMapView.setOnMapReadyListener {
                     tMapView.mapType = TMapView.MapType.NIGHT
+                    tMapView.isCompassMode = true
 
                     val departTMapPoint = TMapPoint(departLocation.latitude, departLocation.longitude)
                     val destinationTMapPoint = TMapPoint(destinationLocation.latitude, destinationLocation.longitude)
@@ -278,9 +228,9 @@ fun AfterRegisterMap(
                     }
                     tMapView.addTMapMarkerItem(currentMarker)
 
-                    // 지도 위치 설정 - 출발지와 첫 대중교통의 중간 지점
-                    val midPoint = getMidPoint(firstTransportationPoint, departLocation)
-                    tMapView.setCenterPoint(midPoint.latitude, midPoint.longitude)
+                    tMapView.isTrackingMode = false
+                    tMapView.setSightVisible(false)
+                    tMapView.isCompassMode = false
 
                     // 지도 Scale 조정 - 출발지와 첫 대중교통의 중간 지점 + 일정 값
                     val latSpan = abs(firstTransportationPoint.latitude - departLocation.latitude) + 0.01 // 0.01 or 0.001
@@ -298,41 +248,47 @@ fun AfterRegisterMap(
                 tMapView
             },
             update = { tMapView ->
-                if (isMapReady) {
-                    val currentPoint = TMapPoint(currentLocation.latitude, currentLocation.longitude)
+                if (!isMapReady) return@AndroidView
 
-                    val currentMarker = tMapView.getMarkerItemFromId("CurrentMarker")
-                    currentMarker.tMapPoint = currentPoint
+                val currentPoint = TMapPoint(currentLocation.latitude, currentLocation.longitude)
+                val existingMarker = tMapView.getMarkerItemFromId("CurrentMarker")
+                existingMarker.tMapPoint = currentPoint
+                tMapView.updateTMapMarkerItem(existingMarker)
 
-                    if (isMapFocused) {
-                        tMapView.setCenterPoint(currentPoint.latitude, currentPoint.longitude)
-                        getCenterLocation(LatLng(currentPoint.latitude, currentPoint.longitude))
+                if (!hasAppliedInitialFocus) {
+                    // 지도 Focus에 따른 위치 설정
+                    when (initialMapFocus) {
+                        // 지도 위치 설정 - 출발지와 첫 대중교통의 중간 지점
+                        MapFocusState.Departure -> {
+                            val midPoint = getMidPoint(firstTransportationPoint, departLocation)
+                            tMapView.setCenterPoint(
+                                midPoint.latitude,
+                                midPoint.longitude
+                            )
+                        }
+
+                        MapFocusState.Current -> {
+                            tMapView.setCenterPoint(
+                                currentLocation.latitude,
+                                currentLocation.longitude
+                            )
+                        }
+
+                        MapFocusState.Modify -> Unit
                     }
+
+                    hasAppliedInitialFocus = true
+                    return@AndroidView
+                }
+
+                if (isMapFocused == MapFocusState.Current) {
+                    tMapView.setCenterPoint(
+                        currentLocation.latitude,
+                        currentLocation.longitude
+                    )
                 }
             }
         )
-
-        // 현위치 버튼
-//            Image(
-//                imageVector = ImageVector.vectorResource(id = R.drawable.ic_all_current_location),
-//                contentDescription = stringResource(R.string.home_current_location_btn),
-//                modifier = Modifier
-//                    .align(Alignment.BottomEnd)
-//                    .then(
-//                        if (isAlarmRegistered) {
-//                            Modifier.padding(bottom = 25.dp, end = 16.dp)
-//                        } else {
-//                            Modifier.padding(bottom = 25.dp, end = 16.dp)
-//                        }
-//                    )
-//                    .clickable(enabled = isMapReady) {
-//                        val tMapPoint = TMapPoint(userLocation.latitude, userLocation.longitude)
-//                        tMapView.setCenterPoint(tMapPoint.latitude, tMapPoint.longitude)
-//
-//                        getCenterLocation(LatLng(tMapPoint.latitude, tMapPoint.longitude))
-//                    }
-//                    .graphicsLayer { alpha = if (isMapReady) 1f else 0.5f } // 비활성화 시 투명도 조정
-//            )
 
         if (isMapReady) {
             isMapReadyCallback()
@@ -366,7 +322,8 @@ fun AfterRegisterMapPreview(
         legs = legs,
         currentLocation = LatLng(37.5665, 126.9780),
         isAlarmRegistered = false,
-        isMapFocused = true,
+        isMapFocused = MapFocusState.Departure,
+        initialMapFocus = MapFocusState.Departure,
         getCenterLocation = {},
         mapModified = {}
     )

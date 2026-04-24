@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,6 +24,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
 import com.depromeet.team6.BuildConfig
 import com.depromeet.team6.R
+import com.depromeet.team6.presentation.model.home.MapFocusState
 import com.depromeet.team6.presentation.ui.common.view.AtChaLoadingView
 import com.depromeet.team6.presentation.util.AmplitudeCommon.SCREEN_NAME
 import com.depromeet.team6.presentation.util.AmplitudeCommon.USER_ID
@@ -35,14 +37,16 @@ import com.google.android.gms.maps.model.LatLng
 import com.skt.tmap.TMapPoint
 import com.skt.tmap.TMapView
 import com.skt.tmap.overlay.TMapMarkerItem
-import timber.log.Timber
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun TMapViewCompose(
     padding: PaddingValues,
     currentLocation: LatLng,
     isAlarmRegistered: Boolean,
-    isMapFocused: Boolean,
+    isMapFocused: MapFocusState,
     userId: Int,
     modifier: Modifier = Modifier,
     getCenterLocation: (LatLng) -> Unit,
@@ -50,26 +54,10 @@ fun TMapViewCompose(
     isMapReadyCallback: () -> Unit
 ) {
     val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
     var isMapReady by remember { mutableStateOf(false) }
 
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
-
-    // focus 버튼 누를때마다 해당 위치로 지도 focus 이동
-//    LaunchedEffect(isMapFocused) {
-//        if (isMapFocused && isMapReady) {
-//            tMapView.setCenterPoint(currentLocation.latitude, currentLocation.longitude)
-//            getCenterLocation(LatLng(currentLocation.latitude, currentLocation.longitude)) // 필요없어보여서 주석처리 해뒀어요
-//
-//            AmplitudeUtils.trackEventWithProperties(
-//                eventName = HOME_EVENT_COURSESEARCH_ENTERED,
-//                mapOf(
-//                    USER_ID to userId,
-//                    SCREEN_NAME to HOME,
-//                    HOME_COURSESEARCH_ENTERED_WITH_CURRENT_LOCATION to true
-//                )
-//            )
-//        }
-//    }
 
     Box(
         modifier = modifier
@@ -81,6 +69,7 @@ fun TMapViewCompose(
                 .align(Alignment.TopCenter),
             factory = { context ->
                 val tMapView = TMapView(context)
+                var debounceJob: Job? = null
 
                 tMapView.setSKTMapApiKey(BuildConfig.TMAP_API_KEY)
                 tMapView.mapType = TMapView.MapType.NIGHT
@@ -92,7 +81,6 @@ fun TMapViewCompose(
                             arrayListOf(currentPoint)
                         )
                     )
-
                     // 현위치 마커
                     val markerDrawable =
                         ContextCompat.getDrawable(context, R.drawable.ic_home_current_location)
@@ -109,19 +97,25 @@ fun TMapViewCompose(
 
                     // 드래그 종료 시 지도 중심 좌표 업데이트
                     tMapView.setOnDisableScrollWithZoomLevelListener { _, _ ->
-                        val centerLat = tMapView.centerPoint.latitude
-                        val centerLon = tMapView.centerPoint.longitude
+                        debounceJob?.cancel()
 
-                        getCenterLocation(LatLng(centerLat, centerLon))
+                        debounceJob = coroutineScope.launch {
+                            delay(1000L) // 1초 동안 추가 움직임이 없으면 아래 로직 실행
 
-                        AmplitudeUtils.trackEventWithProperties(
-                            eventName = HOME_EVENT_COURSESEARCH_ENTERED,
-                            mapOf(
-                                USER_ID to userId,
-                                SCREEN_NAME to HOME,
-                                HOME_COURSESEARCH_ENTERED_WITH_MAP_DRAG to true
+                            val centerLat = tMapView.centerPoint.latitude
+                            val centerLon = tMapView.centerPoint.longitude
+
+                            getCenterLocation(LatLng(centerLat, centerLon))
+
+                            AmplitudeUtils.trackEventWithProperties(
+                                eventName = HOME_EVENT_COURSESEARCH_ENTERED,
+                                mapOf(
+                                    USER_ID to userId,
+                                    SCREEN_NAME to HOME,
+                                    HOME_COURSESEARCH_ENTERED_WITH_MAP_DRAG to true
+                                )
                             )
-                        )
+                        }
                     }
 
                     // 화면 스크롤 발생시 mapFocused 여부 변경
@@ -141,13 +135,11 @@ fun TMapViewCompose(
 
                 val existingMarker = tMapView.getMarkerItemFromId("CurrentMarker")
                 existingMarker.tMapPoint = currentPoint
-                tMapView.addTMapMarkerItem(existingMarker)
                 tMapView.updateTMapMarkerItem(existingMarker)
 
-                if (isMapFocused) {
-                    Timber.d("currentLocation Changed : ${currentLocation.latitude}, ${currentLocation.longitude}")
+                if (isMapFocused == MapFocusState.Current) {
                     tMapView.setCenterPoint(currentLocation.latitude, currentLocation.longitude)
-                    getCenterLocation(LatLng(currentLocation.latitude, currentLocation.longitude)) // 필요없어보여서 주석처리 해뒀어요
+                    getCenterLocation(LatLng(currentLocation.latitude, currentLocation.longitude))
                     tMapView.zoomLevel = 18
 
                     AmplitudeUtils.trackEventWithProperties(

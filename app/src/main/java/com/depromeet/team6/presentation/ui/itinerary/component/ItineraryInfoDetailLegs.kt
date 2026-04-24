@@ -10,6 +10,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -21,6 +22,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
@@ -46,11 +48,18 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import com.depromeet.team6.R
 import com.depromeet.team6.domain.model.BusCongestion
 import com.depromeet.team6.domain.model.BusStatus
@@ -79,12 +88,18 @@ import kotlin.math.roundToInt
 @Composable
 fun ItineraryInfoDetailLegs(
     currentLocation: LatLng,
+    userDeparted: Boolean,
     legs: List<LegInfo>,
     busArrivalStatus: SparseArray<RealTimeBusArrival>,
-    isAlarmRegistered: Boolean,
     modifier: Modifier = Modifier,
     onClickBusInfo: (BusArrivalParameter) -> Unit = {}
 ) {
+    val timelineIconSize = Dimens.LegTimelineIconSize
+    val timelineTimeIconGap = Dimens.LegTimelineTimeIconGap
+    val timelineTimeSlotWidth = Dimens.LegTimelineTimeSlotWidth
+    val timelineColumnMinWidth = timelineTimeSlotWidth + timelineTimeIconGap + timelineIconSize
+    val timelineAxisOffset = timelineTimeSlotWidth + timelineTimeIconGap + (timelineIconSize / 2)
+
     // Column의 실제 높이(px)
     var columnHeightPx by remember { mutableIntStateOf(0) }
     val density = LocalDensity.current
@@ -104,12 +119,20 @@ fun ItineraryInfoDetailLegs(
             for ((idx, leg) in legs.withIndex()) {
                 when (leg.transportType) {
                     TransportType.WALK -> {
-                        val verticalHeight = if (idx == 0 || idx == legs.size - 1) 48.dp else 60.dp
+                        val verticalHeight = walkTimelineHeight(
+                            distanceMeter = leg.distance,
+                            isFirstWalk = idx == 0,
+                            isLastWalk = idx == legs.size - 1
+                        )
+                        val walkLineOffsetY = if (idx == 0) (-3).dp else 0.dp
                         DetailLegsWalk(
                             boardingDateTime = leg.departureDateTime!!,
                             timeMinute = leg.sectionTime / 60,
                             distanceMeter = leg.distance,
-                            verticalHeight = verticalHeight
+                            verticalHeight = verticalHeight,
+                            lineOffsetY = walkLineOffsetY,
+                            timelineAxisOffset = timelineAxisOffset,
+                            timelineColumnWidth = timelineColumnMinWidth
                         )
                     }
                     TransportType.BUS -> {
@@ -123,6 +146,10 @@ fun ItineraryInfoDetailLegs(
                             distanceMeter = leg.distance,
                             busArrivalStatus = busArrivalStatus.get(idx),
                             passStopList = leg.passStopList,
+                            timelineIconSize = timelineIconSize,
+                            timelineTimeSlotWidth = timelineTimeSlotWidth,
+                            timelineTimeIconGap = timelineTimeIconGap,
+                            timelineColumnMinWidth = timelineColumnMinWidth,
                             onClickBusInfo = { routeName, stationName, subtypeIdx ->
                                 onClickBusInfo(
                                     BusArrivalParameter(
@@ -146,7 +173,11 @@ fun ItineraryInfoDetailLegs(
                             boardingDateTime = leg.departureDateTime!!,
                             timeMinute = leg.sectionTime / 60,
                             passStopList = leg.passStopList,
-                            distanceMeter = leg.distance
+                            distanceMeter = leg.distance,
+                            timelineIconSize = timelineIconSize,
+                            timelineTimeSlotWidth = timelineTimeSlotWidth,
+                            timelineTimeIconGap = timelineTimeIconGap,
+                            timelineColumnMinWidth = timelineColumnMinWidth
                         )
                     }
                 }
@@ -154,7 +185,7 @@ fun ItineraryInfoDetailLegs(
         }
 
         // 출발한 경우 부왕부왕 아이콘 표시
-        if (isAlarmRegistered) {
+        if (userDeparted) {
             val iconSizePx = with(density) { WalkIconWithRippleSize.toPx() }
             // 현재위치와 경로의 직선거리를 통해 얼만큼 왔는지 비율 계산 (부왕부왕 마커 표시하기 위함)
             val totalDistance by remember {
@@ -228,6 +259,10 @@ private fun DetailLegsBus(
     distanceMeter: Int,
     busArrivalStatus: RealTimeBusArrival?,
     passStopList: List<Station>,
+    timelineIconSize: Dp,
+    timelineTimeSlotWidth: Dp,
+    timelineTimeIconGap: Dp,
+    timelineColumnMinWidth: Dp,
     modifier: Modifier = Modifier,
     onClickBusInfo: (String, String, Int) -> Unit = { routeName: String, stationName: String, subtypeIdx: Int -> }
 ) {
@@ -237,9 +272,13 @@ private fun DetailLegsBus(
         .parse(boardingDateTime)
         .plusMinutes(timeMinute.toLong())
         .format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+    val timelineAxisOffset = timelineTimeSlotWidth + timelineTimeIconGap + (timelineIconSize / 2)
+    val disembarkingMarkerSize = timelineIconSize * (14f / 26f)
+    val disembarkingMarkerOffset = (timelineIconSize - disembarkingMarkerSize) / 2
 
     Row(
         modifier = modifier
+            .zIndex(1f)
             .wrapContentHeight()
     ) {
         val busColor = TransportTypeUiMapper.getColor(TransportType.BUS, subtypeIdx)
@@ -247,50 +286,66 @@ private fun DetailLegsBus(
         // 좌측 버스 수직라인
         Box(
             modifier = Modifier
-                .width(Dimens.LegDetailVerticalLineWidth)
+                .widthIn(min = timelineColumnMinWidth)
+                .wrapContentWidth()
                 .height(rowHeight.dp),
-            contentAlignment = Alignment.TopCenter
+            contentAlignment = Alignment.TopStart
         ) {
             // 세로 직선
             Box(
                 modifier = Modifier
                     .fillMaxHeight()
-                    .width(4.dp)
-                    .padding(top = 15.dp, bottom = 20.dp)
+                    .width(3.dp)
+                    .align(Alignment.TopStart)
+                    .offset(x = timelineAxisOffset - 1.5.dp)
+                    .padding(top = 12.dp, bottom = 8.dp)
                     .background(busColor)
-                    .align(Alignment.Center)
             )
             Column(
                 modifier = Modifier
+                    .widthIn(min = timelineColumnMinWidth)
                     .wrapContentWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.Start
             ) {
-                // 버스 아이콘
-                Image(
-                    imageVector = ImageVector.vectorResource(busIconId),
-                    contentDescription = null,
-                    modifier = Modifier.size(36.dp)
-                )
-                // 탑승 시각
-                BoardingTime(
-                    boardingDateTime = boardingDateTime,
-                    modifier = Modifier
-                )
+                Row(
+                    modifier = Modifier.wrapContentWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Box(modifier = Modifier.width(timelineTimeSlotWidth)) {
+                        BoardingTime(
+                            boardingDateTime = boardingDateTime,
+                            modifier = Modifier.align(Alignment.CenterStart)
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(timelineTimeIconGap))
+                    Image(
+                        imageVector = ImageVector.vectorResource(busIconId),
+                        contentDescription = null,
+                        modifier = Modifier.size(timelineIconSize)
+                    )
+                }
 
                 Spacer(modifier = Modifier.weight(weight = 1f)) // 남은 공간 차지해서 아래로 밀어줌
 
-                // 하차지점
-                Box(
-                    modifier = Modifier
-                        .size(18.dp) // 지름 크기
-                        .clip(CircleShape)
-                        .background(busColor)
-                )
-                Spacer(modifier = Modifier.height(2.dp))
-                BoardingTime(
-                    boardingDateTime = disembarkingDateTime,
-                    modifier = Modifier
-                )
+                Row(
+                    modifier = Modifier.wrapContentWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Box(modifier = Modifier.width(timelineTimeSlotWidth)) {
+                        BoardingTime(
+                            boardingDateTime = disembarkingDateTime,
+                            modifier = Modifier.align(Alignment.CenterStart)
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(timelineTimeIconGap))
+                    Box(
+                        modifier = Modifier
+                            .size(disembarkingMarkerSize)
+                            .offset(x = disembarkingMarkerOffset)
+                            .clip(CircleShape)
+                            .background(busColor)
+                    )
+                }
             }
         }
 
@@ -393,6 +448,8 @@ private fun DetailLegsBus(
                         val stop = passStopList[i]
                         Text(
                             text = stop.stationName,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
                             style = defaultTeam6Typography.body7_B7M13,
                             color = defaultTeam6Colors.gray200
                         )
@@ -402,22 +459,10 @@ private fun DetailLegsBus(
 
             Spacer(Modifier.height(36.dp))
             // 하차
-            Row(
-                modifier = Modifier
-                    .padding(bottom = 20.dp)
-            ) {
-                Text(
-                    text = disembarkingStation,
-                    style = defaultTeam6Typography.body5_B5SB14,
-                    color = defaultTeam6Colors.white
-                )
-                Spacer(Modifier.width(4.dp))
-                Text(
-                    text = stringResource(R.string.itinerary_info_legs_disembarking),
-                    style = defaultTeam6Typography.body5_B5SB14,
-                    color = defaultTeam6Colors.gray200
-                )
-            }
+            DisembarkingStationText(
+                stationName = disembarkingStation,
+                modifier = Modifier.padding(bottom = 20.dp)
+            )
         }
     }
 }
@@ -432,6 +477,10 @@ private fun DetailLegsSubway(
     timeMinute: Int,
     distanceMeter: Int,
     passStopList: List<Station>,
+    timelineIconSize: Dp,
+    timelineTimeSlotWidth: Dp,
+    timelineTimeIconGap: Dp,
+    timelineColumnMinWidth: Dp,
     modifier: Modifier = Modifier
 ) {
     var rowHeight by remember { mutableStateOf(0) }
@@ -440,9 +489,13 @@ private fun DetailLegsSubway(
         .parse(boardingDateTime)
         .plusMinutes(timeMinute.toLong())
         .format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+    val timelineAxisOffset = timelineTimeSlotWidth + timelineTimeIconGap + (timelineIconSize / 2)
+    val disembarkingMarkerSize = timelineIconSize * (14f / 26f)
+    val disembarkingMarkerOffset = (timelineIconSize - disembarkingMarkerSize) / 2
 
     Row(
         modifier = modifier
+            .zIndex(1f)
             .wrapContentHeight()
     ) {
         val subwayColor = TransportTypeUiMapper.getColor(TransportType.SUBWAY, subtypeIdx)
@@ -450,50 +503,66 @@ private fun DetailLegsSubway(
         // 좌측 버스 수직라인
         Box(
             modifier = Modifier
-                .width(Dimens.LegDetailVerticalLineWidth)
+                .widthIn(min = timelineColumnMinWidth)
+                .wrapContentWidth()
                 .height(rowHeight.dp),
-            contentAlignment = Alignment.TopCenter
+            contentAlignment = Alignment.TopStart
         ) {
             // 세로 직선
             Box(
                 modifier = Modifier
                     .fillMaxHeight()
-                    .width(4.dp)
-                    .padding(top = 15.dp, bottom = 20.dp)
+                    .width(3.dp)
+                    .align(Alignment.TopStart)
+                    .offset(x = timelineAxisOffset - 1.5.dp)
+                    .padding(top = 12.dp, bottom = 8.dp)
                     .background(subwayColor)
-                    .align(Alignment.Center)
             )
             Column(
                 modifier = Modifier
+                    .widthIn(min = timelineColumnMinWidth)
                     .wrapContentWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.Start
             ) {
-                // 지하철 아이콘
-                Image(
-                    imageVector = ImageVector.vectorResource(subwayIconId),
-                    contentDescription = null,
-                    modifier = Modifier.size(36.dp)
-                )
-                // 탑승 시각
-                BoardingTime(
-                    boardingDateTime = boardingDateTime,
-                    modifier = Modifier
-                )
+                Row(
+                    modifier = Modifier.wrapContentWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Box(modifier = Modifier.width(timelineTimeSlotWidth)) {
+                        BoardingTime(
+                            boardingDateTime = boardingDateTime,
+                            modifier = Modifier.align(Alignment.CenterStart)
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(timelineTimeIconGap))
+                    Image(
+                        imageVector = ImageVector.vectorResource(subwayIconId),
+                        contentDescription = null,
+                        modifier = Modifier.size(timelineIconSize)
+                    )
+                }
 
                 Spacer(modifier = Modifier.weight(weight = 1f)) // 남은 공간 차지해서 아래로 밀어줌
 
-                // 하차지점
-                Box(
-                    modifier = Modifier
-                        .size(18.dp) // 지름 크기
-                        .clip(CircleShape)
-                        .background(subwayColor)
-                )
-                Spacer(modifier = Modifier.height(2.dp))
-                BoardingTime(
-                    boardingDateTime = disembarkingDateTime,
-                    modifier = Modifier
-                )
+                Row(
+                    modifier = Modifier.wrapContentWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Box(modifier = Modifier.width(timelineTimeSlotWidth)) {
+                        BoardingTime(
+                            boardingDateTime = disembarkingDateTime,
+                            modifier = Modifier.align(Alignment.CenterStart)
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(timelineTimeIconGap))
+                    Box(
+                        modifier = Modifier
+                            .size(disembarkingMarkerSize)
+                            .offset(x = disembarkingMarkerOffset)
+                            .clip(CircleShape)
+                            .background(subwayColor)
+                    )
+                }
             }
         }
 
@@ -570,6 +639,8 @@ private fun DetailLegsSubway(
                         val stop = passStopList[i]
                         Text(
                             text = stop.stationName,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
                             style = defaultTeam6Typography.body7_B7M13,
                             color = defaultTeam6Colors.gray200
                         )
@@ -579,22 +650,10 @@ private fun DetailLegsSubway(
 
             Spacer(Modifier.height(36.dp))
             // 하차
-            Row(
-                modifier = Modifier
-                    .padding(bottom = 20.dp)
-            ) {
-                Text(
-                    text = disembarkingStation,
-                    style = defaultTeam6Typography.body5_B5SB14,
-                    color = defaultTeam6Colors.white
-                )
-                Spacer(Modifier.width(4.dp))
-                Text(
-                    text = stringResource(R.string.itinerary_info_legs_disembarking),
-                    style = defaultTeam6Typography.body5_B5SB14,
-                    color = defaultTeam6Colors.gray200
-                )
-            }
+            DisembarkingStationText(
+                stationName = disembarkingStation,
+                modifier = Modifier.padding(bottom = 20.dp)
+            )
         }
     }
 }
@@ -605,6 +664,9 @@ private fun DetailLegsWalk(
     timeMinute: Int,
     distanceMeter: Int,
     verticalHeight: Dp,
+    lineOffsetY: Dp,
+    timelineAxisOffset: Dp,
+    timelineColumnWidth: Dp,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -614,13 +676,11 @@ private fun DetailLegsWalk(
         // 좌측 점선
         Column(
             modifier = Modifier
-                .width(Dimens.LegDetailVerticalLineWidth),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .width(timelineColumnWidth),
+            horizontalAlignment = Alignment.Start
         ) {
-            Spacer(
-                modifier = Modifier.height(5.dp)
-            )
             DottedLineWithCircles(
+                modifier = Modifier.offset(x = timelineAxisOffset - 2.5.dp, y = lineOffsetY),
                 height = verticalHeight
             )
         }
@@ -656,7 +716,7 @@ fun BoardingTime(
 ) {
     val boardingTime = LocalDateTime.parse(boardingDateTime)
     Box(
-        modifier = Modifier
+        modifier = modifier
             .wrapContentSize()
             .border(
                 width = 1.dp,
@@ -721,6 +781,85 @@ private fun DottedLineWithCircles(
 }
 
 @Composable
+private fun DisembarkingStationText(
+    stationName: String,
+    modifier: Modifier = Modifier
+) {
+    val stationStyle = defaultTeam6Typography.body5_B5SB14
+    val suffixStyle = defaultTeam6Typography.body5_B5SB14
+    val suffixText = stringResource(R.string.itinerary_info_legs_disembarking)
+    val textMeasurer = rememberTextMeasurer()
+    val density = LocalDensity.current
+
+    BoxWithConstraints(modifier = modifier.fillMaxWidth()) {
+        val maxWidthPx = with(density) { maxWidth.toPx() }.toInt()
+        val spacingPx = with(density) { 4.dp.roundToPx() }
+        val suffixWidthPx = textMeasurer.measure(
+            text = suffixText,
+            style = suffixStyle,
+            maxLines = 1
+        ).size.width
+
+        val combinedLayout = textMeasurer.measure(
+            text = buildAnnotatedString {
+                append(stationName)
+                append(" ")
+                append(suffixText)
+            },
+            style = stationStyle,
+            constraints = Constraints(maxWidth = maxWidthPx)
+        )
+        val useCompactSingleLine = combinedLayout.lineCount > 2
+
+        if (useCompactSingleLine) {
+            val stationMaxWidthDp = with(density) {
+                (maxWidthPx - suffixWidthPx - spacingPx).coerceAtLeast(0).toDp()
+            }
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    modifier = Modifier.width(stationMaxWidthDp),
+                    text = stationName,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    style = stationStyle,
+                    color = defaultTeam6Colors.white
+                )
+                Spacer(Modifier.width(4.dp))
+                Text(
+                    text = suffixText,
+                    style = suffixStyle,
+                    color = defaultTeam6Colors.gray200
+                )
+            }
+        } else {
+            Text(
+                text = buildAnnotatedString {
+                    withStyle(SpanStyle(color = defaultTeam6Colors.white)) { append(stationName) }
+                    append(" ")
+                    withStyle(SpanStyle(color = defaultTeam6Colors.gray200)) { append(suffixText) }
+                },
+                maxLines = 2,
+                overflow = TextOverflow.Clip,
+                style = stationStyle
+            )
+        }
+    }
+}
+
+private fun walkTimelineHeight(
+    distanceMeter: Int,
+    isFirstWalk: Boolean,
+    isLastWalk: Boolean
+): Dp {
+    val baseHeight = (distanceMeter / 10f).dp.coerceIn(44.dp, 120.dp)
+    return when {
+        isFirstWalk -> baseHeight + 10.dp
+        isLastWalk -> baseHeight - 4.dp
+        else -> baseHeight
+    }.coerceIn(40.dp, 130.dp)
+}
+
+@Composable
 private fun BusNumberButton(
     busName: String,
     busColor: Color,
@@ -762,7 +901,7 @@ fun ItineraryInfoDetailLegsPreview(
     ItineraryInfoDetailLegs(
         currentLocation = LatLng(0.0, 0.0),
         legs = legs,
-        isAlarmRegistered = true,
+        userDeparted = true,
         busArrivalStatus = SparseArray<RealTimeBusArrival>()
     )
 }

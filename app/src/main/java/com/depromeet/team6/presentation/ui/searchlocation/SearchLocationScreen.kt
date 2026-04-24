@@ -7,10 +7,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.calculateEndPadding
-import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -26,7 +25,6 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -156,14 +154,7 @@ fun SearchLocationRoute(
                         modifier = Modifier
                             .fillMaxSize()
                             .background(defaultTeam6Colors.gray950)
-                            .padding(
-                                paddingValues = PaddingValues(
-                                    start = padding.calculateStartPadding(LocalLayoutDirection.current),
-                                    end = padding.calculateEndPadding(LocalLayoutDirection.current),
-                                    top = 0.dp,
-                                    bottom = padding.calculateBottomPadding()
-                                )
-                            ),
+                            .navigationBarsPadding(),
                         marginTop = padding.calculateTopPadding(),
                         viewModel = viewModel,
                         backButtonClick = navigateToBack,

@@ -4,6 +4,8 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.widget.Toast
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -49,7 +51,7 @@ import com.depromeet.team6.data.background.ArrivalMonitorService
 import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.course.TransportType
 import com.depromeet.team6.presentation.model.home.CharacterState
-import com.depromeet.team6.presentation.model.home.ComponentType
+import com.depromeet.team6.presentation.model.home.MapFocusState
 import com.depromeet.team6.presentation.model.home.SpeechBubbleData
 import com.depromeet.team6.presentation.model.itinerary.FocusedMarkerParameter
 import com.depromeet.team6.presentation.ui.common.speechbubble.AtchaSpeechCharacter
@@ -59,6 +61,7 @@ import com.depromeet.team6.presentation.ui.home.component.AfterRegisterSheet
 import com.depromeet.team6.presentation.ui.home.component.CurrentLocationSheet
 import com.depromeet.team6.presentation.ui.home.component.DeleteAlarmDialog
 import com.depromeet.team6.presentation.ui.home.component.TMapViewCompose
+import com.depromeet.team6.presentation.ui.main.MainViewModel
 import com.depromeet.team6.presentation.util.AmplitudeCommon.SCREEN_NAME
 import com.depromeet.team6.presentation.util.AmplitudeCommon.USER_ID
 import com.depromeet.team6.presentation.util.AppConstants
@@ -74,7 +77,7 @@ import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_ROUTE_CLICKED
 import com.depromeet.team6.presentation.util.HomeAmplitude.POPUP
 import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
 import com.depromeet.team6.presentation.util.base.ApiErrorSideEffect
-import com.depromeet.team6.presentation.util.dialog.DialogController
+import com.depromeet.team6.presentation.util.dialog.LocalDialogController
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.presentation.util.toast.atChaToastMessage
 import com.depromeet.team6.presentation.util.view.LoadState
@@ -83,7 +86,6 @@ import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.android.gms.maps.model.LatLng
 import com.google.gson.Gson
-import kotlinx.coroutines.delay
 import timber.log.Timber
 import java.text.NumberFormat
 import java.time.LocalDateTime
@@ -102,44 +104,36 @@ fun HomeRoute(
     viewModel: HomeViewModel = hiltViewModel(),
     afterOnboarding: Boolean = false
 ) {
+    val mainViewModel: MainViewModel = hiltViewModel(LocalActivity.current as ComponentActivity)
+
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val currentLocation by mainViewModel.currentLocation.collectAsStateWithLifecycle()
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
 
     val systemUiController = rememberSystemUiController()
-    val dialogController = remember { DialogController() }
+    val dialogController = LocalDialogController.current
 
-//    val characterTexts = CharacterTexts(
-//        taxiCostText = stringResource(R.string.home_bubble_basic_text),
-//        aboutText = stringResource(R.string.home_bubble_least_text),
-//        wonText = stringResource(R.string.home_bubble_won_text),
-//        moveMapText = stringResource(R.string.home_bubble_map_text),
-//
-//        expectDepartText = stringResource(R.string.home_bubble_alarm_emphasis_text),
-//        expectTaxiCostText = stringResource(R.string.home_bubble_user_departure_taxi_cost_text),
-//        expectBustDepartureText = stringResource(R.string.home_bubble_before_bus_departure_text),
-//
-//        expectTimeClickedText1 = stringResource(R.string.home_bubble_expect_departure_time_clicked_text_1),
-//        expectTimeClickedText2 = stringResource(R.string.home_bubble_expect_departure_time_clicked_text_2),
-//        changeLocationClickedText = stringResource(R.string.home_bubble_location_clicked_text),
-//
-//        busDepartureText1 = stringResource(R.string.home_bubble_bus_departure_text_1),
-//        busDepartureText2 = stringResource(R.string.home_bubble_bus_departure_text_2),
-//        subwayDepartureText1 = stringResource(R.string.home_bubble_subway_departure_text_1),
-//        subwayDepartureText2 = stringResource(R.string.home_bubble_subway_departure_text_2),
-//        timeInfoText1 = stringResource(R.string.home_bubble_time_info_text_1),
-//        timeInfoText2 = stringResource(R.string.home_bubble_time_info_text_2),
-//        departureTimeText1 = stringResource(R.string.home_bubble_departure_time_info_text_1),
-//        busDepartureTaxiCostText = stringResource(R.string.home_bubble_departed_taxi_cost_text),
-//        trustText1 = stringResource(R.string.home_bubble_trust_text_1),
-//        trustText2 = stringResource(R.string.home_bubble_trust_text_2),
-//
-//        userDepartureBusText = stringResource(R.string.home_bubble_user_departure_bus_text),
-//        userDepartureSubwayText = stringResource(R.string.home_bubble_user_departure_subway_text),
-//        userDepartureDownText = stringResource(R.string.home_bubble_user_departure_down_text),
-//        userDepartureDetailBtnText = stringResource(R.string.home_bubble_user_departure_detail_btn_text),
-//        userDepartureCheckDetailText = stringResource(R.string.home_bubble_user_departure_check_detail_text)
-//    )
+    // LockScreen에서 출발하기 클릭 시 처리
+    LaunchedEffect(uiState.isAlarmRegistered && uiState.afterRegisterDataLoadState == LoadState.Success) {
+        if (uiState.isAlarmRegistered && uiState.afterRegisterDataLoadState == LoadState.Success) {
+            val sharedPreferences = context.getSharedPreferences("MyPreferences", android.content.Context.MODE_PRIVATE)
+            val fromLockScreenDeparture = sharedPreferences.getBoolean("fromLockScreenDeparture", false)
+
+            if (fromLockScreenDeparture) {
+                // 플래그 초기화
+                sharedPreferences.edit().putBoolean("fromLockScreenDeparture", false).apply()
+
+                // 상세경로 화면으로 이동
+                navigateToItinerary(
+                    Gson().toJson(uiState.itineraryInfo),
+                    Gson().toJson(uiState.departurePoint),
+                    Gson().toJson(uiState.destinationPoint),
+                    null
+                )
+            }
+        }
+    }
 
     SideEffect {
         systemUiController.setStatusBarColor(
@@ -199,6 +193,37 @@ fun HomeRoute(
                             closeButtonText = "닫기"
                         )
                     }
+
+                    is HomeContract.HomeSideEffect.ShowTooCloseDialog -> {
+                        dialogController.showAtchaBottomSheet(
+                            locationName = "이동하려는 거리가 매우 가까워요",
+                            locationAddress = "출발지를 확인한 후 다시 검색해 주세요.",
+                            confirmButtonText = "확인"
+                        )
+                    }
+
+                    is HomeContract.HomeSideEffect.ShowOutOfServiceRegionBottomSheet -> {
+                        dialogController.showAtchaBottomSheet(
+                            locationName = "서울, 경기, 인천 내에서만 사용할 수 있어요",
+                            locationAddress = "출발지를 확인한 후 다시 검색해 주세요",
+                            confirmButtonText = "확인"
+                        )
+                    }
+
+                    is HomeContract.HomeSideEffect.NavigateToCourseSearch -> {
+                        navigateToCourseSearch(
+                            Gson().toJson(uiState.markerPoint),
+                            Gson().toJson(uiState.destinationPoint)
+                        )
+                        AmplitudeUtils.trackEventWithProperties(
+                            eventName = HOME_EVENT_COURSESEARCH_ENTERED,
+                            mapOf(
+                                USER_ID to viewModel.getUserId(),
+                                SCREEN_NAME to HOME,
+                                HOME_COURSESEARCH_ENTERED_DIRECT to 1
+                            )
+                        )
+                    }
                 }
             }
     }
@@ -211,252 +236,6 @@ fun HomeRoute(
 
     LaunchedEffect(Unit) {
         viewModel.setEvent(HomeContract.HomeEvent.SetDestination)
-    }
-
-    // 애니메이션, 말풍선
-    LaunchedEffect(Unit) {
-        val prefs = context.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
-        val currentCount = prefs.getInt("app_launch_count", 0)
-        val newCount = currentCount + 1
-
-        prefs.edit().putInt("app_launch_count", newCount).apply()
-    }
-
-    var previousConditionKey by remember { mutableStateOf("") }
-
-//    val baseCharacterData = remember(
-//        uiState.isAlarmRegistered,
-//        uiState.userDeparture,
-//        uiState.isBusDeparted,
-//        uiState.taxiCost,
-//        characterTexts
-//    ) {
-//        generateCharacterStateWithLaunchCount(uiState, characterTexts, context)
-//    }
-
-    val conditionKey = remember(
-        uiState.isAlarmRegistered,
-        uiState.userDeparture,
-        uiState.isBusDeparted
-    ) {
-        "${uiState.isAlarmRegistered}_${uiState.userDeparture}_${uiState.isBusDeparted}"
-    }
-
-    var currentSpeechIndex by remember(conditionKey) { mutableStateOf(0) }
-    var animationTrigger by remember { mutableStateOf(0) }
-
-//    val safeCurrentIndex = if (baseCharacterData.speechTexts.isNotEmpty()) {
-//        currentSpeechIndex.coerceIn(0, baseCharacterData.speechTexts.size - 1)
-//    } else {
-//        0
-//    }
-
-    var tempSpeechBubble by remember { mutableStateOf<SpeechBubbleData?>(null) }
-    var isShowingTempMessage by remember { mutableStateOf(false) }
-    var hideBubbleAfterComponentClick by remember { mutableStateOf(false) }
-
-    var hideDefaultBubbleAfterFirstMessage by remember { mutableStateOf(false) }
-    var isShowingFirstTimeMessage by remember { mutableStateOf(false) }
-
-    val currentConditionKey = remember(
-        uiState.isAlarmRegistered,
-        uiState.userDeparture,
-        uiState.isBusDeparted,
-        uiState.firtTransportTation
-    ) {
-        when {
-            uiState.isAlarmRegistered && !uiState.userDeparture && !uiState.isBusDeparted -> {
-                "before_bus_arrived"
-            }
-
-            uiState.isAlarmRegistered && !uiState.userDeparture -> {
-                if (uiState.firtTransportTation == TransportType.SUBWAY) {
-                    "after_subway_arrived"
-                } else {
-                    "after_bus_arrived"
-                }
-            }
-
-            uiState.isAlarmRegistered && !uiState.timerFinish && uiState.firtTransportTation == TransportType.BUS ->
-                "after_user_departure_bus"
-
-            uiState.isAlarmRegistered && !uiState.timerFinish && uiState.firtTransportTation == TransportType.SUBWAY ->
-                "after_user_departure_subway"
-
-            else -> "none"
-        }
-    }
-
-    LaunchedEffect(currentConditionKey) {
-        val prefs = context.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
-
-        if (previousConditionKey.isNotEmpty() &&
-            previousConditionKey != currentConditionKey &&
-            previousConditionKey != "none"
-        ) {
-            val previousPrefsKey = "first_$previousConditionKey"
-            prefs.edit().remove(previousPrefsKey).apply()
-        }
-
-        previousConditionKey = currentConditionKey
-
-        if (currentConditionKey == "none") {
-            hideDefaultBubbleAfterFirstMessage = false
-            return@LaunchedEffect
-        }
-
-        val prefsKey = "first_$currentConditionKey"
-
-        if (!prefs.getBoolean(prefsKey, false)) {
-            hideDefaultBubbleAfterFirstMessage = true
-        }
-
-        if (prefs.getBoolean(prefsKey, false)) {
-            return@LaunchedEffect
-        }
-
-//        val speechBubble = when (currentConditionKey) {
-//            "before_bus_arrived" -> SpeechBubbleData(
-//                prefixText = "",
-//                emphasisText = characterTexts.subwayDepartureText1,
-//                suffixText = "",
-//                lineCount = 1
-//            )
-//
-//            "after_bus_arrived" -> SpeechBubbleData(
-//                prefixText = "",
-//                emphasisText = characterTexts.busDepartureText2,
-//                suffixText = "",
-//                topEmphasisText = characterTexts.busDepartureText1,
-//                lineCount = 2
-//            )
-//
-//            "after_subway_arrived" -> SpeechBubbleData(
-//                prefixText = "",
-//                emphasisText = characterTexts.subwayDepartureText2,
-//                suffixText = "",
-//                topEmphasisText = characterTexts.subwayDepartureText1,
-//                lineCount = 2
-//            )
-//
-//            "after_user_departure_bus" -> SpeechBubbleData(
-//                prefixText = "",
-//                emphasisText = characterTexts.userDepartureBusText,
-//                suffixText = "",
-//                lineCount = 1
-//            )
-//
-//            "after_user_departure_subway" -> SpeechBubbleData(
-//                prefixText = "",
-//                emphasisText = characterTexts.userDepartureSubwayText,
-//                suffixText = "",
-//                lineCount = 1
-//            )
-//
-//            else -> return@LaunchedEffect
-//        }
-
-        while (isShowingTempMessage) {
-            delay(100)
-        }
-
-        delay(100)
-
-        isShowingTempMessage = true
-        isShowingFirstTimeMessage = true
-//        tempSpeechBubble = speechBubble
-//
-//        delay(if (speechBubble.lineCount == 2) 4000 else 3200)
-
-        tempSpeechBubble = null
-        isShowingTempMessage = false
-        isShowingFirstTimeMessage = false
-
-        prefs.edit().putBoolean(prefsKey, true).apply()
-    }
-
-//    fun showTempMessage(componentType: ComponentType) {
-//        val speechBubble = when (componentType) {
-//            ComponentType.DEPARTURE_TIME_NOT_CONFIRMED_CLICKED -> SpeechBubbleData(
-//                prefixText = "",
-//                emphasisText = characterTexts.expectTimeClickedText2,
-//                suffixText = "",
-//                topEmphasisText = characterTexts.expectTimeClickedText1,
-//                lineCount = 2
-//            )
-//
-//            ComponentType.DEPARTURE_TIME_CONFIRMED_CLICKED -> SpeechBubbleData(
-//                prefixText = "",
-//                emphasisText = characterTexts.timeInfoText1,
-//                suffixText = "",
-//                topEmphasisText = characterTexts.departureTimeText1,
-//                lineCount = 2
-//            )
-//
-//            ComponentType.ROUTE_TEXT_CLICKED -> SpeechBubbleData(
-//                prefixText = "",
-//                emphasisText = characterTexts.changeLocationClickedText,
-//                suffixText = "",
-//                lineCount = 1
-//            )
-//        }
-//
-//        isShowingTempMessage = true
-//        tempSpeechBubble = speechBubble
-//        animationTrigger++
-//
-//        CoroutineScope(Dispatchers.Main).launch {
-//            if (speechBubble.lineCount == 2) {
-//                delay(4000)
-//            } else {
-//                delay(3200)
-//            }
-//            tempSpeechBubble = null
-//            isShowingTempMessage = false
-//            hideBubbleAfterComponentClick = true
-//        }
-//    }
-
-//    val finalSpeechTexts = when {
-//        tempSpeechBubble != null -> listOf(tempSpeechBubble!!)
-//        hideBubbleAfterComponentClick -> emptyList()
-//        hideDefaultBubbleAfterFirstMessage -> emptyList()
-//        isShowingFirstTimeMessage -> emptyList()
-//        else -> baseCharacterData.speechTexts
-//    }
-//
-//    val characterState = CharacterState(
-//        speechTexts = finalSpeechTexts,
-//        lottieResId = baseCharacterData.lottieResId,
-//        bottomPadding = baseCharacterData.bottomPadding,
-//        currentSpeechIndex = if (tempSpeechBubble != null) 0 else safeCurrentIndex,
-//        animationTrigger = animationTrigger,
-//        isAnimating = true
-//    )
-
-    // 캐릭터 클릭 핸들러
-    val onCharacterClick = {
-        viewModel.setEvent(HomeContract.HomeEvent.OnCharacterClick)
-//        when {
-//            isShowingFirstTimeMessage -> {
-//                // 첫 번째 메시지 표시 중이면 아무것도 하지 않음
-//            }
-//            hideBubbleAfterComponentClick -> {
-//                hideBubbleAfterComponentClick = false
-//                animationTrigger += 1
-//            }
-//            hideDefaultBubbleAfterFirstMessage -> {
-//                hideDefaultBubbleAfterFirstMessage = false
-//                animationTrigger += 1
-//            }
-//            tempSpeechBubble == null && characterState.speechTexts.size > 1 -> {
-//                currentSpeechIndex = (currentSpeechIndex + 1) % characterState.speechTexts.size
-//                animationTrigger += 1
-//            }
-//            tempSpeechBubble == null -> {
-//                animationTrigger += 1
-//            }
-//        }
     }
 
     // 현재 화면이 사라질 때 isMapReady 상태 초기화
@@ -484,16 +263,16 @@ fun HomeRoute(
                 } else {
                     HomeScreen(
                         homeUiState = uiState,
+                        currentLocation = currentLocation,
                         getUserId = { viewModel.getUserId() },
                         getCenterLocation = { position ->
                             viewModel.getCenterLocation(position)
                         },
                         onTimerFinished = { viewModel.onTimerFinished() },
                         getDepartureTime = { viewModel.loadDepartureTime() },
-                        onCharacterClick = onCharacterClick,
+                        onCharacterClick = { viewModel.setEvent(HomeContract.HomeEvent.OnCharacterClick) },
 //                        characterState = characterState,
 //                        showTempMessage = ::showTempMessage,
-                        showTempMessage = {},
                         requestCharacterSpeech = { messages ->
                             viewModel.setEvent(HomeContract.HomeEvent.RequestCharacterSpeech(messages))
                         },
@@ -520,21 +299,7 @@ fun HomeRoute(
                             )
                         },
                         onSearchClick = {
-                            val currentLocationJSON = Gson().toJson(uiState.markerPoint)
-                            val destinationPointJSON = Gson().toJson(uiState.destinationPoint)
-                            navigateToCourseSearch(
-                                currentLocationJSON,
-                                destinationPointJSON
-                            )
-
-                            AmplitudeUtils.trackEventWithProperties(
-                                eventName = HOME_EVENT_COURSESEARCH_ENTERED,
-                                mapOf(
-                                    USER_ID to viewModel.getUserId(),
-                                    SCREEN_NAME to HOME,
-                                    HOME_COURSESEARCH_ENTERED_DIRECT to 1
-                                )
-                            )
+                            viewModel.setEvent(HomeContract.HomeEvent.OnSearchClick)
                         },
                         onDestinationClick = {
                             AmplitudeUtils.trackEventWithProperties(
@@ -576,14 +341,14 @@ fun HomeRoute(
                         currentLocationClicked = {
                             viewModel.setState {
                                 copy(
-                                    isMapFocused = true
+                                    isMapFocused = MapFocusState.Current
                                 )
                             }
                         },
                         mapModified = {
                             viewModel.setState {
                                 copy(
-                                    isMapFocused = false
+                                    isMapFocused = MapFocusState.Modify
                                 )
                             }
                         },
@@ -608,13 +373,13 @@ fun HomeScreen(
     padding: PaddingValues,
     modifier: Modifier = Modifier,
     homeUiState: HomeContract.HomeUiState = HomeContract.HomeUiState(),
+    currentLocation: LatLng,
     getUserId: () -> Int,
     getCenterLocation: (LatLng) -> Unit = {},
     onTimerFinished: () -> Unit = {},
     getDepartureTime: () -> Unit = {},
     onCharacterClick: () -> Unit = {},
 //    characterState: CharacterState,
-    showTempMessage: (ComponentType) -> Unit = {},
     requestCharacterSpeech: (List<String>) -> Unit = {},
     onSearchClick: () -> Unit = {},
     onDestinationClick: () -> Unit = {},
@@ -668,10 +433,11 @@ fun HomeScreen(
 
             AfterRegisterMap(
                 padding = padding,
-                currentLocation = homeUiState.currentLocation,
+                currentLocation = currentLocation,
                 legs = homeUiState.itineraryInfo!!.legs,
                 isAlarmRegistered = homeUiState.isAlarmRegistered,
                 isMapFocused = homeUiState.isMapFocused,
+                initialMapFocus = MapFocusState.Departure,
                 mapModified = mapModified,
                 getCenterLocation = {
                     getCenterLocation(it)
@@ -684,7 +450,7 @@ fun HomeScreen(
         } else {
             TMapViewCompose(
                 padding = padding,
-                currentLocation = homeUiState.currentLocation,
+                currentLocation = currentLocation,
                 isAlarmRegistered = homeUiState.isAlarmRegistered,
                 userId = getUserId(),
                 isMapFocused = homeUiState.isMapFocused,
@@ -695,17 +461,6 @@ fun HomeScreen(
                 isMapReadyCallback = isMapReadyCallback
             ) // Replace with your actual API key
         }
-
-//        var isConfirmed = false
-
-        val firstTransportation = homeUiState.firtTransportTation
-//        if (firstTransportation == TransportType.SUBWAY) {
-//            isConfirmed = true
-//        }
-//
-//        if (homeUiState.isBusDeparted) {
-//            isConfirmed = true
-//        }
 
         when {
             homeUiState.alarmCheckLoadState == LoadState.Loading ||
@@ -757,13 +512,6 @@ fun HomeScreen(
                             getDepartureTime()
                         }
                     },
-                    onIconClick = {
-                        if (homeUiState.isBusDeparted) {
-                            showTempMessage(ComponentType.DEPARTURE_TIME_CONFIRMED_CLICKED)
-                        } else {
-                            showTempMessage(ComponentType.DEPARTURE_TIME_NOT_CONFIRMED_CLICKED)
-                        }
-                    },
                     onHomeDepartureTimeClick = {
 //                        showTempMessage(ComponentType.DEPARTURE_TIME_CONFIRMED_CLICKED)
                         requestCharacterSpeech(
@@ -782,7 +530,6 @@ fun HomeScreen(
                         )
                     },
                     onHomeExpectDepartureTimeClick = {
-                        showTempMessage(ComponentType.DEPARTURE_TIME_NOT_CONFIRMED_CLICKED)
                         AmplitudeUtils.trackEventWithProperties(
                             HOME_DEPARTURE_TIME_CLICKED,
                             mapOf(
@@ -823,14 +570,6 @@ fun HomeScreen(
                 )
             }
         }
-
-//        UnifiedCharacterBubble(
-//            characterState = characterState,
-//            onCharacterClick = onCharacterClick,
-//            modifier = Modifier
-//                .align(Alignment.BottomStart)
-//                .padding(start = 8.dp, bottom = characterState.bottomPadding)
-//        )
 
         Timber.d("isMapReady : ${homeUiState.isMapReady}")
         if (homeUiState.isMapReady) {
@@ -1166,6 +905,7 @@ data class CharacterTexts(
 private fun HomeScreenPreview() {
     HomeScreen(
         padding = PaddingValues(0.dp),
+        currentLocation = LatLng(0.0, 0.0),
         getUserId = { 1 }
     )
 }
