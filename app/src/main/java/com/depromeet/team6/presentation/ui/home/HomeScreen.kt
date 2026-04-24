@@ -434,7 +434,7 @@ fun HomeScreen(
             AfterRegisterMap(
                 padding = padding,
                 currentLocation = currentLocation,
-                legs = homeUiState.itineraryInfo!!.legs,
+                legs = homeUiState.itineraryInfo?.legs ?: emptyList(),
                 isAlarmRegistered = homeUiState.isAlarmRegistered,
                 isMapFocused = homeUiState.isMapFocused,
                 initialMapFocus = MapFocusState.Departure,

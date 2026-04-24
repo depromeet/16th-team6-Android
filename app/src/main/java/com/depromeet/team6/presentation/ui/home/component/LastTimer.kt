@@ -50,10 +50,11 @@ fun LastTimer(
 
     val remainingTimeMillis by remember {
         derivedStateOf {
-            if (targetTimeMillis == null) {
+            val target = targetTimeMillis
+            if (target == null) {
                 0L
             } else {
-                val remaining = targetTimeMillis!! - currentTime
+                val remaining = target - currentTime
                 if (remaining < 0) 0L else remaining
             }
         }

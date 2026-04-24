@@ -1,4 +1,32 @@
 {
   "phase": "COMPLETED",
-  "feedback": "FcmService.onMessageReceived\ub97c WorkManager\ub85c \ub9ac\ud329\ud130\ub9c1\ud558\uc5ec \ubc31\uadf8\ub77c\uc6b4\ub4dc \uc81c\ud55c\uc744 \uc900\uc218\ud558\ub3c4\ub85d \uc218\uc815\ub418\uc5c8\uc2b5\ub2c8\ub2e4. HiltWorker\ub97c \ud65c\uc6a9\ud55c GetUserInfoWorker \uad6c\ud604, Team6App\uc758 Configuration.Provider \uc124\uc815, AndroidManifest \ubc0f \uc758\uc874\uc131 \uc5c5\ub370\uc774\ud2b8\uac00 \ubaa8\ub450 \uc131\uacf5\uc801\uc73c\ub85c \uc644\ub8cc\ub418\uc5c8\uc73c\uba70 \ube4c\ub4dc \uac80\uc99d\uc744 \ub9c8\ucce4\uc2b5\ub2c8\ub2e4."
+  "goal": "Refactor HomeViewModel and related components to fix null-safety in routeName parsing and eliminate unsafe '!!' operator usage, ensuring robust data handling across the UI and Domain layers.",
+  "feedback": "HomeViewModel을 포함하여 HomeScreen, AfterRegisterMap, LastTimer 등 관련 UI 컴포넌트 전체에서 위험한 '!!' 연산자를 모두 제거했습니다. Kotlin의 안전한 호출(?.), 엘비스 연산자(?:), 그리고 smart cast를 활용한 로컬 변수 캡처 등을 사용하여 널 안정성을 확보했습니다. 모든 변경 사항이 반영된 상태에서 빌드 검증(assembleDebug)이 성공적으로 완료되었음을 확인했습니다.",
+  "steps": [
+    {
+      "id": 1,
+      "description": "Identify all occurrences of '!!' operator and unsafe parsing logic in HomeViewModel related to routeName and API responses.",
+      "status": "DONE"
+    },
+    {
+      "id": 2,
+      "description": "Refactor data layer DTOs and Domain layer Models to ensure routeName is handled as a nullable type or with safe defaults.",
+      "status": "DONE"
+    },
+    {
+      "id": 3,
+      "description": "Update HomeViewModel to use safe calls (?.), elvis operators (?:), or scope functions (let, also) instead of forced non-null assertions.",
+      "status": "DONE"
+    },
+    {
+      "id": 4,
+      "description": "Eliminate remaining unsafe '!!' assertions in related UI components (HomeScreen, LastTimer, AfterRegisterMap).",
+      "status": "DONE"
+    },
+    {
+      "id": 5,
+      "description": "Verify the refactor by ensuring the application builds successfully and unit tests pass.",
+      "status": "DONE"
+    }
+  ]
 }
