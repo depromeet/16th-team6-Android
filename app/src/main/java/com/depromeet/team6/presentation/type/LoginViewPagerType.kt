@@ -20,13 +20,8 @@ enum class LoginViewPagerType(
         imageRes = R.drawable.img_login_image3,
         textRes = R.string.login_pager_text_third
     ),
-
     FOURTH(
         imageRes = R.drawable.img_login_image4,
         textRes = R.string.login_pager_text_fourth
-    ),
-    FIFTH(
-        imageRes = R.drawable.img_login_image5,
-        textRes = R.string.login_pager_text_fifth
     )
 }
