@@ -97,6 +97,18 @@
             android:name=".data.background.AlarmReceiver"
             android:enabled="true"
             android:exported="false" />
+
+        <!-- Disable default WorkManager initializer to use custom Configuration.Provider -->
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            android:exported="false"
+            tools:node="merge">
+            <meta-data
+                android:name="androidx.work.WorkManagerInitializer"
+                android:value="androidx.startup"
+                tools:node="remove" />
+        </provider>
     </application>
 
 </manifest>

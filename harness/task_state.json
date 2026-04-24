@@ -1,4 +1,4 @@
 {
   "phase": "COMPLETED",
-  "feedback": "PrimaryButton.kt의 디자인 속성 롤백 및 임포트 정리가 완료되었으며, 빌드 성공을 확인했습니다. 또한 harness 시스템의 안정성 개선 사항이 반영되었습니다."
+  "feedback": "FcmService.onMessageReceived\ub97c WorkManager\ub85c \ub9ac\ud329\ud130\ub9c1\ud558\uc5ec \ubc31\uadf8\ub77c\uc6b4\ub4dc \uc81c\ud55c\uc744 \uc900\uc218\ud558\ub3c4\ub85d \uc218\uc815\ub418\uc5c8\uc2b5\ub2c8\ub2e4. HiltWorker\ub97c \ud65c\uc6a9\ud55c GetUserInfoWorker \uad6c\ud604, Team6App\uc758 Configuration.Provider \uc124\uc815, AndroidManifest \ubc0f \uc758\uc874\uc131 \uc5c5\ub370\uc774\ud2b8\uac00 \ubaa8\ub450 \uc131\uacf5\uc801\uc73c\ub85c \uc644\ub8cc\ub418\uc5c8\uc73c\uba70 \ube4c\ub4dc \uac80\uc99d\uc744 \ub9c8\ucce4\uc2b5\ub2c8\ub2e4."
 }

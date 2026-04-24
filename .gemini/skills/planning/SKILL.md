@@ -1,6 +1,6 @@
 ---
 name: planning
-description: 기능을 분석하여 harness/harness.sh를 통해 작업을 위임하고 전체 프로세스를 관리합니다.
+description: plan 모드 진입 혹은 사용자가 기능 추가나 수정 등을 요청했을 때 활성화 됩니다. 
 ---
 # Instructions
 이 스킬은 사용자가 기능 구현이나 코드 수정을 요청했을 때, `harness/harness.sh`를 활용하여 Claude Code에게 작업을 위임하고 전체 진행 상태를 관리하도록 합니다.
@@ -17,7 +17,7 @@ Gemini는 다음 도구들을 사용하여 구현에 필요한 컨텍스트를 �
 - **아키텍처**: 프로젝트 내의 디자인 패턴과 스타일 가이드를 파악합니다.
 
 ### 2. Write Planning Report
-Research & Analysis 단계에서 수집한 컨텍스트를 task_state.json 파일에 기록합니다.
+Research & Analysis 단계에서 수집한 컨텍스트를 harness/task_state.json 파일에 기록합니다.
 
 ```json
 {
