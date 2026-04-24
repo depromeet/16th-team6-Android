@@ -28,20 +28,22 @@ import com.depromeet.team6.presentation.ui.common.button.AtchaCommonButton
 import com.depromeet.team6.ui.theme.LocalTeam6Colors
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.depromeet.team6.ui.theme.defaultTeam6Typography
-import kotlin.math.ceil
 
 @Composable
 fun VolumeBottomSheet(
     modifier: Modifier = Modifier,
     currentVolume: Int,
+    onVolumeChanged: (Int) -> Unit,
     onButtonClicked: (Int) -> Unit
 ) {
     val context = LocalContext.current
-    var current by remember {
+    var current by remember(currentVolume) {
         val audio = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
-        val systemMax = audio.getStreamMaxVolume(AudioManager.STREAM_MUSIC).coerceAtLeast(1)
-        val systemMin = ceil(systemMax * 0.10f).toInt().coerceAtLeast(1)
-        val volumeScale = (currentVolume * 100f / systemMax).toInt().coerceAtLeast(systemMin)
+        val systemMax = audio.getStreamMaxVolume(AudioManager.STREAM_ALARM)
+        val volumeScale = AlarmVolumeMapper.systemToPercent(
+            systemVolume = currentVolume,
+            maxVolume = systemMax
+        )
         mutableIntStateOf(volumeScale)
     }
 
@@ -75,8 +77,9 @@ fun VolumeBottomSheet(
 
             VolumeBar(
                 currentVolume = current,
-                onVolumeChanged = {
-                    current = it
+                onVolumeChanged = { newValue ->
+                    current = newValue
+                    onVolumeChanged(newValue)
                 }
             )
 
@@ -101,6 +104,7 @@ fun VolumeBottomSheet(
 fun VolumeBottomSheetPreview() {
     VolumeBottomSheet(
         currentVolume = 1,
+        onVolumeChanged = {},
         onButtonClicked = {}
     )
 }
