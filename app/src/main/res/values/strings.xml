@@ -69,11 +69,10 @@
     <string name="overlay_permission_toast_message">"'다른 앱 위에 표시'를 허용해주세요"</string>
 
     <!-- LoginScreen -->
-    <string name="login_pager_text_first"></string>
-    <string name="login_pager_text_second">우리집 미리 등록 해두고\n출발지만 선택해요</string>
-    <string name="login_pager_text_third">푸시 알림으로\n남은 시간 알려드릴게요</string>
-    <string name="login_pager_text_fourth">지금 몇시지? 하지 마세요\n출발 알림 받고 막차 타러 출발!</string>
-    <string name="login_pager_text_fifth">이제 경로만 따라가면 돼요\n안전하게 귀가해요</string>
+    <string name="login_pager_text_first">번거롭던 막차 찾기,\n이제 클릭 한 번이면 돼요</string>
+    <string name="login_pager_text_second">늦은 출발순으로\n다양한 막차 경로 확인해요</string>
+    <string name="login_pager_text_third">원하는 경로 선택하고\n출발 시간에 알람 받아요</string>
+    <string name="login_pager_text_fourth">경로 보고\n안전하게 귀가해요</string>
 
     <!-- HomeScreen -->
     <string name="home_icon_search_text">경로 상세 아이콘</string>

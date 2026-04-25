@@ -156,40 +156,41 @@ while true; do
       log_info "⏳ Claude 작업 완료."
       sleep 3
       ;;
-"REVIEW_REQUIRED")
-  log_info "🧐 Gemini가 변경 사항을 검증하고 리뷰 중입니다..."
+    "REVIEW_REQUIRED")
+      log_info "🧐 Gemini가 변경 사항을 검증하고 리뷰 중입니다..."
 
-  # 빌드 검증 (review-and-build 스킬의 핵심 로직 반영)
-  log_info "🔨 빌드 검증을 시작합니다..."
-  BUILD_LOG=$(./gradlew assembleDebug --quiet 2>&1)
-  BUILD_EXIT=$?
+      # 빌드 검증 (review-and-build 스킬의 핵심 로직 반영)
+      log_info "🔨 빌드 검증을 시작합니다..."
+      BUILD_LOG=$(./gradlew assembleDebug --quiet 2>&1)
+      BUILD_EXIT=$?
 
-  DIFF_STAT=$(git diff --stat)
-  DIFF_FULL=$(git diff)
+      DIFF_STAT=$(git diff --stat)
+      DIFF_FULL=$(git diff)
 
-  echo -e "${YELLOW}--- [CHANGE SUMMARY] ---${NC}"
-  echo "$DIFF_STAT"
+      echo -e "${YELLOW}--- [CHANGE SUMMARY] ---${NC}"
+      echo "$DIFF_STAT"
 
-  if [ $BUILD_EXIT -ne 0 ]; then
-    log_error "❌ 빌드 실패! 오류 내용을 분석하여 Claude에게 피드백을 전달합니다."
-    PROMPT="You are a Senior Architect. The build FAILED after Claude's changes. \n\n[BUILD ERROR]\n$BUILD_LOG \n\n[DIFF]\n$DIFF_FULL \n\nAnalyze the error and set phase to 'REPLANNING' with a specific 'feedback' for Claude to fix it. Output ONLY valid JSON."
-  else
-    log_success "✅ 빌드 성공! 코드 리뷰를 진행합니다."
-    PROMPT="You are a Senior Architect. The build was SUCCESSFUL. Review the following changes based on the goal: $(jq -r '.goal' "$STATE_FILE")\n\n[DIFF SUMMARY]\n$DIFF_STAT\n\n[FULL DIFF]\n$DIFF_FULL\n\nIf the code quality is good, set phase to 'COMPLETED'. If not, set to 'REPLANNING' with feedback. Output ONLY valid JSON."
-  fi
+      if [ $BUILD_EXIT -ne 0 ]; then
+        log_error "❌ 빌드 실패! 오류 내용을 분석하여 Claude에게 피드백을 전달합니다."
+        PROMPT="You are a Senior Architect. The build FAILED after Claude's changes. \n\n[BUILD ERROR]\n$BUILD_LOG \n\n[DIFF]\n$DIFF_FULL \n\nAnalyze the error and set phase to 'REPLANNING' with a specific 'feedback' for Claude to fix it. Output ONLY valid JSON."
+      else
+        log_success "✅ 빌드 성공! 코드 리뷰를 진행합니다."
+        PROMPT="You are a Senior Architect. The build was SUCCESSFUL. Review the following changes based on the goal: $(jq -r '.goal' "$STATE_FILE")\n\n[DIFF SUMMARY]\n$DIFF_STAT\n\n[FULL DIFF]\n$DIFF_FULL\n\nIf the code quality is good, set phase to 'COMPLETED'. If not, set to 'REPLANNING' with feedback. Output ONLY valid JSON."
+      fi
 
-  RESULT=$(call_gemini "$PROMPT")
-  if save_state_safely "$RESULT"; then
-...
+      RESULT=$(call_gemini "$PROMPT")
+      if save_state_safely "$RESULT"; then
         if [ "$(jq -r '.phase' "$STATE_FILE")" == "COMPLETED" ]; then
-          log_success "🎉 모든 작업이 승인되었습니다!"
+          log_success "🎉 모든 작업이 승인되었습니다! 안드로이드 스튜디오를 엽니다."
+          studio . &
           exit 0
         fi
       fi
       ;;
 
     "COMPLETED")
-      log_success "작업이 이미 완료되었습니다."
+      log_success "작업이 이미 완료되었습니다. 안드로이드 스튜디오를 엽니다."
+      studio . &
       exit 0
       ;;
 

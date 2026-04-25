@@ -10,8 +10,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
@@ -25,6 +27,7 @@ import com.depromeet.team6.presentation.ui.common.AtchaTabRowV2
 import com.depromeet.team6.presentation.ui.coursesearch.CourseSearchContract
 import com.depromeet.team6.presentation.ui.itinerary.LegInfoDummyProvider
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
+import com.depromeet.team6.ui.theme.defaultTeam6Typography
 import kotlinx.coroutines.launch
 import java.time.LocalTime
 import java.time.ZoneId
@@ -55,9 +58,12 @@ fun TransportTabMenuV2(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
+                .background(defaultTeam6Colors.gray950)
         ) {
             // TabRow
             AtchaTabRowV2(
+                modifier = Modifier
+                    .weight(1f),
                 tabs = tabItems,
                 selectedTabIndex = pagerState.currentPage,
                 onTabClick = { tabIndex ->
@@ -72,6 +78,14 @@ fun TransportTabMenuV2(
                         )
                     }
                 }
+            )
+            Text(
+                modifier = Modifier
+                    .align(Alignment.CenterVertically)
+                    .padding(end = 16.dp),
+                text = "늦은 출발순",
+                style = defaultTeam6Typography.body8_B8R13,
+                color = defaultTeam6Colors.white
             )
         }
 

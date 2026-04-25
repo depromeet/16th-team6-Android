@@ -531,11 +531,11 @@ class HomeViewModel @Inject constructor(
                         )
                     }
                     AlarmScheduler.scheduleLockScreenAlarm(context, it)
-                    homeRepository.setLastCourseInfo(
-                        homeRepository.getLastCourseInfo()!!.copy(
-                            departureTime = it
+                    homeRepository.getLastCourseInfo()?.let { courseInfo ->
+                        homeRepository.setLastCourseInfo(
+                            courseInfo.copy(departureTime = it)
                         )
-                    )
+                    }
                 }
                 .onFailure {
                     handleApiException(it)
@@ -619,7 +619,7 @@ class HomeViewModel @Inject constructor(
         setEvent(
             HomeContract.HomeEvent.LoadBusArrivalParameter(
                 BusArrivalParameter(
-                    routeName = leg.routeName!!,
+                    routeName = leg.routeName.orEmpty(),
                     stationName = leg.startPoint.name,
                     lat = leg.startPoint.lat,
                     lon = leg.startPoint.lon,

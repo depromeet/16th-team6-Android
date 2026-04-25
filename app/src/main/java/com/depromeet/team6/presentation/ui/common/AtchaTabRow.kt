@@ -115,7 +115,6 @@ fun AtchaTabRowV2(
 ) {
     Column(
         modifier = modifier
-            .fillMaxWidth()
             .background(defaultTeam6Colors.gray950)
     ) {
         Row(

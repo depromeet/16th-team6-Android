@@ -10,19 +10,22 @@ import android.util.Log
 import androidx.annotation.Keep
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.app.NotificationCompat
+import androidx.work.BackoffPolicy
+import androidx.work.Constraints
+import androidx.work.ExistingWorkPolicy
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.workDataOf
 import com.depromeet.team6.R
-import com.depromeet.team6.data.dataremote.datasource.AuthRemoteDataSource
+import com.depromeet.team6.data.background.worker.AddPushAlarmWorker
 import com.depromeet.team6.domain.repository.HomeRepository
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.google.firebase.messaging.Constants
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.launch
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 @Keep
@@ -31,17 +34,8 @@ class FcmService : FirebaseMessagingService() {
 
     @Inject lateinit var homeRepository: HomeRepository
 
-    @Inject lateinit var authRemoteDataSource: AuthRemoteDataSource
-
-    private val serviceScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
-
     private lateinit var body: String
     private lateinit var title: String
-
-    override fun onDestroy() {
-        super.onDestroy()
-        serviceScope.cancel()
-    }
 
     override fun onNewToken(token: String) {
         super.onNewToken(token)
@@ -90,13 +84,22 @@ class FcmService : FirebaseMessagingService() {
                     AlarmScheduler.scheduleLockScreenAlarm(this, timeStamp)
                     updateDepartureTime(timeStamp)
                     if (message.data["isReal"] == "true") {
-                        serviceScope.launch {
-                            authRemoteDataSource.getUserInfo()
-                                .onSuccess {
-                                    AlarmScheduler.scheduleAdditionalPushAlarm(this@FcmService, timeStamp)
-                                }
-                                .onFailure { }
-                        }
+                        val inputData = workDataOf(
+                            AddPushAlarmWorker.KEY_TIME_STAMP to timeStamp
+                        )
+                        val constraints = Constraints.Builder()
+                            .setRequiredNetworkType(NetworkType.CONNECTED)
+                            .build()
+                        val workRequest = OneTimeWorkRequestBuilder<AddPushAlarmWorker>()
+                            .setInputData(inputData)
+                            .setConstraints(constraints)
+                            .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 10, TimeUnit.SECONDS)
+                            .build()
+                        WorkManager.getInstance(this).enqueueUniqueWork(
+                            "GetUserInfoWorker-$timeStamp",
+                            ExistingWorkPolicy.KEEP,
+                            workRequest
+                        )
                     }
                 }
             } else {
