@@ -180,9 +180,9 @@ fun AfterRegisterMap(
                             latLng: TMapPoint?,
                             p3: PointF?
                         ) {
-                            if (markerItems?.isEmpty() == true) return
+                            if (markerItems.isNullOrEmpty()) return
 
-                            val marker = markerItems!![0]
+                            val marker = markerItems[0]
                             val parts = marker.id.split("_")
                             if (parts[0] == "departPoint" || parts[0] == "destinationPoint" || parts[0] == "CurrentMarker") return
                             val transportTypeStr = parts[1]
@@ -191,10 +191,12 @@ fun AfterRegisterMap(
                             val legIndex = parts[3].toInt()
 
                             if (transportType == TransportType.WALK) return
+                            val lat = latLng?.latitude ?: return
+                            val lon = latLng.longitude
                             onTransportMarkerClick(
                                 FocusedMarkerParameter(
-                                    lat = latLng!!.latitude,
-                                    lon = latLng.longitude,
+                                    lat = lat,
+                                    lon = lon,
                                     transportType = transportType,
                                     subTypeIdx = subTypeIdx,
                                     legIndex = legIndex

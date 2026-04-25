@@ -5,6 +5,8 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.util.Base64
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.hilt.work.HiltWorkerFactory
+import androidx.work.Configuration
 import com.depromeet.team6.BuildConfig.KAKAO_NATIVE_APP_KEY
 import com.depromeet.team6.data.background.AlarmScheduler
 import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils.initAmplitude
@@ -14,9 +16,17 @@ import dagger.hilt.android.HiltAndroidApp
 import timber.log.Timber
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
+import javax.inject.Inject
 
 @HiltAndroidApp
-class Team6App : Application() {
+class Team6App : Application(), Configuration.Provider {
+
+    @Inject lateinit var workerFactory: HiltWorkerFactory
+
+    override val workManagerConfiguration: Configuration
+        get() = Configuration.Builder()
+            .setWorkerFactory(workerFactory)
+            .build()
 
     override fun onCreate() {
         super.onCreate()

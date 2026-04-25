@@ -3,6 +3,7 @@ package com.depromeet.team6.presentation.ui.login
 import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -180,37 +181,40 @@ fun LoginScreen(
             )
             .padding(padding)
     ) {
-        Spacer(modifier = Modifier.height(56.dp))
-        LoginIndicator(
-            selectedIndex = uiState.pagerState.currentPage,
-            modifier = Modifier.align(Alignment.CenterHorizontally)
-        )
-        HorizontalPager(
-            count = LoginViewPagerType.entries.size,
-            state = uiState.pagerState,
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
-        ) { page ->
-            val loginViewPagerType = LoginViewPagerType.entries[page]
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Spacer(modifier = Modifier.height(30.dp))
-                Text(
-                    text = stringResource(loginViewPagerType.textRes),
-                    style = defaultTeam6Typography.heading1_H1B22,
-                    color = defaultTeam6Colors.white,
-                    textAlign = TextAlign.Center
-                )
-                Spacer(modifier = Modifier.weight(1f))
-                Image(
-                    painter = painterResource(id = loginViewPagerType.imageRes),
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                )
-                Spacer(modifier = Modifier.height(60.dp))
+                .weight(1f),
+            verticalArrangement = Arrangement.Center
+        ) {
+            HorizontalPager(
+                count = LoginViewPagerType.entries.size,
+                state = uiState.pagerState,
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) { page ->
+                val loginViewPagerType = LoginViewPagerType.entries[page]
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Image(
+                        painter = painterResource(id = loginViewPagerType.imageRes),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    )
+                    Spacer(modifier = Modifier.height(40.dp))
+                    Text(
+                        text = stringResource(loginViewPagerType.textRes),
+                        style = defaultTeam6Typography.heading1_H1B22,
+                        color = defaultTeam6Colors.white,
+                        textAlign = TextAlign.Center
+                    )
+                }
             }
+            Spacer(modifier = Modifier.height(32.dp))
+            LoginIndicator(
+                selectedIndex = uiState.pagerState.currentPage,
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            )
         }
         Box(
             modifier = Modifier

@@ -132,6 +132,11 @@ dependencies {
     implementation(libs.bundles.hilt)
     kapt(libs.hilt.compiler)
 
+    // WorkManager
+    implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.androidx.hilt.work)
+    kapt(libs.androidx.hilt.compiler)
+
     // Navigation
     implementation(libs.androidx.compose.navigation)
     implementation(libs.hilt.navigation.compose)
