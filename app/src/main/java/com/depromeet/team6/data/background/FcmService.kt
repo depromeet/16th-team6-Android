@@ -10,17 +10,22 @@ import android.util.Log
 import androidx.annotation.Keep
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.app.NotificationCompat
+import androidx.work.BackoffPolicy
+import androidx.work.Constraints
+import androidx.work.ExistingWorkPolicy
+import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
 import com.depromeet.team6.R
-import com.depromeet.team6.data.background.worker.GetUserInfoWorker
+import com.depromeet.team6.data.background.worker.AddPushAlarmWorker
 import com.depromeet.team6.domain.repository.HomeRepository
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.google.firebase.messaging.Constants
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 @Keep
@@ -80,12 +85,21 @@ class FcmService : FirebaseMessagingService() {
                     updateDepartureTime(timeStamp)
                     if (message.data["isReal"] == "true") {
                         val inputData = workDataOf(
-                            GetUserInfoWorker.KEY_TIME_STAMP to timeStamp
+                            AddPushAlarmWorker.KEY_TIME_STAMP to timeStamp
                         )
-                        val workRequest = OneTimeWorkRequestBuilder<GetUserInfoWorker>()
-                            .setInputData(inputData)
+                        val constraints = Constraints.Builder()
+                            .setRequiredNetworkType(NetworkType.CONNECTED)
                             .build()
-                        WorkManager.getInstance(this).enqueue(workRequest)
+                        val workRequest = OneTimeWorkRequestBuilder<AddPushAlarmWorker>()
+                            .setInputData(inputData)
+                            .setConstraints(constraints)
+                            .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 10, TimeUnit.SECONDS)
+                            .build()
+                        WorkManager.getInstance(this).enqueueUniqueWork(
+                            "GetUserInfoWorker-$timeStamp",
+                            ExistingWorkPolicy.KEEP,
+                            workRequest
+                        )
                     }
                 }
             } else {
