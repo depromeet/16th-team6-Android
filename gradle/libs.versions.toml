@@ -3,6 +3,7 @@ accompanistFlowlayout = "0.36.0"
 accompanistSystemuicontroller = "0.30.1"
 accompanistWebview = "0.24.13-rc"
 agp = "8.7.0"
+playAppUpdate = "2.1.0"
 firebaseBom = "33.10.0"
 flatbuffersJava = "2.0.6"
 flatbuffersJavaVersion = "24.3.25"
@@ -53,6 +54,7 @@ accompanist-systemuicontroller = { module = "com.google.accompanist:accompanist-
 accompanist-webview = { module = "com.google.accompanist:accompanist-webview", version.ref = "accompanistWebview" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-security-crypto = { module = "androidx.security:security-crypto", version.ref = "securityCrypto" }
+app-update-ktx = { module = "com.google.android.play:app-update-ktx", version.ref = "playAppUpdate" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics" }
