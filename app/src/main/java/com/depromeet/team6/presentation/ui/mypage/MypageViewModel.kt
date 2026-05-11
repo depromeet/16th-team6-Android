@@ -4,6 +4,11 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
+import com.depromeet.team6.BuildConfig
+import com.google.android.play.core.appupdate.AppUpdateManager
+import com.google.android.play.core.appupdate.AppUpdateManagerFactory
+import com.google.android.play.core.install.model.UpdateAvailability
 import androidx.lifecycle.viewModelScope
 import com.depromeet.team6.data.dataremote.model.request.user.RequestModifyUserInfoDto
 import com.depromeet.team6.data.repositoryimpl.UserInfoRepositoryImpl
@@ -144,6 +149,7 @@ class MypageViewModel @Inject constructor(
 
         viewModelScope.launch {
             getUserInfoUseCase().onSuccess { userInfo ->
+                Log.d("MypageVM", "appVersion from server: ${userInfo.appVersion}")
                 setLocationToHomeAddress(userInfo.userHome.latitude, userInfo.userHome.longitude)
                 setState {
                     copy(
@@ -262,6 +268,28 @@ class MypageViewModel @Inject constructor(
             }
             context.startActivity(intent)
         }
+    }
+
+    fun checkUpdateAvailability(
+        context: Context,
+        appUpdateManager: AppUpdateManager = AppUpdateManagerFactory.create(context)
+    ) {
+        appUpdateManager.appUpdateInfo
+            .addOnSuccessListener { appUpdateInfo ->
+                val isUpdateAvailable = isUpdateAvailableFromPlayApi(appUpdateInfo.updateAvailability())
+                setState { copy(isUpdateAvailable = isUpdateAvailable) }
+            }
+            .addOnFailureListener {
+                fallbackToServerVersion()
+            }
+    }
+
+    private fun fallbackToServerVersion() {
+        val isUpdateAvailable = isUpdateAvailableFromServer(
+            serverVersion = currentState.userInfo.appVersion.orEmpty(),
+            currentVersion = BuildConfig.VERSION_NAME
+        )
+        setState { copy(isUpdateAvailable = isUpdateAvailable) }
     }
 
     private fun setLocationToHomeAddress(
@@ -469,5 +497,13 @@ class MypageViewModel @Inject constructor(
 //                navigateToMainSetting()
 //            }
 //        }
+    }
+
+    companion object {
+        internal fun isUpdateAvailableFromPlayApi(updateAvailability: Int): Boolean =
+            updateAvailability == UpdateAvailability.UPDATE_AVAILABLE
+
+        internal fun isUpdateAvailableFromServer(serverVersion: String, currentVersion: String): Boolean =
+            serverVersion.isNotEmpty() && serverVersion != "v$currentVersion"
     }
 }
