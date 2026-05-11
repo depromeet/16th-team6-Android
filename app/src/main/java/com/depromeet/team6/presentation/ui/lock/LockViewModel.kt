@@ -4,6 +4,8 @@ import android.content.ContentValues.TAG
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.viewModelScope
+import com.depromeet.team6.data.background.AlarmScheduler
+import com.depromeet.team6.domain.repository.HomeRepository
 import com.depromeet.team6.domain.repository.UserInfoRepository
 import com.depromeet.team6.domain.usecase.GetTaxiCostUseCase
 import com.depromeet.team6.presentation.util.base.BaseViewModel
@@ -15,6 +17,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LockViewModel @Inject constructor(
+    private val homeRepository: HomeRepository,
     private val userInfoRepository: UserInfoRepository,
     private val getTaxiCostUseCase: GetTaxiCostUseCase,
     @ApplicationContext private val context: Context
@@ -63,11 +66,11 @@ class LockViewModel @Inject constructor(
                 }
             }
             LockContract.LockEvent.OnDepartureClick -> {
-                saveUserDepartureStatus(true)
+                stopAlarmFlow()
                 setSideEffect(LockContract.LockSideEffect.NavigateToHome(true))
             }
             LockContract.LockEvent.OnLateClick -> {
-                saveUserDepartureStatus(true)
+                stopAlarmFlow()
                 setSideEffect(LockContract.LockSideEffect.NavigateToHome(false))
             }
         }
@@ -92,17 +95,14 @@ class LockViewModel @Inject constructor(
         }
     }
 
-    private fun saveUserDepartureStatus(userDeparted: Boolean) {
+    private fun stopAlarmFlow() {
         viewModelScope.launch {
             try {
-                val sharedPreferences = context.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
-                sharedPreferences.edit().apply {
-                    putBoolean("userDeparture", userDeparted)
-                    apply()
-                }
-                Log.d("userDeparture", "사용자 출발 상태 저장: $userDeparted")
+                homeRepository.setUserDeparture(true)
+                AlarmScheduler.unScheduleAllAlarms(context)
+                Log.d("userDeparture", "사용자 출발 처리 및 알람 정리 완료")
             } catch (e: Exception) {
-                Log.e("userDeparture", "사용자 출발 상태 저장 중 오류 발생", e)
+                Log.e("userDeparture", "사용자 출발 처리 중 오류 발생", e)
             }
         }
     }

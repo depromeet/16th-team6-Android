@@ -79,8 +79,14 @@ class FcmService : FirebaseMessagingService() {
         if (message.data.isNotEmpty()) {
             if (type == FCM_TYPE_SUGGESTION) {
             } else if (type == FCM_TYPE_REFRESH) {
+                if (homeRepository.isUserDeparted()) {
+                    AlarmScheduler.unScheduleAllAlarms(this)
+                    return
+                }
+
                 val timeStamp = message.data["body"]
                 if (timeStamp != null) {
+                    AlarmScheduler.unScheduleLockAlarm(this)
                     AlarmScheduler.scheduleLockScreenAlarm(this, timeStamp)
                     updateDepartureTime(timeStamp)
                     if (message.data["isReal"] == "true") {
@@ -93,11 +99,12 @@ class FcmService : FirebaseMessagingService() {
                         val workRequest = OneTimeWorkRequestBuilder<AddPushAlarmWorker>()
                             .setInputData(inputData)
                             .setConstraints(constraints)
+                            .addTag(AlarmScheduler.ADDITIONAL_PUSH_WORK_TAG)
                             .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 10, TimeUnit.SECONDS)
                             .build()
                         WorkManager.getInstance(this).enqueueUniqueWork(
-                            "GetUserInfoWorker-$timeStamp",
-                            ExistingWorkPolicy.KEEP,
+                            AlarmScheduler.ADDITIONAL_PUSH_WORK_NAME,
+                            ExistingWorkPolicy.REPLACE,
                             workRequest
                         )
                     }

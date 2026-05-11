@@ -21,6 +21,7 @@ class InitAlarmUseCase @Inject constructor(
         homeRepository.setDestinationPoint(destinationAddress)
         homeRepository.setLastCourseInfo(registeredCourseInfo)
         homeRepository.setLastRouteId(lastRouteId)
+        homeRepository.setUserDeparture(false)
         homeRepository.setAlarmRegistered(true)
     }
 }
