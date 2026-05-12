@@ -133,7 +133,6 @@ object AlarmScheduler {
         unScheduleLockAlarm(context)
         unScheduleAdditionalPushAlarm(context)
         cancelAdditionalPushWork(context)
-
     }
 
     fun scheduleLocationCheck(context: Context) {
