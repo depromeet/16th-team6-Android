@@ -265,8 +265,8 @@ fun HomeRoute(
                         homeUiState = uiState,
                         currentLocation = currentLocation,
                         getUserId = { viewModel.getUserId() },
-                        getCenterLocation = { position ->
-                            viewModel.getCenterLocation(position)
+                        getCenterLocationAddress = { position ->
+                            viewModel.getCenterLocationAddress(position)
                         },
                         onTimerFinished = { viewModel.onTimerFinished() },
                         getDepartureTime = { viewModel.loadDepartureTime() },
@@ -375,7 +375,7 @@ fun HomeScreen(
     homeUiState: HomeContract.HomeUiState = HomeContract.HomeUiState(),
     currentLocation: LatLng,
     getUserId: () -> Int,
-    getCenterLocation: (LatLng) -> Unit = {},
+    getCenterLocationAddress: (LatLng) -> Unit = {},
     onTimerFinished: () -> Unit = {},
     getDepartureTime: () -> Unit = {},
     onCharacterClick: () -> Unit = {},
@@ -439,8 +439,8 @@ fun HomeScreen(
                 isMapFocused = homeUiState.isMapFocused,
                 initialMapFocus = MapFocusState.Departure,
                 mapModified = mapModified,
-                getCenterLocation = {
-                    getCenterLocation(it)
+                getCenterLocationAddress = {
+                    getCenterLocationAddress(it)
                 },
                 onTransportMarkerClick = { markerParameter ->
                     afterRegisterMapMarkerClick(markerParameter)
@@ -454,8 +454,8 @@ fun HomeScreen(
                 isAlarmRegistered = homeUiState.isAlarmRegistered,
                 userId = getUserId(),
                 isMapFocused = homeUiState.isMapFocused,
-                getCenterLocation = {
-                    getCenterLocation(it)
+                getCenterLocationAddress = {
+                    getCenterLocationAddress(it)
                 },
                 mapModified = mapModified,
                 isMapReadyCallback = isMapReadyCallback

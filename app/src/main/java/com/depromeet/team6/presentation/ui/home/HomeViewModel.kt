@@ -437,7 +437,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun getCenterLocation(location: LatLng) {
+    fun getCenterLocationAddress(location: LatLng) {
         viewModelScope.launch {
             getAddressFromCoordinatesUseCase(location.latitude, location.longitude)
                 .onSuccess { addressData ->
