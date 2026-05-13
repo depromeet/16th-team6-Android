@@ -8,6 +8,7 @@ import com.depromeet.team6.domain.model.SearchHistory
 import com.depromeet.team6.domain.usecase.DeleteAllSearchHistoryUseCase
 import com.depromeet.team6.domain.usecase.DeleteSearchHistoryUseCase
 import com.depromeet.team6.domain.usecase.GetAddressFromCoordinatesUseCase
+import com.depromeet.team6.domain.usecase.GetIsServiceRegionUseCase
 import com.depromeet.team6.domain.usecase.GetLocationsUseCase
 import com.depromeet.team6.domain.usecase.GetSearchHistoriesUseCase
 import com.depromeet.team6.domain.usecase.PostSearchHistoriesUseCase
@@ -30,7 +31,8 @@ class SearchLocationViewModel @Inject constructor(
     private val postSearchHistoriesUseCase: PostSearchHistoriesUseCase,
     private val deleteSearchHistoryUseCase: DeleteSearchHistoryUseCase,
     private val deleteAllSearchHistoryUseCase: DeleteAllSearchHistoryUseCase,
-    private val getAddressFromCoordinatesUseCase: GetAddressFromCoordinatesUseCase
+    private val getAddressFromCoordinatesUseCase: GetAddressFromCoordinatesUseCase,
+    private val getIsServiceRegionUseCase: GetIsServiceRegionUseCase
 ) : BaseViewModel<SearchLocationContract.SearchLocationUiState, SearchLocationContract.SearchLocationSideEffect, SearchLocationContract.SearchLocationEvent>() {
 
     init {
@@ -237,5 +239,51 @@ class SearchLocationViewModel @Inject constructor(
 //                .onFailure {
 //                }
         }
+    }
+
+    fun validateAndNavigateToCourseSearch(destinationLocation: Address) {
+        val departureLocation = currentState.selectLocation
+        val distance = calculateDistance(
+            lat1 = departureLocation.lat,
+            lon1 = departureLocation.lon,
+            lat2 = destinationLocation.lat,
+            lon2 = destinationLocation.lon
+        )
+
+        if (distance <= 800.0) {
+            setSideEffect(SearchLocationContract.SearchLocationSideEffect.ShowTooCloseDialog)
+            return
+        }
+
+        viewModelScope.launch {
+            getIsServiceRegionUseCase(
+                lat = departureLocation.lat,
+                lon = departureLocation.lon
+            ).onSuccess { isServiceRegion ->
+                if (isServiceRegion) {
+                    setSideEffect(
+                        SearchLocationContract.SearchLocationSideEffect.NavigateToCourseSearch(
+                            departureLocation = departureLocation
+                        )
+                    )
+                } else {
+                    setSideEffect(SearchLocationContract.SearchLocationSideEffect.ShowOutOfServiceRegionBottomSheet)
+                }
+            }.onFailure {
+                setSideEffect(SearchLocationContract.SearchLocationSideEffect.ShowOutOfServiceRegionBottomSheet)
+            }
+        }
+    }
+
+    private fun calculateDistance(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Double {
+        val r = 6371000.0
+        val dLat = Math.toRadians(lat2 - lat1)
+        val dLon = Math.toRadians(lon2 - lon1)
+        val phi1 = Math.toRadians(lat1)
+        val phi2 = Math.toRadians(lat2)
+        val a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(phi1) * Math.cos(phi2) *
+            Math.sin(dLon / 2) * Math.sin(dLon / 2)
+        return 2 * r * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
     }
 }

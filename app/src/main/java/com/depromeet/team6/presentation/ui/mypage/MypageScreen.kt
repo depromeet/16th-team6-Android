@@ -42,6 +42,7 @@ import com.depromeet.team6.presentation.ui.mypage.component.MypageListItem
 import com.depromeet.team6.presentation.ui.mypage.component.MypageVersionItem
 import com.depromeet.team6.presentation.ui.mypage.component.TitleBar
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingSearchPopup
+import com.depromeet.team6.presentation.ui.mypage.navigation.MypageRoute
 import com.depromeet.team6.presentation.util.MyPageAmplitude.MYPAGE_BANNER_CLICKED
 import com.depromeet.team6.presentation.util.WebViewUrl.FEEDBACK_FORM_URL
 import com.depromeet.team6.presentation.util.WebViewUrl.PRIVACY_POLICY_URL
@@ -58,6 +59,7 @@ import com.depromeet.team6.ui.theme.LocalTeam6Typography
 @Composable
 fun MyPageRoute(
     navigateToLogin: () -> Unit,
+    initialScreenRoute: String,
     modifier: Modifier = Modifier,
     padding: PaddingValues = PaddingValues(0.dp),
     mypageViewModel: MypageViewModel = hiltViewModel(),
@@ -122,6 +124,18 @@ fun MyPageRoute(
             mypageViewModel.getUserInfo()
             mypageViewModel.updateUserLocation(context)
             isInitialized["initialized"] = true
+        }
+    }
+
+    LaunchedEffect(initialScreenRoute) {
+        mypageViewModel.setState {
+            copy(
+                currentScreen = if (initialScreenRoute == MypageRoute.Screen.CHANGE_HOME.route) {
+                    MypageContract.MypageScreen.CHANGE_HOME
+                } else {
+                    MypageContract.MypageScreen.MAIN
+                }
+            )
         }
     }
 

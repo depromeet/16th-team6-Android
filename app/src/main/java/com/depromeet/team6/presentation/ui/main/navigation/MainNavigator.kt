@@ -15,6 +15,7 @@ import com.depromeet.team6.presentation.ui.home.navigation.navigationHome
 import com.depromeet.team6.presentation.ui.itinerary.navigation.navigateToItinerary
 import com.depromeet.team6.presentation.ui.login.navigation.LoginRoute
 import com.depromeet.team6.presentation.ui.login.navigation.navigationLogin
+import com.depromeet.team6.presentation.ui.mypage.navigation.navigationMypageChangeHome
 import com.depromeet.team6.presentation.ui.mypage.navigation.navigationMypage
 import com.depromeet.team6.presentation.ui.onboarding.navigation.OnboardingRoute
 import com.depromeet.team6.presentation.ui.onboarding.navigation.navigationOnboarding
@@ -89,6 +90,10 @@ class MainNavigator(
 
     fun navigateToMypage() {
         navHostController.navigationMypage()
+    }
+
+    fun navigateToMypageChangeHome() {
+        navHostController.navigationMypageChangeHome()
     }
 
     fun navigateToSearchLocation(destinationLocation: Address, departureLocation: Address? = null) {

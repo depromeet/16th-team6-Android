@@ -4,7 +4,6 @@ import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.course.CourseInfo
 import com.depromeet.team6.domain.model.course.TransportType
 import com.depromeet.team6.presentation.model.bus.BusArrivalParameter
-import com.depromeet.team6.presentation.model.home.CharacterState
 import com.depromeet.team6.presentation.model.home.MapFocusState
 import com.depromeet.team6.presentation.model.itinerary.FocusedMarkerParameter
 import com.depromeet.team6.presentation.util.base.UiEvent
@@ -71,7 +70,6 @@ class HomeContract {
         val taxiCost: Int = 0,
         val deleteAlarmDialogVisible: Boolean = false,
         // 애니메이션
-        val characterState: CharacterState = CharacterState(),
         val characterMessages: SpeechRequest = SpeechRequest(
             emptyList()
         )

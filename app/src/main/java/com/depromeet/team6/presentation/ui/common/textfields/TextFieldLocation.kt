@@ -1,11 +1,13 @@
 package com.depromeet.team6.presentation.ui.common.textfields
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
@@ -31,6 +33,7 @@ fun TextFieldLocation(
     location: String,
     textColor: Color,
     backgroundColor: Color,
+    clickableIcon: Boolean = false,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -75,6 +78,17 @@ fun TextFieldLocation(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
+
+            if (clickableIcon) {
+                Spacer(modifier = Modifier.weight(1f))
+
+                Image(
+                    modifier = Modifier
+                        .size(20.dp),
+                    imageVector = ImageVector.vectorResource(R.drawable.ic_arrow_right_big),
+                    contentDescription = "",
+                )
+            }
         }
     }
 }

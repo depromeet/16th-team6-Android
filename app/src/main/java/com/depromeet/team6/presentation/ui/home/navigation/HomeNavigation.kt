@@ -26,6 +26,7 @@ fun NavGraphBuilder.homeNavGraph(
     navigateToLogin: () -> Unit,
     navigateToCourseSearch: (String, String) -> Unit,
     navigateToMypage: () -> Unit,
+    navigateToMypageChangeHome: () -> Unit,
     navigateToItinerary: (String, String, String, FocusedMarkerParameter?) -> Unit,
     navigateToSearchLocation: (Address) -> Unit
 ) {
@@ -44,6 +45,7 @@ fun NavGraphBuilder.homeNavGraph(
             padding = padding,
             afterOnboarding = afterOnboarding,
             navigateToMypage = navigateToMypage,
+            navigateToMypageChangeHome = navigateToMypageChangeHome,
             navigateToLogin = navigateToLogin,
             navigateToCourseSearch = navigateToCourseSearch,
             navigateToItinerary = navigateToItinerary,
