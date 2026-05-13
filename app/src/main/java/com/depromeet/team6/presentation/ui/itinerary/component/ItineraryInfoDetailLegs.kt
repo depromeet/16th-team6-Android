@@ -447,7 +447,11 @@ private fun DetailLegsBus(
                 Spacer(modifier = Modifier.width(8.dp))
                 AtChaRemainTimeText(
                     remainSecond = busArrivalStatus?.remainingTime ?: 0,
-                    busStatus = displayBusStatus
+                    busStatus = if ((busArrivalStatus?.remainingTime ?: 0) <= 0) {
+                        BusStatus.ARRIVED
+                    } else {
+                        displayBusStatus
+                    }
                 )
                 if (
                     !isBoardingCompleted &&

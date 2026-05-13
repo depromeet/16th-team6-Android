@@ -99,7 +99,7 @@
     <string name="home_icon_arrow_right_text">화살표 아이콘</string>
     <string name="home_icon_bell_text">알람 종 아이콘</string>
 
-    <string name="home_bubble_map_text">지도를 움직여 출발지를 설정해 봐요</string>
+    <string name="home_bubble_map_text">지도를 움직여 출발지를 설정해요</string>
 <!--    <string name="home_bubble_basic_text">여기서 막차 놓치면 택시비</string>-->
 <!--    <string name="home_bubble_user_departure_taxi_cost_text">막차 놓치면 택시비</string>-->
 <!--    <string name="home_bubble_least_text">약&#160;</string>-->
