@@ -145,6 +145,16 @@ class ArrivalMonitorService : Service() {
         val effect = VibrationEffect.createWaveform(longArrayOf(0, 500, 300, 500), -1)
         vibrator?.vibrate(effect)
 
+        val finishChannel = NotificationChannel(
+            ARRIVAL_FINISH_CHANNEL_ID,
+            ARRIVAL_FINISH_CHANNEL_NAME,
+            NotificationManager.IMPORTANCE_HIGH
+        ).apply {
+            enableVibration(true)
+            lockscreenVisibility = Notification.VISIBILITY_PUBLIC
+        }
+        notificationManager.createNotificationChannel(finishChannel)
+
         // 푸시 알림
         val notificationIntent = Intent(this, MainActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(
@@ -154,7 +164,7 @@ class ArrivalMonitorService : Service() {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        val notification = NotificationCompat.Builder(this, "ARRIVAL_MONITOR_CHANNEL")
+        val notification = NotificationCompat.Builder(this, ARRIVAL_FINISH_CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_atcha_logo)
             .setContentTitle(
                 getString(R.string.notification_arrival_guide_finish_title)
@@ -164,6 +174,8 @@ class ArrivalMonitorService : Service() {
             )
             .setContentIntent(pendingIntent)
             .setAutoCancel(true)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setCategory(Notification.CATEGORY_MESSAGE)
             .build()
 
         notificationManager.notify(ARRIVAL_NOTIFICATION_ID, notification)
@@ -188,6 +200,8 @@ class ArrivalMonitorService : Service() {
         const val ARRIVAL_NOTIFICATION_ID = 3
         const val ATCHA_ARRIVAL_MONITOR_CHANNEL_ID = "Arrival_Monitor_Channel"
         const val ATCHA_ARRIVAL_MONITOR_CHANNEL_NAME = "Arrival Monitor Service"
+        const val ARRIVAL_FINISH_CHANNEL_ID = "Arrival_Finish_Channel"
+        const val ARRIVAL_FINISH_CHANNEL_NAME = "Arrival Guide Finish"
         const val ACTION_ARRIVAL = "arrival_event"
         const val EXTRA_DEST_LAT = "dest_lat"
         const val EXTRA_DEST_LNG = "dest_lng"

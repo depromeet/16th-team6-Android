@@ -31,11 +31,15 @@ fun AtChaRemainTimeText(remainSecond: Int, busStatus: BusStatus, modifier: Modif
         busStatus.string
     }
 
+    val color = when (busStatus) {
+        BusStatus.BOARDING_COMPLETED, BusStatus.END -> defaultTeam6Colors.gray400
+        else -> defaultTeam6Colors.systemRed
+    }
     Text(
         modifier = modifier,
         text = displayText,
         style = defaultTeam6Typography.detail1_R12,
-        color = defaultTeam6Colors.systemRed
+        color = color
     )
 }
 

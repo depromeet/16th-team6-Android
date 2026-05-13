@@ -12,6 +12,7 @@ import com.depromeet.team6.domain.model.MypageUserInfo
 import com.depromeet.team6.domain.repository.HomeRepository
 import com.depromeet.team6.domain.usecase.DeleteWithDrawUseCase
 import com.depromeet.team6.domain.usecase.GetAddressFromCoordinatesUseCase
+import com.depromeet.team6.domain.usecase.GetIsServiceRegionUseCase
 import com.depromeet.team6.domain.usecase.GetLocationsUseCase
 import com.depromeet.team6.domain.usecase.GetUserInfoUseCase
 import com.depromeet.team6.domain.usecase.ModifyUserInfoUseCase
@@ -36,6 +37,7 @@ class MypageViewModel @Inject constructor(
     private val postLogoutUseCase: PostLogoutUseCase,
     private val getLocationsUseCase: GetLocationsUseCase,
     private val getAddressFromCoordinatesUseCase: GetAddressFromCoordinatesUseCase,
+    private val getIsServiceRegionUseCase: GetIsServiceRegionUseCase,
     private val deleteWithDrawUseCase: DeleteWithDrawUseCase,
     private val getUserInfoUseCase: GetUserInfoUseCase,
     private val modifyUserInfoUseCase: ModifyUserInfoUseCase
@@ -249,6 +251,24 @@ class MypageViewModel @Inject constructor(
         }
     }
 
+    fun validateAndModifyUserAddress(callback: () -> Unit = {}) {
+        val selectedAddress = currentState.selectedAddress
+        viewModelScope.launch {
+            getIsServiceRegionUseCase(
+                lat = selectedAddress.lat,
+                lon = selectedAddress.lon
+            ).onSuccess { isServiceRegion ->
+                if (isServiceRegion) {
+                    modifyUserAddress(callback = callback)
+                } else {
+                    setSideEffect(MypageContract.MypageSideEffect.ShowOutOfServiceRegionBottomSheet)
+                }
+            }.onFailure {
+                setSideEffect(MypageContract.MypageSideEffect.ShowOutOfServiceRegionBottomSheet)
+            }
+        }
+    }
+
     fun navigateToPlayStore(context: Context) {
         try {
             val intent = Intent(Intent.ACTION_VIEW).apply {
@@ -301,7 +321,7 @@ class MypageViewModel @Inject constructor(
         viewModelScope.launch {
             getAddressFromCoordinatesUseCase(location.latitude, location.longitude)
                 .onSuccess { address ->
-                    setState { copy(myAddress = address) }
+                    setState { copy(selectedAddress = address) }
                     onComplete(address)
                 }
                 .onFailure { exception ->

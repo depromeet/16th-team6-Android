@@ -196,7 +196,10 @@ class MainActivity : ComponentActivity() {
                             override fun onReceive(context: Context?, intent: Intent?) {
                                 dialogController.showAtchaOneButtonAlert(
                                     message = getString(R.string.arrival_guide_finish_dialog),
-                                    onConfirm = { },
+                                    onConfirm = {
+                                        viewModel.finishArrivalGuide()
+                                        navigator.navigateToHomeAfterAlarmRegister()
+                                    },
                                     confirmButtonText = getString(R.string.confirm_dialog)
                                 )
                             }

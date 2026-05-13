@@ -60,6 +60,7 @@ class MypageContract {
         data object NavigateToFeedbackForm : MypageSideEffect
         data object SettingDialog : MypageSideEffect
         data object ClearPermissionData : MypageSideEffect
+        data object ShowOutOfServiceRegionBottomSheet : MypageSideEffect
     }
 
     sealed class MypageEvent : UiEvent {

@@ -115,6 +115,13 @@ fun MyPageRoute(
                     is MypageContract.MypageSideEffect.ClearPermissionData -> {
                         PermissionUtil.clearAllPermissionData(context)
                     }
+                    is MypageContract.MypageSideEffect.ShowOutOfServiceRegionBottomSheet -> {
+                        dialogController.showAtchaBottomSheet(
+                            locationName = "서울, 경기, 인천 내에서만 사용할 수 있어요",
+                            locationAddress = "출발지를 확인한 후 다시 검색해 주세요",
+                            confirmButtonText = "확인"
+                        )
+                    }
                 }
             }
     }
@@ -255,17 +262,11 @@ fun MyPageRoute(
                                 },
                                 mapViewSelectButtonClicked = {
                                     mypageViewModel.updateUserLocation(context)
-                                    mypageViewModel.modifyUserAddress(callback = {
+                                    mypageViewModel.validateAndModifyUserAddress(callback = {
                                         snackbarController.showSnackbar(
                                             message = context.getString(R.string.mypage_change_home_toast_text)
                                         )
                                     })
-                                    mypageViewModel.setEvent(
-                                        MypageContract.MypageEvent.ChangeMapViewVisible(
-                                            false,
-                                            null
-                                        )
-                                    )
                                 }
                             )
                         }

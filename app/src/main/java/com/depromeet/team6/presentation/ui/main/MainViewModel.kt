@@ -5,6 +5,8 @@ import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
 import androidx.lifecycle.viewModelScope
+import com.depromeet.team6.data.background.AlarmScheduler
+import com.depromeet.team6.data.background.ArrivalMonitorService
 import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.course.CourseInfo
 import com.depromeet.team6.domain.repository.HomeRepository
@@ -187,6 +189,15 @@ class MainViewModel @Inject constructor(
 
     fun setUserDeparture(isDeparted: Boolean) {
         homeRepository.setUserDeparture(isDeparted)
+    }
+
+    fun finishArrivalGuide() {
+        // 도착 완료 시, 홈을 "알람 등록 전" 상태로 복귀시키기 위한 로컬 상태 전체 초기화
+        homeRepository.clearAlarmData()
+        homeRepository.clearUserDeparture()
+        AlarmScheduler.unScheduleAllAlarms(context)
+        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as android.app.NotificationManager
+        notificationManager.cancel(ArrivalMonitorService.ARRIVAL_NOTIFICATION_ID)
     }
 
     companion object {
