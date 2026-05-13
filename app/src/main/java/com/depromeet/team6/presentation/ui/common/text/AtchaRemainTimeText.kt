@@ -16,9 +16,10 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun AtChaRemainTimeText(remainSecond: Int, busStatus: BusStatus, modifier: Modifier = Modifier) {
-    var timeLeft by remember { mutableIntStateOf(remainSecond) }
+    var timeLeft by remember(remainSecond) { mutableIntStateOf(remainSecond.coerceAtLeast(0)) }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(remainSecond) {
+        timeLeft = remainSecond.coerceAtLeast(0)
         while (timeLeft > 0) {
             delay(1000L)
             timeLeft--
