@@ -40,7 +40,7 @@ fun ItineraryInfoDetail(
     currentLocation: LatLng,
     legs: List<LegInfo>,
     userDeparted: Boolean,
-    busArrivalStatus: SparseArray<RealTimeBusArrival>,
+    busArrivalStatus: SparseArray<List<RealTimeBusArrival>>,
     departureTime: String,
     departureName: String,
     arrivalTime: String,
