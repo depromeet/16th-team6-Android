@@ -41,6 +41,8 @@ fun ResponseCourseSearchDto.toDomain(): CourseInfo {
             subTypeIdx = leg.type ?: 0,
             departureDateTime = leg.departureDateTime ?: "",
             routeName = leg.route,
+            isExpressSubway = leg.isExpressSubway ?: false,
+            isLastSubway = leg.isLastSubway ?: false,
             sectionTime = leg.sectionTime,
             distance = leg.distance.toInt(),
             startPoint = Address(

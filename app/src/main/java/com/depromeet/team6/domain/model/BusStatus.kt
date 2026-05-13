@@ -7,6 +7,7 @@ enum class BusStatus(val string: String) {
     WAITING("출발 대기"),
     SOON("곧 도착"),
     OPERATING("운행 중"),
+    BOARDING_COMPLETED("탑승 완료"),
     END("운행 종료")
 }
 

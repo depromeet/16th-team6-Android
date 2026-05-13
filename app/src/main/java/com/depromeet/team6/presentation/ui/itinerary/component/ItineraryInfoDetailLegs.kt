@@ -4,12 +4,13 @@ import android.util.SparseArray
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -35,6 +36,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -137,9 +139,12 @@ fun ItineraryInfoDetailLegs(
                     }
                     TransportType.BUS -> {
                         DetailLegsBus(
+                            currentLocation = currentLocation,
                             busName = leg.routeName!!,
                             subtypeIdx = leg.subTypeIdx,
                             boardingStation = leg.startPoint.name,
+                            boardingStationLat = leg.startPoint.lat,
+                            boardingStationLon = leg.startPoint.lon,
                             disembarkingStation = leg.endPoint.name,
                             boardingDateTime = leg.departureDateTime!!,
                             timeMinute = leg.sectionTime / 60,
@@ -167,6 +172,8 @@ fun ItineraryInfoDetailLegs(
                     TransportType.SUBWAY -> {
                         DetailLegsSubway(
                             subwayName = leg.routeName!!,
+                            isExpressSubway = leg.isExpressSubway,
+                            isLastSubway = leg.isLastSubway,
                             subtypeIdx = leg.subTypeIdx,
                             boardingStation = leg.startPoint.name,
                             disembarkingStation = leg.endPoint.name,
@@ -250,9 +257,12 @@ fun ItineraryInfoDetailLegs(
 
 @Composable
 private fun DetailLegsBus(
+    currentLocation: LatLng,
     busName: String,
     subtypeIdx: Int,
     boardingStation: String,
+    boardingStationLat: Double,
+    boardingStationLon: Double,
     disembarkingStation: String,
     boardingDateTime: String,
     timeMinute: Int,
@@ -268,6 +278,8 @@ private fun DetailLegsBus(
 ) {
     var rowHeight by remember { mutableStateOf(0) }
     var isPassStopShow by remember { mutableStateOf(false) }
+    var arrivedAtStationAtMillis by remember(boardingStation, boardingStationLat, boardingStationLon) { mutableLongStateOf(0L) }
+    var isBoardingCompleted by remember(boardingStation, boardingStationLat, boardingStationLon) { mutableStateOf(false) }
     val disembarkingDateTime: String = LocalDateTime
         .parse(boardingDateTime)
         .plusMinutes(timeMinute.toLong())
@@ -275,6 +287,38 @@ private fun DetailLegsBus(
     val timelineAxisOffset = timelineTimeSlotWidth + timelineTimeIconGap + (timelineIconSize / 2)
     val disembarkingMarkerSize = timelineIconSize * (14f / 26f)
     val disembarkingMarkerOffset = (timelineIconSize - disembarkingMarkerSize) / 2
+    val distanceToBoardingStation = remember(currentLocation, boardingStationLat, boardingStationLon) {
+        CalculateDistanceUseCase().invoke(
+            lat1 = currentLocation.latitude,
+            lon1 = currentLocation.longitude,
+            lat2 = boardingStationLat,
+            lon2 = boardingStationLon
+        )
+    }
+    val displayBusStatus = if (isBoardingCompleted) {
+        BusStatus.BOARDING_COMPLETED
+    } else {
+        busArrivalStatus?.busStatus ?: BusStatus.WAITING
+    }
+
+    LaunchedEffect(distanceToBoardingStation) {
+        if (isBoardingCompleted) return@LaunchedEffect
+
+        val now = System.currentTimeMillis()
+        if (arrivedAtStationAtMillis == 0L && distanceToBoardingStation <= BOARDING_STOP_ARRIVAL_DISTANCE_METER) {
+            arrivedAtStationAtMillis = now
+            return@LaunchedEffect
+        }
+
+        if (arrivedAtStationAtMillis != 0L) {
+            val stayedForOneMinute = now - arrivedAtStationAtMillis >= BOARDING_COMPLETED_STAY_MILLIS
+            val movedAwayFromStation = distanceToBoardingStation >= BOARDING_COMPLETED_LEAVE_DISTANCE_METER
+
+            if (stayedForOneMinute || movedAwayFromStation) {
+                isBoardingCompleted = true
+            }
+        }
+    }
 
     Row(
         modifier = modifier
@@ -401,17 +445,20 @@ private fun DetailLegsBus(
                     busColor = busColor
                 )
                 Spacer(modifier = Modifier.width(8.dp))
-                if (busArrivalStatus == null) {
-                    AtChaRemainTimeText(remainSecond = 0, busStatus = BusStatus.WAITING)
-                } else {
-                    AtChaRemainTimeText(remainSecond = busArrivalStatus.remainingTime, busStatus = busArrivalStatus.busStatus)
-                    if (busArrivalStatus.busCongestion != BusCongestion.UNKNOWN) {
-                        Text(
-                            text = "(${busArrivalStatus.busCongestion.toInfo().label})",
-                            style = defaultTeam6Typography.body6_B6R14,
-                            color = defaultTeam6Colors.systemRed
-                        )
-                    }
+                AtChaRemainTimeText(
+                    remainSecond = busArrivalStatus?.remainingTime ?: 0,
+                    busStatus = displayBusStatus
+                )
+                if (
+                    !isBoardingCompleted &&
+                    busArrivalStatus != null &&
+                    busArrivalStatus.busCongestion != BusCongestion.UNKNOWN
+                ) {
+                    Text(
+                        text = "(${busArrivalStatus.busCongestion.toInfo().label})",
+                        style = defaultTeam6Typography.body6_B6R14,
+                        color = defaultTeam6Colors.systemRed
+                    )
                 }
             }
 
@@ -470,6 +517,8 @@ private fun DetailLegsBus(
 @Composable
 private fun DetailLegsSubway(
     subwayName: String,
+    isExpressSubway: Boolean,
+    isLastSubway: Boolean,
     subtypeIdx: Int,
     boardingStation: String,
     disembarkingStation: String,
@@ -601,11 +650,27 @@ private fun DetailLegsSubway(
                 )
             }
             Spacer(Modifier.height(16.dp))
-            Text(
-                text = subwayName,
-                style = defaultTeam6Typography.body7_B7M13,
-                color = defaultTeam6Colors.gray200
-            )
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = subwayName,
+                    style = defaultTeam6Typography.body7_B7M13,
+                    color = defaultTeam6Colors.gray200
+                )
+                if (isLastSubway) {
+                    Spacer(modifier = Modifier.width(6.dp))
+                    TransitFlagBadge(
+                        text = "막",
+                        containerColor = defaultTeam6Colors.systemRed
+                    )
+                }
+                if (isExpressSubway) {
+                    Spacer(modifier = Modifier.width(6.dp))
+                    TransitFlagBadge(
+                        text = "급",
+                        containerColor = Color(0xFF1777FF)
+                    )
+                }
+            }
             Spacer(Modifier.height(16.dp))
             Row(
                 modifier = Modifier
@@ -892,6 +957,37 @@ private fun BusNumberButton(
         }
     }
 }
+
+@Composable
+private fun TransitFlagBadge(
+    text: String,
+    containerColor: Color,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .size(16.dp)
+            .clip(CircleShape)
+            .border(
+                border = BorderStroke(
+                    width = 1.dp,
+                    color = containerColor
+                ),
+                shape = CircleShape
+            ),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = text,
+            color = containerColor,
+            style = defaultTeam6Typography.detail3_M9
+        )
+    }
+}
+
+private const val BOARDING_STOP_ARRIVAL_DISTANCE_METER = 50.0
+private const val BOARDING_COMPLETED_LEAVE_DISTANCE_METER = 150.0
+private const val BOARDING_COMPLETED_STAY_MILLIS = 60_000L
 
 @Preview
 @Composable
