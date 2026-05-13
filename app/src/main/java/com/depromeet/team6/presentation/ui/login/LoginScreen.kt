@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -228,16 +229,23 @@ fun LoginScreen(
                 .semantics { contentDescription = "kakao_login_button" }
                 .padding(horizontal = 22.dp, vertical = 14.dp)
         ) {
-            Icon(
-                imageVector = ImageVector.vectorResource(R.drawable.ic_login_kakao),
-                contentDescription = null,
-                modifier = Modifier.align(Alignment.CenterStart)
-            )
-            Text(
-                text = "카카오 계정으로 계속하기",
-                style = defaultTeam6Typography.body2_B2SB15,
-                modifier = Modifier.align(Alignment.Center)
-            )
+            Row(
+                modifier = Modifier
+                    .align(Alignment.Center),
+                horizontalArrangement = Arrangement.spacedBy(20.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(R.drawable.ic_login_kakao),
+                    contentDescription = null,
+                    modifier = Modifier
+                )
+                Text(
+                    text = "카카오로 계속하기",
+                    style = defaultTeam6Typography.body2_B2SB15,
+                    modifier = Modifier
+                )
+            }
         }
     }
 }

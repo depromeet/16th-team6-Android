@@ -33,6 +33,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
@@ -47,6 +48,7 @@ class MainViewModel @Inject constructor(
 ) : BaseViewModel<MainContract.MainState, MainContract.MainSideEffect, MainContract.MainEvent>() {
 
     private var fcmToken: String? = null
+    private var locationUpdatesJob: Job? = null
     private val _currentLocation = MutableStateFlow(LatLng(DefaultLatLng.DEFAULT_LAT, DefaultLatLng.DEFAULT_LNG))
     val currentLocation: StateFlow<LatLng> = _currentLocation.asStateFlow()
     private val connectivityManager =
@@ -141,13 +143,16 @@ class MainViewModel @Inject constructor(
     }.distinctUntilChanged() // 연속으로 중복된 상태가 전송되는 것을 방지
 
     fun startLocationUpdates() {
-        getRealtimeLocationUseCase()
+        if (locationUpdatesJob?.isActive == true) return
+
+        locationUpdatesJob = getRealtimeLocationUseCase()
             .onEach { newLocation ->
                 _currentLocation.value = newLocation
             }
             .catch { e ->
                 // 위치 정보를 가져오는 중 에러 발생 시 처리 (예: 로그 남기기)
                 Timber.e(e, "Error while collecting location updates : $e")
+                locationUpdatesJob = null
             }
             .launchIn(viewModelScope) // viewModelScope에서 Flow 수집 시작
     }

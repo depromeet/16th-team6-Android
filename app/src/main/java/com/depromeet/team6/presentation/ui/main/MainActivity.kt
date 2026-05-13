@@ -117,6 +117,7 @@ class MainActivity : ComponentActivity() {
             val lifecycleOwner = LocalLifecycleOwner.current
             var shouldNavigateToCourseSearch by remember { mutableStateOf(navigateToCourseSearch) }
             var shouldNavigateToItinerary by remember { mutableStateOf(navigateToItinerary) }
+            var hasLocationPermission by remember { mutableStateOf(permissionGranted) }
 
             SideEffect {
                 WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = false
@@ -129,7 +130,10 @@ class MainActivity : ComponentActivity() {
             val locationPermissionsLauncher = rememberLauncherForActivityResult(
                 contract = ActivityResultContracts.RequestMultiplePermissions(),
                 onResult = { permissions ->
-                    if (permissions.values.all { it }) {
+                    hasLocationPermission = permissions.values.all { it }
+
+                    if (hasLocationPermission) {
+                        viewModel.startLocationUpdates()
                         snackbarController.showSnackbar(
                             "위치 권한이 허용되었습니다."
                         )
@@ -140,8 +144,8 @@ class MainActivity : ComponentActivity() {
                 }
             )
 
-            LaunchedEffect(PermissionUtil.hasLocationPermissions(this)) {
-                if (PermissionUtil.hasLocationPermissions(this@MainActivity)) { // 위치 권한이 있으면
+            LaunchedEffect(hasLocationPermission) {
+                if (hasLocationPermission) { // 위치 권한이 있으면
                     viewModel.startLocationUpdates()
                 } else {
                     dialogController.showAtchaTwoButtonAlert(
