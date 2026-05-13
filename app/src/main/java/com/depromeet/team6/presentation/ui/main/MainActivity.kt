@@ -195,7 +195,11 @@ class MainActivity : ComponentActivity() {
                         object : BroadcastReceiver() {
                             override fun onReceive(context: Context?, intent: Intent?) {
                                 dialogController.showAtchaOneButtonAlert(
-                                    message = getString(R.string.arrival_guide_finish_dialog),
+                                    message = if (intent?.action == ArrivalMonitorService.ACTION_ARRIVAL_TIMEOUT) {
+                                        getString(R.string.arrival_guide_timeout_finish_dialog)
+                                    } else {
+                                        getString(R.string.arrival_guide_finish_dialog)
+                                    },
                                     onConfirm = {
                                         viewModel.finishArrivalGuide()
                                         navigator.navigateToHomeAfterAlarmRegister()
@@ -208,7 +212,10 @@ class MainActivity : ComponentActivity() {
 
                     // Lifecycle-aware 등록/해제
                     DisposableEffect(Unit) {
-                        val filter = IntentFilter(ArrivalMonitorService.ACTION_ARRIVAL)
+                        val filter = IntentFilter().apply {
+                            addAction(ArrivalMonitorService.ACTION_ARRIVAL)
+                            addAction(ArrivalMonitorService.ACTION_ARRIVAL_TIMEOUT)
+                        }
                         ContextCompat.registerReceiver(
                             context,
                             arrivalReceiver,

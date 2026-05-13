@@ -158,17 +158,21 @@ fun CourseSearchRoute(
                             viewModel.showPermissionSnackbar()
                         }
                     } else {
-                        val registeredCourse = uiState.courseData.find { it.routeId == routeId }
-
-                        if (registeredCourse != null) {
-                            viewModel.postAlarm(
-                                departurePoint = departurePoint,
-                                destinationPoint = destinationPoint,
-                                lastRouteId = routeId,
-                                alarmTimeStamp = registeredCourse.departureTime
-                            )
+                        if (viewModel.isAlarmRegistered()) {
+                            viewModel.showDeleteAlarmDialog(routeId)
                         } else {
-                            atChaToastMessage(context, R.string.course_set_notification_failed_snackbar)
+                            val registeredCourse = uiState.courseData.find { it.routeId == routeId }
+
+                            if (registeredCourse != null) {
+                                viewModel.postAlarm(
+                                    departurePoint = departurePoint,
+                                    destinationPoint = destinationPoint,
+                                    lastRouteId = routeId,
+                                    alarmTimeStamp = registeredCourse.departureTime
+                                )
+                            } else {
+                                atChaToastMessage(context, R.string.course_set_notification_failed_snackbar)
+                            }
                         }
                     }
                 },

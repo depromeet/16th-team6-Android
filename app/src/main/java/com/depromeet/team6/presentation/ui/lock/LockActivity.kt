@@ -107,12 +107,19 @@ class LockActivity : ComponentActivity() {
                                 val destinationPoint = sharedPreferences.getString("destinationPoint", "") ?: ""
 
                                 val editor = sharedPreferences.edit()
+                                // "출발하기"와 동일하게 출발 상태 플래그를 남긴다.
+                                editor.putBoolean("fromLockScreenDeparture", true)
                                 editor.putBoolean("fromLockScreen", true)
                                 editor.apply()
 
                                 Timber.d("LockActivity onLateClick: departurePoint=$departurePoint, destinationPoint=$destinationPoint")
 
-                                lockScreenNavigator.navigateToCourseSearch(this, departurePoint, destinationPoint)
+                                lockScreenNavigator.navigateToCourseSearch(
+                                    context = this,
+                                    departurePoint = departurePoint,
+                                    destinationPoint = destinationPoint,
+                                    fromLockScreen = true
+                                )
                             } catch (e: Exception) {
                                 Timber.e(e, "Error in onLateClick, navigating to home")
                                 lockScreenNavigator.navigateToSpecificScreen(this)
