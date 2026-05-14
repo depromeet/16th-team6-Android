@@ -5,6 +5,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.util.Log
 import androidx.work.WorkManager
 import com.depromeet.team6.BuildConfig
 import com.google.firebase.Firebase
@@ -25,8 +26,10 @@ object AlarmScheduler {
     fun scheduleLockScreenAlarm(context: Context, alarmTimeStamp: String) {
         unScheduleLockAlarm(context)
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        // 디버그 모드에서는 알람설정 후 6분뒤 바로 울림
-        val alarmTimeInMillis = if (BuildConfig.DEBUG) isoLocalDateTimeToMillis(alarmTimeStamp) - (60_000L * 6 - 10_000L) else isoLocalDateTimeToMillis(alarmTimeStamp)
+        val alarmTimeInMillis = calculateAlarmTime(isoLocalDateTimeToMillis(alarmTimeStamp))
+        if (BuildConfig.DEBUG) {
+            Log.d("AlarmScheduler", "scheduleLockScreenAlarm: alarmTimeInMillis=$alarmTimeInMillis (debug=${BuildConfig.DEBUG})")
+        }
 
         // 잠금화면 포그라운드 서비스 할당
         val intent = Intent(context, LockService::class.java)
@@ -57,10 +60,10 @@ object AlarmScheduler {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val alarmTimeMillis = isoLocalDateTimeToMillis(alarmTime)
 
-        // 10분 전 푸시알림
+        // 10분 전 푸시알림 (디버그 모드에서는 1분 뒤 바로 울림)
         val pushTime = 10
         val pushInterval = 10 * 60_000L
-        val pushTimeMillis = alarmTimeMillis - pushInterval
+        val pushTimeMillis = calculateAlarmTime(alarmTimeMillis - pushInterval)
 
         val intent = Intent(context, AlarmReceiver::class.java)
         intent.putExtra("alarmTime", pushTime)
@@ -199,6 +202,13 @@ object AlarmScheduler {
             pendingIntent
         )
     }
+
+    /**
+     * 디버그 빌드에서는 빠른 테스트를 위해 현재 시각 + 1분을 반환하고,
+     * 릴리즈 빌드에서는 originalTime을 그대로 반환한다.
+     */
+    private fun calculateAlarmTime(originalTime: Long): Long =
+        if (BuildConfig.DEBUG) System.currentTimeMillis() + 60_000L else originalTime
 
     private fun isoLocalDateTimeToMillis(
         isoTime: String

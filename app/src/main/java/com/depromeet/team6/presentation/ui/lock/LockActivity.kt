@@ -102,7 +102,7 @@ class LockActivity : ComponentActivity() {
                                 )
 
                                 lockScreenNavigator.navigateToItineraryFromLockScreen(this@LockActivity)
-                                finish()
+                                stopLockServiceAndExit(this@LockActivity)
                             },
                             onLateClick = {
                                 viewModel.setEvent(LockContract.LockEvent.OnLateClick)
@@ -139,7 +139,7 @@ class LockActivity : ComponentActivity() {
                                     lockScreenNavigator.navigateToSpecificScreen(this@LockActivity)
                                 }
 
-                                finish()
+                                stopLockServiceAndExit(this@LockActivity)
                             }
                         )
 

@@ -23,7 +23,7 @@ description: Android 프로젝트의 빌드 및 테스트를 통해 변경 사�
 
 ## Constraints
 - **수정 금지**: 어떤 경우에도 `replace`나 `write_file` 등을 사용하여 소스 코드를 직접 수정하지 않습니다.
-- **Claude 위임**: 모든 수정 작업은 오직 Claude(android-executor)만이 수행해야 하며, Gemini는 지시자 역할을 유지합니다.
+- **Claude 위임**: 모든 수정 작업은 오직 executor 만이 수행해야 하며, Reviewer는 검토자 역할을 유지합니다.
 - **로그 요약**: 방대한 빌드 로그 전체를 전달하기보다, 핵심 오류 메시지와 컨텍스트 위주로 요약하여 전달합니다.
 
 ## 피드백 예시 (To Claude)
