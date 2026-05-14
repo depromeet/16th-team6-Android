@@ -1,3 +1,4 @@
+package com.depromeet.team6.presentation.ui.lock
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -49,8 +50,6 @@ import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.depromeet.team6.R
-import com.depromeet.team6.presentation.ui.lock.LockContract
-import com.depromeet.team6.presentation.ui.lock.LockViewModel
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.ui.theme.LocalTeam6Colors
 import com.depromeet.team6.ui.theme.LocalTeam6Typography
@@ -157,18 +156,6 @@ fun LockScreen(
                 contentScale = ContentScale.Crop
             )
     ) {
-        Image(
-            painter = painterResource(R.drawable.ic_onboarding_close_24),
-            contentDescription = null,
-            colorFilter = ColorFilter.tint(colors.white),
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .size(40.dp)
-                .statusBarsPadding()
-                .padding(top = 16.dp, end = 16.dp)
-                .noRippleClickable { onCloseClick() }
-        )
-
         LottieAnimation(
             composition = composition,
             progress = { progress },
@@ -269,6 +256,18 @@ fun LockScreen(
 
             Spacer(modifier = Modifier.height(padding.calculateBottomPadding() + 30.dp))
         }
+
+        Image(
+            painter = painterResource(R.drawable.ic_onboarding_close_24),
+            contentDescription = null,
+            colorFilter = ColorFilter.tint(colors.white),
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .size(40.dp)
+                .statusBarsPadding()
+                .padding(top = 16.dp, end = 16.dp)
+                .noRippleClickable { onCloseClick() }
+        )
     }
 }
 

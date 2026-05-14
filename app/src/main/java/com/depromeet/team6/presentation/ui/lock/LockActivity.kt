@@ -1,6 +1,5 @@
 package com.depromeet.team6.presentation.ui.lock
 
-import LockRoute
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences

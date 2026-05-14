@@ -332,20 +332,107 @@ while true; do
       DIFF_STAT=$(git diff --stat)
       DIFF_FULL=$(git diff)
 
-      echo -e "${YELLOW}--- [CHANGE SUMMARY] ---${NC}"
+      echo -e "\n${YELLOW}--- [CHANGE SUMMARY] ---${NC}"
       echo "$DIFF_STAT"
+      echo -e "${YELLOW}------------------------${NC}\n"
 
       if [ $BUILD_EXIT -ne 0 ]; then
         log_error "❌ 빌드 실패! 오류 내용을 분석하여 피드백을 전달합니다."
-        PROMPT="You are a Senior Architect. The build FAILED after the executor's changes. \n\n[BUILD ERROR]\n$BUILD_LOG \n\n[DIFF]\n$DIFF_FULL \n\nAnalyze the error and set phase to 'REPLANNING' with a specific 'feedback'. Output ONLY valid JSON, NO other text."
+        PROMPT="You are a Senior Architect reviewing a project code contribution.
+The build FAILED after the executor's changes.
+
+[GOAL]
+$(jq -r '.goal' "$STATE_FILE")
+
+[BUILD ERROR]
+$BUILD_LOG
+
+[DIFF]
+$DIFF_FULL
+
+Analyze the error. Your JSON response MUST include:
+- \"phase\": \"REPLANNING\"
+- \"feedback\": specific actionable fix instructions
+- \"review_feedback\": your overall assessment of what went wrong
+- \"review_criteria\": array of strings — each item is a criterion you evaluated (e.g. \"Build compiles without errors\")
+
+Output ONLY valid JSON, NO other text."
       else
         log_success "✅ 빌드 성공! 코드 리뷰를 진행합니다."
-        PROMPT="You are a Senior Architect. The build was SUCCESSFUL. Review the following changes based on the goal: $(jq -r '.goal' "$STATE_FILE")\n\n[DIFF SUMMARY]\n$DIFF_STAT\n\n[FULL DIFF]\n$DIFF_FULL\n\nIf the code quality is good, set phase to 'COMPLETED'. If not, set to 'REPLANNING' with feedback. Output ONLY valid JSON, NO other text."
+        PROMPT="You are a Senior Architect reviewing a project code contribution.
+The build was SUCCESSFUL. Review the changes against the goal.
+
+[GOAL]
+$(jq -r '.goal' "$STATE_FILE")
+
+[DIFF SUMMARY]
+$DIFF_STAT
+
+[FULL DIFF]
+$DIFF_FULL
+
+Your JSON response MUST include:
+- \"phase\": \"COMPLETED\" if quality is good, or \"REPLANNING\" if changes are needed
+- \"feedback\": (required if REPLANNING) specific actionable fix instructions
+- \"review_feedback\": your overall assessment and reasoning for the verdict
+- \"review_criteria\": array of strings — each item is a criterion you evaluated (e.g. \"Goal fully addressed\", \"No regressions\", \"Follows project conventions\")
+
+Output ONLY valid JSON, NO other text."
       fi
 
+      log_info "⏳ [$REVIEWER_PROVIDER/reviewer] 응답 대기 중..."
       RESULT=$(call_text_provider "$REVIEWER_PROVIDER" "$PROMPT") || exit 1
+
       if save_state_safely "$RESULT"; then
-        if [ "$(jq -r '.phase' "$STATE_FILE")" == "COMPLETED" ]; then
+        NEW_PHASE=$(jq -r '.phase' "$STATE_FILE")
+        REVIEW_FEEDBACK=$(jq -r '.review_feedback // .feedback // empty' "$STATE_FILE" 2>/dev/null)
+        REVIEW_FEEDBACK_FIELD=$(jq -r '.feedback // empty' "$STATE_FILE" 2>/dev/null)
+
+        echo -e "\n${CYAN}━━━━━━━━━━━━━━━━━━━━━━━ REVIEW RESULT ━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+        if [ "$NEW_PHASE" == "COMPLETED" ]; then
+          echo -e "${CYAN}▶ VERDICT :${NC} ${GREEN}✅ APPROVED — COMPLETED${NC}"
+        else
+          echo -e "${CYAN}▶ VERDICT :${NC} ${RED}❌ REJECTED — REPLANNING${NC}"
+        fi
+        echo -e "${CYAN}▶ GOAL    :${NC} $(jq -r '.goal' "$STATE_FILE")"
+        echo -e "${CYAN}▶ ENV     :${NC} planner=${YELLOW}$PLANNER_PROVIDER${NC}  executor=${YELLOW}$EXECUTOR_PROVIDER${NC}  reviewer=${YELLOW}$REVIEWER_PROVIDER${NC}"
+
+        # 판단 기준 출력
+        CRITERIA_COUNT=$(jq '.review_criteria | length // 0' "$STATE_FILE" 2>/dev/null)
+        if [ "${CRITERIA_COUNT:-0}" -gt 0 ]; then
+          echo -e "${CYAN}▶ CRITERIA:${NC}"
+          jq -r '.review_criteria[]' "$STATE_FILE" 2>/dev/null | while read -r criterion; do
+            echo -e "  ${GREEN}✓${NC} $criterion"
+          done
+        fi
+
+        # 리뷰 소견 출력
+        if [ -n "$REVIEW_FEEDBACK" ]; then
+          echo -e "${CYAN}▶ ASSESSMENT:${NC}"
+          echo -e "${NC}$REVIEW_FEEDBACK${NC}" | fold -s -w 80 | sed 's/^/  /'
+        fi
+
+        # 반려 시 구체적 피드백 출력
+        if [ "$NEW_PHASE" != "COMPLETED" ] && [ -n "$REVIEW_FEEDBACK_FIELD" ]; then
+          echo -e "${RED}▶ FEEDBACK:${NC}"
+          echo -e "${YELLOW}$REVIEW_FEEDBACK_FIELD${NC}" | fold -s -w 80 | sed 's/^/  /'
+        fi
+
+        echo -e "${CYAN}▶ STEPS   :${NC}"
+        jq -c '.steps[]' "$STATE_FILE" 2>/dev/null | while read -r step; do
+          step_desc=$(echo "$step" | jq -r '.description')
+          step_status=$(echo "$step" | jq -r '.status')
+          if [ "$step_status" == "DONE" ]; then
+            echo -e "  ${GREEN}[DONE]${NC} $step_desc"
+          elif [ "$step_status" == "IN_PROGRESS" ]; then
+            echo -e "  ${YELLOW}[WAIT]${NC} $step_desc"
+          else
+            echo -e "  ${NC}[TODO]${NC} $step_desc"
+          fi
+        done
+        echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}\n"
+
+        if [ "$NEW_PHASE" == "COMPLETED" ]; then
           log_success "🎉 모든 작업이 승인되었습니다!"
           studio . &
           exit 0
