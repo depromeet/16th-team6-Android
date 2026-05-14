@@ -518,6 +518,14 @@ class HomeViewModel @Inject constructor(
     }
 
     fun loadDepartureTime() {
+        // 사용자가 이미 출발한 상태라면 알람을 재설정하지 않는다.
+        // 이 가드가 없으면 HomeScreen onResume 시 loadDepartureTime()이 호출되어
+        // 출발 후에도 알람이 재등록되는 버그가 발생한다.
+        if (homeRepository.isUserDeparted()) {
+            Timber.d("loadDepartureTime: 사용자가 이미 출발했으므로 알람 재설정 건너뜀")
+            return
+        }
+
         // 남은시간 3분 이하부터는 새로고침 불가
         val now: LocalDateTime = LocalDateTime.now()
         val departureTime = LocalDateTime.parse(currentState.departureTime, DateTimeFormatter.ISO_LOCAL_DATE_TIME)

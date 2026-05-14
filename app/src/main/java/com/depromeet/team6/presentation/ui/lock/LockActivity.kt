@@ -20,6 +20,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.lifecycleScope
 import com.depromeet.team6.presentation.ui.home.component.DeleteAlarmDialog
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
+import com.depromeet.team6.data.background.AlarmScheduler
 import com.depromeet.team6.data.background.LockService
 import com.depromeet.team6.presentation.util.AmplitudeCommon.SCREEN_NAME
 import com.depromeet.team6.presentation.util.AmplitudeCommon.USER_ID
@@ -173,6 +174,11 @@ class LockActivity : ComponentActivity() {
     }
 
     private fun stopLockServiceAndExit(context: Context) {
+        // finish() 전에 동기적으로 알람을 취소한다.
+        // LockViewModel.stopAlarmFlow()의 코루틴이 viewModelScope 취소로 인해
+        // 실행되지 못하는 race condition을 방어한다.
+        AlarmScheduler.unScheduleAllAlarms(context)
+
         // 서비스 종료
         val stopIntent = Intent(context, LockService::class.java)
         context.stopService(stopIntent)

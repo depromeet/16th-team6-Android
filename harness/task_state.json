@@ -1,4 +1,6 @@
 {
-  "phase": "COMPLETED",
-  "feedback": "치명적 이슈 없음. 목표였던 '다른 경로 찾기/출발하기 클릭 시 알람( LockService ) 중지'가 LockActivity에서 stopLockServiceAndExit 호출로 반영되었고, 제공된 빌드 결과도 SUCCESSFUL입니다."
+  "phase": "PLANNING",
+  "goal": "LockScreen 좌상단 x 버튼이 보이지 않아. 대충 그 위치 누르면 로직은 동작하는데 흰색으로 x 버튼 보이게 해",
+  "steps": [],
+  "executor_instruction": ""
 }
