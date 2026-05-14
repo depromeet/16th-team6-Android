@@ -10,7 +10,7 @@ tools: Read, Write, Edit, Bash, Glob, Grep
 1. 반드시 `harness/task_state.json`을 읽는다.
 2. `phase`가 `READY_FOR_CLAUDE`인지 확인한다.
 3. 코드를 작성하기 전에 task_state.json 파일의 files, symbols 섹션을 반드시 먼저 참조한다.
-4. 3번에서 참조한 데이터를 바탕으로 `claude_instruction` 필드의 지시사항을 수행한다.
+4. 3번에서 참조한 files, symbols를 바탕으로 `claude_instruction` 필드의 지시사항을 수행한다.
 
 ## 코딩 규칙
 - **아키텍처**: Android Clean Architecture (data / domain / presentation 레이어 분리)
