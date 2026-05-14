@@ -106,4 +106,16 @@ class LockViewModel @Inject constructor(
             }
         }
     }
+
+    fun finishAlarmAndResetState() {
+        viewModelScope.launch {
+            try {
+                homeRepository.clearAlarmData()
+                homeRepository.clearUserDeparture()
+                AlarmScheduler.unScheduleAllAlarms(context)
+            } catch (e: Exception) {
+                Log.e("LockViewModel", "알람 종료 및 상태 초기화 중 오류 발생", e)
+            }
+        }
+    }
 }
