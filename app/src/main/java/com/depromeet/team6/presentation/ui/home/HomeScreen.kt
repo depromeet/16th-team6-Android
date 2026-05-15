@@ -1,6 +1,7 @@
 package com.depromeet.team6.presentation.ui.home
 
 import android.Manifest
+import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
@@ -42,6 +43,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -120,6 +122,16 @@ fun HomeRoute(
     val allPermissionsLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
+        val activity = context as? Activity
+        val hasPermanentlyDeniedPermission = activity != null &&
+            permissions.any { (permission, isGranted) ->
+                !isGranted && !ActivityCompat.shouldShowRequestPermissionRationale(activity, permission)
+            }
+
+        if (hasPermanentlyDeniedPermission) {
+            PermissionUtil.openAppSettings(context)
+        }
+
         val locationGranted = permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true
         if (locationGranted) {
             mainViewModel.startLocationUpdates()
