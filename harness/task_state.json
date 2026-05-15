@@ -1,3 +1,14 @@
 {
-  "phase": "COMPLETED"
+  "phase": "REPLANNING",
+  "feedback": "1) Revert out-of-scope workflow/tooling file edits from this PR: `.claude/agents/android-executor.md`, `.gemini/agents/planner.md`, `CLAUDE.md`, `harness/harness.sh`, and `harness/task_state.json`. These are unrelated to Home permission UX and should not ship with the feature fix. 2) Keep only app-level permission-flow changes required by the goal (`HomeScreen`, `HomeViewModel`, `HomeContract`, and any strictly necessary `MainActivity` adjustments). 3) In `HomeScreen` launcher callback, explicitly evaluate both key results (`ACCESS_FINE_LOCATION` and notification permission) before side effects; continue calling `checkPermissionStatus()` afterward for single-source-of-truth UI sync. 4) Remove or wire the currently unused `DismissPermissionBottomSheet` event path to avoid dead contract surface.",
+  "review_feedback": "Core Home permission behavior is improved: location updates now start only when location permission is granted, and permission state is re-evaluated to keep the bottom-sheet visibility consistent when permissions are missing. LockScreen changes appear reverted. However, the contribution includes substantial unrelated harness/agent/process file modifications, which violates scope for this feature goal and raises regression/process risk. There is also a minor contract consistency issue (unused dismiss event) and the permission result callback does not explicitly inspect notification grant despite relying on downstream re-check. Because of scope contamination and cleanup gaps, this should be replanned before merge.",
+  "review_criteria": [
+    "Goal fully addressed",
+    "Location and notification permissions handled together",
+    "Correct behavior on partial grant/deny paths",
+    "UI state consistency after permission result",
+    "No out-of-scope or unrelated changes",
+    "Regression risk minimized",
+    "Code contract cleanliness (no dead event/API surface)"
+  ]
 }

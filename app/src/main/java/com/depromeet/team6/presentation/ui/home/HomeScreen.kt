@@ -1,11 +1,14 @@
 package com.depromeet.team6.presentation.ui.home
 
+import android.Manifest
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.LocalActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -14,6 +17,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
@@ -60,6 +64,7 @@ import com.depromeet.team6.presentation.ui.home.component.CurrentLocationSheet
 import com.depromeet.team6.presentation.ui.home.component.DeleteAlarmDialog
 import com.depromeet.team6.presentation.ui.home.component.TMapViewCompose
 import com.depromeet.team6.presentation.ui.main.MainViewModel
+import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingPermissionBottomSheet
 import com.depromeet.team6.presentation.util.AmplitudeCommon.SCREEN_NAME
 import com.depromeet.team6.presentation.util.AmplitudeCommon.USER_ID
 import com.depromeet.team6.presentation.util.AppConstants
@@ -77,6 +82,7 @@ import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
 import com.depromeet.team6.presentation.util.base.ApiErrorSideEffect
 import com.depromeet.team6.presentation.util.dialog.LocalDialogController
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
+import com.depromeet.team6.presentation.util.permission.PermissionUtil
 import com.depromeet.team6.presentation.util.toast.atChaToastMessage
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.depromeet.team6.ui.theme.LocalTeam6Colors
@@ -110,6 +116,18 @@ fun HomeRoute(
 
     val systemUiController = rememberSystemUiController()
     val dialogController = LocalDialogController.current
+
+    val allPermissionsLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        val locationGranted = permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true
+        if (locationGranted) {
+            mainViewModel.startLocationUpdates()
+        }
+        // Re-evaluate permission state: dismiss sheet only if all required permissions are granted,
+        // otherwise keep sheet visible so the user can grant remaining permissions.
+        viewModel.checkPermissionStatus()
+    }
 
     // LockScreen에서 출발하기 클릭 시 처리
     LaunchedEffect(uiState.isAlarmRegistered && uiState.afterRegisterDataLoadState == LoadState.Success) {
@@ -354,6 +372,27 @@ fun HomeRoute(
                                     isMapReady = true
                                 )
                             }
+                        }
+                    )
+                }
+
+                // Permission bottom sheet overlay
+                if (uiState.showPermissionBottomSheet) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .navigationBarsPadding()
+                            .background(Color.Black.copy(alpha = 0.6f))
+                            .zIndex(10f)
+                    )
+                    OnboardingPermissionBottomSheet(
+                        modifier = Modifier
+                            .navigationBarsPadding()
+                            .align(Alignment.BottomCenter)
+                            .zIndex(11f),
+                        bottomSheetVisible = true,
+                        buttonClicked = {
+                            PermissionUtil.requestAllRequiredPermissions(allPermissionsLauncher)
                         }
                     )
                 }

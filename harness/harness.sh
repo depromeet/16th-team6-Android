@@ -156,6 +156,20 @@ call_text_provider() {
   echo "$result"
 }
 
+# ── planner provider 호출 (planner 전용 서브에이전트 호출) ──────────────────────
+call_planner_provider() {
+  local provider="$1"
+  local prompt="$2"
+
+  if [ "$provider" == "gemini" ]; then
+    # gemini인 경우 @planner를 사용하여 전용 서브에이전트 호출
+    call_text_provider "gemini" "@planner $prompt"
+  else
+    # 그 외의 경우 일반 텍스트 provider 호출
+    call_text_provider "$provider" "$prompt"
+  fi
+}
+
 # JSON 추출 및 검증 함수
 save_state_safely() {
   local content="$1"
@@ -306,8 +320,8 @@ while true; do
         sleep 5
       else
         log_info "🤖 [$PLANNER_PROVIDER/planner] 계획 수립 중..."
-        PROMPT="Use Planning Skill. You are a PM. Current state: $(cat "$STATE_FILE"). \n\nReview the goal and update 'steps' and 'executor_instruction'. Then set phase to 'READY_FOR_EXECUTE'. \n\nIMPORTANT: Output ONLY valid JSON."
-        RESULT=$(call_text_provider "$PLANNER_PROVIDER" "$PROMPT") || exit 1
+        PROMPT="You are a PM. Current state: $(cat "$STATE_FILE"). \n\nReview the goal and update 'task_state.json' file. Then set phase to 'READY_FOR_EXECUTE'. \n\nIMPORTANT: Output ONLY valid JSON."
+        RESULT=$(call_planner_provider "$PLANNER_PROVIDER" "$PROMPT") || exit 1
         save_state_safely "$RESULT" || exit 1
       fi
       ;;

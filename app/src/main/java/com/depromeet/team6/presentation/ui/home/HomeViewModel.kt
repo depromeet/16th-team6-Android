@@ -37,6 +37,7 @@ import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_EVENT_REGISTER_M
 import com.depromeet.team6.presentation.util.HomeAmplitude.REGISTER_MAP_MARKER_CLICKED
 import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
 import com.depromeet.team6.presentation.util.base.BaseViewModel
+import com.depromeet.team6.presentation.util.permission.PermissionUtil
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -88,6 +89,7 @@ class HomeViewModel @Inject constructor(
     private var messageIdx = 0
 
     init {
+        checkPermissionStatus()
         checkAppVersion()
         viewModelScope.launch {
             loadAlarmAndCourseInfoFromPrefs()
@@ -316,6 +318,10 @@ class HomeViewModel @Inject constructor(
                 }
             }
 
+            is HomeContract.HomeEvent.DismissPermissionBottomSheet -> setState {
+                copy(showPermissionBottomSheet = false)
+            }
+
             is HomeContract.HomeEvent.OnSearchClick -> {
                 val distance = calculateDistance(
                     lat1 = currentState.markerPoint.lat,
@@ -341,6 +347,12 @@ class HomeViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun checkPermissionStatus() {
+        val needsPermission = !PermissionUtil.hasLocationPermissions(context) ||
+            !PermissionUtil.hasNotificationPermission(context)
+        setState { copy(showPermissionBottomSheet = needsPermission) }
     }
 
     fun getUserId(): Int {

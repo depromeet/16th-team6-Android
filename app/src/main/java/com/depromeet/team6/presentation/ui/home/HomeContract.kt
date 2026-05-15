@@ -69,6 +69,7 @@ class HomeContract {
         val logoutState: Boolean = false,
         val taxiCost: Int = 0,
         val deleteAlarmDialogVisible: Boolean = false,
+        val showPermissionBottomSheet: Boolean = false,
         // 애니메이션
         val characterMessages: SpeechRequest = SpeechRequest(
             emptyList()
@@ -119,6 +120,7 @@ class HomeContract {
         data object AfterRegisterMapMarkerClick : HomeEvent()
         data class CourseDetailButtonClick(val clickEventKey: String) : HomeEvent()
         data object OnSearchClick : HomeEvent()
+        data object DismissPermissionBottomSheet : HomeEvent()
 
         // 애니메이션
         data class RequestCharacterSpeech(val messages: List<String>) : HomeEvent()
