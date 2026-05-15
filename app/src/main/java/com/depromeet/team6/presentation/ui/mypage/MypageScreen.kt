@@ -33,7 +33,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
-import com.depromeet.team6.BuildConfig
 import com.depromeet.team6.R
 import com.depromeet.team6.presentation.ui.common.view.AtChaWebView
 import com.depromeet.team6.presentation.ui.mypage.component.MyPageConfirmDialog
@@ -129,6 +128,7 @@ fun MyPageRoute(
         if (!isInitialized["initialized"]!!) {
             mypageViewModel.getUserInfo()
             mypageViewModel.updateUserLocation(context)
+            mypageViewModel.checkUpdateAvailability(context)
             isInitialized["initialized"] = true
         }
     }
@@ -218,7 +218,7 @@ fun MyPageRoute(
                                     mypageViewModel.navigateToPlayStore(context)
                                 },
                                 onBannerClicked = { mypageViewModel.setSideEffect(MypageContract.MypageSideEffect.NavigateToFeedbackForm) },
-                                isUpdateBtnVisible = uiState.userInfo.appVersion != ("v" + BuildConfig.VERSION_NAME)
+                                isUpdateBtnVisible = uiState.isUpdateAvailable
                             )
                         }
 

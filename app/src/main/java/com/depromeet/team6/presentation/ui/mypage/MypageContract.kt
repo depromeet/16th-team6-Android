@@ -51,7 +51,8 @@ class MypageContract {
         ),
         val mapViewVisible: Boolean = false,
         val selectedAlarmType: AlarmType = AlarmType.SOUND,
-        val alarmVolume: Int = 50
+        val alarmVolume: Int = 50,
+        val isUpdateAvailable: Boolean = false
     ) : UiState
 
     sealed interface MypageSideEffect : UiSideEffect {
