@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -183,9 +184,15 @@ fun LoginScreen(
     ) {
         Column(
             modifier = Modifier
-                .weight(1f),
+                .weight(1f)
+                .padding(top = 60.dp),
             verticalArrangement = Arrangement.Center
         ) {
+            LoginIndicator(
+                selectedIndex = uiState.pagerState.currentPage,
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            )
+            Spacer(modifier = Modifier.height(30.dp))
             HorizontalPager(
                 count = LoginViewPagerType.entries.size,
                 state = uiState.pagerState,
@@ -194,27 +201,24 @@ fun LoginScreen(
             ) { page ->
                 val loginViewPagerType = LoginViewPagerType.entries[page]
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Image(
-                        painter = painterResource(id = loginViewPagerType.imageRes),
-                        contentDescription = null,
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                    )
-                    Spacer(modifier = Modifier.height(40.dp))
                     Text(
+                        modifier = Modifier,
                         text = stringResource(loginViewPagerType.textRes),
                         style = defaultTeam6Typography.heading1_H1B22,
                         color = defaultTeam6Colors.white,
                         textAlign = TextAlign.Center
                     )
+                    Spacer(modifier = Modifier.weight(1f))
+                    Image(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        painter = painterResource(id = loginViewPagerType.imageRes),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop
+                    )
+                    Spacer(modifier = Modifier.weight(1f))
                 }
             }
-            Spacer(modifier = Modifier.height(32.dp))
-            LoginIndicator(
-                selectedIndex = uiState.pagerState.currentPage,
-                modifier = Modifier.align(Alignment.CenterHorizontally)
-            )
         }
         Box(
             modifier = Modifier
@@ -228,16 +232,23 @@ fun LoginScreen(
                 .semantics { contentDescription = "kakao_login_button" }
                 .padding(horizontal = 22.dp, vertical = 14.dp)
         ) {
-            Icon(
-                imageVector = ImageVector.vectorResource(R.drawable.ic_login_kakao),
-                contentDescription = null,
-                modifier = Modifier.align(Alignment.CenterStart)
-            )
-            Text(
-                text = "카카오 계정으로 계속하기",
-                style = defaultTeam6Typography.body2_B2SB15,
-                modifier = Modifier.align(Alignment.Center)
-            )
+            Row(
+                modifier = Modifier
+                    .align(Alignment.Center),
+                horizontalArrangement = Arrangement.spacedBy(20.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(R.drawable.ic_login_kakao),
+                    contentDescription = null,
+                    modifier = Modifier
+                )
+                Text(
+                    text = "카카오로 계속하기",
+                    style = defaultTeam6Typography.body2_B2SB15,
+                    modifier = Modifier
+                )
+            }
         }
     }
 }

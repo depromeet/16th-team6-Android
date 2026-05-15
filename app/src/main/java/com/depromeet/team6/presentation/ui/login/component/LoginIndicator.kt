@@ -22,7 +22,7 @@ fun LoginIndicator(selectedIndex: Int, modifier: Modifier = Modifier) {
         verticalAlignment = Alignment.Bottom
     ) {
         for (i in 0 until LoginViewPagerType.entries.size) {
-            val color = if (i == selectedIndex) defaultTeam6Colors.main else defaultTeam6Colors.gray300
+            val color = if (i == selectedIndex) defaultTeam6Colors.white else defaultTeam6Colors.gray300
             Box(
                 modifier = Modifier
                     .size(6.dp)

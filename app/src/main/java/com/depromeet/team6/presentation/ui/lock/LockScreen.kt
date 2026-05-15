@@ -1,3 +1,6 @@
+package com.depromeet.team6.presentation.ui.lock
+
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -8,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -26,12 +30,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.imageResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
@@ -44,8 +50,7 @@ import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.depromeet.team6.R
-import com.depromeet.team6.presentation.ui.lock.LockContract
-import com.depromeet.team6.presentation.ui.lock.LockViewModel
+import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.ui.theme.LocalTeam6Colors
 import com.depromeet.team6.ui.theme.LocalTeam6Typography
 import com.depromeet.team6.ui.theme.Team6Theme
@@ -60,6 +65,7 @@ import java.util.Locale
 fun LockRoute(
     padding: PaddingValues,
     viewModel: LockViewModel,
+    onCloseClick: () -> Unit,
     onDepartureClick: () -> Unit,
     onLateClick: () -> Unit,
     onTimerFinish: () -> Unit
@@ -87,6 +93,7 @@ fun LockRoute(
         uiState = uiState,
         padding = padding,
         onTimerFinish = onTimerFinish,
+        onCloseClick = onCloseClick,
         onDepartureClick = {
             onDepartureClick()
         },
@@ -101,6 +108,7 @@ fun LockScreen(
     padding: PaddingValues,
     uiState: LockContract.LockUiState = LockContract.LockUiState(),
     onTimerFinish: () -> Unit,
+    onCloseClick: () -> Unit,
     onDepartureClick: () -> Unit,
     onLateClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -225,8 +233,41 @@ fun LockScreen(
                 )
             }
 
-            Spacer(modifier = Modifier.height(padding.calculateBottomPadding()))
+            Button(
+                onClick = {
+                    onLateClick()
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp),
+                contentPadding = PaddingValues(0.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = colors.greenLockButton
+                ),
+                shape = RoundedCornerShape(10.dp)
+            ) {
+                Text(
+                    text = stringResource(R.string.lock_screen_late_btn),
+                    color = colors.main,
+                    style = typography.heading3_H3SB17,
+                    modifier = Modifier.padding(vertical = 14.dp)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(padding.calculateBottomPadding() + 30.dp))
         }
+
+        Image(
+            painter = painterResource(R.drawable.ic_onboarding_close_24),
+            contentDescription = null,
+            colorFilter = ColorFilter.tint(colors.white),
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .size(40.dp)
+                .statusBarsPadding()
+                .padding(top = 16.dp, end = 16.dp)
+                .noRippleClickable { onCloseClick() }
+        )
     }
 }
 
@@ -237,6 +278,7 @@ fun LockScreenPreview() {
         LockScreen(
             padding = PaddingValues(0.dp),
             onTimerFinish = {},
+            onCloseClick = {},
             uiState = LockContract.LockUiState(),
             onDepartureClick = { },
             onLateClick = {},

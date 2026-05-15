@@ -54,7 +54,7 @@ fun AtchaSpeechCharacter(
     val bubbles = remember { mutableStateListOf<BubbleMessage>() }
     val scope = rememberCoroutineScope()
     var debouncing by remember { mutableStateOf(false) }
-    val lottieResId = R.raw.character_alarm_not_registered
+    val lottieResId = R.raw.character_jump
     val lottie = rememberLottieAnimatable()
 
     val composition by rememberLottieComposition(
@@ -91,7 +91,10 @@ fun AtchaSpeechCharacter(
             bubbles.clear()
             speechJob?.cancelAndJoin()
         } else {
-            if (speechJob != null && speechJob!!.isActive) return@LaunchedEffect
+            if (speechJob != null && speechJob!!.isActive) {
+                bubbles.clear()
+                speechJob?.cancelAndJoin()
+            }
         }
 
         // 말풍선 만들때 캐릭터 통통 튀기
@@ -164,7 +167,7 @@ fun AtchaSpeechCharacter(
             progress = { lottie.progress },
             modifier = Modifier.noRippleClickable {
                 // 캐릭터 클릭시 애니메이션은 무조건 재생하되, API 호출만 throttling 처리
-                if (speechJob?.isActive == false && !debouncing) {
+                if (!debouncing) {
                     debouncing = true
                     onCharacterClick()
                     scope.launch {

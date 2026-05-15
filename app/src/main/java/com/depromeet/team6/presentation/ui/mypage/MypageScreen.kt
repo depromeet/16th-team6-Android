@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -40,6 +39,7 @@ import com.depromeet.team6.presentation.ui.mypage.component.MyPageConfirmDialog
 import com.depromeet.team6.presentation.ui.mypage.component.MypageListItem
 import com.depromeet.team6.presentation.ui.mypage.component.MypageVersionItem
 import com.depromeet.team6.presentation.ui.mypage.component.TitleBar
+import com.depromeet.team6.presentation.ui.mypage.navigation.MypageRoute
 import com.depromeet.team6.presentation.ui.onboarding.component.OnboardingSearchPopup
 import com.depromeet.team6.presentation.util.MyPageAmplitude.MYPAGE_BANNER_CLICKED
 import com.depromeet.team6.presentation.util.WebViewUrl.FEEDBACK_FORM_URL
@@ -57,6 +57,7 @@ import com.depromeet.team6.ui.theme.LocalTeam6Typography
 @Composable
 fun MyPageRoute(
     navigateToLogin: () -> Unit,
+    initialScreenRoute: String,
     modifier: Modifier = Modifier,
     padding: PaddingValues = PaddingValues(0.dp),
     mypageViewModel: MypageViewModel = hiltViewModel(),
@@ -112,6 +113,13 @@ fun MyPageRoute(
                     is MypageContract.MypageSideEffect.ClearPermissionData -> {
                         PermissionUtil.clearAllPermissionData(context)
                     }
+                    is MypageContract.MypageSideEffect.ShowOutOfServiceRegionBottomSheet -> {
+                        dialogController.showAtchaBottomSheet(
+                            locationName = "서울, 경기, 인천 내에서만 사용할 수 있어요",
+                            locationAddress = "출발지를 확인한 후 다시 검색해 주세요",
+                            confirmButtonText = "확인"
+                        )
+                    }
                 }
             }
     }
@@ -122,6 +130,18 @@ fun MyPageRoute(
             mypageViewModel.updateUserLocation(context)
             mypageViewModel.checkUpdateAvailability(context)
             isInitialized["initialized"] = true
+        }
+    }
+
+    LaunchedEffect(initialScreenRoute) {
+        mypageViewModel.setState {
+            copy(
+                currentScreen = if (initialScreenRoute == MypageRoute.Screen.CHANGE_HOME.route) {
+                    MypageContract.MypageScreen.CHANGE_HOME
+                } else {
+                    MypageContract.MypageScreen.MAIN
+                }
+            )
         }
     }
 
@@ -241,17 +261,11 @@ fun MyPageRoute(
                                 },
                                 mapViewSelectButtonClicked = {
                                     mypageViewModel.updateUserLocation(context)
-                                    mypageViewModel.modifyUserAddress(callback = {
+                                    mypageViewModel.validateAndModifyUserAddress(callback = {
                                         snackbarController.showSnackbar(
                                             message = context.getString(R.string.mypage_change_home_toast_text)
                                         )
                                     })
-                                    mypageViewModel.setEvent(
-                                        MypageContract.MypageEvent.ChangeMapViewVisible(
-                                            false,
-                                            null
-                                        )
-                                    )
                                 }
                             )
                         }
@@ -364,15 +378,6 @@ fun MypageScreen(
                     onSuccess = logoutConfirmed
                 )
             }
-
-            Text(
-                text = stringResource(R.string.itinerary_info_legs_data_source),
-                style = typography.detail1_R12,
-                color = colors.gray300,
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(bottom = 32.dp)
-            )
         }
     }
 }

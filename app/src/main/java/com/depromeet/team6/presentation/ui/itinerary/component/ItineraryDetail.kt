@@ -18,7 +18,7 @@ fun ItineraryDetail(
     currentLocation: LatLng,
     courseInfo: CourseInfo,
     userDeparted: Boolean,
-    busArrivalStatus: SparseArray<RealTimeBusArrival>,
+    busArrivalStatus: SparseArray<List<RealTimeBusArrival>>,
     departurePoint: Address,
     destinationPoint: Address,
     modifier: Modifier = Modifier,

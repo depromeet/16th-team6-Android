@@ -1,6 +1,5 @@
 package com.depromeet.team6.presentation.ui.lock
 
-import LockRoute
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -9,9 +8,18 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.lifecycleScope
+import com.depromeet.team6.data.background.AlarmScheduler
 import com.depromeet.team6.data.background.LockService
+import com.depromeet.team6.presentation.ui.home.component.DeleteAlarmDialog
 import com.depromeet.team6.presentation.util.AmplitudeCommon.SCREEN_NAME
 import com.depromeet.team6.presentation.util.AmplitudeCommon.USER_ID
 import com.depromeet.team6.presentation.util.LockAmplitude.LOCK
@@ -22,6 +30,7 @@ import com.depromeet.team6.presentation.util.LockAmplitude.LOCK_BUTTON_LATER_ROU
 import com.depromeet.team6.presentation.util.LockAmplitude.LOCK_BUTTON_START
 import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
 import com.depromeet.team6.ui.theme.Team6Theme
+import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -61,72 +70,114 @@ class LockActivity : ComponentActivity() {
 
         setContent {
             Team6Theme {
+                var showFinishDialog by remember { mutableStateOf(false) }
                 Scaffold { innerPadding ->
-                    LockRoute(
-                        padding = innerPadding,
-                        viewModel = viewModel,
-                        onTimerFinish = {
-                            stopLockServiceAndExit(this)
-                        },
-                        onDepartureClick = {
-                            viewModel.setEvent(LockContract.LockEvent.OnDepartureClick)
-                            AmplitudeUtils.trackEventWithProperties(
-                                LOCK_BUTTON,
-                                mapOf(
-                                    SCREEN_NAME to LOCK,
-                                    USER_ID to viewModel.getUserId(),
-                                    LOCK_BUTTON_START to 1
+                    Box(modifier = androidx.compose.ui.Modifier.fillMaxSize()) {
+                        LockRoute(
+                            padding = innerPadding,
+                            viewModel = viewModel,
+                            onCloseClick = {
+                                showFinishDialog = true
+                            },
+                            onTimerFinish = {
+                                stopLockServiceAndExit(this@LockActivity)
+                            },
+                            onDepartureClick = {
+                                viewModel.setEvent(LockContract.LockEvent.OnDepartureClick)
+                                AmplitudeUtils.trackEventWithProperties(
+                                    LOCK_BUTTON,
+                                    mapOf(
+                                        SCREEN_NAME to LOCK,
+                                        USER_ID to viewModel.getUserId(),
+                                        LOCK_BUTTON_START to 1
+                                    )
                                 )
-                            )
-                            val actionTime = (System.currentTimeMillis() - alarmStartedTime) / 1000L
-                            AmplitudeUtils.trackEventWithProperties(
-                                LOCK_ACTION_TAKEN,
-                                mapOf(
-                                    LOCK_ACTION_TAKEN to "Y",
-                                    LOCK_ACTION_TAKEN_TIME to actionTime
+                                val actionTime = (System.currentTimeMillis() - alarmStartedTime) / 1000L
+                                AmplitudeUtils.trackEventWithProperties(
+                                    LOCK_ACTION_TAKEN,
+                                    mapOf(
+                                        LOCK_ACTION_TAKEN to "Y",
+                                        LOCK_ACTION_TAKEN_TIME to actionTime
+                                    )
                                 )
-                            )
 
-                            lockScreenNavigator.navigateToItineraryFromLockScreen(this)
-                            finish()
-                        },
-                        onLateClick = {
-                            viewModel.setEvent(LockContract.LockEvent.OnLateClick)
+                                lockScreenNavigator.navigateToItineraryFromLockScreen(this@LockActivity)
+                                stopLockServiceAndExit(this@LockActivity)
+                            },
+                            onLateClick = {
+                                viewModel.setEvent(LockContract.LockEvent.OnLateClick)
 
-                            AmplitudeUtils.trackEventWithProperties(
-                                LOCK_BUTTON,
-                                mapOf(
-                                    SCREEN_NAME to LOCK,
-                                    USER_ID to viewModel.getUserId(),
-                                    LOCK_BUTTON_LATER_ROUTE to 1
+                                AmplitudeUtils.trackEventWithProperties(
+                                    LOCK_BUTTON,
+                                    mapOf(
+                                        SCREEN_NAME to LOCK,
+                                        USER_ID to viewModel.getUserId(),
+                                        LOCK_BUTTON_LATER_ROUTE to 1
+                                    )
                                 )
-                            )
 
-                            try {
-                                val departurePoint = sharedPreferences.getString("departurePoint", "") ?: ""
-                                val destinationPoint = sharedPreferences.getString("destinationPoint", "") ?: ""
+                                try {
+                                    val departurePoint = sharedPreferences.getString("departurePoint", "") ?: ""
+                                    val destinationPoint = sharedPreferences.getString("destinationPoint", "") ?: ""
 
-                                val editor = sharedPreferences.edit()
-                                editor.putBoolean("fromLockScreen", true)
-                                editor.apply()
+                                    val editor = sharedPreferences.edit()
+                                    // "출발하기"와 동일하게 출발 상태 플래그를 남긴다.
+                                    editor.putBoolean("fromLockScreenDeparture", true)
+                                    editor.putBoolean("fromLockScreen", true)
+                                    editor.apply()
 
-                                Timber.d("LockActivity onLateClick: departurePoint=$departurePoint, destinationPoint=$destinationPoint")
+                                    Timber.d("LockActivity onLateClick: departurePoint=$departurePoint, destinationPoint=$destinationPoint")
 
-                                lockScreenNavigator.navigateToCourseSearch(this, departurePoint, destinationPoint)
-                            } catch (e: Exception) {
-                                Timber.e(e, "Error in onLateClick, navigating to home")
-                                lockScreenNavigator.navigateToSpecificScreen(this)
+                                    lockScreenNavigator.navigateToCourseSearch(
+                                        context = this@LockActivity,
+                                        departurePoint = departurePoint,
+                                        destinationPoint = destinationPoint,
+                                        fromLockScreen = true
+                                    )
+                                } catch (e: Exception) {
+                                    Timber.e(e, "Error in onLateClick, navigating to home")
+                                    lockScreenNavigator.navigateToSpecificScreen(this@LockActivity)
+                                }
+
+                                stopLockServiceAndExit(this@LockActivity)
                             }
+                        )
 
-                            finish()
+                        if (showFinishDialog) {
+                            Box(
+                                modifier = androidx.compose.ui.Modifier
+                                    .fillMaxSize()
+                                    .background(color = defaultTeam6Colors.black.copy(alpha = 0.76f))
+                            )
+
+                            Box(
+                                modifier = androidx.compose.ui.Modifier.fillMaxSize(),
+                                contentAlignment = androidx.compose.ui.Alignment.Center
+                            ) {
+                                DeleteAlarmDialog(
+                                    onDismiss = { showFinishDialog = false },
+                                    onSuccess = {
+                                        showFinishDialog = false
+                                        viewModel.finishAlarmAndResetState()
+                                        lockScreenNavigator.navigateToSpecificScreen(this@LockActivity)
+                                        stopLockServiceAndExit(this@LockActivity)
+                                    },
+                                    sortType = 1
+                                )
+                            }
                         }
-                    )
+                    }
                 }
             }
         }
     }
 
     private fun stopLockServiceAndExit(context: Context) {
+        // finish() 전에 동기적으로 알람을 취소한다.
+        // LockViewModel.stopAlarmFlow()의 코루틴이 viewModelScope 취소로 인해
+        // 실행되지 못하는 race condition을 방어한다.
+        AlarmScheduler.unScheduleAllAlarms(context)
+
         // 서비스 종료
         val stopIntent = Intent(context, LockService::class.java)
         context.stopService(stopIntent)

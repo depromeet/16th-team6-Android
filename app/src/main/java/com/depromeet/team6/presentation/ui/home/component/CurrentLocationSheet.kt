@@ -60,6 +60,7 @@ fun CurrentLocationSheet(
                 location = destination,
                 textColor = colors.gray200,
                 backgroundColor = colors.gray950,
+                clickableIcon = true,
                 onClick = { onDestinationClick() },
                 modifier = Modifier
             )

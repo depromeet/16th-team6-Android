@@ -4,6 +4,7 @@ import android.util.SparseArray
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -35,6 +36,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -61,16 +63,16 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.depromeet.team6.R
+import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.BusCongestion
 import com.depromeet.team6.domain.model.BusStatus
 import com.depromeet.team6.domain.model.RealTimeBusArrival
 import com.depromeet.team6.domain.model.course.LegInfo
 import com.depromeet.team6.domain.model.course.Station
 import com.depromeet.team6.domain.model.course.TransportType
-import com.depromeet.team6.domain.model.toInfo
 import com.depromeet.team6.domain.usecase.CalculateDistanceUseCase
 import com.depromeet.team6.presentation.model.bus.BusArrivalParameter
-import com.depromeet.team6.presentation.ui.common.text.AtChaRemainTimeText
+import com.depromeet.team6.presentation.ui.common.text.AtChaRemainTimeWithStationText
 import com.depromeet.team6.presentation.ui.itinerary.LegInfoDummyProvider
 import com.depromeet.team6.presentation.util.Dimens
 import com.depromeet.team6.presentation.util.Dimens.WalkIconWithRippleSize
@@ -90,7 +92,7 @@ fun ItineraryInfoDetailLegs(
     currentLocation: LatLng,
     userDeparted: Boolean,
     legs: List<LegInfo>,
-    busArrivalStatus: SparseArray<RealTimeBusArrival>,
+    busArrivalStatus: SparseArray<List<RealTimeBusArrival>>,
     modifier: Modifier = Modifier,
     onClickBusInfo: (BusArrivalParameter) -> Unit = {}
 ) {
@@ -116,6 +118,7 @@ fun ItineraryInfoDetailLegs(
                     columnHeightPx = coords.size.height
                 }
         ) {
+            var busLegOrder = 0
             for ((idx, leg) in legs.withIndex()) {
                 when (leg.transportType) {
                     TransportType.WALK -> {
@@ -137,14 +140,18 @@ fun ItineraryInfoDetailLegs(
                     }
                     TransportType.BUS -> {
                         DetailLegsBus(
+                            currentLocation = currentLocation,
+                            isFirstBusLeg = busLegOrder == 0,
                             busName = leg.routeName!!,
                             subtypeIdx = leg.subTypeIdx,
                             boardingStation = leg.startPoint.name,
+                            boardingStationLat = leg.startPoint.lat,
+                            boardingStationLon = leg.startPoint.lon,
                             disembarkingStation = leg.endPoint.name,
                             boardingDateTime = leg.departureDateTime!!,
                             timeMinute = leg.sectionTime / 60,
                             distanceMeter = leg.distance,
-                            busArrivalStatus = busArrivalStatus.get(idx),
+                            busArrivalStatus = busArrivalStatus.get(idx) ?: emptyList(),
                             passStopList = leg.passStopList,
                             timelineIconSize = timelineIconSize,
                             timelineTimeSlotWidth = timelineTimeSlotWidth,
@@ -163,10 +170,13 @@ fun ItineraryInfoDetailLegs(
                                 )
                             }
                         )
+                        busLegOrder++
                     }
                     TransportType.SUBWAY -> {
                         DetailLegsSubway(
                             subwayName = leg.routeName!!,
+                            isExpressSubway = leg.isExpressSubway,
+                            isLastSubway = leg.isLastSubway,
                             subtypeIdx = leg.subTypeIdx,
                             boardingStation = leg.startPoint.name,
                             disembarkingStation = leg.endPoint.name,
@@ -250,14 +260,18 @@ fun ItineraryInfoDetailLegs(
 
 @Composable
 private fun DetailLegsBus(
+    currentLocation: LatLng,
+    isFirstBusLeg: Boolean,
     busName: String,
     subtypeIdx: Int,
     boardingStation: String,
+    boardingStationLat: Double,
+    boardingStationLon: Double,
     disembarkingStation: String,
     boardingDateTime: String,
     timeMinute: Int,
     distanceMeter: Int,
-    busArrivalStatus: RealTimeBusArrival?,
+    busArrivalStatus: List<RealTimeBusArrival>,
     passStopList: List<Station>,
     timelineIconSize: Dp,
     timelineTimeSlotWidth: Dp,
@@ -268,6 +282,8 @@ private fun DetailLegsBus(
 ) {
     var rowHeight by remember { mutableStateOf(0) }
     var isPassStopShow by remember { mutableStateOf(false) }
+    var arrivedAtStationAtMillis by remember(boardingStation, boardingStationLat, boardingStationLon) { mutableLongStateOf(0L) }
+    var isBoardingCompleted by remember(boardingStation, boardingStationLat, boardingStationLon) { mutableStateOf(false) }
     val disembarkingDateTime: String = LocalDateTime
         .parse(boardingDateTime)
         .plusMinutes(timeMinute.toLong())
@@ -275,6 +291,39 @@ private fun DetailLegsBus(
     val timelineAxisOffset = timelineTimeSlotWidth + timelineTimeIconGap + (timelineIconSize / 2)
     val disembarkingMarkerSize = timelineIconSize * (14f / 26f)
     val disembarkingMarkerOffset = (timelineIconSize - disembarkingMarkerSize) / 2
+    val distanceToBoardingStation = remember(currentLocation, boardingStationLat, boardingStationLon) {
+        CalculateDistanceUseCase().invoke(
+            lat1 = currentLocation.latitude,
+            lon1 = currentLocation.longitude,
+            lat2 = boardingStationLat,
+            lon2 = boardingStationLon
+        )
+    }
+    val primaryArrivalStatus = busArrivalStatus.firstOrNull()
+    val displayBusStatus = if (isBoardingCompleted) {
+        BusStatus.BOARDING_COMPLETED
+    } else {
+        primaryArrivalStatus?.busStatus ?: BusStatus.WAITING
+    }
+
+    LaunchedEffect(distanceToBoardingStation) {
+        if (isBoardingCompleted) return@LaunchedEffect
+
+        val now = System.currentTimeMillis()
+        if (arrivedAtStationAtMillis == 0L && distanceToBoardingStation <= BOARDING_STOP_ARRIVAL_DISTANCE_METER) {
+            arrivedAtStationAtMillis = now
+            return@LaunchedEffect
+        }
+
+        if (arrivedAtStationAtMillis != 0L) {
+            val stayedForOneMinute = now - arrivedAtStationAtMillis >= BOARDING_COMPLETED_STAY_MILLIS
+            val movedAwayFromStation = distanceToBoardingStation >= BOARDING_COMPLETED_LEAVE_DISTANCE_METER
+
+            if (stayedForOneMinute || movedAwayFromStation) {
+                isBoardingCompleted = true
+            }
+        }
+    }
 
     Row(
         modifier = modifier
@@ -401,16 +450,31 @@ private fun DetailLegsBus(
                     busColor = busColor
                 )
                 Spacer(modifier = Modifier.width(8.dp))
-                if (busArrivalStatus == null) {
-                    AtChaRemainTimeText(remainSecond = 0, busStatus = BusStatus.WAITING)
+                if (isFirstBusLeg) {
+                    AtChaRemainTimeWithStationText(
+                        remainSecond = primaryArrivalStatus?.remainingTime ?: 0,
+                        remainingStations = primaryArrivalStatus?.remainingStations ?: 0
+                    )
                 } else {
-                    AtChaRemainTimeText(remainSecond = busArrivalStatus.remainingTime, busStatus = busArrivalStatus.busStatus)
-                    if (busArrivalStatus.busCongestion != BusCongestion.UNKNOWN) {
-                        Text(
-                            text = "(${busArrivalStatus.busCongestion.toInfo().label})",
-                            style = defaultTeam6Typography.body6_B6R14,
-                            color = defaultTeam6Colors.systemRed
-                        )
+                    val arrivalsToShow = busArrivalStatus.take(2)
+                    val firstArrival = arrivalsToShow.getOrNull(0)
+                    val secondArrival = arrivalsToShow.getOrNull(1)
+
+                    Column {
+                        Spacer(modifier = Modifier.height(10.dp))
+                        if (firstArrival != null) {
+                            AtChaRemainTimeWithStationText(
+                                remainSecond = firstArrival.remainingTime,
+                                remainingStations = firstArrival.remainingStations
+                            )
+                        }
+                        if (secondArrival != null) {
+                            Spacer(modifier = Modifier.height(2.dp))
+                            AtChaRemainTimeWithStationText(
+                                remainSecond = secondArrival.remainingTime,
+                                remainingStations = secondArrival.remainingStations
+                            )
+                        }
                     }
                 }
             }
@@ -470,6 +534,8 @@ private fun DetailLegsBus(
 @Composable
 private fun DetailLegsSubway(
     subwayName: String,
+    isExpressSubway: Boolean,
+    isLastSubway: Boolean,
     subtypeIdx: Int,
     boardingStation: String,
     disembarkingStation: String,
@@ -601,11 +667,27 @@ private fun DetailLegsSubway(
                 )
             }
             Spacer(Modifier.height(16.dp))
-            Text(
-                text = subwayName,
-                style = defaultTeam6Typography.body7_B7M13,
-                color = defaultTeam6Colors.gray200
-            )
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = subwayName,
+                    style = defaultTeam6Typography.body7_B7M13,
+                    color = defaultTeam6Colors.gray200
+                )
+                if (isLastSubway) {
+                    Spacer(modifier = Modifier.width(6.dp))
+                    TransitFlagBadge(
+                        text = "막",
+                        containerColor = defaultTeam6Colors.systemRed
+                    )
+                }
+                if (isExpressSubway) {
+                    Spacer(modifier = Modifier.width(6.dp))
+                    TransitFlagBadge(
+                        text = "급",
+                        containerColor = Color(0xFF1777FF)
+                    )
+                }
+            }
             Spacer(Modifier.height(16.dp))
             Row(
                 modifier = Modifier
@@ -893,6 +975,37 @@ private fun BusNumberButton(
     }
 }
 
+@Composable
+private fun TransitFlagBadge(
+    text: String,
+    containerColor: Color,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .size(16.dp)
+            .clip(CircleShape)
+            .border(
+                border = BorderStroke(
+                    width = 1.dp,
+                    color = containerColor
+                ),
+                shape = CircleShape
+            ),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = text,
+            color = containerColor,
+            style = defaultTeam6Typography.detail3_M9
+        )
+    }
+}
+
+private const val BOARDING_STOP_ARRIVAL_DISTANCE_METER = 50.0
+private const val BOARDING_COMPLETED_LEAVE_DISTANCE_METER = 150.0
+private const val BOARDING_COMPLETED_STAY_MILLIS = 60_000L
+
 @Preview
 @Composable
 fun ItineraryInfoDetailLegsPreview(
@@ -902,6 +1015,117 @@ fun ItineraryInfoDetailLegsPreview(
         currentLocation = LatLng(0.0, 0.0),
         legs = legs,
         userDeparted = true,
-        busArrivalStatus = SparseArray<RealTimeBusArrival>()
+        busArrivalStatus = SparseArray<List<RealTimeBusArrival>>()
     )
 }
+
+@Preview(name = "First Bus - Existing Style")
+@Composable
+private fun ItineraryInfoDetailLegsFirstBusArrivalPreview() {
+    val arrivals = SparseArray<List<RealTimeBusArrival>>().apply {
+        put(
+            1,
+            listOf(
+                RealTimeBusArrival(
+                    busStatus = BusStatus.OPERATING,
+                    remainingTime = 320,
+                    busCongestion = BusCongestion.HIGH,
+                    remainingSeats = 3,
+                    expectedArrivalTime = null,
+                    vehicleId = "v1",
+                    remainingStations = 4
+                )
+            )
+        )
+    }
+    ItineraryInfoDetailLegs(
+        currentLocation = LatLng(0.0, 0.0),
+        legs = previewLegsWithTwoBus(),
+        userDeparted = true,
+        busArrivalStatus = arrivals
+    )
+}
+
+@Preview(name = "Second Bus - Max 2 Arrivals")
+@Composable
+private fun ItineraryInfoDetailLegsSecondBusArrivalPreview() {
+    val arrivals = SparseArray<List<RealTimeBusArrival>>().apply {
+        put(
+            1,
+            listOf(
+                RealTimeBusArrival(
+                    busStatus = BusStatus.OPERATING,
+                    remainingTime = 320,
+                    busCongestion = BusCongestion.HIGH,
+                    remainingSeats = 3,
+                    expectedArrivalTime = null,
+                    vehicleId = "v1",
+                    remainingStations = 4
+                )
+            )
+        )
+        put(
+            2,
+            listOf(
+                RealTimeBusArrival(
+                    busStatus = BusStatus.OPERATING,
+                    remainingTime = 320,
+                    busCongestion = BusCongestion.HIGH,
+                    remainingSeats = 3,
+                    expectedArrivalTime = null,
+                    vehicleId = "v2",
+                    remainingStations = 4
+                ),
+                RealTimeBusArrival(
+                    busStatus = BusStatus.OPERATING,
+                    remainingTime = 601,
+                    busCongestion = BusCongestion.MEDIUM,
+                    remainingSeats = 8,
+                    expectedArrivalTime = null,
+                    vehicleId = "v3",
+                    remainingStations = 8
+                )
+            )
+        )
+    }
+    ItineraryInfoDetailLegs(
+        currentLocation = LatLng(0.0, 0.0),
+        legs = previewLegsWithTwoBus(),
+        userDeparted = true,
+        busArrivalStatus = arrivals
+    )
+}
+
+private fun previewLegsWithTwoBus(): List<LegInfo> = listOf(
+    LegInfo(
+        transportType = TransportType.WALK,
+        sectionTime = 300,
+        departureDateTime = "2023-06-06T23:17:00",
+        startPoint = Address(name = "출발", lat = 0.1, lon = 0.1, address = ""),
+        endPoint = Address(name = "버스정류장 A", lat = 0.0, lon = 0.0, address = ""),
+        distance = 400,
+        passShape = ""
+    ),
+    LegInfo(
+        transportType = TransportType.BUS,
+        routeName = "경기 : 100",
+        subTypeIdx = 2,
+        departureDateTime = "2023-06-06T23:20:00",
+        sectionTime = 900,
+        startPoint = Address(name = "버스정류장 A", lat = 0.0, lon = 0.0, address = ""),
+        endPoint = Address(name = "버스정류장 B", lat = 0.0, lon = 0.0, address = ""),
+        distance = 3000,
+        passShape = ""
+    ),
+    LegInfo(
+        transportType = TransportType.BUS,
+        routeName = "서울 : 200",
+        subTypeIdx = 2,
+        departureDateTime = "2023-06-06T23:36:00",
+        sectionTime = 1200,
+        startPoint = Address(name = "버스정류장 B", lat = 0.0, lon = 0.0, address = ""),
+        endPoint = Address(name = "도착", lat = 0.0, lon = 0.0, address = ""),
+        distance = 5200,
+        passShape = ""
+    )
+)
