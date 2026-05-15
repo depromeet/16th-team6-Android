@@ -230,12 +230,13 @@ if m:
 
 # ── executor provider 호출 (파일 변경 수행) ──────────────────────────────────
 call_executor_provider() {
+  local instruction="task_state.json에 정의된 스텝을 수행하고 phase를 REVIEW_REQUIRED로 바꿔."
   case "$EXECUTOR_PROVIDER" in
     claude)
       (while true; do sleep 60; echo -ne "${YELLOW}.${NC}"; done) &
       local keep_alive_pid=$!
       claude --agent "$EXECUTOR_CLAUDE_AGENT" --verbose \
-        -p "harness/task_state.json에 정의된 스텝을 수행하고 phase를 REVIEW_REQUIRED로 바꿔." \
+        -p "$instruction" \
         --dangerously-skip-permissions
       local exit_code=$?
       kill "$keep_alive_pid" 2>/dev/null
@@ -243,23 +244,15 @@ call_executor_provider() {
       return $exit_code
       ;;
     gemini)
-      local instruction
-      instruction=$(jq -r '.executor_instruction // "task_state.json에 정의된 스텝을 수행하고 phase를 REVIEW_REQUIRED로 바꿔."' "$STATE_FILE")
       local prompt="You are a coding agent. Execute every step in the following task state and update phase to REVIEW_REQUIRED.\n\nTASK STATE:\n$(cat "$STATE_FILE")\n\nINSTRUCTION:\n$instruction\n\nOutput ONLY valid JSON (updated task_state)."
       local result
       result=$(call_text_provider gemini "$prompt")
       save_state_safely "$result"
       ;;
     codex)
-      local instruction
-      instruction=$(jq -r '.executor_instruction // "task_state.json에 정의된 스텝을 수행하고 phase를 REVIEW_REQUIRED로 바꿔."' "$STATE_FILE")
-      (while true; do sleep 60; echo -ne "${YELLOW}.${NC}"; done) &
-      local keep_alive_pid=$!
-      printf '%s\n\nTask state:\n%s\n' "$instruction" "$(cat "$STATE_FILE")" \
+      printf '먼저 android-executor subagent를 실행해.\n\n%s\n' "$instruction" \
         | codex exec - --sandbox workspace-write -C "$PROJECT_ROOT" 2>&1
       local exit_code=$?
-      kill "$keep_alive_pid" 2>/dev/null
-      echo -e ""
       return $exit_code
       ;;
 

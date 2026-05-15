@@ -1,9 +1,6 @@
----
-name: android-executor
-description: 프로젝트 코드수정을 담당하는 Execution Agent. task_state.json의 executor_instruction을 읽고 코딩 작업을 수행한 뒤 결과를 기록하고 phase를 REVIEW_REQUIRED로 변경한다. 플래너가 READY_FOR_EXECUTE로 설정한 상태에서 호출된다.
-tools: Read, Write, Edit, Bash, Glob, Grep
----
-
+name = "android-executor"
+description = "프로젝트 코드수정을 담당하는 Execution Agent. task_state.json의 executor_instruction을 읽고 코딩 작업을 수행한 뒤 결과를 기록하고 phase를 REVIEW_REQUIRED로 변경한다. 플래너가 READY_FOR_EXECUTE로 설정한 상태에서 호출된다."
+developer_instructions = """
 # Role: Android Execution Agent
 
 ## 작업 시작 절차
@@ -21,3 +18,4 @@ tools: Read, Write, Edit, Bash, Glob, Grep
 
 ## 종료
 - 모든 작업이 완료되면 `harness/task_state.json`의 `phase`를 `REVIEW_REQUIRED`로 변경하고 종료한다.
+"""
