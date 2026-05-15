@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -49,15 +50,25 @@ fun TMapViewCompose(
     isMapFocused: MapFocusState,
     userId: Int,
     modifier: Modifier = Modifier,
-    getCenterLocation: (LatLng) -> Unit,
+    getCenterLocationAddress: (LatLng) -> Unit,
     mapModified: () -> Unit,
     isMapReadyCallback: () -> Unit
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
+    val tMapView = remember { TMapView(context) }
     var isMapReady by remember { mutableStateOf(false) }
 
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
+
+    LaunchedEffect(isMapFocused) {
+        if (!isMapReady) return@LaunchedEffect
+        if (isMapFocused == MapFocusState.Current) {
+            tMapView.setCompassModeFix(true)
+        } else {
+            tMapView.setCompassModeFix(false)
+        }
+    }
 
     Box(
         modifier = modifier
@@ -67,15 +78,18 @@ fun TMapViewCompose(
                 .fillMaxWidth()
                 .height(screenHeight - 180.dp + padding.calculateTopPadding())
                 .align(Alignment.TopCenter),
-            factory = { context ->
-                val tMapView = TMapView(context)
+            factory = { viewContext ->
                 var debounceJob: Job? = null
 
                 tMapView.setSKTMapApiKey(BuildConfig.TMAP_API_KEY)
                 tMapView.mapType = TMapView.MapType.NIGHT
+                tMapView.setIconVisibility(false)
+                tMapView.setSightVisible(false)
+                tMapView.setRotateEnable(true)
                 tMapView.setOnMapReadyListener {
-                    getCenterLocation(currentLocation)
+                    getCenterLocationAddress(currentLocation)
                     val currentPoint = TMapPoint(currentLocation.latitude, currentLocation.longitude)
+                    tMapView.setLocationPoint(currentLocation.latitude, currentLocation.longitude)
                     tMapView.fitBounds(
                         tMapView.getBoundsFromPoints(
                             arrayListOf(currentPoint)
@@ -83,7 +97,7 @@ fun TMapViewCompose(
                     )
                     // 현위치 마커
                     val markerDrawable =
-                        ContextCompat.getDrawable(context, R.drawable.ic_home_current_location)
+                        ContextCompat.getDrawable(viewContext, R.drawable.ic_home_current_location)
                     val markerBitmap = markerDrawable?.toBitmap()
 
                     val markerItem = TMapMarkerItem().apply {
@@ -105,7 +119,7 @@ fun TMapViewCompose(
                             val centerLat = tMapView.centerPoint.latitude
                             val centerLon = tMapView.centerPoint.longitude
 
-                            getCenterLocation(LatLng(centerLat, centerLon))
+                            getCenterLocationAddress(LatLng(centerLat, centerLon))
 
                             AmplitudeUtils.trackEventWithProperties(
                                 eventName = HOME_EVENT_COURSESEARCH_ENTERED,
@@ -139,8 +153,7 @@ fun TMapViewCompose(
 
                 if (isMapFocused == MapFocusState.Current) {
                     tMapView.setCenterPoint(currentLocation.latitude, currentLocation.longitude)
-                    getCenterLocation(LatLng(currentLocation.latitude, currentLocation.longitude))
-                    tMapView.zoomLevel = 18
+                    getCenterLocationAddress(LatLng(currentLocation.latitude, currentLocation.longitude))
 
                     AmplitudeUtils.trackEventWithProperties(
                         eventName = HOME_EVENT_COURSESEARCH_ENTERED,

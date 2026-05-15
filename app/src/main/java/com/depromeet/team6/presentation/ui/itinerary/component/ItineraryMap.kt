@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -59,12 +60,17 @@ fun ItineraryMap(
 ) {
     val context = LocalContext.current
     var isMapReady by remember { mutableStateOf(false) }
-    var isMapFocused by remember { mutableStateOf(true) }
+    var isMapFocused by remember { mutableStateOf(false) }
     val tMapView = remember { TMapView(context) }
 
     val departLocation = LatLng(departurePoint.lat, departurePoint.lon)
     val destinationLocation = LatLng(destinationPoint.lat, destinationPoint.lon)
     val markerSizePx = 28.dp.toPx().toInt()
+
+    LaunchedEffect(isMapFocused) {
+        if (!isMapReady) return@LaunchedEffect
+        tMapView.setCompassModeFix(isMapFocused)
+    }
 
     Box(
         modifier = modifier
@@ -74,15 +80,19 @@ fun ItineraryMap(
         AndroidView(
             modifier = modifier
                 .fillMaxSize(),
-            factory = { context ->
+            factory = { viewContext ->
                 tMapView.setSKTMapApiKey(BuildConfig.TMAP_API_KEY)
                 tMapView.mapType = TMapView.MapType.NIGHT
+                tMapView.setIconVisibility(false)
+                tMapView.setSightVisible(false)
 
                 val departTMapPoint = TMapPoint(departLocation.latitude, departLocation.longitude)
                 val destinationTMapPoint = TMapPoint(destinationLocation.latitude, destinationLocation.longitude)
                 val tMapPointList = arrayListOf(departTMapPoint, destinationTMapPoint)
 
                 tMapView.setOnMapReadyListener {
+                    tMapView.setLocationPoint(currentLocation.latitude, currentLocation.longitude)
+
                     // 경로 그리기
                     for (leg in legs) {
                         // 라인 그리기
@@ -119,7 +129,7 @@ fun ItineraryMap(
                             fillColor = TransportTypeUiMapper.getColor(leg.transportType, leg.subTypeIdx),
                             isMarker = true,
                             sizePx = markerSizePx,
-                            context = context
+                            context = viewContext
                         )
                         tMapView.addTMapMarkerItem(marker)
                     }
@@ -128,20 +138,20 @@ fun ItineraryMap(
                     val departMarker = TMapMarkerItem()
                     departMarker.id = "departPoint"
                     departMarker.tMapPoint = departTMapPoint
-                    departMarker.icon = ContextCompat.getDrawable(context, R.drawable.map_marker_departure)?.toBitmap()
+                    departMarker.icon = ContextCompat.getDrawable(viewContext, R.drawable.map_marker_departure)?.toBitmap()
                     tMapView.addTMapMarkerItem(departMarker)
 
                     val destinationMarker = TMapMarkerItem()
                     destinationMarker.id = "destinationPoint"
                     destinationMarker.tMapPoint = destinationTMapPoint
-                    destinationMarker.icon = ContextCompat.getDrawable(context, R.drawable.map_marker_arrival)?.toBitmap()
+                    destinationMarker.icon = ContextCompat.getDrawable(viewContext, R.drawable.map_marker_arrival)?.toBitmap()
                     tMapView.addTMapMarkerItem(destinationMarker)
 
                     val currentMarker = TMapMarkerItem()
                     val currentPoint = TMapPoint(currentLocation.latitude, currentLocation.longitude)
                     currentMarker.id = "CurrentMarker"
                     currentMarker.name = "Current Location"
-                    currentMarker.icon = ContextCompat.getDrawable(context, R.drawable.ic_home_current_location)?.toBitmap()
+                    currentMarker.icon = ContextCompat.getDrawable(viewContext, R.drawable.ic_home_current_location)?.toBitmap()
                     currentMarker.tMapPoint = currentPoint
                     tMapView.addTMapMarkerItem(currentMarker)
 
@@ -162,6 +172,10 @@ fun ItineraryMap(
                         TMapInsets.of(-100, -100, -100, -100)
                     )
 
+                    tMapView.setOnEnableScrollWithZoomLevelListener { _, _ ->
+                        isMapFocused = false
+                    }
+
                     isMapReady = true
 
                     // 지도 Scale 조정
@@ -181,7 +195,6 @@ fun ItineraryMap(
 
                 if (isMapFocused) {
                     tMapView.setCenterPoint(currentLocation.latitude, currentLocation.longitude)
-                    tMapView.zoomLevel = 18
                 }
             }
         )

@@ -180,6 +180,9 @@ dependencies {
     // Amplitude
     implementation(libs.amplitude)
     implementation(libs.play.services.appset)
+
+    // In-App Update
+    implementation(libs.app.update.ktx)
 }
 java {
     toolchain {

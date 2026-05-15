@@ -5,6 +5,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import androidx.work.WorkManager
 import com.depromeet.team6.BuildConfig
 import com.google.firebase.Firebase
 import com.google.firebase.crashlytics.crashlytics
@@ -18,6 +19,8 @@ object AlarmScheduler {
     private const val LOCATION_NOTIFICATION_ID = 1001
     private const val ALARM_START_ID = 2001
     private const val ALARM_AWARE_NOTIFICATION_ID = 2002
+    const val ADDITIONAL_PUSH_WORK_NAME = "additional_push_alarm_work"
+    const val ADDITIONAL_PUSH_WORK_TAG = "additional_push_alarm_tag"
 
     fun scheduleLockScreenAlarm(context: Context, alarmTimeStamp: String) {
         unScheduleLockAlarm(context)
@@ -68,6 +71,8 @@ object AlarmScheduler {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
+        alarmManager.cancel(pendingIntent)
+
         val exactSupported = Build.VERSION.SDK_INT < Build.VERSION_CODES.S || alarmManager.canScheduleExactAlarms()
 
         if (exactSupported) {
@@ -102,9 +107,7 @@ object AlarmScheduler {
         }
     }
 
-    fun unScheduleAllAlarms(context: Context) {
-        unScheduleLockAlarm(context)
-
+    private fun unScheduleAdditionalPushAlarm(context: Context) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val pushTime = 10
         val intent = Intent(context, AlarmReceiver::class.java)
@@ -117,20 +120,19 @@ object AlarmScheduler {
         try {
             alarmManager.cancel(pendingIntent)
         } catch (e: Exception) {
-            Firebase.crashlytics.recordException(RuntimeException("deleteAlarm 오류 : 알람취소를 눌렀지만 실제로 unschedule 로직이 실행되지 않음"))
+            Firebase.crashlytics.recordException(RuntimeException("deleteAlarm 오류 : 추가 푸시 알람 unschedule 실패"))
         }
+    }
 
-        // 5분, 10분 전 푸시알림 해제
-//        for (pushTime in pushTimes) {
-//            val intent = Intent(context, AlarmReceiver::class.java)
-//            val pendingIntent = PendingIntent.getBroadcast(
-//                context,
-//                ALARM_AWARE_NOTIFICATION_ID + pushTime,
-//                intent,
-//                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-//            )
-//            alarmManager.cancel(pendingIntent)
-//        }
+    fun cancelAdditionalPushWork(context: Context) {
+        WorkManager.getInstance(context).cancelUniqueWork(ADDITIONAL_PUSH_WORK_NAME)
+        WorkManager.getInstance(context).cancelAllWorkByTag(ADDITIONAL_PUSH_WORK_TAG)
+    }
+
+    fun unScheduleAllAlarms(context: Context) {
+        unScheduleLockAlarm(context)
+        unScheduleAdditionalPushAlarm(context)
+        cancelAdditionalPushWork(context)
     }
 
     fun scheduleLocationCheck(context: Context) {
