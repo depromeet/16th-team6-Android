@@ -1,11 +1,11 @@
 {
   "phase": "COMPLETED",
-  "review_feedback": "빌드 검증(`./gradlew :app:compileDebugKotlin`)이 성공했고, 목표였던 '더 이상 권한 요청이 불가능한 상태(영구 거절)에서 설정 화면으로 유도'가 구현되었습니다. `HomeScreen`의 권한 콜백에서 거절된 권한에 대해 `shouldShowRequestPermissionRationale == false`를 검사해 영구 거절을 감지하고, `PermissionUtil.openAppSettings()`로 앱 설정 화면을 여는 흐름이 핵심 요구사항과 일치합니다. 또한 `Activity` 캐스팅이 안전 캐스트로 처리되어 즉시 크래시 리스크도 보이지 않습니다. 치명적 결함(빌드 실패, 크래시 경로, 요구사항 미충족)은 확인되지 않았습니다.",
+  "review_feedback": "치명 이슈 기준으로 검토한 결과, 목표가 충족되었습니다. `showPermissionBottomSheet` 오버레이에 `.noRippleClickable { }`가 추가되어 바텀시트 노출 중 배경 터치가 소비되므로 background view와의 상호작용이 차단됩니다. 또한 권한 요청 결과 콜백에서 `viewModel.checkPermissionStatus()`를 호출하고 있어, 권한 허용 상태로 전환되면 바텀시트 표시 상태가 재평가되어 자동으로 사라지는 흐름이 보장됩니다. 빌드 성공 조건과 함께 크래시/요구사항 미충족에 해당하는 결함은 확인되지 않았습니다.",
   "review_criteria": [
     "Goal fully addressed",
-    "Permanent-denial path routes user to app settings",
-    "No runtime crash risk introduced in permission callback",
-    "Build/test gate passes",
-    "Changes remain scoped to permission-flow concern"
+    "Permission bottom sheet blocks background interaction while visible",
+    "Bottom sheet visibility is re-evaluated after permission result",
+    "No crash-risk introduced in permission callback flow",
+    "Build/test gate passes"
   ]
 }

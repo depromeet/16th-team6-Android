@@ -395,6 +395,7 @@ fun HomeRoute(
                             .fillMaxSize()
                             .navigationBarsPadding()
                             .background(Color.Black.copy(alpha = 0.6f))
+                            .noRippleClickable { }
                             .zIndex(10f)
                     )
                     OnboardingPermissionBottomSheet(
