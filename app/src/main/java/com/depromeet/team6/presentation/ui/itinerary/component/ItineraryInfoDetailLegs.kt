@@ -1,7 +1,6 @@
 package com.depromeet.team6.presentation.ui.itinerary.component
 
 import android.util.SparseArray
-import android.widget.Space
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
@@ -71,10 +70,8 @@ import com.depromeet.team6.domain.model.RealTimeBusArrival
 import com.depromeet.team6.domain.model.course.LegInfo
 import com.depromeet.team6.domain.model.course.Station
 import com.depromeet.team6.domain.model.course.TransportType
-import com.depromeet.team6.domain.model.toInfo
 import com.depromeet.team6.domain.usecase.CalculateDistanceUseCase
 import com.depromeet.team6.presentation.model.bus.BusArrivalParameter
-import com.depromeet.team6.presentation.ui.common.text.AtChaRemainTimeText
 import com.depromeet.team6.presentation.ui.common.text.AtChaRemainTimeWithStationText
 import com.depromeet.team6.presentation.ui.itinerary.LegInfoDummyProvider
 import com.depromeet.team6.presentation.util.Dimens
@@ -478,7 +475,7 @@ private fun DetailLegsBus(
                                 remainingStations = secondArrival.remainingStations
                             )
                         }
-                    } 
+                    }
                 }
             }
 

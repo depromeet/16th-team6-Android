@@ -86,7 +86,7 @@ fun TextFieldLocation(
                     modifier = Modifier
                         .size(20.dp),
                     imageVector = ImageVector.vectorResource(R.drawable.ic_arrow_right_big),
-                    contentDescription = "",
+                    contentDescription = ""
                 )
             }
         }

@@ -42,9 +42,9 @@ import com.depromeet.team6.presentation.util.view.LoadState
 import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.time.Duration
 import java.time.LocalDateTime
@@ -746,7 +746,7 @@ class HomeViewModel @Inject constructor(
                     lastTaxiCostRoute = routeLocation
                     setState {
                         copy(
-                            taxiCost = it,
+                            taxiCost = it
                         )
                     }
                     showTaxiCostSpeech(it)

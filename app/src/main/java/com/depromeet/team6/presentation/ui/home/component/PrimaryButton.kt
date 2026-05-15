@@ -39,7 +39,7 @@ fun PrimaryButton(
             .background(
                 color = colors.primaryMain,
                 shape = RoundedCornerShape(10.dp)
-            ),
+            )
     ) {
         Row(
             modifier = Modifier

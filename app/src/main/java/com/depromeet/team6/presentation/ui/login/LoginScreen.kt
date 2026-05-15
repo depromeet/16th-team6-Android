@@ -214,7 +214,7 @@ fun LoginScreen(
                             .fillMaxWidth(),
                         painter = painterResource(id = loginViewPagerType.imageRes),
                         contentDescription = null,
-                        contentScale = ContentScale.Crop,
+                        contentScale = ContentScale.Crop
                     )
                     Spacer(modifier = Modifier.weight(1f))
                 }

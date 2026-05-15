@@ -17,10 +17,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.lifecycleScope
-import com.depromeet.team6.presentation.ui.home.component.DeleteAlarmDialog
-import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.depromeet.team6.data.background.AlarmScheduler
 import com.depromeet.team6.data.background.LockService
+import com.depromeet.team6.presentation.ui.home.component.DeleteAlarmDialog
 import com.depromeet.team6.presentation.util.AmplitudeCommon.SCREEN_NAME
 import com.depromeet.team6.presentation.util.AmplitudeCommon.USER_ID
 import com.depromeet.team6.presentation.util.LockAmplitude.LOCK
@@ -31,6 +30,7 @@ import com.depromeet.team6.presentation.util.LockAmplitude.LOCK_BUTTON_LATER_ROU
 import com.depromeet.team6.presentation.util.LockAmplitude.LOCK_BUTTON_START
 import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
 import com.depromeet.team6.ui.theme.Team6Theme
+import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
