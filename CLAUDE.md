@@ -15,7 +15,7 @@
 
 ## Phase 2: EXECUTION — Claude가 실행
 
-1. `task_state.json`의 `claude_instruction`을 읽고 코드를 작성/수정한다.
+1. `task_state.json`의 `executor_instruction`을 읽고 코드를 작성/수정한다.
     - Android Clean Architecture 및 프로젝트 코딩 스타일 준수
 2. `./gradlew assembleDebug`를 실행하여 빌드를 검증한다.
 3. 실행 결과(stdout, stderr, exit_code)를 `last_execution_result`에 기록하고 `phase`를 `REVIEW_REQUIRED`로 변경한다.

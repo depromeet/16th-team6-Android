@@ -5,6 +5,8 @@ import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
 import androidx.lifecycle.viewModelScope
+import com.depromeet.team6.data.background.AlarmScheduler
+import com.depromeet.team6.data.background.ArrivalMonitorService
 import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.domain.model.course.CourseInfo
 import com.depromeet.team6.domain.repository.HomeRepository
@@ -19,6 +21,7 @@ import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.delay
@@ -47,6 +50,7 @@ class MainViewModel @Inject constructor(
 ) : BaseViewModel<MainContract.MainState, MainContract.MainSideEffect, MainContract.MainEvent>() {
 
     private var fcmToken: String? = null
+    private var locationUpdatesJob: Job? = null
     private val _currentLocation = MutableStateFlow(LatLng(DefaultLatLng.DEFAULT_LAT, DefaultLatLng.DEFAULT_LNG))
     val currentLocation: StateFlow<LatLng> = _currentLocation.asStateFlow()
     private val connectivityManager =
@@ -141,13 +145,16 @@ class MainViewModel @Inject constructor(
     }.distinctUntilChanged() // 연속으로 중복된 상태가 전송되는 것을 방지
 
     fun startLocationUpdates() {
-        getRealtimeLocationUseCase()
+        if (locationUpdatesJob?.isActive == true) return
+
+        locationUpdatesJob = getRealtimeLocationUseCase()
             .onEach { newLocation ->
                 _currentLocation.value = newLocation
             }
             .catch { e ->
                 // 위치 정보를 가져오는 중 에러 발생 시 처리 (예: 로그 남기기)
                 Timber.e(e, "Error while collecting location updates : $e")
+                locationUpdatesJob = null
             }
             .launchIn(viewModelScope) // viewModelScope에서 Flow 수집 시작
     }
@@ -182,6 +189,15 @@ class MainViewModel @Inject constructor(
 
     fun setUserDeparture(isDeparted: Boolean) {
         homeRepository.setUserDeparture(isDeparted)
+    }
+
+    fun finishArrivalGuide() {
+        // 도착 완료 시, 홈을 "알람 등록 전" 상태로 복귀시키기 위한 로컬 상태 전체 초기화
+        homeRepository.clearAlarmData()
+        homeRepository.clearUserDeparture()
+        AlarmScheduler.unScheduleAllAlarms(context)
+        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as android.app.NotificationManager
+        notificationManager.cancel(ArrivalMonitorService.ARRIVAL_NOTIFICATION_ID)
     }
 
     companion object {

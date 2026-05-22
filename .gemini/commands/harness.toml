@@ -1,0 +1,2 @@
+description = "harness.sh에 따라 명령을 수행"
+prompt = "Run 'bash harness/harness.sh \"{{args}}\"'"

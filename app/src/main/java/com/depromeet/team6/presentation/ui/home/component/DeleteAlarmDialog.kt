@@ -97,7 +97,11 @@ fun DeleteAlarmDialog(
                     )
                 ) {
                     Text(
-                        text = stringResource(R.string.dialog_finish_alarm_finish_text),
+                        text = if (sortType == 2) {
+                            stringResource(R.string.dialog_change_alarm_change_text)
+                        } else {
+                            stringResource(R.string.dialog_finish_alarm_finish_text)
+                        },
                         color = colors.black,
                         style = typography.body5_B5SB14,
                         modifier = Modifier.padding(vertical = 13.dp)
@@ -115,6 +119,6 @@ fun DeleteAlarmDialogPreview() {
         onDismiss = {},
         onSuccess = {},
         modifier = Modifier,
-        sortType = TODO()
+        sortType = 2
     )
 }

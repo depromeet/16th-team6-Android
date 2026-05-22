@@ -27,13 +27,19 @@ class LockScreenNavigator @Inject constructor() {
         context.startActivity(intent)
     }
 
-    fun navigateToCourseSearch(context: Context, departurePoint: String, destinationPoint: String) {
+    fun navigateToCourseSearch(
+        context: Context,
+        departurePoint: String,
+        destinationPoint: String,
+        fromLockScreen: Boolean = false
+    ) {
         try {
             val intent = Intent(context, MainActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 putExtra(EXTRA_NAVIGATE_TO_COURSE_SEARCH, true)
                 putExtra(EXTRA_DEPARTURE_POINT, departurePoint)
                 putExtra(EXTRA_DESTINATION_POINT, destinationPoint)
+                putExtra(EXTRA_FROM_LOCK_SCREEN, fromLockScreen)
             }
             context.startActivity(intent)
         } catch (e: Exception) {

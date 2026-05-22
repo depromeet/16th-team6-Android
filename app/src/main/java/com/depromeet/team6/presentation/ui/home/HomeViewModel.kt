@@ -37,10 +37,13 @@ import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_EVENT_REGISTER_M
 import com.depromeet.team6.presentation.util.HomeAmplitude.REGISTER_MAP_MARKER_CLICKED
 import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
 import com.depromeet.team6.presentation.util.base.BaseViewModel
+import com.depromeet.team6.presentation.util.permission.PermissionUtil
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.time.Duration
@@ -67,6 +70,9 @@ class HomeViewModel @Inject constructor(
     @ApplicationContext private val context: Context
 ) : BaseViewModel<HomeContract.HomeUiState, HomeContract.HomeSideEffect, HomeContract.HomeEvent>() {
     private var lastRouteId: String = ""
+    private var taxiCostJob: Job? = null
+    private var characterTaxiCostDebounceJob: Job? = null
+    private var lastTaxiCostRoute: RouteLocation? = null
 
     private val beforeDepartMessages = listOf(
         "막차 놓치면 택시비 약 34,000원",
@@ -83,6 +89,7 @@ class HomeViewModel @Inject constructor(
     private var messageIdx = 0
 
     init {
+        checkPermissionStatus()
         checkAppVersion()
         viewModelScope.launch {
             loadAlarmAndCourseInfoFromPrefs()
@@ -98,8 +105,7 @@ class HomeViewModel @Inject constructor(
                 HomeContract.SpeechRequest(
                     messages = listOf(
                         context.getString(R.string.home_bubble_taxi_cost_message, formattedCost)
-                    ),
-                    persistentMessage = true
+                    )
                 )
             }
             val focusState = if (homeRepository.isAlarmRegistered()) {
@@ -150,7 +156,7 @@ class HomeViewModel @Inject constructor(
                         )
                     )
                 } else {
-//                    getTaxiCost()
+                    requestTaxiCostFromCharacterClick()
                     AmplitudeUtils.trackEventWithProperties(
                         eventName = HOME_EVENT_CHARACTER_CLICK_BEFORE_ALARM,
                         properties = mapOf(
@@ -312,6 +318,10 @@ class HomeViewModel @Inject constructor(
                 }
             }
 
+            is HomeContract.HomeEvent.DismissPermissionBottomSheet -> setState {
+                copy(showPermissionBottomSheet = false)
+            }
+
             is HomeContract.HomeEvent.OnSearchClick -> {
                 val distance = calculateDistance(
                     lat1 = currentState.markerPoint.lat,
@@ -337,6 +347,12 @@ class HomeViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun checkPermissionStatus() {
+        val needsPermission = !PermissionUtil.hasLocationPermissions(context) ||
+            !PermissionUtil.hasNotificationPermission(context)
+        setState { copy(showPermissionBottomSheet = needsPermission) }
     }
 
     fun getUserId(): Int {
@@ -450,7 +466,7 @@ class HomeViewModel @Inject constructor(
                         copy(markerPoint = newMarkerPoint)
                     }
                     if (!currentState.userDeparture) {
-                        getTaxiCost()
+                        requestTaxiCost(newMarkerPoint)
                     }
                 }
                 .onFailure { exception ->
@@ -514,6 +530,14 @@ class HomeViewModel @Inject constructor(
     }
 
     fun loadDepartureTime() {
+        // 사용자가 이미 출발한 상태라면 알람을 재설정하지 않는다.
+        // 이 가드가 없으면 HomeScreen onResume 시 loadDepartureTime()이 호출되어
+        // 출발 후에도 알람이 재등록되는 버그가 발생한다.
+        if (homeRepository.isUserDeparted()) {
+            Timber.d("loadDepartureTime: 사용자가 이미 출발했으므로 알람 재설정 건너뜀")
+            return
+        }
+
         // 남은시간 3분 이하부터는 새로고침 불가
         val now: LocalDateTime = LocalDateTime.now()
         val departureTime = LocalDateTime.parse(currentState.departureTime, DateTimeFormatter.ISO_LOCAL_DATE_TIME)
@@ -667,31 +691,65 @@ class HomeViewModel @Inject constructor(
 //        stopPollingBusStarted()
 //    }
 
-    private fun getTaxiCost() {
+    private fun requestTaxiCost(markerPoint: Address, force: Boolean = false) {
+        val routeLocation = RouteLocation(
+            startLat = markerPoint.lat,
+            startLon = markerPoint.lon,
+            endLat = currentState.destinationPoint.lat,
+            endLon = currentState.destinationPoint.lon
+        )
+
+        if (!force && shouldSkipTaxiCostRequest(routeLocation)) {
+            return
+        }
+
+        taxiCostJob?.cancel()
+        taxiCostJob = viewModelScope.launch {
+            delay(TAXI_COST_REQUEST_DEBOUNCE_MS)
+            getTaxiCost(routeLocation)
+        }
+    }
+
+    private fun requestTaxiCostFromCharacterClick() {
+        viewModelScope.launch {
+            val savedTaxiCost = getTaxiCostUseCase.getLastSavedTaxiCost()
+            if (savedTaxiCost > 0) {
+                showTaxiCostSpeech(savedTaxiCost)
+            }
+        }
+
+        characterTaxiCostDebounceJob?.cancel()
+        characterTaxiCostDebounceJob = viewModelScope.launch {
+            delay(CHARACTER_TAXI_COST_DEBOUNCE_MS)
+
+            val routeLocation = RouteLocation(
+                startLat = currentState.markerPoint.lat,
+                startLon = currentState.markerPoint.lon,
+                endLat = currentState.destinationPoint.lat,
+                endLon = currentState.destinationPoint.lon
+            )
+
+            if (!isTaxiCostRouteValid(routeLocation)) {
+                return@launch
+            }
+
+            getTaxiCost(routeLocation)
+        }
+    }
+
+    private fun getTaxiCost(routeLocation: RouteLocation) {
         viewModelScope.launch {
             getTaxiCostUseCase(
-                routeLocation = RouteLocation(
-                    startLat = currentState.markerPoint.lat,
-                    startLon = currentState.markerPoint.lon,
-                    endLat = currentState.destinationPoint.lat,
-                    endLon = currentState.destinationPoint.lon
-                )
+                routeLocation = routeLocation
             )
                 .onSuccess {
-                    // 1. 숫자를 콤마가 포함된 문자열로 포매팅
-                    val formattedCost = String.format(Locale.KOREA, "%,d", it) // "34,200"
-                    val resultString = context.getString(R.string.home_bubble_taxi_cost_message, formattedCost)
+                    lastTaxiCostRoute = routeLocation
                     setState {
                         copy(
-                            taxiCost = it,
-                            characterMessages = HomeContract.SpeechRequest(
-                                messages = listOf(
-                                    resultString
-                                ),
-                                persistentMessage = true
-                            )
+                            taxiCost = it
                         )
                     }
+                    showTaxiCostSpeech(it)
                     getTaxiCostUseCase.saveTaxiCost(it)
                 }.onFailure { exception ->
                     handleApiException(exception) {
@@ -700,6 +758,18 @@ class HomeViewModel @Inject constructor(
                         )
                     }
                 }
+        }
+    }
+
+    private fun showTaxiCostSpeech(taxiCost: Int) {
+        val formattedCost = String.format(Locale.KOREA, "%,d", taxiCost)
+        val resultString = context.getString(R.string.home_bubble_taxi_cost_message, formattedCost)
+        setState {
+            copy(
+                characterMessages = HomeContract.SpeechRequest(
+                    messages = listOf(resultString)
+                )
+            )
         }
     }
 
@@ -751,7 +821,7 @@ class HomeViewModel @Inject constructor(
                         )
 
                 if (isAllNotDefault) {
-                    getTaxiCost()
+                    requestTaxiCost(currentState.markerPoint, force = true)
                 }
             }.onFailure { exception ->
                 handleApiException(exception)
@@ -860,6 +930,47 @@ class HomeViewModel @Inject constructor(
         return 2 * r * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
     }
 
+    private fun shouldSkipTaxiCostRequest(routeLocation: RouteLocation): Boolean {
+        if (!isTaxiCostRouteValid(routeLocation)) {
+            return true
+        }
+
+        val previousRoute = lastTaxiCostRoute ?: return false
+        val startDistance = calculateDistance(
+            lat1 = previousRoute.startLat,
+            lon1 = previousRoute.startLon,
+            lat2 = routeLocation.startLat,
+            lon2 = routeLocation.startLon
+        )
+        val endDistance = calculateDistance(
+            lat1 = previousRoute.endLat,
+            lon1 = previousRoute.endLon,
+            lat2 = routeLocation.endLat,
+            lon2 = routeLocation.endLon
+        )
+
+        return startDistance < TAXI_COST_REQUEST_MIN_DISTANCE_METER &&
+            endDistance < TAXI_COST_REQUEST_MIN_DISTANCE_METER
+    }
+
+    private fun isTaxiCostRouteValid(routeLocation: RouteLocation): Boolean {
+        if (
+            routeLocation.startLat == DEFAULT_MARKER_LAT &&
+            routeLocation.startLon == DEFAULT_MARKER_LON
+        ) {
+            return false
+        }
+
+        if (
+            routeLocation.endLat == DEFAULT_DESTINATION_LAT &&
+            routeLocation.endLon == DEFAULT_DESTINATION_LON
+        ) {
+            return false
+        }
+
+        return true
+    }
+
     private fun getCurrentVersionName(): String? {
         return try {
             val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
@@ -872,5 +983,8 @@ class HomeViewModel @Inject constructor(
 
     companion object {
         private const val MY_PREFERENCES_NAME = "MyPreferences"
+        private const val TAXI_COST_REQUEST_DEBOUNCE_MS = 400L
+        private const val TAXI_COST_REQUEST_MIN_DISTANCE_METER = 100.0
+        private const val CHARACTER_TAXI_COST_DEBOUNCE_MS = 1_000L
     }
 }

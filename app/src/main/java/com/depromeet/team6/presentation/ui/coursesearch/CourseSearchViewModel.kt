@@ -188,6 +188,8 @@ class CourseSearchViewModel @Inject constructor(
         return userInfoRepository.getUserID()
     }
 
+    fun isAlarmRegistered(): Boolean = homeRepository.isAlarmRegistered()
+
     fun setSortType(sortType: Int) {
         setState { copy(sortType = sortType) }
         if (uiState.value.startingPoint != null && uiState.value.destinationPoint != null) {

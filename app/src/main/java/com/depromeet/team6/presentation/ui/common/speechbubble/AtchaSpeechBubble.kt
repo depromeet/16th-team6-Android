@@ -14,6 +14,9 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
@@ -44,8 +47,21 @@ fun AtchaSpeechBubble(
                 .padding(top = 10.dp, bottom = 16.dp, start = 12.dp, end = 12.dp)
         ) {
             Text(
-                text = message,
-                color = colors.gray100,
+                text = buildAnnotatedString {
+                    val highlightedText = "여기서 막차 놓치면 택시비"
+                    val startIndex = message.indexOf(highlightedText)
+
+                    if (startIndex == -1) {
+                        append(message)
+                    } else {
+                        append(message.substring(0, startIndex))
+                        withStyle(style = SpanStyle(color = colors.gray100)) {
+                            append(highlightedText)
+                        }
+                        append(message.substring(startIndex + highlightedText.length))
+                    }
+                },
+                color = colors.white,
                 style = typography.body7_B7M13
             )
         }
@@ -137,7 +153,7 @@ class SpeechBubbleShape(
 @Composable
 fun SpeechBubbleTailPreview() {
     AtchaSpeechBubble(
-        message = "여기서 놓치면 택시비 34.000원",
+        message = "여기서 막차 놓치면 택시비 34.000원",
 //        prefix = "여기서 놓치면 택시비",
 //        emphasisText = "34,000원",
         modifier = Modifier,
@@ -149,7 +165,7 @@ fun SpeechBubbleTailPreview() {
 @Composable
 fun SpeechBubblePreview() {
     AtchaSpeechBubble(
-        message = "여기서 놓치면 택시비 1억9천달러",
+        message = "여기서 막차 놓치면 택시비 1억9천달러",
 //        prefix = "여기서 놓치면 택시비",
 //        emphasisText = "34,000원",
         modifier = Modifier,

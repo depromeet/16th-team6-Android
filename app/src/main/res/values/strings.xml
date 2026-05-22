@@ -58,6 +58,7 @@
     <string name="dialog_finish_alarm_finish_text">종료하기</string>
 
     <string name="dialog_change_alarm_title">기존 막차 알람을 종료하고\n선택한 알람으로 변경할까요?</string>
+    <string name="dialog_change_alarm_change_text">변경하기</string>
 
     <!-- Overlay Permission -->
     <string name="overlay_permission_content_text_start">막차 알람을 등록하려면\n</string>
@@ -99,7 +100,7 @@
     <string name="home_icon_arrow_right_text">화살표 아이콘</string>
     <string name="home_icon_bell_text">알람 종 아이콘</string>
 
-    <string name="home_bubble_map_text">지도를 움직여 출발지를 설정해 봐요</string>
+    <string name="home_bubble_map_text">지도를 움직여 출발지를 설정해요</string>
 <!--    <string name="home_bubble_basic_text">여기서 막차 놓치면 택시비</string>-->
 <!--    <string name="home_bubble_user_departure_taxi_cost_text">막차 놓치면 택시비</string>-->
 <!--    <string name="home_bubble_least_text">약&#160;</string>-->
@@ -121,7 +122,6 @@
     <string name="home_bubble_time_info_text_2">시간에 맞춰 알람을 드릴게요</string>
     <string name="home_bubble_departed_taxi_cost_text">출발지에서 막차 놓치면 택시비</string>
     <string name="home_bubble_trust_text_1">믿을 수 있는</string>
-    <string name="home_bubble_trust_text_2">티맵 API와 공공 데이터를 활용해요</string>
 
     <string name="home_bubble_user_departure_bus_text">버스타러 출발!</string>
     <string name="home_bubble_user_departure_subway_text">지하철타러 출발!</string>
@@ -182,7 +182,6 @@
     <string name="itinerary_info_legs_disembarking">하차</string>
     <string name="itinerary_info_legs_bus_remaining_time">%d분 %d초(%s)</string>
     <string name="itinerary_info_legs_bus_remaining_second">%d초(%s)</string>
-    <string name="itinerary_info_legs_data_source">티맵 API와 공공데이터로 막차 정보를 제공합니다.</string>
     <string name="itinerary_info_legs_bus_stopovers">%d분, %d개 정류장 이동</string>
     <string name="itinerary_info_legs_subway_stopovers">%d분, %d개 역 이동</string>
 
@@ -255,7 +254,9 @@
     <string name="notification_arrival_monitor_start_text">목적지 도착 모니터링을 시작합니다</string>
     <string name="notification_arrival_guide_finish_title">막차 안내 종료</string>
     <string name="notification_arrival_near_destination_text">목적지 부근에 도착했어요</string>
+    <string name="notification_arrival_expected_time_over_text">예정된 도착 시간이 지나 알람이 자동으로 종료됐어요</string>
 
     <string name="arrival_guide_finish_dialog">목적지 부근에 도착해\n안내를 종료합니다</string>
+    <string name="arrival_guide_timeout_finish_dialog">예정된 도착 시간이 지나\n안내를 종료합니다</string>
     <string name="confirm_dialog">확인</string>
 </resources>

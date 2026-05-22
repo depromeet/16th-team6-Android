@@ -41,7 +41,6 @@ import com.depromeet.team6.presentation.ui.common.SearchBar
 import com.depromeet.team6.presentation.ui.common.list.LocationListItemDistance
 import com.depromeet.team6.presentation.ui.common.textfields.TextFieldLocation
 import com.depromeet.team6.presentation.ui.common.view.AtChaLoadingView
-import com.depromeet.team6.presentation.ui.home.HomeViewModel
 import com.depromeet.team6.presentation.ui.searchlocation.component.BackTopBar
 import com.depromeet.team6.presentation.ui.searchlocation.component.SearchHistoryContainer
 import com.depromeet.team6.presentation.ui.searchlocation.component.SearchHistoryEmptyContainer
@@ -63,7 +62,6 @@ import timber.log.Timber
 fun SearchLocationRoute(
     padding: PaddingValues = PaddingValues(0.dp),
     viewModel: SearchLocationViewModel = hiltViewModel(),
-    homeViewModel: HomeViewModel = hiltViewModel(),
     destinationLocation: Address,
     departureLocation: Address?,
     navigateToBack: () -> Unit = {},
@@ -71,7 +69,6 @@ fun SearchLocationRoute(
     navigateToCourseSearch: (String, String) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val homeUiState by homeViewModel.uiState.collectAsStateWithLifecycle()
 
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
@@ -137,7 +134,31 @@ fun SearchLocationRoute(
             .collect { sideEffect ->
                 when (sideEffect) {
                     is SearchLocationContract.SearchLocationSideEffect.NavigateBack -> navigateToBack()
+                    is SearchLocationContract.SearchLocationSideEffect.NavigateToCourseSearch -> {
+                        viewModel.setEvent(
+                            SearchLocationContract.SearchLocationEvent.ChangeCurrentScreen(
+                                SearchLocationContract.SearchLocationScreen.LISTVIEW
+                            )
+                        )
+                        val currentLocationJSON = Gson().toJson(sideEffect.departureLocation)
+                        val destinationPointJSON = Gson().toJson(destinationLocation)
+                        navigateToCourseSearch(currentLocationJSON, destinationPointJSON)
+                    }
                     is SearchLocationContract.SearchLocationSideEffect.ShowToastSideEffect -> Toast.makeText(context, sideEffect.message, Toast.LENGTH_SHORT).show()
+                    is SearchLocationContract.SearchLocationSideEffect.ShowTooCloseDialog -> {
+                        dialogController.showAtchaBottomSheet(
+                            locationName = "이동하려는 거리가 매우 가까워요",
+                            locationAddress = "출발지를 확인한 후 다시 검색해 주세요.",
+                            confirmButtonText = "확인"
+                        )
+                    }
+                    is SearchLocationContract.SearchLocationSideEffect.ShowOutOfServiceRegionBottomSheet -> {
+                        dialogController.showAtchaBottomSheet(
+                            locationName = "서울, 경기, 인천 내에서만 사용할 수 있어요",
+                            locationAddress = "출발지를 확인한 후 다시 검색해 주세요",
+                            confirmButtonText = "확인"
+                        )
+                    }
                     is ApiErrorSideEffect.ShowToastSideEffect -> {
                         Toast.makeText(context, sideEffect.toastMessage, Toast.LENGTH_SHORT).show()
                     }
@@ -229,18 +250,7 @@ fun SearchLocationRoute(
                         getCenterLocation = { viewModel.getCenterLocation(it) },
                         currentLocation = userLocation,
                         setDepartureButtonClicked = {
-                            viewModel.setEvent(
-                                SearchLocationContract.SearchLocationEvent.ChangeCurrentScreen(
-                                    SearchLocationContract.SearchLocationScreen.LISTVIEW
-                                )
-                            )
-
-                            val currentLocationJSON = Gson().toJson(uiState.selectLocation)
-                            val destinationPointJSON = Gson().toJson(destinationLocation)
-                            navigateToCourseSearch(
-                                currentLocationJSON,
-                                destinationPointJSON
-                            )
+                            viewModel.validateAndNavigateToCourseSearch(destinationLocation)
                         },
                         backButtonClicked = {
                             viewModel.setEvent(SearchLocationContract.SearchLocationEvent.ClearText)

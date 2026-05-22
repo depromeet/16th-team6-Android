@@ -12,12 +12,6 @@ tools: Read, Write, Edit, Bash, Glob, Grep
 3. 코드를 작성하기 전에 task_state.json 파일의 files, symbols 섹션을 반드시 먼저 참조한다.
 4. 3번에서 참조한 files, symbols를 바탕으로 `executor_instruction` 필드의 지시사항을 수행한다.
 
-## 코딩 규칙
-- **아키텍처**: Android Clean Architecture (data / domain / presentation 레이어 분리)
-- **언어/UI**: Kotlin + Jetpack Compose
-- **스타일**: 프로젝트의 기존 코딩 컨벤션을 따른다. 수정 전 관련 파일을 반드시 읽어 패턴을 파악한다.
-- 불필요한 파일 생성 금지, 기존 파일 우선 수정, 재사용가능한 매서드 재사용.
-
 
 ## 종료
 - 모든 작업이 완료되면 `harness/task_state.json`의 `phase`를 `REVIEW_REQUIRED`로 변경하고 종료한다.

@@ -1,32 +1,11 @@
 {
   "phase": "COMPLETED",
-  "goal": "Refactor HomeViewModel and related components to fix null-safety in routeName parsing and eliminate unsafe '!!' operator usage, ensuring robust data handling across the UI and Domain layers.",
-  "feedback": "HomeViewModel을 포함하여 HomeScreen, AfterRegisterMap, LastTimer 등 관련 UI 컴포넌트 전체에서 위험한 '!!' 연산자를 모두 제거했습니다. Kotlin의 안전한 호출(?.), 엘비스 연산자(?:), 그리고 smart cast를 활용한 로컬 변수 캡처 등을 사용하여 널 안정성을 확보했습니다. 모든 변경 사항이 반영된 상태에서 빌드 검증(assembleDebug)이 성공적으로 완료되었음을 확인했습니다.",
-  "steps": [
-    {
-      "id": 1,
-      "description": "Identify all occurrences of '!!' operator and unsafe parsing logic in HomeViewModel related to routeName and API responses.",
-      "status": "DONE"
-    },
-    {
-      "id": 2,
-      "description": "Refactor data layer DTOs and Domain layer Models to ensure routeName is handled as a nullable type or with safe defaults.",
-      "status": "DONE"
-    },
-    {
-      "id": 3,
-      "description": "Update HomeViewModel to use safe calls (?.), elvis operators (?:), or scope functions (let, also) instead of forced non-null assertions.",
-      "status": "DONE"
-    },
-    {
-      "id": 4,
-      "description": "Eliminate remaining unsafe '!!' assertions in related UI components (HomeScreen, LastTimer, AfterRegisterMap).",
-      "status": "DONE"
-    },
-    {
-      "id": 5,
-      "description": "Verify the refactor by ensuring the application builds successfully and unit tests pass.",
-      "status": "DONE"
-    }
+  "review_feedback": "치명 이슈 기준으로 검토한 결과, 목표가 충족되었습니다. `showPermissionBottomSheet` 오버레이에 `.noRippleClickable { }`가 추가되어 바텀시트 노출 중 배경 터치가 소비되므로 background view와의 상호작용이 차단됩니다. 또한 권한 요청 결과 콜백에서 `viewModel.checkPermissionStatus()`를 호출하고 있어, 권한 허용 상태로 전환되면 바텀시트 표시 상태가 재평가되어 자동으로 사라지는 흐름이 보장됩니다. 빌드 성공 조건과 함께 크래시/요구사항 미충족에 해당하는 결함은 확인되지 않았습니다.",
+  "review_criteria": [
+    "Goal fully addressed",
+    "Permission bottom sheet blocks background interaction while visible",
+    "Bottom sheet visibility is re-evaluated after permission result",
+    "No crash-risk introduced in permission callback flow",
+    "Build/test gate passes"
   ]
 }

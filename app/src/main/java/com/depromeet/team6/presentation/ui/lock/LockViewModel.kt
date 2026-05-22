@@ -95,14 +95,29 @@ class LockViewModel @Inject constructor(
         }
     }
 
+    /**
+     * 사용자 출발 상태 플래그 설정 + 알람 전체 취소를 동기적으로 수행한다.
+     * 내부 viewModelScope.launch {} 래퍼를 제거하여 Activity.finish() 전에
+     * 반드시 완료되도록 보장한다(race condition 방지).
+     */
     private fun stopAlarmFlow() {
+        try {
+            homeRepository.setUserDeparture(true)
+            AlarmScheduler.unScheduleAllAlarms(context)
+            Log.d("userDeparture", "사용자 출발 처리 및 알람 정리 완료")
+        } catch (e: Exception) {
+            Log.e("userDeparture", "사용자 출발 처리 중 오류 발생", e)
+        }
+    }
+
+    fun finishAlarmAndResetState() {
         viewModelScope.launch {
             try {
-                homeRepository.setUserDeparture(true)
+                homeRepository.clearAlarmData()
+                homeRepository.clearUserDeparture()
                 AlarmScheduler.unScheduleAllAlarms(context)
-                Log.d("userDeparture", "사용자 출발 처리 및 알람 정리 완료")
             } catch (e: Exception) {
-                Log.e("userDeparture", "사용자 출발 처리 중 오류 발생", e)
+                Log.e("LockViewModel", "알람 종료 및 상태 초기화 중 오류 발생", e)
             }
         }
     }

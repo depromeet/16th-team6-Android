@@ -197,7 +197,7 @@ class ItineraryViewModel @Inject constructor(
 //    }
 
     private fun getRemainingBusArrivalTimes() {
-        val newBusArrivalStatus = SparseArray<RealTimeBusArrival>()
+        val newBusArrivalStatus = SparseArray<List<RealTimeBusArrival>>()
 
         viewModelScope.launch {
             val deferredList = currentState.itineraryInfo!!.legs.mapIndexedNotNull { idx, leg ->
@@ -215,7 +215,7 @@ class ItineraryViewModel @Inject constructor(
                     }
                     result.mapCatching {
                         Timber.d("busArrivalStatusAPIResult : $it")
-                        idx to it.realTimeBusArrival[0]
+                        idx to it.realTimeBusArrival.take(2)
                     }.getOrNull()
                 }
             }

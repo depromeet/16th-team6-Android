@@ -5,8 +5,10 @@ import com.depromeet.team6.ui.theme.defaultTeam6Colors
 
 enum class BusStatus(val string: String) {
     WAITING("출발 대기"),
+    ARRIVED("도착 또는 출발"),
     SOON("곧 도착"),
     OPERATING("운행 중"),
+    BOARDING_COMPLETED("탑승 완료"),
     END("운행 종료")
 }
 

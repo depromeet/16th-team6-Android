@@ -16,9 +16,10 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun AtChaRemainTimeText(remainSecond: Int, busStatus: BusStatus, modifier: Modifier = Modifier) {
-    var timeLeft by remember { mutableIntStateOf(remainSecond) }
+    var timeLeft by remember(remainSecond) { mutableIntStateOf(remainSecond.coerceAtLeast(0)) }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(remainSecond) {
+        timeLeft = remainSecond.coerceAtLeast(0)
         while (timeLeft > 0) {
             delay(1000L)
             timeLeft--
@@ -31,11 +32,15 @@ fun AtChaRemainTimeText(remainSecond: Int, busStatus: BusStatus, modifier: Modif
         busStatus.string
     }
 
+    val color = when (busStatus) {
+        BusStatus.BOARDING_COMPLETED, BusStatus.END -> defaultTeam6Colors.gray400
+        else -> defaultTeam6Colors.systemRed
+    }
     Text(
         modifier = modifier,
         text = displayText,
         style = defaultTeam6Typography.detail1_R12,
-        color = defaultTeam6Colors.systemRed
+        color = color
     )
 }
 
