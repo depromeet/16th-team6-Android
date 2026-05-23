@@ -40,6 +40,8 @@ import com.depromeet.team6.presentation.util.base.BaseViewModel
 import com.depromeet.team6.presentation.util.permission.PermissionUtil
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.play.core.appupdate.AppUpdateManagerFactory
+import com.google.android.play.core.install.model.UpdateAvailability
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Job
@@ -865,6 +867,26 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun checkAppVersion() {
+        val appUpdateManager = AppUpdateManagerFactory.create(context)
+        appUpdateManager.appUpdateInfo
+            .addOnSuccessListener { appUpdateInfo ->
+                when (appUpdateInfo.updateAvailability()) {
+                    UpdateAvailability.UPDATE_AVAILABLE -> {
+                        setSideEffect(HomeContract.HomeSideEffect.ShowUpdateOptionalDialog)
+                    }
+                    UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS -> {
+                        setSideEffect(HomeContract.HomeSideEffect.ShowUpdateRequiredDialog)
+                    }
+                    else -> Timber.d("최신 버전입니다")
+                }
+            }
+            .addOnFailureListener {
+                Timber.e(it, "Play Store 버전 확인 실패, 서버 버전으로 폴백")
+                checkAppVersionFromServer()
+            }
+    }
+
+    private fun checkAppVersionFromServer() {
         val installedVersion = getCurrentVersionName()?.cleanVersion() ?: "0.0.0"
         viewModelScope.launch {
             getAppVersionUseCase().onSuccess { appVersion ->
@@ -879,11 +901,9 @@ class HomeViewModel @Inject constructor(
                     VersionResult.UPDATE_REQUIRED -> {
                         setSideEffect(HomeContract.HomeSideEffect.ShowUpdateRequiredDialog)
                     }
-
                     VersionResult.UPDATE_OPTIONAL -> {
                         setSideEffect(HomeContract.HomeSideEffect.ShowUpdateOptionalDialog)
                     }
-
                     VersionResult.UP_TO_DATE -> {
                         Timber.d("최신 버전입니다")
                     }
