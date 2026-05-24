@@ -1,11 +1,11 @@
 {
   "phase": "COMPLETED",
-  "review_feedback": "치명 이슈 기준으로 검토한 결과, 목표가 충족되었습니다. `showPermissionBottomSheet` 오버레이에 `.noRippleClickable { }`가 추가되어 바텀시트 노출 중 배경 터치가 소비되므로 background view와의 상호작용이 차단됩니다. 또한 권한 요청 결과 콜백에서 `viewModel.checkPermissionStatus()`를 호출하고 있어, 권한 허용 상태로 전환되면 바텀시트 표시 상태가 재평가되어 자동으로 사라지는 흐름이 보장됩니다. 빌드 성공 조건과 함께 크래시/요구사항 미충족에 해당하는 결함은 확인되지 않았습니다.",
+  "review_feedback": "The goal is met and no critical defects were found in the submitted changes. The overwrite root cause was addressed by removing the automatic `onCharacterClick()` trigger in `AtchaSpeechCharacter` at composition start, which previously fired taxi-fare speech immediately on app launch. In `HomeViewModel`, initial speech is now explicitly set during init (including the no-alarm case via `home_bubble_map_text`), and taxi-fare speech is conditionally suppressed when an alarm is registered, preventing immediate replacement of intended startup messages. Build is successful, and I did not identify crash-risk, data-loss, or security/privacy regressions in this flow.",
   "review_criteria": [
     "Goal fully addressed",
-    "Permission bottom sheet blocks background interaction while visible",
-    "Bottom sheet visibility is re-evaluated after permission result",
-    "No crash-risk introduced in permission callback flow",
+    "Initial speech is no longer auto-overwritten on app start",
+    "Alarm-registered startup messaging is preserved before any taxi-fare speech",
+    "No critical runtime regression in HomeViewModel initialization flow",
     "Build/test gate passes"
   ]
 }

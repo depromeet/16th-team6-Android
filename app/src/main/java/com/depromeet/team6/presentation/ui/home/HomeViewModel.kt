@@ -95,33 +95,45 @@ class HomeViewModel @Inject constructor(
         checkAppVersion()
         viewModelScope.launch {
             loadAlarmAndCourseInfoFromPrefs()
-            val initialSpeech = if (loadUserDepartureState()) {
-                HomeContract.SpeechRequest(
-                    listOf(
-                        "교통 상황에 따라 시간이 달라질 수 있어요"
-                    )
-                )
-            } else {
-                val taxiCost = getTaxiCostUseCase.getLastSavedTaxiCost()
-                val formattedCost = String.format(Locale.KOREA, "%,d", taxiCost)
-                HomeContract.SpeechRequest(
-                    messages = listOf(
-                        context.getString(R.string.home_bubble_taxi_cost_message, formattedCost)
-                    )
-                )
-            }
-            val focusState = if (homeRepository.isAlarmRegistered()) {
+            val isAlarmRegistered = currentState.isAlarmRegistered
+            val focusState = if (isAlarmRegistered) {
                 MapFocusState.Departure
             } else {
                 MapFocusState.Current
             }
 
-            setState {
-                copy(
-                    loadState = LoadState.Success,
-                    characterMessages = initialSpeech,
-                    isMapFocused = focusState
-                )
+            if (isAlarmRegistered) {
+                val initialSpeech = if (loadUserDepartureState()) {
+                    HomeContract.SpeechRequest(
+                        listOf(
+                            "교통 상황에 따라 시간이 달라질 수 있어요"
+                        )
+                    )
+                } else {
+                    HomeContract.SpeechRequest(
+                        listOf(
+                            "이때 자리에서 출발하면 돼요",
+                            "교통 상황에 따라 시간이 달라질 수 있어요"
+                        )
+                    )
+                }
+                setState {
+                    copy(
+                        loadState = LoadState.Success,
+                        characterMessages = initialSpeech,
+                        isMapFocused = focusState
+                    )
+                }
+            } else {
+                setState {
+                    copy(
+                        loadState = LoadState.Success,
+                        isMapFocused = focusState,
+                        characterMessages = HomeContract.SpeechRequest(
+                            messages = listOf(context.getString(R.string.home_bubble_map_text))
+                        )
+                    )
+                }
             }
         }
     }
@@ -569,64 +581,80 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun loadAlarmAndCourseInfoFromPrefs() {
-        viewModelScope.launch {
-            setState { copy(alarmCheckLoadState = LoadState.Loading) }
+    private suspend fun loadAlarmAndCourseInfoFromPrefs() {
+        setState { copy(alarmCheckLoadState = LoadState.Loading) }
 
-            val isAlarmRegistered = homeRepository.isAlarmRegistered()
-            val lastRouteId = homeRepository.getLastRouteId()
+        val isAlarmRegistered = homeRepository.isAlarmRegistered()
+        val lastRouteId = homeRepository.getLastRouteId()
 
-            setEvent(HomeContract.HomeEvent.UpdateAlarmRegistered(isAlarmRegistered))
-            setEvent(lastRouteId.let { HomeContract.HomeEvent.UpdateLastRouteId(it) })
+        setState {
+            copy(
+                isAlarmRegistered = isAlarmRegistered,
+                lastRouteId = lastRouteId
+            )
+        }
 
-            if (!isAlarmRegistered) {
-                setState {
-                    copy(
-                        alarmCheckLoadState = LoadState.Success,
-                        afterRegisterDataLoadState = LoadState.Success
-                    )
-                }
-            }
-
+        if (!isAlarmRegistered) {
             setState {
                 copy(
                     alarmCheckLoadState = LoadState.Success,
-                    afterRegisterDataLoadState = LoadState.Loading
+                    afterRegisterDataLoadState = LoadState.Success
                 )
             }
-
-            homeRepository.getDeparturePoint()?.let { departurePoint ->
-                setEvent(HomeContract.HomeEvent.UpdateDeparturePointName(departurePoint.name))
-                setEvent(HomeContract.HomeEvent.UpdateDeparturePoint(departurePoint))
-            }
-
-            homeRepository.getLastCourseInfo()?.let { courseInfo ->
-                setEvent(HomeContract.HomeEvent.LoadLegsResult(courseInfo))
-                setEvent(HomeContract.HomeEvent.LoadDepartureDateTime(courseInfo.departureTime))
-                setEvent(HomeContract.HomeEvent.LoadBoardingDateTime(courseInfo.boardingTime))
-                setEvent(
-                    HomeContract.HomeEvent.LoadHomeArrivedTime(
-                        calculateArrivalTime(
-                            courseInfo.departureTime,
-                            courseInfo.totalTime
-                        )
-                    )
-                )
-                setEvent(HomeContract.HomeEvent.LoadFirstTransportation(getFirstTransportation(courseInfo.legs)))
-                setEvent(HomeContract.HomeEvent.LoadFirstTransportationNumber(getFirstTransportationNumber(courseInfo.legs)))
-                setEvent(HomeContract.HomeEvent.LoadFirstTransportationName(getFirstTransportationName(courseInfo.legs)))
-
-                if (getFirstTransportation(courseInfo.legs) == TransportType.BUS) {
-//                    if (lastRouteId.isNotEmpty()) {
-//                        startPollingBusStarted(lastRouteId)
-//                    }
-                } else if (getFirstTransportation(courseInfo.legs) == TransportType.SUBWAY) {
-                    setEvent(HomeContract.HomeEvent.UpdateBusDeparted(true))
-                }
-            }
-
-            checkAfterRegisterDataComplete()
+            return
         }
+
+        setState {
+            copy(
+                alarmCheckLoadState = LoadState.Success,
+                afterRegisterDataLoadState = LoadState.Loading
+            )
+        }
+
+        homeRepository.getDeparturePoint()?.let { departurePoint ->
+            setState {
+                copy(
+                    departurePointName = departurePoint.name,
+                    departurePoint = departurePoint
+                )
+            }
+        }
+
+        homeRepository.getLastCourseInfo()?.let { courseInfo ->
+            val firstTransportation = getFirstTransportation(courseInfo.legs)
+            val firstTransportationNumber = getFirstTransportationNumber(courseInfo.legs)
+            val firstTransportationName = getFirstTransportationName(courseInfo.legs)
+            val busArrivalParameter = courseInfo.legs.firstOrNull { it.transportType == TransportType.BUS }?.let { leg ->
+                BusArrivalParameter(
+                    routeName = leg.routeName.orEmpty(),
+                    stationName = leg.startPoint.name,
+                    lat = leg.startPoint.lat,
+                    lon = leg.startPoint.lon,
+                    subtypeIdx = 0,
+                    passingStations = leg.passStopList
+                )
+            } ?: currentState.busArrivalParameter
+
+            setState {
+                copy(
+                    itineraryInfo = courseInfo,
+                    courseDataLoadState = LoadState.Success,
+                    departureTime = courseInfo.departureTime,
+                    boardingTime = courseInfo.boardingTime,
+                    homeArrivedTime = calculateArrivalTime(
+                        courseInfo.departureTime,
+                        courseInfo.totalTime
+                    ),
+                    firtTransportTation = firstTransportation,
+                    firstTransportationNumber = firstTransportationNumber,
+                    firstTransportationName = firstTransportationName,
+                    busArrivalParameter = busArrivalParameter,
+                    isBusDeparted = if (firstTransportation == TransportType.SUBWAY) true else currentState.isBusDeparted
+                )
+            }
+        }
+
+        checkAfterRegisterDataComplete()
     }
 
     private fun getFirstTransportation(legs: List<LegInfo>): TransportType {
@@ -639,21 +667,6 @@ class HomeViewModel @Inject constructor(
             }
         }
         return firstTransportation
-    }
-
-    private fun getBusArrivalParameter(leg: LegInfo) {
-        setEvent(
-            HomeContract.HomeEvent.LoadBusArrivalParameter(
-                BusArrivalParameter(
-                    routeName = leg.routeName.orEmpty(),
-                    stationName = leg.startPoint.name,
-                    lat = leg.startPoint.lat,
-                    lon = leg.startPoint.lon,
-                    subtypeIdx = 0,
-                    passingStations = leg.passStopList
-                )
-            )
-        )
     }
 
     private fun getFirstTransportationNumber(legs: List<LegInfo>): Int {
@@ -678,7 +691,6 @@ class HomeViewModel @Inject constructor(
                         ?.substringAfter(":", missingDelimiterValue = leg.routeName.orEmpty())
                         ?.trim()
                         .orEmpty()
-                    getBusArrivalParameter(leg)
                 } else if (leg.transportType == TransportType.SUBWAY) {
                     firstTransportationName = leg.startPoint.name + "역"
                 }
@@ -751,7 +763,9 @@ class HomeViewModel @Inject constructor(
                             taxiCost = it
                         )
                     }
-                    showTaxiCostSpeech(it)
+                    if (!currentState.isAlarmRegistered) {
+                        showTaxiCostSpeech(it)
+                    }
                     getTaxiCostUseCase.saveTaxiCost(it)
                 }.onFailure { exception ->
                     handleApiException(exception) {
@@ -882,7 +896,7 @@ class HomeViewModel @Inject constructor(
             }
             .addOnFailureListener {
                 Timber.e(it, "Play Store 버전 확인 실패, 서버 버전으로 폴백")
-                checkAppVersionFromServer()
+//                checkAppVersionFromServer()
             }
     }
 

@@ -63,10 +63,6 @@ fun AtchaSpeechCharacter(
 
     var speechJob by remember { mutableStateOf<Job?>(null) }
 
-    LaunchedEffect(Unit) {
-        onCharacterClick()
-    }
-
     LaunchedEffect(composition) {
         if (composition != null) {
             lottie.animate(
