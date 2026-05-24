@@ -16,7 +16,30 @@ import kotlin.math.roundToInt
 class SoundSamplePlayer(
     private val context: Context
 ) {
-    private val alarmRingtone: Ringtone? =
+    private val audioManager: AudioManager =
+        context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+
+    private var alarmRingtone: Ringtone? = null
+
+    private var toneGenerator: ToneGenerator? = null
+    private var currentToneVolume = DEFAULT_TONE_VOLUME
+    private var lastPlayedToneVolume = -1
+    private var lastTonePlayedAt = 0L
+    private var savedAlarmStreamVolume: Int? = null
+
+    fun playAlarmSample() {
+        alarmRingtone?.takeIf { it.isPlaying }?.stop()
+        alarmRingtone = createAlarmRingtone()
+        alarmRingtone?.let { ringtone ->
+            applyFeedbackStreamVolume()
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                ringtone.volume = 1f
+            }
+            ringtone.play()
+        }
+    }
+
+    private fun createAlarmRingtone(): Ringtone? =
         RingtoneManager.getRingtone(
             context,
             RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
@@ -25,26 +48,6 @@ class SoundSamplePlayer(
                 .setUsage(AudioAttributes.USAGE_ALARM)
                 .build()
         }
-
-    private var toneGenerator: ToneGenerator? = null
-    private var currentToneVolume = DEFAULT_TONE_VOLUME
-    private var lastPlayedToneVolume = -1
-    private var lastTonePlayedAt = 0L
-
-    fun playAlarmSample() {
-        alarmRingtone?.let { ringtone ->
-            if (ringtone.isPlaying) {
-                ringtone.stop()
-            }
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                val audio = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
-                val systemMax = audio.getStreamMaxVolume(AudioManager.STREAM_ALARM).coerceAtLeast(1)
-                val currentRatio = audio.getStreamVolume(AudioManager.STREAM_ALARM) / systemMax.toFloat()
-                ringtone.volume = currentRatio.coerceAtLeast(MIN_SLIDER_VOLUME_RATIO)
-            }
-            ringtone.play()
-        }
-    }
 
     fun playCombinedSample() {
         vibrateSample()
@@ -112,6 +115,28 @@ class SoundSamplePlayer(
 
     private fun stopAlarmSample() {
         alarmRingtone?.takeIf { it.isPlaying }?.stop()
+        restoreAlarmStreamVolume()
+    }
+
+    private fun applyFeedbackStreamVolume() {
+        val systemMax = audioManager.getStreamMaxVolume(AudioManager.STREAM_ALARM).coerceAtLeast(1)
+        val targetVolume = (systemMax * INITIAL_FEEDBACK_VOLUME_RATIO)
+            .roundToInt()
+            .coerceIn(1, systemMax)
+        if (savedAlarmStreamVolume == null) {
+            savedAlarmStreamVolume = audioManager.getStreamVolume(AudioManager.STREAM_ALARM)
+        }
+        runCatching {
+            audioManager.setStreamVolume(AudioManager.STREAM_ALARM, targetVolume, 0)
+        }
+    }
+
+    private fun restoreAlarmStreamVolume() {
+        val original = savedAlarmStreamVolume ?: return
+        runCatching {
+            audioManager.setStreamVolume(AudioManager.STREAM_ALARM, original, 0)
+        }
+        savedAlarmStreamVolume = null
     }
 
     private fun getVibrator(): Vibrator {
@@ -130,6 +155,7 @@ class SoundSamplePlayer(
         private const val DEFAULT_TONE_VOLUME = 100
         private const val MIN_AUDIBLE_SAMPLE_VOLUME = 40
         private const val MIN_SLIDER_VOLUME_RATIO = 0.10f
+        private const val INITIAL_FEEDBACK_VOLUME_RATIO = 0.30f
         private const val TONE_DURATION_MILLIS = 120
         private const val TONE_DEBOUNCE_MILLIS = 80L
         private const val VIBRATION_DURATION_MILLIS = 150L
