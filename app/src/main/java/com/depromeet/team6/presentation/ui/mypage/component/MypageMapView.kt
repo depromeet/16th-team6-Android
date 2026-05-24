@@ -140,7 +140,6 @@ fun MypageMapView(
                     contentDescription = "Start Marker",
                     modifier = Modifier.align(Alignment.Center)
                 )
-
             }
 
             AtChaLocationSettingBottomSheet(
