@@ -235,6 +235,7 @@ fun AfterRegisterMap(
                         name = "Current Location"
                         icon = markerBitmap
                         tMapPoint = currentPoint
+                        setPosition(0.5f, 0.5f)
                     }
                     tMapView.addTMapMarkerItem(currentMarker)
 

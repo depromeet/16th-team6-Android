@@ -191,7 +191,7 @@
     <string name="mypage_account_title_text">내 계정</string>
     <string name="mypage_change_home_title_text">우리집 설정</string>
     <string name="mypage_change_home_toast_text">집 주소가 변경되었습니다.</string>
-    <string name="mypage_change_home_button_text">다른 주소로 변경하기</string>
+    <string name="mypage_change_home_button_text">수정하기</string>
     <string name="mypage_alarm_title_text">알람 설정</string>
     <string name="mypage_alarm_sound_setting_text">진동/벨소리 설정</string>
     <string name="mypage_alarm_time_setting_text">푸시 알림 빈도 설정</string>
@@ -247,7 +247,7 @@
     <!-- VolumeBottomSheet -->
     <string name="volume_bottom_sheet_title_tv">소리 크기</string>
     <string name="volume_bottom_sheet_setting_tv">설정한 크기로 알람이 울려요</string>
-    <string name="volume_bottom_sheet_setting_btn_tv">설정 변경</string>
+    <string name="volume_bottom_sheet_setting_btn_tv">설정 완료</string>
     <string name="all_dialog_close_button_text">닫기</string>
     <string name="all_dialog_setting_button_text">설정하기</string>
     

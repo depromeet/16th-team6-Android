@@ -9,6 +9,7 @@ class VersionRepositoryImpl @Inject constructor(
 ) : VersionRepository {
 
     override suspend fun getVersion(): Result<String> = runCatching {
-        versionRemoteDataSource.getVersion().toString()
+        val a = versionRemoteDataSource.getVersion().toString()
+        a
     }
 }

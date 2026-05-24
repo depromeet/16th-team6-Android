@@ -5,7 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.offset
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -106,6 +106,7 @@ fun TMapViewCompose(
                         icon = markerBitmap
                         tMapPoint = currentPoint
                         isAnimation = true
+                        setPosition(0.5f, 0.5f)
                     }
                     tMapView.addTMapMarkerItem(markerItem)
 
@@ -175,7 +176,7 @@ fun TMapViewCompose(
                 contentDescription = "Start Marker",
                 modifier = Modifier
                     .align(Alignment.Center)
-                    .padding(bottom = 118.dp)
+                    .offset(y = (-28).dp)
             )
         } else {
             AtChaLoadingView(
