@@ -115,7 +115,7 @@ fun SearchLocationMapView(
                 }
 
                 tMapView.setCenterPoint(lat, lon, true)
-                getCenterLocation(LatLng(lat, lon))
+//                getCenterLocation(LatLng(lat, lon))
 
                 tMapView.zoomLevel = 18
 
@@ -162,6 +162,17 @@ fun SearchLocationMapView(
                 }
         )
 
+        // 지도 중심(화면 정중앙)에 핀 끝이 오도록 배치
+        // ic_map_marker_setting 높이 44dp → 이미지 중앙 기준 -22dp 오프셋으로 핀 끝 정렬
+        Icon(
+            tint = Color.Unspecified,
+            imageVector = ImageVector.vectorResource(id = R.drawable.ic_map_marker_setting),
+            contentDescription = "Start Marker",
+            modifier = Modifier
+                .align(Alignment.Center)
+                .offset(y = (-50).dp)
+        )
+
         // 하단 UI
         Column(modifier = modifier.fillMaxSize()) {
             Box(
@@ -169,13 +180,6 @@ fun SearchLocationMapView(
                     .fillMaxWidth()
                     .weight(1f)
             ) {
-                Icon(
-                    tint = Color.Unspecified,
-                    imageVector = ImageVector.vectorResource(id = R.drawable.ic_map_marker_setting),
-                    contentDescription = "Start Marker",
-                    modifier = Modifier.align(Alignment.Center)
-                )
-
                 Icon(
                     tint = Color.Unspecified,
                     imageVector = ImageVector.vectorResource(id = R.drawable.ic_all_current_location),

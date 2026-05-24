@@ -225,6 +225,11 @@ class SearchLocationViewModel @Inject constructor(
         viewModelScope.launch {
             getAddressFromCoordinatesUseCase(location.latitude, location.longitude)
                 .onSuccess { address ->
+                    val selectedAddress = address.copy(
+                        name = "현재 위치",
+                        lat = location.latitude,
+                        lon = location.longitude
+                    )
                     setState { copy(selectLocation = address) }
                     onComplete(address)
                 }
