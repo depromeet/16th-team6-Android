@@ -1,11 +1,12 @@
 {
-  "phase": "COMPLETED",
-  "review_feedback": "The goal is met and no critical defects were found in the submitted changes. The overwrite root cause was addressed by removing the automatic `onCharacterClick()` trigger in `AtchaSpeechCharacter` at composition start, which previously fired taxi-fare speech immediately on app launch. In `HomeViewModel`, initial speech is now explicitly set during init (including the no-alarm case via `home_bubble_map_text`), and taxi-fare speech is conditionally suppressed when an alarm is registered, preventing immediate replacement of intended startup messages. Build is successful, and I did not identify crash-risk, data-loss, or security/privacy regressions in this flow.",
+  "phase": "REPLANNING",
+  "feedback": "Apply the required revert in `app/src/main/java/com/depromeet/ui/searchlocation/SearchLocationMapView.kt` and include it in the submitted diff: (1) restore the back button layout from `.align(TopStart).padding(18.dp).statusBarsPadding()` to `.offset(x = 16.dp, y = 12.dp + marginTop)`, and (2) restore the center marker drawable from `ic_home_dearture_marker` back to `ic_map_marker_setting`. Also ensure `.DS_Store` files are not modified/tracked in the final change set. Keep `MypageMapView.kt` and `OnboardingMapView.kt` current-location marker/button removals as they are.",
+  "review_feedback": "The contribution partially matches the goal: the current-location marker/button removals in `MypageMapView.kt` and `OnboardingMapView.kt` are present and look consistent. However, the required `SearchLocationMapView.kt` revert is not present in the provided diff at all, so the primary goal is not verifiably met from this submission. `.DS_Store` cleanup is also not verifiable from the diff content.",
   "review_criteria": [
     "Goal fully addressed",
-    "Initial speech is no longer auto-overwritten on app start",
-    "Alarm-registered startup messaging is preserved before any taxi-fare speech",
-    "No critical runtime regression in HomeViewModel initialization flow",
-    "Build/test gate passes"
+    "Required SearchLocationMapView UI reverts applied",
+    "Current-location marker/button removals preserved in MypageMapView and OnboardingMapView",
+    ".DS_Store modifications removed from contribution",
+    "No critical regressions introduced"
   ]
 }
