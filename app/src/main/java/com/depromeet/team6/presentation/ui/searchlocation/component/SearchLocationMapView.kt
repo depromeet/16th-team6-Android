@@ -115,7 +115,7 @@ fun SearchLocationMapView(
                 }
 
                 tMapView.setCenterPoint(lat, lon, true)
-                getCenterLocation(LatLng(lat, lon))
+//                getCenterLocation(LatLng(lat, lon))
 
                 tMapView.zoomLevel = 18
 
