@@ -57,12 +57,12 @@ class TransitsRemoteDataSource @Inject constructor(
             val errorBodyString = response.errorBody()?.string() ?: ""
             val (errorCode, message) = try {
                 val json = JsonParser.parseString(errorBodyString).asJsonObject
-                Timber.d("Response body asdrasdr : $json")
+                Timber.d("Response body : $json")
                 val code = json.get("responseCode")?.asString ?: "GET_COURSES_FAILURE"
                 val msg = json.get("message")?.asString ?: "Unknown error"
                 code to msg
             } catch (e: Exception) {
-                Timber.d("Response body asdrasdr : $e")
+                Timber.d("Response body : $e")
                 "GET_COURSES_FAILURE" to errorBodyString.ifEmpty { "Unknown error" }
             }
             throw ApiException.ApiRequestFailureException(errorCode, message)

@@ -47,6 +47,9 @@ class ItineraryViewModel @Inject constructor(
     override fun createInitialState(): ItineraryContract.ItineraryUiState = ItineraryContract.ItineraryUiState()
 
     init {
+        AmplitudeUtils.trackEvent(
+            "경로_상세_진입"
+        )
         val isAlarmRegistered = homeRepository.isAlarmRegistered()
         val userDeparture = homeRepository.isUserDeparted()
         setState {
@@ -140,6 +143,18 @@ class ItineraryViewModel @Inject constructor(
                         alarmTimeStamp = alarmTimeStamp
                     )
                     AlarmScheduler.scheduleAdditionalPushAlarm(context, alarmTimeStamp)
+                    val courseSearchEnteredAt = homeRepository.getCourseSearchEnteredAt()
+                    val alarmRegisterDurationSeconds = if (courseSearchEnteredAt > 0L) {
+                        ((System.currentTimeMillis() - courseSearchEnteredAt) / 1000).coerceAtLeast(0)
+                    } else {
+                        0L
+                    }
+                    AmplitudeUtils.trackEventWithProperties(
+                        eventName = "알람_등록",
+                        properties = mapOf(
+                            "알람_등록_시간" to alarmRegisterDurationSeconds
+                        )
+                    )
                 }
                 .onFailure { exception ->
                     handleApiException(exception)

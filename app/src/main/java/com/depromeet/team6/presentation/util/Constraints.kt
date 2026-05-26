@@ -123,12 +123,18 @@ object CourseSearchAmplitude {
     const val COURSE_SEARCH_ALARM_MIN_WALK_RANK = "minimal_walk_rank"
     const val COURSE_SEARCH_ALARM_MIN_TOTAL_TIME_RANK = "minimal_total_time_rank"
     const val COURSE_SEARCH_ALARM_TRANSFER_COUNT = "transfer_count"
+    const val COURSE_SEARCH_ALARM_ALERT_TYPE = "alert_type"
 }
 
 object ItineraryAmplitude {
     const val ITINERARY = "경로상세"
     const val ITINERARY_EVENT_ALARM_REGISTERED_SCREEN = "alert_button"
     const val ITINERARY_ALARM_REGISTER_BTN_CLICKED = "alert_button"
+}
+
+object AlarmRegisterAmplitude {
+    const val ALARM_REGISTER_DURATION_EVENT = "alarm_register_duration"
+    const val ALARM_REGISTER_DURATION_SECONDS = "alarm_register_duration_seconds"
 }
 
 object MyPageAmplitude {

@@ -57,6 +57,10 @@ class CourseSearchViewModel @Inject constructor(
 ) : BaseViewModel<CourseSearchContract.CourseUiState, CourseSearchContract.CourseSideEffect, CourseSearchContract.CourseEvent>() {
 
     init {
+        AmplitudeUtils.trackEvent(
+            "경로_탐색_진입"
+        )
+        homeRepository.setCourseSearchEnteredAt(System.currentTimeMillis())
         val route = savedStateHandle.toRoute<CourseSearchRoute>()
         setEvent(CourseSearchContract.CourseEvent.InitUiState(route.departurePoint, route.destinationPoint))
     }
@@ -134,6 +138,9 @@ class CourseSearchViewModel @Inject constructor(
                 )
             }
             is CourseSearchContract.CourseEvent.ItemCardClick -> {
+                AmplitudeUtils.trackEvent(
+                    "경로_상세_영역_클릭"
+                )
                 when (event.isTextClicked) {
                     true -> AmplitudeUtils.trackEventWithProperties(
                         eventName = COURSE_SEARCH_EVENT_CARD_CLICKED,
@@ -351,6 +358,18 @@ class CourseSearchViewModel @Inject constructor(
                         alarmTimeStamp = alarmTimeStamp
                     )
                     AlarmScheduler.scheduleAdditionalPushAlarm(context, alarmTimeStamp)
+                    val courseSearchEnteredAt = homeRepository.getCourseSearchEnteredAt()
+                    val alarmRegisterDurationSeconds = if (courseSearchEnteredAt > 0L) {
+                        ((System.currentTimeMillis() - courseSearchEnteredAt) / 1000).coerceAtLeast(0)
+                    } else {
+                        0L
+                    }
+                    AmplitudeUtils.trackEventWithProperties(
+                        eventName = "알람_등록",
+                        properties = mapOf(
+                            "알람_등록_시간" to alarmRegisterDurationSeconds
+                        )
+                    )
                 }
                 .onFailure { exception ->
                     handleApiException(exception)
@@ -364,6 +383,18 @@ class CourseSearchViewModel @Inject constructor(
                 lastRouteId = lastRouteId
             )
                 .onSuccess {
+                    val courseSearchEnteredAt = homeRepository.getCourseSearchEnteredAt()
+                    val alarmRegisterDurationSeconds = if (courseSearchEnteredAt > 0L) {
+                        ((System.currentTimeMillis() - courseSearchEnteredAt) / 1000).coerceAtLeast(0)
+                    } else {
+                        0L
+                    }
+                    AmplitudeUtils.trackEventWithProperties(
+                        eventName = "다른_알람_등록",
+                        properties = mapOf(
+                            "알람_등록_시간" to alarmRegisterDurationSeconds
+                        )
+                    )
                     postAlarm(departurePoint, destinationPoint, lastRouteId, alarmTimeStamp)
                 }
                 .onFailure { exception ->

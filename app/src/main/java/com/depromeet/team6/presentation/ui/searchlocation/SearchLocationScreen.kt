@@ -47,6 +47,7 @@ import com.depromeet.team6.presentation.ui.searchlocation.component.SearchHistor
 import com.depromeet.team6.presentation.ui.searchlocation.component.SearchLocationMapView
 import com.depromeet.team6.presentation.util.DefaultLatLng.DEFAULT_LAT
 import com.depromeet.team6.presentation.util.DefaultLatLng.DEFAULT_LNG
+import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
 import com.depromeet.team6.presentation.util.base.ApiErrorSideEffect
 import com.depromeet.team6.presentation.util.context.getUserLocation
 import com.depromeet.team6.presentation.util.dialog.LocalDialogController
@@ -229,6 +230,9 @@ fun SearchLocationRoute(
                                     SearchLocationContract.SearchLocationScreen.MAPVIEW
                                 )
                             )
+                            AmplitudeUtils.trackEvent(
+                                "출발지_설정_진입"
+                            )
                             // 최근 검색 내역 추가
                             viewModel.postSearchHistory(searchHistory)
                         },
@@ -250,6 +254,9 @@ fun SearchLocationRoute(
                         getCenterLocation = { viewModel.getCenterLocation(it) },
                         currentLocation = userLocation,
                         setDepartureButtonClicked = {
+                            AmplitudeUtils.trackEvent(
+                                "출발지_설정_클릭"
+                            )
                             viewModel.validateAndNavigateToCourseSearch(destinationLocation)
                         },
                         backButtonClicked = {

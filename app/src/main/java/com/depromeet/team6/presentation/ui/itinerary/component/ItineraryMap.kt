@@ -34,6 +34,7 @@ import com.depromeet.team6.presentation.model.itinerary.FocusedMarkerParameter
 import com.depromeet.team6.presentation.ui.common.TransportVectorIconBitmap
 import com.depromeet.team6.presentation.ui.common.view.AtChaLoadingView
 import com.depromeet.team6.presentation.ui.itinerary.LegInfoDummyProvider
+import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.presentation.util.modifier.roundedBackgroundWithPadding
 import com.depromeet.team6.presentation.util.view.TransportTypeUiMapper
@@ -220,6 +221,9 @@ fun ItineraryMap(
                 .align(Alignment.BottomEnd)
                 .offset(x = (-16).dp, y = (-36).dp)
                 .noRippleClickable {
+                    AmplitudeUtils.trackEvent(
+                        eventName = "현재_위치_버튼_클릭",
+                    )
                     isMapFocused = true
                 },
             imageVector = ImageVector.vectorResource(R.drawable.ic_all_current_location),

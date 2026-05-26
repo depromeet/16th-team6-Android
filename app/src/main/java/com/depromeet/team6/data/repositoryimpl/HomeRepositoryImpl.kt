@@ -57,6 +57,12 @@ class HomeRepositoryImpl @Inject constructor(
 
     override fun getBusArrivalParameter(): BusArrivalParameter? = homeInfoLocalDataSource.busArrivalParameter
 
+    override fun setCourseSearchEnteredAt(enteredAtMs: Long) {
+        homeInfoLocalDataSource.courseSearchEnteredAt = enteredAtMs
+    }
+
+    override fun getCourseSearchEnteredAt(): Long = homeInfoLocalDataSource.courseSearchEnteredAt
+
     override fun clearAlarmData() {
         homeInfoLocalDataSource.clearAlarmData()
     }

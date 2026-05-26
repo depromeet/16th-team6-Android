@@ -301,7 +301,12 @@ fun HomeRoute(
                         requestCharacterSpeech = { messages ->
                             viewModel.setEvent(HomeContract.HomeEvent.RequestCharacterSpeech(messages))
                         },
-                        navigateToMypage = navigateToMypage,
+                        navigateToMypage = {
+                            AmplitudeUtils.trackEvent(
+                                "마이페이지_클릭",
+                            )
+                            navigateToMypage()
+                        },
 //                    navigateToItinerary = navigateToItinerary,
                         modifier = modifier,
                         padding = padding,
@@ -567,13 +572,8 @@ fun HomeScreen(
                                 "교통 상황에 따라 시간이 달라질 수 있어요"
                             )
                         )
-                        AmplitudeUtils.trackEventWithProperties(
-                            HOME_DEPARTURE_TIME_CLICKED,
-                            mapOf(
-                                SCREEN_NAME to HOME,
-                                USER_ID to getUserId(),
-                                HOME_DEPARTURE_TIME_CLICKED to 1
-                            )
+                        AmplitudeUtils.trackEvent(
+                            "출발시간_영역_클릭",
                         )
                     },
                     onHomeExpectDepartureTimeClick = {
@@ -630,7 +630,12 @@ fun HomeScreen(
                     .align(Alignment.BottomStart)
                     .padding(start = 8.dp, bottom = bottomOffset),
                 speechRequest = homeUiState.characterMessages,
-                onCharacterClick = onCharacterClick
+                onCharacterClick = {
+                    AmplitudeUtils.trackEvent(
+                        "캐릭터_클릭"
+                    )
+                    onCharacterClick()
+                }
             )
         }
 
@@ -645,7 +650,12 @@ fun HomeScreen(
                     bottom = bottomSheetHeight + 16.dp,
                     end = 16.dp
                 )
-                .noRippleClickable(onClick = currentLocationClicked)
+                .noRippleClickable {
+                    AmplitudeUtils.trackEvent(
+                        eventName = "현재_위치_버튼_클릭",
+                    )
+                    currentLocationClicked()
+                }
         )
 
         if (homeUiState.deleteAlarmDialogVisible) {

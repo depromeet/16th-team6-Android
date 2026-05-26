@@ -6,6 +6,7 @@ import com.depromeet.team6.domain.usecase.GetBusOperationInfoUseCase
 import com.depromeet.team6.domain.usecase.GetBusPositionsUseCase
 import com.depromeet.team6.presentation.model.bus.BusArrivalParameter
 import com.depromeet.team6.presentation.model.bus.BusPositionParameter
+import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
 import com.depromeet.team6.presentation.util.base.BaseViewModel
 import com.depromeet.team6.presentation.util.view.LoadState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -29,6 +30,9 @@ class BusCourseViewModel @Inject constructor(
             }
 
             is BusCourseContract.BusCourseEvent.ChangeBusOperationInfoVisible -> {
+                AmplitudeUtils.trackEvent(
+                    "버스_정보_진입"
+                )
                 setState { copy(busOperationInfoVisible = !currentState.busOperationInfoVisible) }
             }
         }

@@ -212,12 +212,22 @@ fun MyPageRoute(
                                     }
                                 },
                                 onBackClick = { mypageViewModel.setEvent(MypageContract.MypageEvent.BackPressed) },
-                                onWebViewClicked = { mypageViewModel.setEvent(MypageContract.MypageEvent.PolicyClicked) },
+                                onWebViewClicked = {
+                                    AmplitudeUtils.trackEvent(
+                                        "약관동의_진입"
+                                    )
+                                    mypageViewModel.setEvent(MypageContract.MypageEvent.PolicyClicked)
+                                },
                                 dismissDialog = { mypageViewModel.setEvent(MypageContract.MypageEvent.DismissDialog) },
                                 onUpdateClicked = {
                                     mypageViewModel.navigateToPlayStore(context)
                                 },
-                                onBannerClicked = { mypageViewModel.setSideEffect(MypageContract.MypageSideEffect.NavigateToFeedbackForm) },
+                                onBannerClicked = {
+                                    AmplitudeUtils.trackEvent(
+                                        "피드백_진입"
+                                    )
+                                    mypageViewModel.setSideEffect(MypageContract.MypageSideEffect.NavigateToFeedbackForm)
+                                },
                                 isUpdateBtnVisible = uiState.isUpdateAvailable
                             )
                         }
@@ -247,6 +257,9 @@ fun MyPageRoute(
                                 selectedAddress = uiState.selectedAddress,
                                 onBackClick = { mypageViewModel.setEvent(MypageContract.MypageEvent.BackPressed) },
                                 onModifyHomeButtonClick = {
+                                    AmplitudeUtils.trackEvent(
+                                        "집주소_검색_진입"
+                                    )
                                     mypageViewModel.setEvent(MypageContract.MypageEvent.ShowSearchPopup)
                                 },
                                 getCenterLocation = { mypageViewModel.getCenterLocation(it) },
@@ -260,6 +273,9 @@ fun MyPageRoute(
                                     )
                                 },
                                 mapViewSelectButtonClicked = {
+                                    AmplitudeUtils.trackEvent(
+                                        "집주소_설정_클릭"
+                                    )
                                     mypageViewModel.updateUserLocation(context)
                                     mypageViewModel.validateAndModifyUserAddress(callback = {
                                         snackbarController.showSnackbar(

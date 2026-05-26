@@ -40,6 +40,7 @@ import com.depromeet.team6.R
 import com.depromeet.team6.domain.model.Address
 import com.depromeet.team6.presentation.ui.common.bottomsheet.AtChaLocationSettingBottomSheet
 import com.depromeet.team6.presentation.ui.common.view.AtChaLoadingView
+import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.ui.theme.defaultTeam6Colors
 import com.google.android.gms.maps.model.LatLng
@@ -188,6 +189,9 @@ fun SearchLocationMapView(
                         .align(Alignment.BottomEnd)
                         .padding(end = 16.dp, bottom = 16.dp)
                         .clickable(enabled = isMapReady) {
+                            AmplitudeUtils.trackEvent(
+                                eventName = "현재_위치_버튼_클릭",
+                            )
                             val tMapPoint =
                                 TMapPoint(currentLocation.latitude, currentLocation.longitude)
                             tMapView.setCenterPoint(

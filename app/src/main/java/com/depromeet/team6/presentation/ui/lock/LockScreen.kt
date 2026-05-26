@@ -50,6 +50,7 @@ import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.depromeet.team6.R
+import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.ui.theme.LocalTeam6Colors
 import com.depromeet.team6.ui.theme.LocalTeam6Typography
@@ -76,6 +77,9 @@ fun LockRoute(
     val systemUiController = rememberSystemUiController()
 
     LaunchedEffect(Unit) {
+        AmplitudeUtils.trackEvent(
+            "알람_진입"
+        )
         viewModel.loadTaxiCost()
     }
 
@@ -95,9 +99,15 @@ fun LockRoute(
         onTimerFinish = onTimerFinish,
         onCloseClick = onCloseClick,
         onDepartureClick = {
+            AmplitudeUtils.trackEvent(
+                "출발하기_클릭"
+            )
             onDepartureClick()
         },
         onLateClick = {
+            AmplitudeUtils.trackEvent(
+                "늦은_경로_확인하기_클릭"
+            )
             onLateClick()
         }
     )

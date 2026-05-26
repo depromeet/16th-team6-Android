@@ -43,6 +43,7 @@ import com.depromeet.team6.presentation.type.LoginViewPagerType
 import com.depromeet.team6.presentation.ui.common.view.AtChaLoadingView
 import com.depromeet.team6.presentation.ui.common.view.AtChaTreeDotsLoadingView
 import com.depromeet.team6.presentation.ui.login.component.LoginIndicator
+import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.presentation.util.view.LoadState
 import com.depromeet.team6.ui.theme.Team6Theme
@@ -228,7 +229,15 @@ fun LoginScreen(
                     color = defaultTeam6Colors.kakaoLoginButton,
                     shape = RoundedCornerShape(8.dp)
                 )
-                .noRippleClickable { onLoginClicked() }
+                .noRippleClickable {
+                    AmplitudeUtils.trackEventWithProperties(
+                        "로그인_클릭",
+                        mapOf(
+                            "로그인_방식" to "카카오"
+                        )
+                    )
+                    onLoginClicked()
+                }
                 .semantics { contentDescription = "kakao_login_button" }
                 .padding(horizontal = 22.dp, vertical = 14.dp)
         ) {
