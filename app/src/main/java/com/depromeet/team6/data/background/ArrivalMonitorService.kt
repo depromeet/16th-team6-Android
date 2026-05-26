@@ -21,6 +21,7 @@ import androidx.core.app.NotificationCompat
 import com.depromeet.team6.R
 import com.depromeet.team6.domain.model.course.CourseInfo
 import com.depromeet.team6.presentation.ui.main.MainActivity
+import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -212,7 +213,9 @@ class ArrivalMonitorService : Service() {
             `package` = packageName
         }
         sendBroadcast(intent) // MainActivity 에서 수신
-
+        AmplitudeUtils.trackEvent(
+            "알람_도착_종료"
+        )
         stopSelf()
     }
 

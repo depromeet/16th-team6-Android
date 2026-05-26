@@ -17,6 +17,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.depromeet.team6.R
+import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.ui.theme.LocalTeam6Colors
 import com.depromeet.team6.ui.theme.LocalTeam6Typography
@@ -55,7 +56,12 @@ fun FinishCourseDetailButton(
                 contentColor = colors.white
             ),
             shape = RoundedCornerShape(10.dp),
-            onClick = onFinishClick
+            onClick = {
+                AmplitudeUtils.trackEvent(
+                    "알람_강제_종료"
+                )
+                onFinishClick()
+            }
         ) {
             Text(
                 text = stringResource(R.string.home_finish_button_text),

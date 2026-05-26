@@ -13,6 +13,7 @@ import com.depromeet.team6.domain.usecase.GetLocationsUseCase
 import com.depromeet.team6.domain.usecase.GetSearchHistoriesUseCase
 import com.depromeet.team6.domain.usecase.PostSearchHistoriesUseCase
 import com.depromeet.team6.presentation.ui.searchlocation.navigation.SearchLocationRoute.DEPARTURE_LOCATION
+import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
 import com.depromeet.team6.presentation.util.base.BaseViewModel
 import com.google.android.gms.maps.model.LatLng
 import com.google.gson.Gson
@@ -36,6 +37,9 @@ class SearchLocationViewModel @Inject constructor(
 ) : BaseViewModel<SearchLocationContract.SearchLocationUiState, SearchLocationContract.SearchLocationSideEffect, SearchLocationContract.SearchLocationEvent>() {
 
     init {
+        AmplitudeUtils.trackEvent(
+            "출발지_수정_진입"
+        )
         val departureLocationJSON: String? = savedStateHandle[DEPARTURE_LOCATION]
         if (departureLocationJSON != null) {
             val departureLocation = Gson().fromJson(departureLocationJSON, Address::class.java)

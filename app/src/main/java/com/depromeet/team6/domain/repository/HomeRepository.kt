@@ -27,6 +27,8 @@ interface HomeRepository {
 
     fun setBusArrivalParameter(parameter: BusArrivalParameter?)
     fun getBusArrivalParameter(): BusArrivalParameter?
+    fun setCourseSearchEnteredAt(enteredAtMs: Long)
+    fun getCourseSearchEnteredAt(): Long
 
     fun clearAlarmData()
     fun clearUserDeparture()

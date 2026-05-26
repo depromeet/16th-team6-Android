@@ -44,6 +44,7 @@ import com.depromeet.team6.presentation.ui.bus.component.BusOperationInfoView
 import com.depromeet.team6.presentation.ui.bus.component.BusStationItem
 import com.depromeet.team6.presentation.ui.common.TransportVectorIconComposable
 import com.depromeet.team6.presentation.ui.common.view.AtChaLoadingView
+import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
 import com.depromeet.team6.presentation.util.base.ApiErrorSideEffect
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.presentation.util.toast.atChaToastMessage
@@ -76,6 +77,9 @@ fun BusCourseRoute(
     }
 
     LaunchedEffect(Unit) {
+        AmplitudeUtils.trackEvent(
+            "버스_상세_진입"
+        )
         viewModel.initUiState(busArrivalParameter)
     }
 
@@ -88,8 +92,18 @@ fun BusCourseRoute(
                     modifier = Modifier.fillMaxSize(),
                     uiState = uiState,
                     backButtonClicked = { viewModel.setSideEffect(BusCourseContract.BusCourseSideEffect.NavigateToBackStack) },
-                    refreshButtonClicked = { viewModel.setEvent(BusCourseContract.BusCourseEvent.RefreshButtonClicked) },
-                    changeBusOperationInfoVisible = { viewModel.setEvent(BusCourseContract.BusCourseEvent.ChangeBusOperationInfoVisible) }
+                    refreshButtonClicked = {
+                        AmplitudeUtils.trackEvent(
+                            "버스_새로고침_클릭"
+                        )
+                        viewModel.setEvent(BusCourseContract.BusCourseEvent.RefreshButtonClicked)
+                    },
+                    changeBusOperationInfoVisible = {
+                        AmplitudeUtils.trackEvent(
+                            "버스_정보_클릭"
+                        )
+                        viewModel.setEvent(BusCourseContract.BusCourseEvent.ChangeBusOperationInfoVisible)
+                    }
                 )
                 if (uiState.loadState == LoadState.Loading) {
                     AtChaLoadingView()

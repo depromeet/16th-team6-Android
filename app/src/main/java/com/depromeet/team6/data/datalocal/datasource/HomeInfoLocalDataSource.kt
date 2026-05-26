@@ -145,6 +145,10 @@ class HomeInfoLocalDataSource @Inject constructor(
             setValue(BUS_ARRIVAL_PARAMETER, json)
         }
 
+    var courseSearchEnteredAt: Long
+        get() = getLongValue(COURSE_SEARCH_ENTERED_AT, 0L)
+        set(value) = setLongValue(COURSE_SEARCH_ENTERED_AT, value)
+
     fun clearAlarmData() {
         sharedPreferences.edit {
             remove(DEPARTURE_POINT)
@@ -172,6 +176,12 @@ class HomeInfoLocalDataSource @Inject constructor(
     private fun setBooleanValue(key: String, value: Boolean) =
         sharedPreferences.edit { putBoolean(key, value) }
 
+    private fun getLongValue(key: String, defaultValue: Long = 0L): Long =
+        sharedPreferences.getLong(key, defaultValue)
+
+    private fun setLongValue(key: String, value: Long) =
+        sharedPreferences.edit { putLong(key, value) }
+
     companion object {
         private const val FILE_NAME = "MyPreferences"
         private const val INITIAL_VALUE = ""
@@ -182,5 +192,6 @@ class HomeInfoLocalDataSource @Inject constructor(
         private const val LAST_COURSE_INFO = "lastCourseInfo"
         private const val USER_DEPARTURE = "userDeparture"
         private const val BUS_ARRIVAL_PARAMETER = "busArrivalParameter"
+        private const val COURSE_SEARCH_ENTERED_AT = "courseSearchEnteredAt"
     }
 }

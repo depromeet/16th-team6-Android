@@ -59,6 +59,7 @@ import com.depromeet.team6.presentation.ui.itinerary.component.ItinerarySummary
 import com.depromeet.team6.presentation.ui.main.MainViewModel
 import com.depromeet.team6.presentation.ui.overlay.OverlayPermissionDialog
 import com.depromeet.team6.presentation.ui.overlay.PermissionSnackbar
+import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
 import com.depromeet.team6.presentation.util.base.ApiErrorSideEffect
 import com.depromeet.team6.presentation.util.modifier.noRippleClickable
 import com.depromeet.team6.presentation.util.modifier.roundedBackgroundWithPadding
@@ -155,7 +156,12 @@ fun ItineraryRoute(
                 currentLocation = currentLocation,
                 focusedMarkerParam = focusedMarkerParam,
                 onBackPressed = onBackPressed,
-                onRefreshButtonClick = { viewModel.setEvent(ItineraryContract.ItineraryEvent.RefreshButtonClicked) },
+                onRefreshButtonClick = {
+                    AmplitudeUtils.trackEvent(
+                        "경로_새로고침_클릭"
+                    )
+                    viewModel.setEvent(ItineraryContract.ItineraryEvent.RefreshButtonClicked)
+                },
                 registerAlarmButtonClick = { routeId ->
                     if (PermissionUtil.needsOverlayPermission(context)) {
                         if (viewModel.shouldShowOverlayDialog()) {
@@ -290,7 +296,12 @@ fun ItineraryScreen(
                         busArrivalStatus = uiState.busArrivalStatus,
                         departurePoint = uiState.departurePoint!!,
                         destinationPoint = uiState.destinationPoint!!,
-                        onClickBusInfo = navigateToBusCourse
+                        onClickBusInfo = {
+                            AmplitudeUtils.trackEvent(
+                                "버스_상세_클릭"
+                            )
+                            navigateToBusCourse(it)
+                        }
                     )
                     Spacer(Modifier.height(marginBottom))
                 }

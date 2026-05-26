@@ -16,6 +16,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.depromeet.team6.R
 import com.depromeet.team6.presentation.ui.common.textfields.TextFieldLocation
+import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
 import com.depromeet.team6.ui.theme.LocalTeam6Colors
 
 @Composable
@@ -50,7 +51,12 @@ fun CurrentLocationSheet(
                 textColor = colors.systemGreen,
                 backgroundColor = colors.gray930,
                 modifier = Modifier,
-                onClick = { onSearchLocationClick() }
+                onClick = {
+                    AmplitudeUtils.trackEvent(
+                        "출발지_수정_클릭"
+                    )
+                    onSearchLocationClick()
+                }
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -61,7 +67,12 @@ fun CurrentLocationSheet(
                 textColor = colors.gray200,
                 backgroundColor = colors.gray950,
                 clickableIcon = true,
-                onClick = { onDestinationClick() },
+                onClick = {
+                    AmplitudeUtils.trackEvent(
+                        "집주소_수정_클릭"
+                    )
+                    onDestinationClick()
+                },
                 modifier = Modifier
             )
 
@@ -69,7 +80,12 @@ fun CurrentLocationSheet(
 
             PrimaryButton(
                 text = stringResource(R.string.home_search_button_text),
-                onClick = onSearchClick,
+                onClick = {
+                    AmplitudeUtils.trackEvent(
+                        "막차_검색하기_클릭"
+                    )
+                    onSearchClick()
+                },
                 modifier = Modifier
             )
         }

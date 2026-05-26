@@ -263,6 +263,9 @@ class LockService : Service() {
                     .build()
 
                 notificationManager.notify(ALARM_NOTIFICATION_ID, notification)
+                AmplitudeUtils.trackEvent(
+                    "알람_타임아웃_종료"
+                )
                 stopForeground(STOP_FOREGROUND_DETACH)
                 stopSelf()
             }

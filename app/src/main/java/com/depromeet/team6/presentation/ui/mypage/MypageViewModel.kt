@@ -20,6 +20,7 @@ import com.depromeet.team6.domain.usecase.GetUserInfoUseCase
 import com.depromeet.team6.domain.usecase.ModifyUserInfoUseCase
 import com.depromeet.team6.domain.usecase.PostLogoutUseCase
 import com.depromeet.team6.presentation.mapper.toPresentationList
+import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
 import com.depromeet.team6.presentation.util.base.BaseViewModel
 import com.depromeet.team6.presentation.util.context.getUserLocation
 import com.depromeet.team6.presentation.util.permission.PermissionUtil
@@ -49,6 +50,9 @@ class MypageViewModel @Inject constructor(
 ) : BaseViewModel<MypageContract.MypageUiState, MypageContract.MypageSideEffect, MypageContract.MypageEvent>() {
 
     init {
+        AmplitudeUtils.trackEvent(
+            "마이페이지_진입"
+        )
         loadAlarmSettings()
     }
 
@@ -133,6 +137,17 @@ class MypageViewModel @Inject constructor(
             MypageContract.MypageEvent.AlarmSettingClicked -> navigateToAlarmSetting()
 
             is MypageContract.MypageEvent.AlarmTypeModified -> {
+                val alarmType = when (event.type) {
+                    MypageContract.AlarmType.SOUND -> "소리"
+                    MypageContract.AlarmType.VIBRATION -> "진동"
+                    MypageContract.AlarmType.ALL -> "소리 및 진동"
+                }
+                AmplitudeUtils.trackEventWithProperties(
+                    "알람 설정",
+                    mapOf(
+                        "알람_방식" to alarmType
+                    )
+                )
                 saveAlarmType(event.type)
                 navigateToMainSetting()
             }
@@ -452,6 +467,9 @@ class MypageViewModel @Inject constructor(
                 setState { copy(loadState = LoadState.Error) }
                 userInfoRepositoryImpl.clear()
                 homeRepository.clearAlarmData()
+                AmplitudeUtils.trackEvent(
+                    "로그아웃"
+                )
             }.onFailure { exception ->
                 setEvent(MypageContract.MypageEvent.LogoutClicked)
                 handleApiException(exception = exception)
@@ -462,6 +480,9 @@ class MypageViewModel @Inject constructor(
     private fun withDraw(reason: String) {
         viewModelScope.launch {
             deleteWithDrawUseCase(reason).onSuccess {
+                AmplitudeUtils.trackEvent(
+                    "회원탈퇴"
+                )
                 userInfoRepositoryImpl.clear()
                 setSideEffect(MypageContract.MypageSideEffect.ClearPermissionData)
                 homeRepository.clearAlarmData()

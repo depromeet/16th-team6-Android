@@ -32,7 +32,6 @@ import com.depromeet.team6.presentation.util.DefaultMarkerDestination.DEFAULT_MA
 import com.depromeet.team6.presentation.util.HomeAmplitude.HOME
 import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_EVENT_CHARACTER_CLICK_AFTER_ALARM
 import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_EVENT_CHARACTER_CLICK_BEFORE_ALARM
-import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_EVENT_ITINERARY_BTN_CLICK
 import com.depromeet.team6.presentation.util.HomeAmplitude.HOME_EVENT_REGISTER_MAP_MARKER_CLICK
 import com.depromeet.team6.presentation.util.HomeAmplitude.REGISTER_MAP_MARKER_CLICKED
 import com.depromeet.team6.presentation.util.amplitude.AmplitudeUtils
@@ -91,6 +90,12 @@ class HomeViewModel @Inject constructor(
     private var messageIdx = 0
 
     init {
+        AmplitudeUtils.trackEventWithProperties(
+            "메인_진입",
+            mapOf(
+                "로그인_상태" to "로그인",
+            )
+        )
         checkPermissionStatus()
         checkAppVersion()
         viewModelScope.launch {
@@ -312,13 +317,16 @@ class HomeViewModel @Inject constructor(
             }
 
             is HomeContract.HomeEvent.CourseDetailButtonClick -> {
-                AmplitudeUtils.trackEventWithProperties(
-                    eventName = HOME_EVENT_ITINERARY_BTN_CLICK,
-                    properties = mapOf(
-                        SCREEN_NAME to HOME,
-                        USER_ID to userInfoRepository.getUserID(),
-                        event.clickEventKey to 1
-                    )
+//                AmplitudeUtils.trackEventWithProperties(
+//                    eventName = HOME_EVENT_ITINERARY_BTN_CLICK,
+//                    properties = mapOf(
+//                        SCREEN_NAME to HOME,
+//                        USER_ID to userInfoRepository.getUserID(),
+//                        event.clickEventKey to 1
+//                    )
+//                )
+                AmplitudeUtils.trackEvent(
+                    "경로_영역_클릭"
                 )
             }
 
